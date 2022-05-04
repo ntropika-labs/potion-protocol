@@ -1,0 +1,21 @@
+{
+  "name": "subgraph",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "prepare-local": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/simple-erc20/deployments/localhost.json | mustache - subgraph.template.yaml > subgraph.yaml",
+    "prepare-rinkeby": "echo '{\"subgraphNetwork\": \"rinkeby\"}' | jq -s '.[0] * .[1]' - ../../contracts/simple-erc20/deployments/rinkeby.json | mustache - subgraph.template.yaml > subgraph.yaml",
+    "prepare-mainnet": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/simple-erc20/deployments/mainnet.json | mustache - subgraph.template.yaml > subgraph.yaml",
+    "create": "graph create subgraph --node https://api.thegraph.com/deploy",
+    "create-local": "graph create subgraph --node http://localhost:8020",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy subgraph --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy",
+    "deploy-hosted": "graph deploy --product hosted-service",
+    "deploy-local": "graph deploy subgraph --ipfs http://localhost:5001 --node http://localhost:8020",
+    "test-unit": "RUST_BACKTRACE=full graph test",
+    "lint": "eslint . --ext .ts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/**/*.ts tests/**/*.ts",
+    "coverage": "graph test -- -c"
+  }
+}

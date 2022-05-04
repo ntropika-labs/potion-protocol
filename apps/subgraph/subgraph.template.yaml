@@ -1,0 +1,24 @@
+specVersion: 0.0.4
+description: Demo subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: SimpleERC20
+    network: "{{subgraphNetwork}}"
+    source:
+      address: "{{contracts.SimpleERC20.address}}"
+      abi: SimpleERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Token
+      abis:
+        - name: SimpleERC20
+          file: ../../contracts/simple-erc20/abis/SimpleERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/simpleErc20.ts

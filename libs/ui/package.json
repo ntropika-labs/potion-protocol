@@ -1,0 +1,33 @@
+{
+  "name": "ui-library",
+  "private": true,
+  "version": "0.1.0",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "nx": {
+    "targets": {
+      "build": {
+        "outputs": [
+          "dist/"
+        ]
+      }
+    }
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development vite",
+    "build": "NODE_ENV=production vue-tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
+    "watch": "vite build --watch",
+    "preview": "vite preview",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "test-unit": "vitest run --environment jsdom",
+    "test-unit-watch": "vitest watch --environment jsdom",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "lint": "eslint --ext .ts,.js,.vue src --fix  --ignore-path .gitignore",
+    "format": "prettier --write 'src/**/*.{ts,js,vue}'"
+  }
+}

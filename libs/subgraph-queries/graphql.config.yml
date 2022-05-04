@@ -1,0 +1,44 @@
+# Schema is loaded from the introspection schema
+schema: ./generated/schema.json
+documents: "queries/**/*.{graphql,gql}"
+
+extensions:
+  codegen:
+    config:
+      # Typescript settings
+      avoidOptionals: true
+      enumsAsTypes: true
+      immutableTypes: true
+      onlyOperationTypes: true
+      preResolveTypes: true
+      useTypeImports: true
+      # The Graph custom scalars that we cast to a specific type
+      scalars:
+        BigDecimal: string
+        BigInt: string
+        Bytes: string
+
+    generates:
+      # Generate base types in a file
+      generated/schema.ts:
+        plugins:
+          - "typescript"
+
+      # Generate queries/subscriptions/mutations types in a file
+      generated/operations.ts:
+        preset: import-types
+        presetConfig:
+          typesPath: ./schema
+          importTypesNamespace: SchemaTypes
+        plugins:
+          - "typescript-operations"
+
+      # Currently there is a bug with import-types and urql codegens, so as a workaround we are using the add plugin
+      # See for more info https://github.com/dotansimha/graphql-code-generator/issues/7694
+      generated/urql.ts:
+        config:
+          typesPrefix: "Operations."
+        plugins:
+          - "typescript-vue-urql"
+          - add:
+              content: "import type * as Operations from './operations'"

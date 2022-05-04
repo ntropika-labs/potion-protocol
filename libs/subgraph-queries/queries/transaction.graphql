@@ -1,0 +1,14 @@
+query allTransactions {
+  transactions {
+    id
+    from {
+      id
+    }
+    to {
+      id
+    }
+    amount
+    timestamp
+    block
+  }
+}

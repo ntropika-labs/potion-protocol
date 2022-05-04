@@ -1,0 +1,27 @@
+# Ignore subgraph.yaml because we are generating it from subgraph.template.yaml
+subgraph.yaml
+
+# Docker files
+data
+
+# Matchstick binaries
+tests/.*
+matchstick
+
+# Test coverage tools
+tests/.tools/
+
+# Graph CLI
+generated/
+build/
+
+# Packages
+node_modules/
+
+.DS_Store
+
+# Config
+.idea
+
+# Temporary workaround until we found out which process generates this files
+contracts

@@ -1,0 +1,39 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "references": [
+    {
+      "path": "./tsconfig.vue.json"
+    },
+    {
+      "path": "apps/dapp"
+    },
+    {
+      "path": "contracts/simple-erc20"
+    },
+    {
+      "path": "libs/ui-library"
+    },
+    {
+      "path": "libs/subgraph-queries"
+    }
+  ],
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "dist"
+  ]
+}

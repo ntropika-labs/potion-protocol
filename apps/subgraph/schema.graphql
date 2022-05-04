@@ -1,0 +1,21 @@
+type Token @entity(immutable: true) {
+  id: ID!
+  name: String!
+  decimals: Int!
+  symbol: String!
+  totalSupply: BigInt!
+}
+
+type Owner @entity {
+  id: ID!
+  balance: BigInt!
+}
+
+type Transaction @entity(immutable: true) {
+  id: ID!
+  from: Owner!
+  to: Owner!
+  amount: BigInt!
+  timestamp: BigInt!
+  block: BigInt!
+}

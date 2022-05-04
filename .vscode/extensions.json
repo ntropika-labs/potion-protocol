@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "antfu.vite",
+    "antfu.iconify",
+    "wix.vscode-import-cost",
+    "antfu.unocss",
+    "naumovs.color-highlight",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "johnsoncodehk.volar",
+  ]
+}

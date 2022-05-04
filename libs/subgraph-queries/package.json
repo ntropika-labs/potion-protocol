@@ -1,0 +1,17 @@
+{
+  "name": "subgraph-queries",
+  "private": true,
+  "version": "0.0.0",
+  "main": "./generated/schema.ts",
+  "types": "./generated/schema.ts",
+  "files": [
+    "generated"
+  ],
+  "scripts": {
+    "build": "graphql-codegen",
+    "codegen": "graphql-codegen",
+    "introspection": "graphql-codegen -c introspection.yml",
+    "lint": "eslint --fix queries",
+    "format": "prettier --write 'queries/**/*.{graphql,gql}'"
+  }
+}

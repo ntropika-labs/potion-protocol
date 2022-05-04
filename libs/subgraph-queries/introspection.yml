@@ -1,0 +1,11 @@
+# Schema must be an endpoint and not a graphql file because the graph adds some custom decorators in the schema that aren't supported by graphql-codegen and that are used only for them to prepare the endpoint
+schema: ${GRAPHQL_ENDPOINT}
+documents: "queries/**/*.{graphql,gql}"
+
+extensions:
+  codegen:
+    generates:
+      # Generate a schema.json file
+      generated/schema.json:
+        plugins:
+          - "introspection"

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Script to check if the current environment has the required dependencies to run everything locally
+
+if ! which docker 2>&1 > /dev/null; then
+    echo "Please install 'docker' first"
+    exit 1
+fi
+echo "'docker' detected"
+
+docker_version="$(docker -v | cut -d ',' -f1 | cut -d ' ' -f3)"
+
+if ! which docker-compose 2>&1 > /dev/null; then
+    if $docker_version < "20"; then
+        echo "Please install 'docker-compose' first"
+    else
+        echo "Please ensure that you have the 'docker-compose' compatibility layer for your docker version installed"
+    fi
+    exit 1
+fi
+echo "'docker-compose' detected"
+
+if ! which jq 2>&1 > /dev/null; then
+    echo "Please install 'jq' first"
+    exit 1
+fi
+echo "'jq' detected"

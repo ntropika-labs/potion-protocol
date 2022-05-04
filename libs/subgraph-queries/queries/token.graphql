@@ -1,0 +1,9 @@
+query allTokens {
+  tokens {
+    id
+    name
+    decimals
+    symbol
+    totalSupply
+  }
+}
