@@ -1,0 +1,23 @@
+{
+  "name": "gamma-protocol",
+  "version": "2.0.0",
+  "description": "Advanced Margin Opyn",
+  "keywords": [
+    "options",
+    "ethereum",
+    "defi"
+  ],
+  "homepage": "https://github.com/opynfinance/GammaProtocol#readme",
+  "bugs": {
+    "url": "https://github.com/opynfinance/GammaProtocol/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opynfinance/GammaProtocol.git"
+  },
+  "license": "Unlicense",
+  "author": "Opyn",
+  "files": [
+    "contracts"
+  ]
+}

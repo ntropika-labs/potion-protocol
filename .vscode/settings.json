@@ -13,9 +13,5 @@
   },
   "editor.tabSize": 2,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.workingDirectories": [
-    "./contracts/simple-erc20",
-    "./apps/",
-    "./libs/"
-  ]
+  "eslint.workingDirectories": ["./contracts/core", "./apps/", "./libs/"]
 }

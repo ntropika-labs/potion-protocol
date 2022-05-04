@@ -22,7 +22,7 @@
       "path": "apps/dapp"
     },
     {
-      "path": "contracts/simple-erc20"
+      "path": "contracts/core"
     },
     {
       "path": "libs/ui-library"
@@ -31,9 +31,5 @@
       "path": "libs/subgraph-queries"
     }
   ],
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "dist"
-  ]
+  "exclude": ["node_modules", "tmp", "dist"]
 }
