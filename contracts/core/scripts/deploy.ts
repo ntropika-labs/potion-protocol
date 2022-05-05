@@ -1,11 +1,12 @@
 import type { Contract } from "ethers";
-import { network, ethers, upgrades } from "hardhat";
+import { network, ethers } from "hardhat";
 import { PotionLiquidityPool } from "../typechain";
 import { config as deployConfiguration } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
+import { deploy, deployUpgrade, initDeployment } from "./utils/deployment";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -37,17 +38,19 @@ const CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM = [
 const contractAddresses = new Map();
 
 async function init() {
+    await initDeployment();
+
     const deployer = (await ethers.provider.listAccounts())[0];
+
     console.log(`Using network ${networkName}`);
     console.log(`Deploying from ${deployer}`);
 }
 
 // Deploys a faucet token for use as test collateral, and returns its address
 async function deployCollateralToken(): Promise<string> {
-    const tokenFactory = await ethers.getContractFactory("PotionTestUSD");
-    const tokenTrx = await tokenFactory.deploy();
     process.stdout.write(`Deploying test collateral token (PUSDC)...`);
-    const token = await tokenTrx.deployed();
+    const token = await deploy("PotionTestUSD");
+
     console.log(` deployed at ${token.address}`);
     return token.address;
 }
@@ -80,38 +83,29 @@ async function updateAddressBook(addressbook: Contract) {
 // Deploys all of the Opyn contracts and returns the address of the addressbook contract
 async function deployOpynContracts(): Promise<string> {
     // Deploy the address book and other Opyn contracts
-    const AddressBookFactory = await ethers.getContractFactory(ADDRESS_BOOK_CONTRACT_NAME);
-    const addressBookDeployTrx = await AddressBookFactory.deploy();
-    const addressbook = await addressBookDeployTrx.deployed();
+    const addressbook = await deploy(ADDRESS_BOOK_CONTRACT_NAME);
 
     // Deploy contracts that take no constructor params
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_NO_PARAM) {
-        const factory = await ethers.getContractFactory(contractName);
-        const deployTrx = await factory.deploy();
-        await deployTrx.deployed();
-        contractAddresses.set(contractName, (await deployTrx.deployed()).address);
+        const deployedContract = await deploy(contractName);
+        contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy contracts that take the oracle as a constructor param
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_ORACLE_PARAM) {
-        const factory = await ethers.getContractFactory(contractName);
-        const deployTrx = await factory.deploy(contractAddresses.get(ORACLE_CONTRACT_NAME));
-        await deployTrx.deployed();
-        contractAddresses.set(contractName, (await deployTrx.deployed()).address);
+        const deployedContract = await deploy(contractName, [contractAddresses.get(ORACLE_CONTRACT_NAME)]);
+        contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy contracts that take the address book as a constructor param
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM) {
-        const factory = await ethers.getContractFactory(contractName);
-        const deployTrx = await factory.deploy(addressbook.address);
-        await deployTrx.deployed();
-        contractAddresses.set(contractName, (await deployTrx.deployed()).address);
+        const deployedContract = await deploy(contractName, [addressbook.address]);
+        contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy Controller including linked library
-    const MarginVaultFactory = await ethers.getContractFactory("MarginVault");
-    const marginVaultLib = await MarginVaultFactory.deploy();
-    contractAddresses.set(MARGIN_VAULT_LIB_NAME, (await marginVaultLib.deployed()).address);
+    const marginVaultLib = await deploy("MarginVault");
+    contractAddresses.set(MARGIN_VAULT_LIB_NAME, marginVaultLib.address);
 
     const ControllerFactory = await ethers.getContractFactory(CONTROLLER_CONTRACT_NAME, {
         libraries: {
@@ -120,7 +114,13 @@ async function deployOpynContracts(): Promise<string> {
     });
     const controllerDeployTrx = await ControllerFactory.deploy();
     await controllerDeployTrx.deployed();
-    contractAddresses.set(CONTROLLER_CONTRACT_NAME, (await controllerDeployTrx.deployed()).address);
+
+    const controller = await deploy(CONTROLLER_CONTRACT_NAME, [], {
+        libraries: {
+            MarginVault: marginVaultLib.address,
+        },
+    });
+    contractAddresses.set(CONTROLLER_CONTRACT_NAME, controller.address);
 
     await updateAddressBook(addressbook);
     return addressbook.address;
@@ -142,26 +142,22 @@ async function main() {
     }
 
     process.stdout.write(`Deploying CurveManager... `);
-    const CurveManagerFactory = await ethers.getContractFactory("CurveManager");
-    const curveManager = await CurveManagerFactory.deploy();
-    await curveManager.deployed();
+    const curveManager = await deploy("CurveManager");
     console.log(`deployed at ${curveManager.address}`);
+
     process.stdout.write(`Deploying CriteriaManager... `);
-    const CriteriaManagerFactory = await ethers.getContractFactory("CriteriaManager");
-    const criteriaManager = await CriteriaManagerFactory.deploy();
-    await criteriaManager.deployed();
+    const criteriaManager = await deploy("CriteriaManager");
     console.log(`deployed at ${criteriaManager.address}`);
 
     process.stdout.write(`Deploying PotionLiquidityPool... `);
-    const PotionLiquidityPoolFactory = await ethers.getContractFactory("PotionLiquidityPool");
-    const potionLiquidityPool = (await upgrades.deployProxy(PotionLiquidityPoolFactory, [
+    const potionLiquidityPool = (await deployUpgrade("PotionLiquidityPool", [
         deployConfig.opynAddressBook,
         deployConfig.collateralToken,
         curveManager.address,
         criteriaManager.address,
     ])) as PotionLiquidityPool;
-    await potionLiquidityPool.deployed();
-    const configToPersist = new Deployment({
+
+    const deployment = new Deployment({
         opynAddressBookAddress: deployConfig.opynAddressBook,
         collateralTokenAddress: deployConfig.collateralToken,
         potionLiquidityPoolAddress: potionLiquidityPool.address,
@@ -173,16 +169,10 @@ async function main() {
     });
     console.log(`deployed at ${potionLiquidityPool.address}`);
 
-    // We persist now in case the post-deploy actions are long-running
-    await configToPersist.persist();
-
     if (deployConfig.postDeployActions && deployConfig.postDeployActions.length > 0) {
         // Note that executePostDeployActions may persist updated config after every successful action
-        await executePostDeployActions(deployConfig.postDeployActions, configToPersist, true);
+        await executePostDeployActions(deployConfig.postDeployActions, deployment, true);
     }
-
-    // We persist again in case the post-deploy actions changed config
-    await configToPersist.persist();
 }
 
 main()

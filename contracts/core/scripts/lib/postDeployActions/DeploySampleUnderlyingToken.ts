@@ -1,6 +1,7 @@
 import { ethers } from "hardhat";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployActionsResults } from "../postDeploy";
+import { deploy } from "../../utils/deployment";
 
 export class DeploySampleUnderlyingToken {
     public constructor(public tokenSymbol = "UNDRLYNG") {}
@@ -11,11 +12,9 @@ export class DeploySampleUnderlyingToken {
         dataAlreadyDeployed: PostDeployActionsResults,
         printProgress: boolean,
     ): Promise<void> {
-        const tokenFactory = await ethers.getContractFactory("SampleUnderlyingToken");
-        const tokenTrx = await tokenFactory.deploy(this.tokenSymbol);
         printProgress &&
             process.stdout.write(`Deploying & whitelisting sample underlying token (${this.tokenSymbol})... `);
-        const token = await tokenTrx.deployed();
+        const token = await deploy("SampleUnderlyingToken", [this.tokenSymbol]);
         printProgress && console.log(`deployed at ${token.address}`);
 
         const whitelist = await depl.whitelist();

@@ -153,7 +153,6 @@ export async function executePostDeployActions(
         printProgress &&
             process.stdout.write(`PDA_${(i + 1).toLocaleString(undefined, { minimumIntegerDigits: digits })}: `);
         await pdaHistory.push(await actions[i].executePostDeployAction(depl, pdaHistory, printProgress));
-        await depl.persist();
     }
     printProgress && console.log(`${actions.length}/${actions.length} post-deploy actions complete.`);
 }

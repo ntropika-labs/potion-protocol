@@ -3,8 +3,9 @@ import { config as dotenvConfig } from "dotenv";
 import fs from "fs";
 
 import hre from "hardhat";
-import { ethers, network } from "hardhat";
-import { Contract } from "ethers";
+import { ethers, network, upgrades } from "hardhat";
+import { Contract, Signer } from "ethers";
+import { FactoryOptions } from "hardhat/types";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -23,7 +24,7 @@ export async function initDeployment() {
 
     // Cycle the previous deployment info to keep a history of deployments. When deploying to localhost
     // only the latest deployment is kept.
-    if (network.name !== "localhost" && fs.existsSync(latestDeploymentPath)) {
+    if (network.name !== "localhost" && network.name !== "hardhat" && fs.existsSync(latestDeploymentPath)) {
         const latestDeployment = JSON.parse(fs.readFileSync(latestDeploymentPath, "utf8"));
         const timestamp = latestDeployment.timestamp;
 
@@ -70,11 +71,33 @@ export async function verify(contractAddress: string, args: unknown[]): Promise<
 
 export async function deploy(
     contractName: string,
-    args: unknown[],
+    args: unknown[] = [],
+    options: Signer | FactoryOptions | undefined = undefined,
     flags: DeploymentFlags = DeploymentFlags.Deploy,
 ): Promise<Contract> {
-    const contractFactory = await ethers.getContractFactory(contractName);
+    const contractFactory = await ethers.getContractFactory(contractName, options);
     const contract = await contractFactory.deploy(...args);
+    const transactionReceipt = await contract.deployTransaction.wait();
+
+    // Export the deployed contract
+    await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+
+    if ((flags & DeploymentFlags.DeployAndVerify) === DeploymentFlags.DeployAndVerify) {
+        await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
+        await verify(contract.address, args);
+    }
+
+    return contract.deployed();
+}
+
+export async function deployUpgrade(
+    contractName: string,
+    args: unknown[] = [],
+    options: Signer | FactoryOptions | undefined = undefined,
+    flags: DeploymentFlags = DeploymentFlags.Deploy,
+): Promise<Contract> {
+    const contractFactory = await ethers.getContractFactory(contractName, options);
+    const contract = await upgrades.deployProxy(contractFactory, args);
     const transactionReceipt = await contract.deployTransaction.wait();
 
     // Export the deployed contract
