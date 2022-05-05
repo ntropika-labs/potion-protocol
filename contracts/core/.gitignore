@@ -12,8 +12,8 @@ artifacts/
 abis/
 build/
 cache/
-coverage/
 dist/
+typechain/
 node_modules/
 .vscode
 .openzeppelin

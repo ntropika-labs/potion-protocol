@@ -1,8 +1,8 @@
 const shell = require("shelljs");
 
 module.exports = {
-    istanbulFolder: "./reports",
-    istanbulReporter: ["text"],
+    istanbulFolder: "./reports/coverage",
+    istanbulReporter: ["text", "html", "lcov", "json"],
     onCompileComplete: async function (_config) {
         await run("typechain");
     },
@@ -12,7 +12,7 @@ module.exports = {
         shell.rm("-rf", "./typechain");
     },
     providerOptions: {
-        mnemonic: process.env.MNEMONIC,
+        mnemonic: process.env.DEPLOYER_MNEMONIC,
     },
     skipFiles: ["mocks", "test", "packages/opyn", "test", "PotionTestToken.sol", "packages/SageMath.sol"],
     configureYulOptimizer: true,
