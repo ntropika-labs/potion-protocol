@@ -21,7 +21,6 @@
     "deploy-subgraph:ganache": "./wait-for-it.sh localhost:8545 -- sleep 1 && yarn deploy:ganache",
     "build-deploy": "yarn && yarn codegen && yarn create-local && yarn deploy-local",
     "test-unit": "RUST_BACKTRACE=full graph test",
-    "test": "graph test PotionLiquidityPool CurveManager CriteriaManager OtokenFactoryContract",
     "coverage": "graph test -- -c",
     "lint": "eslint . --ext .ts --fix --ignore-path .gitignore",
     "format": "prettier --write src/**/*.ts tests/**/*.ts"
