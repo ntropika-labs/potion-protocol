@@ -13,5 +13,8 @@
   },
   "editor.tabSize": 2,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.workingDirectories": ["./contracts/core", "./apps/", "./libs/"]
+  "eslint.workingDirectories": ["./contracts/core", "./apps/", "./libs/"],
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
