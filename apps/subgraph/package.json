@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
+    "auth-hosted": "graph auth --hosted-service",
+    "auth-studio": "graph auth --studio",
     "prepare-local": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/localhost.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-rinkeby": "echo '{\"subgraphNetwork\": \"rinkeby\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/rinkeby.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-mainnet": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/mainnet.json | mustache - subgraph.template.yaml > subgraph.yaml",
@@ -16,6 +18,7 @@
     "build": "graph build",
     "deploy": "graph deploy potion-subgraph --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
     "deploy-hosted": "graph deploy --product hosted-service",
+    "deploy-studio": "graph deploy --studio",
     "deploy-local": "graph deploy potion-subgraph --node http://localhost:8020/ --ipfs http://localhost:5001 --version-label 0.0.1",
     "deploy-ganache": "yarn prepare:ganache && yarn build-deploy",
     "deploy-subgraph:ganache": "./wait-for-it.sh localhost:8545 -- sleep 1 && yarn deploy:ganache",
