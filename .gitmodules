@@ -1,0 +1,3 @@
+[submodule "contracts/core/contracts/packages/GammaProtocol"]
+	path = contracts/core/contracts/packages/GammaProtocol
+	url = https://github.com/opynfinance/GammaProtocol

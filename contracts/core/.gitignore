@@ -1,0 +1,36 @@
+# directories
+.coverage_artifacts/
+.coverage_cache/
+.coverage_contracts/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+artifacts/
+abis/
+build/
+cache/
+dist/
+typechain/
+node_modules/
+.vscode
+.openzeppelin
+
+# files
+*.env
+*.log
+*.tsbuildinfo
+*.code-workspace
+coverage.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+deployments/localhost.json
+deployments/hardhat.json
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+!.yarn/cache
+#.pnp.*
