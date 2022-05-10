@@ -81,7 +81,13 @@ export function createCurveAdded(
   const dParam = ethereum.Value.fromUnsignedBigInt(d);
   const maxUtilParam = ethereum.Value.fromUnsignedBigInt(maxUtil);
 
-  const curveParams = changetype<ethereum.Tuple>([aParam, bParam, cParam, dParam, maxUtilParam]);
+  const curveParams = changetype<ethereum.Tuple>([
+    aParam,
+    bParam,
+    cParam,
+    dParam,
+    maxUtilParam,
+  ]);
 
   event.parameters = [
     new ethereum.EventParam("curveHash", ethereum.Value.fromBytes(curveHash)),

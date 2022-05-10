@@ -4,199 +4,120 @@
  */
 
 import { assert } from "matchstick-as/assembly/index";
-import { ethereum, BigInt, BigDecimal } from "@graphprotocol/graph-ts";
-import { Pool, OToken, Template, Curve, Criteria } from "../generated/schema";
+
+export function assertPoolExists(
+  poolId: string,
+  size: string,
+  unlocked: string,
+  locked: string,
+  lp: string
+): void {
+  assert.fieldEquals("Pool", poolId, "size", size);
+  assert.fieldEquals("Pool", poolId, "unlocked", unlocked);
+  assert.fieldEquals("Pool", poolId, "locked", locked);
+  assert.fieldEquals("Pool", poolId, "lp", lp);
+}
 
 export function assertPoolLiquidity(
-  pool: Pool,
+  poolId: string,
   size: string,
   unlocked: string,
   locked: string,
   initialBalance: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromString(size),
-    ethereum.Value.fromString(pool.size.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(unlocked),
-    ethereum.Value.fromString(pool.unlocked.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(locked),
-    ethereum.Value.fromString(pool.locked.toString())
-  );
-  if (pool.initialBalance) {
-    assert.equals(
-      ethereum.Value.fromString(initialBalance),
-      ethereum.Value.fromString((pool.initialBalance as BigDecimal).toString())
-    );
-  } else {
-    // raise error
-  }
+  assert.fieldEquals("Pool", poolId, "size", size);
+  assert.fieldEquals("Pool", poolId, "unlocked", unlocked);
+  assert.fieldEquals("Pool", poolId, "locked", locked);
+  assert.fieldEquals("Pool", poolId, "initialBalance", initialBalance);
 }
 
 export function assertPoolMarketData(
-  pool: Pool,
+  poolId: string,
   pnlTotal: string,
   pnlPercentage: string,
   liquidityAtTrades: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromString(pnlTotal),
-    ethereum.Value.fromString(pool.pnlTotal.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(pnlPercentage),
-    ethereum.Value.fromString(pool.pnlPercentage.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(liquidityAtTrades),
-    ethereum.Value.fromString(pool.liquidityAtTrades.toString())
-  );
+  assert.fieldEquals("Pool", poolId, "pnlTotal", pnlTotal);
+  assert.fieldEquals("Pool", poolId, "pnlPercentage", pnlPercentage);
+  assert.fieldEquals("Pool", poolId, "liquidityAtTrades", liquidityAtTrades);
 }
 
 export function assertTemplateLiquidity(
-  template: Template,
+  templateId: string,
   size: string,
   locked: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromString(size),
-    ethereum.Value.fromString(template.size.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(locked),
-    ethereum.Value.fromString(template.locked.toString())
-  );
+  assert.fieldEquals("Template", templateId, "size", size);
+  assert.fieldEquals("Template", templateId, "locked", locked);
 }
 
-export function assertCurveEquality(
-  curve: Curve,
+export function assertCurveFields(
+  curveId: string,
   a: string,
   b: string,
   c: string,
   d: string,
   maxUtil: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromString(a),
-    ethereum.Value.fromString(curve.a.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(b),
-    ethereum.Value.fromString(curve.b.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(c),
-    ethereum.Value.fromString(curve.c.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(d),
-    ethereum.Value.fromString(curve.d.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(maxUtil),
-    ethereum.Value.fromString(curve.maxUtil.toString())
-  );
+  assert.fieldEquals("Curve", curveId, "a", a);
+  assert.fieldEquals("Curve", curveId, "b", b);
+  assert.fieldEquals("Curve", curveId, "c", c);
+  assert.fieldEquals("Curve", curveId, "d", d);
+  assert.fieldEquals("Curve", curveId, "maxUtil", maxUtil);
 }
 
-export function assertCriteriaEquality(
-  criteria: Criteria,
-  isPut: boolean,
+export function assertCriteriaFields(
+  criteriaId: string,
+  isPut: string,
   maxStrikePercent: string,
   maxDurationInDays: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromBoolean(isPut),
-    ethereum.Value.fromBoolean(criteria.isPut)
+  assert.fieldEquals("Criteria", criteriaId, "isPut", isPut);
+  assert.fieldEquals(
+    "Criteria",
+    criteriaId,
+    "maxStrikePercent",
+    maxStrikePercent
   );
-  assert.equals(
-    ethereum.Value.fromString(maxStrikePercent),
-    ethereum.Value.fromString(criteria.maxStrikePercent.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(maxDurationInDays),
-    ethereum.Value.fromString(criteria.maxDurationInDays.toString())
+  assert.fieldEquals(
+    "Criteria",
+    criteriaId,
+    "maxDurationInDays",
+    maxDurationInDays
   );
 }
 
-export function assertOtokenEquality(
-  otoken: OToken,
+export function assertOtokenFields(
+  otokenId: string,
   tokenAddress: string,
   creator: string,
   underlyingAsset: string,
   strikeAsset: string,
   collateralAsset: string,
-  strikePrice: BigDecimal,
-  expiry: BigInt,
-  isPut: boolean,
-  decimals: BigInt,
-  settled: boolean,
-  premium: BigDecimal,
-  collateralized: BigDecimal,
-  liquiditySettled: BigDecimal,
-  numberOfOTokens: BigDecimal,
-  purchasesCount: BigInt
+  strikePrice: string,
+  expiry: string,
+  isPut: string,
+  decimals: string,
+  settled: string,
+  premium: string,
+  collateralized: string,
+  liquiditySettled: string,
+  numberOfOTokens: string,
+  purchasesCount: string
 ): void {
-  assert.equals(
-    ethereum.Value.fromString(tokenAddress),
-    ethereum.Value.fromString(otoken.tokenAddress.toHexString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(creator),
-    ethereum.Value.fromString(otoken.creator.toHexString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(underlyingAsset),
-    ethereum.Value.fromString(otoken.underlyingAsset)
-  );
-  assert.equals(
-    ethereum.Value.fromString(strikeAsset),
-    ethereum.Value.fromString(otoken.strikeAsset)
-  );
-  assert.equals(
-    ethereum.Value.fromString(collateralAsset),
-    ethereum.Value.fromString(otoken.collateralAsset)
-  );
-  assert.equals(
-    ethereum.Value.fromString(strikePrice.toString()),
-    ethereum.Value.fromString(otoken.strikePrice.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromUnsignedBigInt(expiry),
-    ethereum.Value.fromUnsignedBigInt(otoken.expiry)
-  );
-  assert.equals(
-    ethereum.Value.fromBoolean(isPut),
-    ethereum.Value.fromBoolean(otoken.isPut)
-  );
-  assert.equals(
-    ethereum.Value.fromUnsignedBigInt(decimals),
-    ethereum.Value.fromUnsignedBigInt(otoken.decimals)
-  );
-  assert.equals(
-    ethereum.Value.fromBoolean(settled),
-    ethereum.Value.fromBoolean(otoken.settled)
-  );
-  assert.equals(
-    ethereum.Value.fromString(premium.toString()),
-    ethereum.Value.fromString(otoken.premium.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(collateralized.toString()),
-    ethereum.Value.fromString(otoken.collateralized.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(liquiditySettled.toString()),
-    ethereum.Value.fromString(otoken.liquiditySettled.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromString(numberOfOTokens.toString()),
-    ethereum.Value.fromString(otoken.numberOfOTokens.toString())
-  );
-  assert.equals(
-    ethereum.Value.fromUnsignedBigInt(purchasesCount),
-    ethereum.Value.fromUnsignedBigInt(otoken.purchasesCount)
-  );
+  assert.fieldEquals("OToken", otokenId, "collateralAsset", collateralAsset);
+  assert.fieldEquals("OToken", otokenId, "collateralized", collateralized);
+  assert.fieldEquals("OToken", otokenId, "creator", creator);
+  assert.fieldEquals("OToken", otokenId, "decimals", decimals);
+  assert.fieldEquals("OToken", otokenId, "expiry", expiry);
+  assert.fieldEquals("OToken", otokenId, "isPut", isPut);
+  assert.fieldEquals("OToken", otokenId, "liquiditySettled", liquiditySettled);
+  assert.fieldEquals("OToken", otokenId, "numberOfOTokens", numberOfOTokens);
+  assert.fieldEquals("OToken", otokenId, "premium", premium);
+  assert.fieldEquals("OToken", otokenId, "purchasesCount", purchasesCount);
+  assert.fieldEquals("OToken", otokenId, "settled", settled);
+  assert.fieldEquals("OToken", otokenId, "strikeAsset", strikeAsset);
+  assert.fieldEquals("OToken", otokenId, "strikePrice", strikePrice);
+  assert.fieldEquals("OToken", otokenId, "tokenAddress", tokenAddress);
+  assert.fieldEquals("OToken", otokenId, "underlyingAsset", underlyingAsset);
 }

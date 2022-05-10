@@ -1,6 +1,4 @@
 import {
-  Pool,
-  Template,
   Curve,
   Criteria,
   CriteriaSet,
@@ -27,7 +25,7 @@ export function createNewPool(
   poolId: BigInt,
   size: string,
   templateId: string
-): Pool {
+): void {
   const poolSize = BigDecimal.fromString(size);
   const id = createPoolId(lp, poolId);
   const pool = createPool(id, lp, poolId);
@@ -35,7 +33,7 @@ export function createNewPool(
   pool.size = poolSize;
   pool.unlocked = poolSize;
   pool.initialBalance = poolSize;
-  return pool;
+  pool.save();
 }
 
 export function createNewTemplate(
@@ -45,16 +43,16 @@ export function createNewTemplate(
   locked: string,
   pnl: string,
   lp: Bytes
-): Template {
+): void {
   const id = createTemplateId(
-    Bytes.fromHexString(curveHash) as Bytes,
-    Bytes.fromHexString(criteriaSetHash) as Bytes
+    Bytes.fromHexString(curveHash),
+    Bytes.fromHexString(criteriaSetHash)
   );
   const template = createTemplate(id, curveHash, criteriaSetHash, lp);
   template.size = BigDecimal.fromString(size);
   template.locked = BigDecimal.fromString(locked);
   template.pnl = BigDecimal.fromString(pnl);
-  return template;
+  template.save();
 }
 
 export function createNewCurve(
@@ -64,14 +62,14 @@ export function createNewCurve(
   c: BigDecimal,
   d: BigDecimal,
   maxUtil: BigDecimal
-): Curve {
+): void {
   const curve = new Curve(id);
   curve.a = a;
   curve.b = b;
   curve.c = c;
   curve.d = d;
   curve.maxUtil = maxUtil;
-  return curve;
+  curve.save();
 }
 
 export function toCurveParam(value: string): BigInt {
@@ -93,34 +91,34 @@ export function createNewCriteria(
   isPut: boolean,
   maxStrikePercent: BigDecimal,
   maxDurationInDays: BigInt
-): Criteria {
+): void {
   const criteria = new Criteria(id);
   criteria.underlyingAsset = underlyingAsset;
   criteria.strikeAsset = strikeAsset;
   criteria.isPut = isPut;
   criteria.maxStrikePercent = maxStrikePercent;
   criteria.maxDurationInDays = maxDurationInDays;
-  return criteria;
+  criteria.save();
 }
 
-export function createNewCriteriaSet(id: string): CriteriaSet {
+export function createNewCriteriaSet(id: string): void {
   const criteriaSet = new CriteriaSet(id);
-  return criteriaSet;
+  criteriaSet.save();
 }
 
 export function createNewCriteriaJoinedCriteriaSet(
   criteriaId: string,
   criteriaSetId: string
-): CriteriaJoinedCriteriaSet {
+): void {
   const id = createCriteriaJoinedCriteriaSetId(
-    Bytes.fromHexString(criteriaId) as Bytes,
-    Bytes.fromHexString(criteriaSetId) as Bytes
+    Bytes.fromHexString(criteriaId),
+    Bytes.fromHexString(criteriaSetId)
   );
   const criteriaJoinedCriteriaSet = new CriteriaJoinedCriteriaSet(id);
 
   criteriaJoinedCriteriaSet.criteria = criteriaId;
   criteriaJoinedCriteriaSet.criteriaSet = criteriaSetId;
-  return criteriaJoinedCriteriaSet;
+  criteriaJoinedCriteriaSet.save();
 }
 
 export function createNewOtoken(
@@ -140,10 +138,10 @@ export function createNewOtoken(
   liquiditySettled: BigDecimal,
   numberOfOTokens: BigDecimal,
   purchasesCount: BigInt
-): OToken {
+): void {
   const otoken = new OToken(id);
-  otoken.tokenAddress = Bytes.fromHexString(tokenAddress) as Bytes;
-  otoken.creator = Bytes.fromHexString(creator) as Bytes;
+  otoken.tokenAddress = Bytes.fromHexString(tokenAddress);
+  otoken.creator = Bytes.fromHexString(creator);
   otoken.underlyingAsset = underlyingAsset;
   otoken.strikeAsset = strikeAsset;
   otoken.collateralAsset = collateralAsset;
@@ -158,5 +156,5 @@ export function createNewOtoken(
   otoken.numberOfOTokens = numberOfOTokens;
   otoken.purchasesCount = purchasesCount;
 
-  return otoken;
+  otoken.save();
 }
