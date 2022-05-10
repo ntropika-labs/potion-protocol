@@ -1,6 +1,6 @@
 {
     "name": "potion-contracts",
-    "main": "./typechain/index.ts",
+    "main": "./src/index.ts",
     "version": "0.0.1",
     "private": true,
     "author": "Potion",

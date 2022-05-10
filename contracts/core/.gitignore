@@ -13,7 +13,6 @@ abis/
 build/
 cache/
 dist/
-typechain/
 node_modules/
 .vscode
 .openzeppelin
