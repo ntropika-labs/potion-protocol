@@ -1,7 +1,6 @@
-export { onboardOptions } from "./onboard";
 export const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
 export const ethereumNetwork = import.meta.env.VITE_ETHEREUM_NETWORK;
-
+console.log(ethereumNetwork);
 export const rpcUrl =
   ethereumNetwork === "localhost"
     ? "http://localhost:8545"

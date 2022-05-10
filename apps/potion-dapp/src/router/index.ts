@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
   const timestamp = Date.now();
   const diff = timestamp - onboard.lastConnectionTimestamp.value;
   const minutes = Math.floor(diff / 60000);
-  if (minutes <= 5) {
+  if (minutes <= 6) {
     if (onboard.alreadyConnectedWallets.value.length > 0) {
       if (onboard.onboardState.value.wallets.length === 0) {
         await onboard.connectWallet({

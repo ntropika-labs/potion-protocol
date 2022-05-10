@@ -1,7 +1,7 @@
 // We use vue-demi to automatically use the correct reactivity API for both Vue 2 and Vue 3
 import { computed, readonly, ref, shallowRef } from "vue";
 
-import { eagerComputed, useStorage } from "@vueuse/core";
+import { useStorage } from "@vueuse/core";
 // Vueuse helper to streamline the use of rxjs observables as vue refs
 import { useSubscription } from "@vueuse/rxjs";
 import Web3Onboard from "@web3-onboard/core";
@@ -57,11 +57,13 @@ const useOnboard = () => {
   }
 
   const connectingWallet = ref<boolean>(false);
-  const wallets = eagerComputed(() => onboardState.value.wallets);
+  // const wallets = computed(() => onboardState.value.wallets);
 
-  const connectedWallet = computed<WalletState | null>(() =>
-    wallets.value.length > 0 ? wallets.value[0] : null
-  );
+  const connectedWallet = computed<WalletState | null>(() => {
+    return onboardState.value.wallets.length > 0
+      ? onboardState.value.wallets[0]
+      : null;
+  });
 
   const connectWallet = async (options?: ConnectOptions) => {
     connectingWallet.value = true;
