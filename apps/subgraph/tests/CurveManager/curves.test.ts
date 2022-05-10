@@ -3,8 +3,7 @@ import { test, clearStore } from "matchstick-as/assembly/index";
 import { log } from "matchstick-as/assembly/log";
 import { handleCurveAdded } from "../../src/curves";
 import { createCurveAdded } from "../events";
-import { createNewCurve, toCurveParam } from "../helpers";
-import { assertCurveFields } from "../assertions";
+import { assertEntity, createNewCurve, toCurveParam } from "../helpers";
 import { MOCKED_CURVE_ID } from "../constants";
 
 // template creation
@@ -21,7 +20,13 @@ test("It can create a curve", () => {
     "Created curve with parameters { a: 1, b: 2, c: 3, d: 4, maxUtil: 1 }",
     []
   );
-  assertCurveFields(MOCKED_CURVE_ID, "1", "2", "3", "4", "1");
+  assertEntity("Curve", MOCKED_CURVE_ID, [
+    ["a", "1"],
+    ["b", "2"],
+    ["c", "3"],
+    ["d", "4"],
+    ["maxUtil", "1"],
+  ]);
   clearStore();
 });
 
@@ -40,7 +45,13 @@ test("It can handle the curveAdded event when the curve doesn't exist", () => {
     []
   );
   handleCurveAdded(mockedEvent);
-  assertCurveFields(MOCKED_CURVE_ID, "1", "2", "3", "4", "1");
+  assertEntity("Curve", MOCKED_CURVE_ID, [
+    ["a", "1"],
+    ["b", "2"],
+    ["c", "3"],
+    ["d", "4"],
+    ["maxUtil", "1"],
+  ]);
   clearStore();
 });
 
@@ -70,6 +81,12 @@ test("It can handle the curveAdded event when the curve is already present", () 
     []
   );
   handleCurveAdded(mockedEvent);
-  assertCurveFields(MOCKED_CURVE_ID, "1", "2", "3", "4", "1");
+  assertEntity("Curve", MOCKED_CURVE_ID, [
+    ["a", "1"],
+    ["b", "2"],
+    ["c", "3"],
+    ["d", "4"],
+    ["maxUtil", "1"],
+  ]);
   clearStore();
 });

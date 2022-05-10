@@ -20,6 +20,18 @@ import {
 } from "./constants";
 import { createCriteriaJoinedCriteriaSetId } from "../src/criterias";
 
+import { assert } from "matchstick-as/assembly/index";
+
+export function assertEntity(
+  entity: string,
+  id: string,
+  values: string[][]
+): void {
+  for (let i = 0; i < values.length; i += 1) {
+    assert.fieldEquals(entity, id, values[i][0], values[i][1]);
+  }
+}
+
 export function createNewPool(
   lp: Address,
   poolId: BigInt,

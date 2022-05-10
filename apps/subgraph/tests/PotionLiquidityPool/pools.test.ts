@@ -15,11 +15,7 @@ import {
   createCriteriaSetSelected,
 } from "../events";
 import {
-  assertPoolLiquidity,
-  assertPoolMarketData,
-  assertPoolExists,
-} from "../assertions";
-import {
+  assertEntity,
   createNewPool,
   createNewCurve,
   createNewCriteriaSet,
@@ -39,15 +35,15 @@ test("It can create a pool", () => {
     []
   );
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
-  const poolId = createPoolId(MOCKED_LP, BIGINT_ZERO);
-  assertPoolExists(
-    poolId,
-    "0",
-    "0",
-    "0",
-    "0x0000000000000000000000000000000000000000"
-  );
-  assertPoolMarketData(poolId, "0", "0", "0");
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["pnlTotal", "0"],
+    ["pnlPercentage", "0"],
+    ["liquidityAtTrades", "0"],
+  ]);
   clearStore();
 });
 
@@ -69,13 +65,12 @@ test("It can deposit liquidity in an already existing pool without a template", 
     []
   );
   handleDeposited(mockedEvent);
-  assertPoolLiquidity(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "200",
-    "200",
-    "0",
-    "100"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "200"],
+    ["unlocked", "200"],
+    ["locked", "0"],
+    ["initialBalance", "100"],
+  ]);
   clearStore();
 });
 
@@ -92,13 +87,12 @@ test("It can withdraw from a pool without a template leaving some liquidity insi
     []
   );
   handleWithdrawn(mockedEvent);
-  assertPoolLiquidity(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "100",
-    "100",
-    "0",
-    "200"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "100"],
+    ["unlocked", "100"],
+    ["locked", "0"],
+    ["initialBalance", "200"],
+  ]);
   clearStore();
 });
 
@@ -114,13 +108,12 @@ test("It can withdraw from a pool without a template leaving it without liquidit
     []
   );
   handleWithdrawn(mockedEvent);
-  assertPoolLiquidity(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "0",
-    "0",
-    "0",
-    "100"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["initialBalance", "100"],
+  ]);
   clearStore();
 });
 
@@ -165,13 +158,12 @@ test("It can assign a new curve to a new pool", () => {
     []
   );
   handleCurveSelected(mockedEvent);
-  assertPoolExists(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "0",
-    "0",
-    "0",
-    "0x0000000000000000000000000000000000000000"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["lp", "0x0000000000000000000000000000000000000000"],
+  ]);
   clearStore();
 });
 
@@ -198,13 +190,12 @@ test("It can assign an existing curve to a new pool", () => {
     []
   );
   handleCurveSelected(mockedEvent);
-  assertPoolExists(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "0",
-    "0",
-    "0",
-    "0x0000000000000000000000000000000000000000"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["lp", "0x0000000000000000000000000000000000000000"],
+  ]);
   clearStore();
 });
 
@@ -224,7 +215,12 @@ test("It can assign a new curve to an existing pool", () => {
     []
   );
   handleCurveSelected(mockedEvent);
-  assertPoolLiquidity(createPoolId(MOCKED_LP, BIGINT_ZERO), "0", "0", "0", "0");
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["initialBalance", "0"],
+  ]);
   clearStore();
 });
 
@@ -256,7 +252,12 @@ test("It can assign an existing curve to an exististing pool", () => {
     []
   );
   handleCurveSelected(mockedEvent);
-  assertPoolLiquidity(createPoolId(MOCKED_LP, BIGINT_ZERO), "0", "0", "0", "0");
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["initialBalance", "0"],
+  ]);
   clearStore();
 });
 
@@ -277,13 +278,12 @@ test("It can assign an existing criteriaSet to a new pool", () => {
     []
   );
   handleCriteriaSetSelected(mockedEvent);
-  assertPoolExists(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "0",
-    "0",
-    "0",
-    "0x0000000000000000000000000000000000000000"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["lp", "0x0000000000000000000000000000000000000000"],
+  ]);
   clearStore();
 });
 
@@ -303,13 +303,12 @@ test("It can assign a new criteriaSet to an existing pool", () => {
     []
   );
   handleCriteriaSetSelected(mockedEvent);
-  assertPoolExists(
-    createPoolId(MOCKED_LP, BIGINT_ZERO),
-    "0",
-    "0",
-    "0",
-    "0x0000000000000000000000000000000000000000"
-  );
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["lp", "0x0000000000000000000000000000000000000000"],
+  ]);
   clearStore();
 });
 
@@ -334,6 +333,11 @@ test("It can assign an existing criteriaSet to an exististing pool", () => {
     []
   );
   handleCriteriaSetSelected(mockedEvent);
-  assertPoolLiquidity(createPoolId(MOCKED_LP, BIGINT_ZERO), "0", "0", "0", "0");
+  assertEntity("Pool", createPoolId(MOCKED_LP, BIGINT_ZERO), [
+    ["size", "0"],
+    ["unlocked", "0"],
+    ["locked", "0"],
+    ["initialBalance", "0"],
+  ]);
   clearStore();
 });

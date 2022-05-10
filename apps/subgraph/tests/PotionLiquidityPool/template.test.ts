@@ -3,8 +3,12 @@ import { log } from "matchstick-as/assembly/log";
 import { handleDeposited, createTemplateId } from "../../src/pools";
 import { BigDecimal, Bytes } from "@graphprotocol/graph-ts";
 import { createDeposited } from "../events";
-import { assertTemplateLiquidity } from "../assertions";
-import { createNewPool, createNewTemplate, createNewCurve } from "../helpers";
+import {
+  assertEntity,
+  createNewPool,
+  createNewTemplate,
+  createNewCurve,
+} from "../helpers";
 import {
   MOCKED_LP,
   BIGINT_ZERO,
@@ -69,7 +73,10 @@ test("It can deposit liquidity in an already existing pool with a template", () 
     []
   );
   handleDeposited(mockedEvent);
-  assertTemplateLiquidity(templateId, "200", "0");
+  assertEntity("Template", templateId, [
+    ["size", "200"],
+    ["locked", "0"],
+  ]);
   clearStore();
 });
 test("It can deposit liquidity in an already existing pool with a template that has other pools", () => {
@@ -111,6 +118,9 @@ test("It can deposit liquidity in an already existing pool with a template that 
     []
   );
   handleDeposited(mockedEvent);
-  assertTemplateLiquidity(templateId, "250", "0");
+  assertEntity("Template", templateId, [
+    ["size", "250"],
+    ["locked", "0"],
+  ]);
   clearStore();
 });

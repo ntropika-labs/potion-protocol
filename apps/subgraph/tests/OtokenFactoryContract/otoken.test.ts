@@ -9,10 +9,9 @@ import {
   MOCKED_LP,
   COLLATERAL_PRECISION_DECIMALS,
 } from "../constants";
-import { createNewOtoken, formatStrike } from "../helpers";
+import { assertEntity, createNewOtoken, formatStrike } from "../helpers";
 import { createOtokenCreated } from "../events";
 import { mockDecimals } from "../mocks";
-import { assertOtokenFields } from "../assertions";
 import { handleOtokenCreate } from "../../src/otoken";
 
 // otoken creation
@@ -35,24 +34,23 @@ test("It can create an otoken", () => {
     BigDecimal.fromString("5"),
     BigInt.fromString("12")
   );
-  assertOtokenFields(
-    MOCKED_OTOKEN_ID,
-    MOCKED_TOKEN_A_ID,
-    MOCKED_LP.toHexString(),
-    MOCKED_TOKEN_B_ID,
-    MOCKED_TOKEN_C_ID,
-    MOCKED_TOKEN_C_ID,
-    "100",
-    "30",
-    "true",
-    "18",
-    "false",
-    "200",
-    "100",
-    "0",
-    "5",
-    "12"
-  );
+  assertEntity("OToken", MOCKED_OTOKEN_ID, [
+    ["collateralAsset", MOCKED_TOKEN_C_ID],
+    ["collateralized", "100"],
+    ["creator", MOCKED_LP.toHexString()],
+    ["decimals", "18"],
+    ["expiry", "30"],
+    ["isPut", "true"],
+    ["liquiditySettled", "0"],
+    ["numberOfOTokens", "5"],
+    ["premium", "200"],
+    ["purchasesCount", "12"],
+    ["settled", "false"],
+    ["strikeAsset", MOCKED_TOKEN_C_ID],
+    ["strikePrice", "100"],
+    ["tokenAddress", MOCKED_TOKEN_A_ID],
+    ["underlyingAsset", MOCKED_TOKEN_B_ID],
+  ]);
   clearStore();
 });
 
@@ -75,23 +73,22 @@ test("It can handle the OtokenCreated event", () => {
     []
   );
   handleOtokenCreate(mockedEvent);
-  assertOtokenFields(
-    MOCKED_TOKEN_A_ID,
-    MOCKED_TOKEN_A_ID,
-    MOCKED_LP.toHexString(),
-    MOCKED_TOKEN_B_ID,
-    MOCKED_TOKEN_C_ID,
-    MOCKED_TOKEN_C_ID,
-    "1000",
-    "30",
-    "true",
-    COLLATERAL_PRECISION_DECIMALS.toString(),
-    "false",
-    "0",
-    "0",
-    "0",
-    "0",
-    "0"
-  );
+  assertEntity("OToken", MOCKED_TOKEN_A_ID, [
+    ["collateralAsset", MOCKED_TOKEN_C_ID],
+    ["collateralized", "0"],
+    ["creator", MOCKED_LP.toHexString()],
+    ["decimals", COLLATERAL_PRECISION_DECIMALS.toString()],
+    ["expiry", "30"],
+    ["isPut", "true"],
+    ["liquiditySettled", "0"],
+    ["numberOfOTokens", "0"],
+    ["premium", "0"],
+    ["purchasesCount", "0"],
+    ["settled", "false"],
+    ["strikeAsset", MOCKED_TOKEN_C_ID],
+    ["strikePrice", "1000"],
+    ["tokenAddress", MOCKED_TOKEN_A_ID],
+    ["underlyingAsset", MOCKED_TOKEN_B_ID],
+  ]);
   clearStore();
 });

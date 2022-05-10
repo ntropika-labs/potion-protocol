@@ -6,12 +6,12 @@ import {
 } from "../../src/criterias";
 import { BigDecimal, BigInt, Bytes, Address } from "@graphprotocol/graph-ts";
 import {
+  assertEntity,
   createNewCriteria,
   createNewCriteriaSet,
   createNewCriteriaJoinedCriteriaSet,
 } from "../helpers";
 import { createCriteriaAdded, createCriteriaSetAdded } from "../events";
-import { assertCriteriaFields } from "../assertions";
 import {
   MOCKED_CRITERIA_ID,
   MOCKED_CRITERIA_A_ID,
@@ -35,7 +35,11 @@ test("It can create a criteria", () => {
     "Created criteria with maxStrikePercent 100 and maxDurationInDays 30",
     []
   );
-  assertCriteriaFields(MOCKED_CRITERIA_ID, "true", "100", "30");
+  assertEntity("Criteria", MOCKED_CRITERIA_ID, [
+    ["isPut", "true"],
+    ["maxStrikePercent", "100"],
+    ["maxDurationInDays", "30"],
+  ]);
   clearStore();
 });
 
@@ -82,7 +86,11 @@ test("In can handle the CriteriaAdded event whn the criteria doesn't exist", () 
     []
   );
   handleCriteriaAdded(mockedEvent);
-  assertCriteriaFields(MOCKED_CRITERIA_ID, "true", "100", "30");
+  assertEntity("Criteria", MOCKED_CRITERIA_ID, [
+    ["isPut", "true"],
+    ["maxStrikePercent", "100"],
+    ["maxDurationInDays", "30"],
+  ]);
   clearStore();
 });
 test("In can handle the CriteriaAdded event when the criteria is already present", () => {
@@ -111,7 +119,11 @@ test("In can handle the CriteriaAdded event when the criteria is already present
     []
   );
   handleCriteriaAdded(mockedEvent);
-  assertCriteriaFields(MOCKED_CRITERIA_ID, "true", "100", "30");
+  assertEntity("Criteria", MOCKED_CRITERIA_ID, [
+    ["isPut", "true"],
+    ["maxStrikePercent", "100"],
+    ["maxDurationInDays", "30"],
+  ]);
   clearStore();
 });
 
