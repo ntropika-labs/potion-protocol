@@ -8,7 +8,6 @@ This subgraph tracks changes Pools, Curves, Criterias, and oTokens, with data ag
 - Option purchase and exercise by users from pools
 - Settlement and distibution of capital after expiry of an option.
 
-
 ## Requirements
 
 The following binaries are required to run the subgraph
@@ -61,4 +60,3 @@ Visit [docs/schemas.md](docs/schemas.md)
 ## Running tests
 
 Remember to run the `codegen` before `unit-test`
-
