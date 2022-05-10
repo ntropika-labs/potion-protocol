@@ -19,7 +19,7 @@
       "path": "./tsconfig.vue.json"
     },
     {
-      "path": "apps/dapp"
+      "path": "apps/potion-dapp"
     },
     {
       "path": "contracts/core"
@@ -31,5 +31,9 @@
       "path": "libs/subgraph-queries"
     }
   ],
-  "exclude": ["node_modules", "tmp", "dist"]
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "dist"
+  ]
 }
