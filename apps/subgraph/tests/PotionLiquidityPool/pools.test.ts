@@ -130,8 +130,7 @@ test(
     );
     handleWithdrawn(mockedEvent);
     clearStore();
-  },
-  true
+  }
 );
 
 test(
@@ -150,8 +149,7 @@ test(
     );
     handleWithdrawn(mockedEvent);
     clearStore();
-  },
-  true
+  }
 );
 
 // CurveSelected tests

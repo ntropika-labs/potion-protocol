@@ -26,16 +26,7 @@ export function createDeposited(
   poolId: BigInt,
   amount: BigInt
 ): Deposited {
-  const mockEvent = newMockEvent();
-  const event = new Deposited(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<Deposited>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -57,16 +48,7 @@ export function createCriteriaSetSelected(
   poolId: BigInt,
   criteriaSetHash: Bytes
 ): CriteriaSetSelected {
-  const mockEvent = newMockEvent();
-  const event = new CriteriaSetSelected(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<CriteriaSetSelected>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -91,16 +73,7 @@ export function createCurveAdded(
   d: BigInt,
   maxUtil: BigInt
 ): CurveAdded {
-  const mockEvent = newMockEvent();
-  const event = new CurveAdded(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<CurveAdded>(newMockEvent());
 
   const aParam = ethereum.Value.fromUnsignedBigInt(a);
   const bParam = ethereum.Value.fromUnsignedBigInt(b);
@@ -108,12 +81,7 @@ export function createCurveAdded(
   const dParam = ethereum.Value.fromUnsignedBigInt(d);
   const maxUtilParam = ethereum.Value.fromUnsignedBigInt(maxUtil);
 
-  const curveParams = new ethereum.Tuple();
-  curveParams.push(aParam);
-  curveParams.push(bParam);
-  curveParams.push(cParam);
-  curveParams.push(dParam);
-  curveParams.push(maxUtilParam);
+  const curveParams = changetype<ethereum.Tuple>([aParam, bParam, cParam, dParam, maxUtilParam]);
 
   event.parameters = [
     new ethereum.EventParam("curveHash", ethereum.Value.fromBytes(curveHash)),
@@ -131,16 +99,7 @@ export function createCurveSelected(
   poolId: BigInt,
   curveHash: Bytes
 ): CurveSelected {
-  const mockEvent = newMockEvent();
-  const event = new CurveSelected(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<CurveSelected>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -158,16 +117,7 @@ export function createOptionSettled(
   otoken: Address,
   collateralReturned: BigInt
 ): OptionSettled {
-  const mockEvent = newMockEvent();
-  const event = new OptionSettled(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<OptionSettled>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("otoken", ethereum.Value.fromAddress(otoken)),
@@ -189,16 +139,7 @@ export function createOptionsSold(
   liquidityCollateralized: BigInt,
   premiumReceived: BigInt
 ): OptionsSold {
-  const mockEvent = newMockEvent();
-  const event = new OptionsSold(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<OptionsSold>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -231,16 +172,7 @@ export function createOptionSettlementDistributed(
   poolId: BigInt,
   collateralReturned: BigInt
 ): OptionSettlementDistributed {
-  const mockEvent = newMockEvent();
-  const event = new OptionSettlementDistributed(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<OptionSettlementDistributed>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -264,16 +196,7 @@ export function createOptionsBought(
   numberOfOtokens: BigInt,
   totalPremiumPaid: BigInt
 ): OptionsBought {
-  const mockEvent = newMockEvent();
-  const event = new OptionsBought(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<OptionsBought>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("buyer", ethereum.Value.fromAddress(buyer)),
@@ -296,16 +219,7 @@ export function createWithdrawn(
   poolId: BigInt,
   amount: BigInt
 ): Withdrawn {
-  const mockEvent = newMockEvent();
-  const event = new Withdrawn(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<Withdrawn>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
@@ -330,16 +244,7 @@ export function createCriteriaAdded(
   maxStrikePercent: BigInt,
   maxDurationInDays: BigInt
 ): CriteriaAdded {
-  const mockEvent = newMockEvent();
-  const event = new CriteriaAdded(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<CriteriaAdded>(newMockEvent());
 
   const underlyingAssetParam = ethereum.Value.fromAddress(underlyingAsset);
   const strikeAssetParam = ethereum.Value.fromAddress(strikeAsset);
@@ -374,16 +279,7 @@ export function createCriteriaSetAdded(
   criteriaSetHash: Bytes,
   criteriaSet: Array<Bytes>
 ): CriteriaSetAdded {
-  const mockEvent = newMockEvent();
-  const event = new CriteriaSetAdded(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<CriteriaSetAdded>(newMockEvent());
 
   const criteriaSetValues: ethereum.Value[] = [];
   for (let i = 0; i < criteriaSet.length; i += 1) {
@@ -415,16 +311,8 @@ export function createOtokenCreated(
   expiry: BigInt,
   isPut: boolean
 ): OtokenCreated {
-  const mockEvent = newMockEvent();
-  const event = new OtokenCreated(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters
-  );
+  const event = changetype<OtokenCreated>(newMockEvent());
+
   event.parameters = [
     new ethereum.EventParam(
       "tokenAddress",

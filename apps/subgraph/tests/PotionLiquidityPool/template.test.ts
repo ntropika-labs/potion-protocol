@@ -22,6 +22,7 @@ test("It can create a template", () => {
     MOCKED_CRITERIA_SET_ID,
     "0",
     "0",
+    "0",
     MOCKED_LP
   );
   newTemplate.save();
@@ -47,6 +48,7 @@ test("It can deposit liquidity in an already existing pool with a template", () 
     MOCKED_CURVE_ID,
     MOCKED_CRITERIA_SET_ID,
     "100",
+    "0",
     "0",
     MOCKED_LP
   );
@@ -83,6 +85,7 @@ test("It can deposit liquidity in an already existing pool with a template that 
     MOCKED_CURVE_ID,
     MOCKED_CRITERIA_SET_ID,
     "150",
+    "0",
     "0",
     MOCKED_LP
   );

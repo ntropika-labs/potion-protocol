@@ -43,6 +43,7 @@ export function createNewTemplate(
   criteriaSetHash: string,
   size: string,
   locked: string,
+  pnl: string,
   lp: Bytes
 ): Template {
   const id = createTemplateId(
@@ -52,6 +53,7 @@ export function createNewTemplate(
   const template = createTemplate(id, curveHash, criteriaSetHash, lp);
   template.size = BigDecimal.fromString(size);
   template.locked = BigDecimal.fromString(locked);
+  template.pnl = BigDecimal.fromString(pnl);
   return template;
 }
 
