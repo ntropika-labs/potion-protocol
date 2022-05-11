@@ -134,8 +134,8 @@ import { ref, computed } from "vue";
 import { useOnboard } from "@/composables/useOnboard";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useSimpleERC20 } from "@/composables/useSimpleERC20";
-import { BaseInput, BaseButton as BaseButton, ListComponent } from "ui-library";
-import type { ListElement } from "ui-library/dist/types/src/types";
+import { BaseInput, BaseButton as BaseButton, ListComponent } from "potion-ui";
+import type { ListElement } from "potion-ui/dist/types/src/types";
 import { useAllTransactionsQuery } from "subgraph-queries/generated/urql";
 
 type ExtendedListElement = ListElement & { [key: string]: any };
