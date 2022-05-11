@@ -1,6 +1,0 @@
-query allOwners {
-  owners {
-    id
-    balance
-  }
-}

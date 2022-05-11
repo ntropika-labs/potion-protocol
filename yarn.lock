@@ -2973,15 +2973,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphprotocol/graph-ts@npm:0.22.0":
-  version: 0.22.0
-  resolution: "@graphprotocol/graph-ts@npm:0.22.0"
-  dependencies:
-    assemblyscript: 0.19.10
-  checksum: 817ab6eb9b24c89af324bfa0b5f29e86d743aaaf42251d07d18124c45795a5951985d2da7f8524bc3bcdb702c6ed985ae611636c2a24adc8cb41fce87b052415
-  languageName: node
-  linkType: hard
-
 "@graphprotocol/graph-ts@npm:^0.26.0":
   version: 0.26.0
   resolution: "@graphprotocol/graph-ts@npm:0.26.0"
@@ -9043,7 +9034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assemblyscript@npm:^0.19.16":
+"assemblyscript@npm:^0.19.20":
   version: 0.19.23
   resolution: "assemblyscript@npm:0.19.23"
   dependencies:
@@ -15015,7 +15006,7 @@ __metadata:
     hardhat-gas-reporter: ^1.0.8
     husky: ^7.0.4
     jsdom: ^19.0.0
-    matchstick-as: 0.2.0
+    matchstick-as: ^0.4.3
     mocha: ^9.2.2
     mustache: ^4.2.0
     nx: 14.0.3
@@ -22115,13 +22106,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"matchstick-as@npm:0.2.0":
-  version: 0.2.0
-  resolution: "matchstick-as@npm:0.2.0"
+"matchstick-as@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "matchstick-as@npm:0.4.3"
   dependencies:
-    "@graphprotocol/graph-ts": 0.22.0
-    assemblyscript: ^0.19.16
-  checksum: 25491fab3cabb0307afb16c672dbb67257fd5b463dd9a93096919d145a0afcbbf038f8fac2dba2027ac925941f62edde95a668cc653f32dd6de24581a3c41900
+    "@graphprotocol/graph-ts": ^0.26.0
+    assemblyscript: ^0.19.20
+    wabt: 1.0.24
+  checksum: af641c7d2eb046b08b7769bbe5d5159e919f62f2b05a178a112812cec0933cb90cddac9ff4f4d15279e49166a0803c7d6614982b17648ce65eeb8af33e4e558f
   languageName: node
   linkType: hard
 
@@ -30875,6 +30867,23 @@ __metadata:
   dependencies:
     xml-name-validator: ^4.0.0
   checksum: 0af8589942eeb11c9fe29eb31a1a09f3d5dd136aea53a9848dfbabff79ac0dd26fe13eb54d330d5555fe27bb50b28dca0715e09f9cc2bfa7670ccc8b7f919ca2
+  languageName: node
+  linkType: hard
+
+"wabt@npm:1.0.24":
+  version: 1.0.24
+  resolution: "wabt@npm:1.0.24"
+  bin:
+    wasm-decompile: bin/wasm-decompile
+    wasm-interp: bin/wasm-interp
+    wasm-objdump: bin/wasm-objdump
+    wasm-opcodecnt: bin/wasm-opcodecnt
+    wasm-strip: bin/wasm-strip
+    wasm-validate: bin/wasm-validate
+    wasm2c: bin/wasm2c
+    wasm2wat: bin/wasm2wat
+    wat2wasm: bin/wat2wasm
+  checksum: 7d404acaa0605b5cde99585839b97db37998754512d89e1c63147bc62f4bfd46484595cc8f2e8d6f9741f67206ed936336a0828a3e1e6f3d348567cda6176333
   languageName: node
   linkType: hard
 
