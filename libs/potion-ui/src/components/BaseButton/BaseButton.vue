@@ -93,9 +93,9 @@ const weightClass = computed(() =>
     @click="emit('click')"
   >
     <slot name="pre-icon"></slot>
-    <span class="leading-none">
+    <p class="leading-none mt-0.5">
       {{ label }}
-    </span>
+    </p>
     <slot name="post-icon"></slot>
   </button>
 </template>

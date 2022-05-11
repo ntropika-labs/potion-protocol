@@ -1,27 +1,34 @@
 <template>
-  <div class="flex">
+  <div class="flex items-center">
     <BaseButton
       :label="ensOrAddress"
       palette="secondary"
       size="xs"
       weight="bold"
-      class="font-mono !tracking-tight !py-1"
+      class="font-mono !tracking-tight disabled:(!opacity-100)"
+      :disabled="props.connected"
+      @click="$emit('connectWallet')"
     >
       <template #pre-icon>
         <AvatarIcon
-          class="h-5 w-5 mr-2"
-          :loaded="imageLoaded"
+          v-if="props.avatar"
+          class="h-4 w-4 mr-2"
+          :loaded="props.imageLoaded"
           :avatar-url="props.avatar"
         />
       </template>
     </BaseButton>
-    <button v-if="connected">
+    <button
+      v-if="connected"
+      class="focus:(outline-none)"
+      @click="$emit('disconnectWallet')"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         aria-hidden="true"
         role="img"
-        class="stroke-deepBlack-500"
+        class="transition stroke-deepBlack-500 hover:stroke-deepBlack-700 focus:stroke-deepBlack-900"
         width="32"
         height="32"
         preserveAspectRatio="xMidYMid meet"
@@ -54,6 +61,7 @@ export interface Props {
   connected: boolean;
   imageLoaded: boolean;
 }
+// const emits = ["connectWallet", "disconnectWallet"];
 const props = defineProps<Props>();
 const ensOrAddress = computed(() => {
   if (props.label.length === 42 && props.label.startsWith("0x")) {
