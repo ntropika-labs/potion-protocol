@@ -18,6 +18,9 @@ import { HardhatUserConfig } from "hardhat/config";
 
 import { getChainConfig, getHardhatChainConfig, getLocalhostChainConfig, getEtherscanApiKey } from "./hardhat.helpers";
 
+import "./tasks/fast-forward";
+import "./tasks/set-prices";
+
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 const config: HardhatUserConfig = {
