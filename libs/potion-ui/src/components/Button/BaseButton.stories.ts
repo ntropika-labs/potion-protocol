@@ -1,6 +1,6 @@
 // @unocss-include
 
-import type { Story } from "@storybook/vue3";
+import type { Args, Story } from "@storybook/vue3";
 import BaseButton from "./BaseButton.vue";
 import { ButtonSize, ButtonPalette } from "../../types";
 
@@ -66,7 +66,7 @@ export const actionsData = {
   onButtonClick: action("click-button"),
 };
 
-const Template: Story = (args) => ({
+const Template: Story = (args: Args) => ({
   components: { BaseButton },
   setup() {
     return { args, ...actionsData };
@@ -74,7 +74,7 @@ const Template: Story = (args) => ({
   template: '<BaseButton v-bind="args" />',
 });
 
-export const Extended = () => ({
+export const Overview = () => ({
   components: { BaseButton },
   template: `
     <div class="grid grid-cols-5 gap-8">
