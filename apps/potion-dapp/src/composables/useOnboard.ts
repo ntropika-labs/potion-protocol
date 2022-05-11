@@ -57,12 +57,10 @@ const useOnboard = () => {
   }
 
   const connectingWallet = ref<boolean>(false);
-  // const wallets = computed(() => onboardState.value.wallets);
+  const wallets = computed(() => onboardState.value.wallets);
 
   const connectedWallet = computed<WalletState | null>(() => {
-    return onboardState.value.wallets.length > 0
-      ? onboardState.value.wallets[0]
-      : null;
+    return wallets.value.length > 0 ? wallets.value[0] : null;
   });
 
   const connectWallet = async (options?: ConnectOptions) => {
@@ -119,6 +117,7 @@ const useOnboard = () => {
     onboardState,
     alreadyConnectedWallets,
     lastConnectionTimestamp,
+    wallets,
   };
 };
 
