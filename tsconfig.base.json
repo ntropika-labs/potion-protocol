@@ -25,7 +25,7 @@
       "path": "contracts/core"
     },
     {
-      "path": "libs/ui-library"
+      "path": "libs/potion-ui"
     },
     {
       "path": "libs/subgraph-queries"

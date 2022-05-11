@@ -15,8 +15,8 @@
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
   },
   "dependencies": {
+    "potion-ui": "*",
     "simple-erc20": "*",
-    "subgraph-queries": "*",
-    "ui-library": "*"
+    "subgraph-queries": "*"
   }
 }
