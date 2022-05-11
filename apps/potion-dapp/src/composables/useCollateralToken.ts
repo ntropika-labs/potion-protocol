@@ -1,6 +1,6 @@
 import type { PotionTestUSD } from "potion-contracts/typechain";
 import { PotionTestUSD__factory } from "potion-contracts/typechain";
-import { computed, ref, shallowRef, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { formatUnits, parseUnits } from "@ethersproject/units";
@@ -16,12 +16,12 @@ export function useCollateralToken() {
     return connectedWallet.value !== null;
   });
   const loading = ref(false);
-  const contractSigner = shallowRef<PotionTestUSD>();
+  let contractSigner: PotionTestUSD | null = null;
 
   watch(connectedWallet, (connectedWallet) => {
     console.log(connectedWallet);
     if (connectedWallet && connectedWallet.accounts[0].address) {
-      contractSigner.value = initContract(
+      contractSigner = initContract(
         true,
         false,
         PotionTestUSD__factory,
@@ -91,7 +91,7 @@ export function useCollateralToken() {
     try {
       if (walletConnected.value) {
         //@ts-expect-error - we know that the wallet is connected by the computed value
-        const tx = await contractSigner.value.approve(
+        const tx = await contractSigner.approve(
           PotionLiquidityPool.address,
           parseUnits(amount.toString(), 6)
         );
