@@ -44,8 +44,6 @@ type Template @entity {
   numPools: BigInt!
   curve: Curve
   criteriaSet: CriteriaSet
-  # TODO: This field is present only for backward reasons, can be removed after we have updated the frontend
-  pnl: BigDecimal!
   # total Profit and Loss over the lifetime of the template
   pnlTotal: BigDecimal!
   # the percentage returned on the template over its lifetime

@@ -1,6 +1,6 @@
 // @unocss-include
 
-import type { Story } from "@storybook/vue3";
+import type { Args, Story } from "@storybook/vue3";
 import HeaderComponent from "./HeaderComponent.vue";
 
 export default {
@@ -10,7 +10,7 @@ export default {
   argTypes: {},
 };
 
-const Template: Story = (args) => ({
+const Template: Story = (args: Args) => ({
   components: { HeaderComponent },
   setup() {
     return { args };
