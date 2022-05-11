@@ -43,4 +43,4 @@ services:
     image: trufflesuite/ganache:latest
     ports:
       - "8545:8545"
-    command: --wallet.mnemonic '${DEPLOYER_MNEMONIC}'
+    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}'
