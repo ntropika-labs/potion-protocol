@@ -31,7 +31,7 @@ import {
 // Test pool creation
 test("It can create a pool", () => {
   log.info(
-    "Trying to create a pool with poolId 0 and lp '0x0000000000000000000000000000000000000000'",
+    "Trying to create a pool with poolId 0 and lp '0x0000000000000000000000000000000000000001'",
     []
   );
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
@@ -39,7 +39,7 @@ test("It can create a pool", () => {
     ["size", "0"],
     ["unlocked", "0"],
     ["locked", "0"],
-    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["lp", "0x0000000000000000000000000000000000000001"],
     ["pnlTotal", "0"],
     ["pnlPercentage", "0"],
     ["liquidityAtTrades", "0"],
@@ -50,7 +50,7 @@ test("It can create a pool", () => {
 // Test Deposit event
 test("It can deposit liquidity in an already existing pool without a template", () => {
   log.info(
-    "Trying to create a pool with poolId 0, lp '0x0000000000000000000000000000000000000000' and a size of 100",
+    "Trying to create a pool with poolId 0, lp '0x0000000000000000000000000000000000000001' and a size of 100",
     []
   );
   createNewPool(MOCKED_LP, BIGINT_ZERO, "100", "");
@@ -61,7 +61,7 @@ test("It can deposit liquidity in an already existing pool without a template", 
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleDeposited(mockedEvent);
@@ -83,7 +83,7 @@ test("It can withdraw from a pool without a template leaving some liquidity insi
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleWithdrawn(mockedEvent);
@@ -104,7 +104,7 @@ test("It can withdraw from a pool without a template leaving it without liquidit
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleWithdrawn(mockedEvent);
@@ -124,7 +124,7 @@ test("It raises an error when we try to withdraw from a pool that doesn't exist"
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleWithdrawn(mockedEvent);
@@ -139,7 +139,7 @@ test("It raises an error when we try to withdraw more liqudity than what was act
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleWithdrawn with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleWithdrawn(mockedEvent);
@@ -154,7 +154,7 @@ test("It can assign a new curve to a new pool", () => {
     Bytes.fromHexString(MOCKED_CURVE_ID)
   );
   log.info(
-    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and curveId '0x00000000000000000000000000000000000000100'",
+    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
     []
   );
   handleCurveSelected(mockedEvent);
@@ -162,7 +162,7 @@ test("It can assign a new curve to a new pool", () => {
     ["size", "0"],
     ["unlocked", "0"],
     ["locked", "0"],
-    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["lp", "0x0000000000000000000000000000000000000001"],
   ]);
   clearStore();
 });
@@ -186,7 +186,7 @@ test("It can assign an existing curve to a new pool", () => {
     Bytes.fromHexString(MOCKED_CURVE_ID)
   );
   log.info(
-    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and curveId '0x00000000000000000000000000000000000000100'",
+    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
     []
   );
   handleCurveSelected(mockedEvent);
@@ -194,7 +194,7 @@ test("It can assign an existing curve to a new pool", () => {
     ["size", "0"],
     ["unlocked", "0"],
     ["locked", "0"],
-    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["lp", "0x0000000000000000000000000000000000000001"],
   ]);
   clearStore();
 });
@@ -202,7 +202,7 @@ test("It can assign an existing curve to a new pool", () => {
 test("It can assign a new curve to an existing pool", () => {
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
   log.info(
-    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000000'",
+    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000001'",
     []
   );
   const mockedEvent = createCurveSelected(
@@ -211,7 +211,7 @@ test("It can assign a new curve to an existing pool", () => {
     Bytes.fromHexString(MOCKED_CURVE_ID)
   );
   log.info(
-    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and curveId '0x00000000000000000000000000000000000000100'",
+    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
     []
   );
   handleCurveSelected(mockedEvent);
@@ -227,7 +227,7 @@ test("It can assign a new curve to an existing pool", () => {
 test("It can assign an existing curve to an exististing pool", () => {
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
   log.info(
-    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000000'",
+    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000001'",
     []
   );
   createNewCurve(
@@ -248,7 +248,7 @@ test("It can assign an existing curve to an exististing pool", () => {
     Bytes.fromHexString(MOCKED_CURVE_ID)
   );
   log.info(
-    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and curveId '0x00000000000000000000000000000000000000100'",
+    "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
     []
   );
   handleCurveSelected(mockedEvent);
@@ -274,7 +274,7 @@ test("It can assign an existing criteriaSet to a new pool", () => {
     Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
   );
   log.info(
-    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and criteriaSetId '0x00000000000000000000000000000000000001000'",
+    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
     []
   );
   handleCriteriaSetSelected(mockedEvent);
@@ -282,7 +282,7 @@ test("It can assign an existing criteriaSet to a new pool", () => {
     ["size", "0"],
     ["unlocked", "0"],
     ["locked", "0"],
-    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["lp", "0x0000000000000000000000000000000000000001"],
   ]);
   clearStore();
 });
@@ -290,7 +290,7 @@ test("It can assign an existing criteriaSet to a new pool", () => {
 test("It can assign a new criteriaSet to an existing pool", () => {
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
   log.info(
-    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000000'",
+    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000001'",
     []
   );
   const mockedEvent = createCriteriaSetSelected(
@@ -299,7 +299,7 @@ test("It can assign a new criteriaSet to an existing pool", () => {
     Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
   );
   log.info(
-    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and criteriaSetId '0x00000000000000000000000000000000000001000'",
+    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
     []
   );
   handleCriteriaSetSelected(mockedEvent);
@@ -307,7 +307,7 @@ test("It can assign a new criteriaSet to an existing pool", () => {
     ["size", "0"],
     ["unlocked", "0"],
     ["locked", "0"],
-    ["lp", "0x0000000000000000000000000000000000000000"],
+    ["lp", "0x0000000000000000000000000000000000000001"],
   ]);
   clearStore();
 });
@@ -315,7 +315,7 @@ test("It can assign a new criteriaSet to an existing pool", () => {
 test("It can assign an existing criteriaSet to an exististing pool", () => {
   createNewPool(MOCKED_LP, BIGINT_ZERO, "0", "");
   log.info(
-    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000000'",
+    "Created pool with poolId 0 and lp '0x0000000000000000000000000000000000000001'",
     []
   );
   createNewCriteriaSet(MOCKED_CRITERIA_SET_ID);
@@ -329,7 +329,7 @@ test("It can assign an existing criteriaSet to an exististing pool", () => {
     Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
   );
   log.info(
-    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000000' and criteriaSetId '0x00000000000000000000000000000000000001000'",
+    "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
     []
   );
   handleCriteriaSetSelected(mockedEvent);

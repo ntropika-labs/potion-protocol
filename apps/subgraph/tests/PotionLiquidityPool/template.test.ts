@@ -48,7 +48,7 @@ test("It can deposit liquidity in an already existing pool with a template", () 
     BigDecimal.fromString("1")
   );
   log.info(
-    "Trying to create a pool with poolId 0, lp '0x0000000000000000000000000000000000000000' and a size of 100",
+    "Trying to create a pool with poolId 0, lp '0x0000000000000000000000000000000000000001' and a size of 100",
     []
   );
   createNewTemplate(
@@ -67,7 +67,7 @@ test("It can deposit liquidity in an already existing pool with a template", () 
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleDeposited(mockedEvent);
@@ -96,12 +96,12 @@ test("It can deposit liquidity in an already existing pool with a template that 
   const templateId = getTemplateId(MOCKED_CURVE_ID, MOCKED_CRITERIA_SET_ID);
   createNewPool(MOCKED_LP, BIGINT_ZERO, "100", templateId);
   log.info(
-    "Created a pool with poolId 0, lp '0x0000000000000000000000000000000000000000' and a size of 100",
+    "Created a pool with poolId 0, lp '0x0000000000000000000000000000000000000001' and a size of 100",
     []
   );
   createNewPool(MOCKED_LP, BIGINT_ONE, "50", templateId);
   log.info(
-    "Created a pool with poolId 1, lp '0x0000000000000000000000000000000000000000' and a size of 50",
+    "Created a pool with poolId 1, lp '0x0000000000000000000000000000000000000001' and a size of 50",
     []
   );
   log.info("Stored the pool, proceding with the mocked event", []);
@@ -111,7 +111,7 @@ test("It can deposit liquidity in an already existing pool with a template that 
     BIGINT_ONE_HUNDRED_AS_COLLATERAL
   );
   log.info(
-    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000000' and amount 100",
+    "Calling handleDeposited with poolId 0, lp '0x0000000000000000000000000000000000000001' and amount 100",
     []
   );
   handleDeposited(mockedEvent);
