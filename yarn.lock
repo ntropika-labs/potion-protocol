@@ -12801,9 +12801,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp@workspace:apps/dapp"
   dependencies:
+    potion-ui: "*"
     simple-erc20: "*"
     subgraph-queries: "*"
-    ui-library: "*"
   languageName: unknown
   linkType: soft
 
@@ -25164,6 +25164,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"potion-ui@*, potion-ui@workspace:libs/potion-ui":
+  version: 0.0.0-use.local
+  resolution: "potion-ui@workspace:libs/potion-ui"
+  languageName: unknown
+  linkType: soft
+
 "preact-render-to-string@npm:^5.1.19":
   version: 5.2.0
   resolution: "preact-render-to-string@npm:5.2.0"
@@ -30251,12 +30257,6 @@ __metadata:
   checksum: 5f673c5dd7f3b3dd15d1d26aebfe29bccbb1b896c4b5423ec70a2e8b9506c70b6fb6a53dec83df5ad65a717ec9a850adf08e0aedf9b1711eac5eb080216615fa
   languageName: node
   linkType: hard
-
-"ui-library@*, ui-library@workspace:libs/ui":
-  version: 0.0.0-use.local
-  resolution: "ui-library@workspace:libs/ui"
-  languageName: unknown
-  linkType: soft
 
 "ultron@npm:~1.1.0":
   version: 1.1.1
