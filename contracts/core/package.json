@@ -1,6 +1,6 @@
 {
     "name": "potion-contracts",
-    "main": "./typechain/index.ts",
+    "main": "./src/index.ts",
     "version": "0.0.1",
     "private": true,
     "author": "Potion",
@@ -34,7 +34,7 @@
         "url": "git@github.com:ntropika-labs/potion-protocol.git",
         "type": "git"
     },
-    "types": "./typechain/index.d.ts",
+    "types": "./src/index.ts",
     "scripts": {
         "hardhat-localnode": "hardhat node --hostname 0.0.0.0 ",
         "hardhat-accounts": "hardhat accounts",

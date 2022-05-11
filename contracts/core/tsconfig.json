@@ -20,6 +20,7 @@
     "exclude": ["node_modules"],
     "files": ["./hardhat.config.ts", "hardhat.helpers.ts", "deployments/deploymentConfig.ts"],
     "include": [
+        "src/**/*.ts",
         "scripts/**/*.ts",
         "config/**/*.ts",
         "utils/**/*.ts",
