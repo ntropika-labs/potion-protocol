@@ -1,4 +1,5 @@
 <template>
+  <router-link to="/about">About Page</router-link>
   <button
     class="p-1 bg-green-700 rounded-full text-white font-bold"
     @click="connectWallet()"

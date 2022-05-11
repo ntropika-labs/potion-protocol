@@ -19,7 +19,7 @@ const router = createRouter({
       path: "/about",
       name: "about",
       component: AboutView,
-      meta: { requireWallet: false, layout: EmptyLayout },
+      meta: { requireWallet: true, layout: EmptyLayout },
     },
   ],
 });
@@ -36,23 +36,24 @@ router.beforeEach(async (to, from, next) => {
   const diff = timestamp - lastConnectionTimestamp.value;
   const minutes = Math.floor(diff / 60000);
   if (minutes <= 6) {
-    if (alreadyConnectedWallets.value.length > 0) {
-      if (connectedWallet.value !== null) {
-        await connectWallet({
-          autoSelect: {
-            label: alreadyConnectedWallets.value[0],
-            disableModals: true,
-          },
-        });
-      }
+    if (
+      alreadyConnectedWallets.value.length > 0 &&
+      connectedWallet.value === null
+    ) {
+      await connectWallet({
+        autoSelect: {
+          label: alreadyConnectedWallets.value[0],
+          disableModals: true,
+        },
+      });
     }
   }
   if (to.meta.requireWallet === true) {
     console.info("This page requires a connected wallet");
     if (connectedWallet.value !== null) {
-      next({ name: "home" });
-    } else {
       next();
+    } else {
+      next({ name: "home" });
     }
   } else {
     next();
