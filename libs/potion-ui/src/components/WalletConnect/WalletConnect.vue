@@ -1,52 +1,57 @@
 <template>
   <Transition name="fade" :duration="550">
-    <div ref="modal">
+    <div ref="modal" class="inline-flex">
       <template v-if="props.isConnected">
         <div
-          class="bg-slate-50 ring-1 ring-gray-300 rounded-full p-1 shadow-lg transition overflow-hidden"
+          class="rounded-[1.75rem] transition-all overflow-hidden"
+          :class="[
+            props.hasAdditionalInfo ? 'border-2 border-t-0 max-w-64' : '',
+            isOpen ? 'border-secondary-500 bg-primary-600/80' : '',
+          ]"
         >
-          <div class="flex flex-row items-center gap-4 px-2">
-            <div class="flex-0">
+          <div
+            class="relative flex items-center gap-4 rounded-full before:(content-none absolute top-0 left-0 w-double h-full transition-transform duration-300 z-0 bg-gradient-to-r from-secondary-500 via-secondary-400 to-secondary-600) hover:(shadow-secondary before:translate-x-[-50%])"
+          >
+            <button
+              class="relative flex items-center gap-4 px-2 text-left whitespace-nowrap items-center z-1 overflow-hidden font-poppins transition-shadow duration-300 shadow-none focus:outline-none py-1 px-2"
+              :class="[props.hasAdditionalInfo ? '' : 'cursor-normal']"
+              :disabled="!props.hasAdditionalInfo"
+              @click="() => (isOpen = !isOpen)"
+            >
               <AvatarIcon
                 :loaded="props.isConnected"
                 :avatar-url="props.avatarUrl"
-                :fallback-image-icon="props.fallbackImage"
+                class="flex-none inline-block bg-white/10 rounded-full"
               ></AvatarIcon>
-            </div>
-            <div class="flex flex-grow">
-              <button
-                class="w-full text-left bg-gray-50 py-1 px-2 rounded-lg"
-                :class="[
-                  props.hasAdditionalInfo
-                    ? 'hover:bg-slate-200'
-                    : 'cursor-normal',
-                ]"
-                :disabled="!props.hasAdditionalInfo"
-                @click="() => (isOpen = !isOpen)"
-              >
-                <p class="font-bold text-md tracking-wide font-mono">
-                  {{ props.shortAddress }}
+              <div class="pr-3">
+                <p
+                  class="font-bold text-lg tracking-wide font-mono text-dwhite-300"
+                >
+                  {{ props.ensOrAddress }}
                 </p>
-                <p class="text-sm text-gray-600 tracking-widest">
+                <p
+                  v-if="props.ethBalance !== undefined"
+                  class="text-xs text-gray-600 tracking-widest uppercase text-white/70"
+                >
                   {{ props.ethBalance }} ETH
                 </p>
-              </button>
-              <div class="flex items-center">
-                <BaseButton
-                  size="icon"
-                  palette="opaque"
-                  label=""
-                  :disabled="props.isConnecting"
-                  @click="() => emit('disconnectWallet')"
-                  ><template #pre-icon
-                    ><img
-                      :src="logoutIcon"
-                      class="w-10 inline-block" /></template
-                ></BaseButton>
               </div>
+            </button>
+            <div class="flex items-center">
+              <BaseButton
+                size="icon"
+                palette="transparent"
+                label=""
+                :disabled="props.isConnecting"
+                @click="() => emit('disconnectWallet')"
+                ><template #pre-icon><LogoutIcon class="w-8" /></template
+              ></BaseButton>
             </div>
           </div>
-          <div v-if="props.hasAdditionalInfo && isOpen" class="p-2">
+          <div
+            v-if="props.hasAdditionalInfo && props.isConnected && isOpen"
+            class="text-dwhite-300 p-4"
+          >
             <slot />
           </div>
         </div>
@@ -69,20 +74,17 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { AvatarIcon, BaseButton } from "potion-ui";
+import { AvatarIcon, BaseButton } from "../../index";
 import { ref } from "@vue/reactivity";
 import { onClickOutside } from "@vueuse/core";
-import logoutIcon from "../../assets/logout_icon.svg";
+import LogoutIcon from "../icons/LogoutIcon.vue";
 
 export interface Props {
   isConnected: boolean;
   isConnecting: boolean;
   ensOrAddress: string;
-  shortAddress: string;
-  ethBalance: number;
+  ethBalance?: number;
   avatarUrl: string;
-  fallbackImage: string;
-  showEnsInfo?: boolean;
   showConnectButton?: boolean;
   hasAdditionalInfo?: boolean;
 }
@@ -91,6 +93,7 @@ const props = withDefaults(defineProps<Props>(), {
   showEnsInfo: false,
   showConnectButton: false,
   hasAdditionalInfo: false,
+  ethBalance: undefined,
 });
 const emit = defineEmits<{
   (e: "disconnectWallet"): void;

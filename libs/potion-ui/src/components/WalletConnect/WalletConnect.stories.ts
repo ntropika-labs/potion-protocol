@@ -1,7 +1,7 @@
 // @unocss-include
 
 import { action } from "@storybook/addon-actions";
-import type { Story } from "@storybook/vue3";
+import type { Args, Story } from "@storybook/vue3";
 import WalletConnect from "./WalletConnect.vue";
 
 export default {
@@ -10,9 +10,9 @@ export default {
   title: "Potion UI/WalletConnect",
   argTypes: {
     // Actions
-    onDisconnect: { action: "disconnect" },
-    onConnect: { action: "connect" },
-    onClickOutside: { action: "clickOutside" },
+    // onDisconnect: { action: "disconnect" },
+    // onConnect: { action: "connect" },
+    // onClickOutside: { action: "clickOutside" },
     // Configurable options
     isConnected: {
       name: "Is connected",
@@ -33,44 +33,21 @@ export default {
       control: {
         type: "text",
       },
-      defaultValue: "",
-    },
-    shortAddress: {
-      name: "Short Address",
-      control: {
-        type: "text",
-      },
-      defaultValue: "",
+      defaultValue: "0xd3adb33f",
     },
     ethBalance: {
       name: "ETH Balance",
       control: {
         type: "number",
       },
-      defaultValue: 0,
+      defaultValue: 9530.583,
     },
     avatarUrl: {
       name: "Avatar url",
       control: {
-        type: "file",
-        accept: ".png,.svg,.jpg",
+        type: "text",
       },
-      defaultValue: "",
-    },
-    fallbackImage: {
-      name: "Fallback image",
-      control: {
-        type: "file",
-        accept: ".png,.svg,.jpg",
-      },
-      defaultValue: "",
-    },
-    showEnsInfo: {
-      name: "Show ENS info",
-      control: {
-        type: "boolean",
-      },
-      defaultValue: true,
+      defaultValue: "/logo.svg",
     },
     showConnectButton: {
       name: "Show connect button",
@@ -109,4 +86,18 @@ const Template: Story = (args) => ({
   template: `<WalletConnect v-bind="args"></WalletConnect>`,
 });
 
-export const Empty = Template.bind({});
+export const Overview = Template.bind({});
+
+export const DropdownMenu = (args: Args) => ({
+  components: { WalletConnect },
+  setup() {
+    return { args, ...actionsData };
+  },
+  template: `
+  <WalletConnect v-bind="args">
+    <p>
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque quaerat quo autem nobis dolorum qui sunt neque sequi nam deleniti sit minus, iusto ut eveniet, est ab vel fugiat error.
+    </p>
+  </WalletConnect>
+  `,
+});
