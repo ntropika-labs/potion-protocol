@@ -68,8 +68,8 @@
         "lint-ts": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --ext .js,.ts .",
         "format": "prettier --config ./.prettierrc.js --write \"**/*.{js,json,md,sol,ts}\"",
         "format-check": "prettier --check --config ./.prettierrc.js \"**/*.{js,json,md,sol,ts}\"",
-        "fast-forward": "hardhat --network localhost fastForward",
-        "set-price": "hardhat setPrices --network localhost --token 0x5822308f584aDAB81D2FB569aE106DC37aB6B576 --price 1234"
+        "fast-forward": "yarn run -T hardhat fastForward",
+        "set-price": "yarn run -T hardhat setPrices"
     },
     "dependencies": {
         "gamma-protocol": "workspace:^"
