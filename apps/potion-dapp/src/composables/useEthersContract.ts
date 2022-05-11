@@ -5,7 +5,6 @@ export function useEthersContract() {
   const { initProvider } = useEthersProvider();
   const { getSigner } = useEthersSigner();
   const initContract = (
-    // signerOrProvider: JsonRpcSigner | JsonRpcProvider,
     needSigner = false,
     webSocket = false,
     typechainContractFactory: any,

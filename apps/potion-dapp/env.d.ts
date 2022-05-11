@@ -5,3 +5,14 @@ declare module "*.vue" {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+interface ImportMetaEnv {
+  readonly VITE_ALCHEMY_KEY: string;
+  readonly VITE_ETHEREUM_NETWORK: string;
+  readonly VITE_SUBGRAPH_ADDRESS: string;
+  readonly VITE_ENDPOINT_PROVIDER: string;
+  readonly VITE_INFURA_KEY: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

@@ -6,7 +6,7 @@ import { createApp } from "vue";
 
 import App from "@/App.vue";
 import { init } from "@/composables/useOnboard";
-import { onboardOptions } from "@/helpers";
+import { onboardOptions } from "@/helpers/onboard";
 import router from "@/router";
 import urql from "@urql/vue";
 
