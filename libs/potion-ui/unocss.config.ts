@@ -4,7 +4,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup,
+  transformerVariantGroup
 } from "unocss";
 
 const preset = presetUno();
@@ -55,7 +55,7 @@ export default defineConfig({
         300: "#FCFAFA",
         400: "#EEEAFD",
       },
-      "deep-black": {
+      deepBlack: {
         1000: "#141023",
         900: "#1A152E",
         800: "#242038",

@@ -15,7 +15,7 @@ export const parameters = {
       {
         name: "potion",
         value:
-          "linear-gradient( 113.69deg, var(--deep-blue) 23.72%, var(--deep-black-900) 81.45% )",
+          "linear-gradient( 113.69deg, var(--deep-blue) 23.72%, var(--deepBlack-900) 81.45% )",
       },
       {
         name: "light",

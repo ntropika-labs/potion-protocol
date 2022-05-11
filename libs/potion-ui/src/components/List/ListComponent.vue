@@ -10,7 +10,7 @@ import { InputType } from "../../types";
 import type { ListElement } from "../../types";
 import BaseInput from "../Input/BaseInput.vue";
 import BaseCheckbox from "../Checkbox/BaseCheckbox.vue";
-import BaseButton from "../Button/BaseButton.vue";
+import BaseButton from "../BaseButton/BaseButton.vue";
 
 export interface Props {
   modelValue: Array<ListElement>;

@@ -54,7 +54,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import BaseButton from "../../Button/BaseButton.vue";
+import BaseButton from "../../BaseButton/BaseButton.vue";
 
 const currentRoute = useRoute();
 const mobileMenuOpen = ref(false);

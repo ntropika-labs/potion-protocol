@@ -152,6 +152,8 @@
   },
   "packageManager": "yarn@3.2.0",
   "dependencies": {
-    "@openzeppelin/contracts-upgradeable": "^4.6.0"
+    "@openzeppelin/contracts-upgradeable": "^4.6.0",
+    "ethereum-blockies-base64": "^1.0.2",
+    "ohmyfetch": "^0.4.16"
   }
 }

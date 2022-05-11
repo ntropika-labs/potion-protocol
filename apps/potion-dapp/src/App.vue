@@ -1,5 +1,11 @@
 <template>
   <router-link to="/about">About Page</router-link>
+  <ConnectButton
+    :label="connectButtonLabel"
+    :avatar="image"
+    :connected="true"
+    :image-loaded="avatarLoadStatus"
+  />
   <button
     class="p-1 bg-green-700 rounded-full text-white font-bold"
     @click="connectWallet()"
@@ -44,18 +50,36 @@
   </component>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ConnectButton } from "potion-ui";
+import { ref, computed } from "vue";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useOnboard } from "@/composables/useOnboard";
-import { $computed } from "vue/macros";
 import { useRoute } from "vue-router";
+import { useEnsAvatar } from "./composables/useEnsAvatar";
 const amount = ref(0);
 const route = useRoute();
-let layout = $computed(() => {
+const layout = computed(() => {
   return route.meta.layout;
 });
 const { connectedChain, connectedWallet, connectWallet } = useOnboard();
+const connectButtonLabel = computed(() => {
+  if (connectedWallet && connectedWallet.value?.accounts[0].ens) {
+    return connectedWallet.value.accounts[0].ens.name;
+  }
+  if (connectedWallet && connectedWallet.value?.accounts[0].address) {
+    return connectedWallet.value.accounts[0].address;
+  }
+  return "Connect Wallet";
+});
+
+const { image, status } = useEnsAvatar(connectButtonLabel);
+const avatarLoadStatus = computed(() => {
+  if (status.value === "RUNNING") {
+    return false;
+  }
+  return true;
+});
 const {
   loading,
   userCollateralBalance,
