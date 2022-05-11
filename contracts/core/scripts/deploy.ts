@@ -6,7 +6,7 @@ import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import { deploy, deployUpgrade, initDeployment, exportDeployments } from "./utils/deployment";
+import { deploy, deployUpgrade, initDeployment, exportDeployments, exportContract } from "./utils/deployment";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -50,6 +50,9 @@ async function init() {
 async function deployCollateralToken(): Promise<string> {
     process.stdout.write(`Deploying test collateral token (PUSDC)...`);
     const token = await deploy("PotionTestUSD");
+
+    console.log("HERE!");
+    await exportContract("USDC", token.address, 0);
 
     console.log(` deployed at ${token.address}`);
     return token.address;
@@ -139,6 +142,8 @@ async function main() {
 
     if (!deployConfig.collateralToken) {
         deployConfig.collateralToken = await deployCollateralToken();
+    } else {
+        await exportContract("USDC", deployConfig.collateralToken, 0);
     }
 
     process.stdout.write(`Deploying CurveManager... `);
