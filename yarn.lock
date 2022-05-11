@@ -2973,15 +2973,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphprotocol/graph-ts@npm:^0.24.1":
-  version: 0.24.1
-  resolution: "@graphprotocol/graph-ts@npm:0.24.1"
-  dependencies:
-    assemblyscript: 0.19.10
-  checksum: ad88167a4ffe1c2d61be493fc43674cacffe42f6a51de52d357125cbb152484a8a9d9835f42d65114f19fd12a073b862afad0500d8528103ee0db2b7bd92e6bc
-  languageName: node
-  linkType: hard
-
 "@graphprotocol/graph-ts@npm:^0.26.0":
   version: 0.26.0
   resolution: "@graphprotocol/graph-ts@npm:0.26.0"
@@ -15156,7 +15147,7 @@ __metadata:
     hardhat-gas-reporter: ^1.0.8
     husky: ^7.0.4
     jsdom: ^19.0.0
-    matchstick-as: ^0.4.2
+    matchstick-as: ^0.4.3
     mocha: ^9.2.2
     mustache: ^4.2.0
     nx: 14.0.3
@@ -22393,14 +22384,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"matchstick-as@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "matchstick-as@npm:0.4.2"
+"matchstick-as@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "matchstick-as@npm:0.4.3"
   dependencies:
-    "@graphprotocol/graph-ts": ^0.24.1
+    "@graphprotocol/graph-ts": ^0.26.0
     assemblyscript: ^0.19.20
     wabt: 1.0.24
-  checksum: 45d89635733f44b4316af9af42e8278f858d0cd107d580a805dc9bd836b86b427a793afe21d3aff6e3c8bceb8124ef53a8119e39c3871014d40b9896e393b399
+  checksum: af641c7d2eb046b08b7769bbe5d5159e919f62f2b05a178a112812cec0933cb90cddac9ff4f4d15279e49166a0803c7d6614982b17648ce65eeb8af33e4e558f
   languageName: node
   linkType: hard
 
