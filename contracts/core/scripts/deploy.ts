@@ -51,7 +51,6 @@ async function deployCollateralToken(): Promise<string> {
     process.stdout.write(`Deploying test collateral token (PUSDC)...`);
     const token = await deploy("PotionTestUSD");
 
-    console.log("HERE!");
     await exportContract("USDC", token.address, 0);
 
     console.log(` deployed at ${token.address}`);
