@@ -102,6 +102,7 @@ const config: HardhatUserConfig = {
             "gamma-protocol.*:AddressBook$",
             "gamma-protocol.*:MarginCalculator$",
             "gamma-protocol.*:Oracle$",
+            "gamma-protocol.*:ChainLinkPricer$",
         ],
         spacing: 2,
         pretty: false,

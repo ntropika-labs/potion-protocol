@@ -80,6 +80,8 @@ export type { OtokenFactory } from "./gamma-protocol/contracts/core/OtokenFactor
 export { OtokenFactory__factory } from "./factories/gamma-protocol/contracts/core/OtokenFactory__factory";
 export type { Whitelist } from "./gamma-protocol/contracts/core/Whitelist";
 export { Whitelist__factory } from "./factories/gamma-protocol/contracts/core/Whitelist__factory";
+export type { AggregatorInterface } from "./gamma-protocol/contracts/interfaces/AggregatorInterface";
+export { AggregatorInterface__factory } from "./factories/gamma-protocol/contracts/interfaces/AggregatorInterface__factory";
 export type { CalleeInterface } from "./gamma-protocol/contracts/interfaces/CalleeInterface";
 export { CalleeInterface__factory } from "./factories/gamma-protocol/contracts/interfaces/CalleeInterface__factory";
 export type { ERC20Interface } from "./gamma-protocol/contracts/interfaces/ERC20Interface";
@@ -116,3 +118,5 @@ export type { UpgradeabilityProxy } from "./gamma-protocol/contracts/packages/oz
 export { UpgradeabilityProxy__factory } from "./factories/gamma-protocol/contracts/packages/oz/upgradeability/UpgradeabilityProxy__factory";
 export type { Spawn } from "./gamma-protocol/contracts/packages/Spawn";
 export { Spawn__factory } from "./factories/gamma-protocol/contracts/packages/Spawn__factory";
+export type { ChainLinkPricer } from "./gamma-protocol/contracts/pricers/ChainlinkPricer.sol/ChainLinkPricer";
+export { ChainLinkPricer__factory } from "./factories/gamma-protocol/contracts/pricers/ChainlinkPricer.sol/ChainLinkPricer__factory";
