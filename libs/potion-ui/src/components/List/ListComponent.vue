@@ -10,7 +10,7 @@ import { InputType } from "../../types";
 import type { ListElement } from "../../types";
 import BaseInput from "../Input/BaseInput.vue";
 import BaseCheckbox from "../Checkbox/BaseCheckbox.vue";
-import BaseButton from "../Button/BaseButton.vue";
+import BaseButton from "../BaseButton/BaseButton.vue";
 
 export interface Props {
   modelValue: Array<ListElement>;
@@ -31,18 +31,36 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: string | number): void;
   (e: "update:select", item: ListElement): void;
 }>();
-// items: [{ id: 2, name: "sdss", checked: false }]
+const searchFilter = ref("");
+const selectedItems = ref<Array<string | number>>([]);
+const expandedItems = ref<Array<string | number>>([]);
 
 const onSearch = (value: string | number) => {
   console.log(value);
   searchFilter.value = "" + value;
 };
 
-const onClickMoreInfo = (item: ListElement) => {
-  item.showAdditionalInfo = !item.showAdditionalInfo;
+const onSelectItem = (item: ListElement) => {
+  const index = expandedItems.value.indexOf(item.id);
+  if (index === -1) {
+    selectedItems.value.push(item.id);
+  } else {
+    selectedItems.value.splice(index, 1);
+  }
+
+  emit("update:select", item);
 };
 
-const searchFilter = ref("");
+const onClickMoreInfo = (item: ListElement) => {
+  const index = expandedItems.value.indexOf(item.id);
+  if (index === -1) {
+    expandedItems.value.push(item.id);
+  } else {
+    expandedItems.value.splice(index, 1);
+  }
+
+  console.log(expandedItems);
+};
 
 const filteredItems = computed(() => {
   if (!searchFilter.value) return props.modelValue || [];
@@ -104,10 +122,10 @@ const isEmpty = computed(() => filteredItems.value.length === 0);
                 ><BaseCheckbox
                   label=""
                   :is-inline="true"
-                  :model-value="!!item.checked"
-                  @update:model-value="emit('update:select', item)"
+                  :model-value="selectedItems.includes(item.id)"
+                  @update:model-value="onSelectItem(item)"
               /></span>
-              <span>{{ item.label }}</span>
+              <span class="truncate">{{ item.label }}</span>
               <BaseButton
                 v-if="props.hasMoreInfo"
                 label=""
@@ -120,7 +138,7 @@ const isEmpty = computed(() => filteredItems.value.length === 0);
             </div>
             <div
               class="mx-2 p-2 bg-light"
-              :class="{ hidden: !item.showAdditionalInfo }"
+              :class="{ hidden: !expandedItems.includes(item.id) }"
             >
               <slot name="item" v-bind="item"></slot>
             </div>

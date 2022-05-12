@@ -1,27 +1,17 @@
 import {
   defineConfig,
-  presetAttributify,
-  presetIcons,
   presetTypography,
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup,
+  transformerVariantGroup
 } from "unocss";
+
+const preset = presetUno();
 
 export default defineConfig({
   presets: [
-    presetUno(),
-    presetAttributify(),
-    presetIcons({
-      scale: 1.2,
-      warn: true,
-      extraProperties: {
-        display: "inline-block",
-        "vertical-align": "middle",
-        // ...
-      },
-    }),
+    preset,
     presetTypography(),
     presetWebFonts({
       provider: "google",
@@ -34,7 +24,13 @@ export default defineConfig({
   transformers: [transformerDirectives(), transformerVariantGroup()],
   safelist: "prose prose-sm m-auto text-left".split(" "),
   theme: {
+    screens: {
+      "2xl": "1536px",
+    },
     colors: {
+      transparent: "transparent",
+      current: "currentColor",
+
       primary: {
         600: "#5837CC",
         500: "#724CF9",
@@ -55,11 +51,11 @@ export default defineConfig({
         500: "#ECBA82",
         400: "#FFDFBC",
       },
-      "dirty-white": {
+      dwhite: {
         300: "#FCFAFA",
         400: "#EEEAFD",
       },
-      "deep-black": {
+      deepBlack: {
         1000: "#141023",
         900: "#1A152E",
         800: "#242038",
@@ -67,10 +63,24 @@ export default defineConfig({
         600: "#433C68",
         500: "#887DB5",
       },
+
+      error: preset.theme.colors.red[500],
+      warning: preset.theme.colors.yellow[500],
+
+      black: preset.theme.colors.black,
+      white: preset.theme.colors.white,
+      gray: preset.theme.colors.coolGray,
+      red: preset.theme.colors.red,
+      yellow: preset.theme.colors.amber,
+      green: preset.theme.colors.emerald,
+      blue: preset.theme.colors.blue,
+      indigo: preset.theme.colors.indigo,
+      purple: preset.theme.colors.violet,
+      pink: preset.theme.colors.pink,
     },
-    fontFamily: {
-      serif: ['"Roboto Slab"', "serif"],
-      sans: ['"Hind"', "sans-serif"],
+
+    width: {
+      double: "200%",
     },
   },
 });

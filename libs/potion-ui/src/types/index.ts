@@ -16,16 +16,30 @@ export enum ButtonPalette {
   "primary-o"   = "primary-o",
   secondary     = "secondary",
   "secondary-o" = "secondary-o",
+  accent        = "accent",
+  "accent-o"    = "accent-o",
+  tertiary      = "tertiary",
+  white         = "white",
+  "white-o"     = "white-o",
+  filter        = "filter",
+  warning       = "warning",
+  error         = "error",
   transparent   = "transparent",
-  opaque        = "opaque",
 }
 
 // prettier-ignore
 export enum ButtonSize {
   icon      = "icon",
-  small     = "small",
-  medium    = "medium",
-  large     = "large",
+  xs        = "xs",
+  sm        = "sm",
+  md        = "md",
+  lg        = "lg",
+}
+
+// prettier-ignore
+export enum ButtonWeight {
+  medium      = "medium",
+  bold        = "bold"
 }
 
 // prettier-ignore

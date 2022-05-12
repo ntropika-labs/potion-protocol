@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "potion-contracts": "*",
-    "subgraph-queries": "*",
-    "ui-library": "*"
+    "potion-ui": "*",
+    "subgraph-queries": "*"
   }
 }

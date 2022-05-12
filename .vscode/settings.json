@@ -16,5 +16,6 @@
   "eslint.workingDirectories": ["./contracts/core", "./apps/", "./libs/"],
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "unocss.root": "apps/potion-dapp"
 }
