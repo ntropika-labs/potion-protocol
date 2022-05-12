@@ -9,14 +9,14 @@ task("setPrices", "Call the Oracle to set current prices for tokens, and/or to s
         if (args.otoken) {
             // Import using require to avoid circular dependencies
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { setExpiryPrice } = require("./scripts/lib/setExpiryPrice");
+            const { setExpiryPrice } = require("../scripts/lib/setExpiryPrice");
             console.log(`Processing otoken ${args.otoken}`);
             await setExpiryPrice(args.otoken, args.price);
         }
         if (args.token) {
             // Import using require to avoid circular dependencies
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { setPrice } = require("./scripts/lib/setCurrentPrice");
+            const { setPrice } = require("../scripts/lib/setCurrentPrice");
             console.log(`Processing token ${args.token}`);
             await setPrice(args.token, args.price);
         }

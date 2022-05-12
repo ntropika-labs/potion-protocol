@@ -24,7 +24,9 @@
     "test-e2e-ci-all": "nx run-many --target=test-e2e --all",
     "test-unit": "nx test-unit",
     "test-unit-affected": "nx affected --target=test-unit",
-    "test-unit-all": "nx run-many --target=test-unit --all"
+    "test-unit-all": "nx run-many --target=test-unit --all",
+    "fast-forward": "yarn workspace potion-contracts fast-forward",
+    "set-price": "yarn workspace potion-contracts set-price"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.6.1",
