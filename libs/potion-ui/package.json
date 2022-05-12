@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development vite",
-    "build": "NODE_ENV=production vue-tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
+    "build-ui": "NODE_ENV=production vue-tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
     "watch": "vite build --watch",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
