@@ -1,11 +1,9 @@
-import AvatarIcon from "./components/AvatarIcon/AvatarIcon.vue";
 import BaseButton from "./components/BaseButton/BaseButton.vue";
 import BaseCheckbox from "./components/Checkbox/BaseCheckbox.vue";
-import ConnectButton from "./components/ConnectButton/ConnectButton.vue";
+import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletButton.vue";
 import BaseInput from "./components/Input/BaseInput.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import ListComponent from "./components/List/ListComponent.vue";
-import WalletConnect from "./components/WalletConnect/WalletConnect.vue";
 
 export type {
   IconStrokeWeight,
@@ -26,7 +24,5 @@ export {
   BaseInput,
   ListComponent,
   HeaderComponent,
-  WalletConnect,
-  AvatarIcon,
-  ConnectButton,
+  ConnectWalletButton,
 };

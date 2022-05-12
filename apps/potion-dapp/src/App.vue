@@ -1,10 +1,10 @@
 <template>
   <router-link to="/about">About Page</router-link>
-  <ConnectButton
+  <ConnectWalletButton
     :label="connectButtonLabel"
     :avatar="image"
     :connected="connectedWallet ? true : false"
-    :image-loaded="avatarLoadStatus"
+    :image-loading="avatarLoadStatus"
     @connect-wallet="connectWallet"
     @disconnect-wallet="disconnectConnectedWallet"
   />
@@ -51,7 +51,7 @@
   </component>
 </template>
 <script lang="ts" setup>
-import { ConnectButton, BaseButton } from "potion-ui";
+import { ConnectWalletButton, BaseButton } from "potion-ui";
 import { ref, computed } from "vue";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { contractsAddresses } from "@/helpers/contracts";
@@ -82,9 +82,9 @@ const connectButtonLabel = computed(() => {
 const { image, status } = useEnsAvatar(connectButtonLabel);
 const avatarLoadStatus = computed(() => {
   if (status.value === "RUNNING") {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 });
 const {
   loading,

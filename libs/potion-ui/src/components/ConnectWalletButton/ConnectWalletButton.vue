@@ -10,11 +10,15 @@
       @click="$emit('connectWallet')"
     >
       <template #pre-icon>
-        <AvatarIcon
-          v-if="props.avatar"
-          class="h-4 w-4 mr-2"
-          :loaded="props.imageLoaded"
-          :avatar-url="props.avatar"
+        <div
+          v-if="props.imageLoading"
+          class="mr-2 animated animate-flash animate-loop bg-white bg-opacity-10 animate-duration-6000 rounded-full h-5 w-5"
+        ></div>
+        <img
+          v-else-if="!props.imageLoading && props.avatar"
+          class="mr-2 h-5 w-5 rounded-full"
+          :src="props.avatar"
+          alt="Address Logo"
         />
       </template>
     </BaseButton>
@@ -53,15 +57,18 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { BaseButton, AvatarIcon } from "../../index";
+import { BaseButton } from "../../index";
 import { computed } from "vue";
 export interface Props {
   label: string;
   avatar?: string;
   connected: boolean;
-  imageLoaded: boolean;
+  imageLoading: boolean;
 }
-// const emits = ["connectWallet", "disconnectWallet"];
+defineEmits<{
+  (e: "connectWallet"): void;
+  (e: "disconnectWallet"): void;
+}>();
 const props = defineProps<Props>();
 const ensOrAddress = computed(() => {
   if (props.label.length === 42 && props.label.startsWith("0x")) {
