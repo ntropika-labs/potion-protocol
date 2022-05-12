@@ -2939,8 +2939,8 @@ __metadata:
   linkType: hard
 
 "@graphprotocol/graph-cli@npm:^0.29.0":
-  version: 0.29.1
-  resolution: "@graphprotocol/graph-cli@npm:0.29.1"
+  version: 0.29.2
+  resolution: "@graphprotocol/graph-cli@npm:0.29.2"
   dependencies:
     assemblyscript: 0.19.10
     binary-install-raw: 0.0.13
@@ -2969,16 +2969,7 @@ __metadata:
     yaml: 1.9.2
   bin:
     graph: bin/graph
-  checksum: 8c29f221c598d7df237ee68eeb0ca9da935aabc651f9a5851bef59f0c11284c02b6e0f8f33ca14b32d351321188bbba0ea79355fc0cc8a9047ec4c9dc829e234
-  languageName: node
-  linkType: hard
-
-"@graphprotocol/graph-ts@npm:^0.24.1":
-  version: 0.24.1
-  resolution: "@graphprotocol/graph-ts@npm:0.24.1"
-  dependencies:
-    assemblyscript: 0.19.10
-  checksum: ad88167a4ffe1c2d61be493fc43674cacffe42f6a51de52d357125cbb152484a8a9d9835f42d65114f19fd12a073b862afad0500d8528103ee0db2b7bd92e6bc
+  checksum: c5ca9b8c11845c712631cd4e643f6c9e907f921d04a09105ffdb602ce61e8feecb276cf8f417c4d9ed44f45db16c8098197f848c1179f4823a68d3b2cea2a613
   languageName: node
   linkType: hard
 
@@ -12675,6 +12666,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data-uri-to-buffer@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "data-uri-to-buffer@npm:4.0.0"
+  checksum: d9e6e36553ec394bc3bc0fab4f39c6fdfa1c9376655431765f79c3a2d481f423c05e5f223c8197fce939231b96cbec679bab67f856db079b1d4517f907637f94
+  languageName: node
+  linkType: hard
+
 "data-urls@npm:^2.0.0":
   version: 2.0.0
   resolution: "data-urls@npm:2.0.0"
@@ -13066,6 +13064,13 @@ __metadata:
     inherits: ^2.0.1
     minimalistic-assert: ^1.0.0
   checksum: 1ec2eedd7ed6bd61dd5e0519fd4c96124e93bb22de8a9d211b02d63e5dd152824853d919bb2090f965cc0e3eb9c515950a9836b332020d810f9c71feb0fd7df4
+  languageName: node
+  linkType: hard
+
+"destr@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "destr@npm:1.1.1"
+  checksum: 334886494cef39d39526061071b83384dee493b531a7a13f6705e92a168ebb072b45be4aba4179aaba88c4a32c3e35d8058d1357871179dbaf74890584199019
   languageName: node
   linkType: hard
 
@@ -15001,6 +15006,7 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^6.0.0
     eslint-plugin-vue: ^8.7.1
+    ethereum-blockies-base64: ^1.0.2
     ethereum-waffle: ^3.4.4
     ethers: ^5.6.4
     from-exponential: ^1.1.1
@@ -15015,10 +15021,11 @@ __metadata:
     hardhat-gas-reporter: ^1.0.8
     husky: ^7.0.4
     jsdom: ^19.0.0
-    matchstick-as: ^0.4.2
+    matchstick-as: ^0.4.3
     mocha: ^9.2.2
     mustache: ^4.2.0
     nx: 14.0.3
+    ohmyfetch: ^0.4.16
     pinia: ^2.0.13
     prettier: ^2.6.2
     prettier-plugin-solidity: ^1.0.0-dev.21
@@ -15042,6 +15049,15 @@ __metadata:
     vue-tsc: ^0.34.10
   languageName: unknown
   linkType: soft
+
+"ethereum-blockies-base64@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "ethereum-blockies-base64@npm:1.0.2"
+  dependencies:
+    pnglib: 0.0.1
+  checksum: 326cb27f36c03c8857853dfaa024a4ab3c09ea90989579a84dd138a12930773bbf0d89cbac951a844e28d32a5b540d82ac6fcafad2d06219b9acd0ee68054bfc
+  languageName: node
+  linkType: hard
 
 "ethereum-bloom-filters@npm:^1.0.6":
   version: 1.0.10
@@ -15999,6 +16015,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4":
+  version: 3.1.5
+  resolution: "fetch-blob@npm:3.1.5"
+  dependencies:
+    node-domexception: ^1.0.0
+    web-streams-polyfill: ^3.0.3
+  checksum: 6493f21bfe196798343431d20c0284835202728d076dd2cbf502a2846679f9265f3b0c3a7224750ae1a770b925da09e592b05fe7c3a22ca27794a39a0039ab21
+  languageName: node
+  linkType: hard
+
 "fetch-ponyfill@npm:^4.0.0":
   version: 4.1.0
   resolution: "fetch-ponyfill@npm:4.1.0"
@@ -16498,6 +16524,15 @@ __metadata:
     node-domexception: 1.0.0
     web-streams-polyfill: 4.0.0-beta.1
   checksum: 37d4737f3de2fe52515a5f46f09bc882973a667bfaadd4be05aac208f738a46da776f6d8d2c4e9dec84263095672f1001485ed3174b8229305a93b024091623d
+  languageName: node
+  linkType: hard
+
+"formdata-polyfill@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "formdata-polyfill@npm:4.0.10"
+  dependencies:
+    fetch-blob: ^3.1.2
+  checksum: 82a34df292afadd82b43d4a740ce387bc08541e0a534358425193017bf9fb3567875dc5f69564984b1da979979b70703aa73dee715a17b6c229752ae736dd9db
   languageName: node
   linkType: hard
 
@@ -17383,7 +17418,7 @@ __metadata:
     yargs-parser: ^16.1.0
   bin:
     gluegun: bin/gluegun
-  checksum: c498874ffb01378808e48cf3cb1c823c25ac62d3dba64b483259192299e4e3a1fe4e7cd94a5449db067a348d299f1f142551b1a506bddb7fec3ad61a7b88f163
+  checksum: dde5b359d6beedc73f289cde306922a7b727014e43ae8468ba5870f2cc9d60a7f1af43d0e7d6ca6a36ded5789620c6d8d9f7b487436cf7598967dea47792f601
   languageName: node
   linkType: hard
 
@@ -22115,14 +22150,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"matchstick-as@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "matchstick-as@npm:0.4.2"
+"matchstick-as@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "matchstick-as@npm:0.4.3"
   dependencies:
-    "@graphprotocol/graph-ts": ^0.24.1
+    "@graphprotocol/graph-ts": ^0.26.0
     assemblyscript: ^0.19.20
     wabt: 1.0.24
-  checksum: 45d89635733f44b4316af9af42e8278f858d0cd107d580a805dc9bd836b86b427a793afe21d3aff6e3c8bceb8124ef53a8119e39c3871014d40b9896e393b399
+  checksum: af641c7d2eb046b08b7769bbe5d5159e919f62f2b05a178a112812cec0933cb90cddac9ff4f4d15279e49166a0803c7d6614982b17648ce65eeb8af33e4e558f
   languageName: node
   linkType: hard
 
@@ -23198,7 +23233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-domexception@npm:1.0.0":
+"node-domexception@npm:1.0.0, node-domexception@npm:^1.0.0":
   version: 1.0.0
   resolution: "node-domexception@npm:1.0.0"
   checksum: 53a4685f9e67e663b1b01480b6df08f08f6059b5c5c7819ff0d55b90d8cc86330071c2421b75b759142d16bea2df88602fad067fe50a264dcbb6f562b7eef4bb
@@ -23242,6 +23277,17 @@ __metadata:
     encoding:
       optional: true
   checksum: 8d816ffd1ee22cab8301c7756ef04f3437f18dace86a1dae22cf81db8ef29c0bf6655f3215cb0cdb22b420b6fe141e64b26905e7f33f9377a7fa59135ea3e10b
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "node-fetch@npm:3.2.4"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: cfc715441302167bd4a9c6d6f3ff8eecb65e5aeeccd55a690497dcce5f95ec017d65c5682414287cad3998a28b1bab4820dcbe51852902eaa5f15f3975562384
   languageName: node
   linkType: hard
 
@@ -23740,6 +23786,18 @@ __metadata:
   dependencies:
     http-https: ^1.0.0
   checksum: e6171b33645ffc3559688a824a461952380d0b8f6a203b2daf6767647f277554a73fd7ad795629d88cd8eab68c0460aabb1e1b8b52ef80e3ff7621ac39f832ed
+  languageName: node
+  linkType: hard
+
+"ohmyfetch@npm:^0.4.16":
+  version: 0.4.16
+  resolution: "ohmyfetch@npm:0.4.16"
+  dependencies:
+    destr: ^1.1.1
+    node-fetch: ^3.2.4
+    ufo: ^0.8.3
+    undici: ^5.0.0
+  checksum: 35be32d251ad35cb1b6862724f53bb3b80e23bb6434cd827ba2be1f4619cdc93ca6c827e0a31bef0cfbe80e881691775d9f44412f0ab3329669cded5762a8614
   languageName: node
   linkType: hard
 
@@ -24676,6 +24734,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pnglib@npm:0.0.1":
+  version: 0.0.1
+  resolution: "pnglib@npm:0.0.1"
+  checksum: 48b5ef961a257f7653e6bc4d03aac1a817e4590d048cddee4f09a63cb3ed4ac120d15470725d4e37e087d57b231915d0563b16e596dd88d69a72ed669746c2bd
+  languageName: node
+  linkType: hard
+
 "pnp-webpack-plugin@npm:1.6.4":
   version: 1.6.4
   resolution: "pnp-webpack-plugin@npm:1.6.4"
@@ -24825,8 +24890,20 @@ __metadata:
   resolution: "potion-dapp@workspace:apps/potion-dapp"
   dependencies:
     potion-contracts: "*"
+    potion-ui: "*"
     subgraph-queries: "*"
-    ui-library: "*"
+  languageName: unknown
+  linkType: soft
+
+"potion-subgraph@workspace:apps/subgraph":
+  version: 0.0.0-use.local
+  resolution: "potion-subgraph@workspace:apps/subgraph"
+  languageName: unknown
+  linkType: soft
+
+"potion-ui@*, potion-ui@workspace:libs/potion-ui":
+  version: 0.0.0-use.local
+  resolution: "potion-ui@workspace:libs/potion-ui"
   languageName: unknown
   linkType: soft
 
@@ -28599,12 +28676,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"subgraph@workspace:apps/subgraph":
-  version: 0.0.0-use.local
-  resolution: "subgraph@workspace:apps/subgraph"
-  languageName: unknown
-  linkType: soft
-
 "supports-color@npm:6.0.0":
   version: 6.0.0
   resolution: "supports-color@npm:6.0.0"
@@ -29870,6 +29941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ufo@npm:^0.8.3":
+  version: 0.8.4
+  resolution: "ufo@npm:0.8.4"
+  checksum: a2ebef6f64b9cc4114fc65405837eeb83eb8975edd6d54c7f37abb6905da6fd1f63524e4a02c8b087e7b0b3db6e6f4f798a3d86a96500410ff590b405f807dc9
+  languageName: node
+  linkType: hard
+
 "uglify-js@npm:^3.1.4":
   version: 3.15.4
   resolution: "uglify-js@npm:3.15.4"
@@ -29878,12 +29956,6 @@ __metadata:
   checksum: 5f673c5dd7f3b3dd15d1d26aebfe29bccbb1b896c4b5423ec70a2e8b9506c70b6fb6a53dec83df5ad65a717ec9a850adf08e0aedf9b1711eac5eb080216615fa
   languageName: node
   linkType: hard
-
-"ui-library@*, ui-library@workspace:libs/ui":
-  version: 0.0.0-use.local
-  resolution: "ui-library@workspace:libs/ui"
-  languageName: unknown
-  linkType: soft
 
 "ultron@npm:~1.1.0":
   version: 1.1.1
@@ -29933,6 +30005,13 @@ __metadata:
   version: 4.16.0
   resolution: "undici@npm:4.16.0"
   checksum: 5e88c2b3381085e25ed1d1a308610ac7ee985f478ac705af7a8e03213536e10f73ef8dd8d85e6ed38948d1883fa0ae935e04357c317b0f5d3d3c0211d0c8c393
+  languageName: node
+  linkType: hard
+
+"undici@npm:^5.0.0":
+  version: 5.2.0
+  resolution: "undici@npm:5.2.0"
+  checksum: b7d6fe077c3ab13b7f7a0e5f4b70354b8489c5d37ca06c471754f9543c34501e3b29394b130afc8f066f11e465d6474ec665b2eb5a61052dc84baa97eeb9c7c3
   languageName: node
   linkType: hard
 
@@ -30988,7 +31067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-streams-polyfill@npm:^3.2.0":
+"web-streams-polyfill@npm:^3.0.3, web-streams-polyfill@npm:^3.2.0":
   version: 3.2.1
   resolution: "web-streams-polyfill@npm:3.2.1"
   checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02
