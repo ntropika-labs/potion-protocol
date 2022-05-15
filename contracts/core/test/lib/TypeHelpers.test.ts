@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { CurveCriteria, OrderedCriteria } from '../../scripts/lib/typeHelpers'
+import { CurveCriteria, OrderedCriteria } from 'contracts-math/src/typeHelpers'
 
 describe('OrderedCriteria tests', () => {
   it('gets an ordered criteria', () => {

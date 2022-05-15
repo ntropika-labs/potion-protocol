@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BigNumber, BigNumberish } from "ethers";
-import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "./typeHelpers";
+import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "contracts-math/src/typeHelpers";
 import { DepositParams } from "./lpHelpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Wallet } from "ethers";

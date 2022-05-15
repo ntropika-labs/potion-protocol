@@ -1,5 +1,5 @@
-import { Int59x18 } from "../../scripts/lib/math59x18";
-import { HyperbolicCurve } from "../../scripts/lib/typeHelpers";
+import { Int59x18 } from "contracts-math/src/math59x18";
+import { HyperbolicCurve } from "contracts-math/src/typeHelpers";
 
 export class PowerDecimalTestCase {
     public in_base_59x18: Int59x18;

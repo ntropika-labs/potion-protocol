@@ -12128,6 +12128,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"contracts-math@workspace:^, contracts-math@workspace:libs/contracts-math":
+  version: 0.0.0-use.local
+  resolution: "contracts-math@workspace:libs/contracts-math"
+  dependencies:
+    potion-contracts: "*"
+  languageName: unknown
+  linkType: soft
+
 "convert-source-map@npm:^1.4.0, convert-source-map@npm:^1.5.0, convert-source-map@npm:^1.5.1, convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
   version: 1.8.0
   resolution: "convert-source-map@npm:1.8.0"
@@ -24756,6 +24764,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "potion-contracts@workspace:contracts/core"
   dependencies:
+    contracts-math: "workspace:^"
     gamma-protocol: "workspace:^"
   languageName: unknown
   linkType: soft

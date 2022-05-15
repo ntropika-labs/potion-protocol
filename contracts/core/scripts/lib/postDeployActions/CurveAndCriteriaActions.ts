@@ -1,6 +1,6 @@
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { CriteriaManager, CurveManager } from "../../../typechain";
-import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "../typeHelpers";
+import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import {
     PostDeployAction,
     PostDeployActionResult,

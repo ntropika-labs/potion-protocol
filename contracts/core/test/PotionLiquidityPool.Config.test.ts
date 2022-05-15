@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber, constants } from "ethers";
 
 import { CounterpartyDetails, Pool } from "../scripts/lib/purchaseHelpers";
-import { CriteriaSet, CurveCriteria, HyperbolicCurve, OrderedCriteria } from "../scripts/lib/typeHelpers";
+import { CriteriaSet, CurveCriteria, HyperbolicCurve, OrderedCriteria } from "contracts-math/src/typeHelpers";
 import {
     usdcDecimals,
     deployTestContracts,

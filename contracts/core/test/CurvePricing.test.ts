@@ -5,7 +5,7 @@ import { deployTestContracts, getTestOtoken, mintTokens, usdcDecimals } from "./
 import { createTokenAmount, createScaledNumber as scaleNum } from "./helpers/OpynUtils";
 import { PotionLiquidityPool, Otoken as OtokenInstance, CurveManager, MockERC20, MockOracle } from "../typechain";
 import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
-import { CurveCriteria, HyperbolicCurve } from "../scripts/lib/typeHelpers";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import { deployDefaultCriteria } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
 
 const provider = waffle.provider;
