@@ -1,25 +1,26 @@
-import { ethers, waffle, upgrades } from "hardhat";
+import { fail } from "assert";
 import { expect } from "chai";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { BigNumber, ContractFactory } from "ethers";
-import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
-import { HyperbolicCurve, CurveCriteria } from "contracts-math/src/typeHelpers";
-import { usdcDecimals, deployTestContracts, getTestOtoken, mintTokens } from "./helpers/testSetup";
-const provider = waffle.provider;
+import { ethers, upgrades, waffle } from "hardhat";
 
+import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
+import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
 import {
-    MockERC20,
     AddressBook,
+    CriteriaManager,
+    CurveManager,
+    MockERC20,
     MockOracle,
-    PotionLiquidityPool,
-    PotionLiquidityPoolUpgradeTest,
     Otoken as OtokenInstance,
     OtokenFactory,
-    CurveManager,
-    CriteriaManager,
+    PotionLiquidityPool,
+    PotionLiquidityPoolUpgradeTest,
 } from "../typechain";
-import { createTokenAmount, createScaledNumber as scaleNum } from "./helpers/OpynUtils";
-import { fail } from "assert";
-import { deployDefaultCurves, deployDefaultCriteria } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
+import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
+import { deployTestContracts, getTestOtoken, mintTokens, usdcDecimals } from "./helpers/testSetup";
+
+const provider = waffle.provider;
 
 describe("PotionLiquidityPool - Upgrades", function () {
     const wallets = provider.getWallets();

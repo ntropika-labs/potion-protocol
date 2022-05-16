@@ -1,10 +1,17 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { CriteriaSet, HyperbolicCurve } from "contracts-math";
 import { commify, formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
+
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { DepositParams } from "../lpHelpers";
-import { CriteriaSet, HyperbolicCurve } from "contracts-math/src/typeHelpers";
-import { PostDeployAction, parseUsdcAmount, PostDeployActionsResults, PostDeployActionResult } from "../postDeploy";
+import {
+  parseUsdcAmount,
+  PostDeployAction,
+  PostDeployActionResult,
+  PostDeployActionsResults
+} from "../postDeploy";
 
 type DepositGenerator = {
     (dataSoFar: PostDeployActionsResults): Promise<DepositParams[]>;

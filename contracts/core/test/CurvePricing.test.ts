@@ -1,12 +1,13 @@
-import { waffle } from "hardhat";
 import { expect } from "chai";
-import { BigNumber, ethers, Wallet, utils } from "ethers";
-import { deployTestContracts, getTestOtoken, mintTokens, usdcDecimals } from "./helpers/testSetup";
-import { createTokenAmount, createScaledNumber as scaleNum } from "./helpers/OpynUtils";
-import { PotionLiquidityPool, Otoken as OtokenInstance, CurveManager, MockERC20, MockOracle } from "../typechain";
-import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
-import { CurveCriteria, HyperbolicCurve } from "contracts-math/src/typeHelpers";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math";
+import { BigNumber, ethers, utils, Wallet } from "ethers";
+import { waffle } from "hardhat";
+
 import { deployDefaultCriteria } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
+import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
+import { CurveManager, MockERC20, MockOracle, Otoken as OtokenInstance, PotionLiquidityPool } from "../typechain";
+import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
+import { deployTestContracts, getTestOtoken, mintTokens, usdcDecimals } from "./helpers/testSetup";
 
 const provider = waffle.provider;
 const test = it;

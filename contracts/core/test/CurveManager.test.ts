@@ -1,9 +1,8 @@
-import { ethers } from "hardhat";
 import { expect } from "chai";
+import { HyperbolicCurve } from "contracts-math";
+import { ethers } from "hardhat";
 
-import { HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import { CurveManager } from "../typechain/";
-
 import { EMPTY_HASH } from "./helpers/testSetup";
 
 const offset1 = 16.62165255;

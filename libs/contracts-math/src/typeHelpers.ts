@@ -1,6 +1,8 @@
-import { BigNumber, BigNumberish, utils } from "ethers";
+import { BigNumber, utils } from "ethers";
+
 import { Int59x18 } from "./math59x18";
 
+import type { BigNumberish } from "ethers";
 function assert(input: boolean, message?: string): asserts input {
   if (!input) throw new Error(message ? message : "assertion failed");
 }

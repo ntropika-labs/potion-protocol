@@ -1,22 +1,12 @@
 {
+  "extends": "../../tsconfig.vue.json",
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "./dist",
     "declaration": true,
-    "declarationMap": false,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["es6", "dom"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "sourceMap": false,
-    "strict": true,
-    "target": "es6",
-    "types": ["node", "mocha"]
+    "declarationMap": true,
+    "declarationDir": "./dist/types"
   },
-  "exclude": ["node_modules"],
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
