@@ -54,6 +54,7 @@
     "@graphql-codegen/typescript-operations": "^2.3.5",
     "@graphql-codegen/typescript-vue-urql": "^2.2.9",
     "@graphql-eslint/eslint-plugin": "^3.10.2",
+    "@intlify/vite-plugin-vue-i18n": "^3.4.0",
     "@mdx-js/preact": "^2.1.1",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
@@ -155,6 +156,7 @@
     "vitest": "^0.10.0",
     "vue": "^3.2.33",
     "vue-eslint-parser": "^8.3.0",
+    "vue-i18n": "9",
     "vue-router": "^4.0.14",
     "vue-tsc": "^0.34.10"
   },
