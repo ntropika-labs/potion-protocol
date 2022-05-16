@@ -29,11 +29,13 @@
     },
     {
       "path": "libs/subgraph-queries"
+    },
+    {
+      "path": "libs/potion-router"
+    },
+    {
+      "path": "libs/contracts-math"
     }
   ],
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "dist"
-  ]
+  "exclude": ["node_modules", "tmp", "dist"]
 }

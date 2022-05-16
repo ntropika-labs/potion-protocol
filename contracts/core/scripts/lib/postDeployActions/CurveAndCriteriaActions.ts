@@ -1,13 +1,14 @@
+import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "contracts-math";
+
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { CriteriaManager, CurveManager } from "../../../typechain";
-import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import {
-    PostDeployAction,
-    PostDeployActionResult,
-    CurveGenerator,
-    CriteriaGenerator,
-    PostDeployActionsResults,
-    CriteriaAndCriteriaSets,
+  CriteriaAndCriteriaSets,
+  CriteriaGenerator,
+  CurveGenerator,
+  PostDeployAction,
+  PostDeployActionResult,
+  PostDeployActionsResults
 } from "../postDeploy";
 
 export const generateOneCurve: CurveGenerator = () => {

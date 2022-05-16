@@ -6765,7 +6765,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.139":
+"@types/lodash-es@npm:^4":
+  version: 4.17.6
+  resolution: "@types/lodash-es@npm:4.17.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 9bd239dd525086e278821949ce12fbdd4f100a060fed9323fc7ad5661113e1641f28a7ebab617230ed3474680d8f4de705c1928b48252bb684be6ec9eed715db
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.139":
   version: 4.14.182
   resolution: "@types/lodash@npm:4.14.182"
   checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
@@ -12128,7 +12137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contracts-math@workspace:^, contracts-math@workspace:libs/contracts-math":
+"contracts-math@*, contracts-math@workspace:^, contracts-math@workspace:libs/contracts-math":
   version: 0.0.0-use.local
   resolution: "contracts-math@workspace:libs/contracts-math"
   dependencies:
@@ -17880,6 +17889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heap-js@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "heap-js@npm:2.2.0"
+  checksum: be89ec49ceac0c55a1cdbbe47b8fad76b43d98468b72e7fb3302f048a796ca8c8e683d59ffe564cc0b5ad31b68770a31bf2f315e3739bd7165ea34d7562a4b6b
+  languageName: node
+  linkType: hard
+
 "heap@npm:0.2.6":
   version: 0.2.6
   resolution: "heap@npm:0.2.6"
@@ -21446,6 +21462,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: f10e95e3128dfd3b1dd98ecebcfa5301acee871033fb6a0528e37a850239c3a3d53663f2052711e7e6b0f5664da2840a5dea39c419bc59751a83942cc036e258
+  languageName: node
+  linkType: hard
+
 "lodash.assign@npm:^4.0.3, lodash.assign@npm:^4.0.6":
   version: 4.2.0
   resolution: "lodash.assign@npm:4.2.0"
@@ -24828,6 +24851,7 @@ __metadata:
     "@types/eslint": ^8.4.1
     "@types/fs-extra": ^9.0.13
     "@types/jsdom": ^16.2.14
+    "@types/lodash-es": ^4
     "@types/mocha": ^9.1.1
     "@types/mustache": ^4.1.2
     "@types/node": 16.11.27
@@ -24873,8 +24897,10 @@ __metadata:
     hardhat-abi-exporter: ^2.8.0
     hardhat-contract-sizer: ^2.5.1
     hardhat-gas-reporter: ^1.0.8
+    heap-js: ^2.2.0
     husky: ^7.0.4
     jsdom: ^19.0.0
+    lodash-es: ^4.17.21
     matchstick-as: ^0.4.3
     mocha: ^9.2.2
     mustache: ^4.2.0
@@ -24901,6 +24927,15 @@ __metadata:
     vue-eslint-parser: ^8.3.0
     vue-router: ^4.0.14
     vue-tsc: ^0.34.10
+  languageName: unknown
+  linkType: soft
+
+"potion-router@workspace:libs/potion-router":
+  version: 0.0.0-use.local
+  resolution: "potion-router@workspace:libs/potion-router"
+  dependencies:
+    contracts-math: "*"
+    potion-contracts: "*"
   languageName: unknown
   linkType: soft
 

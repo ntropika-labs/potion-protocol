@@ -1,9 +1,14 @@
 import type { Wallet } from "ethers";
+import {
+  CurveCriteria,
+  CurveParamsAsBigNumbers,
+  HyperbolicCurve
+} from "contracts-math";
 import { BigNumber, BigNumberish } from "ethers";
+
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { Otoken as OtokenInstance } from "../../typechain";
-import { CurveCriteria, CurveParamsAsBigNumbers, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 
 // When a buyer wants to accept any amount of premium slippage, they can pass this as the max premium
 export const MAX_UINT_256 = BigNumber.from(2).pow(256).sub(1);

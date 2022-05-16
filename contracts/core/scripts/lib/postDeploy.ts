@@ -1,13 +1,14 @@
+import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "contracts-math";
+import { BigNumber, BigNumberish, Wallet } from "ethers";
 import { ethers } from "hardhat";
-import { BigNumber, BigNumberish } from "ethers";
-import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "contracts-math/src/typeHelpers";
-import { DepositParams } from "./lpHelpers";
+
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Wallet } from "ethers";
+
 import { Deployment } from "../../deployments/deploymentConfig";
 import { Otoken as OtokenInstance } from "../../typechain/";
-import { CounterpartyDetails, PurchaseParams } from "./purchaseHelpers";
+import { DepositParams } from "./lpHelpers";
 import { SettlementRecord } from "./postDeployActions/SettleAllExpiredOtokens";
+import { CounterpartyDetails, PurchaseParams } from "./purchaseHelpers";
 
 export function parseUsdcAmount(dollars: BigNumberish): BigNumber {
     return BigNumber.from(dollars).mul(1e6);
