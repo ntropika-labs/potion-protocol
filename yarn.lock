@@ -17889,6 +17889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heap-js@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "heap-js@npm:2.2.0"
+  checksum: be89ec49ceac0c55a1cdbbe47b8fad76b43d98468b72e7fb3302f048a796ca8c8e683d59ffe564cc0b5ad31b68770a31bf2f315e3739bd7165ea34d7562a4b6b
+  languageName: node
+  linkType: hard
+
 "heap@npm:0.2.6":
   version: 0.2.6
   resolution: "heap@npm:0.2.6"
@@ -24890,6 +24897,7 @@ __metadata:
     hardhat-abi-exporter: ^2.8.0
     hardhat-contract-sizer: ^2.5.1
     hardhat-gas-reporter: ^1.0.8
+    heap-js: ^2.2.0
     husky: ^7.0.4
     jsdom: ^19.0.0
     lodash-es: ^4.17.21
