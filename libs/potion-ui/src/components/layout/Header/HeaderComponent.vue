@@ -15,32 +15,29 @@
         Menu
       </BaseButton>
 
-      <transition name="fade">
-        <section
-          v-if="mobileMenuOpen"
-          class="lg:hidden fixed inset-0 flex flex-col items-start p-4 gap-6 bg-light"
-        >
-          <section class="flex w-full items-center justify-between">
-            <span class="uppercase text-sm">Menu</span>
-            <BaseButton
-              size="icon"
-              label=""
-              mode="button"
-              color="transparent"
-              @click="toggleMobileMenu"
-            >
-              Close
-            </BaseButton>
-          </section>
-
-          <slot name="routes"></slot>
+      <slot name="routes"></slot>
+    </div>
+    <transition name="fade">
+      <section
+        v-if="mobileMenuOpen"
+        class="lg:hidden fixed inset-0 flex flex-col items-start p-4 gap-6 bg-light z-40"
+      >
+        <section class="flex w-full items-center justify-between">
+          <span class="uppercase text-sm">Menu</span>
+          <BaseButton
+            size="icon"
+            label=""
+            mode="button"
+            color="transparent"
+            @click="toggleMobileMenu"
+          >
+            Close
+          </BaseButton>
         </section>
-      </transition>
 
-      <section class="justify-self-end hidden lg:flex items-center gap-12">
         <slot name="routes"></slot>
       </section>
-    </div>
+    </transition>
   </header>
 </template>
 
@@ -53,10 +50,16 @@ export default defineComponent({
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import BaseButton from "../../BaseButton/BaseButton.vue";
 
-const currentRoute = useRoute();
+export interface Props {
+  currentRouteName?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  currentRouteName: undefined,
+});
+
 const mobileMenuOpen = ref(false);
 
 const toggleMobileMenu = () => {
@@ -75,7 +78,7 @@ const toggleBodyOverflow = (isHidden: boolean) => {
 };
 
 watch(
-  () => currentRoute?.name || undefined,
+  () => props.currentRouteName || undefined,
   () => {
     toggleBodyOverflow(false);
     mobileMenuOpen.value = false;
