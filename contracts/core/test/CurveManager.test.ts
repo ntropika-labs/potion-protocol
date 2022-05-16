@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 
-import { HyperbolicCurve } from "../scripts/lib/typeHelpers";
+import { HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import { CurveManager } from "../typechain/";
 
 import { EMPTY_HASH } from "./helpers/testSetup";

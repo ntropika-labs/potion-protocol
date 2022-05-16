@@ -3,7 +3,7 @@ import { commify, formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { DepositParams } from "../lpHelpers";
-import { CriteriaSet, HyperbolicCurve } from "../typeHelpers";
+import { CriteriaSet, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import { PostDeployAction, parseUsdcAmount, PostDeployActionsResults, PostDeployActionResult } from "../postDeploy";
 
 type DepositGenerator = {

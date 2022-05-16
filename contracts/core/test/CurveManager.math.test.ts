@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { expect, assert } from "chai";
-import { Int59x18 } from "../scripts/lib/math59x18";
-import { HyperbolicCurve } from "../scripts/lib/typeHelpers";
+import { Int59x18 } from "contracts-math/src/math59x18";
+import { HyperbolicCurve } from "contracts-math/src/typeHelpers";
 import { CurveManager } from "../typechain";
 import { HyperbolicCurveTestCase, PowerDecimalTestCase, CoshTestCase } from "./helpers/testCases";
 import BigDecimal from "bignumber.js";

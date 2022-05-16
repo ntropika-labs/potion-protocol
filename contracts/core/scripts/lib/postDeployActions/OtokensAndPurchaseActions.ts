@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BigNumber, BigNumberish, ContractFactory } from "ethers";
-import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "../typeHelpers";
+import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "contracts-math/src/typeHelpers";
 import { MockOracle, Otoken as OtokenInstance, OtokenFactory } from "../../../typechain";
 import { DepositParams } from "../lpHelpers";
 import { CounterpartyDetails, PurchaseParams } from "../purchaseHelpers";

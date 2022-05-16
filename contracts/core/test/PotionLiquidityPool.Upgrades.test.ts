@@ -2,7 +2,7 @@ import { ethers, waffle, upgrades } from "hardhat";
 import { expect } from "chai";
 import { BigNumber, ContractFactory } from "ethers";
 import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
-import { HyperbolicCurve, CurveCriteria } from "../scripts/lib/typeHelpers";
+import { HyperbolicCurve, CurveCriteria } from "contracts-math/src/typeHelpers";
 import { usdcDecimals, deployTestContracts, getTestOtoken, mintTokens } from "./helpers/testSetup";
 const provider = waffle.provider;
 

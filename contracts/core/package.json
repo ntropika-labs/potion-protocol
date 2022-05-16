@@ -50,7 +50,6 @@
         "test": "hardhat test",
         "test-poolConfig": "hardhat test test/PotionLiquidityPool.Config.test.ts",
         "test-curvePricing": "hardhat test test/CurvePricing.test.ts",
-        "test-typeHelpers": "hardhat test test/lib/TypeHelpers.test.ts",
         "test-curveManager": "hardhat test test/CurveManager.test.ts",
         "test-purchases": "hardhat test test/PotionLiquidityPool.PurchaseTestGenerator.test.ts",
         "report": "yarn typechain; yarn report-gas; yarn report-coverage; yarn report-size",
@@ -73,6 +72,7 @@
         "set-price": "yarn run -T hardhat setPrices"
     },
     "dependencies": {
+        "contracts-math": "workspace:^",
         "gamma-protocol": "workspace:^"
     }
 }

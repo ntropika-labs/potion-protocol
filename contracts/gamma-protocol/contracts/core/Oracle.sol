@@ -45,9 +45,15 @@ contract Oracle is Ownable {
     /// @notice emits an event when the pricer is updated for an asset
     event PricerUpdated(address indexed asset, address indexed pricer);
     /// @notice emits an event when the locking period is updated for a pricer
-    event PricerLockingPeriodUpdated(address indexed pricer, uint256 lockingPeriod);
+    event PricerLockingPeriodUpdated(
+        address indexed pricer,
+        uint256 lockingPeriod
+    );
     /// @notice emits an event when the dispute period is updated for a pricer
-    event PricerDisputePeriodUpdated(address indexed pricer, uint256 disputePeriod);
+    event PricerDisputePeriodUpdated(
+        address indexed pricer,
+        uint256 disputePeriod
+    );
     /// @notice emits an event when an expiry price is updated for a specific asset
     event ExpiryPriceUpdated(
         address indexed asset,
@@ -79,7 +85,10 @@ contract Oracle is Ownable {
         uint256[] calldata _prices
     ) external onlyOwner {
         require(!migrated, "Oracle: migration already done");
-        require(_expiries.length == _prices.length, "Oracle: invalid migration data");
+        require(
+            _expiries.length == _prices.length,
+            "Oracle: invalid migration data"
+        );
 
         for (uint256 i; i < _expiries.length; i++) {
             storedPrice[_asset][_expiries[i]] = Price(_prices[i], now);
@@ -100,9 +109,18 @@ contract Oracle is Ownable {
      * @param _asset asset address
      * @param _pricer pricer address
      */
-    function setAssetPricer(address _asset, address _pricer) external onlyOwner {
-        require(_pricer != address(0), "Oracle: cannot set pricer to address(0)");
-        require(stablePrice[_asset] == 0, "Oracle: could not set a pricer for stable asset");
+    function setAssetPricer(address _asset, address _pricer)
+        external
+        onlyOwner
+    {
+        require(
+            _pricer != address(0),
+            "Oracle: cannot set pricer to address(0)"
+        );
+        require(
+            stablePrice[_asset] == 0,
+            "Oracle: could not set a pricer for stable asset"
+        );
 
         assetPricer[_asset] = _pricer;
 
@@ -115,7 +133,10 @@ contract Oracle is Ownable {
      * @param _pricer pricer address
      * @param _lockingPeriod locking period
      */
-    function setLockingPeriod(address _pricer, uint256 _lockingPeriod) external onlyOwner {
+    function setLockingPeriod(address _pricer, uint256 _lockingPeriod)
+        external
+        onlyOwner
+    {
         pricerLockingPeriod[_pricer] = _lockingPeriod;
 
         emit PricerLockingPeriodUpdated(_pricer, _lockingPeriod);
@@ -131,7 +152,10 @@ contract Oracle is Ownable {
      * @param _pricer pricer address
      * @param _disputePeriod dispute period
      */
-    function setDisputePeriod(address _pricer, uint256 _disputePeriod) external onlyOwner {
+    function setDisputePeriod(address _pricer, uint256 _disputePeriod)
+        external
+        onlyOwner
+    {
         pricerDisputePeriod[_pricer] = _disputePeriod;
 
         emit PricerDisputePeriodUpdated(_pricer, _disputePeriod);
@@ -155,7 +179,10 @@ contract Oracle is Ownable {
      * @param _price price
      */
     function setStablePrice(address _asset, uint256 _price) external onlyOwner {
-        require(assetPricer[_asset] == address(0), "Oracle: could not set stable price for an asset with pricer");
+        require(
+            assetPricer[_asset] == address(0),
+            "Oracle: could not set stable price for an asset with pricer"
+        );
 
         stablePrice[_asset] = _price;
 
@@ -175,16 +202,28 @@ contract Oracle is Ownable {
         uint256 _price
     ) external {
         require(msg.sender == disputer, "Oracle: caller is not the disputer");
-        require(!isDisputePeriodOver(_asset, _expiryTimestamp), "Oracle: dispute period over");
+        require(
+            !isDisputePeriodOver(_asset, _expiryTimestamp),
+            "Oracle: dispute period over"
+        );
 
         Price storage priceToUpdate = storedPrice[_asset][_expiryTimestamp];
 
-        require(priceToUpdate.timestamp != 0, "Oracle: price to dispute does not exist");
+        require(
+            priceToUpdate.timestamp != 0,
+            "Oracle: price to dispute does not exist"
+        );
 
         uint256 oldPrice = priceToUpdate.price;
         priceToUpdate.price = _price;
 
-        emit ExpiryPriceDisputed(_asset, _expiryTimestamp, oldPrice, _price, now);
+        emit ExpiryPriceDisputed(
+            _asset,
+            _expiryTimestamp,
+            oldPrice,
+            _price,
+            now
+        );
     }
 
     /**
@@ -199,9 +238,18 @@ contract Oracle is Ownable {
         uint256 _expiryTimestamp,
         uint256 _price
     ) external {
-        require(msg.sender == assetPricer[_asset], "Oracle: caller is not authorized to set expiry price");
-        require(isLockingPeriodOver(_asset, _expiryTimestamp), "Oracle: locking period is not over yet");
-        require(storedPrice[_asset][_expiryTimestamp].timestamp == 0, "Oracle: dispute period started");
+        require(
+            msg.sender == assetPricer[_asset],
+            "Oracle: caller is not authorized to set expiry price"
+        );
+        require(
+            isLockingPeriodOver(_asset, _expiryTimestamp),
+            "Oracle: locking period is not over yet"
+        );
+        require(
+            storedPrice[_asset][_expiryTimestamp].timestamp == 0,
+            "Oracle: dispute period started"
+        );
 
         storedPrice[_asset][_expiryTimestamp] = Price(_price, now);
         emit ExpiryPriceUpdated(_asset, _expiryTimestamp, _price, now);
@@ -217,7 +265,10 @@ contract Oracle is Ownable {
         uint256 price = stablePrice[_asset];
 
         if (price == 0) {
-            require(assetPricer[_asset] != address(0), "Oracle: Pricer for this asset not set");
+            require(
+                assetPricer[_asset] != address(0),
+                "Oracle: Pricer for this asset not set"
+            );
 
             price = OpynPricerInterface(assetPricer[_asset]).getPrice();
         }
@@ -232,7 +283,11 @@ contract Oracle is Ownable {
      * @return price scaled by 1e8, denominated in USD
      * @return isFinalized True, if the price is finalized, False if not
      */
-    function getExpiryPrice(address _asset, uint256 _expiryTimestamp) external view returns (uint256, bool) {
+    function getExpiryPrice(address _asset, uint256 _expiryTimestamp)
+        external
+        view
+        returns (uint256, bool)
+    {
         uint256 price = stablePrice[_asset];
         bool isFinalized = true;
 
@@ -268,7 +323,11 @@ contract Oracle is Ownable {
      * @param _pricer pricer address
      * @return locking period
      */
-    function getPricerLockingPeriod(address _pricer) external view returns (uint256) {
+    function getPricerLockingPeriod(address _pricer)
+        external
+        view
+        returns (uint256)
+    {
         return pricerLockingPeriod[_pricer];
     }
 
@@ -279,7 +338,11 @@ contract Oracle is Ownable {
      * @param _pricer pricer address
      * @return dispute period
      */
-    function getPricerDisputePeriod(address _pricer) external view returns (uint256) {
+    function getPricerDisputePeriod(address _pricer)
+        external
+        view
+        returns (uint256)
+    {
         return pricerDisputePeriod[_pricer];
     }
 
@@ -290,14 +353,22 @@ contract Oracle is Ownable {
      * @param _roundId chainlink round id
      * @return price and round timestamp
      */
-    function getChainlinkRoundData(address _asset, uint80 _roundId) external view returns (uint256, uint256) {
+    function getChainlinkRoundData(address _asset, uint80 _roundId)
+        external
+        view
+        returns (uint256, uint256)
+    {
         uint256 price = stablePrice[_asset];
         uint256 timestamp = now;
 
         if (price == 0) {
-            require(assetPricer[_asset] != address(0), "Oracle: Pricer for this asset not set");
+            require(
+                assetPricer[_asset] != address(0),
+                "Oracle: Pricer for this asset not set"
+            );
 
-            (price, timestamp) = OpynPricerInterface(assetPricer[_asset]).getHistoricalPrice(_roundId);
+            (price, timestamp) = OpynPricerInterface(assetPricer[_asset])
+                .getHistoricalPrice(_roundId);
         }
 
         return (price, timestamp);
@@ -309,7 +380,11 @@ contract Oracle is Ownable {
      * @param _expiryTimestamp expiry timestamp
      * @return True if locking period is over, False if not
      */
-    function isLockingPeriodOver(address _asset, uint256 _expiryTimestamp) public view returns (bool) {
+    function isLockingPeriodOver(address _asset, uint256 _expiryTimestamp)
+        public
+        view
+        returns (bool)
+    {
         uint256 price = stablePrice[_asset];
 
         if (price == 0) {
@@ -328,7 +403,11 @@ contract Oracle is Ownable {
      * @param _expiryTimestamp expiry timestamp
      * @return True if dispute period is over, False if not
      */
-    function isDisputePeriodOver(address _asset, uint256 _expiryTimestamp) public view returns (bool) {
+    function isDisputePeriodOver(address _asset, uint256 _expiryTimestamp)
+        public
+        view
+        returns (bool)
+    {
         uint256 price = stablePrice[_asset];
 
         if (price == 0) {
