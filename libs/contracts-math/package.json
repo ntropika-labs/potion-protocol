@@ -3,9 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "main": "./src/index.ts",
-  "files": [
-    "src/"
-  ],
+  "types": "./src/index.ts",
   "scripts": {
     "test": "mocha"
   },

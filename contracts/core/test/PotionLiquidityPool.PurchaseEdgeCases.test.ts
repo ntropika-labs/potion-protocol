@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
 import { usdcDecimals, deployTestContracts, getTestOtoken, mintTokens, TestContracts } from "./helpers/testSetup";
-import { CurveCriteria, HyperbolicCurve } from ".contracts-math/src/typeHelpers";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math/src/typeHelpers";
 
 const provider = waffle.provider;
 

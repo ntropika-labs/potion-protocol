@@ -1,6 +1,5 @@
 import { BigNumber, BigNumberish, utils } from "ethers";
 import { Int59x18 } from "./math59x18";
-import { MockOtoken } from "potion-contracts/typechain";
 
 function assert(input: boolean, message?: string): asserts input {
   if (!input) throw new Error(message ? message : "assertion failed");
@@ -12,30 +11,6 @@ export interface CurveParamsAsBigNumbers {
   c_59x18: BigNumber;
   d_59x18: BigNumber;
   max_util_59x18: BigNumber;
-}
-
-export class OtokenPropertiesForValidation {
-  constructor(
-    public percentStrikeValue: number,
-    public wholeDaysRemaining: number,
-    public underlyingAsset: string,
-    public strikeAsset: string,
-    public isPut = true
-  ) {}
-
-  public static async fromOtokenAssets(
-    otoken: MockOtoken,
-    percentStrikeValue: number,
-    wholeDaysRemaining: number
-  ): Promise<OtokenPropertiesForValidation> {
-    return new OtokenPropertiesForValidation(
-      percentStrikeValue,
-      wholeDaysRemaining,
-      await otoken.underlyingAsset(),
-      await otoken.strikeAsset(),
-      await otoken.isPut()
-    );
-  }
 }
 
 export class HyperbolicCurve {

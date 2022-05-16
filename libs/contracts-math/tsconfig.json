@@ -18,6 +18,5 @@
     "types": ["node", "mocha"]
   },
   "exclude": ["node_modules"],
-  "files": [],
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

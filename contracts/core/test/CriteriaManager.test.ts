@@ -1,6 +1,8 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { CurveCriteria, CriteriaSet, OtokenPropertiesForValidation } from "contracts-math/src/typeHelpers";
+import { CurveCriteria, CriteriaSet } from "contracts-math/src/typeHelpers";
+import { OtokenPropertiesForValidation } from "./helpers/typeHelpers";
+
 import { utils } from "ethers";
 
 import { MockOtoken, CriteriaManager, MockAddressBook } from "../typechain/";
