@@ -23,6 +23,27 @@ export default defineConfig({
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   safelist: "prose prose-sm m-auto text-left".split(" "),
+  rules: [
+    [
+      "bg-radial-glass",
+      {
+        background: `radial-gradient(
+    77.23% 77.23% at 13.57% 18.81%,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0) 100%
+  )`,
+      },
+    ],
+  ],
+  shortcuts: {
+    "bg-radial-secondary":
+      'relative z-10 overflow-hidden hover:shadow-secondary transition-shadow duration-300 before:(content-[""] absolute top-0 left-0 w-[200%] h-double transition-transform duration-300 -z-1 bg-gradient-to-br from-secondary-500 via-secondary-400 to-secondary-600) hover:before:(-translate-x-1/2 -translate-y-1/2)',
+    "bg-radial-neutral": "bg-white bg-opacity-5",
+    "bg-radial-primary":
+      "relative z-10 overflow-hidden hover:shadow-primary transition-shadow duration-300 before:(content-[''] absolute top-0 left-0 w-double h-double transition-transform duration-300 -z-1 bg-gradient-to-br from-primary-500 via-primary-400 to-primary-600)",
+    "bg-radial-primary-inactive":
+      'relative z-10 overflow-hidden border border-white border-opacity-10 before:(content-[""] absolute top-0 left-0 w-full h-full transition-opacity duration-300 opacity-0 -z-1 bg-gradient-to-br from-primary-500 via-primary-400 to-primary-600) hover:before:(opacity-100)',
+  },
   theme: {
     screens: {
       "2xl": "1536px",
@@ -78,8 +99,18 @@ export default defineConfig({
       purple: preset.theme.colors.violet,
       pink: preset.theme.colors.pink,
     },
+    boxShadow: {
+      primary: "0px 4px 20px 4px rgba(114, 76, 249, 0.35) ",
+      secondary: "0 4px 20px 4px rgba(250, 25, 139, 0.35)",
+      accent: "0 4px 20px 4px rgba(61, 220, 151, 0.35)",
+      tertiary: "0 4px 20px 4px rgba(236, 186, 130, 0.35)",
+      "deep-black-800": "0 4px 20px 4px rgba(36, 32, 56, 0.20)",
+    },
 
     width: {
+      double: "200%",
+    },
+    height: {
       double: "200%",
     },
   },
