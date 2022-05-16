@@ -1,3 +1,4 @@
+import path from "path";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
@@ -5,6 +6,7 @@ import { defineConfig } from "vite";
 
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
@@ -14,6 +16,9 @@ console.log(development);
 export default defineConfig({
   plugins: [
     vue({ reactivityTransform: true }),
+    vueI18n({
+      include: path.resolve(__dirname, "src/locales/**"),
+    }),
     vueJsx(),
     Unocss(),
     development &&

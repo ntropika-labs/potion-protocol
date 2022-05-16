@@ -9,7 +9,7 @@
     @disconnect-wallet="disconnectConnectedWallet"
   />
   <div class="flex flex-col gap-2 mt-10">
-    <p>User collateral balance</p>
+    <p>{{ t("app.user_balance") }}</p>
     <p v-if="loading">loading...</p>
     <p v-else>{{ userCollateralBalance }}</p>
     <BaseButton
@@ -18,7 +18,7 @@
       @click="fetchUserCollateralBalance()"
     />
 
-    <p>User allowance for Potion Liquidity Pool Contract</p>
+    <p>{{ t("app.user_allowance") }}</p>
     <p>{{ userAllowance }}</p>
     <BaseButton
       label="Fetch User Allowance"
@@ -40,11 +40,11 @@
     </div>
   </div>
 
-  <p>Connected Wallet:</p>
+  <p>{{ t("app.connected_wallet") }}</p>
   <pre>{{ connectedWallet?.accounts }}</pre>
-  <p>Connected Chain</p>
+  <p>{{ t("app.connected_chain") }}</p>
   <pre>{{ connectedChain?.id }}</pre>
-  <p>Contracts Addresses</p>
+  <p>{{ t("app.contracts_addresses") }}</p>
   <pre>{{ contractsAddresses }}</pre>
   <component :is="layout">
     <router-view />
@@ -57,7 +57,10 @@ import { useCollateralToken } from "@/composables/useCollateralToken";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useOnboard } from "@/composables/useOnboard";
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useEnsAvatar } from "./composables/useEnsAvatar";
+
+const { t } = useI18n();
 const amount = ref(0);
 const route = useRoute();
 const layout = computed(() => {
@@ -76,7 +79,7 @@ const connectButtonLabel = computed(() => {
   if (connectedWallet && connectedWallet.value?.accounts[0].address) {
     return connectedWallet.value.accounts[0].address;
   }
-  return "Connect Wallet";
+  return t("app.connect_wallet");
 });
 
 const { image, status } = useEnsAvatar(connectButtonLabel);
