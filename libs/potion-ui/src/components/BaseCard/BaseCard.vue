@@ -7,8 +7,8 @@ export default defineComponent({
 <script lang="ts" setup>
 import { computed } from "vue";
 export interface Props {
-  direction: "row" | "column";
-  color:
+  direction?: "row" | "column";
+  color?:
     | "glass"
     | "neutral"
     | "no-bg"
@@ -16,8 +16,8 @@ export interface Props {
     | "primary-radial-inactive"
     | "primary-radial"
     | "clean";
-  fullHeight: boolean;
-  roundSize: "none" | "small" | "default";
+  fullHeight?: boolean;
+  roundSize?: "none" | "small" | "default";
 }
 const props = withDefaults(defineProps<Props>(), {
   direction: "column",
