@@ -11,6 +11,7 @@ describe("TokenIcon", () => {
   const wrapper = mount(TokenIcon, { props: { name: "Hello Vitest" } });
 
   it("renders properly", () => {
-    expect(wrapper.html()).toContain("img");
+    expect(wrapper.html()).toContain("test-token-icon");
+    expect(wrapper.html()).toContain('alt="Hello Vitest"');
   });
 });

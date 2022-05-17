@@ -37,6 +37,7 @@ const size = computed(() => sizeToClasses.get(props.size));
 
 <template>
   <img
+    test-token-icon
     class="object-cover rounded-full"
     :src="props.image"
     :alt="props.name"

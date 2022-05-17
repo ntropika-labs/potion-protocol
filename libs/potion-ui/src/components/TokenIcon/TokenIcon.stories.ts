@@ -1,24 +1,33 @@
 // @unocss-include
 
 import type { Story } from "@storybook/vue3";
+import { getTokenList } from "potion-tokenlist";
 
 import TokenIcon from "./TokenIcon.vue";
+
+const tokenList = getTokenList("ganache");
+const defaultName = tokenList[0].name;
+const defaultLogo = tokenList[0].logoURI;
 
 export default {
   component: TokenIcon,
   excludeStories: /.*Data$/,
   title: "Potion UI/Token Icon",
   argTypes: {
-    // Configurable options
     name: {
       name: "Name",
+      control: "select",
+      options: tokenList.map((t) => t.name),
     },
     image: {
       name: "Image",
+      control: "select",
+      options: tokenList.map((t) => t.logoURI),
     },
     size: {
       name: "Size",
-      defaultValue: "md",
+      control: "select",
+      options: ["sm", "base", "md", "lg", "xl", "2xl"],
     },
   },
 };
@@ -34,62 +43,20 @@ const Template: Story = (args) => ({
 export const Overview = () => ({
   components: { TokenIcon },
   template: `
-    <div class="grid grid-cols-6 gap-8">
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="sm" />
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="base" />
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="md" />
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="lg" />
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="xl" />
-      <TokenIcon name="Wrapped Ether" image="https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png" size="2xl" />
+    <div class="flex items-center gap-8">
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="sm" />
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="base" />
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="md" />
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="lg" />
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="xl" />
+      <TokenIcon name="${defaultName}" image="${defaultLogo}" size="2xl" />
     </div>
   `,
 });
 
-export const sm = Template.bind({});
-export const base = Template.bind({});
-export const md = Template.bind({});
-export const lg = Template.bind({});
-export const xl = Template.bind({});
-export const xl2 = Template.bind({});
-
-sm.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-  size: "sm",
-};
-
-base.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-  size: "base",
-};
-
-md.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+export const interactable = Template.bind({});
+interactable.args = {
+  name: defaultName,
+  image: defaultLogo,
   size: "md",
-};
-
-lg.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-  size: "lg",
-};
-
-xl.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-  size: "xl",
-};
-
-xl2.args = {
-  name: "Wrapped Ether",
-  image:
-    "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-  size: "2xl",
 };
