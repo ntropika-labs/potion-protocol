@@ -4,7 +4,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
 
 const preset = presetUno();
@@ -63,7 +63,7 @@ export default defineConfig({
         600: "#433C68",
         500: "#887DB5",
       },
-
+      deepBlue: "#231b4b",
       error: preset.theme.colors.red[500],
       warning: preset.theme.colors.yellow[500],
 
