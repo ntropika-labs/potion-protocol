@@ -161,5 +161,8 @@
     "vue-router": "^4.0.14",
     "vue-tsc": "^0.34.10"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "dependencies": {
+    "storybook-dark-mode": "^1.1.0"
+  }
 }
