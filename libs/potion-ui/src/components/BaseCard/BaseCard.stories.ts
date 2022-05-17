@@ -1,10 +1,12 @@
 //@unocss-include
 import type { Args, Story } from "@storybook/vue3";
+import CardFooter from "../CardFooter/CardFooter.vue";
 import BaseCard from "./BaseCard.vue";
 
 export default {
   title: "Potion UI/BaseCard",
   component: BaseCard,
+  subcomponents: { CardFooter },
   argTypes: {
     color: {
       name: "color",
@@ -51,7 +53,16 @@ const Template: Story = (args: Args) => ({
   },
   template: `<div class="h-[400px] w-[300px]"><BaseCard v-bind="args" ></BaseCard></div>`,
 });
+const TemplateFooter: Story = (args: Args) => ({
+  components: { BaseCard, CardFooter },
+  setup() {
+    return { args };
+  },
+  template: `<div class="h-[400px] w-[300px]"><BaseCard v-bind="args" class="justify-end" ><CardFooter class="text-dwhite-300">This is a footer</CardFooter></BaseCard></div>`,
+});
 
+export const WithFooter = TemplateFooter.bind({});
+WithFooter.args = { color: "glass", defArgs };
 export const Glass = Template.bind({});
 Glass.args = { color: "glass", ...defArgs };
 
