@@ -25,5 +25,6 @@ describe("UnderlyingCard", () => {
 
   it("emit events", async () => {
     await wrapper.get("[test-underlying-card]").trigger("click");
+    expect(wrapper.emitted()).toHaveProperty("underlying-selected");
   });
 });

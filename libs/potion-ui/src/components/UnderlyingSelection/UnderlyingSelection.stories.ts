@@ -10,7 +10,7 @@ const underlyings = tokenList.map((token) => ({
   symbol: token.symbol,
   image: token.logoURI,
   name: token.name,
-  active: false,
+  selected: false,
 }));
 
 export default {
