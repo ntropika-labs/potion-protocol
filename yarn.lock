@@ -25092,6 +25092,8 @@ __metadata:
 "potion-ui@*, potion-ui@workspace:libs/potion-ui":
   version: 0.0.0-use.local
   resolution: "potion-ui@workspace:libs/potion-ui"
+  dependencies:
+    potion-tokenlist: "*"
   languageName: unknown
   linkType: soft
 

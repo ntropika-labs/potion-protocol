@@ -29,5 +29,8 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint --ext .ts,.js,.vue src --fix  --ignore-path .gitignore",
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
+  },
+  "dependencies": {
+    "potion-tokenlist": "*"
   }
 }
