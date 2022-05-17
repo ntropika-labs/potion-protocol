@@ -7,8 +7,8 @@ export default defineComponent({
 <script lang="ts" setup>
 import { computed } from "vue";
 export interface Props {
-  direction: "row" | "column";
-  color:
+  direction?: "row" | "column";
+  color?:
     | "glass"
     | "neutral"
     | "no-bg"
@@ -16,8 +16,8 @@ export interface Props {
     | "primary-radial-inactive"
     | "primary-radial"
     | "clean";
-  fullHeight: boolean;
-  roundSize: "none" | "small" | "default";
+  fullHeight?: boolean;
+  roundSize?: "none" | "small" | "default";
 }
 const props = withDefaults(defineProps<Props>(), {
   direction: "column",
@@ -38,9 +38,9 @@ const roundedToClass = {
 };
 
 const colorToClass = {
-  glass: "bg-radial-glass blurred border-white border-opacity-10 border",
+  glass: "bg-radial-glass blurred ring-white/10 ring-1",
   neutral: "bg-radial-neutral",
-  "no-bg": "border-white border-opacity-10 border",
+  "no-bg": "ring-white/10 ring",
   "secondary-radial": "bg-radial-secondary",
   "primary-radial-inactive": "bg-radial-primary-inactive",
   "primary-radial": "bg-radial-primary",

@@ -16,8 +16,8 @@ export default defineConfig({
     presetWebFonts({
       provider: "google",
       fonts: {
-        sans: ["Hind:300,400,500,600,700"],
-        serif: ["Roboto Slab:200,300,400,500,600,700"],
+        sans: ["Poppins:400,500,600"],
+        serif: ["Bitter:200,300,400,500,600,700,800,900"],
       },
     }),
   ],
@@ -49,9 +49,6 @@ export default defineConfig({
       "2xl": "1536px",
     },
     colors: {
-      transparent: "transparent",
-      current: "currentColor",
-
       primary: {
         600: "#5837CC",
         500: "#724CF9",

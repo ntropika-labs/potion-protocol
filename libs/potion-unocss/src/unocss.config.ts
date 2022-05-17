@@ -4,7 +4,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
 
 const preset = presetUno();
