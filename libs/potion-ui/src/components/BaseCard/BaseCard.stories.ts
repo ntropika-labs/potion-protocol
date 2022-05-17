@@ -62,7 +62,7 @@ const TemplateFooter: Story = (args: Args) => ({
 });
 
 export const WithFooter = TemplateFooter.bind({});
-WithFooter.args = { color: "glass", defArgs };
+WithFooter.args = { color: "glass", ...defArgs };
 export const Glass = Template.bind({});
 Glass.args = { color: "glass", ...defArgs };
 
