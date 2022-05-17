@@ -7,11 +7,13 @@
     }"
   >
     <label class="p-3">
-      <p class="font-sans font-medium text-sm text-white">{{ props.title }}</p>
+      <p class="font-sans font-medium text-sm text-white">
+        {{ props.title }}
+      </p>
       <div class="flex justify-between mt-4">
         <BaseTag>{{ props.unit }}</BaseTag>
         <input
-          class="text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
+          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
           type="number"
           :value="props.modelValue"
           @input="emits('update:modelValue', ($event.target as HTMLInputElement).value)"
@@ -66,12 +68,7 @@ const handleSetMax = () => {
   return props.max;
 };
 const handleKeydown = (event: KeyboardEvent) => {
-  if (
-    event.key === "," ||
-    event.key === "-" ||
-    event.key === "+" ||
-    event.key === "e"
-  ) {
+  if ([",", "-", "+", "e"].includes(event.key)) {
     event.preventDefault();
   }
 };
