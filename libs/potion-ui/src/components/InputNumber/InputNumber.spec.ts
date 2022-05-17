@@ -59,7 +59,7 @@ describe("InputNumber", () => {
     expect(wrapper.vm.inputIsValid).toBe(false);
     await wrapper.setProps({ modelValue: "-101" });
     expect(wrapper.vm.inputIsValid).toBe(false);
-    await wrapper.setProps({ modelValue: "101e0" });
+    await wrapper.setProps({ modelValue: "101e8" });
     expect(wrapper.vm.inputIsValid).toBe(false);
     await wrapper.setProps({ modelValue: null });
     expect(wrapper.vm.inputIsValid).toBe(false);
