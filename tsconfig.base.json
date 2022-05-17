@@ -35,6 +35,9 @@
     },
     {
       "path": "libs/contracts-math"
+    },
+    {
+      "path": "libs/potion-unocss"
     }
   ],
   "exclude": ["node_modules", "tmp", "dist"]

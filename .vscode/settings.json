@@ -17,5 +17,5 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "unocss.root": "apps/potion-dapp"
+  "unocss.root": "libs/potion-unocss"
 }
