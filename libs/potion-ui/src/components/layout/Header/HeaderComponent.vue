@@ -15,7 +15,11 @@
         Menu
       </BaseButton>
 
-      <slot name="routes"></slot>
+      <div class="hidden lg:flex flex-1 justify-between items-center">
+        <!-- empty span for symmetric spacing -->
+        <span class="w-12"></span>
+        <slot name="routes"></slot>
+      </div>
     </div>
     <transition name="fade">
       <section
