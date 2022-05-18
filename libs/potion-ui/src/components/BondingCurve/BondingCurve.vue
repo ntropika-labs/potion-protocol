@@ -116,8 +116,8 @@ watch(chartData, updateChart);
 <template>
   <div class="flex flex-col text-white">
     <div class="w-full text-sm">Premium Bonding Curve</div>
-    <div ref="chartContainer" class="h-[32rem]">
-      <div ref="bondingCurveChart"></div>
+    <div test-chart-container ref="chartContainer" class="h-[32rem]">
+      <div test-billboard-chart ref="bondingCurveChart"></div>
     </div>
   </div>
 </template>
