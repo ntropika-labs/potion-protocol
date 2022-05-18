@@ -1,15 +1,17 @@
-import "uno.css";
 import "@unocss/reset/tailwind.css";
+import "uno.css";
 
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
-import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
 import App from "@/App.vue";
 import { init } from "@/composables/useOnboard";
 import { onboardOptions } from "@/helpers/onboard";
+import BaseLayout from "@/layouts/BaseLayout.vue";
+import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import router from "@/router";
+import messages from "@intlify/vite-plugin-vue-i18n/messages";
 import urql from "@urql/vue";
 
 init(onboardOptions);
@@ -30,5 +32,7 @@ app.use(urql, {
 app.use(createPinia());
 app.use(router);
 app.use(i18n);
+app.component("BaseLayout", BaseLayout);
+app.component("EmptyLayout", EmptyLayout);
 
 app.mount("#app");

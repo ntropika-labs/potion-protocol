@@ -4,7 +4,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup,
+  transformerVariantGroup
 } from "unocss";
 
 const preset = presetUno();
@@ -16,8 +16,9 @@ export default defineConfig({
     presetWebFonts({
       provider: "google",
       fonts: {
-        sans: ["Hind:300,400,500,600,700"],
-        serif: ["Roboto Slab:200,300,400,500,600,700"],
+        sans: ["Poppins:100,200,300,400,500,600,700,800,900"],
+        serif: ["Bitter:100,200,300,400,500,600,700,800,900"],
+        mono: ["Fira Code", "Fira Mono:100,200,300,400,500,600,700,800,900"],
       },
     }),
   ],
@@ -84,6 +85,7 @@ export default defineConfig({
         600: "#433C68",
         500: "#887DB5",
       },
+      deepBlue: "#231b4b",
       //@ts-expect-error - no type for iterable
       error: preset.theme?.colors?.red[500],
       //@ts-expect-error - no type for iterable
