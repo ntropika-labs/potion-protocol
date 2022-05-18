@@ -72,3 +72,24 @@ export interface Underlying {
   image: string;
   selected: boolean;
 }
+
+export type BondingCurve = number[];
+
+export interface EmergingCurve {
+  data: BondingCurve;
+  underlyingSymbol: string;
+}
+
+export interface BillboardLabel {
+  text: string;
+}
+
+export interface BillboardTick {
+  values?: number[];
+  format: (x: number) => string;
+}
+
+export interface BillboardAxis {
+  label: BillboardLabel;
+  tick: BillboardTick;
+}
