@@ -11,44 +11,37 @@ import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { range as _range } from "lodash-es";
 import bb, { spline } from "billboard.js";
 import "billboard.js/dist/theme/insight.min.css";
-import type { BondingCurve, EmergingCurve, BillboardAxis } from "../../types";
+import type { BondingCurve, EmergingCurve } from "../../types";
 
 export interface Props {
   bondingCurve: BondingCurve;
   emergingCurves?: EmergingCurve[];
   unloadKeys?: string[];
-  axis?: {
-    x: BillboardAxis;
-    y: BillboardAxis;
-  };
 }
 
 const props = withDefaults(defineProps<Props>(), {
   bondingCurve: () => [],
   emergingCurves: () => [],
   unloadKeys: () => [],
-  axis: () => ({
-    x: {
-      label: {
-        text: "Utilization",
-      },
-      tick: {
-        values: _range(0, 1, 0.1),
-        format: (n) => `${n}%`,
-      },
-    },
-    y: {
-      label: {
-        text: "Premium",
-      },
-      tick: {
-        format: (n) => `${n}%`,
-      },
-    },
-  }),
 });
 
-const roundvalue = (value: number) => parseFloat(value.toFixed(2));
+const roundvalue = (value: number) => value.toFixed(2);
+
+const axis: bb.Axis = {
+  x: {
+    label: "Utilization",
+    tick: {
+      values: _range(0, 101, 10),
+      format: (n: number) => `${n}%`,
+    },
+  },
+  y: {
+    label: "Premium",
+    tick: {
+      format: (n: number) => `${roundvalue(n)}%`,
+    },
+  },
+};
 
 const chart = ref<bb.Chart | null>(null);
 const chartReady = ref(false);
@@ -59,7 +52,7 @@ const chartHeight = computed(() => chartContainer?.value?.clientHeight ?? 0);
 
 const chartData = computed(() => {
   const json = new Map<string, BondingCurve>([
-    ["bondingCurve", props.bondingCurve.map(roundvalue)],
+    ["bondingCurve", props.bondingCurve],
   ]);
   const colors = new Map<string, string>([
     ["bondingCurve", "var(--primary-500)"],
@@ -72,7 +65,7 @@ const chartData = computed(() => {
     if (curve?.data?.length > 0) {
       json.set(
         curve.underlyingSymbol,
-        curve.data.map((n) => roundvalue(n * 100))
+        curve.data.map((n) => n * 100)
       );
       names.set(curve.underlyingSymbol, curve.underlyingSymbol.toUpperCase());
     } else {
@@ -91,6 +84,7 @@ const chartData = computed(() => {
 
 const createChart = () => {
   chart.value = bb.generate({
+    axis,
     bindto: bondingCurveChart.value,
     data: chartData.value,
     point: {
@@ -115,9 +109,8 @@ const updateChart = () => {
   }
 };
 
-watch(chartData, updateChart);
-
 onMounted(() => nextTick(createChart));
+watch(chartData, updateChart);
 </script>
 
 <template>
