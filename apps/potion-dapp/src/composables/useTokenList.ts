@@ -1,14 +1,13 @@
 import { getTokenList } from "potion-tokenlist";
-import { computed } from "vue";
 
 const tokenList = getTokenList(import.meta.env.VITE_ETHEREUM_NETWORK);
 
 const useTokenList = (address: string) => {
   const token = tokenList.find((token) => token.address === address);
 
-  const name = computed(() => token?.name);
-  const symbol = computed(() => token?.symbol);
-  const image = computed(() => token?.logoURI);
+  const name = token?.name ?? "";
+  const symbol = token?.symbol ?? "";
+  const image = token?.logoURI ?? "";
 
   return {
     name,
@@ -17,4 +16,7 @@ const useTokenList = (address: string) => {
   };
 };
 
-export { useTokenList };
+export {
+  tokenList,
+  useTokenList
+};
