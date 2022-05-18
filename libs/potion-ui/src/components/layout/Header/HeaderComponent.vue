@@ -12,7 +12,9 @@
         class="lg:hidden"
         @click="toggleMobileMenu"
       >
-        Menu
+        <template #pre-icon>
+          <i class="i-ph-list-duotone"></i>
+        </template>
       </BaseButton>
 
       <div class="hidden lg:flex flex-1 justify-between items-center">
@@ -24,10 +26,10 @@
     <transition name="fade">
       <section
         v-if="mobileMenuOpen"
-        class="lg:hidden fixed inset-0 flex flex-col items-start p-4 gap-6 bg-light z-40"
+        class="lg:hidden fixed inset-0 flex flex-col items-start p-6 gap-6 bg-gradient-to-br from-deep-blue-500 to-deep-black-900 z-40"
       >
-        <section class="flex w-full items-center justify-between">
-          <span class="uppercase text-sm">Menu</span>
+        <section class="flex w-full items-center justify-between p-2">
+          <span class="uppercase text-sm text-dwhite-400">Menu</span>
           <BaseButton
             size="icon"
             label=""
@@ -35,11 +37,15 @@
             color="transparent"
             @click="toggleMobileMenu"
           >
-            Close
+            <template #pre-icon>
+              <i class="i-ph-x"></i>
+            </template>
           </BaseButton>
         </section>
 
-        <slot name="routes"></slot>
+        <div class="flex flex-col">
+          <slot name="routes"></slot>
+        </div>
       </section>
     </transition>
   </header>
