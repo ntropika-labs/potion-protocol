@@ -1,5 +1,6 @@
 const { resolve } = require("path");
 const Unocss = require("unocss/vite").default;
+const yaml =  require("@rollup/plugin-yaml");
 
 module.exports = {
   stories: [
@@ -27,8 +28,9 @@ module.exports = {
       resolve(__dirname, "@", "../src"),
       "node_modules",
     ];
-    config.plugins = config.plugins ?? [];
+    config.plugins = config.plugins || [];
     config.plugins.push(Unocss());
+    config.plugins.push(yaml());
 
     return config;
   },

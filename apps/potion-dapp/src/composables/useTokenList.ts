@@ -16,7 +16,4 @@ const useTokenList = (address: string) => {
   };
 };
 
-export {
-  tokenList,
-  useTokenList
-};
+export { tokenList, useTokenList };
