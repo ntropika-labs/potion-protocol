@@ -10,6 +10,7 @@ export default defineComponent({
 import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { range as _range } from "lodash-es";
 import bb, { spline } from "billboard.js";
+import { useI18n } from "vue-i18n";
 import "billboard.js/dist/theme/insight.min.css";
 import type { BondingCurve, EmergingCurve } from "../../types";
 
@@ -25,18 +26,20 @@ const props = withDefaults(defineProps<Props>(), {
   unloadKeys: () => [],
 });
 
+const { t } = useI18n();
+
 const roundvalue = (value: number) => value.toFixed(2);
 
 const axis: bb.Axis = {
   x: {
-    label: "Utilization",
+    label: t("bonding_curve.x_axis.label"),
     tick: {
       values: _range(0, 101, 10),
       format: (n: number) => `${n}%`,
     },
   },
   y: {
-    label: "Premium",
+    label: t("bonding_curve.y_axis.label"),
     tick: {
       format: (n: number) => `${roundvalue(n)}%`,
     },
@@ -115,9 +118,9 @@ watch(chartData, updateChart);
 
 <template>
   <div class="flex flex-col text-white">
-    <div class="w-full text-sm">Premium Bonding Curve</div>
-    <div test-chart-container ref="chartContainer" class="h-[32rem]">
-      <div test-billboard-chart ref="bondingCurveChart"></div>
+    <div class="w-full text-sm">{{ t("bonding_curve.title") }}</div>
+    <div ref="chartContainer" test-chart-container class="h-[32rem]">
+      <div ref="bondingCurveChart" test-billboard-chart></div>
     </div>
   </div>
 </template>
