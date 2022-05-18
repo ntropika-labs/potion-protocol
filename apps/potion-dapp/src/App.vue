@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="font-medium">
+  <div id="app" class="">
     <transition
       enter-active-class="transition-all"
       leave-active-class="transition-all"
@@ -9,7 +9,7 @@
       leave-to-class="opacity-0"
     >
       <!-- <Spinner v-if="isLoading" /> -->
-      <component :is="layout" class="font-poppins layout-container">
+      <component :is="layout" class="layout-container">
         <router-view />
       </component>
     </transition>

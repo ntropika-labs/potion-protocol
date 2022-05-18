@@ -5,13 +5,20 @@
   "description": "A monorepo template to develop awesome ethereum based applications",
   "license": "MIT",
   "author": "Ntropika Labs",
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*",
+      "contracts/*"
+    ]
+  },
   "scripts": {
-    "local-env": "./bin/start-local-env",
     "build": "nx build",
-    "dev": "nx dev",
     "codegen": "nx codegen",
     "compile-contracts": "nx run-many --target=compile --all",
+    "dev": "nx dev",
     "dprint": "dprint fmt '**/*.{ts,tsx,js,jsx,json}'",
+    "fast-forward": "yarn workspace potion-contracts fast-forward",
     "format": "nx format",
     "format-affected": "nx affected --target=format --uncommitted",
     "format-all": "nx run-many --target=format --all",
@@ -19,14 +26,14 @@
     "lint": "nx lint",
     "lint-affected": "nx affected --target=lint --uncommitted",
     "lint-all": "nx run-many --target=lint --all",
+    "local-env": "./bin/start-local-env",
+    "set-price": "yarn workspace potion-contracts set-price",
     "test-e2e-ci": "nx run-many --target=test-e2e-ci",
     "test-e2e-ci-affected": "nx affected --target=test-e2e",
     "test-e2e-ci-all": "nx run-many --target=test-e2e --all",
     "test-unit": "nx test-unit",
     "test-unit-affected": "nx affected --target=test-unit",
-    "test-unit-all": "nx run-many --target=test-unit --all",
-    "fast-forward": "yarn workspace potion-contracts fast-forward",
-    "set-price": "yarn workspace potion-contracts set-price"
+    "test-unit-all": "nx run-many --target=test-unit --all"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.6.1",
@@ -47,6 +54,7 @@
     "@graphql-codegen/typescript-operations": "^2.3.5",
     "@graphql-codegen/typescript-vue-urql": "^2.2.9",
     "@graphql-eslint/eslint-plugin": "^3.10.2",
+    "@intlify/vite-plugin-vue-i18n": "^3.4.0",
     "@mdx-js/preact": "^2.1.1",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
@@ -54,6 +62,7 @@
     "@nrwl/cli": "14.0.3",
     "@nrwl/workspace": "14.0.3",
     "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/contracts-upgradeable": "^4.6.0",
     "@openzeppelin/hardhat-upgrades": "^1.17.0",
     "@rushstack/eslint-patch": "^1.1.3",
     "@storybook/addon-a11y": "^6.4.20",
@@ -73,6 +82,7 @@
     "@types/eslint": "^8.4.1",
     "@types/fs-extra": "^9.0.13",
     "@types/jsdom": "^16.2.14",
+    "@types/lodash-es": "^4",
     "@types/mocha": "^9.1.1",
     "@types/mustache": "^4.1.2",
     "@types/node": "16.11.27",
@@ -105,6 +115,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^8.7.1",
+    "ethereum-blockies-base64": "^1.0.2",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.4",
     "from-exponential": "^1.1.1",
@@ -117,12 +128,15 @@
     "hardhat-abi-exporter": "^2.8.0",
     "hardhat-contract-sizer": "^2.5.1",
     "hardhat-gas-reporter": "^1.0.8",
+    "heap-js": "^2.2.0",
     "husky": "^7.0.4",
     "jsdom": "^19.0.0",
+    "lodash-es": "^4.17.21",
     "matchstick-as": "^0.4.3",
     "mocha": "^9.2.2",
     "mustache": "^4.2.0",
     "nx": "14.0.3",
+    "ohmyfetch": "^0.4.16",
     "pinia": "^2.0.13",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-dev.21",
@@ -142,20 +156,9 @@
     "vitest": "^0.10.0",
     "vue": "^3.2.33",
     "vue-eslint-parser": "^8.3.0",
+    "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.14",
     "vue-tsc": "^0.34.10"
   },
-  "workspaces": {
-    "packages": [
-      "apps/*",
-      "libs/*",
-      "contracts/*"
-    ]
-  },
-  "packageManager": "yarn@3.2.0",
-  "dependencies": {
-    "@openzeppelin/contracts-upgradeable": "^4.6.0",
-    "ethereum-blockies-base64": "^1.0.2",
-    "ohmyfetch": "^0.4.16"
-  }
+  "packageManager": "yarn@3.2.0"
 }

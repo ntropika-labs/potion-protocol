@@ -16,7 +16,7 @@
           :key="route.name"
           active-class="shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400"
           :to="{ name: route.name }"
-          class="p-2 transition uppercase text-md"
+          class="p-2 transition uppercase text-base font-serif"
           >{{ route.label }}</router-link
         >
       </div>
@@ -73,7 +73,7 @@ const connectButtonLabel = computed(() => {
   if (connectedWallet && connectedWallet.value?.accounts[0].address) {
     return connectedWallet.value.accounts[0].address;
   }
-  return t("app.connect_wallet");
+  return t("connect_wallet");
 });
 
 const { image, status } = useEnsAvatar(connectButtonLabel);

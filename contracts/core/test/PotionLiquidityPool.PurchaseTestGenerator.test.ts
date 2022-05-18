@@ -1,34 +1,34 @@
-import { waffle } from "hardhat";
 import { expect } from "chai";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { BigNumber } from "ethers";
+import { waffle } from "hardhat";
+
+import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
 import {
     CounterpartyDetails,
-    PurchaseParams,
     CreateAndPurchaseParams,
-    SettleTestCase,
-    Pool,
     OutstandingSettlementTestCase,
+    Pool,
+    PurchaseParams,
+    SettleTestCase,
 } from "../scripts/lib/purchaseHelpers";
-import { usdcDecimals, deployTestContracts, getTestOtoken, mintTokens, TestContracts } from "./helpers/testSetup";
-import { CurveCriteria, HyperbolicCurve } from "../scripts/lib/typeHelpers";
-
-const provider = waffle.provider;
-
 import {
+    CriteriaManager,
+    CurveManager,
     MockERC20,
     MockOracle,
     Otoken as OtokenInstance,
     OtokenFactory,
     PotionLiquidityPool,
-    CurveManager,
-    CriteriaManager,
 } from "../typechain";
-import { createTokenAmount, createScaledNumber as scaleNum } from "./helpers/OpynUtils";
-import { deployDefaultCurves, deployDefaultCriteria } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
-import testSuccessfulCreateAndBuyOtokens from "./helpers/testSuccessfulCreateAndBuyOtokens";
+import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
+import { deployTestContracts, getTestOtoken, mintTokens, TestContracts, usdcDecimals } from "./helpers/testSetup";
 import testSuccessfulBuyOtokens from "./helpers/testSuccessfulBuyOtokens";
-import testSuccessfulSettleAndRedistribute from "./helpers/testSuccessfulSettleAndRedistribute";
+import testSuccessfulCreateAndBuyOtokens from "./helpers/testSuccessfulCreateAndBuyOtokens";
 import testSuccessfulOutstandingSettlement from "./helpers/testSuccessfulOutstandingSettlement";
+import testSuccessfulSettleAndRedistribute from "./helpers/testSuccessfulSettleAndRedistribute";
+
+const provider = waffle.provider;
 
 // When testing purchases and settlements, we often want to run the same set of operations and the same set of checks.
 // This suite of tests does that, by generating a set of nearly-identical tests in the before() block.
