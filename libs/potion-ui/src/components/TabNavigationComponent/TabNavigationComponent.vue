@@ -105,7 +105,9 @@ watch(
 <template>
   <!-- Start tab navigation -->
   <BaseCard>
-    <ul class="inline-flex items-center justify-evenly gap-4 mx-auto pt-2 pb-6">
+    <ul
+      class="flex flex-wrap items-center justify-center lg:justify-evenly gap-4 mx-auto pt-2 pb-6"
+    >
       <li
         v-for="(step, index) in tabItems"
         :key="index"
@@ -132,7 +134,7 @@ watch(
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->
-  <div class="overflow-hidden mt-6">
+  <div class="mt-6">
     <template v-for="(step, index) in tabItems">
       <component
         :is="step.component"
