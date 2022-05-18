@@ -18,7 +18,7 @@ describe("InputNumber", () => {
       max: 100,
       step: 1,
       disabled: false,
-      footerDescription: "Balance:",
+      footerDescription: "Balance",
     },
   });
 
@@ -31,7 +31,7 @@ describe("InputNumber", () => {
       max: 100,
       step: 1,
       disabled: false,
-      footerDescription: "Balance:",
+      footerDescription: "Balance",
     });
   });
 
@@ -41,7 +41,13 @@ describe("InputNumber", () => {
 
   it("renders an error if the value is not valid", async () => {
     await wrapper.setProps({ modelValue: 101 });
-    expect(wrapper.vm.footerText).toBe("Please, enter a valid value");
+    expect(wrapper.vm.footerText).toBe(
+      `Please, enter a valid value - Your ${
+        wrapper.props().footerDescription
+      } is ${wrapper.props().max} ${wrapper.props().unit} - Minimum is ${
+        wrapper.props().min
+      } ${wrapper.props().unit}.`
+    );
   });
 
   it("shows an error if the input is major than props.max", async () => {
