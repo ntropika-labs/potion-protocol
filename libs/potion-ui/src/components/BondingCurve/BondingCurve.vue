@@ -131,37 +131,26 @@ onMounted(() => nextTick(createChart));
 
 <style>
 .bb-line {
-  stroke-dasharray: 7 8 !important;
+  @apply stroke-dash-7;
 }
 
 .bb-line-bondingCurve {
-  stroke-dasharray: none !important;
+  @apply stroke-dash-0;
 }
 
 .bb-tooltip {
-  border-collapse: separate;
-  border-spacing: 0;
-  empty-cells: show;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(36, 32, 56, 0.7);
-  text-align: left;
-  font-size: 0.75rem;
+  @apply border-separate empty-cells-visible font-size-xs border-white/10 bg-deepBlack-800/70;
 }
 
 .bb-tooltip th {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  text-align: left;
-  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+  @apply border-bottom border-white/10 py-1 px-2;
 }
 
 .bb-tooltip td {
-  padding: 0.25rem 0.75rem;
-  background-color: rgba(36, 32, 56, 0.7);
+  @apply py-1 px-3 bg-deepBlack-800/70;
 }
 
-.bb-axis-y text,
-.bb-axis-x text,
+.bb-axis text,
 .bb-legend text {
   @apply text-white fill-current;
 }
