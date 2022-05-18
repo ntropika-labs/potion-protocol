@@ -5,15 +5,25 @@
       :pool-id="1"
       :user-balance="userCollateralBalance"
       class="col-span-12 md:col-span-4 xl:col-span-3"
-    />
+    >
+      <BaseButton
+        size="sm"
+        palette="secondary"
+        :inline="true"
+        :label="t('next')"
+      />
+    </AddLiquidityCard>
     <div></div>
   </div>
 </template>
 <script lang="ts" setup>
+import { BaseButton } from "potion-ui";
+import { useI18n } from "vue-i18n";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed } from "vue";
+const { t } = useI18n();
 const liquidity = ref(100);
 const { connectedWallet } = useOnboard();
 
