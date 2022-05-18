@@ -73,7 +73,7 @@ const connectButtonLabel = computed(() => {
   if (connectedWallet && connectedWallet.value?.accounts[0].address) {
     return connectedWallet.value.accounts[0].address;
   }
-  return t("app.connect_wallet");
+  return t("connect_wallet");
 });
 
 const { image, status } = useEnsAvatar(connectButtonLabel);

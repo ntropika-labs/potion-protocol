@@ -1,6 +1,6 @@
 <template>
   <div
-    class="text-sm font-semibold text-white font-sans flex flex-col justify-center w-full p-4 rounded-b-3xl bg-radial-glass border-t border-white/10"
+    class="text-sm font-semibold text-white font-sans w-full p-4 rounded-b-3xl bg-radial-glass border-t border-white/10"
   >
     <slot />
   </div>

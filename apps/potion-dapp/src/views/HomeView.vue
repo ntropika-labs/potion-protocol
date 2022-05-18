@@ -9,7 +9,7 @@
     @disconnect-wallet="disconnectConnectedWallet"
   />
   <div class="flex flex-col gap-2 mt-10">
-    <p>{{ t("app.user_balance") }}</p>
+    <p>{{ t("user_balance") }}</p>
     <p>{{ userCollateralBalance }}</p>
     <BaseButton
       label="Fetch User Balance"
@@ -17,7 +17,7 @@
       @click="fetchUserCollateralBalance()"
     />
 
-    <p>{{ t("app.user_allowance") }}</p>
+    <p>{{ t("user_allowance") }}</p>
     <p>{{ userAllowance }}</p>
     <BaseButton
       label="Fetch User Allowance"
@@ -39,11 +39,11 @@
     </div>
   </div>
 
-  <p>{{ t("app.connected_wallet") }}</p>
+  <p>{{ t("connected_wallet") }}</p>
   <pre>{{ connectedWallet?.accounts }}</pre>
-  <p>{{ t("app.connected_chain") }}</p>
+  <p>{{ t("connected_chain") }}</p>
   <pre>{{ connectedChain?.id }}</pre>
-  <p>{{ t("app.contracts_addresses") }}</p>
+  <p>{{ t("contracts_addresses") }}</p>
   <pre>{{ contractsAddresses }}</pre>
 </template>
 <script lang="ts" setup>
@@ -71,7 +71,7 @@ const connectButtonLabel = computed(() => {
   if (connectedWallet && connectedWallet.value?.accounts[0].address) {
     return connectedWallet.value.accounts[0].address;
   }
-  return t("app.connect_wallet");
+  return t("connect_wallet");
 });
 
 const { image, status } = useEnsAvatar(connectButtonLabel);

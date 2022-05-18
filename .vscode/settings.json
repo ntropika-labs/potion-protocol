@@ -18,5 +18,9 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "unocss.root": "apps/potion-dapp",
-  "i18n-ally.localesPaths": ["apps/potion-dapp/src/locales"]
+  "i18n-ally.localesPaths": ["apps/potion-dapp/src/locales"],
+  "i18n-ally.keystyle": "nested",
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

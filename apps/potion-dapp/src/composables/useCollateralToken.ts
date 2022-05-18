@@ -123,13 +123,13 @@ export function useCollateralToken() {
   };
 
   return {
-    approveLoading,
-    fetchUserCollateralBalanceLoading,
-    fetchUserAllowanceLoading,
-    userCollateralBalance,
     fetchUserCollateralBalance,
-    userAllowance,
+    userCollateralBalance,
+    fetchUserCollateralBalanceLoading,
     fetchUserCollateralAllowance,
+    userAllowance,
+    fetchUserAllowanceLoading,
     approveForPotionLiquidityPool,
+    approveLoading,
   };
 }

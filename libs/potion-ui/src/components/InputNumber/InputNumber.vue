@@ -1,5 +1,6 @@
 <template>
   <BaseCard
+    :full-height="false"
     :class="{
       'focus-within:(ring-primary-500) focus-within:children:last:(bg-primary-500)':
         inputIsValid,
@@ -42,14 +43,14 @@ import BaseTag from "../BaseTag/BaseTag.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
 import CardFooter from "../CardFooter/CardFooter.vue";
 export interface Props {
-  title: string;
+  title?: string;
   unit: string;
   step: number;
   min: number;
   max: number;
-  disabled: boolean;
+  disabled?: boolean;
   modelValue: number;
-  footerDescription: string;
+  footerDescription?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   title: "",
@@ -59,7 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
   max: 100,
   disabled: false,
   modelValue: 1,
-  footerDescription: "Balance:",
+  footerDescription: "Balance",
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -89,7 +90,7 @@ const footerText = computed(() => {
   if (inputIsValid.value) {
     return `${props.footerDescription} ${props.max} ${props.unit}`;
   } else {
-    return "Please, enter a valid value";
+    return `Please, enter a valid value - Your balance is ${props.max} ${props.unit} - Minimum is ${props.min} ${props.unit}.`;
   }
 });
 

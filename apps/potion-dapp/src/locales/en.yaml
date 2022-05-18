@@ -1,10 +1,12 @@
-app:
-  connect_wallet: "Connect Wallet"
-  user_balance: "User collateral balance"
-  user_allowance: "User allowance for Potion Liquidity Pool Contract"
-  connected_wallet: "Connected Wallet:"
-  connected_chain: "Connected Chain"
-  contracts_addresses: "Contracts Addresses"
-
-home:
-  title: "Home page"
+connect_wallet: Connect Wallet
+user_balance: User collateral balance
+user_allowance: User allowance for Potion Liquidity Pool Contract
+connected_wallet: 'Connected Wallet:'
+connected_chain: Connected Chain
+contracts_addresses: Contracts Addresses
+my_pool: My Pool
+title: Home page
+deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
+next: next
+deposit_collateral_title: You're providing
+deposit_collateral_footer_description: Balance
