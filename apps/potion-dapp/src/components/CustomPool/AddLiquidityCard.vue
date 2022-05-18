@@ -17,13 +17,13 @@
         />
       </div>
       <CardFooter class="flex justify-center">
-        <BaseButton palette="secondary" :inline="true" :label="t('next')" />
+        <slot name="card-footer"></slot>
       </CardFooter>
     </BaseCard>
   </div>
 </template>
 <script lang="ts" setup>
-import { BaseCard, CardFooter, InputNumber, BaseButton } from "potion-ui";
+import { BaseCard, CardFooter, InputNumber } from "potion-ui";
 import { useI18n } from "vue-i18n";
 const emits = defineEmits(["update:modelValue"]);
 const { t } = useI18n();
