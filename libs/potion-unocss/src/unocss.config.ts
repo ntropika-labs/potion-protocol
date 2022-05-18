@@ -3,8 +3,9 @@ import {
   presetTypography,
   presetUno,
   presetWebFonts,
+  presetIcons,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
 
 const preset = presetUno();
@@ -19,6 +20,14 @@ export default defineConfig({
         sans: ["Poppins:100,200,300,400,500,600,700,800,900"],
         serif: ["Bitter:100,200,300,400,500,600,700,800,900"],
         mono: ["Fira Code", "Fira Mono:100,200,300,400,500,600,700,800,900"],
+      },
+    }),
+    presetIcons({
+      prefix: "i-",
+      extraProperties: {
+        display: "inline-flex",
+        width: "1rem",
+        height: "1rem",
       },
     }),
   ],

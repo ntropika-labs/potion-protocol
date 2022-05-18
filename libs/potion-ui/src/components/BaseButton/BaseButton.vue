@@ -3,27 +3,27 @@ import { computed, defineComponent } from "vue";
 import { ButtonSize, ButtonPalette, ButtonWeight } from "../../types";
 
 const baseClasses =
-  "whitespace-nowrap justify-center items-center relative z-1 overflow-hidden font-sans uppercase transition-shadow duration-300 rounded-full shadow-none  focus:outline-none disabled:(opacity-50 cursor-not-allowed)";
+  "whitespace-nowrap justify-center items-center relative z-1 overflow-hidden font-sans transition-shadow duration-300 rounded-full shadow-none  focus:outline-none disabled:(opacity-50 cursor-not-allowed)";
 const btnSolidClasses =
   "before:(content-none absolute top-0 left-0 w-double h-full transition-transform duration-300 -z-1) hover:before:translate-x-[-50%]";
 const btnOutlineClasses = "ring-2 transition-all hover:ring-4";
 
 // prettier-ignore
 export const buttonPaletteMap: Map<ButtonPalette, string> = new Map([
-  [ButtonPalette.primary,         btnSolidClasses   + " text-dwhite-300 hover:shadow-primary before:(bg-gradient-to-r from-primary-500 via-primary-400 to-primary-600)"],
-  [ButtonPalette.secondary,       btnSolidClasses   + " text-dwhite-300 hover:shadow-secondary before:(bg-gradient-to-r from-secondary-500 via-secondary-400 to-secondary-600)"],
-  [ButtonPalette.accent,          btnSolidClasses   + " text-dwhite-300 hover:shadow-accent before:(bg-gradient-to-r from-accent-500 via-accent-400 to-accent-600)"],
-  [ButtonPalette.tertiary,        btnSolidClasses   + " text-dwhite-300 hover:shadow-tertiary before:(bg-gradient-to-r from-tertiary-500 via-tertiary-400 to-tertiary-600)"],
-  [ButtonPalette.white,           btnSolidClasses   + " text-deepBlack-900 hover:shadow-deep-black-800 before:(bg-dwhite-300)"],
-  [ButtonPalette["primary-o"],    btnOutlineClasses + " ring-primary-500 text-dwhite-300 hover:(shadow-primary ring-primary-500)"],
-  [ButtonPalette["secondary-o"],  btnOutlineClasses + " ring-secondary-500 text-dwhite-300 hover:(shadow-secondary from-secondary-400 to-secondary-500 ring-secondary-500)"],
-  [ButtonPalette["accent-o"],     btnOutlineClasses + " ring-accent-500 text-dwhite-300 hover:(shadow-accent from-accent-400 to-accent-500 ring-accent-500)"],
-  [ButtonPalette["white-o"],      btnOutlineClasses + " ring-dwhite-300 text-dwhite-300 hover:(shadow-primary ring-dwhite-300)"],
+  [ButtonPalette.primary,         btnSolidClasses   + " uppercase text-dwhite-300 hover:shadow-primary before:(bg-gradient-to-r from-primary-500 via-primary-400 to-primary-600)"],
+  [ButtonPalette.secondary,       btnSolidClasses   + " uppercase text-dwhite-300 hover:shadow-secondary before:(bg-gradient-to-r from-secondary-500 via-secondary-400 to-secondary-600)"],
+  [ButtonPalette.accent,          btnSolidClasses   + " uppercase text-dwhite-300 hover:shadow-accent before:(bg-gradient-to-r from-accent-500 via-accent-400 to-accent-600)"],
+  [ButtonPalette.tertiary,        btnSolidClasses   + " uppercase text-dwhite-300 hover:shadow-tertiary before:(bg-gradient-to-r from-tertiary-500 via-tertiary-400 to-tertiary-600)"],
+  [ButtonPalette.white,           btnSolidClasses   + " uppercase text-deepBlack-900 hover:shadow-deep-black-800 before:(bg-dwhite-300)"],
+  [ButtonPalette["primary-o"],    btnOutlineClasses + " uppercase ring-primary-500 text-dwhite-300 hover:(shadow-primary ring-primary-500)"],
+  [ButtonPalette["secondary-o"],  btnOutlineClasses + " uppercase ring-secondary-500 text-dwhite-300 hover:(shadow-secondary from-secondary-400 to-secondary-500 ring-secondary-500)"],
+  [ButtonPalette["accent-o"],     btnOutlineClasses + " uppercase ring-accent-500 text-dwhite-300 hover:(shadow-accent from-accent-400 to-accent-500 ring-accent-500)"],
+  [ButtonPalette["white-o"],      btnOutlineClasses + " uppercase ring-dwhite-300 text-dwhite-300 hover:(shadow-primary ring-dwhite-300)"],
   [ButtonPalette["filter"],       "bg-transparent ring-1 ring-white ring-opacity-10 transition hover:(bg-white bg-opacity-10)"],
   [ButtonPalette["warning"],      "btn-warning"],
   [ButtonPalette["error"],        "btn-error"],
-  [ButtonPalette.transparent,     "transition-all text-dwhite-300 hover:(shadow-sm bg-dwhite-300 bg-opacity-10)"],
-  [ButtonPalette.flat,            ""]
+  [ButtonPalette.transparent,     "uppercase transition-all text-dwhite-300 hover:(shadow-sm bg-dwhite-300 bg-opacity-10)"],
+  [ButtonPalette.flat,            "ring-0 ring-transparent text-center"]
 ]);
 
 // prettier-ignore
@@ -94,7 +94,7 @@ const weightClass = computed(() =>
     @click="emit('click')"
   >
     <slot name="pre-icon"></slot>
-    <p class="leading-none mt-0.5">
+    <p class="leading-none">
       {{ label }}
     </p>
     <slot name="post-icon"></slot>

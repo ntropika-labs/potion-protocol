@@ -17,7 +17,7 @@
         />
       </div>
       <CardFooter class="flex justify-center">
-        <slot />
+        <slot name="card-footer"></slot>
       </CardFooter>
     </BaseCard>
   </div>

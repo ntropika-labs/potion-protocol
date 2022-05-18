@@ -65,7 +65,7 @@ const PotionTemplate: Story = (args: Args) => ({
 />
 </a></template>
   <template #routes>
-      <div class="flex space-x-6">
+      <div class="flex flex-col lg:flex-row gap-6">
         <a
           href=""
           class="text-dwhite-300 p-2 transition uppercase text-sm"
