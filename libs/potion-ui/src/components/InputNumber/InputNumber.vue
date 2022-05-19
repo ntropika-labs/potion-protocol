@@ -90,7 +90,7 @@ const footerText = computed(() => {
   if (inputIsValid.value) {
     return `${props.footerDescription} ${props.max} ${props.unit}`;
   } else {
-    return `Please, enter a valid value - Your balance is ${props.max} ${props.unit} - Minimum is ${props.min} ${props.unit}.`;
+    return `Please, enter a valid value - Your ${props.footerDescription} is ${props.max} ${props.unit} - Minimum is ${props.min} ${props.unit}.`;
   }
 });
 

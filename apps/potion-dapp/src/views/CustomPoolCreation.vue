@@ -50,11 +50,11 @@
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
-import { onMounted, ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
+import { onMounted, ref, computed, watch } from "vue";
 
 import { TabNavigationComponent, TabComponent, BaseButton } from "potion-ui";
 
@@ -109,10 +109,20 @@ console.log(
   amountNeededToApprove,
   readyToDeploy
 );
+
 onMounted(async () => {
   if (connectedWallet.value) {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
+  }
+});
+watch(connectedWallet, async (newAWallet) => {
+  if (newAWallet) {
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  } else {
+    userCollateralBalance.value = 0;
+    userAllowance.value = 0;
   }
 });
 </script>

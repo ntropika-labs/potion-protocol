@@ -58,7 +58,9 @@ watch(
 <template>
   <!-- Start tab navigation -->
   <BaseCard>
-    <ul class="inline-flex items-center justify-evenly gap-4 mx-auto pt-2 pb-6">
+    <ul
+      class="flex flex-wrap items-center justify-center lg:justify-evenly gap-4 mx-auto pt-2 pb-6"
+    >
       <li
         v-for="(step, index) in tabs"
         :key="index"
@@ -85,11 +87,13 @@ watch(
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->
-  <div v-if="$slots.default" class="overflow-hidden mt-6">
-    <template v-for="(step, index) in $slots.default()" :key="index">
-      <KeepAlive>
-        <component :is="step" v-if="index === currentIndex"></component>
-      </KeepAlive>
+  <div class="mt-6">
+    <template v-for="(step, index) in tabItems">
+      <component
+        :is="step.component"
+        v-if="index === currentIndex"
+        :key="index"
+      ></component>
     </template>
   </div>
   <!-- End tabs content -->
