@@ -8,6 +8,7 @@ export default defineComponent({
 
 <script lang="ts" setup>
 import { computed } from "vue";
+import BaseInput from "../BaseInput/BaseInput.vue";
 import MinusPlusButton from "../MinusPlusButton/MinusPlusButton.vue";
 
 export interface Props {
@@ -26,7 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
-  (e: "update:isValid"): void;
+  (e: "update:isValid", value: boolean): void;
 }>();
 
 const isValid = (value: number) => value >= props.min && value <= props.max;
@@ -40,12 +41,11 @@ const toPrecision = (value: number) =>
 const canDecrease = computed(() => isValid(props.modelValue - props.step));
 const canIncrease = computed(() => isValid(props.modelValue + props.step));
 
-const handleInput = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  const value = parseFloat(target.value);
+const handleInput = (value: number) => {
   emit("update:modelValue", value);
   emit("update:isValid", isValid(value));
 };
+
 const decrease = () => {
   if (canDecrease.value) {
     emit("update:modelValue", toPrecision(props.modelValue - props.step));
@@ -64,15 +64,14 @@ const increase = () => {
     <div class="flex items-center px-2 py-1 rounded-md bg-white bg-opacity-10">
       <label class="text-xs text-white leading-none">{{ props.label }}</label>
     </div>
-    <input
-      type="number"
+    <BaseInput
       :min="props.min"
       :max="props.max"
       :step="props.step"
       :value="props.modelValue"
       class="w-full leading-none bg-transparent text-lg font-semibold block border-none text-right p-0 outline-none focus:(outline-none border-none ring-0)"
-      @input="handleInput"
-    />
+      @update:model-value="handleInput"
+    ></BaseInput>
     <MinusPlusButton
       direction="decrease"
       :enabled="canDecrease"

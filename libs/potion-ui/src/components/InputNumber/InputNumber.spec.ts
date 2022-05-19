@@ -85,9 +85,6 @@ describe("InputNumber", () => {
     const button = await wrapper.find("button");
     button.trigger("click");
     expect(wrapper.emitted()).toHaveProperty("update:modelValue");
-    expect(wrapper.emitted()).toHaveProperty("update:modelValue", [
-      ["0"],
-      [100],
-    ]);
+    expect(wrapper.emitted()).toHaveProperty("update:modelValue", [[0], [100]]);
   });
 });
