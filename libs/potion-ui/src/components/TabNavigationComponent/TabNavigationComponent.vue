@@ -88,7 +88,7 @@ watch(
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->
-  <div v-if="$slots.default" class="overflow-hidden mt-6">
+  <div v-if="$slots.default" class="mt-6">
     <template v-for="(step, index) in $slots.default()" :key="index">
       <KeepAlive>
         <component :is="step" v-if="index === currentIndex"></component>
