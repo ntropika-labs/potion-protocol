@@ -6,7 +6,6 @@ import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletB
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
-import TabComponent from "./components/TabComponent/TabComponent.vue";
 
 export type {
   IconStrokeWeight,
@@ -30,5 +29,4 @@ export {
   CardFooter,
   InputNumber,
   TabNavigationComponent,
-  TabComponent,
 };
