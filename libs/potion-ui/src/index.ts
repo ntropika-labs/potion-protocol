@@ -1,9 +1,11 @@
 import BaseButton from "./components/BaseButton/BaseButton.vue";
-import BaseCheckbox from "./components/Checkbox/BaseCheckbox.vue";
+import BaseCard from "./components/BaseCard/BaseCard.vue";
+import BaseTag from "./components/BaseTag/BaseTag.vue";
+import CardFooter from "./components/CardFooter/CardFooter.vue";
 import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletButton.vue";
-import BaseInput from "./components/Input/BaseInput.vue";
+import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
-import ListComponent from "./components/List/ListComponent.vue";
+import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
 
 export type {
   IconStrokeWeight,
@@ -20,9 +22,11 @@ export type {
  */
 export {
   BaseButton,
-  BaseCheckbox,
-  BaseInput,
-  ListComponent,
   HeaderComponent,
   ConnectWalletButton,
+  BaseCard,
+  BaseTag,
+  CardFooter,
+  InputNumber,
+  TabNavigationComponent,
 };

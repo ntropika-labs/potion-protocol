@@ -18,6 +18,7 @@
     "potion-contracts": "*",
     "potion-tokenlist": "*",
     "potion-ui": "*",
+    "potion-unocss": "*",
     "subgraph-queries": "*"
   }
 }

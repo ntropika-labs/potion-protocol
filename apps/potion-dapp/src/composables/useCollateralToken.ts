@@ -3,7 +3,8 @@ import { PotionTestUSD__factory } from "potion-contracts/typechain";
 import { computed, ref, watch } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { MaxUint256 } from "@ethersproject/constants";
+import { formatUnits } from "@ethersproject/units";
 
 import { useEthersContract } from "./useEthersContract";
 import { useOnboard } from "./useOnboard";
@@ -15,7 +16,6 @@ export function useCollateralToken() {
   const walletConnected = computed(() => {
     return connectedWallet.value !== null;
   });
-  const loading = ref(false);
   let contractSigner: PotionTestUSD | null = null;
 
   watch(connectedWallet, (connectedWallet) => {
@@ -37,22 +37,23 @@ export function useCollateralToken() {
     PotionTestUSD.address.toLowerCase()
   ) as PotionTestUSD;
 
-  const userCollateralBalance = ref("");
+  const userCollateralBalance = ref(0);
+  const fetchUserCollateralBalanceLoading = ref(false);
   const fetchUserCollateralBalance = async () => {
     try {
-      loading.value = true;
+      fetchUserCollateralBalanceLoading.value = true;
       if (walletConnected.value) {
         const response = await contractProvider.balanceOf(
           //@ts-expect-error - we know that the wallet is connected by the computed
           connectedWallet.value.accounts[0].address
         );
-        userCollateralBalance.value = formatUnits(response, 6);
-        loading.value = false;
+        userCollateralBalance.value = parseFloat(formatUnits(response, 6));
+        fetchUserCollateralBalanceLoading.value = false;
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      loading.value = false;
+      fetchUserCollateralBalanceLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot retrieve the user balance: ${error.message}`);
       } else {
@@ -61,9 +62,10 @@ export function useCollateralToken() {
     }
   };
 
-  const userAllowance = ref("");
+  const userAllowance = ref(0);
+  const fetchUserAllowanceLoading = ref(false);
   const fetchUserCollateralAllowance = async () => {
-    loading.value = true;
+    fetchUserAllowanceLoading.value = true;
     try {
       if (walletConnected.value) {
         const response = await contractProvider.allowance(
@@ -71,13 +73,13 @@ export function useCollateralToken() {
           connectedWallet.value.accounts[0].address,
           PotionLiquidityPool.address
         );
-        userAllowance.value = formatUnits(response, 6);
-        loading.value = false;
+        userAllowance.value = parseFloat(formatUnits(response, 6));
+        fetchUserAllowanceLoading.value = false;
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      loading.value = false;
+      fetchUserAllowanceLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot retrieve the user allowance: ${error.message}`);
       } else {
@@ -86,23 +88,30 @@ export function useCollateralToken() {
     }
   };
 
+  const approveLoading = ref(false);
   const approveForPotionLiquidityPool = async (amount: number) => {
-    loading.value = true;
+    approveLoading.value = true;
     try {
       if (walletConnected.value) {
-        //@ts-expect-error - we know that the wallet is connected by the computed value
-        const tx = await contractSigner.approve(
-          PotionLiquidityPool.address,
-          parseUnits(amount.toString(), 6)
-        );
-        const receipt = await tx.wait();
-        console.log(receipt);
-        loading.value = false;
+        await fetchUserCollateralAllowance();
+        if (userAllowance.value < amount) {
+          //@ts-expect-error - we know that the wallet is connected by the computed value
+          const tx = await contractSigner.approve(
+            PotionLiquidityPool.address,
+            // parseUnits(amount.toString(), 6)
+            MaxUint256
+          );
+          const receipt = await tx.wait();
+          console.log(receipt);
+          approveLoading.value = false;
+        } else {
+          throw new Error(`User allowance is already ${amount}`);
+        }
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      loading.value = false;
+      approveLoading.value = false;
       if (error instanceof Error) {
         throw new Error(
           `Cannot approve for the liquidity pool: ${error.message}`
@@ -114,11 +123,13 @@ export function useCollateralToken() {
   };
 
   return {
-    loading,
-    userCollateralBalance,
     fetchUserCollateralBalance,
-    userAllowance,
+    userCollateralBalance,
+    fetchUserCollateralBalanceLoading,
     fetchUserCollateralAllowance,
+    userAllowance,
+    fetchUserAllowanceLoading,
     approveForPotionLiquidityPool,
+    approveLoading,
   };
 }

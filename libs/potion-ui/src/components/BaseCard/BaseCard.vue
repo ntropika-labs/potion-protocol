@@ -4,8 +4,10 @@ export default defineComponent({
   name: "BaseCard",
 });
 </script>
+
 <script lang="ts" setup>
 import { computed } from "vue";
+
 export interface Props {
   direction?: "row" | "column";
   color?:
@@ -19,6 +21,7 @@ export interface Props {
   fullHeight?: boolean;
   roundSize?: "none" | "small" | "default";
 }
+
 const props = withDefaults(defineProps<Props>(), {
   direction: "column",
   color: "glass",
@@ -38,9 +41,9 @@ const roundedToClass = {
 };
 
 const colorToClass = {
-  glass: "bg-radial-glass blurred border-white border-opacity-10 border",
+  glass: "bg-radial-glass blurred ring-white/10 ring-1",
   neutral: "bg-radial-neutral",
-  "no-bg": "border-white border-opacity-10 border",
+  "no-bg": "ring-white/10 ring",
   "secondary-radial": "bg-radial-secondary",
   "primary-radial-inactive": "bg-radial-primary-inactive",
   "primary-radial": "bg-radial-primary",

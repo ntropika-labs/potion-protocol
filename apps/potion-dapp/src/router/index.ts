@@ -4,6 +4,8 @@ import { useOnboard } from "@/composables/useOnboard";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import AboutView from "@/views/AboutView.vue";
+import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
+import DiscoverPools from "@/views/DiscoverPools.vue";
 import HomeView from "@/views/HomeView.vue";
 
 const router = createRouter({
@@ -13,6 +15,18 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/pools",
+      name: "discover-pools",
+      component: DiscoverPools,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/custom-pool-creation",
+      name: "custom-pool-creation",
+      component: CustomPoolCreation,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
