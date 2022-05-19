@@ -12,12 +12,12 @@
     <template #routes>
       <div class="flex flex-col lg:flex-row gap-6">
         <router-link
-          v-for="route in routes"
-          :key="route.name"
+          v-for="r in routes"
+          :key="r.name"
           active-class="shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400"
-          :to="{ name: route.name }"
+          :to="{ name: r.name }"
           class="p-2 transition uppercase text-base font-serif"
-          >{{ route.label }}</router-link
+          >{{ r.label }}</router-link
         >
       </div>
       <div class="flex justify-center">
