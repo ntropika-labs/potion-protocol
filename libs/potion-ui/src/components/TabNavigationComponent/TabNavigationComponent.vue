@@ -3,9 +3,10 @@ import { defineComponent, ref, watch, type ComputedRef } from "vue";
 import { BaseButton } from "../../index";
 
 interface TabNavigationInfo {
-  label: string;
+  title: string;
+  subtitle: string;
   visited?: boolean;
-  isValid: ComputedRef<boolean>;
+  isValid: ComputedRef<boolean> | boolean;
 }
 
 export default defineComponent({
@@ -73,7 +74,7 @@ watch(
       >
         <!-- :disabled="currentIndex < index && !step.isValid" -->
         <BaseButton
-          :label="step.label"
+          :label="step.title"
           palette="flat"
           class="text-dwhite-300 rounded-none mx-auto !disabled:opacity-100 w-52"
           @click="navigateToTab(index)"
