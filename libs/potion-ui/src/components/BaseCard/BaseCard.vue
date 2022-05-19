@@ -4,8 +4,10 @@ export default defineComponent({
   name: "BaseCard",
 });
 </script>
+
 <script lang="ts" setup>
 import { computed } from "vue";
+
 export interface Props {
   direction?: "row" | "column";
   color?:
@@ -19,6 +21,7 @@ export interface Props {
   fullHeight?: boolean;
   roundSize?: "none" | "small" | "default";
 }
+
 const props = withDefaults(defineProps<Props>(), {
   direction: "column",
   color: "glass",

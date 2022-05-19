@@ -1,6 +1,22 @@
 import "@unocss/reset/tailwind.css";
 import "uno.css";
 
+import { app } from '@storybook/vue3';
+import { createI18n } from "vue-i18n";
+
+import messages from "../../locales/en.yaml";
+
+const i18n = createI18n({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: {
+    en: messages
+  },
+});
+
+app.use(i18n);
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {

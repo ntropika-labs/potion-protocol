@@ -1,5 +1,6 @@
 const { resolve } = require("path");
 const Unocss = require("unocss/vite").default;
+const yaml =  require("@rollup/plugin-yaml");
 
 module.exports = {
   stories: [
@@ -7,6 +8,7 @@ module.exports = {
     "../**/*.stories.@(js|jsx|ts|tsx)",
   ],
   addons: [
+    "storybook-dark-mode",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-a11y",
@@ -26,8 +28,9 @@ module.exports = {
       resolve(__dirname, "@", "../src"),
       "node_modules",
     ];
-    config.plugins = config.plugins ?? [];
+    config.plugins = config.plugins || [];
     config.plugins.push(Unocss());
+    config.plugins.push(yaml());
 
     return config;
   },
