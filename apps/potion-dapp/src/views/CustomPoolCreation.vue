@@ -1,14 +1,4 @@
 <template>
-  <div class="flex items-center gap-4 mb-5">
-    <h1 class="text-2xl font-semibold">Create Pool</h1>
-    <BaseButton
-      label="Cancel"
-      palette="flat"
-      size="md"
-      class="border border-dwhite-400 font-bold uppercase"
-      @click="$router.back()"
-    ></BaseButton>
-  </div>
   <TabNavigationComponent
     title="Create Pool"
     :tabs="tabs"
@@ -36,7 +26,7 @@ import { onMounted, ref, computed, watch } from "vue";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 // import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
-import { TabNavigationComponent, BaseButton } from "potion-ui";
+import { TabNavigationComponent } from "potion-ui";
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
