@@ -72,3 +72,10 @@ export interface Underlying {
   image: string;
   selected: boolean;
 }
+
+export type BondingCurve = number[];
+
+export interface EmergingCurve {
+  data: BondingCurve;
+  underlyingSymbol: string;
+}

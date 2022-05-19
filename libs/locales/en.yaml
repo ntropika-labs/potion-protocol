@@ -8,3 +8,10 @@ app:
 
 home:
   title: "Home page"
+
+bonding_curve:
+  title: "Premium Bonding Curve"
+  x_axis:
+    label: "Utilization"
+  y_axis:
+    label: "Premium"

@@ -17,7 +17,7 @@ export default defineConfig({
   plugins: [
     vue({ reactivityTransform: true }),
     vueI18n({
-      include: path.resolve(__dirname, "src/locales/**"),
+      include: path.resolve(__dirname, "../../libs/locales/**"),
     }),
     vueJsx(),
     Unocss(),
