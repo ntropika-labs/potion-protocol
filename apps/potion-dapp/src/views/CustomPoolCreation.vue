@@ -18,6 +18,7 @@
     ></BaseButton>
   </div>
   <TabNavigationComponent
+    title="Create Pool"
     :tabs="tabs"
     :default-index="currentFormStep"
     @navigate-tab="(index) => (currentFormStep = index)"
