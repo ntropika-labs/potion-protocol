@@ -2,7 +2,15 @@ import kovan from "./kovan.json";
 import ganache from "./ganache.json";
 import mainnet from "./mainnet.json";
 
-const getTokenList = (networkName: "ganache" | "kovan" | "mainnet") => {
+
+export interface Token {
+  name: string;
+  symbol: string;
+  address: string;
+  logoURI: string;
+}
+
+const getTokenList = (networkName: "ganache" | "kovan" | "mainnet"): Token[] => {
   switch (networkName) {
     case "ganache":
       return ganache.tokens;
