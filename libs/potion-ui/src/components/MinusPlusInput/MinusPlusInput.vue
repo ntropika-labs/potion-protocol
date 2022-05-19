@@ -70,7 +70,7 @@ const increase = () => {
       :max="props.max"
       :step="props.step"
       :value="props.modelValue"
-      class="w-full leading-none bg-transparent text-lg font-semibold block border-none arrowless text-right p-0 outline-none focus:(outline-none border-none ring-0)"
+      class="w-full leading-none bg-transparent text-lg font-semibold block border-none text-right p-0 outline-none focus:(outline-none border-none ring-0)"
       @input="handleInput"
     />
     <MinusPlusButton
@@ -85,21 +85,3 @@ const increase = () => {
     />
   </div>
 </template>
-
-<style scoped>
-.arrowless,
-.arrowless::-webkit-outer-spin-button,
-.arrowless::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-  -moz-appearance: textfield;
-}
-
-.bg-radial-glass {
-  background: radial-gradient(
-    77.23% 77.23% at 13.57% 18.81%,
-    rgba(67, 60, 104, 0.3) 0%,
-    rgba(67, 60, 104, 0.05) 100%
-  );
-}
-</style>
