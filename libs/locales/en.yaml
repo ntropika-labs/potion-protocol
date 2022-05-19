@@ -1,10 +1,14 @@
 app:
+  asset: "Asset"
   connect_wallet: "Connect Wallet"
-  user_balance: "User collateral balance"
-  user_allowance: "User allowance for Potion Liquidity Pool Contract"
-  connected_wallet: "Connected Wallet:"
   connected_chain: "Connected Chain"
+  connected_wallet: "Connected Wallet:"
   contracts_addresses: "Contracts Addresses"
+  empty: "Empty"
+  max_duration: "Max Duration"
+  max_strike: "Max Strike"
+  user_allowance: "User allowance for Potion Liquidity Pool Contract"
+  user_balance: "User collateral balance"
 
 home:
   title: "Home page"
