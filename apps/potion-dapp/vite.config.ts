@@ -7,7 +7,6 @@ import { defineConfig } from "vite";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
