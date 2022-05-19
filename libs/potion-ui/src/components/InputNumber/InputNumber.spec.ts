@@ -36,7 +36,11 @@ describe("InputNumber", () => {
   });
 
   it("renders the footer text properly", () => {
-    expect(wrapper.vm.footerText).toBe("Balance: 100 usdc");
+    expect(wrapper.vm.footerText).toBe(
+      `${wrapper.props().footerDescription} ${wrapper.props().max} ${
+        wrapper.props().unit
+      }`
+    );
   });
 
   it("renders an error if the value is not valid", async () => {
