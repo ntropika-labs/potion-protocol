@@ -57,6 +57,11 @@ const increase = () => {
     emit("update:modelValue", toPrecision(props.modelValue + props.step));
   }
 };
+
+defineExpose({
+  canDecrease,
+  canIncrease,
+});
 </script>
 
 <template>
@@ -65,6 +70,7 @@ const increase = () => {
       <label class="text-xs text-white leading-none">{{ props.label }}</label>
     </div>
     <BaseInput
+      test-unit="input"
       :min="props.min"
       :max="props.max"
       :step="props.step"
@@ -73,11 +79,13 @@ const increase = () => {
       @update:model-value="handleInput"
     ></BaseInput>
     <MinusPlusButton
+      test-unit="decrease-button"
       direction="decrease"
       :enabled="canDecrease"
       @click="decrease"
     />
     <MinusPlusButton
+      test-unit="increase-button"
       direction="increase"
       :enabled="canIncrease"
       @click="increase"
