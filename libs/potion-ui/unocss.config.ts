@@ -4,14 +4,20 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
+import presetIcons from "@unocss/preset-icons";
 
 const preset = presetUno();
 
 export default defineConfig({
   presets: [
     preset,
+    presetIcons({
+      collections: {
+        ph: import("@iconify-json/ph/icons.json").then((i) => i.default),
+      },
+    }),
     presetTypography(),
     presetWebFonts({
       provider: "google",
