@@ -39,7 +39,7 @@ switch (ethereumNetwork) {
 export const onboardOptions = {
   accountCenter: {
     desktop: {
-      enabled: true,
+      enabled: false,
     },
   },
   wallets: [walletConnect, injected],
