@@ -19,3 +19,10 @@ bonding_curve:
     label: "Utilization"
   y_axis:
     label: "Premium"
+
+curve_formula:
+  title: "Equation"
+  tooltip: "a = Scale
+    b = End Point
+    c = Convexity
+    d = Offset"
