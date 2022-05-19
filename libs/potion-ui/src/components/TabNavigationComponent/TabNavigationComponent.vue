@@ -16,6 +16,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import BaseCard from "../BaseCard/BaseCard.vue";
 export interface Props {
+  title: string;
   tabs: Array<TabNavigationInfo>;
   defaultIndex?: number;
   vertical?: boolean;
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: "navigateTab", index: number): void;
+  (e: "quitTabs"): void;
 }>();
 
 const currentIndex = ref<number>(props.defaultIndex);
@@ -59,6 +61,19 @@ watch(
 <template>
   <!-- Start tab navigation -->
   <BaseCard>
+    <div class="flex justify-between items-center pt-4 px-6 pb-2">
+      <h4 class="uppercase text-dwhite-400 text-lg">{{ props.title }}</h4>
+      <BaseButton
+        palette="flat"
+        size="icon"
+        label=""
+        @click="() => emit('quitTabs')"
+      >
+        <template #post-icon>
+          <i class="i-ph-x"></i>
+        </template>
+      </BaseButton>
+    </div>
     <ul
       class="flex flex-wrap items-center justify-center lg:justify-evenly gap-4 mx-auto pt-2 pb-6"
     >
@@ -76,7 +91,7 @@ watch(
         <BaseButton
           :label="step.title"
           palette="flat"
-          class="text-dwhite-300 rounded-none mx-auto !disabled:opacity-100 w-52"
+          class="text-dwhite-300 uppercase rounded-none mx-auto !disabled:opacity-100 w-52"
           @click="navigateToTab(index)"
         >
           <template v-if="step.isValid" #post-icon>
@@ -85,6 +100,7 @@ watch(
         </BaseButton>
       </li>
     </ul>
+    <p class="text-center text-lg mb-4">{{ tabs[currentIndex].subtitle }}</p>
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->
