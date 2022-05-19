@@ -1,7 +1,7 @@
 connect_wallet: Connect Wallet
 user_balance: User collateral balance
 user_allowance: User allowance for Potion Liquidity Pool Contract
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 connected_chain: Connected Chain
 contracts_addresses: Contracts Addresses
 my_pool: My Pool

@@ -5,7 +5,7 @@ import {
   calculateDepthMarginalCost,
   calculateMarginalCostForDeltaX,
   checkTotalUnlockedCollateral,
-  poolUntypedToTyped,
+  poolUntypedToTyped
 } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";
 
