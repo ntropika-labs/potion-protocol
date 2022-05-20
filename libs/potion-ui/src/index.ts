@@ -6,6 +6,10 @@ import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletB
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
+import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSelection.vue";
+import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
+import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
+import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
 
 export type {
   IconStrokeWeight,
@@ -29,4 +33,8 @@ export {
   CardFooter,
   InputNumber,
   TabNavigationComponent,
+  UnderlyingSelection,
+  CustomCurveParams,
+  CurveFormula,
+  BondingCurve,
 };
