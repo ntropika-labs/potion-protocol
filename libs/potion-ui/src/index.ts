@@ -11,6 +11,8 @@ import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSele
 import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
 import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
+import InputSlider from "./components/InputSlider/InputSlider.vue";
+import Tooltip from "./components/Tooltip/Tooltip.vue";
 
 export type {
   IconStrokeWeight,
@@ -39,4 +41,6 @@ export {
   CustomCurveParams,
   CurveFormula,
   BondingCurve,
+  InputSlider,
+  Tooltip,
 };
