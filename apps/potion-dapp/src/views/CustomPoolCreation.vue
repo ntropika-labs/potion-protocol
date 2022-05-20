@@ -9,9 +9,9 @@
       v-model:liquidity.number="liquidity"
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
-      :available-underlyings="availableUnderlyings"
-      :underlying-prices="underlyingPricesMap"
-      @underlying-selected="toggleUnderlyingSelection"
+      :available-tokens="availableTokens"
+      :token-prices="tokenPricesMap"
+      @token-selected="toggleTokenSelection"
       @update:criteria="updateCriteria"
     />
     <div></div>
@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, SelectableToken, Token } from "@/types";
+import type { Criteria, SelectableToken, Token } from "dapp-types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import {
@@ -45,9 +45,9 @@ const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
-const availableUnderlyings = ref<SelectableToken[]>([]);
+const availableTokens = ref<SelectableToken[]>([]);
 const criteriaMap = new Map<string, Criteria>();
-const underlyingPricesMap = new Map<
+const tokenPricesMap = new Map<
   string,
   {
     loading: Ref<boolean>;
@@ -57,11 +57,11 @@ const underlyingPricesMap = new Map<
   }
 >();
 
-const tokenToUnderlying = (
+const tokenToSelectableToken = (
   address: string,
   decimals = 18,
   selected = false
-) => {
+): SelectableToken => {
   const { name, symbol, image } = useTokenList(address);
   return {
     address,
@@ -74,39 +74,37 @@ const tokenToUnderlying = (
 };
 
 watch(data, () => {
-  availableUnderlyings.value =
+  availableTokens.value =
     data?.value?.products?.map((product) =>
-      tokenToUnderlying(
+      tokenToSelectableToken(
         product.underlying.address,
         parseInt(product.underlying.decimals)
       )
     ) ?? [];
 });
 
-const toggleUnderlyingSelection = async (address: string) => {
-  const underlying = availableUnderlyings.value.find(
-    (u) => u.address === address
-  );
-  if (underlying) {
-    underlying.selected = !underlying.selected;
+const toggleTokenSelection = async (address: string) => {
+  const token = availableTokens.value.find((u) => u.address === address);
+  if (token) {
+    token.selected = !token.selected;
 
-    if (underlying.selected && !underlyingPricesMap.has(underlying.address)) {
-      await updateUnderlyingPrice(underlying);
+    if (token.selected && !tokenPricesMap.has(token.address)) {
+      await updateTokenPrice(token);
     }
   }
 };
 
 const updateCriteria = (criteria: Criteria) =>
-  criteriaMap.set(criteria.tokenAddress, criteria);
+  criteriaMap.set(criteria.token.address, criteria);
 
-const updateUnderlyingPrice = async (underlying: Token) => {
-  console.log("[updateUnderlyingPrice] for: ", underlying.name);
+const updateTokenPrice = async (token: Token) => {
+  console.log("[updateTokenPrice] for: ", token.name);
   const { loading, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
-    underlying.address
+    token.address
   );
 
   let succeded = ref(false);
-  underlyingPricesMap.set(underlying.address, {
+  tokenPricesMap.set(token.address, {
     loading,
     price,
     formattedPrice,
@@ -116,14 +114,13 @@ const updateUnderlyingPrice = async (underlying: Token) => {
   try {
     succeded.value = await fetchPrice();
     console.log(
-      "[updateUnderlyingPrice] completed for: ",
-      underlying.name,
+      "[updateTokenPrice] completed for: ",
+      token.name,
       succeded.value
     );
   } catch (error) {
     console.error(
-      "Error while fetching underlying price. Affected underlying: " +
-        underlying.name
+      "Error while fetching token price. Affected token: " + token.name
     );
   }
 };

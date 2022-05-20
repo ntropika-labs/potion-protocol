@@ -22,19 +22,16 @@
       </template>
     </AddLiquidityCard>
     <BaseCard class="col-span-12 md:col-span-8 xl:col-span-9 p-6">
-      <UnderlyingSelection
-        :underlyings="props.availableUnderlyings"
-        @underlying-selected="handleUnderlyingSelected"
+      <TokenSelection
+        :tokens="props.availableTokens"
+        @token-selected="handleTokenSelected"
       />
       <hr class="my-6 opacity-10" />
       <div class="flex flex-col gap-6">
-        <template
-          v-for="underlying of selectedUnderlyings"
-          :key="underlying.address"
-        >
+        <template v-for="token of selectedTokens" :key="token.address">
           <SelectedUnderlyingWrapper
-            :underlying="underlying"
-            :price-info="props.underlyingPrices.get(underlying.address)"
+            :underlying="token"
+            :price-info="props.tokenPrices.get(token.address)"
           ></SelectedUnderlyingWrapper>
         </template>
       </div>
@@ -43,8 +40,8 @@
 </template>
 <script lang="ts" setup>
 import { computed, type ComputedRef, type Ref } from "vue";
-import type { SelectableToken, Criteria } from "@/types";
-import { BaseCard, BaseButton, UnderlyingSelection } from "potion-ui";
+import type { SelectableToken, Criteria } from "dapp-types";
+import { BaseCard, BaseButton, TokenSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import SelectedUnderlyingWrapper from "@/components/SelectedUnderlyingWrapper/SelectedUnderlyingWrapper.vue";
 import { useI18n } from "vue-i18n";
@@ -55,8 +52,8 @@ interface Props {
   liquidity: number;
   userCollateralBalance: number;
   liquidityCheck: boolean;
-  availableUnderlyings: SelectableToken[];
-  underlyingPrices: Map<
+  availableTokens: SelectableToken[];
+  tokenPrices: Map<
     string,
     {
       loading: Ref<boolean>;
@@ -71,13 +68,13 @@ const emits = defineEmits<{
   (e: "update:liquidity", value: number): void;
   (e: "update:criteria", criteria: Criteria): void;
   (e: "navigate:next"): void;
-  (e: "underlying-selected", address: string): void;
+  (e: "token-selected", address: string): void;
 }>();
 
-const handleUnderlyingSelected = (address: string) =>
-  emits("underlying-selected", address);
+const handleTokenSelected = (address: string) =>
+  emits("token-selected", address);
 
-const selectedUnderlyings = computed(() => {
-  return props.availableUnderlyings.filter((u) => u.selected);
+const selectedTokens = computed(() => {
+  return props.availableTokens.filter((u) => u.selected);
 });
 </script>

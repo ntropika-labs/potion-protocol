@@ -13038,6 +13038,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dapp-types@*, dapp-types@workspace:libs/dapp-types":
+  version: 0.0.0-use.local
+  resolution: "dapp-types@workspace:libs/dapp-types"
+  languageName: unknown
+  linkType: soft
+
 "dashdash@npm:^1.12.0":
   version: 1.14.1
   resolution: "dashdash@npm:1.14.1"
@@ -25210,6 +25216,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "potion-dapp@workspace:apps/potion-dapp"
   dependencies:
+    dapp-types: "*"
     potion-contracts: "*"
     potion-tokenlist: "*"
     potion-ui: "*"
@@ -25380,6 +25387,7 @@ __metadata:
   resolution: "potion-ui@workspace:libs/potion-ui"
   dependencies:
     contracts-math: "*"
+    dapp-types: "*"
     potion-tokenlist: "*"
     potion-unocss: "*"
   languageName: unknown
