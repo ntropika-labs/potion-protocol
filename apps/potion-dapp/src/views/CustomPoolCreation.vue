@@ -13,24 +13,32 @@
       @underlying-selected="toggleUnderlyingSelection"
       @update:criteria="updateCriteria"
     />
-    <div></div>
+    <CurveSetup v-model="bondingCurve"></CurveSetup>
     <div></div>
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, Underlying } from "@/types";
+import type { Criteria, Underlying, BondingCurve } from "@/types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
-// import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
+import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+
+const bondingCurve = ref<BondingCurve>({
+  a: 2.5,
+  b: 2.5,
+  c: 2.5,
+  d: 2.5,
+  maxUtil: 1,
+});
 
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({

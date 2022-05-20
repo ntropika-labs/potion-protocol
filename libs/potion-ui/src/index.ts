@@ -10,6 +10,7 @@ import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSele
 import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
 import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
+import UnderlyingRecap from "./components/UnderlyingRecap/UnderlyingRecap.vue";
 
 export type {
   IconStrokeWeight,
@@ -37,4 +38,5 @@ export {
   CustomCurveParams,
   CurveFormula,
   BondingCurve,
+  UnderlyingRecap,
 };

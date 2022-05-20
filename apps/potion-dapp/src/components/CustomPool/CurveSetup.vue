@@ -1,50 +1,85 @@
-<template>
-  <div>
-    <div>CurveSetup</div>
-    <input
-      type="number"
-      :value="props.modelValue.a"
-      @input="handleUpdate('a', ($event.target as HTMLInputElement).value)"
-    />
-    <input
-      type="number"
-      :value="props.modelValue.b"
-      @input="handleUpdate('b', ($event.target as HTMLInputElement).value)"
-    />
-    <input
-      type="number"
-      :value="props.modelValue.c"
-      @input="handleUpdate('c', ($event.target as HTMLInputElement).value)"
-    />
-    <input
-      type="number"
-      :value="props.modelValue.d"
-      @input="handleUpdate('d', ($event.target as HTMLInputElement).value)"
-    />
-    <input
-      type="number"
-      :value="props.modelValue.maxUtil"
-      @input="handleUpdate('maxUtil', ($event.target as HTMLInputElement).value)"
-    />
-  </div>
-</template>
 <script lang="ts" setup>
+import type { BondingCurve } from "@/types";
+import {
+  BaseCard,
+  CurveFormula,
+  CustomCurveParams,
+  BondingCurve as Chart,
+  UnderlyingRecap,
+} from "potion-ui";
+import { times as _times } from "lodash-es";
+import { HyperbolicCurve } from "contracts-math";
+import { computed } from "vue";
+
 interface Props {
-  modelValue: {
-    a: number;
-    b: number;
-    c: number;
-    d: number;
-    maxUtil: number;
-  };
+  modelValue: BondingCurve;
 }
+
 const props = defineProps<Props>();
 const emits = defineEmits(["update:modelValue"]);
-const handleUpdate = (param: string, value: string) => {
+
+const handleUpdate = (param: string, value: number) => {
   const newValue = {
     ...props.modelValue,
-    [param]: parseFloat(value),
+    [param]: value,
   };
   emits("update:modelValue", newValue);
 };
+
+const curvePoints = 100;
+const getCurvePoints = (curve: HyperbolicCurve) =>
+  _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
+
+const bondingCurve = computed(
+  () =>
+    new HyperbolicCurve(
+      props.modelValue.a,
+      props.modelValue.b,
+      props.modelValue.c,
+      props.modelValue.d,
+      props.modelValue.maxUtil
+    )
+);
 </script>
+
+<template>
+  <div class="grid external-grid gap-6">
+    <BaseCard class="p-6">
+      <UnderlyingRecap></UnderlyingRecap>
+    </BaseCard>
+    <BaseCard>
+      <div class="grid internal-grid gap-6">
+        <Chart
+          class="m-6"
+          :bonding-curve="getCurvePoints(bondingCurve)"
+        ></Chart>
+        <BaseCard color="neutral" class="p-6 gap-6 rounded-l-none">
+          <CurveFormula></CurveFormula>
+          <CustomCurveParams
+            :a="props.modelValue.a"
+            :b="props.modelValue.b"
+            :c="props.modelValue.c"
+            :d="props.modelValue.d"
+            :max-util="props.modelValue.maxUtil"
+            @update:a="(value) => handleUpdate('a', value)"
+            @update:b="(value) => handleUpdate('b', value)"
+            @update:c="(value) => handleUpdate('c', value)"
+            @update:d="(value) => handleUpdate('d', value)"
+            @update:max-util="(value) => handleUpdate('maxUtil', value)"
+          >
+          </CustomCurveParams>
+        </BaseCard>
+      </div>
+    </BaseCard>
+  </div>
+</template>
+
+<style scoped>
+.external-grid {
+  grid-template-columns: 1fr 4fr;
+}
+
+.internal-grid {
+  grid-template-columns: 3fr 1fr;
+}
+</style>
