@@ -7,10 +7,11 @@
   >
     <PoolSetup
       v-model:liquidity.number="liquidity"
-      v-model:selected-underlyings="selectedUnderlyings"
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
       :available-underlyings="availableUnderlyings"
+      @underlying-selected="toggleUnderlyingSelection"
+      @update:criteria="updateCriteria"
     />
     <div></div>
     <div></div>
@@ -19,46 +20,74 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, Token } from "@/types";
+import type { Criteria, Underlying } from "@/types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
+import { contractsAddresses } from "@/helpers/contracts";
+import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 // import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
+import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+
+const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
+const { data } = useAllCollateralizedProductsUnderlyingQuery({
+  variables: { collateral },
+});
+const availableUnderlyings = ref<Underlying[]>([]);
+
+const tokenToUnderlying = (
+  address: string,
+  decimals = 18,
+  selected = false
+) => {
+  const { name, symbol, image } = useTokenList(address);
+  return {
+    address,
+    decimals,
+    name,
+    symbol,
+    image,
+    selected,
+  };
+};
+
+watch(data, () => {
+  availableUnderlyings.value =
+    data?.value?.products?.map((product) =>
+      tokenToUnderlying(
+        product.underlying.address,
+        parseInt(product.underlying.decimals)
+      )
+    ) ?? [];
+});
+
+const toggleUnderlyingSelection = (address: string) => {
+  const underlying = availableUnderlyings.value.find(
+    (u) => u.address === address
+  );
+  if (underlying) {
+    underlying.selected = !underlying.selected;
+  }
+};
+
+const criteriaMap = new Map<string, Criteria>();
+
+const updateCriteria = (address: string, criteria: Criteria) =>
+  criteriaMap.set(address, criteria);
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
 
 /* Setup data validation */
 const liquidity = ref(100);
-const selectedUnderlyings = ref<Criteria[]>([
-  {
-    token: {
-      address: "0x0000000000000000000000000000000000000000",
-      symbol: "WETH",
-      decimals: 18,
-      name: "Wrapped Ether",
-    },
-    maxStrike: 100,
-    maxDuration: 1,
-  },
-]);
-const availableUnderlyings = ref<Token[]>([
-  {
-    address: "0x0000000000000000000000000000000000000000",
-    symbol: "WETH",
-    decimals: 18,
-    name: "Wrapped Ether",
-  },
-]);
 //const curve = ref({ a: 0, b: 0, c: 0, maxUtil: 0 });
 
 const {
   fetchUserCollateralBalance,
   userCollateralBalance,
-  // fetchUserCollateralBalanceLoading,
   fetchUserCollateralAllowance,
   userAllowance,
   // fetchUserAllowanceLoading,
@@ -66,13 +95,9 @@ const {
   // approveLoading,
 } = useCollateralToken();
 
-const liquidityCheck = computed(() => {
-  if (userCollateralBalance.value >= liquidity.value && liquidity.value > 0) {
-    return true;
-  } else {
-    return false;
-  }
-});
+const liquidityCheck = computed(
+  () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
+);
 
 /* This will be needed for the last step*/
 

@@ -6,8 +6,17 @@ export interface Token {
   address: string;
   decimals: number;
 }
+
+export interface Underlying {
+  address: string;
+  symbol: string;
+  decimals: number;
+  image: string;
+  name: string;
+  selected: boolean;
+}
+
 export interface Criteria {
-  token: Token;
   maxStrike: number;
   maxDuration: number;
 }
