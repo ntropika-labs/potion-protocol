@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { mount } from "@vue/test-utils";
 
+import { currencyFormatter } from "../../helpers";
 import InputNumber from "./InputNumber.vue";
 
 describe("InputNumber", () => {
@@ -37,9 +38,10 @@ describe("InputNumber", () => {
 
   it("renders the footer text properly", () => {
     expect(wrapper.vm.footerText).toBe(
-      `${wrapper.props().footerDescription} ${wrapper.props().max} ${
+      `${wrapper.props().footerDescription} ${currencyFormatter(
+        wrapper.props().max,
         wrapper.props().unit
-      }`
+      )}`
     );
   });
 
@@ -48,9 +50,13 @@ describe("InputNumber", () => {
     expect(wrapper.vm.footerText).toBe(
       `Please, enter a valid value - Your ${
         wrapper.props().footerDescription
-      } is ${wrapper.props().max} ${wrapper.props().unit} - Minimum is ${
-        wrapper.props().min
-      } ${wrapper.props().unit}.`
+      } is ${currencyFormatter(
+        wrapper.props().max,
+        wrapper.props().unit
+      )} - Minimum is ${currencyFormatter(
+        wrapper.props().min,
+        wrapper.props().unit
+      )}.`
     );
   });
 

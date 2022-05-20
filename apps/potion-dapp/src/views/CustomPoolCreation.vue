@@ -98,68 +98,22 @@ const liquidityCheck = computed(() => {
 
 /* Setup navigation logic */
 
-// const currentSelectedTab = ref<"PoolSetup" | "CurveSetup" | "CreatePool">(
-//   "PoolSetup"
-// );
-// const selectedComponent = computed(() => {
-//   if (currentSelectedTab.value === "PoolSetup") {
-//     return {
-//       component: PoolSetup,
-//       props: {
-//         // liquidity: liquidity.value,
-//         liquidityCheck: liquidityCheck.value,
-//         userCollateralBalance: userCollateralBalance.value,
-//       },
-//     };
-//   }
-//   if (currentSelectedTab.value === "CurveSetup") {
-//     return { component: CurveSetup };
-//   }
-//   if (currentSelectedTab.value === "CreatePool") {
-//     return { component: CreatePool };
-//   }
-//   return { component: PoolSetup };
-// });
-
-// const computedModel = computed({
-//   get() {
-//     if (currentSelectedTab.value === "PoolSetup") {
-//       return liquidity.value;
-//     }
-//     if (currentSelectedTab.value === "CurveSetup") {
-//       return curve.value;
-//     }
-//     return liquidity.value;
-//   },
-//   set(newValue: any) {
-//     if (currentSelectedTab.value === "PoolSetup") {
-//       liquidity.value = newValue;
-//     }
-//     if (currentSelectedTab.value === "CurveSetup") {
-//       curve.value = newValue;
-//     }
-//   },
-// });
-
 const currentFormStep = ref(0);
 const tabs = ref([
   {
     title: "Pool Setup",
     subtitle: "Choose one or more assets this pool will insure",
-    //componentName: "PoolSetup",
     isValid: liquidityCheck,
   },
   {
     title: "Curve Setup",
     subtitle:
       "Curve the pool will use to determine sell prices, as a function of your pool utilization.",
-    //componentName: "CurveSetup",
     isValid: false,
   },
   {
     title: "Review and Create",
     subtitle: "Review your choices before creating the pool on chain.",
-    //componentName: "CreatePool",
     isValid: false,
   },
 ]);
