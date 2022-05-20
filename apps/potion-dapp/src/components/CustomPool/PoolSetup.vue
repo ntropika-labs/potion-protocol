@@ -30,7 +30,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { Underlying, Criteria } from "@/types";
+import type { SelectableToken, Criteria } from "@/types";
 import { BaseButton, UnderlyingSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import { useI18n } from "vue-i18n";
@@ -40,12 +40,12 @@ interface Props {
   liquidity: number;
   userCollateralBalance: number;
   liquidityCheck: boolean;
-  availableUnderlyings: Underlying[];
+  availableUnderlyings: SelectableToken[];
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: "update:liquidity", value: number): void;
-  (e: "update:criteria", address: string, criteria: Criteria): void;
+  (e: "update:criteria", criteria: Criteria): void;
   (e: "navigate:next"): void;
   (e: "underlying-selected", address: string): void;
 }>();

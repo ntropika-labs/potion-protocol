@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, Underlying } from "@/types";
+import type { Criteria, SelectableToken } from "@/types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
@@ -36,7 +36,7 @@ const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
-const availableUnderlyings = ref<Underlying[]>([]);
+const availableUnderlyings = ref<SelectableToken[]>([]);
 
 const tokenToUnderlying = (
   address: string,
@@ -75,8 +75,8 @@ const toggleUnderlyingSelection = (address: string) => {
 
 const criteriaMap = new Map<string, Criteria>();
 
-const updateCriteria = (address: string, criteria: Criteria) =>
-  criteriaMap.set(address, criteria);
+const updateCriteria = (criteria: Criteria) =>
+  criteriaMap.set(criteria.tokenAddress, criteria);
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
