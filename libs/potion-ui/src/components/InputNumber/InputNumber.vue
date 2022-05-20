@@ -37,6 +37,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
+import { currencyFormatter } from "../../helpers";
 import { computed } from "vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
@@ -83,9 +84,17 @@ const inputIsValid = computed(() => {
 
 const footerText = computed(() => {
   if (inputIsValid.value) {
-    return `${props.footerDescription} ${props.max} ${props.unit}`;
+    return `${props.footerDescription} ${currencyFormatter(
+      props.max,
+      props.unit
+    )}`;
   } else {
-    return `Please, enter a valid value - Your ${props.footerDescription} is ${props.max} ${props.unit} - Minimum is ${props.min} ${props.unit}.`;
+    return `Please, enter a valid value - Your ${
+      props.footerDescription
+    } is ${currencyFormatter(
+      props.max,
+      props.unit
+    )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
   }
 });
 
