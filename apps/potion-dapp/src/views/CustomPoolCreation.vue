@@ -30,10 +30,12 @@ import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 // import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
-import { useAllTokensQuery } from "subgraph-queries/generated/urql";
+import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 
-const collateral = contractsAddresses.PotionTestUSD.address as string;
-const { data } = useAllTokensQuery({ variables: { collateral } });
+const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
+const { data } = useAllCollateralizedProductsUnderlyingQuery({
+  variables: { collateral },
+});
 const availableUnderlyings = ref<Underlying[]>([]);
 
 const tokenToUnderlying = (
@@ -54,7 +56,12 @@ const tokenToUnderlying = (
 
 watch(data, () => {
   availableUnderlyings.value =
-    data?.value?.tokens?.map((token) => tokenToUnderlying(token.id)) ?? [];
+    data?.value?.products?.map((product) =>
+      tokenToUnderlying(
+        product.underlying.address,
+        parseInt(product.underlying.decimals)
+      )
+    ) ?? [];
 });
 
 const toggleUnderlyingSelection = (address: string) => {
