@@ -7,6 +7,10 @@ import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
 import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
+import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSelection.vue";
+import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
+import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
+import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
 
 export type {
   IconStrokeWeight,
@@ -31,4 +35,8 @@ export {
   InputNumber,
   TabNavigationComponent,
   TokenIcon,
+  UnderlyingSelection,
+  CustomCurveParams,
+  CurveFormula,
+  BondingCurve,
 };

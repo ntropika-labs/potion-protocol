@@ -5,9 +5,15 @@ export interface Token {
   symbol: string;
   address: string;
   decimals: number;
+  image?: string;
 }
+
+export interface SelectableToken extends Token {
+  selected: boolean;
+}
+
 export interface Criteria {
-  token: Token;
+  tokenAddress: string;
   maxStrike: number;
   maxDuration: number;
 }

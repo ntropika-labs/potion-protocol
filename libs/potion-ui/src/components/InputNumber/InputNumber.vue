@@ -13,13 +13,12 @@
       </p>
       <div class="flex justify-between mt-4">
         <BaseTag>{{ props.unit }}</BaseTag>
-        <input
+        <BaseInput
           class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
           type="number"
-          :value="props.modelValue"
-          @input="emits('update:modelValue', ($event.target as HTMLInputElement).value)"
-          @keydown="handleKeydown($event)"
-        />
+          :model-value="props.modelValue"
+          @update:model-value="handleInput"
+        ></BaseInput>
         <button @click="emits('update:modelValue', handleSetMax())">
           <BaseTag :is-empty="true">MAX</BaseTag>
         </button>
@@ -38,9 +37,11 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
+import { currencyFormatter } from "../../helpers";
 import { computed } from "vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
+import BaseInput from "../BaseInput/BaseInput.vue";
 import CardFooter from "../CardFooter/CardFooter.vue";
 export interface Props {
   title?: string;
@@ -65,14 +66,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits(["update:modelValue"]);
 
-const handleSetMax = () => {
-  return props.max;
-};
-const handleKeydown = (event: KeyboardEvent) => {
-  if ([",", "-", "+", "e"].includes(event.key)) {
-    event.preventDefault();
-  }
-};
+const handleSetMax = () => props.max;
+
+const handleInput = (value: number) => emits("update:modelValue", value);
 
 const inputIsValid = computed(() => {
   if (
@@ -88,9 +84,17 @@ const inputIsValid = computed(() => {
 
 const footerText = computed(() => {
   if (inputIsValid.value) {
-    return `${props.footerDescription} ${props.max} ${props.unit}`;
+    return `${props.footerDescription} ${currencyFormatter(
+      props.max,
+      props.unit
+    )}`;
   } else {
-    return `Please, enter a valid value - Your ${props.footerDescription} is ${props.max} ${props.unit} - Minimum is ${props.min} ${props.unit}.`;
+    return `Please, enter a valid value - Your ${
+      props.footerDescription
+    } is ${currencyFormatter(
+      props.max,
+      props.unit
+    )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
   }
 });
 
@@ -99,13 +103,3 @@ defineExpose({
   footerText,
 });
 </script>
-<style scoped>
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-</style>
