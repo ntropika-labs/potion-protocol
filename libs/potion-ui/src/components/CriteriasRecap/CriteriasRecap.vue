@@ -54,18 +54,18 @@ const props = withDefaults(defineProps<Props>(), {
       >
         <div
           v-for="criteria in props.criterias"
-          :key="criteria.address"
+          :key="criteria.token.address"
           test-criterias-recap-row
           class="grid grid-cols-3 gap-3"
         >
           <span class="flex items-center gap-2">
             <TokenIcon
-              :name="criteria.name"
-              :image="criteria.image"
-              :address="criteria.address"
+              :name="criteria.token.name"
+              :image="criteria.token.image"
+              :address="criteria.token.address"
               size="base"
             />
-            {{ criteria.symbol }}
+            {{ criteria.token.symbol }}
           </span>
           <span>{{ toPercentage(criteria.maxStrike) }}</span>
           <span>{{ toDuration(criteria.maxDuration) }}</span>

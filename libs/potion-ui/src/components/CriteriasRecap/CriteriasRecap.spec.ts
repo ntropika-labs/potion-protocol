@@ -24,11 +24,12 @@ describe("CriteriasRecap", () => {
     await wrapper.setProps({
       criterias: [
         {
-          name: "Hello Vitest",
-          address: "0xMOCKED",
-          symbol: "MOCKED",
-          image: "https://mocked.com/placeholder.png",
-          selected: false,
+          token: {
+            name: "Hello Vitest",
+            address: "0xMOCKED",
+            symbol: "MOCKED",
+            image: "https://mocked.com/placeholder.png",
+          },
           maxStrike: 100,
           maxDuration: 30,
         },
@@ -44,20 +45,22 @@ describe("CriteriasRecap", () => {
     await wrapper.setProps({
       criterias: [
         {
-          name: "Hello Vitest",
-          address: "0xMOCKED",
-          symbol: "MOCKED",
-          image: "https://mocked.com/placeholder.png",
-          selected: false,
+          token: {
+            name: "Hello Vitest",
+            address: "0xMOCKED",
+            symbol: "MOCKED",
+            image: "https://mocked.com/placeholder.png",
+          },
           maxStrike: 100,
           maxDuration: 30,
         },
         {
-          name: "Hello Vitest 2",
-          address: "0xMOCKED2",
-          symbol: "MOCKED2",
-          image: "https://mocked.com/placeholder.png",
-          selected: true,
+          token: {
+            name: "Hello Vitest 2",
+            address: "0xMOCKED2",
+            symbol: "MOCKED2",
+            image: "https://mocked.com/placeholder.png",
+          },
           maxStrike: 200,
           maxDuration: 30,
         },

@@ -74,7 +74,7 @@ const toggleTokenSelection = (address: string) => {
 const criteriaMap = new Map<string, Criteria>();
 
 const updateCriteria = (criteria: Criteria) =>
-  criteriaMap.set(criteria.address, criteria);
+  criteriaMap.set(criteria.token.address, criteria);
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();

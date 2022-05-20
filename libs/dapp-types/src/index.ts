@@ -9,7 +9,8 @@ export interface Token {
 export interface SelectableToken extends Token {
   selected: boolean;
 }
-export interface Criteria extends Token {
+export interface Criteria {
+  token: Token;
   maxStrike: number;
   maxDuration: number;
 }

@@ -14,11 +14,12 @@ const tokenToCriteria = (
   maxStrike: number,
   maxDuration: number
 ) => ({
-  address: token.address,
-  symbol: token.symbol,
-  image: token.logoURI,
-  name: token.name,
-  selected: false,
+  token: {
+    address: token.address,
+    symbol: token.symbol,
+    image: token.logoURI,
+    name: token.name,
+  },
   maxStrike,
   maxDuration,
 });
