@@ -3,15 +3,15 @@
 import type { Story } from "@storybook/vue3";
 import { getTokenList } from "potion-tokenlist";
 
-import UnderlyingCard from "./UnderlyingCard.vue";
+import TokenCard from "./TokenCard.vue";
 
 const tokenList = getTokenList("ganache");
 const defaultToken = tokenList[0];
 
 export default {
-  component: UnderlyingCard,
+  component: TokenCard,
   excludeStories: /.*Data$/,
-  title: "Potion UI/Underlying Card",
+  title: "Potion UI/Token Card",
   argTypes: {
     // Configurable options
     address: {
@@ -39,21 +39,21 @@ export default {
       control: "boolean",
     },
     onClick: {
-      action: "underlying-selected",
+      action: "token-selected",
     },
   },
 };
 
 const Template: Story = (args) => ({
-  components: { UnderlyingCard },
+  components: { TokenCard },
   setup() {
     return { args };
   },
-  template: '<UnderlyingCard v-bind="args" />',
+  template: '<TokenCard v-bind="args" />',
 });
 
 export const Overview = () => ({
-  components: { UnderlyingCard },
+  components: { TokenCard },
   setup() {
     return {
       tokenList: tokenList.map((t, i) => ({ ...t, active: i % 2 === 0 })),
@@ -61,7 +61,7 @@ export const Overview = () => ({
   },
   template: `
     <div class="flex gap-8">
-      <UnderlyingCard v-for="token in tokenList" :key="token.address" :address="token.address" :name="token.name" :image="token.logoURI" :symbol="token.symbol" :active="token.active" />
+      <TokenCard v-for="token in tokenList" :key="token.address" :address="token.address" :name="token.name" :image="token.logoURI" :symbol="token.symbol" :active="token.active" />
     </div>
   `,
 });

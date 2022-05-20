@@ -9,8 +9,8 @@
       v-model:liquidity.number="liquidity"
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
-      :available-underlyings="availableUnderlyings"
-      @underlying-selected="toggleUnderlyingSelection"
+      :available-tokens="availableTokens"
+      @token-selected="toggleTokenSelection"
       @update:criteria="updateCriteria"
     />
     <CurveSetup v-model="bondingCurve"></CurveSetup>
@@ -20,7 +20,8 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, Underlying, BondingCurve } from "@/types";
+import type { Criteria, SelectableToken, BondingCurveParams } from "dapp-types";
+
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
@@ -32,7 +33,7 @@ import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 
-const bondingCurve = ref<BondingCurve>({
+const bondingCurve = ref<BondingCurveParams>({
   a: 2.5,
   b: 2.5,
   c: 2.5,
@@ -44,13 +45,13 @@ const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
-const availableUnderlyings = ref<Underlying[]>([]);
+const availableTokens = ref<SelectableToken[]>([]);
 
-const tokenToUnderlying = (
+const tokenToSelectableToken = (
   address: string,
   decimals = 18,
   selected = false
-) => {
+): SelectableToken => {
   const { name, symbol, image } = useTokenList(address);
   return {
     address,
@@ -63,28 +64,26 @@ const tokenToUnderlying = (
 };
 
 watch(data, () => {
-  availableUnderlyings.value =
+  availableTokens.value =
     data?.value?.products?.map((product) =>
-      tokenToUnderlying(
+      tokenToSelectableToken(
         product.underlying.address,
         parseInt(product.underlying.decimals)
       )
     ) ?? [];
 });
 
-const toggleUnderlyingSelection = (address: string) => {
-  const underlying = availableUnderlyings.value.find(
-    (u) => u.address === address
-  );
-  if (underlying) {
-    underlying.selected = !underlying.selected;
+const toggleTokenSelection = (address: string) => {
+  const token = availableTokens.value.find((u) => u.address === address);
+  if (token) {
+    token.selected = !token.selected;
   }
 };
 
 const criteriaMap = new Map<string, Criteria>();
 
-const updateCriteria = (address: string, criteria: Criteria) =>
-  criteriaMap.set(address, criteria);
+const updateCriteria = (criteria: Criteria) =>
+  criteriaMap.set(criteria.token.address, criteria);
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();

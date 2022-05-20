@@ -64,23 +64,7 @@ export enum IconStrokeWeight {
   thin = 8,
   regular = 16,
 }
-
-export interface Underlying {
-  name: string;
-  symbol: string;
-  address: string;
-  image: string;
-  selected: boolean;
-}
-
-export interface SelectedUnderlying extends Underlying {
-  strike: number;
-  duration: number;
-}
-
-export type BondingCurve = number[];
-
 export interface EmergingCurve {
-  data: BondingCurve;
-  underlyingSymbol: string;
+  data: number[];
+  symbol: string;
 }

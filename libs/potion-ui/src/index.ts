@@ -1,16 +1,19 @@
+//helpers
+export * from "./helpers";
+
 import BaseButton from "./components/BaseButton/BaseButton.vue";
 import BaseCard from "./components/BaseCard/BaseCard.vue";
 import BaseTag from "./components/BaseTag/BaseTag.vue";
+import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
 import CardFooter from "./components/CardFooter/CardFooter.vue";
 import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletButton.vue";
-import InputNumber from "./components/InputNumber/InputNumber.vue";
-import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
-import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
-import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSelection.vue";
-import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
+import CriteriasRecap from "./components/CriteriasRecap/CriteriasRecap.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
-import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
-import UnderlyingRecap from "./components/UnderlyingRecap/UnderlyingRecap.vue";
+import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
+import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
+import InputNumber from "./components/InputNumber/InputNumber.vue";
+import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
+import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 
 export type {
   IconStrokeWeight,
@@ -27,16 +30,16 @@ export type {
  */
 export {
   BaseButton,
-  HeaderComponent,
-  ConnectWalletButton,
   BaseCard,
   BaseTag,
+  BondingCurve,
   CardFooter,
+  ConnectWalletButton,
+  CriteriasRecap,
+  CurveFormula,
+  CustomCurveParams,
+  HeaderComponent,
   InputNumber,
   TabNavigationComponent,
-  UnderlyingSelection,
-  CustomCurveParams,
-  CurveFormula,
-  BondingCurve,
-  UnderlyingRecap,
+  TokenSelection,
 };

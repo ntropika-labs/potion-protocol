@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "contracts-math": "*",
+    "dapp-types": "*",
     "potion-tokenlist": "*",
     "potion-unocss": "*"
   }

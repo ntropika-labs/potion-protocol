@@ -3,27 +3,33 @@
 import type { Story, Args } from "@storybook/vue3";
 import { getTokenList } from "potion-tokenlist";
 
-import UnderlyingRecap from "./UnderlyingRecap.vue";
+import CriteriasRecap from "./CriteriasRecap.vue";
+
 import type { Token } from "potion-tokenlist";
 
 const tokenList = getTokenList("ganache");
 
-const tokenToUnderlying = (token: Token, strike: number, duration: number) => ({
-  address: token.address,
-  symbol: token.symbol,
-  image: token.logoURI,
-  name: token.name,
-  selected: false,
-  strike,
-  duration,
+const tokenToCriteria = (
+  token: Token,
+  maxStrike: number,
+  maxDuration: number
+) => ({
+  token: {
+    address: token.address,
+    symbol: token.symbol,
+    image: token.logoURI,
+    name: token.name,
+  },
+  maxStrike,
+  maxDuration,
 });
 
 export default {
-  component: UnderlyingRecap,
+  component: CriteriasRecap,
   excludeStories: /.*Data$/,
-  title: "Potion UI/Underlying Recap",
+  title: "Potion UI/Criterias Recap",
   argTypes: {
-    strike: {
+    maxStrike: {
       control: {
         type: "range",
         min: 0,
@@ -31,7 +37,7 @@ export default {
         step: 1,
       },
     },
-    duration: {
+    maxDuration: {
       control: {
         type: "range",
         min: 0,
@@ -48,34 +54,34 @@ export default {
 };
 
 const Template: Story = (args: Args) => ({
-  components: { UnderlyingRecap },
+  components: { CriteriasRecap },
   setup() {
     return {
-      underlyings: args.tokens.map((t: Token) =>
-        tokenToUnderlying(t, args.strike, args.duration)
+      criterias: args.tokens.map((t: Token) =>
+        tokenToCriteria(t, args.maxStrike, args.maxDuration)
       ),
     };
   },
-  template: '<UnderlyingRecap :underlyings="underlyings" />',
+  template: '<CriteriasRecap :criterias="criterias" />',
 });
 
 export const Empty = Template.bind({});
 Empty.args = {
   tokens: [],
-  strike: 100,
-  duration: 30,
+  maxStrike: 100,
+  maxDuration: 30,
 };
 
 export const OneToken = Template.bind({});
 OneToken.args = {
   tokens: tokenList.slice(0, 1),
-  strike: 100,
-  duration: 30,
+  maxStrike: 100,
+  maxDuration: 30,
 };
 
 export const MultipleTokens = Template.bind({});
 MultipleTokens.args = {
   tokens: tokenList,
-  strike: 100,
-  duration: 30,
+  maxStrike: 100,
+  maxDuration: 30,
 };

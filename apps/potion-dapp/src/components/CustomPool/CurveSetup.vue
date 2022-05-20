@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import type { BondingCurve } from "@/types";
+import type { BondingCurveParams } from "dapp-types";
 import {
   BaseCard,
   CurveFormula,
   CustomCurveParams,
-  BondingCurve as Chart,
-  UnderlyingRecap,
+  BondingCurve,
+  CriteriasRecap,
 } from "potion-ui";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { computed } from "vue";
 
 interface Props {
-  modelValue: BondingCurve;
+  modelValue: BondingCurveParams;
 }
 
 const props = defineProps<Props>();
@@ -45,14 +45,14 @@ const bondingCurve = computed(
 <template>
   <div class="grid external-grid gap-6">
     <BaseCard class="p-6">
-      <UnderlyingRecap></UnderlyingRecap>
+      <CriteriasRecap></CriteriasRecap>
     </BaseCard>
     <BaseCard>
       <div class="grid internal-grid gap-6">
-        <Chart
+        <BondingCurve
           class="m-6"
           :bonding-curve="getCurvePoints(bondingCurve)"
-        ></Chart>
+        ></BondingCurve>
         <BaseCard color="neutral" class="p-6 gap-6 rounded-l-none">
           <CurveFormula></CurveFormula>
           <CustomCurveParams

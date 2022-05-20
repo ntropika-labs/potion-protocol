@@ -20,17 +20,14 @@ const sizeToClasses = new Map<string, string>([
 const keys = Array.from(sizeToClasses.keys());
 type TokenSizes = typeof keys[number];
 
-interface Props {
-  name: string;
-  image?: string;
-  size?: TokenSizes;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  image:
-    "https://s.gravatar.com/avatar/da32ff79613d46d206a45e5a3018acf3?size=496&default=retro",
-  size: "md",
-});
+const props = withDefaults(
+  defineProps<{ name: string; image?: string; size?: TokenSizes }>(),
+  {
+    image:
+      "https://s.gravatar.com/avatar/da32ff79613d46d206a45e5a3018acf3?size=496&default=retro",
+    size: "md",
+  }
+);
 
 const size = computed(() => sizeToClasses.get(props.size));
 </script>
