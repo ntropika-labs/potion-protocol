@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="">
+  <div class="">
     <transition
       enter-active-class="transition-all"
       leave-active-class="transition-all"
