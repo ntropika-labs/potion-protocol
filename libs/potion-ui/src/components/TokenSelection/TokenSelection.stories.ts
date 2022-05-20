@@ -2,10 +2,10 @@
 
 import { getTokenList } from "potion-tokenlist";
 
-import UnderlyingSelection from "./UnderlyingSelection.vue";
+import TokenSelection from "./TokenSelection.vue";
 
 const tokenList = getTokenList("ganache");
-const underlyings = tokenList.map((token) => ({
+const tokens = tokenList.map((token) => ({
   address: token.address,
   symbol: token.symbol,
   image: token.logoURI,
@@ -14,15 +14,15 @@ const underlyings = tokenList.map((token) => ({
 }));
 
 export default {
-  component: UnderlyingSelection,
+  component: TokenSelection,
   excludeStories: /.*Data$/,
-  title: "Potion UI/Underlying Selection",
+  title: "Potion UI/Token Selection",
 };
 
 export const Overview = () => ({
-  components: { UnderlyingSelection },
+  components: { TokenSelection },
   setup() {
-    return { underlyings };
+    return { tokens };
   },
-  template: `<UnderlyingSelection :underlyings="underlyings" />`,
+  template: `<TokenSelection :tokens="tokens" />`,
 });

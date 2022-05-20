@@ -12,7 +12,7 @@ import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
-import UnderlyingSelection from "./components/UnderlyingSelection/UnderlyingSelection.vue";
+import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 
 export type {
   IconStrokeWeight,
@@ -36,7 +36,7 @@ export {
   CardFooter,
   InputNumber,
   TabNavigationComponent,
-  UnderlyingSelection,
+  TokenSelection,
   CustomCurveParams,
   CurveFormula,
   BondingCurve,

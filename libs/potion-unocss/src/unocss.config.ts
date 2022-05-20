@@ -1,11 +1,11 @@
 import {
   defineConfig,
+  presetIcons,
   presetTypography,
   presetUno,
   presetWebFonts,
-  presetIcons,
   transformerDirectives,
-  transformerVariantGroup,
+  transformerVariantGroup
 } from "unocss";
 
 const preset = presetUno();

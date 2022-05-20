@@ -12,10 +12,10 @@ import { range as _range } from "lodash-es";
 import bb, { spline } from "billboard.js";
 import { useI18n } from "vue-i18n";
 import "billboard.js/dist/theme/insight.min.css";
-import type { BondingCurve, EmergingCurve } from "../../types";
+import type { EmergingCurve } from "../../types";
 
 export interface Props {
-  bondingCurve: BondingCurve;
+  bondingCurve: number[];
   emergingCurves?: EmergingCurve[];
   unloadKeys?: string[];
 }
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { t } = useI18n();
 
-const roundvalue = (value: number) => value.toFixed(2);
+const roundValue = (value: number) => value.toFixed(2);
 
 const axis: bb.Axis = {
   x: {
@@ -41,7 +41,7 @@ const axis: bb.Axis = {
   y: {
     label: t("bonding_curve.y_axis.label"),
     tick: {
-      format: (n: number) => `${roundvalue(n)}%`,
+      format: (n: number) => `${roundValue(n)}%`,
     },
   },
 };
@@ -54,7 +54,7 @@ const bondingCurveChart = ref<HTMLDivElement | null>(null);
 const chartHeight = computed(() => chartContainer?.value?.clientHeight ?? 0);
 
 const chartData = computed(() => {
-  const json = new Map<string, BondingCurve>([
+  const json = new Map<string, number[]>([
     ["bondingCurve", props.bondingCurve],
   ]);
   const colors = new Map<string, string>([
@@ -67,12 +67,12 @@ const chartData = computed(() => {
   props.emergingCurves.forEach((curve) => {
     if (curve?.data?.length > 0) {
       json.set(
-        curve.underlyingSymbol,
+        curve.symbol,
         curve.data.map((n) => n * 100)
       );
-      names.set(curve.underlyingSymbol, curve.underlyingSymbol.toUpperCase());
+      names.set(curve.symbol, curve.symbol.toUpperCase());
     } else {
-      unload.push(curve.underlyingSymbol);
+      unload.push(curve.symbol);
     }
   });
 

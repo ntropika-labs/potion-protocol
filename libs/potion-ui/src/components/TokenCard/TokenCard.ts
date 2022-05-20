@@ -1,14 +1,15 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { mount } from "@vue/test-utils";
 
-import UnderlyingCard from "./UnderlyingCard.vue";
+import TokenCard from "./TokenCard.vue";
 
-describe("UnderlyingCard", () => {
+describe("TokenCard", () => {
   it("compiles properly", () => {
-    expect(UnderlyingCard).toBeTruthy();
+    expect(TokenCard).toBeTruthy();
   });
 
-  const wrapper = mount(UnderlyingCard, {
+  const wrapper = mount(TokenCard, {
     props: {
       name: "Hello Vitest",
       address: "0xMOCKED",
@@ -18,13 +19,13 @@ describe("UnderlyingCard", () => {
   });
 
   it("renders properly", () => {
-    expect(wrapper.html()).toContain("test-underlying-card");
+    expect(wrapper.html()).toContain("test-token-card");
     expect(wrapper.html()).toContain("test-token-icon");
     expect(wrapper.text()).toContain("MOCKED");
   });
 
   it("emit events", async () => {
-    await wrapper.get("[test-underlying-card]").trigger("click");
-    expect(wrapper.emitted()).toHaveProperty("underlying-selected");
+    await wrapper.get("[test-token-card]").trigger("click");
+    expect(wrapper.emitted()).toHaveProperty("token-selected");
   });
 });
