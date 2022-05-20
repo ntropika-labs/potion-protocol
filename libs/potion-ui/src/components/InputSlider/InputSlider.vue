@@ -66,7 +66,7 @@ const onValueChange = (event: Event) => {
     <input
       ref="inputElement"
       test-slider-input
-      class="input-slider h-[4px] focus:outline-none appearance-none w-full bg-transparent z-30 absolute cursor-pointer disabled:opacity-40"
+      class="input-slider h-[4px] focus:outline-none appearance-none w-full bg-transparent z-30 absolute cursor-pointer disabled:opacity-40 rounded-full"
       type="range"
       :step="props.step"
       :value="props.modelValue"
@@ -79,10 +79,10 @@ const onValueChange = (event: Event) => {
     <span
       ref="sliderThumb"
       test-slider-thumb
-      class="select-none min-w-12 h-8 px-4 leading-8 text-dwhite-300 absolute z-20 text-center rounded-lg cursor-pointer bg-gradient-to-r from-primary-500 to-primary-400 shadow-md transform translate-y-[-50%]"
+      class="select-none min-w-12 h-8 px-4 leading-8 text-dwhite-300 absolute z-20 text-center rounded-lg cursor-pointer bg-gradient-to-r from-primary-500 to-primary-400 shadow-md transform translate-y-[-50%] text-xs font-serif whitespace-nowrap"
       :class="[disabled ? 'opacity-80' : '']"
       :style="`left: ${thumbPosition}px`"
-      >{{ Math.round(valuePercentage) }}{{ symbol }}</span
+      >{{ props.modelValue }}{{ symbol }}</span
     >
     <div class="h-[4px] absolute w-full bg-white bg-opacity-10">
       <div
