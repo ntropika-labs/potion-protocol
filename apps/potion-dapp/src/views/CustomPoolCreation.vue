@@ -13,7 +13,7 @@
       @token-selected="toggleTokenSelection"
       @update:criteria="updateCriteria"
     />
-    <CurveSetup v-model="bondingCurve"></CurveSetup>
+    <CurveSetup v-model="bondingCurve" :criterias="criterias"></CurveSetup>
     <div></div>
   </TabNavigationComponent>
 </template>
@@ -77,10 +77,14 @@ const toggleTokenSelection = (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
     token.selected = !token.selected;
+    if (!token.selected) {
+      criteriaMap.delete(token.address);
+    }
   }
 };
 
 const criteriaMap = new Map<string, Criteria>();
+const criterias = computed(() => Array.from(criteriaMap.values()));
 
 const updateCriteria = (criteria: Criteria) =>
   criteriaMap.set(criteria.token.address, criteria);

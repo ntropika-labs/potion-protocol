@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { BondingCurveParams } from "dapp-types";
+import type { BondingCurveParams, Criteria } from "dapp-types";
 import {
   BaseCard,
   CurveFormula,
@@ -13,6 +13,7 @@ import { computed } from "vue";
 
 interface Props {
   modelValue: BondingCurveParams;
+  criterias: Criteria[];
 }
 
 const props = defineProps<Props>();
@@ -45,7 +46,7 @@ const bondingCurve = computed(
 <template>
   <div class="grid external-grid gap-6">
     <BaseCard class="p-6">
-      <CriteriasRecap></CriteriasRecap>
+      <CriteriasRecap :criterias="criterias"></CriteriasRecap>
     </BaseCard>
     <BaseCard>
       <div class="grid internal-grid gap-6">
