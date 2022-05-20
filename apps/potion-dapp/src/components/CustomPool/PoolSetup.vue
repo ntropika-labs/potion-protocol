@@ -22,16 +22,16 @@
       </template>
     </AddLiquidityCard>
     <div class="col-span-12 md:col-span-8 xl:col-span-9">
-      <UnderlyingSelection
-        :underlyings="props.availableUnderlyings"
-        @underlying-selected="handleUnderlyingSelected"
+      <TokenSelection
+        :tokens="props.availableTokens"
+        @token-selected="handleTokenSelected"
       />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import type { SelectableToken, Criteria } from "@/types";
-import { BaseButton, UnderlyingSelection } from "potion-ui";
+import type { SelectableToken, Criteria } from "dapp-types";
+import { BaseButton, TokenSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
@@ -40,16 +40,16 @@ interface Props {
   liquidity: number;
   userCollateralBalance: number;
   liquidityCheck: boolean;
-  availableUnderlyings: SelectableToken[];
+  availableTokens: SelectableToken[];
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: "update:liquidity", value: number): void;
   (e: "update:criteria", criteria: Criteria): void;
   (e: "navigate:next"): void;
-  (e: "underlying-selected", address: string): void;
+  (e: "token-selected", address: string): void;
 }>();
 
-const handleUnderlyingSelected = (address: string) =>
-  emits("underlying-selected", address);
+const handleTokenSelected = (address: string) =>
+  emits("token-selected", address);
 </script>

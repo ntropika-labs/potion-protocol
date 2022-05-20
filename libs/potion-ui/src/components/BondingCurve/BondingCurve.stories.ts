@@ -1,9 +1,11 @@
 // @unocss-include
 
 import { HyperbolicCurve } from "contracts-math";
+import { random as _random, times as _times } from "lodash-es";
 import { getTokenList } from "potion-tokenlist";
-import { times as _times, random as _random } from "lodash-es";
+
 import BondingCurve from "./BondingCurve.vue";
+
 import type { Args, Story } from "@storybook/vue3";
 
 const tokenList = getTokenList("ganache");
@@ -48,7 +50,7 @@ const Template: Story<Args> = (args: Args) => ({
       ).map((p: number) => p * 100),
       emergingCurves: tokenList.map(({ symbol }) => ({
         data: getCurvePoints(getRandomCurve()),
-        underlyingSymbol: symbol,
+        tokenSymbol: symbol,
       })),
     };
   },

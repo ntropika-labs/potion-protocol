@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-  name: "UnderlyingCard",
+  name: "TokenCard",
 });
 </script>
 
@@ -9,35 +9,33 @@ export default defineComponent({
 import { computed } from "vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
-
 export interface Props {
   address: string;
   image: string;
   name: string;
   symbol: string;
-  active?: boolean;
+  selected?: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
-  active: false,
+  selected: false,
 });
 
 const emit = defineEmits<{
-  (e: "underlying-selected", address: string): void;
+  (e: "token-selected", address: string): void;
 }>();
 
 let color = computed(() =>
-  props.active ? "primary-radial" : "primary-radial-inactive"
+  props.selected ? "primary-radial" : "primary-radial-inactive"
 );
 </script>
 
 <template>
   <BaseCard
-    test-underlying-card
+    test-token-card
     rounded="internal"
     class="items-center px-4 py-3 cursor-pointer w-20"
     :color="color"
-    @click="emit('underlying-selected', props.address)"
+    @click="emit('token-selected', props.address)"
   >
     <TokenIcon size="lg" :name="props.name" :image="props.image" class="mb-4" />
     <span class="text-sm text-white leading-none">{{ props.symbol }}</span>

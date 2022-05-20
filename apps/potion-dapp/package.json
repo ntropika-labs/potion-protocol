@@ -15,6 +15,7 @@
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
   },
   "dependencies": {
+    "dapp-types": "*",
     "potion-contracts": "*",
     "potion-tokenlist": "*",
     "potion-ui": "*",

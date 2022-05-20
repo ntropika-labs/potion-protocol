@@ -38,6 +38,9 @@
     },
     {
       "path": "libs/potion-unocss"
+    },
+    {
+      "path": "libs/dapp-types"
     }
   ],
   "exclude": ["node_modules", "tmp", "dist"]

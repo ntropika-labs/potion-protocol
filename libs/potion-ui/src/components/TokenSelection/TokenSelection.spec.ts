@@ -1,32 +1,33 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { mount } from "@vue/test-utils";
 
-import UnderlyingSelection from "./UnderlyingSelection.vue";
+import TokenSelection from "./TokenSelection.vue";
 
-describe("Empty UnderlyingSelection", () => {
+describe("Empty TokenSelection", () => {
   it("compiles properly", () => {
-    expect(UnderlyingSelection).toBeTruthy();
+    expect(TokenSelection).toBeTruthy();
   });
 
-  const wrapper = mount(UnderlyingSelection, {
+  const wrapper = mount(TokenSelection, {
     props: {
-      underlyings: [],
+      tokens: [],
     },
   });
 
   it("renders properly", () => {
-    expect(wrapper.html()).toContain("test-underlying-selection");
+    expect(wrapper.html()).toContain("test-token-selection");
   });
 });
 
-describe("UnderlyingSelection", () => {
+describe("TokenSelection", () => {
   it("compiles properly", () => {
-    expect(UnderlyingSelection).toBeTruthy();
+    expect(TokenSelection).toBeTruthy();
   });
 
-  const wrapper = mount(UnderlyingSelection, {
+  const wrapper = mount(TokenSelection, {
     props: {
-      underlyings: [
+      tokens: [
         {
           name: "Hello Vitest",
           address: "0xMOCKED",
@@ -46,18 +47,16 @@ describe("UnderlyingSelection", () => {
   });
 
   it("renders properly", () => {
-    expect(wrapper.html()).toContain("test-underlying-selection");
-    expect(wrapper.html()).toContain("test-underlying-card");
+    expect(wrapper.html()).toContain("test-token-selection");
+    expect(wrapper.html()).toContain("test-token-card");
     expect(wrapper.html()).toContain("test-token-icon");
     expect(wrapper.text()).toContain("MOCKED");
     expect(wrapper.text()).toContain("MOCKED2");
   });
 
   it("emit events", async () => {
-    await wrapper.get("[test-underlying-card]").trigger("click");
-    expect(wrapper.emitted()).toHaveProperty("underlying-selected");
-    expect(wrapper.emitted()).toHaveProperty("underlying-selected", [
-      ["0xMOCKED"],
-    ]);
+    await wrapper.get("[test-token-card]").trigger("click");
+    expect(wrapper.emitted()).toHaveProperty("token-selected");
+    expect(wrapper.emitted()).toHaveProperty("token-selected", [["0xMOCKED"]]);
   });
 });
