@@ -10,6 +10,10 @@ next: next
 title: Home page
 user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
+hint_duration: How long the insurance you are selling will be valid for.
+hint_strike: Choose the maximum insurance cover.
+description_duration: How long the insurance you are selling will be valid for.
+description_strike: Choose the maximum insurance cover.
 
 app:
   asset: "Asset"
