@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12 gap-5">
+  <div class="grid grid-cols-12 gap-5 items-start">
     <AddLiquidityCard
       :model-value="props.liquidity"
       :pool-id="1"
@@ -21,19 +21,34 @@
         </BaseButton>
       </template>
     </AddLiquidityCard>
-    <div class="col-span-12 md:col-span-8 xl:col-span-9">
+    <BaseCard class="col-span-12 md:col-span-8 xl:col-span-9 p-6">
       <UnderlyingSelection
         :underlyings="props.availableUnderlyings"
         @underlying-selected="handleUnderlyingSelected"
       />
-    </div>
+      <hr class="my-6 opacity-10" />
+      <div class="flex flex-col gap-6">
+        <template
+          v-for="underlying of selectedUnderlyings"
+          :key="underlying.address"
+        >
+          <SelectedUnderlyingWrapper
+            :underlying="underlying"
+            :price-info="props.underlyingPrices.get(underlying.address)"
+          ></SelectedUnderlyingWrapper>
+        </template>
+      </div>
+    </BaseCard>
   </div>
 </template>
 <script lang="ts" setup>
+import { computed, type ComputedRef, type Ref } from "vue";
 import type { SelectableToken, Criteria } from "@/types";
-import { BaseButton, UnderlyingSelection } from "potion-ui";
+import { BaseCard, BaseButton, UnderlyingSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
+import SelectedUnderlyingWrapper from "@/components/SelectedUnderlyingWrapper/SelectedUnderlyingWrapper.vue";
 import { useI18n } from "vue-i18n";
+
 const { t } = useI18n();
 
 interface Props {
@@ -41,6 +56,15 @@ interface Props {
   userCollateralBalance: number;
   liquidityCheck: boolean;
   availableUnderlyings: SelectableToken[];
+  underlyingPrices: Map<
+    string,
+    {
+      loading: Ref<boolean>;
+      price: Ref<number>;
+      formattedPrice: ComputedRef<string>;
+      success: Ref<boolean>;
+    }
+  >;
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
@@ -52,4 +76,8 @@ const emits = defineEmits<{
 
 const handleUnderlyingSelected = (address: string) =>
   emits("underlying-selected", address);
+
+const selectedUnderlyings = computed(() => {
+  return props.availableUnderlyings.filter((u) => u.selected);
+});
 </script>

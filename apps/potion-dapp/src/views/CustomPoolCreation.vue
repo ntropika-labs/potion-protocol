@@ -10,6 +10,7 @@
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
       :available-underlyings="availableUnderlyings"
+      :underlying-prices="underlyingPricesMap"
       @underlying-selected="toggleUnderlyingSelection"
       @update:criteria="updateCriteria"
     />
@@ -20,10 +21,17 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, SelectableToken } from "@/types";
+import type { Criteria, SelectableToken, Token } from "@/types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
-import { onMounted, ref, computed, watch } from "vue";
+import {
+  onMounted,
+  ref,
+  computed,
+  watch,
+  type Ref,
+  type ComputedRef,
+} from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
@@ -31,12 +39,23 @@ import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
 const availableUnderlyings = ref<SelectableToken[]>([]);
+const criteriaMap = new Map<string, Criteria>();
+const underlyingPricesMap = new Map<
+  string,
+  {
+    loading: Ref<boolean>;
+    price: Ref<number>;
+    formattedPrice: ComputedRef<string>;
+    success: Ref<boolean>;
+  }
+>();
 
 const tokenToUnderlying = (
   address: string,
@@ -64,19 +83,50 @@ watch(data, () => {
     ) ?? [];
 });
 
-const toggleUnderlyingSelection = (address: string) => {
+const toggleUnderlyingSelection = async (address: string) => {
   const underlying = availableUnderlyings.value.find(
     (u) => u.address === address
   );
   if (underlying) {
     underlying.selected = !underlying.selected;
+
+    if (underlying.selected && !underlyingPricesMap.has(underlying.address)) {
+      await updateUnderlyingPrice(underlying);
+    }
   }
 };
 
-const criteriaMap = new Map<string, Criteria>();
-
 const updateCriteria = (criteria: Criteria) =>
   criteriaMap.set(criteria.tokenAddress, criteria);
+
+const updateUnderlyingPrice = async (underlying: Token) => {
+  console.log("[updateUnderlyingPrice] for: ", underlying.name);
+  const { loading, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
+    underlying.address
+  );
+
+  let succeded = ref(false);
+  underlyingPricesMap.set(underlying.address, {
+    loading,
+    price,
+    formattedPrice,
+    success: ref(succeded),
+  });
+
+  try {
+    succeded.value = await fetchPrice();
+    console.log(
+      "[updateUnderlyingPrice] completed for: ",
+      underlying.name,
+      succeded.value
+    );
+  } catch (error) {
+    console.error(
+      "Error while fetching underlying price. Affected underlying: " +
+        underlying.name
+    );
+  }
+};
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
