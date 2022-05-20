@@ -67,12 +67,12 @@ const chartData = computed(() => {
   props.emergingCurves.forEach((curve) => {
     if (curve?.data?.length > 0) {
       json.set(
-        curve.tokenSymbol,
+        curve.symbol,
         curve.data.map((n) => n * 100)
       );
-      names.set(curve.tokenSymbol, curve.tokenSymbol.toUpperCase());
+      names.set(curve.symbol, curve.symbol.toUpperCase());
     } else {
-      unload.push(curve.tokenSymbol);
+      unload.push(curve.symbol);
     }
   });
 

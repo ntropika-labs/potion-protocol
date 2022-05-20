@@ -50,7 +50,7 @@ const Template: Story<Args> = (args: Args) => ({
       ).map((p: number) => p * 100),
       emergingCurves: tokenList.map(({ symbol }) => ({
         data: getCurvePoints(getRandomCurve()),
-        tokenSymbol: symbol,
+        symbol: symbol,
       })),
     };
   },
