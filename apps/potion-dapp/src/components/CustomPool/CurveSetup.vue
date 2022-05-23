@@ -69,7 +69,7 @@ const bondingCurve = computed(
     <BaseCard>
       <div class="grid gap-6 xl:grid-cols-[3fr_1fr]">
         <BondingCurve
-          class="m-6"
+          class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
           :emerging-curves="emergingCurves"
         ></BondingCurve>
