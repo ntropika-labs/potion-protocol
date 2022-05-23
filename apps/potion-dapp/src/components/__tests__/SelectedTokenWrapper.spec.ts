@@ -2,11 +2,9 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 
 import SelectedTokenWrapper from "../SelectedTokenWrapper/SelectedTokenWrapper.vue";
-import { ref, type Ref } from "vue";
 
-const price = ref(0);
-const formattedPrice = (price: Ref<number>): Ref<string> =>
-  ref(`US$${price.value}`);
+const price = 0;
+const formattedPrice = `US$${price}`;
 
 describe("SelectedTokenWrapper", () => {
   it("compiles properly", () => {
@@ -15,18 +13,18 @@ describe("SelectedTokenWrapper", () => {
 
   const wrapper = mount(SelectedTokenWrapper, {
     props: {
-      token: {
+      underlying: {
         name: "Hello Vitest",
         address: "0xMOCKED",
         symbol: "MOCKED",
         image: "https://mocked.com/placeholder.png",
-        selected: false,
+        decimals: 18,
       },
       priceInfo: {
-        loading: ref(true),
+        loading: true,
         price: price,
-        formattedPrice: formattedPrice(price),
-        success: ref(false),
+        formattedPrice: formattedPrice,
+        success: false,
       },
     },
   });
@@ -36,6 +34,7 @@ describe("SelectedTokenWrapper", () => {
     expect(wrapper.html()).toContain("test-wrapper-icon");
     expect(wrapper.html()).toContain("test-wrapper-button");
     expect(wrapper.text()).toContain("MOCKED");
+    expect(wrapper.text()).toContain("Loading..");
   });
 
   it("emits remove selection event", async () => {
@@ -45,9 +44,9 @@ describe("SelectedTokenWrapper", () => {
 
   it("emits strike and duration events", async () => {
     await wrapper.get("[test-wrapper-strike]").trigger("input");
-    expect(wrapper.emitted()).toHaveProperty("removeSelection");
+    expect(wrapper.emitted()).toHaveProperty("update:strikeDuration");
 
     await wrapper.get("[test-wrapper-duration]").trigger("input");
-    expect(wrapper.emitted()).toHaveProperty("removeSelection");
+    expect(wrapper.emitted()).toHaveProperty("update:strikeDuration");
   });
 });
