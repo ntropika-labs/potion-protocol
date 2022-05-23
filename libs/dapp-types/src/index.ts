@@ -9,6 +9,14 @@ export interface Token {
 export interface SelectableToken extends Token {
   selected: boolean;
 }
+
+export interface ApiTokenPrice {
+  loading: boolean;
+  price: number;
+  formattedPrice: string;
+  success: boolean;
+}
+
 export interface Criteria {
   token: Token;
   maxStrike: number;
