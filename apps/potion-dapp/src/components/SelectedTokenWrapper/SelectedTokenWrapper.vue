@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, ref, type ComputedRef, type Ref } from "vue";
+<script lang="ts" setup>
+import { ref } from "vue";
 import {
   BaseCard,
   TokenIcon,
@@ -7,33 +7,36 @@ import {
   InputSlider,
   Tooltip,
 } from "potion-ui";
-import type { Token } from "@/types";
+import type { Token, ApiTokenPrice } from "dapp-types";
 import { useI18n } from "vue-i18n";
 
-defineComponent({
-  name: "SelectedUnderlyingWrapper",
-});
-</script>
-<script lang="ts" setup>
-export interface Props {
+interface Props {
   underlying: Token;
-  priceInfo: {
-    loading: Ref<boolean>;
-    price: Ref<number>;
-    formattedPrice: ComputedRef<string>;
-    success: Ref<boolean>;
-  };
+  priceInfo: ApiTokenPrice;
 }
 
 const props = withDefaults(defineProps<Props>(), {});
 
 const emit = defineEmits<{
-  (e: "removeSelection", assetSymbol: string): void;
+  (e: "removeSelection", address: string): void;
+  (
+    e: "update:strikeDuration",
+    value: { strike: number; duration: number }
+  ): void;
 }>();
 
 const { t } = useI18n();
 const maxStrike = ref(100);
 const maxDuration = ref(60);
+const updateStrikeDuration = (strike: number, duration: number) => {
+  maxStrike.value = strike;
+  maxDuration.value = duration;
+
+  emit("update:strikeDuration", {
+    strike: maxStrike.value,
+    duration: maxDuration.value,
+  });
+};
 </script>
 <template>
   <BaseCard color="glass" test-wrapper-card>
@@ -65,42 +68,48 @@ const maxDuration = ref(60);
 
     <div class="grid md:grid-cols-2 gap-14 px-6 mt-8 mb-4">
       <div class="flex flex-col p-1">
-        <div class="flex flex-row items-center gap-2">
-          <p class="text-sm">{{ t("max_strike") }}</p>
+        <div class="flex flex-row items-center gap-2 mb-6">
+          <p class="text-sm">{{ t("app.max_strike") }}</p>
           <Tooltip :message="t('hint_strike')"></Tooltip>
         </div>
         <p class="text-sm">{{ t("description_strike") }}</p>
-        <div>
-          success: {{ priceInfo.success }} loading:
-          {{ priceInfo.loading }} price: {{ priceInfo.price }} formattedPrice:
-          {{ priceInfo.formattedPrice }}
-        </div>
         <div
-          class="flex flex-row items-center gap-2 text-sm text-secondary-600 mb-12"
+          class="flex flex-row items-center gap-2 text-sm text-secondary-600 mt-2 mb-12"
         >
           <i class="i-ph-warning-circle"></i>
-          <p>{{ priceInfo.formattedPrice.value }}</p>
+          <template v-if="priceInfo.success && !priceInfo.loading">
+            <p>{{ priceInfo.formattedPrice }}</p>
+          </template>
+          <template v-else-if="priceInfo.loading">
+            {{ t("loading") }}
+          </template>
+          <template v-else-if="!priceInfo.success && !priceInfo.loading">
+            {{ t("loading_error") }}
+          </template>
         </div>
         <InputSlider
+          test-wrapper-strike
           :model-value="maxStrike"
           symbol="%"
           class="mt-auto"
-          @update:model-value="(value: number) => maxStrike = value"
+          :max="200"
+          @update:model-value="(value: number) => updateStrikeDuration(value, maxDuration)"
         ></InputSlider>
       </div>
       <div class="flex flex-col p-1">
-        <div class="flex flex-row items-center gap-2">
-          <p class="text-sm">{{ t("max_duration") }}</p>
-          <Tooltip :message="t('hint_strike')"></Tooltip>
+        <div class="flex flex-row items-center gap-2 mb-6">
+          <p class="text-sm">{{ t("app.max_duration") }}</p>
+          <Tooltip :message="t('hint_duration')"></Tooltip>
         </div>
-        <p class="text-sm mb-12">{{ t("description_strike") }}</p>
+        <p class="text-sm mb-12">{{ t("description_duration") }}</p>
         <InputSlider
+          test-wrapper-duration
           :model-value="maxDuration"
           :min="1"
           :max="365"
           symbol=" Dd"
           class="mt-auto"
-          @update:model-value="(value: number) => maxDuration = value"
+          @update:model-value="(value: number) => updateStrikeDuration(maxStrike, value)"
         ></InputSlider>
       </div>
     </div>
