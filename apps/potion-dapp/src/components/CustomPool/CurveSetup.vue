@@ -2,14 +2,16 @@
 import type { BondingCurveParams, Criteria } from "dapp-types";
 import {
   BaseCard,
-  CurveFormula,
-  CustomCurveParams,
   BondingCurve,
   CriteriasRecap,
+  CurveFormula,
+  CustomCurveParams,
+  Tooltip,
 } from "potion-ui";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 interface Props {
   modelValue: BondingCurveParams;
@@ -18,6 +20,8 @@ interface Props {
 
 const props = defineProps<Props>();
 const emits = defineEmits(["update:modelValue"]);
+
+const { t } = useI18n();
 
 const handleUpdate = (param: string, value: number) => {
   const newValue = {
@@ -44,18 +48,27 @@ const bondingCurve = computed(
 </script>
 
 <template>
-  <div class="grid external-grid gap-6">
+  <div class="grid gap-6 lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]">
     <BaseCard class="p-6">
       <CriteriasRecap :criterias="criterias"></CriteriasRecap>
     </BaseCard>
     <BaseCard>
-      <div class="grid internal-grid gap-6">
+      <div class="grid gap-6 xl:grid-cols-[3fr_1fr]">
         <BondingCurve
           class="m-6"
           :bonding-curve="getCurvePoints(bondingCurve)"
         ></BondingCurve>
-        <BaseCard color="neutral" class="p-6 gap-6 rounded-l-none">
+        <BaseCard class="p-6 gap-6 rounded-l-none">
           <CurveFormula></CurveFormula>
+          <div class="text-sm">
+            {{ t("set_bonding_curve_params") }}
+            <Tooltip
+              class="ml-[.5ch] -mb-[.125rem]"
+              :message="t('curve_formula_tooltip')"
+              icon-weight="bold"
+            >
+            </Tooltip>
+          </div>
           <CustomCurveParams
             :a="props.modelValue.a"
             :b="props.modelValue.b"
@@ -74,13 +87,3 @@ const bondingCurve = computed(
     </BaseCard>
   </div>
 </template>
-
-<style scoped>
-.external-grid {
-  grid-template-columns: 1fr 4fr;
-}
-
-.internal-grid {
-  grid-template-columns: 3fr 1fr;
-}
-</style>
