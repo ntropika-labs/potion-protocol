@@ -36,7 +36,7 @@ const calculateMarginalCostForDeltaX = (
   const poolCurrentLocked = pool.poolOrderSize + pool.locked;
   const numerator =
     (poolCurrentLocked + deltaX) *
-      pool.curve.evalAt((poolCurrentLocked + deltaX) / pool.size) -
+    pool.curve.evalAt((poolCurrentLocked + deltaX) / pool.size) -
     poolCurrentLocked * pool.curve.evalAt(poolCurrentLocked / pool.size);
   return numerator / deltaX;
 };
@@ -79,11 +79,11 @@ const calculateDepthMarginalCost = (
 const poolUntypedToTyped = (pool: IPoolUntyped): IPool => {
   const unlocked = parseFloat(pool.size) - parseFloat(pool.locked);
   const hyperbolicCurve = new HyperbolicCurve(
-    parseFloat(pool.template.curve.a),
-    parseFloat(pool.template.curve.b),
-    parseFloat(pool.template.curve.c),
-    parseFloat(pool.template.curve.d),
-    parseFloat(pool.template.curve.maxUtil)
+    parseFloat(pool.curve.a),
+    parseFloat(pool.curve.b),
+    parseFloat(pool.curve.c),
+    parseFloat(pool.curve.d),
+    parseFloat(pool.curve.maxUtil)
   );
 
   return {
@@ -105,7 +105,7 @@ const poolUntypedToTyped = (pool: IPoolUntyped): IPool => {
     poolPremium: 0,
     marginalCostForDeltaX: 0,
     initialMarginalCost: 0,
-    maxUtil: parseFloat(pool.template.curve.maxUtil),
+    maxUtil: parseFloat(pool.curve.maxUtil),
     util: parseFloat(pool.utilization),
   };
 };

@@ -25359,6 +25359,7 @@ __metadata:
   dependencies:
     contracts-math: "*"
     potion-contracts: "*"
+    subgraph-queries: "*"
   languageName: unknown
   linkType: soft
 

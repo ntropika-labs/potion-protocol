@@ -33,15 +33,13 @@ export interface IPoolUntyped {
   maxStrikePercent: string;
   maxDurationInDays: string;
   isPut: boolean;
-  template: {
-    curve: {
-      id: string;
-      a: string;
-      b: string;
-      c: string;
-      d: string;
-      maxUtil: string;
-    };
+  curve: {
+    id: string;
+    a: string;
+    b: string;
+    c: string;
+    d: string;
+    maxUtil: string;
   };
 }
 
