@@ -15,9 +15,12 @@ export function useFetchTokenPrices(address: string, currency = "usd") {
   const fetchPrice = async () => {
     try {
       loading.value = true;
-      const response = await $fetch(
-        `${endpoint}?contract_addresses=${address}&vs_currencies=${currency}`
-      );
+      const response = await $fetch(endpoint, {
+        params: {
+          contract_addresses: address,
+          vs_currencies: currency,
+        },
+      });
       console.log(response);
       price.value = response[address.toLowerCase()][currency.toLowerCase()];
       loading.value = false;
