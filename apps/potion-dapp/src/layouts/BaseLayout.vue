@@ -1,9 +1,12 @@
 <template>
   <div
-    class="min-h-screen px-6 py-5 md:px-12 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-screen overflow-x-hidden"
+    class="min-h-screen py-5 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-screen max-w-screen overflow-x-hidden"
   >
-    <MainHeader></MainHeader>
-    <div class="container mx-auto mt-24">
+    <div class="container mx-auto px-6 md:px-12">
+      <MainHeader></MainHeader>
+    </div>
+
+    <div class="container mx-auto mt-24 px-6 md:px-12">
       <slot />
     </div>
   </div>

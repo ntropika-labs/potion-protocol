@@ -7,6 +7,11 @@ interface TabNavigationInfo {
   subtitle: string;
   visited?: boolean;
   isValid: ComputedRef<boolean> | boolean;
+  cta?: {
+    externalUrl?: boolean;
+    label: string;
+    url: string;
+  };
 }
 
 export default defineComponent({
@@ -100,7 +105,21 @@ watch(
         </BaseButton>
       </li>
     </ul>
-    <p class="text-center text-lg mb-4">{{ tabs[currentIndex].subtitle }}</p>
+    <p class="text-center text-lg mb-2">{{ tabs[currentIndex].subtitle }}</p>
+    <template v-if="tabs[currentIndex].cta">
+      <router-link
+        v-if="!tabs[currentIndex].cta?.externalUrl"
+        :to="tabs[currentIndex].cta?.url"
+        class="text-center text-sm text-secondary-500 uppercase mb-4"
+        >{{ tabs[currentIndex].cta?.label }}</router-link
+      >
+      <a
+        v-if="tabs[currentIndex].cta?.externalUrl"
+        :href="tabs[currentIndex].cta?.url"
+        class="text-center text-sm text-secondary-500 uppercase mb-4"
+        >{{ tabs[currentIndex].cta?.label }}</a
+      >
+    </template>
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->

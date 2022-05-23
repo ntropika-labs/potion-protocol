@@ -6,7 +6,6 @@ import { defineConfig } from "vite";
 
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vue from "@vitejs/plugin-vue";
-import vueJsx from "@vitejs/plugin-vue-jsx";
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
@@ -19,7 +18,6 @@ export default defineConfig({
     vueI18n({
       include: path.resolve(__dirname, "../../libs/locales/**"),
     }),
-    vueJsx(),
     Unocss(),
     development &&
       nodePolyfills({

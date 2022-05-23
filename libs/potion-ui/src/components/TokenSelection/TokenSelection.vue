@@ -6,7 +6,6 @@ export default defineComponent({
 </script>
 
 <script lang="ts" setup>
-import BaseCard from "../BaseCard/BaseCard.vue";
 import TokenCard from "../TokenCard/TokenCard.vue";
 import type { SelectableToken } from "dapp-types";
 
@@ -22,20 +21,18 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <BaseCard class="p-6">
-    <div test-token-selection-grid class="grid gap-6">
-      <TokenCard
-        v-for="token in props.tokens"
-        :key="token.address"
-        :symbol="token.symbol"
-        :name="token.name"
-        :address="token.address"
-        :image="token.image"
-        :selected="token.selected"
-        @token-selected="emit('token-selected', token.address)"
-      />
-    </div>
-  </BaseCard>
+  <div test-token-selection-grid class="grid gap-6">
+    <TokenCard
+      v-for="token in props.tokens"
+      :key="token.address"
+      :symbol="token.symbol"
+      :name="token.name"
+      :address="token.address"
+      :image="token.image"
+      :selected="token.selected"
+      @token-selected="emit('token-selected', token.address)"
+    />
+  </div>
 </template>
 
 <style scoped>

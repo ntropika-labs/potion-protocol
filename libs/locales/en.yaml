@@ -1,6 +1,6 @@
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer_description: Balance
@@ -10,26 +10,29 @@ next: next
 title: Home page
 user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
-
+hint_duration: The max duration that you are willing sell an Option
+hint_strike: The highest price that a buyer can exercise the Option
+description_duration: How long the insurance you are selling will be valid for.
+description_strike: Choose the maximum insurance cover.
 app:
-  asset: "Asset"
-  empty: "Empty"
-  max_duration: "Max Duration"
-  max_strike: "Max Strike"
-
+  asset: Asset
+  empty: Empty
+  max_duration: Max Duration
+  max_strike: Max Strike
 home:
-  title: "Home page"
-
+  title: Home page
 bonding_curve:
-  title: "Premium Bonding Curve"
+  title: Premium Bonding Curve
   x_axis:
-    label: "Utilization"
+    label: Utilization
   y_axis:
-    label: "Premium"
-
-curve_formula_title: "Equation"
-curve_formula_tooltip: "a = Scale
-    b = End Point
-    c = Convexity
-    d = Offset"
-set_bonding_curve_params: "Set the following parameters and define your curve."
+    label: Premium
+curve_formula:
+  title: Equation
+  tooltip: a = Scale b = End Point c = Convexity d = Offset
+loading: Loading..
+loading_error: Error loading data
+curve_formula_title: Equation
+curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
+set_bonding_curve_params: Set the following parameters and define your curve.
+insurance_description: You're selling insurance for

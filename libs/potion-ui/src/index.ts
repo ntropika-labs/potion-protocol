@@ -13,8 +13,10 @@ import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
-import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
+import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
+import InputSlider from "./components/InputSlider/InputSlider.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
+import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 
 export type {
   IconStrokeWeight,
@@ -42,6 +44,8 @@ export {
   HeaderComponent,
   InputNumber,
   TabNavigationComponent,
+  TokenIcon,
   TokenSelection,
+  InputSlider,
   Tooltip,
 };
