@@ -12,7 +12,6 @@
           palette="secondary"
           :inline="true"
           :label="t('next')"
-          :disabled="!liquidityCheck"
           @click="emits('navigate:next')"
         >
           <template #post-icon>
@@ -29,21 +28,25 @@
       <hr class="my-6 opacity-10" />
       <div class="flex flex-col gap-6">
         <template v-for="token of selectedTokens" :key="token.address">
-          <SelectedUnderlyingWrapper
+          <SelectedTokenWrapper
             :underlying="token"
             :price-info="props.tokenPrices.get(token.address)"
-          ></SelectedUnderlyingWrapper>
+            @remove-selection="handleTokenRemove"
+            @update:strike-duration="
+              (newValues) => handleCriteriaUpdate(token.address, newValues)
+            "
+          ></SelectedTokenWrapper>
         </template>
       </div>
     </BaseCard>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, type ComputedRef, type Ref } from "vue";
-import type { SelectableToken, Criteria } from "dapp-types";
+import { computed } from "vue";
+import type { SelectableToken, ApiTokenPrice } from "dapp-types";
 import { BaseCard, BaseButton, TokenSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
-import SelectedUnderlyingWrapper from "@/components/SelectedUnderlyingWrapper/SelectedUnderlyingWrapper.vue";
+import SelectedTokenWrapper from "@/components/SelectedTokenWrapper/SelectedTokenWrapper.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -53,26 +56,33 @@ interface Props {
   userCollateralBalance: number;
   liquidityCheck: boolean;
   availableTokens: SelectableToken[];
-  tokenPrices: Map<
-    string,
-    {
-      loading: Ref<boolean>;
-      price: Ref<number>;
-      formattedPrice: ComputedRef<string>;
-      success: Ref<boolean>;
-    }
-  >;
+  tokenPrices: Map<string, ApiTokenPrice>;
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: "update:liquidity", value: number): void;
-  (e: "update:criteria", criteria: Criteria): void;
+  (
+    e: "update:criteria",
+    address: string,
+    maxStrike: number,
+    maxDuration: number
+  ): void;
   (e: "navigate:next"): void;
   (e: "token-selected", address: string): void;
+  (e: "token-remove", address: string): void;
 }>();
 
 const handleTokenSelected = (address: string) =>
   emits("token-selected", address);
+
+const handleCriteriaUpdate = (
+  address: string,
+  newValues: { strike: number; duration: number }
+) => {
+  emits("update:criteria", address, newValues.strike, newValues.duration);
+};
+
+const handleTokenRemove = (address: string) => emits("token-remove", address);
 
 const selectedTokens = computed(() => {
   return props.availableTokens.filter((u) => u.selected);
