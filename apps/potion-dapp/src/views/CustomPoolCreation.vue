@@ -29,6 +29,7 @@ import type {
   SelectableToken,
   Token,
   BondingCurveParams,
+  Criteria,
 } from "dapp-types";
 
 import { useCollateralToken } from "@/composables/useCollateralToken";
@@ -52,16 +53,16 @@ const bondingCurve = ref<BondingCurveParams>({
   d: 2.5,
   maxUtil: 1,
 });
+const criterias = ref<Array<Criteria>>([]);
 
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
 const availableTokens = ref<SelectableToken[]>([]);
-const criteriaMap = new Map<
-  string,
-  { maxStrike: number; maxDuration: number }
->();
+const criteriaMap = ref(
+  new Map<string, { maxStrike: number; maxDuration: number }>()
+);
 const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
 
 const tokenToSelectableToken = (
@@ -108,7 +109,7 @@ const toggleTokenSelection = (address: string) => {
     if (token.selected) {
       if (!tokenHasPrice) updateTokenPrice(token);
     } else {
-      criteriaMap.delete(token.address);
+      criteriaMap.value.delete(token.address);
     }
   }
 };
@@ -117,7 +118,7 @@ const updateCriteria = (
   tokenAddress: string,
   maxStrike: number,
   maxDuration: number
-) => criteriaMap.set(tokenAddress, { maxStrike, maxDuration });
+) => criteriaMap.value.set(tokenAddress, { maxStrike, maxDuration });
 
 const updateTokenPrice = async (token: Token) => {
   console.log("[updateTokenPrice] for: ", token.name);
@@ -147,7 +148,29 @@ const updateTokenPrice = async (token: Token) => {
   }
 };
 
-const criterias = computed(() => Array.from(criteriaMap.values()));
+watch(
+  criteriaMap.value,
+  () => {
+    const existingCriteria: Array<Criteria> = [];
+
+    for (const entry of criteriaMap.value.entries()) {
+      console.log("criteria entry", entry);
+      const address = entry[0];
+      const strikeAndDuration = entry[1];
+      const token = availableTokens.value.find((t) => t.address === address);
+      if (token) {
+        existingCriteria.push({
+          token: token,
+          maxStrike: strikeAndDuration?.maxStrike,
+          maxDuration: strikeAndDuration?.maxDuration,
+        });
+      }
+    }
+
+    criterias.value = existingCriteria;
+  },
+  { deep: true }
+);
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();

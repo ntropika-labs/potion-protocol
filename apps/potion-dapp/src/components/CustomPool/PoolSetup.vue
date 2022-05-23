@@ -30,7 +30,7 @@
         <template v-for="token of selectedTokens" :key="token.address">
           <SelectedTokenWrapper
             :underlying="token"
-            :price-info="props.tokenPrices.get(token.address)"
+            :price-info="props.tokenPrices.get(token.address)!"
             @remove-selection="handleTokenRemove"
             @update:strike-duration="
               (newValues) => handleCriteriaUpdate(token.address, newValues)

@@ -74,7 +74,7 @@ defineExpose({
       :min="props.min"
       :max="props.max"
       :step="props.step"
-      :value="props.modelValue"
+      :model-value="props.modelValue"
       class="w-full leading-none bg-transparent text-lg font-semibold block border-none text-right p-0 outline-none focus:(outline-none border-none ring-0)"
       @update:model-value="handleInput"
     ></BaseInput>

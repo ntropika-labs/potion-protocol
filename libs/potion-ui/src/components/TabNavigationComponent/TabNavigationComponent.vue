@@ -8,7 +8,7 @@ interface TabNavigationInfo {
   visited?: boolean;
   isValid: ComputedRef<boolean> | boolean;
   cta?: {
-    externalUrl: boolean;
+    externalUrl?: boolean;
     label: string;
     url: string;
   };
