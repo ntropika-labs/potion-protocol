@@ -7,12 +7,14 @@ import BaseTag from "./components/BaseTag/BaseTag.vue";
 import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
 import CardFooter from "./components/CardFooter/CardFooter.vue";
 import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletButton.vue";
+import CriteriasRecap from "./components/CriteriasRecap/CriteriasRecap.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
 import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
-import InputNumber from "./components/InputNumber/InputNumber.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
+import InputNumber from "./components/InputNumber/InputNumber.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
+import Tooltip from "./components/Tooltip/Tooltip.vue";
 
 export type {
   IconStrokeWeight,
@@ -29,15 +31,17 @@ export type {
  */
 export {
   BaseButton,
-  HeaderComponent,
-  ConnectWalletButton,
   BaseCard,
   BaseTag,
+  BondingCurve,
   CardFooter,
+  ConnectWalletButton,
+  CriteriasRecap,
+  CurveFormula,
+  CustomCurveParams,
+  HeaderComponent,
   InputNumber,
   TabNavigationComponent,
   TokenSelection,
-  CustomCurveParams,
-  CurveFormula,
-  BondingCurve,
+  Tooltip,
 };

@@ -13,24 +13,33 @@
       @token-selected="toggleTokenSelection"
       @update:criteria="updateCriteria"
     />
-    <div></div>
+    <CurveSetup v-model="bondingCurve" :criterias="criterias"></CurveSetup>
     <div></div>
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, SelectableToken } from "dapp-types";
+import type { Criteria, SelectableToken, BondingCurveParams } from "dapp-types";
+
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
-// import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
+import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 // import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+
+const bondingCurve = ref<BondingCurveParams>({
+  a: 2.5,
+  b: 2.5,
+  c: 2.5,
+  d: 2.5,
+  maxUtil: 1,
+});
 
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
@@ -68,10 +77,14 @@ const toggleTokenSelection = (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
     token.selected = !token.selected;
+    if (!token.selected) {
+      criteriaMap.delete(token.address);
+    }
   }
 };
 
 const criteriaMap = new Map<string, Criteria>();
+const criterias = computed(() => Array.from(criteriaMap.values()));
 
 const updateCriteria = (criteria: Criteria) =>
   criteriaMap.set(criteria.token.address, criteria);

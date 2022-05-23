@@ -12,11 +12,11 @@ import { range as _range } from "lodash-es";
 import bb, { spline } from "billboard.js";
 import { useI18n } from "vue-i18n";
 import "billboard.js/dist/theme/insight.min.css";
-import type { EmergingCurve } from "../../types";
+import type { EmergingCurvePoints } from "dapp-types";
 
 export interface Props {
   bondingCurve: number[];
-  emergingCurves?: EmergingCurve[];
+  emergingCurves?: EmergingCurvePoints[];
   unloadKeys?: string[];
 }
 
@@ -144,6 +144,11 @@ watch(chartData, updateChart);
 
 .bb-tooltip td {
   @apply py-1 px-3 bg-deepBlack-800/70;
+}
+
+.bb line,
+.bb path {
+  @apply stroke-white/30;
 }
 
 .bb-axis text,
