@@ -12,11 +12,11 @@ import { range as _range } from "lodash-es";
 import bb, { spline } from "billboard.js";
 import { useI18n } from "vue-i18n";
 import "billboard.js/dist/theme/insight.min.css";
-import type { EmergingCurve } from "../../types";
+import type { EmergingCurvePoints } from "dapp-types";
 
 export interface Props {
   bondingCurve: number[];
-  emergingCurves?: EmergingCurve[];
+  emergingCurves?: EmergingCurvePoints[];
   unloadKeys?: string[];
 }
 

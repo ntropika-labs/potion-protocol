@@ -64,7 +64,3 @@ export enum IconStrokeWeight {
   thin = 8,
   regular = 16,
 }
-export interface EmergingCurve {
-  data: number[];
-  symbol: string;
-}

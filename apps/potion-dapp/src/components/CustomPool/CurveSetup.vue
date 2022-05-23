@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import type { BondingCurveParams, Criteria } from "dapp-types";
+import type {
+  BondingCurveParams,
+  Criteria,
+  EmergingCurvePoints,
+} from "dapp-types";
 import {
   BaseCard,
   BondingCurve,
@@ -16,9 +20,10 @@ import { useI18n } from "vue-i18n";
 interface Props {
   modelValue: BondingCurveParams;
   criterias: Criteria[];
+  emergingCurves: EmergingCurvePoints[];
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { emergingCurves: () => [] });
 const emits = defineEmits(["update:modelValue"]);
 
 const { t } = useI18n();
@@ -57,6 +62,7 @@ const bondingCurve = computed(
         <BondingCurve
           class="m-6"
           :bonding-curve="getCurvePoints(bondingCurve)"
+          :emerging-curves="emergingCurves"
         ></BondingCurve>
         <BaseCard class="p-6 gap-6 rounded-l-none">
           <CurveFormula></CurveFormula>
