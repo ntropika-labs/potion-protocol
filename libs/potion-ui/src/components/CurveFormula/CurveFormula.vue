@@ -22,8 +22,8 @@ const { t } = useI18n();
     :full-height="false"
   >
     <span class="text-white inline-flex items-center gap-[.5ch]">
-      <span>{{ t("curve_formula.title") }}</span>
-      <Tooltip :message="t('curve_formula.tooltip')" />
+      <span>{{ t("curve_formula_title") }}</span>
+      <Tooltip :message="t('curve_formula_tooltip')" />
     </span>
     <span class="text-deep-black-500 mt-2"
       >P = a ⋅ U ⋅ cosh(b ⋅ U<sup>c</sup>) +d</span

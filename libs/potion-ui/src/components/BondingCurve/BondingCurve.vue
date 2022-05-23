@@ -146,6 +146,11 @@ watch(chartData, updateChart);
   @apply py-1 px-3 bg-deepBlack-800/70;
 }
 
+.bb line,
+.bb path {
+  @apply stroke-white/30;
+}
+
 .bb-axis text,
 .bb-legend text {
   @apply text-white fill-current;

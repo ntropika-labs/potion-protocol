@@ -27,9 +27,9 @@ bonding_curve:
   y_axis:
     label: "Premium"
 
-curve_formula:
-  title: "Equation"
-  tooltip: "a = Scale
+curve_formula_title: "Equation"
+curve_formula_tooltip: "a = Scale
     b = End Point
     c = Convexity
     d = Offset"
+set_bonding_curve_params: "Set the following parameters and define your curve."
