@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen px-6 py-5 md:px-12 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium"
+    class="min-h-screen px-6 py-5 md:px-12 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-screen overflow-x-hidden"
   >
     <MainHeader></MainHeader>
     <div class="container mx-auto mt-24">

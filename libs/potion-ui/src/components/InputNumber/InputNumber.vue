@@ -2,9 +2,9 @@
   <BaseCard
     :full-height="false"
     :class="{
-      'focus-within:(ring-primary-500) focus-within:children:last:(bg-primary-500)':
+      'focus-within:(ring-primary-500) last-children:focus-within:(bg-primary-500)':
         inputIsValid,
-      '!ring-error children:last:(bg-error)': !inputIsValid,
+      '!ring-error last-children:(bg-error)': !inputIsValid,
     }"
   >
     <label class="p-3">
