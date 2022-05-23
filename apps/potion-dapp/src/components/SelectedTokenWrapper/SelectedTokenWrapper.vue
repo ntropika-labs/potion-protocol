@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import {
   BaseCard,
   TokenIcon,
@@ -28,6 +28,7 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const maxStrike = ref(100);
 const maxDuration = ref(60);
+
 const updateStrikeDuration = (strike: number, duration: number) => {
   maxStrike.value = strike;
   maxDuration.value = duration;
@@ -37,6 +38,8 @@ const updateStrikeDuration = (strike: number, duration: number) => {
     duration: maxDuration.value,
   });
 };
+
+updateStrikeDuration(maxStrike.value, maxDuration.value);
 </script>
 <template>
   <BaseCard color="glass" test-wrapper-card>

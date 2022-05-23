@@ -1,8 +1,9 @@
 import { $fetch } from "ohmyfetch";
 import { computed, ref } from "vue";
 
-const endpoint = "https://api.coingecko.com/api/v3/simple/token_price/ethereum";
 export function useFetchTokenPrices(address: string, currency = "usd") {
+  const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
+  const success = ref(false);
   const loading = ref(false);
   const price = ref(0);
   const formattedPrice = computed(() => {
@@ -15,16 +16,19 @@ export function useFetchTokenPrices(address: string, currency = "usd") {
   const fetchPrice = async () => {
     try {
       loading.value = true;
-      const response = await $fetch(endpoint, {
-        params: {
-          contract_addresses: address,
-          vs_currencies: currency,
-        },
-      });
+      const response = await $fetch(
+        endpoint.concat("/simple/token_price/ethereum"),
+        {
+          params: {
+            contract_addresses: address,
+            vs_currencies: currency,
+          },
+        }
+      );
       console.log(response);
       price.value = response[address.toLowerCase()][currency.toLowerCase()];
       loading.value = false;
-      return true;
+      success.value = true;
     } catch (error) {
       loading.value = false;
       throw new Error("Failed to fetch price");
@@ -32,6 +36,7 @@ export function useFetchTokenPrices(address: string, currency = "usd") {
   };
   return {
     loading,
+    success,
     price,
     formattedPrice,
     fetchPrice,

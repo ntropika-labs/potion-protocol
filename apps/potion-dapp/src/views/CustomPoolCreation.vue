@@ -76,7 +76,7 @@ watch(data, () => {
     ) ?? [];
 });
 
-const toggleTokenSelection = async (address: string) => {
+const toggleTokenSelection = (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
     const tokenHasPrice = tokenPricesMap.value.get(token.address)?.success;
@@ -92,7 +92,7 @@ const toggleTokenSelection = async (address: string) => {
     token.selected = !token.selected;
 
     if (token.selected) {
-      if (!tokenHasPrice) await updateTokenPrice(token);
+      if (!tokenHasPrice) updateTokenPrice(token);
     } else {
       criteriaMap.delete(token.address);
     }
@@ -107,24 +107,28 @@ const updateCriteria = (
 
 const updateTokenPrice = async (token: Token) => {
   console.log("[updateTokenPrice] for: ", token.name);
-  const { loading, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
+  const { success, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
     token.address
   );
-  let success = false;
   try {
-    success = await fetchPrice();
+    await fetchPrice();
 
-    console.log("[updateTokenPrice] completed for: ", token.name, success);
+    console.log(
+      "[updateTokenPrice] completed for: ",
+      token.name,
+      success.value
+    );
   } catch (error) {
     console.error(
       "Error while fetching token price. Affected token: " + token.name
     );
   } finally {
+    console.log("[updateTokenPrice] running finally ");
     tokenPricesMap.value.set(token.address, {
-      loading: loading.value,
+      loading: false,
       price: price.value,
       formattedPrice: formattedPrice.value,
-      success: success,
+      success: success.value,
     });
   }
 };
