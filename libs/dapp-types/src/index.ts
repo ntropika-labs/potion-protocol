@@ -38,3 +38,8 @@ export interface CurveCriteriaSet {
   curve: BondingCurveParams;
   criterias: Criteria[];
 }
+
+export interface EmergingCurvePoints {
+  data: number[];
+  symbol: string;
+}

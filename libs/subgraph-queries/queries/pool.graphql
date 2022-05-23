@@ -1,0 +1,43 @@
+query getPoolsFromCriteria(
+  $underlyingAddress: String
+  $minDuration: BigInt
+  $minStrike: BigDecimal
+) {
+  criterias(
+    where: {
+      underlyingAsset: $underlyingAddress
+      maxDurationInDays_gte: $minDuration
+      maxStrikePercent_gte: $minStrike
+    }
+  ) {
+    isPut
+    maxStrikePercent
+    maxDurationInDays
+    strikeAsset {
+      address
+    }
+    criteriaSets {
+      criteriaSet {
+        templates {
+          curve {
+            id
+            a
+            b
+            c
+            d
+            maxUtil
+          }
+          pools(first: 1000, orderBy: averageCost, orderDirection: asc) {
+            id
+            size
+            locked
+            unlocked
+            utilization
+            lp
+            poolId
+          }
+        }
+      }
+    }
+  }
+}
