@@ -4,6 +4,7 @@
     :tabs="tabs"
     :default-index="currentFormStep"
     @navigate-tab="(index) => (currentFormStep = index)"
+    @quit-tabs="router.push('/pools')"
   >
     <PoolSetup
       v-model:liquidity.number="liquidity"
@@ -12,7 +13,9 @@
       :available-tokens="availableTokens"
       :token-prices="tokenPricesMap"
       @token-selected="toggleTokenSelection"
+      @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
+      @navigate:next="currentFormStep = 1"
     />
     <div></div>
     <div></div>
@@ -21,17 +24,10 @@
 <script lang="ts" setup>
 //import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
-import type { Criteria, SelectableToken, Token } from "dapp-types";
+import type { ApiTokenPrice, SelectableToken, Token } from "dapp-types";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
-import {
-  onMounted,
-  ref,
-  computed,
-  watch,
-  type Ref,
-  type ComputedRef,
-} from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
@@ -40,22 +36,19 @@ import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
 const availableTokens = ref<SelectableToken[]>([]);
-const criteriaMap = new Map<string, Criteria>();
-const tokenPricesMap = new Map<
+const criteriaMap = new Map<
   string,
-  {
-    loading: Ref<boolean>;
-    price: Ref<number>;
-    formattedPrice: ComputedRef<string>;
-    success: Ref<boolean>;
-  }
+  { maxStrike: number; maxDuration: number }
 >();
+const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
 
 const tokenToSelectableToken = (
   address: string,
@@ -86,42 +79,49 @@ watch(data, () => {
 const toggleTokenSelection = async (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
+    tokenPricesMap.value.set(token.address, {
+      loading: true,
+      price: 0,
+      formattedPrice: "0",
+      success: false,
+    });
     token.selected = !token.selected;
 
-    if (token.selected && !tokenPricesMap.has(token.address)) {
+    if (token.selected) {
       await updateTokenPrice(token);
+    } else {
+      criteriaMap.delete(token.address);
     }
   }
 };
 
-const updateCriteria = (criteria: Criteria) =>
-  criteriaMap.set(criteria.token.address, criteria);
+const updateCriteria = (
+  tokenAddress: string,
+  maxStrike: number,
+  maxDuration: number
+) => criteriaMap.set(tokenAddress, { maxStrike, maxDuration });
 
 const updateTokenPrice = async (token: Token) => {
   console.log("[updateTokenPrice] for: ", token.name);
   const { loading, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
     token.address
   );
-
-  let succeded = ref(false);
-  tokenPricesMap.set(token.address, {
-    loading,
-    price,
-    formattedPrice,
-    success: ref(succeded),
-  });
-
+  let success = false;
   try {
-    succeded.value = await fetchPrice();
-    console.log(
-      "[updateTokenPrice] completed for: ",
-      token.name,
-      succeded.value
-    );
+    success = await fetchPrice();
+
+    console.log("[updateTokenPrice] completed for: ", token.name, success);
   } catch (error) {
     console.error(
       "Error while fetching token price. Affected token: " + token.name
     );
+  } finally {
+    tokenPricesMap.value.set(token.address, {
+      loading: loading.value,
+      price: price.value,
+      formattedPrice: formattedPrice.value,
+      success: success,
+    });
   }
 };
 
