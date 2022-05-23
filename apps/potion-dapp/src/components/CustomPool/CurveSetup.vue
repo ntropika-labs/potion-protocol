@@ -73,7 +73,9 @@ const bondingCurve = computed(
           :bonding-curve="getCurvePoints(bondingCurve)"
           :emerging-curves="emergingCurves"
         ></BondingCurve>
-        <BaseCard class="p-6 gap-6 rounded-l-none">
+        <BaseCard
+          class="p-6 gap-6 rounded-l-none !ring-none border-l-1 border-white/10"
+        >
           <CurveFormula></CurveFormula>
           <div class="text-sm">
             {{ t("set_bonding_curve_params") }}
