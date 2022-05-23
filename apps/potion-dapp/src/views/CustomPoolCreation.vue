@@ -53,7 +53,6 @@ const bondingCurve = ref<BondingCurveParams>({
   d: 2.5,
   maxUtil: 1,
 });
-const criterias = ref<Array<Criteria>>([]);
 
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
@@ -147,37 +146,30 @@ const updateTokenPrice = async (token: Token) => {
     });
   }
 };
+const criterias = computed(() => {
+  const existingCriteria: Array<Criteria> = [];
 
-watch(
-  criteriaMap.value,
-  () => {
-    const existingCriteria: Array<Criteria> = [];
-
-    for (const entry of criteriaMap.value.entries()) {
-      console.log("criteria entry", entry);
-      const address = entry[0];
-      const strikeAndDuration = entry[1];
-      const token = availableTokens.value.find((t) => t.address === address);
-      if (token) {
-        existingCriteria.push({
-          token: token,
-          maxStrike: strikeAndDuration?.maxStrike,
-          maxDuration: strikeAndDuration?.maxDuration,
-        });
-      }
+  for (const entry of criteriaMap.value.entries()) {
+    const address = entry[0];
+    const strikeAndDuration = entry[1];
+    const token = availableTokens.value.find((t) => t.address === address);
+    if (token) {
+      existingCriteria.push({
+        token: token,
+        maxStrike: strikeAndDuration?.maxStrike,
+        maxDuration: strikeAndDuration?.maxDuration,
+      });
     }
+  }
 
-    criterias.value = existingCriteria;
-  },
-  { deep: true }
-);
+  return existingCriteria;
+});
 
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
 
 /* Setup data validation */
 const liquidity = ref(100);
-//const curve = ref({ a: 0, b: 0, c: 0, maxUtil: 0 });
 
 const {
   fetchUserCollateralBalance,
