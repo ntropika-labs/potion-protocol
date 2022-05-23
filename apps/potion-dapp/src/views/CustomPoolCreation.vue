@@ -79,16 +79,20 @@ watch(data, () => {
 const toggleTokenSelection = async (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
-    tokenPricesMap.value.set(token.address, {
-      loading: true,
-      price: 0,
-      formattedPrice: "0",
-      success: false,
-    });
+    const tokenHasPrice = tokenPricesMap.value.get(token.address)?.success;
+    if (!tokenHasPrice) {
+      tokenPricesMap.value.set(token.address, {
+        loading: true,
+        price: 0,
+        formattedPrice: "0",
+        success: false,
+      });
+    }
+
     token.selected = !token.selected;
 
     if (token.selected) {
-      await updateTokenPrice(token);
+      if (!tokenHasPrice) await updateTokenPrice(token);
     } else {
       criteriaMap.delete(token.address);
     }
@@ -176,12 +180,21 @@ const tabs = ref([
     title: "Pool Setup",
     subtitle: "Choose one or more assets this pool will insure",
     isValid: liquidityCheck,
+    cta: {
+      label: "existing pools (test)",
+      url: "/pools",
+    },
   },
   {
     title: "Curve Setup",
     subtitle:
       "Curve the pool will use to determine sell prices, as a function of your pool utilization.",
     isValid: false,
+    cta: {
+      externalUrl: true,
+      label: "learn more",
+      url: "https://google.com",
+    },
   },
   {
     title: "Review and Create",
