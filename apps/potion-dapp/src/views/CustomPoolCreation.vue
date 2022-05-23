@@ -12,12 +12,18 @@
       :user-collateral-balance="userCollateralBalance"
       :available-tokens="availableTokens"
       :token-prices="tokenPricesMap"
+      :pool-id="poolId"
       @token-selected="toggleTokenSelection"
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
       @navigate:next="currentFormStep = 1"
     />
-    <CurveSetup v-model="bondingCurve" :criterias="criterias"></CurveSetup>
+    <CurveSetup
+      v-model="bondingCurve"
+      :pool-id="poolId"
+      :liquidity="currencyFormatter(liquidity, 'USDC')"
+      :criterias="criterias"
+    ></CurveSetup>
     <div></div>
   </TabNavigationComponent>
 </template>
@@ -32,6 +38,7 @@ import type {
   Criteria,
 } from "dapp-types";
 
+import { currencyFormatter } from "potion-ui";
 import { useCollateralToken } from "@/composables/useCollateralToken";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
@@ -46,6 +53,7 @@ import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const poolId = ref(1);
 const bondingCurve = ref<BondingCurveParams>({
   a: 2.5,
   b: 2.5,
@@ -53,7 +61,6 @@ const bondingCurve = ref<BondingCurveParams>({
   d: 2.5,
   maxUtil: 1,
 });
-
 const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
 const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },

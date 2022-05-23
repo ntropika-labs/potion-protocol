@@ -1,6 +1,6 @@
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer_description: Balance
@@ -32,10 +32,7 @@ curve_formula:
   tooltip: a = Scale b = End Point c = Convexity d = Offset
 loading: Loading..
 loading_error: Error loading data
-
-curve_formula_title: "Equation"
-curve_formula_tooltip: "a = Scale
-  b = End Point
-  c = Convexity
-  d = Offset"
-set_bonding_curve_params: "Set the following parameters and define your curve."
+curve_formula_title: Equation
+curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
+set_bonding_curve_params: Set the following parameters and define your curve.
+insurance_description: You're selling insurance for

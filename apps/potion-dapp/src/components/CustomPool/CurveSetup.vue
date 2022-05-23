@@ -18,6 +18,8 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 interface Props {
+  liquidity: string;
+  poolId: number;
   modelValue: BondingCurveParams;
   criterias: Criteria[];
   emergingCurves: EmergingCurvePoints[];
@@ -54,8 +56,15 @@ const bondingCurve = computed(
 
 <template>
   <div class="grid gap-6 lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]">
-    <BaseCard class="p-6">
-      <CriteriasRecap :criterias="criterias"></CriteriasRecap>
+    <BaseCard class="py-3 px-4 gap-4">
+      <p class="text-sm uppercase">{{ t("my_pool") }} #{{ props.poolId }}</p>
+      <div class="flex justify-between text-sm">
+        <p>{{ t("deposit_collateral_title") }}</p>
+        <p class="font-bold font-serif">{{ liquidity }}</p>
+      </div>
+      <div class="w-full bg-white/10 h-[1px]"></div>
+      <p class="text-sm">{{ t("insurance_description") }}</p>
+      <CriteriasRecap class="" :criterias="criterias"></CriteriasRecap>
     </BaseCard>
     <BaseCard>
       <div class="grid gap-6 xl:grid-cols-[3fr_1fr]">
