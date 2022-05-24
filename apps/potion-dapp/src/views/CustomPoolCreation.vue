@@ -42,7 +42,7 @@ import type {
 } from "dapp-types";
 
 import { currencyFormatter } from "potion-ui";
-import { useCollateralToken } from "@/composables/useCollateralToken";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
@@ -189,7 +189,7 @@ const {
   // fetchUserAllowanceLoading,
   // approveForPotionLiquidityPool,
   // approveLoading,
-} = useCollateralToken();
+} = useCollateralTokenContract();
 
 const liquidityCheck = computed(
   () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0

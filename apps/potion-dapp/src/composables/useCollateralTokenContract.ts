@@ -9,7 +9,7 @@ import { formatUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 import { useOnboard } from "./useOnboard";
 
-export function useCollateralToken() {
+export function useCollateralTokenContract() {
   const { initContract } = useEthersContract();
   const { PotionTestUSD, PotionLiquidityPool } = contractsAddresses;
   const { connectedWallet } = useOnboard();
