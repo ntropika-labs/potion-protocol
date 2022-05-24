@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { t } = useI18n();
 
-const roundValue = (value: number) => value.toFixed(2);
+const roundValue = (value: number) => (value * 100).toFixed(2);
 
 const axis: bb.Axis = {
   x: {
@@ -62,17 +62,14 @@ const chartData = computed(() => {
   ]);
   const names = new Map<string, string>([["bondingCurve", "Bonding Curve"]]);
 
-  const unload = props.unloadKeys.map((v) => v.toUpperCase());
+  const unloadKeys = new Set(props.unloadKeys);
 
   props.emergingCurves.forEach((curve) => {
     if (curve?.data?.length > 0) {
-      json.set(
-        curve.symbol,
-        curve.data.map((n) => n * 100)
-      );
+      json.set(curve.symbol, curve.data);
       names.set(curve.symbol, curve.symbol.toUpperCase());
     } else {
-      unload.push(curve.symbol);
+      unloadKeys.add(curve.symbol);
     }
   });
 
@@ -81,7 +78,7 @@ const chartData = computed(() => {
     json: Object.fromEntries(json),
     colors: Object.fromEntries(colors),
     names: Object.fromEntries(names),
-    unload: unload,
+    unload: Array.from(unloadKeys).map((v) => v.toUpperCase()),
   };
 });
 
@@ -108,12 +105,19 @@ const createChart = () => {
 
 const updateChart = () => {
   if (chartReady.value) {
-    chart.value?.load(chartData.value);
+    chartReady.value = false;
+    chart.value?.load({
+      ...chartData.value,
+      done: () => {
+        chart.value?.load(chartData.value);
+        chartReady.value = true;
+      },
+    });
   }
 };
 
 onMounted(() => nextTick(createChart));
-watch(chartData, updateChart);
+watch(chartData, () => nextTick(updateChart));
 </script>
 
 <template>
