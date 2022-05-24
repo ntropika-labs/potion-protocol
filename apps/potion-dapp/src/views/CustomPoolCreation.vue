@@ -31,19 +31,13 @@
     <CreatePool
       :transaction="depositAndCreateCurveAndCriteriaTx"
       :receipt="depositAndCreateCurveAndCriteriaReceipt"
-      @deploy-pool="
-        depositAndCreateCurveAndCriteria(
-          13,
-          liquidity,
-          bondingCurve,
-          selectedCriterias
-        )
-      "
+      :action-label="deployButtonLabel"
+      @deploy-pool="handleDeployPool"
     />
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
-// import { useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import type {
   ApiTokenPrice,
   SelectableToken,
@@ -201,7 +195,7 @@ const criterias = computed(() => {
 });
 
 const { connectedWallet } = useOnboard();
-// const { t } = useI18n();
+const { t } = useI18n();
 
 /* Setup data validation */
 const liquidity = ref(100);
@@ -212,7 +206,7 @@ const {
   fetchUserCollateralAllowance,
   userAllowance,
   // fetchUserAllowanceLoading,
-  // approveForPotionLiquidityPool,
+  approveForPotionLiquidityPool,
   // approveLoading,
 } = useCollateralTokenContract();
 
@@ -241,16 +235,39 @@ const criteriasCheck = computed(() => {
 
 /* This will be needed for the last step*/
 
-// const amountNeededToApprove = computed(() => {
-//   if (userAllowance.value === 0) {
-//     return liquidity.value;
-//   }
-//   if (liquidity.value > userAllowance.value) {
-//     return liquidity.value - userAllowance.value;
-//   }
-//   return 0;
-// });
+const amountNeededToApprove = computed(() => {
+  if (userAllowance.value === 0) {
+    return liquidity.value;
+  }
+  if (liquidity.value > userAllowance.value) {
+    return liquidity.value - userAllowance.value;
+  }
+  return 0;
+});
 
+const deployButtonLabel = computed(() => {
+  if (amountNeededToApprove.value > 0) {
+    return `${t("approve")} USDC`;
+  }
+  return `${t("create_pool")}`;
+});
+
+const handleDeployPool = async () => {
+  if (amountNeededToApprove.value > 0) {
+    await approveForPotionLiquidityPool(liquidity.value, true);
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  } else {
+    await depositAndCreateCurveAndCriteria(
+      13,
+      liquidity.value,
+      bondingCurve.value,
+      selectedCriterias.value
+    );
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
 /* this needs to be expanded with the 3 steps checks */
 
 const readyToDeploy = computed(() => {

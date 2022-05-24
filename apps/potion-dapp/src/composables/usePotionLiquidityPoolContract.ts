@@ -1,16 +1,3 @@
-import {
-  CurveCriteria,
-  HyperbolicCurve,
-  OrderedCriteria,
-} from "contracts-math";
-import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
-import { computed, ref, watch } from "vue";
-
-import { contractsAddresses } from "@/helpers/contracts";
-
-import { useEthersContract } from "./useEthersContract";
-import { useOnboard } from "./useOnboard";
-
 import type {
   ContractTransaction,
   ContractReceipt,
@@ -18,34 +5,36 @@ import type {
 
 import type { PotionLiquidityPool } from "potion-contracts/typechain";
 import type { BondingCurveParams } from "dapp-types";
+
+import {
+  CurveCriteria,
+  HyperbolicCurve,
+  OrderedCriteria,
+} from "contracts-math";
+import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
+import { ref } from "vue";
+
+import { contractsAddresses } from "@/helpers/contracts";
+import { parseUnits } from "@ethersproject/units";
+
+import { useEthersContract } from "./useEthersContract";
+import { useOnboard } from "./useOnboard";
+
 export function usePotionLiquidityPoolContract() {
   const { initContract } = useEthersContract();
   const { PotionLiquidityPool, PotionTestUSD } = contractsAddresses;
   const { connectedWallet } = useOnboard();
-  const walletConnected = computed(() => {
-    return connectedWallet.value !== null;
-  });
 
   //Provider initialization
-  let contractSigner: PotionLiquidityPool | null = null;
 
-  watch(connectedWallet, (connectedWallet) => {
-    if (connectedWallet && connectedWallet.accounts[0].address) {
-      contractSigner = initContract(
-        true,
-        false,
-        PotionLiquidityPool__factory,
-        PotionLiquidityPool.address.toLowerCase()
-      ) as PotionLiquidityPool;
-    }
-  });
-
-  // const contractProvider = initContract(
-  //   false,
-  //   false,
-  //   PotionLiquidityPool__factory,
-  //   PotionLiquidityPool.address.toLowerCase()
-  // ) as PotionLiquidityPool;
+  const initContractSigner = () => {
+    return initContract(
+      true,
+      false,
+      PotionLiquidityPool__factory,
+      PotionLiquidityPool.address.toLowerCase()
+    ) as PotionLiquidityPool;
+  };
 
   //Contract methods
 
@@ -84,12 +73,13 @@ export function usePotionLiquidityPoolContract() {
         )
     );
     const orderedCriteria = OrderedCriteria.from(curveCriterias);
-    if (walletConnected.value && contractSigner) {
+    if (connectedWallet.value) {
+      const contractSigner = initContractSigner();
       try {
         depositAndCreateCurveAndCriteriaTx.value =
           await contractSigner.depositAndCreateCurveAndCriteria(
             poolId,
-            amount,
+            parseUnits(amount.toString(), 6),
             curve,
             orderedCriteria
           );
@@ -109,9 +99,13 @@ export function usePotionLiquidityPoolContract() {
   const depositTx = ref<ContractTransaction | null>(null);
   const depositReceipt = ref<ContractReceipt | null>(null);
   const deposit = async (poolId: number, amount: number) => {
-    if (walletConnected.value && contractSigner) {
+    if (connectedWallet.value) {
+      const contractSigner = initContractSigner();
       try {
-        depositTx.value = await contractSigner.deposit(poolId, amount);
+        depositTx.value = await contractSigner.deposit(
+          poolId,
+          parseUnits(amount.toString(), 6)
+        );
         depositReceipt.value = await depositTx.value.wait();
       } catch (error) {
         if (error instanceof Error) {

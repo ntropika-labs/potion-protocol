@@ -82,7 +82,7 @@ const bondingCurve = computed(
           :label="t('back')"
           @click="emits('navigate:back')"
         >
-          <template #post-icon>
+          <template #pre-icon>
             <i class="i-ph-caret-left"></i>
           </template>
         </BaseButton>

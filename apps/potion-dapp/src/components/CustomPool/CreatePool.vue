@@ -1,6 +1,6 @@
 <template>
   <div>CreatePool</div>
-  <button @click="$emit('deployPool')">create pool</button>
+  <button @click="$emit('deployPool')">{{ props.actionLabel }}</button>
   <div>
     <code class="bg-black">
       {{ props.transaction }}
@@ -18,6 +18,7 @@ defineEmits(["deployPool"]);
 interface Props {
   transaction: ContractTransaction | null;
   receipt: ContractReceipt | null;
+  actionLabel: string;
 }
 const props = defineProps<Props>();
 </script>
