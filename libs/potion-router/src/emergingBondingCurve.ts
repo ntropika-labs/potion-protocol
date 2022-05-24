@@ -8,7 +8,7 @@ const curvePoints = 100;
 const deltaX = 1000;
 const step = 1 / curvePoints;
 
-const initialPoint = [_min([step / 10, 1 / deltaX])]
+const initialPoint = [_min([step / 10, 1 / deltaX])];
 
 const stepArray = initialPoint.concat(_range(step, 1, step)) as number[];
 
@@ -24,7 +24,10 @@ const getEmergingBondingCurvesFromCriterias = async (
   for (const { pools, symbol } of criteriaPools) {
     let data = [] as number[];
     if (pools.length > 0) {
-      const totalUnlocked = pools.reduce((sum, pool) => sum + parseFloat(pool.unlocked), 0);
+      const totalUnlocked = pools.reduce(
+        (sum, pool) => sum + parseFloat(pool.unlocked),
+        0
+      );
       data = stepArray.map((step) => {
         const orderSize = totalUnlocked * step;
         const { premium } = runMarginalCostRouter(pools, orderSize, deltaX, 1);

@@ -1,9 +1,10 @@
-import { useGetPoolsFromCriteriaQuery } from 'subgraph-queries/generated/urql';
+import { useGetPoolsFromCriteriaQuery } from "subgraph-queries/generated/urql";
 import type { Criteria } from "dapp-types";
-import type { IPoolUntyped, CriteriaPool } from './types';
+import type { IPoolUntyped, CriteriaPool } from "./types";
 
-
-const getPoolsFromCriteria = async (criteria: Criteria): Promise<CriteriaPool> => {
+const getPoolsFromCriteria = async (
+  criteria: Criteria
+): Promise<CriteriaPool> => {
   const underlyingAddress = criteria.token.address;
   const { data } = await useGetPoolsFromCriteriaQuery({
     variables: {
@@ -31,13 +32,12 @@ const getPoolsFromCriteria = async (criteria: Criteria): Promise<CriteriaPool> =
             unlocked: pool.unlocked,
             utilization: pool.utilization,
             curve: {
-              id: template?.curve?.id ?? '',
-              a: template?.curve?.a ?? '',
-              b: template?.curve?.b ?? '',
-              c: template?.curve?.c ?? '',
-              d: template?.curve?.d ?? '',
-              maxUtil: template?.curve?.maxUtil ?? '',
-
+              id: template?.curve?.id ?? "",
+              a: template?.curve?.a ?? "",
+              b: template?.curve?.b ?? "",
+              c: template?.curve?.c ?? "",
+              d: template?.curve?.d ?? "",
+              maxUtil: template?.curve?.maxUtil ?? "",
             },
             underlyingAddress,
           });
@@ -49,12 +49,12 @@ const getPoolsFromCriteria = async (criteria: Criteria): Promise<CriteriaPool> =
   return {
     pools,
     symbol: criteria.token.symbol,
-  }
-}
+  };
+};
 
-const getPoolsFromCriterias = async (criterias: Criteria[]): Promise<CriteriaPool[]> => await Promise.all(criterias.map(getPoolsFromCriteria));
+const getPoolsFromCriterias = async (
+  criterias: Criteria[]
+): Promise<CriteriaPool[]> =>
+  await Promise.all(criterias.map(getPoolsFromCriteria));
 
-export {
-  getPoolsFromCriteria,
-  getPoolsFromCriterias
-}
+export { getPoolsFromCriteria, getPoolsFromCriterias };

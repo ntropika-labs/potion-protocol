@@ -5,7 +5,7 @@ import {
   calculateDepthMarginalCost,
   calculateMarginalCostForDeltaX,
   checkTotalUnlockedCollateral,
-  poolUntypedToTyped
+  poolUntypedToTyped,
 } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";
 import { getEmergingBondingCurvesFromCriterias } from "./emergingBondingCurve";
@@ -119,4 +119,10 @@ const runDepthRouter = (
   };
 };
 
-export { runMarginalCostRouter, runDepthRouter, getEmergingBondingCurvesFromCriterias, getPoolsFromCriteria, getPoolsFromCriterias };
+export {
+  runMarginalCostRouter,
+  runDepthRouter,
+  getEmergingBondingCurvesFromCriterias,
+  getPoolsFromCriteria,
+  getPoolsFromCriterias,
+};

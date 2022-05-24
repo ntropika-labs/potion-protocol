@@ -4,6 +4,10 @@
   "version": "0.0.1",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "format": "prettier --write 'src/**/*.{ts,js}'"
+  },
   "dependencies": {
     "contracts-math": "*",
     "dapp-types": "*",

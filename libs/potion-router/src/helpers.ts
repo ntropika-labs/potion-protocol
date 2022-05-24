@@ -36,7 +36,7 @@ const calculateMarginalCostForDeltaX = (
   const poolCurrentLocked = pool.poolOrderSize + pool.locked;
   const numerator =
     (poolCurrentLocked + deltaX) *
-    pool.curve.evalAt((poolCurrentLocked + deltaX) / pool.size) -
+      pool.curve.evalAt((poolCurrentLocked + deltaX) / pool.size) -
     poolCurrentLocked * pool.curve.evalAt(poolCurrentLocked / pool.size);
   return numerator / deltaX;
 };
