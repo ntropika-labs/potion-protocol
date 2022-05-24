@@ -28,7 +28,18 @@
       @navigate:back="currentFormStep = 0"
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
-    <div></div>
+    <CreatePool
+      :transaction="depositAndCreateCurveAndCriteriaTx"
+      :receipt="depositAndCreateCurveAndCriteriaReceipt"
+      @deploy-pool="
+        depositAndCreateCurveAndCriteria(
+          13,
+          liquidity,
+          bondingCurve,
+          selectedCriterias
+        )
+      "
+    />
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
@@ -49,12 +60,17 @@ import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
-// import CreatePool from "@/components/CustomPool/CreatePool.vue";
+import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
-
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+const {
+  depositAndCreateCurveAndCriteriaTx,
+  depositAndCreateCurveAndCriteriaReceipt,
+  depositAndCreateCurveAndCriteria,
+} = usePotionLiquidityPoolContract();
 const router = useRouter();
 const poolId = ref(1);
 const bondingCurve = ref<BondingCurveParams>({
@@ -72,6 +88,15 @@ const availableTokens = ref<SelectableToken[]>([]);
 const criteriaMap = ref(
   new Map<string, { maxStrike: number; maxDuration: number }>()
 );
+const selectedCriterias = computed(() => {
+  return [...criteriaMap.value].map((criteria) => {
+    return {
+      tokenAddress: criteria[0],
+      maxStrike: criteria[1].maxStrike,
+      maxDuration: criteria[1].maxDuration,
+    };
+  });
+});
 const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
 
 const tokenToSelectableToken = (

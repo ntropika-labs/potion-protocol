@@ -12,9 +12,10 @@ import { useEthersContract } from "./useEthersContract";
 import { useOnboard } from "./useOnboard";
 
 import type {
-  ContractReceipt,
   ContractTransaction,
+  ContractReceipt,
 } from "@ethersproject/contracts";
+
 import type { PotionLiquidityPool } from "potion-contracts/typechain";
 import type { BondingCurveParams } from "dapp-types";
 export function usePotionLiquidityPoolContract() {
