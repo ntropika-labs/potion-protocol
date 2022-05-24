@@ -1,7 +1,7 @@
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria
+  OrderedCriteria,
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { computed, ref, watch } from "vue";
