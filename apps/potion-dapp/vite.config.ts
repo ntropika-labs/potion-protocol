@@ -35,6 +35,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@web-worker": fileURLToPath(new URL("./src/web-worker", import.meta.url)),
       crypto: "crypto-browserify",
       stream: "stream-browserify",
       assert: "assert",

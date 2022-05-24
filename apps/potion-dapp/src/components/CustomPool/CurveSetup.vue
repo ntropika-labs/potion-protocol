@@ -18,10 +18,8 @@ import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { computed, onActivated, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import {
-  getEmergingBondingCurvesFromCriterias,
-  getPoolsFromCriterias,
-} from "potion-router";
+import { getPoolsFromCriterias } from "potion-router";
+import { worker } from "@web-worker";
 
 interface Props {
   liquidity: string;
@@ -70,7 +68,9 @@ const emergingCurves = ref<EmergingCurvePoints[]>([]);
 
 onActivated(async () => {
   const poolSets = await getPoolsFromCriterias(props.criterias);
-  emergingCurves.value = await getEmergingBondingCurvesFromCriterias(poolSets);
+  emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
+    poolSets
+  );
 });
 </script>
 
