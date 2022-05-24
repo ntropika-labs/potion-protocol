@@ -1,12 +1,15 @@
 import { useGetPoolsFromCriteriaQuery } from 'subgraph-queries/generated/urql';
-import type { IPoolUntyped } from './types';
+import type { Criteria } from "dapp-types";
+import type { IPoolUntyped, CriteriaPool } from './types';
 
-const getPoolsFromCriteria = async (underlyingAddress: string, minDuration: string, minStrike: string) => {
+
+const getPoolsFromCriteria = async (criteria: Criteria): Promise<CriteriaPool> => {
+  const underlyingAddress = criteria.token.address;
   const { data } = await useGetPoolsFromCriteriaQuery({
     variables: {
       underlyingAddress,
-      minDuration,
-      minStrike,
+      minDuration: criteria.maxDuration.toString(),
+      minStrike: criteria.maxStrike.toString(),
     },
   });
   const poolsMap = new Map<string, IPoolUntyped>();
@@ -42,9 +45,16 @@ const getPoolsFromCriteria = async (underlyingAddress: string, minDuration: stri
       });
     });
   });
-  return Array.from(poolsMap.values());
+  const pools = Array.from(poolsMap.values());
+  return {
+    pools,
+    symbol: criteria.token.symbol,
+  }
 }
 
+const getPoolsFromCriterias = async (criterias: Criteria[]): Promise<CriteriaPool[]> => await Promise.all(criterias.map(getPoolsFromCriteria));
+
 export {
-  getPoolsFromCriteria
+  getPoolsFromCriteria,
+  getPoolsFromCriterias
 }

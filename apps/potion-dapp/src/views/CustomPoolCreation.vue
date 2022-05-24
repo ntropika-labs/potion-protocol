@@ -25,6 +25,7 @@
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :criterias="criterias"
       :disable-navigation-next="!criteriasCheck"
+      :unselected-tokens="unselectedTokens"
       @navigate:back="currentFormStep = 0"
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
@@ -69,6 +70,11 @@ const { data } = useAllCollateralizedProductsUnderlyingQuery({
   variables: { collateral },
 });
 const availableTokens = ref<SelectableToken[]>([]);
+const unselectedTokens = computed(() =>
+  availableTokens.value
+    .filter((token) => !token.selected)
+    .map((token) => token.symbol)
+);
 const criteriaMap = ref(
   new Map<string, { maxStrike: number; maxDuration: number }>()
 );

@@ -6,6 +6,7 @@
   "types": "./src/index.ts",
   "dependencies": {
     "contracts-math": "*",
+    "dapp-types": "*",
     "potion-contracts": "*",
     "subgraph-queries": "*"
   }

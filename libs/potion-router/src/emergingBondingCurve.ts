@@ -1,52 +1,40 @@
-import { range as _range } from "lodash-es";
+import { range as _range, min as _min } from "lodash-es";
 
-import { HYPERBOLIC_POINTS } from "@/helpers/pools";
-import { Router } from "@/services/api/router";
-import { runMarginalCostRouter } from "@/services/router";
-import { ICriteria } from "@/types";
+import { runMarginalCostRouter } from "./index";
+import type { EmergingCurvePoints } from "dapp-types";
+import type { CriteriaPool } from "./types";
 
-const stepArray = [0.01].concat(
-  _range(1 / HYPERBOLIC_POINTS, 1, 1 / HYPERBOLIC_POINTS)
-);
+const curvePoints = 100;
+const deltaX = 1000;
+const step = 1 / curvePoints;
 
-interface EmergingBondingCurves {
-  data: number[];
-  underlyingSymbol: string;
-}
+const initialPoint = [_min([step / 10, 1 / deltaX])]
+
+const stepArray = initialPoint.concat(_range(step, 1, step)) as number[];
+
 /**
  *
- * @param criterias
+ * @param criteriaPools
  * @returns the data needed to compute the chart for the emerging bonding curves of the selected criterias
  */
 const getEmergingBondingCurvesFromCriterias = async (
-  criterias: ICriteria[]
-): Promise<EmergingBondingCurves[]> => {
-  const bondingCurves: EmergingBondingCurves[] = [];
-  for (const criteria of criterias) {
-    const pools = await Router.getPoolsFromCriteria(
-      criteria.underlyingAsset.id,
-      criteria.maxStrikePercent,
-      criteria.maxDurationInDays
-    );
+  criteriaPools: CriteriaPool[]
+): Promise<EmergingCurvePoints[]> => {
+  const bondingCurves: EmergingCurvePoints[] = [];
+  for (const { pools, symbol } of criteriaPools) {
+    let data = [] as number[];
     if (pools.length > 0) {
-      const totalUnlocked: number = pools.reduce((sum, pool) => {
-        return sum + parseFloat(pool.unlocked);
-      }, 0);
-      const criteriaRelativePremiums = stepArray.map((step) => {
+      const totalUnlocked = pools.reduce((sum, pool) => sum + parseFloat(pool.unlocked), 0);
+      data = stepArray.map((step) => {
         const orderSize = totalUnlocked * step;
-        const { premium } = runMarginalCostRouter(pools, orderSize, 1000, 1);
+        const { premium } = runMarginalCostRouter(pools, orderSize, deltaX, 1);
         return orderSize > 0 ? premium / orderSize : 0;
       });
-      bondingCurves.push({
-        data: criteriaRelativePremiums,
-        underlyingSymbol: criteria.underlyingAsset.symbol,
-      });
-    } else {
-      bondingCurves.push({
-        data: [],
-        underlyingSymbol: criteria.underlyingAsset.symbol,
-      });
     }
+    bondingCurves.push({
+      data,
+      symbol,
+    });
   }
   return bondingCurves;
 };

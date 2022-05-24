@@ -1,5 +1,6 @@
 import path from "path";
 import nodePolyfills from "rollup-plugin-polyfill-node";
+import comlink from "vite-plugin-comlink";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
@@ -19,14 +20,18 @@ export default defineConfig({
       include: path.resolve(__dirname, "../../libs/locales/**"),
     }),
     Unocss(),
+    comlink(),
     development &&
-      nodePolyfills({
-        include: [
-          "node_modules/**/*.js",
-          new RegExp("node_modules/.vite/.*js"),
-        ],
-      }),
+    nodePolyfills({
+      include: [
+        "node_modules/**/*.js",
+        new RegExp("node_modules/.vite/.*js"),
+      ],
+    }),
   ],
+  worker: {
+    plugins: [comlink()],
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

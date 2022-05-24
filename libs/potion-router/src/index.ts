@@ -8,6 +8,8 @@ import {
   poolUntypedToTyped
 } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";
+import { getEmergingBondingCurvesFromCriterias } from "./emergingBondingCurve";
+import { getPoolsFromCriteria, getPoolsFromCriterias } from "./dataRetrieve";
 
 import type { CounterpartyDetails, IPoolUntyped, IRouterReturn } from "./types";
 
@@ -117,4 +119,4 @@ const runDepthRouter = (
   };
 };
 
-export { runMarginalCostRouter, runDepthRouter };
+export { runMarginalCostRouter, runDepthRouter, getEmergingBondingCurvesFromCriterias, getPoolsFromCriteria, getPoolsFromCriterias };

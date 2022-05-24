@@ -16,19 +16,25 @@ import {
 } from "potion-ui";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
-import { computed } from "vue";
+import { computed, onActivated, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import {
+  getEmergingBondingCurvesFromCriterias,
+  getPoolsFromCriterias,
+} from "potion-router";
 
 interface Props {
   liquidity: string;
   poolId: number;
   modelValue: BondingCurveParams;
   criterias: Criteria[];
-  emergingCurves: EmergingCurvePoints[];
   disableNavigationNext: boolean;
+  unselectedTokens: string[];
 }
 
-const props = withDefaults(defineProps<Props>(), { emergingCurves: () => [] });
+const props = withDefaults(defineProps<Props>(), {
+  unselectedTokens: () => [],
+});
 const emits = defineEmits([
   "update:modelValue",
   "navigate:back",
@@ -59,6 +65,13 @@ const bondingCurve = computed(
       props.modelValue.maxUtil
     )
 );
+
+const emergingCurves = ref<EmergingCurvePoints[]>([]);
+
+onActivated(async () => {
+  const poolSets = await getPoolsFromCriterias(props.criterias);
+  emergingCurves.value = await getEmergingBondingCurvesFromCriterias(poolSets);
+});
 </script>
 
 <template>
@@ -105,7 +118,9 @@ const bondingCurve = computed(
           class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
           :emerging-curves="emergingCurves"
-        ></BondingCurve>
+          :unload-keys="props.unselectedTokens"
+        >
+        </BondingCurve>
         <BaseCard
           class="p-6 gap-6 rounded-l-none !ring-none border-l-1 border-white/10"
         >
