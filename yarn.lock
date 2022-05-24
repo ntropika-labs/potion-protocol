@@ -12027,6 +12027,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"comlink@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "comlink@npm:4.3.1"
+  checksum: 46d23e9744faa5ad782880027f36d2bc2a2e169fbb21c137516cf90c9fb8e347ff098e57d469b75897a24152212eb952de341ae899cd8c636db63c72ab3e48de
+  languageName: node
+  linkType: hard
+
 "comma-separated-tokens@npm:^1.0.0":
   version: 1.0.8
   resolution: "comma-separated-tokens@npm:1.0.8"
@@ -25292,6 +25299,7 @@ __metadata:
     chai: ^4.3.6
     chai-ethers-bn: ^0.0.3
     cli-progress: ^3.10.0
+    comlink: ^4.3.1
     console-log-colors: ^0.2.3
     cross-env: ^7.0.3
     crossenv: ^0.0.2-security
@@ -25345,6 +25353,7 @@ __metadata:
     typescript: 4.6.3
     unocss: ^0.34.0
     vite: ^2.9.6
+    vite-plugin-comlink: ^3.0.2
     vitest: ^0.10.0
     vue: ^3.2.33
     vue-eslint-parser: ^8.3.0
@@ -31228,6 +31237,16 @@ __metadata:
     unist-util-stringify-position: ^2.0.0
     vfile-message: ^2.0.0
   checksum: b317cc16170f6881556d9dd3110c027a7f73921bac93740b967d517b7e8e6720a05706894199c22dd5206f2cf7046ff96a544a34d92e86708f7b723b10d3f7ae
+  languageName: node
+  linkType: hard
+
+"vite-plugin-comlink@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "vite-plugin-comlink@npm:3.0.2"
+  peerDependencies:
+    comlink: ^4.3.1
+    vite: ">=2.9.6"
+  checksum: 3a18dd7a4dd2a5da45305af9af9d00800f0eb8b1ed6b4524b7acd2bd21afef904abef1e8d2073761fbcf4f0531b48680aea2291bcba4cd05ff9db8f3eca8e2c1
   languageName: node
   linkType: hard
 
