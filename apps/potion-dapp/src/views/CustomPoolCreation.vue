@@ -200,6 +200,15 @@ const {
 const liquidityCheck = computed(
   () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
 );
+
+const setupCheck = computed(() => {
+  if (liquidityCheck.value && criteriasCheck.value) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
 const bondingCurveCheck = computed(() => {
   if (
     bondingCurve.value.a > 0 &&
@@ -257,7 +266,7 @@ const tabs = ref([
   {
     title: "Pool Setup",
     subtitle: "Choose one or more assets this pool will insure",
-    isValid: liquidityCheck,
+    isValid: setupCheck,
     cta: {
       label: "existing pools (test)",
       url: "/pools",
