@@ -1,7 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { mount } from "@vue/test-utils";
 
-import SelectedTokenWrapper from "../SelectedTokenWrapper/SelectedTokenWrapper.vue";
+import SelectedTokenWrapper from "../CustomPool/SelectedTokenWrapper.vue";
 
 const price = 0;
 const formattedPrice = `US$${price}`;

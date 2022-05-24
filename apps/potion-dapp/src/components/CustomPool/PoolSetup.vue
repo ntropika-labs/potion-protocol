@@ -46,7 +46,7 @@ import { computed } from "vue";
 import type { SelectableToken, ApiTokenPrice } from "dapp-types";
 import { BaseCard, BaseButton, TokenSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
-import SelectedTokenWrapper from "@/components/SelectedTokenWrapper/SelectedTokenWrapper.vue";
+import SelectedTokenWrapper from "@/components/CustomPool/SelectedTokenWrapper.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
