@@ -1,10 +1,10 @@
 <template>
-  <div class="grid grid-cols-12 gap-5 items-start">
+  <div class="grid md:grid-cols-12 gap-5">
     <AddLiquidityCard
       :model-value="props.liquidity"
       :pool-id="1"
       :user-balance="userCollateralBalance"
-      class="col-span-12 md:col-span-4 xl:col-span-3"
+      class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
     >
       <template #card-footer>
@@ -21,7 +21,7 @@
         </BaseButton>
       </template>
     </AddLiquidityCard>
-    <BaseCard class="col-span-12 md:col-span-8 xl:col-span-9 p-6">
+    <BaseCard class="md:col-span-8 xl:col-span-9 p-6">
       <TokenSelection
         :tokens="props.availableTokens"
         @token-selected="handleTokenSelected"

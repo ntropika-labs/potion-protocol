@@ -1,28 +1,28 @@
 <script lang="ts">
-import { defineComponent, ref, watch, type ComputedRef } from "vue";
-import { BaseButton } from "../../index";
-
-interface TabNavigationInfo {
-  title: string;
-  subtitle: string;
-  visited?: boolean;
-  isValid: ComputedRef<boolean> | boolean;
-  cta?: {
-    externalUrl?: boolean;
-    label: string;
-    url: string;
-  };
-}
-
+import { defineComponent } from "vue";
 export default defineComponent({
   name: "TabNavigationComponent",
 });
 </script>
 <script lang="ts" setup>
-import BaseCard from "../BaseCard/BaseCard.vue";
+import { ref, watch } from "vue";
+import { BaseButton, BaseCard } from "potion-ui";
+
+export interface TabNavigationInfo {
+  title: string;
+  subtitle: string;
+  visited?: boolean;
+  isValid: boolean;
+  cta?: {
+    externalUrl?: boolean;
+    label: string;
+    url: string;
+  };
+  enabled: boolean;
+}
 export interface Props {
   title: string;
-  tabs: Array<TabNavigationInfo>;
+  tabs: TabNavigationInfo[];
   defaultIndex?: number;
   vertical?: boolean;
   hasNavigation?: boolean;
@@ -96,7 +96,8 @@ watch(
         <BaseButton
           :label="step.title"
           palette="flat"
-          class="text-dwhite-300 uppercase rounded-none mx-auto !disabled:opacity-100 w-52"
+          class="text-dwhite-300 uppercase rounded-none mx-auto w-52"
+          :disabled="!step.enabled"
           @click="navigateToTab(index)"
         >
           <template v-if="step.isValid" #post-icon>

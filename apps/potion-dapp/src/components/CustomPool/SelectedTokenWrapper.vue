@@ -75,7 +75,7 @@ updateStrikeDuration(maxStrike.value, maxDuration.value);
           <p class="text-sm">{{ t("app.max_strike") }}</p>
           <Tooltip :message="t('hint_strike')"></Tooltip>
         </div>
-        <p class="text-sm">{{ t("description_strike") }}</p>
+        <p class="text-sm">{{ t("strike_description") }}</p>
         <div
           class="flex flex-row items-center gap-2 text-sm text-secondary-600 mt-2 mb-12"
         >
@@ -104,7 +104,7 @@ updateStrikeDuration(maxStrike.value, maxDuration.value);
           <p class="text-sm">{{ t("app.max_duration") }}</p>
           <Tooltip :message="t('hint_duration')"></Tooltip>
         </div>
-        <p class="text-sm mb-12">{{ t("description_duration") }}</p>
+        <p class="text-sm mb-12">{{ t("duration_description") }}</p>
         <InputSlider
           test-wrapper-duration
           :model-value="maxDuration"

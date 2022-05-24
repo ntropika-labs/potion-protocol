@@ -13,7 +13,7 @@
       :available-tokens="availableTokens"
       :token-prices="tokenPricesMap"
       :pool-id="poolId"
-      :disable-navigation="!canNavigateToCurve"
+      :disable-navigation="!criteriasCheck"
       @token-selected="toggleTokenSelection"
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
@@ -24,12 +24,14 @@
       :pool-id="poolId"
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :criterias="criterias"
+      :disable-navigation-next="!criteriasCheck"
+      @navigate:back="currentFormStep = 0"
+      @navigate:next="currentFormStep = 2"
     ></CurveSetup>
     <div></div>
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
-//import CustomPoolNavigation from "@/components/CustomPool/CustomPoolNavigation.vue";
 // import { useI18n } from "vue-i18n";
 import type {
   ApiTokenPrice,
@@ -192,6 +194,25 @@ const {
 const liquidityCheck = computed(
   () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
 );
+const bondingCurveCheck = computed(() => {
+  if (
+    bondingCurve.value.a > 0 &&
+    bondingCurve.value.b > 0 &&
+    bondingCurve.value.c > 0 &&
+    bondingCurve.value.d > 0 &&
+    bondingCurve.value.maxUtil > 0 &&
+    bondingCurve.value.maxUtil <= 1
+  ) {
+    return true;
+  }
+  return false;
+});
+const criteriasCheck = computed(() => {
+  if (criterias.value.length > 0) {
+    return true;
+  }
+  return false;
+});
 
 /* This will be needed for the last step*/
 
@@ -207,21 +228,22 @@ const liquidityCheck = computed(
 
 /* this needs to be expanded with the 3 steps checks */
 
-// const readyToDeploy = computed(() => {
-//   if (liquidityCheck.value) {
-//     return true;
-//   } else {
-//     return false;
-//   }
-// });
+const readyToDeploy = computed(() => {
+  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
+    return true;
+  } else {
+    return false;
+  }
+});
 
 /* Setup navigation logic */
 
-const canNavigateToCurve = computed(() => {
-  if (criterias.value.length > 0) {
+const canNavigateToDeploy = computed(() => {
+  if (criteriasCheck.value && bondingCurveCheck.value) {
     return true;
+  } else {
+    return false;
   }
-  return false;
 });
 
 const currentFormStep = ref(0);
@@ -234,22 +256,25 @@ const tabs = ref([
       label: "existing pools (test)",
       url: "/pools",
     },
+    enabled: true,
   },
   {
     title: "Curve Setup",
     subtitle:
       "Curve the pool will use to determine sell prices, as a function of your pool utilization.",
-    isValid: false,
+    isValid: bondingCurveCheck,
     cta: {
       externalUrl: true,
       label: "learn more",
       url: "https://google.com",
     },
+    enabled: criteriasCheck,
   },
   {
     title: "Review and Create",
     subtitle: "Review your choices before creating the pool on chain.",
-    isValid: false,
+    isValid: readyToDeploy,
+    enabled: canNavigateToDeploy,
   },
 ]);
 
