@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen py-5 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-screen max-w-screen overflow-x-hidden"
+    class="min-h-screen py-5 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-[calc(100vw_-_15px)]"
   >
     <div class="container mx-auto px-6 md:px-12">
       <MainHeader></MainHeader>

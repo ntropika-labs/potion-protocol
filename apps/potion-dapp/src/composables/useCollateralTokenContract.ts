@@ -19,7 +19,6 @@ export function useCollateralTokenContract() {
   let contractSigner: PotionTestUSD | null = null;
 
   watch(connectedWallet, (connectedWallet) => {
-    console.log(connectedWallet);
     if (connectedWallet && connectedWallet.accounts[0].address) {
       contractSigner = initContract(
         true,
