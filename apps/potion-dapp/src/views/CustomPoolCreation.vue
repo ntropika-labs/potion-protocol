@@ -13,6 +13,7 @@
       :available-tokens="availableTokens"
       :token-prices="tokenPricesMap"
       :pool-id="poolId"
+      :disable-navigation="!canNavigateToCurve"
       @token-selected="toggleTokenSelection"
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
@@ -215,6 +216,13 @@ const liquidityCheck = computed(
 // });
 
 /* Setup navigation logic */
+
+const canNavigateToCurve = computed(() => {
+  if (criterias.value.length > 0) {
+    return true;
+  }
+  return false;
+});
 
 const currentFormStep = ref(0);
 const tabs = ref([

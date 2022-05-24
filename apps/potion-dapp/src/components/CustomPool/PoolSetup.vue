@@ -12,6 +12,7 @@
           palette="secondary"
           :inline="true"
           :label="t('next')"
+          :disabled="props.disableNavigation"
           @click="emits('navigate:next')"
         >
           <template #post-icon>
@@ -57,6 +58,7 @@ interface Props {
   liquidityCheck: boolean;
   availableTokens: SelectableToken[];
   tokenPrices: Map<string, ApiTokenPrice>;
+  disableNavigation: boolean;
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
