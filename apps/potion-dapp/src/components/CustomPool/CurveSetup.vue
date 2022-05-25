@@ -76,10 +76,10 @@ const bondingCurve = computed(
         <BondingCurve
           class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
-          :emerging-curves="props.emergingCurves"
+          :emerging-curves="emergingCurves"
         ></BondingCurve>
         <BaseCard
-          class="p-6 gap-6 rounded-l-none !ring-none border-l-1 border-white/10"
+          class="p-6 gap-6 !rounded-none !ring-none xl:(border-l-1 border-t-0) border-t-1 border-white/10"
         >
           <CurveFormula></CurveFormula>
           <div class="text-sm">
@@ -97,6 +97,7 @@ const bondingCurve = computed(
             :c="props.modelValue.c"
             :d="props.modelValue.d"
             :max-util="props.modelValue.maxUtil"
+            :readonly="false"
             @update:a="(value) => handleUpdate('a', value)"
             @update:b="(value) => handleUpdate('b', value)"
             @update:c="(value) => handleUpdate('c', value)"

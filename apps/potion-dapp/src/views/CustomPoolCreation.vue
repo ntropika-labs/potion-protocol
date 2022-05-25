@@ -37,7 +37,9 @@
       :pool-id="poolId"
       :criterias="criterias"
       :disable-action="readyToDeploy"
+      :bonding-curve-params="bondingCurve"
       @deploy-pool="handleDeployPool"
+      @navigate:back="currentFormStep = 1"
     />
   </TabNavigationComponent>
 </template>
