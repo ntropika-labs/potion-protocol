@@ -22,7 +22,7 @@ interface Props {
   poolId: number;
   modelValue: BondingCurveParams;
   criterias: Criteria[];
-  emergingCurves: EmergingCurvePoints[];
+  emergingCurves?: EmergingCurvePoints[];
   disableNavigationNext: boolean;
   navigateNextLabel: string;
 }

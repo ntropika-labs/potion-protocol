@@ -6,6 +6,7 @@
       :user-balance="userCollateralBalance"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
+      @valid-input="emits('validInput', $event)"
     >
       <template #card-footer>
         <BaseButton
@@ -73,6 +74,7 @@ const emits = defineEmits<{
   (e: "navigate:next"): void;
   (e: "token-selected", address: string): void;
   (e: "token-remove", address: string): void;
+  (e: "validInput", value: boolean): void;
 }>();
 
 const handleTokenSelected = (address: string) =>

@@ -18,6 +18,7 @@
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
       @navigate:next="currentFormStep = 1"
+      @valid-input="validInput = $event"
     />
     <CurveSetup
       v-model="bondingCurve"
@@ -101,6 +102,7 @@ const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
   variables: {
     //@ts-expect-error URQL accepts refs, but typings are not correct here?
     lp: walletAddress,
+    ids: [""],
   },
 });
 
@@ -245,9 +247,12 @@ const {
 } = useCollateralTokenContract();
 
 /* Setup data validation */
-
+const validInput = ref(false);
 const liquidityCheck = computed(
-  () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
+  () =>
+    userCollateralBalance.value >= liquidity.value &&
+    liquidity.value > 0 &&
+    validInput.value
 );
 const bondingCurveCheck = computed(() => {
   if (
@@ -276,7 +281,7 @@ const amountNeededToApprove = computed(() => {
     return liquidity.value;
   }
   if (liquidity.value > userAllowance.value) {
-    return liquidity.value - userAllowance.value;
+    return parseFloat((liquidity.value - userAllowance.value).toPrecision(6));
   }
   return 0;
 });
@@ -290,7 +295,7 @@ const deployButtonLabel = computed(() => {
 
 const handleDeployPool = async () => {
   if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(liquidity.value, true);
+    await approveForPotionLiquidityPool(liquidity.value, false);
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {

@@ -55,6 +55,7 @@ export interface Props {
   readonly?: boolean;
   modelValue: number;
   footerDescription?: string;
+  maxDecimals?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   title: "",
@@ -65,23 +66,38 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   modelValue: 1,
   footerDescription: "Balance",
+  maxDecimals: 6,
 });
 
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "validInput"]);
 
 const handleSetMax = () => props.max;
 
 const handleInput = (value: number) => emits("update:modelValue", value);
+
+const decimalCount = (num: number) => {
+  // Convert to String
+  const numStr = String(num);
+  // String Contains Decimal
+  if (numStr.includes(".")) {
+    return numStr.split(".")[1].length;
+  }
+  // String Does Not Contain Decimal
+  return 0;
+};
 
 const inputIsValid = computed(() => {
   if (
     props.modelValue < props.min ||
     props.modelValue > props.max ||
     typeof props.modelValue !== "number" ||
-    isNaN(props.modelValue)
+    isNaN(props.modelValue) ||
+    decimalCount(props.modelValue) > props.maxDecimals
   ) {
+    emits("validInput", false);
     return false;
   }
+  emits("validInput", true);
   return true;
 });
 
@@ -92,12 +108,16 @@ const footerText = computed(() => {
       props.unit
     )}`;
   } else {
-    return `Please, enter a valid value - Your ${
-      props.footerDescription
-    } is ${currencyFormatter(
-      props.max,
-      props.unit
-    )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
+    if (decimalCount(props.modelValue) > props.maxDecimals) {
+      return `The max number of decimals is ${props.maxDecimals}`;
+    } else {
+      return `Please, enter a valid value - Your ${
+        props.footerDescription
+      } is ${currencyFormatter(
+        props.max,
+        props.unit
+      )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
+    }
   }
 });
 

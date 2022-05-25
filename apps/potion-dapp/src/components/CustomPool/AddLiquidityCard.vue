@@ -13,6 +13,7 @@
         :model-value="props.modelValue"
         :footer-description="t('deposit_collateral_footer_description')"
         @update:model-value="emits('update:modelValue', $event)"
+        @valid-input="emits('validInput', $event)"
       />
     </div>
     <CardFooter class="flex justify-center">
@@ -23,7 +24,7 @@
 <script lang="ts" setup>
 import { BaseCard, CardFooter, InputNumber } from "potion-ui";
 import { useI18n } from "vue-i18n";
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "validInput"]);
 const { t } = useI18n();
 interface Props {
   poolId: number;
