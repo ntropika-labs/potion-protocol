@@ -17,7 +17,7 @@
           :bonding-curve="getCurvePoints(bondingCurve)"
         />
         <BaseCard
-          class="rounded-l-none !ring-none py-3 px-4 border-l-1 border-white/10"
+          class="rounded-l-none !ring-none py-3 px-4 border-t-1 xl:( border-l-1 border-t-0 ) border-white/10"
         >
           <CustomCurveParams
             class="!h-auto"
