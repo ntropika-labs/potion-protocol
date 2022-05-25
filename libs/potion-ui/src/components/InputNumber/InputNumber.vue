@@ -16,6 +16,8 @@
         <BaseInput
           class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
           type="number"
+          :readonly="props.readonly"
+          :disabled="props.disabled"
           :model-value="props.modelValue"
           @update:model-value="handleInput"
         ></BaseInput>
@@ -50,6 +52,7 @@ export interface Props {
   min: number;
   max: number;
   disabled?: boolean;
+  readonly?: boolean;
   modelValue: number;
   footerDescription?: string;
 }

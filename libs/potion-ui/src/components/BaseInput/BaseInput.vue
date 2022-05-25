@@ -12,8 +12,8 @@ export interface Props {
   min?: number;
   max?: number;
   step?: number;
-  readonly: boolean;
-  disabled: boolean;
+  readonly?: boolean;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

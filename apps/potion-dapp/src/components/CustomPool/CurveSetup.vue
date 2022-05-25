@@ -98,6 +98,7 @@ const bondingCurve = computed(
             :d="props.modelValue.d"
             :max-util="props.modelValue.maxUtil"
             :readonly="false"
+            :disabled="false"
             @update:a="(value) => handleUpdate('a', value)"
             @update:b="(value) => handleUpdate('b', value)"
             @update:c="(value) => handleUpdate('c', value)"

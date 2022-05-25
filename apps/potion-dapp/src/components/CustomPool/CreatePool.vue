@@ -28,6 +28,7 @@
             :d="props.bondingCurveParams.d"
             :max-util="props.bondingCurveParams.maxUtil"
             :readonly="true"
+            :disabled="false"
           />
         </BaseCard>
       </div>
