@@ -49,7 +49,6 @@ type ButtonType = "button" | "submit";
 </script>
 
 <script lang="ts" setup>
-import SpinnerIcon from "../icons/SpinnerIcon.vue";
 export interface Props {
   label: string;
   size?: string;
@@ -97,8 +96,8 @@ const weightClass = computed(() =>
     @click="emit('click')"
   >
     <slot v-if="!props.loading" name="pre-icon"></slot>
-    <template v-if="props.loading">
-      <SpinnerIcon class="h-4 w-4 animate-spin mr-2" />
+    <template v-else>
+      <i class="i-eos-icons-loading mr-2"></i>
     </template>
     <p class="leading-none">
       {{ label }}

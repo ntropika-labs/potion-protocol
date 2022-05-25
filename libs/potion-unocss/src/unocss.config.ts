@@ -5,7 +5,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
 
 const preset = presetUno();
@@ -28,6 +28,7 @@ export default defineConfig({
         display: "inline-flex",
         width: "1rem",
         height: "1rem",
+        flex: "none",
       },
     }),
   ],
