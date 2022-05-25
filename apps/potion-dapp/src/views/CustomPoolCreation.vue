@@ -21,11 +21,13 @@
     />
     <CurveSetup
       v-model="bondingCurve"
-      :pool-id="poolId"
-      :liquidity="currencyFormatter(liquidity, 'USDC')"
       :criterias="criterias"
       :disable-navigation-next="!criteriasCheck"
+      :emerging-curves="emergingCurves"
+      :liquidity="currencyFormatter(liquidity, 'USDC')"
+      :pool-id="poolId"
       :unselected-tokens="unselectedTokens"
+      @activated="loadEmergingCurves"
       @navigate:back="currentFormStep = 0"
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
@@ -40,6 +42,7 @@ import type {
   Token,
   BondingCurveParams,
   Criteria,
+  EmergingCurvePoints,
 } from "dapp-types";
 
 import { currencyFormatter } from "potion-ui";
@@ -55,6 +58,8 @@ import { TabNavigationComponent } from "potion-ui";
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
+import { getPoolsFromCriterias } from "potion-router";
+import { worker } from "@web-worker";
 
 const router = useRouter();
 const poolId = ref(1);
@@ -181,6 +186,14 @@ const criterias = computed(() => {
   return existingCriteria;
 });
 
+const emergingCurves = ref<EmergingCurvePoints[]>([]);
+const loadEmergingCurves = async () => {
+  const poolSets = await getPoolsFromCriterias(criterias.value);
+  emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
+    poolSets
+  );
+};
+
 const { connectedWallet } = useOnboard();
 // const { t } = useI18n();
 
@@ -299,6 +312,7 @@ onMounted(async () => {
     await fetchUserCollateralAllowance();
   }
 });
+
 watch(connectedWallet, async (newAWallet) => {
   if (newAWallet) {
     await fetchUserCollateralBalance();

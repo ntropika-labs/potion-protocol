@@ -16,10 +16,8 @@ import {
 } from "potion-ui";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
-import { computed, onActivated, ref } from "vue";
+import { computed, onActivated } from "vue";
 import { useI18n } from "vue-i18n";
-import { getPoolsFromCriterias } from "potion-router";
-import { worker } from "@web-worker";
 
 interface Props {
   liquidity: string;
@@ -28,15 +26,18 @@ interface Props {
   criterias: Criteria[];
   disableNavigationNext: boolean;
   unselectedTokens: string[];
+  emergingCurves: EmergingCurvePoints[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   unselectedTokens: () => [],
+  emergingCurves: () => [],
 });
 const emits = defineEmits([
   "update:modelValue",
   "navigate:back",
   "navigate:next",
+  "activated",
 ]);
 
 const { t } = useI18n();
@@ -64,13 +65,8 @@ const bondingCurve = computed(
     )
 );
 
-const emergingCurves = ref<EmergingCurvePoints[]>([]);
-
-onActivated(async () => {
-  const poolSets = await getPoolsFromCriterias(props.criterias);
-  emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
-    poolSets
-  );
+onActivated(() => {
+  emits("activated");
 });
 </script>
 
@@ -117,7 +113,7 @@ onActivated(async () => {
         <BondingCurve
           class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
-          :emerging-curves="emergingCurves"
+          :emerging-curves="props.emergingCurves"
           :unload-keys="props.unselectedTokens"
         >
         </BondingCurve>
