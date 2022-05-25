@@ -57,6 +57,7 @@ export interface Props {
   disabled?: boolean;
   inline?: boolean;
   type?: ButtonType;
+  loading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -65,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   weight: ButtonWeight.medium,
   inline: false,
   type: "button",
+  loading: false,
 });
 const emit = defineEmits<{
   (e: "click"): void;
@@ -82,7 +84,7 @@ const weightClass = computed(() =>
 <template>
   <button
     :title="props.label"
-    :disabled="props.disabled"
+    :disabled="props.disabled || props.loading"
     :class="[
       baseClasses,
       paletteClass,
@@ -93,7 +95,8 @@ const weightClass = computed(() =>
     :type="props.type"
     @click="emit('click')"
   >
-    <slot name="pre-icon"></slot>
+    <i v-if="props.loading" class="i-eos-icons-loading mr-2"></i>
+    <slot v-else name="pre-icon"></slot>
     <p class="leading-none">
       {{ label }}
     </p>

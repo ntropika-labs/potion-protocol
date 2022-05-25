@@ -1,4 +1,85 @@
 <template>
-  <div>CreatePool</div>
+  <div class="grid gap-5 lg:grid-cols-12">
+    <PoolSettingsCard
+      :pool-id="props.poolId"
+      :liquidity="props.liquidity"
+      :criterias="props.criterias"
+      :disable-navigation-next="props.disableAction"
+      :navigate-next-label="props.actionLabel"
+      :action-loading="actionLoading"
+      class="lg:col-span-4 xl:col-span-3 self-start"
+      @navigate:back="emits('navigate:back')"
+      @navigate:next="emits('deployPool')"
+    />
+    <BaseCard class="lg:col-span-8 xl:col-span-9">
+      <div class="grid gap-5 grid xl:grid-cols-[3fr_1fr]">
+        <BondingCurve
+          class="py-3 px-4"
+          :bonding-curve="getCurvePoints(bondingCurve)"
+        />
+        <BaseCard
+          class="rounded-l-none !ring-none py-3 px-4 border-t-1 xl:( border-l-1 border-t-0 ) border-white/10"
+        >
+          <CustomCurveParams
+            class="!h-auto"
+            :a="props.bondingCurveParams.a"
+            :b="props.bondingCurveParams.b"
+            :c="props.bondingCurveParams.c"
+            :d="props.bondingCurveParams.d"
+            :max-util="props.bondingCurveParams.maxUtil"
+            :readonly="true"
+            :disabled="false"
+          />
+        </BaseCard>
+      </div>
+    </BaseCard>
+  </div>
+  <div>
+    <code class="bg-black">
+      {{ props.transaction }}
+    </code>
+    <code class="bg-blue-900">{{ props.receipt }}</code>
+  </div>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import type {
+  ContractTransaction,
+  ContractReceipt,
+} from "@ethersproject/contracts";
+import type { Criteria, BondingCurveParams } from "dapp-types";
+import { computed } from "vue";
+import { BondingCurve, BaseCard, CustomCurveParams } from "potion-ui";
+import { times as _times } from "lodash-es";
+
+import PoolSettingsCard from "@/components/CustomPool/PoolSettingsCard.vue";
+import { HyperbolicCurve } from "contracts-math";
+
+const emits = defineEmits(["deployPool", "navigate:back"]);
+interface Props {
+  transaction: ContractTransaction | null;
+  receipt: ContractReceipt | null;
+  actionLabel: string;
+  liquidity: string;
+  poolId: number;
+  criterias: Criteria[];
+  disableAction: boolean;
+  bondingCurveParams: BondingCurveParams;
+  actionLoading: boolean;
+}
+const props = defineProps<Props>();
+
+const curvePoints = 100;
+
+const getCurvePoints = (curve: HyperbolicCurve) =>
+  _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
+
+const bondingCurve = computed(() => {
+  return new HyperbolicCurve(
+    props.bondingCurveParams.a,
+    props.bondingCurveParams.b,
+    props.bondingCurveParams.c,
+    props.bondingCurveParams.d,
+    props.bondingCurveParams.maxUtil
+  );
+});
+</script>

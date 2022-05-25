@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { ConnectWalletButton, BaseButton } from "potion-ui";
 import { ref, computed } from "vue";
-import { useCollateralToken } from "@/composables/useCollateralToken";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useOnboard } from "@/composables/useOnboard";
 import { useI18n } from "vue-i18n";
@@ -87,5 +87,5 @@ const {
   userAllowance,
   fetchUserCollateralAllowance,
   approveForPotionLiquidityPool,
-} = useCollateralToken();
+} = useCollateralTokenContract();
 </script>

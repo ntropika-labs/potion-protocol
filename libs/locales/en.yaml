@@ -37,3 +37,5 @@ curve_formula_title: Equation
 curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
 set_bonding_curve_params: Set the following parameters and define your curve.
 back: back
+approve: approve
+create_pool: create pool

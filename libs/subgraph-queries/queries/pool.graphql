@@ -41,3 +41,9 @@ query getPoolsFromCriteria(
     }
   }
 }
+
+query getNumberOfPoolsFromUser($lp: Bytes, $ids: [ID!]) {
+  pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
+    id
+  }
+}

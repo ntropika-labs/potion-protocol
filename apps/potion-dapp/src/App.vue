@@ -8,7 +8,7 @@
     leave-to-class="opacity-0"
   >
     <!-- <Spinner v-if="isLoading" /> -->
-    <component :is="layout" class="layout-container">
+    <component :is="layout">
       <router-view />
     </component>
   </transition>

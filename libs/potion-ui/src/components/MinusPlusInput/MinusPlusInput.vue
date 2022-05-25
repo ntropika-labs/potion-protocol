@@ -17,12 +17,16 @@ export interface Props {
   max?: number;
   step?: number;
   label: string;
+  readonly?: boolean;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   min: 0,
   max: 100,
   step: 1,
+  readonly: false,
+  disabled: false,
 });
 
 const emit = defineEmits<{
@@ -75,16 +79,20 @@ defineExpose({
       :max="props.max"
       :step="props.step"
       :model-value="props.modelValue"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       class="w-full leading-none bg-transparent text-lg font-semibold block border-none text-right p-0 outline-none focus:(outline-none border-none ring-0)"
       @update:model-value="handleInput"
     ></BaseInput>
     <MinusPlusButton
+      v-if="!props.readonly"
       test-unit="decrease-button"
       direction="decrease"
       :enabled="canDecrease"
       @click="decrease"
     />
     <MinusPlusButton
+      v-if="!props.readonly"
       test-unit="increase-button"
       direction="increase"
       :enabled="canIncrease"
