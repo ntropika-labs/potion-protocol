@@ -23,6 +23,7 @@ interface Props {
   modelValue: BondingCurveParams;
   criterias: Criteria[];
   emergingCurves?: EmergingCurvePoints[];
+  unselectedTokens: string[];
   disableNavigationNext: boolean;
   navigateNextLabel: string;
 }
