@@ -34,6 +34,8 @@
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
     <CreatePool
+      :emerging-curves="emergingCurves"
+      :unselected-tokens="unselectedTokens"
       :transaction="depositAndCreateCurveAndCriteriaTx"
       :receipt="depositAndCreateCurveAndCriteriaReceipt"
       :action-label="deployButtonLabel"
@@ -81,63 +83,35 @@ import { getPoolsFromCriterias } from "potion-router";
 import { worker } from "@web-worker";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 
+const { t } = useI18n();
+const router = useRouter();
+
+// Initial data setup
+const liquidity = ref(100);
 const { connectedWallet } = useOnboard();
 const walletAddress = ref(connectedWallet.value?.accounts[0].address ?? "");
-watch(connectedWallet, () => {
-  walletAddress.value = connectedWallet.value?.accounts[0].address ?? "";
-});
-const { t } = useI18n();
-
-const router = useRouter();
-const bondingCurve = ref<BondingCurveParams>({
-  a: 2.5,
-  b: 2.5,
-  c: 2.5,
-  d: 2.5,
-  maxUtil: 1,
-});
 const collateral: string =
   contractsAddresses.PotionTestUSD.address.toLowerCase();
-const { data: availableProducts } = useAllCollateralizedProductsUnderlyingQuery(
-  {
-    variables: { collateral },
-  }
-);
 
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
-  variables: {
-    //@ts-expect-error URQL accepts refs, but typings are not correct here?
-    lp: walletAddress,
-    ids: [""],
-  },
-});
+/*
+ * Available tokens are fetched from the subgraph
+ * Prices are loaded from an API
+ */
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
-const poolId = computed(() => {
-  return userPoolsCount.value + 1;
-});
 const availableTokens = ref<SelectableToken[]>([]);
+const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
+
 const unselectedTokens = computed(() =>
   availableTokens.value
     .filter((token) => !token.selected)
     .map((token) => token.symbol)
 );
-const criteriaMap = ref(
-  new Map<string, { maxStrike: number; maxDuration: number }>()
+
+const { data: availableProducts } = useAllCollateralizedProductsUnderlyingQuery(
+  {
+    variables: { collateral },
+  }
 );
-const selectedCriterias = computed(() => {
-  return [...criteriaMap.value].map((criteria) => {
-    return {
-      tokenAddress: criteria[0],
-      maxStrike: criteria[1].maxStrike,
-      maxDuration: criteria[1].maxDuration,
-    };
-  });
-});
-const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
 
 const tokenToSelectableToken = (
   address: string,
@@ -154,16 +128,6 @@ const tokenToSelectableToken = (
     selected,
   };
 };
-
-watch(availableProducts, () => {
-  availableTokens.value =
-    availableProducts?.value?.products?.map((product) =>
-      tokenToSelectableToken(
-        product.underlying.address,
-        parseInt(product.underlying.decimals)
-      )
-    ) ?? [];
-});
 
 const toggleTokenSelection = (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
@@ -187,12 +151,6 @@ const toggleTokenSelection = (address: string) => {
     }
   }
 };
-
-const updateCriteria = (
-  tokenAddress: string,
-  maxStrike: number,
-  maxDuration: number
-) => criteriaMap.value.set(tokenAddress, { maxStrike, maxDuration });
 
 const updateTokenPrice = async (token: Token) => {
   console.log("[updateTokenPrice] for: ", token.name);
@@ -221,12 +179,35 @@ const updateTokenPrice = async (token: Token) => {
     });
   }
 };
+
+watch(availableProducts, () => {
+  availableTokens.value =
+    availableProducts?.value?.products?.map((product) =>
+      tokenToSelectableToken(
+        product.underlying.address,
+        parseInt(product.underlying.decimals)
+      )
+    ) ?? [];
+});
+
+/*
+ * criterias
+ */
+
+const criteriaMap = ref(
+  new Map<string, { maxStrike: number; maxDuration: number }>()
+);
+
+const updateCriteria = (
+  tokenAddress: string,
+  maxStrike: number,
+  maxDuration: number
+) => criteriaMap.value.set(tokenAddress, { maxStrike, maxDuration });
+
 const criterias = computed(() => {
   const existingCriteria: Array<Criteria> = [];
 
-  for (const entry of criteriaMap.value.entries()) {
-    const address = entry[0];
-    const strikeAndDuration = entry[1];
+  for (const [address, strikeAndDuration] of criteriaMap.value.entries()) {
     const token = availableTokens.value.find((t) => t.address === address);
     if (token) {
       existingCriteria.push({
@@ -240,6 +221,17 @@ const criterias = computed(() => {
   return existingCriteria;
 });
 
+/*
+ * Bonding Curve and emerging curves
+ */
+const bondingCurve = ref<BondingCurveParams>({
+  a: 2.5,
+  b: 2.5,
+  c: 2.5,
+  d: 2.5,
+  maxUtil: 1,
+});
+
 const emergingCurves = ref<EmergingCurvePoints[]>([]);
 const loadEmergingCurves = async () => {
   const poolSets = await getPoolsFromCriterias(criterias.value);
@@ -248,7 +240,9 @@ const loadEmergingCurves = async () => {
   );
 };
 
-/* Setup data validation */
+/*
+ * Pool deployment data and functions
+ */
 
 const {
   depositAndCreateCurveAndCriteriaTx,
@@ -256,8 +250,6 @@ const {
   depositAndCreateCurveAndCriteria,
   depositAndCreateCurveAndCriteriaLoading,
 } = usePotionLiquidityPoolContract();
-
-const liquidity = ref(100);
 
 const {
   fetchUserCollateralBalance,
@@ -268,40 +260,21 @@ const {
   approveLoading,
 } = useCollateralTokenContract();
 
-/* Setup data validation */
-const validInput = ref(false);
-const liquidityCheck = computed(
-  () =>
-    userCollateralBalance.value >= liquidity.value &&
-    liquidity.value > 0 &&
-    validInput.value
-);
-
-const bondingCurveCheck = computed(() => {
-  if (
-    bondingCurve.value.a > 0 &&
-    bondingCurve.value.b > 0 &&
-    bondingCurve.value.c > 0 &&
-    bondingCurve.value.d > 0 &&
-    bondingCurve.value.maxUtil > 0 &&
-    bondingCurve.value.maxUtil <= 1
-  ) {
-    return true;
-  }
-  return false;
-});
-const criteriasCheck = computed(() => {
-  if (criterias.value.length > 0) {
-    return true;
-  }
-  return false;
+const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  variables: {
+    //@ts-expect-error URQL accepts refs, but typings are not correct here?
+    lp: walletAddress,
+    ids: [""],
+  },
 });
 
-const liquidityAndCriteriaCheck = computed(() => {
-  return liquidityCheck.value && criteriasCheck.value;
+const userPoolsCount = computed(() => {
+  return userPools?.value?.pools?.length ?? 0;
 });
 
-/* This will be needed for the last step*/
+const poolId = computed(() => {
+  return userPoolsCount.value + 1;
+});
 
 const amountNeededToApprove = computed(() => {
   if (userAllowance.value === 0) {
@@ -330,30 +303,49 @@ const handleDeployPool = async () => {
       poolId.value,
       liquidity.value,
       bondingCurve.value,
-      selectedCriterias.value
+      criterias.value
     );
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   }
 };
 
-/* Setup navigation logic */
+/*
+ * Data validation and guarding
+ */
 
-const canNavigateToDeploy = computed(() => {
-  if (criteriasCheck.value && bondingCurveCheck.value) {
-    return true;
-  } else {
-    return false;
-  }
-});
+const validInput = ref(false);
+const liquidityCheck = computed(
+  () =>
+    validInput.value &&
+    liquidity.value > 0 &&
+    liquidity.value < userCollateralBalance.value
+);
 
-const readyToDeploy = computed(() => {
-  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
-    return true;
-  } else {
-    return false;
-  }
-});
+const bondingCurveCheck = computed(
+  () =>
+    bondingCurve.value.a > 0 &&
+    bondingCurve.value.b > 0 &&
+    bondingCurve.value.c > 0 &&
+    bondingCurve.value.d > 0 &&
+    bondingCurve.value.maxUtil > 0 &&
+    bondingCurve.value.maxUtil <= 1
+);
+
+const criteriasCheck = computed(() => criterias.value.length > 0);
+const liquidityAndCriteriaCheck = computed(
+  () => liquidityCheck.value && criteriasCheck.value
+);
+const canNavigateToDeploy = computed(
+  () => criteriasCheck.value && bondingCurveCheck.value
+);
+const readyToDeploy = computed(
+  () => liquidityCheck.value && canNavigateToDeploy.value
+);
+
+/*
+ * Tab navigation
+ */
 
 const currentFormStep = ref(0);
 const tabs = ref([
@@ -387,17 +379,19 @@ const tabs = ref([
   },
 ]);
 
-onMounted(async () => {
+const fetchUserData = async () => {
   if (connectedWallet.value) {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   }
-});
+};
+
+onMounted(async () => await fetchUserData());
 
 watch(connectedWallet, async (newAWallet) => {
+  walletAddress.value = connectedWallet.value?.accounts[0].address ?? "";
   if (newAWallet) {
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
+    await fetchUserData();
   } else {
     userCollateralBalance.value = 0;
     userAllowance.value = 0;
