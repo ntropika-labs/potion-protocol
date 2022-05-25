@@ -36,7 +36,7 @@
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :pool-id="poolId"
       :criterias="criterias"
-      :disable-action="readyToDeploy"
+      :disable-action="!readyToDeploy"
       :bonding-curve-params="bondingCurve"
       @deploy-pool="handleDeployPool"
       @navigate:back="currentFormStep = 1"
