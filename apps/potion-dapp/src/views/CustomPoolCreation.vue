@@ -248,9 +248,6 @@ const loadEmergingCurves = async () => {
   );
 };
 
-const { connectedWallet } = useOnboard();
-// const { t } = useI18n();
-
 /* Setup data validation */
 
 const {
