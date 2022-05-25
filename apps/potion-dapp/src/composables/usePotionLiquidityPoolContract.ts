@@ -4,7 +4,7 @@ import type {
 } from "@ethersproject/contracts";
 
 import type { PotionLiquidityPool } from "potion-contracts/typechain";
-import type { BondingCurveParams } from "dapp-types";
+import type { BondingCurveParams, Criteria } from "dapp-types";
 
 import {
   CurveCriteria,
@@ -50,11 +50,7 @@ export function usePotionLiquidityPoolContract() {
     poolId: number,
     amount: number,
     bondingCurveParams: BondingCurveParams,
-    criterias: {
-      tokenAddress: string;
-      maxStrike: number;
-      maxDuration: number;
-    }[]
+    criterias: Criteria[]
   ) => {
     const curve = new HyperbolicCurve(
       bondingCurveParams["a"],
@@ -66,7 +62,7 @@ export function usePotionLiquidityPoolContract() {
     const curveCriterias = criterias.map(
       (criteria) =>
         new CurveCriteria(
-          criteria.tokenAddress,
+          criteria.token.address,
           PotionTestUSD.address,
           true,
           criteria.maxStrike,
