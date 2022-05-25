@@ -1,14 +1,16 @@
-import { range as _range, min as _min } from "lodash-es";
+import { min as _min, range as _range } from "lodash-es";
 
 import { runMarginalCostRouter } from "./index";
+
 import type { EmergingCurvePoints } from "dapp-types";
 import type { CriteriaPool } from "./types";
 
-const curvePoints = 100;
 const deltaX = 1000;
+const curvePoints = 100;
+const sqCurvePoints = curvePoints ** 2;
 const step = 1 / curvePoints;
 
-const initialPoint = [_min([step / 10, 1 / deltaX])];
+const initialPoint = [_min([step / 10, 1 / sqCurvePoints])];
 
 const stepArray = initialPoint.concat(_range(step, 1, step)) as number[];
 
