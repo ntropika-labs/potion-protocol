@@ -85,7 +85,7 @@ const weightClass = computed(() =>
 <template>
   <button
     :title="props.label"
-    :disabled="props.disabled"
+    :disabled="props.disabled || props.loading"
     :class="[
       baseClasses,
       paletteClass,
