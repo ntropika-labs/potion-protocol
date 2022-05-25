@@ -5,7 +5,7 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref } from "vue";
 import { useResizeObserver } from "@vueuse/core";
 
 export interface Props {
@@ -27,7 +27,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const inputElement = ref<Element>();
 const sliderThumb = ref<Element>();
-const windowSize = ref(0);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
@@ -49,7 +48,6 @@ const inputWidth = ref((inputElement.value as HTMLElement)?.offsetWidth || 1);
 useResizeObserver(inputElement, (entries) => {
   const entry = entries[0];
   const { width, height } = entry.contentRect;
-  console.log(width);
   inputWidth.value = width;
 });
 
@@ -73,20 +71,6 @@ const onValueChange = (event: Event) => {
     emit("update:modelValue", numericValue);
   }
 };
-
-const updateWindowSize = () => {
-  windowSize.value = window.innerWidth;
-  //const instance = getCurrentInstance();
-  //console.log(instance);
-};
-
-onMounted(() => {
-  window.addEventListener("resize", updateWindowSize);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", updateWindowSize);
-});
 </script>
 <template>
   <div class="relative w-full h-[4px] bg-dark/20">
