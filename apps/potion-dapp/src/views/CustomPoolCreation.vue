@@ -274,6 +274,10 @@ const criteriasCheck = computed(() => {
   return false;
 });
 
+const liquidityAndCriteriaCheck = computed(() => {
+  return liquidityCheck.value && criteriasCheck.value;
+});
+
 /* This will be needed for the last step*/
 
 const amountNeededToApprove = computed(() => {
@@ -333,7 +337,7 @@ const tabs = ref([
   {
     title: "Pool Setup",
     subtitle: "Choose one or more assets this pool will insure",
-    isValid: liquidityCheck,
+    isValid: liquidityAndCriteriaCheck,
     cta: {
       label: "existing pools (test)",
       url: "/pools",
