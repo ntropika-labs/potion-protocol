@@ -1,5 +1,10 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+} from "vue";
 defineComponent({
   name: "InputSlider",
 });
@@ -26,10 +31,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const inputElement = ref<Element>();
 const sliderThumb = ref<Element>();
+const windowSize = ref(0);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
 }>();
+
 const valuePercentage = computed(() => {
   const currentValue = Math.min(
     props.max,
@@ -42,6 +49,9 @@ const valuePercentage = computed(() => {
 const thumbPosition = computed(() => {
   const inputWidth = (inputElement.value as HTMLElement)?.offsetWidth || 1;
   const thumbWidth = (sliderThumb.value as HTMLElement)?.offsetWidth || 1;
+  const ws = windowSize.value; // DO NOT REMOVE: even if this is totally useless, it's needed to trigger a refresh when the window size changes
+  const instance = getCurrentInstance();
+  console.log(instance);
 
   return (
     ((props.modelValue - props.min) / (props.max - props.min)) *
@@ -61,6 +71,20 @@ const onValueChange = (event: Event) => {
     emit("update:modelValue", numericValue);
   }
 };
+
+const updateWindowSize = () => {
+  windowSize.value = window.innerWidth;
+  //const instance = getCurrentInstance();
+  //console.log(instance);
+};
+
+onMounted(() => {
+  window.addEventListener("resize", updateWindowSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateWindowSize);
+});
 </script>
 <template>
   <div class="relative w-full h-[4px] bg-dark/20">
