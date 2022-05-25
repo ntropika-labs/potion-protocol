@@ -3546,6 +3546,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iconify-json/eos-icons@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@iconify-json/eos-icons@npm:1.1.1"
+  dependencies:
+    "@iconify/types": ^1.0.12
+  checksum: a5f7903a3a49e6e2c30e20fd35abfd9fcda43a9363db12447fcb4c0b34ed903efa0afc79b4cfa76d9ff2cf7023367d7bf355e0b8f61a8051d723e239cf6301a0
+  languageName: node
+  linkType: hard
+
 "@iconify-json/ph@npm:^1.1.1":
   version: 1.1.1
   resolution: "@iconify-json/ph@npm:1.1.1"
@@ -25239,6 +25248,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": ^2.3.5
     "@graphql-codegen/typescript-vue-urql": ^2.2.9
     "@graphql-eslint/eslint-plugin": ^3.10.2
+    "@iconify-json/eos-icons": ^1.1.1
     "@iconify-json/ph": ^1.1.1
     "@intlify/vite-plugin-vue-i18n": ^3.4.0
     "@mdx-js/preact": ^2.1.1
