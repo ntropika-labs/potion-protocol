@@ -27,6 +27,7 @@
         :inline="true"
         :label="props.navigateNextLabel"
         :disabled="props.disableNavigationNext"
+        :loading="props.actionLoading"
         @click="emits('navigate:next')"
       >
         <template v-if="props.navigateNextLabel === t('next')" #post-icon>
@@ -46,8 +47,11 @@ interface Props {
   criterias: Criteria[];
   disableNavigationNext: boolean;
   navigateNextLabel: string;
+  actionLoading?: boolean;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  actionLoading: false,
+});
 const emits = defineEmits(["navigate:back", "navigate:next"]);
 const { t } = useI18n();
 </script>

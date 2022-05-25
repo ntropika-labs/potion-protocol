@@ -45,6 +45,7 @@ export function usePotionLiquidityPoolContract() {
   const depositAndCreateCurveAndCriteriaReceipt = ref<ContractReceipt | null>(
     null
   );
+  const depositAndCreateCurveAndCriteriaLoading = ref(false);
   const depositAndCreateCurveAndCriteria = async (
     poolId: number,
     amount: number,
@@ -76,6 +77,7 @@ export function usePotionLiquidityPoolContract() {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
+        depositAndCreateCurveAndCriteriaLoading.value = true;
         depositAndCreateCurveAndCriteriaTx.value =
           await contractSigner.depositAndCreateCurveAndCriteria(
             poolId,
@@ -85,7 +87,9 @@ export function usePotionLiquidityPoolContract() {
           );
         depositAndCreateCurveAndCriteriaReceipt.value =
           await depositAndCreateCurveAndCriteriaTx.value.wait();
+        depositAndCreateCurveAndCriteriaLoading.value = false;
       } catch (error) {
+        depositAndCreateCurveAndCriteriaLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot create the pool: ${error.message}`);
         } else {
@@ -98,16 +102,20 @@ export function usePotionLiquidityPoolContract() {
   //Deposit Collateral
   const depositTx = ref<ContractTransaction | null>(null);
   const depositReceipt = ref<ContractReceipt | null>(null);
+  const depositLoading = ref(false);
   const deposit = async (poolId: number, amount: number) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
+        depositLoading.value = true;
         depositTx.value = await contractSigner.deposit(
           poolId,
           parseUnits(amount.toString(), 6)
         );
         depositReceipt.value = await depositTx.value.wait();
+        depositLoading.value = false;
       } catch (error) {
+        depositLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot deposit: ${error.message}`);
         } else {
@@ -119,6 +127,7 @@ export function usePotionLiquidityPoolContract() {
   return {
     depositAndCreateCurveAndCriteriaTx,
     depositAndCreateCurveAndCriteriaReceipt,
+    depositAndCreateCurveAndCriteriaLoading,
     depositAndCreateCurveAndCriteria,
     depositTx,
     depositReceipt,

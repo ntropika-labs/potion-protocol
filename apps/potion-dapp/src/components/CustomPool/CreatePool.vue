@@ -6,6 +6,7 @@
       :criterias="props.criterias"
       :disable-navigation-next="props.disableAction"
       :navigate-next-label="props.actionLabel"
+      :action-loading="actionLoading"
       class="lg:col-span-4 xl:col-span-3 self-start"
       @navigate:back="emits('navigate:back')"
       @navigate:next="emits('deployPool')"
@@ -62,6 +63,7 @@ interface Props {
   criterias: Criteria[];
   disableAction: boolean;
   bondingCurveParams: BondingCurveParams;
+  actionLoading: boolean;
 }
 const props = defineProps<Props>();
 

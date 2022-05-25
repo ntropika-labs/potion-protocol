@@ -37,6 +37,9 @@
       :pool-id="poolId"
       :criterias="criterias"
       :disable-action="!readyToDeploy"
+      :action-loading="
+        depositAndCreateCurveAndCriteriaLoading || approveLoading
+      "
       :bonding-curve-params="bondingCurve"
       @deploy-pool="handleDeployPool"
       @navigate:back="currentFormStep = 1"
@@ -78,11 +81,6 @@ watch(connectedWallet, () => {
 });
 const { t } = useI18n();
 
-const {
-  depositAndCreateCurveAndCriteriaTx,
-  depositAndCreateCurveAndCriteriaReceipt,
-  depositAndCreateCurveAndCriteria,
-} = usePotionLiquidityPoolContract();
 const router = useRouter();
 const bondingCurve = ref<BondingCurveParams>({
   a: 2.5,
@@ -229,7 +227,12 @@ const criterias = computed(() => {
   return existingCriteria;
 });
 
-/* Setup data validation */
+const {
+  depositAndCreateCurveAndCriteriaTx,
+  depositAndCreateCurveAndCriteriaReceipt,
+  depositAndCreateCurveAndCriteria,
+  depositAndCreateCurveAndCriteriaLoading,
+} = usePotionLiquidityPoolContract();
 const liquidity = ref(100);
 
 const {
@@ -237,10 +240,11 @@ const {
   userCollateralBalance,
   fetchUserCollateralAllowance,
   userAllowance,
-  // fetchUserAllowanceLoading,
   approveForPotionLiquidityPool,
-  // approveLoading,
+  approveLoading,
 } = useCollateralTokenContract();
+
+/* Setup data validation */
 
 const liquidityCheck = computed(
   () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
