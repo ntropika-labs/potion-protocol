@@ -254,6 +254,7 @@ const liquidityCheck = computed(
     liquidity.value > 0 &&
     validInput.value
 );
+
 const bondingCurveCheck = computed(() => {
   if (
     bondingCurve.value.a > 0 &&
