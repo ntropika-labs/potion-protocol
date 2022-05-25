@@ -30,6 +30,7 @@
     ></CurveSetup>
     <CreatePool
       :transaction="depositAndCreateCurveAndCriteriaTx"
+      :pool-id="poolId"
       :receipt="depositAndCreateCurveAndCriteriaReceipt"
       :action-label="deployButtonLabel"
       @deploy-pool="handleDeployPool"
@@ -56,17 +57,27 @@ import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
 import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
-import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+import {
+  useAllCollateralizedProductsUnderlyingQuery,
+  useGetNumberOfPoolsFromUserQuery,
+} from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+
+const { connectedWallet } = useOnboard();
+const walletAddress = ref(connectedWallet.value?.accounts[0].address ?? "");
+watch(connectedWallet, () => {
+  walletAddress.value = connectedWallet.value?.accounts[0].address ?? "";
+});
+const { t } = useI18n();
+
 const {
   depositAndCreateCurveAndCriteriaTx,
   depositAndCreateCurveAndCriteriaReceipt,
   depositAndCreateCurveAndCriteria,
 } = usePotionLiquidityPoolContract();
 const router = useRouter();
-const poolId = ref(1);
 const bondingCurve = ref<BondingCurveParams>({
   a: 2.5,
   b: 2.5,
@@ -74,9 +85,27 @@ const bondingCurve = ref<BondingCurveParams>({
   d: 2.5,
   maxUtil: 1,
 });
-const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
-const { data } = useAllCollateralizedProductsUnderlyingQuery({
-  variables: { collateral },
+const collateral: string =
+  contractsAddresses.PotionTestUSD.address.toLowerCase();
+const { data: availableProducts } = useAllCollateralizedProductsUnderlyingQuery(
+  {
+    variables: { collateral },
+  }
+);
+
+const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  variables: {
+    //@ts-expect-error URQL accepts refs, but typings are not correct here?
+    lp: walletAddress,
+  },
+});
+
+const userPoolsCount = computed(() => {
+  return userPools?.value?.pools?.length ?? 0;
+});
+
+const poolId = computed(() => {
+  return userPoolsCount.value + 1;
 });
 const availableTokens = ref<SelectableToken[]>([]);
 const criteriaMap = ref(
@@ -109,9 +138,9 @@ const tokenToSelectableToken = (
   };
 };
 
-watch(data, () => {
+watch(availableProducts, () => {
   availableTokens.value =
-    data?.value?.products?.map((product) =>
+    availableProducts?.value?.products?.map((product) =>
       tokenToSelectableToken(
         product.underlying.address,
         parseInt(product.underlying.decimals)
@@ -194,9 +223,6 @@ const criterias = computed(() => {
   return existingCriteria;
 });
 
-const { connectedWallet } = useOnboard();
-const { t } = useI18n();
-
 /* Setup data validation */
 const liquidity = ref(100);
 
@@ -259,7 +285,7 @@ const handleDeployPool = async () => {
     await fetchUserCollateralAllowance();
   } else {
     await depositAndCreateCurveAndCriteria(
-      13,
+      poolId.value,
       liquidity.value,
       bondingCurve.value,
       selectedCriterias.value
