@@ -95,10 +95,8 @@ const weightClass = computed(() =>
     :type="props.type"
     @click="emit('click')"
   >
-    <slot v-if="!props.loading" name="pre-icon"></slot>
-    <template v-else>
-      <i class="i-eos-icons-loading mr-2"></i>
-    </template>
+    <i v-if="props.loading" class="i-eos-icons-loading mr-2"></i>
+    <slot v-else name="pre-icon"></slot>
     <p class="leading-none">
       {{ label }}
     </p>
