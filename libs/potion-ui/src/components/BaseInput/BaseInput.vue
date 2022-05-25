@@ -12,9 +12,17 @@ export interface Props {
   min?: number;
   max?: number;
   step?: number;
+  readonly?: boolean;
+  disabled?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false,
+  disabled: false,
+  min: 1,
+  max: 999999999999999,
+  step: 1,
+});
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
@@ -40,6 +48,8 @@ const handleKeydown = (event: KeyboardEvent) => {
     :max="props.max"
     :step="props.step"
     :value="props.modelValue"
+    :readonly="props.readonly"
+    :disabled="props.disabled"
     @input="handleInput"
     @keydown="handleKeydown"
   />

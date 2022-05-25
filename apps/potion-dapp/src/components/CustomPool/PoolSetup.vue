@@ -2,10 +2,11 @@
   <div class="grid md:grid-cols-12 gap-5">
     <AddLiquidityCard
       :model-value="props.liquidity"
-      :pool-id="1"
+      :pool-id="props.poolId"
       :user-balance="userCollateralBalance"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
+      @valid-input="emits('validInput', $event)"
     >
       <template #card-footer>
         <BaseButton
@@ -59,6 +60,7 @@ interface Props {
   availableTokens: SelectableToken[];
   tokenPrices: Map<string, ApiTokenPrice>;
   disableNavigation: boolean;
+  poolId: number;
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
@@ -72,6 +74,7 @@ const emits = defineEmits<{
   (e: "navigate:next"): void;
   (e: "token-selected", address: string): void;
   (e: "token-remove", address: string): void;
+  (e: "validInput", value: boolean): void;
 }>();
 
 const handleTokenSelected = (address: string) =>

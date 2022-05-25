@@ -7,13 +7,11 @@ import type {
 import {
   BaseCard,
   BondingCurve,
-  CriteriasRecap,
   CurveFormula,
   CustomCurveParams,
   Tooltip,
-  BaseButton,
-  CardFooter,
 } from "potion-ui";
+import PoolSettingsCard from "@/components/CustomPool/PoolSettingsCard.vue";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { computed } from "vue";
@@ -24,8 +22,9 @@ interface Props {
   poolId: number;
   modelValue: BondingCurveParams;
   criterias: Criteria[];
-  emergingCurves: EmergingCurvePoints[];
+  emergingCurves?: EmergingCurvePoints[];
   disableNavigationNext: boolean;
+  navigateNextLabel: string;
 }
 
 const props = withDefaults(defineProps<Props>(), { emergingCurves: () => [] });
@@ -63,42 +62,15 @@ const bondingCurve = computed(
 
 <template>
   <div class="grid gap-5 lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]">
-    <BaseCard class="self-start" :full-height="false">
-      <div class="py-3 px-4 flex flex-col gap-4">
-        <p class="text-sm uppercase">{{ t("my_pool") }} #{{ props.poolId }}</p>
-        <div class="flex justify-between text-sm">
-          <p>{{ t("deposit_collateral_title") }}</p>
-          <p class="font-bold font-serif">{{ liquidity }}</p>
-        </div>
-        <div class="w-full bg-white/10 h-[1px]"></div>
-        <p class="text-sm">{{ t("insurance_description") }}</p>
-        <CriteriasRecap class="" :criterias="criterias"></CriteriasRecap>
-      </div>
-
-      <CardFooter class="flex justify-center gap-5">
-        <BaseButton
-          palette="transparent"
-          :inline="true"
-          :label="t('back')"
-          @click="emits('navigate:back')"
-        >
-          <template #post-icon>
-            <i class="i-ph-caret-left"></i>
-          </template>
-        </BaseButton>
-        <BaseButton
-          palette="secondary"
-          :inline="true"
-          :label="t('next')"
-          :disabled="props.disableNavigationNext"
-          @click="emits('navigate:next')"
-        >
-          <template #post-icon>
-            <i class="i-ph-caret-right"></i>
-          </template>
-        </BaseButton>
-      </CardFooter>
-    </BaseCard>
+    <PoolSettingsCard
+      :pool-id="props.poolId"
+      :liquidity="props.liquidity"
+      :criterias="props.criterias"
+      :disable-navigation-next="props.disableNavigationNext"
+      :navigate-next-label="props.navigateNextLabel"
+      @navigate:back="emits('navigate:back')"
+      @navigate:next="emits('navigate:next')"
+    />
     <BaseCard>
       <div class="grid gap-5 xl:grid-cols-[3fr_1fr]">
         <BondingCurve
@@ -107,7 +79,7 @@ const bondingCurve = computed(
           :emerging-curves="emergingCurves"
         ></BondingCurve>
         <BaseCard
-          class="p-6 gap-6 rounded-l-none !ring-none border-l-1 border-white/10"
+          class="p-6 gap-6 !rounded-none !ring-none xl:(border-l-1 border-t-0) border-t-1 border-white/10"
         >
           <CurveFormula></CurveFormula>
           <div class="text-sm">
@@ -125,6 +97,8 @@ const bondingCurve = computed(
             :c="props.modelValue.c"
             :d="props.modelValue.d"
             :max-util="props.modelValue.maxUtil"
+            :readonly="false"
+            :disabled="false"
             @update:a="(value) => handleUpdate('a', value)"
             @update:b="(value) => handleUpdate('b', value)"
             @update:c="(value) => handleUpdate('c', value)"

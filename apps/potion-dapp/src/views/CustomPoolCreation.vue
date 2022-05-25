@@ -18,6 +18,7 @@
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
       @navigate:next="currentFormStep = 1"
+      @valid-input="validInput = $event"
     />
     <CurveSetup
       v-model="bondingCurve"
@@ -25,14 +26,29 @@
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :criterias="criterias"
       :disable-navigation-next="!criteriasCheck"
+      :navigate-next-label="t('next')"
       @navigate:back="currentFormStep = 0"
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
-    <div></div>
+    <CreatePool
+      :transaction="depositAndCreateCurveAndCriteriaTx"
+      :receipt="depositAndCreateCurveAndCriteriaReceipt"
+      :action-label="deployButtonLabel"
+      :liquidity="currencyFormatter(liquidity, 'USDC')"
+      :pool-id="poolId"
+      :criterias="criterias"
+      :disable-action="!readyToDeploy"
+      :action-loading="
+        depositAndCreateCurveAndCriteriaLoading || approveLoading
+      "
+      :bonding-curve-params="bondingCurve"
+      @deploy-pool="handleDeployPool"
+      @navigate:back="currentFormStep = 1"
+    />
   </TabNavigationComponent>
 </template>
 <script lang="ts" setup>
-// import { useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import type {
   ApiTokenPrice,
   SelectableToken,
@@ -42,21 +58,31 @@ import type {
 } from "dapp-types";
 
 import { currencyFormatter } from "potion-ui";
-import { useCollateralToken } from "@/composables/useCollateralToken";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
-// import CreatePool from "@/components/CustomPool/CreatePool.vue";
+import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import { TabNavigationComponent } from "potion-ui";
-import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
+import {
+  useAllCollateralizedProductsUnderlyingQuery,
+  useGetNumberOfPoolsFromUserQuery,
+} from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+
+const { connectedWallet } = useOnboard();
+const walletAddress = ref(connectedWallet.value?.accounts[0].address ?? "");
+watch(connectedWallet, () => {
+  walletAddress.value = connectedWallet.value?.accounts[0].address ?? "";
+});
+const { t } = useI18n();
 
 const router = useRouter();
-const poolId = ref(1);
 const bondingCurve = ref<BondingCurveParams>({
   a: 2.5,
   b: 2.5,
@@ -64,14 +90,42 @@ const bondingCurve = ref<BondingCurveParams>({
   d: 2.5,
   maxUtil: 1,
 });
-const collateral = contractsAddresses.PotionTestUSD.address.toLowerCase();
-const { data } = useAllCollateralizedProductsUnderlyingQuery({
-  variables: { collateral },
+const collateral: string =
+  contractsAddresses.PotionTestUSD.address.toLowerCase();
+const { data: availableProducts } = useAllCollateralizedProductsUnderlyingQuery(
+  {
+    variables: { collateral },
+  }
+);
+
+const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  variables: {
+    //@ts-expect-error URQL accepts refs, but typings are not correct here?
+    lp: walletAddress,
+    ids: [""],
+  },
+});
+
+const userPoolsCount = computed(() => {
+  return userPools?.value?.pools?.length ?? 0;
+});
+
+const poolId = computed(() => {
+  return userPoolsCount.value + 1;
 });
 const availableTokens = ref<SelectableToken[]>([]);
 const criteriaMap = ref(
   new Map<string, { maxStrike: number; maxDuration: number }>()
 );
+const selectedCriterias = computed(() => {
+  return [...criteriaMap.value].map((criteria) => {
+    return {
+      tokenAddress: criteria[0],
+      maxStrike: criteria[1].maxStrike,
+      maxDuration: criteria[1].maxDuration,
+    };
+  });
+});
 const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
 
 const tokenToSelectableToken = (
@@ -90,9 +144,9 @@ const tokenToSelectableToken = (
   };
 };
 
-watch(data, () => {
+watch(availableProducts, () => {
   availableTokens.value =
-    data?.value?.products?.map((product) =>
+    availableProducts?.value?.products?.map((product) =>
       tokenToSelectableToken(
         product.underlying.address,
         parseInt(product.underlying.decimals)
@@ -175,10 +229,12 @@ const criterias = computed(() => {
   return existingCriteria;
 });
 
-const { connectedWallet } = useOnboard();
-// const { t } = useI18n();
-
-/* Setup data validation */
+const {
+  depositAndCreateCurveAndCriteriaTx,
+  depositAndCreateCurveAndCriteriaReceipt,
+  depositAndCreateCurveAndCriteria,
+  depositAndCreateCurveAndCriteriaLoading,
+} = usePotionLiquidityPoolContract();
 const liquidity = ref(100);
 
 const {
@@ -186,22 +242,18 @@ const {
   userCollateralBalance,
   fetchUserCollateralAllowance,
   userAllowance,
-  // fetchUserAllowanceLoading,
-  // approveForPotionLiquidityPool,
-  // approveLoading,
-} = useCollateralToken();
+  approveForPotionLiquidityPool,
+  approveLoading,
+} = useCollateralTokenContract();
 
+/* Setup data validation */
+const validInput = ref(false);
 const liquidityCheck = computed(
-  () => userCollateralBalance.value >= liquidity.value && liquidity.value > 0
+  () =>
+    userCollateralBalance.value >= liquidity.value &&
+    liquidity.value > 0 &&
+    validInput.value
 );
-
-const setupCheck = computed(() => {
-  if (liquidityCheck.value && criteriasCheck.value) {
-    return true;
-  } else {
-    return false;
-  }
-});
 
 const bondingCurveCheck = computed(() => {
   if (
@@ -223,27 +275,45 @@ const criteriasCheck = computed(() => {
   return false;
 });
 
+const liquidityAndCriteriaCheck = computed(() => {
+  return liquidityCheck.value && criteriasCheck.value;
+});
+
 /* This will be needed for the last step*/
 
-// const amountNeededToApprove = computed(() => {
-//   if (userAllowance.value === 0) {
-//     return liquidity.value;
-//   }
-//   if (liquidity.value > userAllowance.value) {
-//     return liquidity.value - userAllowance.value;
-//   }
-//   return 0;
-// });
-
-/* this needs to be expanded with the 3 steps checks */
-
-const readyToDeploy = computed(() => {
-  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
-    return true;
-  } else {
-    return false;
+const amountNeededToApprove = computed(() => {
+  if (userAllowance.value === 0) {
+    return liquidity.value;
   }
+  if (liquidity.value > userAllowance.value) {
+    return parseFloat((liquidity.value - userAllowance.value).toPrecision(6));
+  }
+  return 0;
 });
+
+const deployButtonLabel = computed(() => {
+  if (amountNeededToApprove.value > 0) {
+    return `${t("approve")} USDC`;
+  }
+  return `${t("create_pool")}`;
+});
+
+const handleDeployPool = async () => {
+  if (amountNeededToApprove.value > 0) {
+    await approveForPotionLiquidityPool(liquidity.value, false);
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  } else {
+    await depositAndCreateCurveAndCriteria(
+      poolId.value,
+      liquidity.value,
+      bondingCurve.value,
+      selectedCriterias.value
+    );
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
 
 /* Setup navigation logic */
 
@@ -255,12 +325,20 @@ const canNavigateToDeploy = computed(() => {
   }
 });
 
+const readyToDeploy = computed(() => {
+  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
 const currentFormStep = ref(0);
 const tabs = ref([
   {
     title: "Pool Setup",
     subtitle: "Choose one or more assets this pool will insure",
-    isValid: setupCheck,
+    isValid: liquidityAndCriteriaCheck,
     cta: {
       label: "existing pools (test)",
       url: "/pools",

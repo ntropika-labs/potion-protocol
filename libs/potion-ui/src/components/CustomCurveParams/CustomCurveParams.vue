@@ -16,9 +16,14 @@ export interface Props {
   c: number;
   d: number;
   maxUtil: number;
+  readonly?: boolean;
+  disabled?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false,
+  disabled: false,
+});
 const emits = defineEmits<{
   (e: "update:a", value: number): void;
   (e: "update:b", value: number): void;
@@ -37,6 +42,8 @@ const emits = defineEmits<{
       :step="0.1"
       label="a"
       :model-value="props.a"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       @update:model-value="(value) => emits('update:a', value)"
     />
     <MinusPlusInput
@@ -45,6 +52,8 @@ const emits = defineEmits<{
       :max="5"
       :step="0.1"
       label="b"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       :model-value="props.b"
       @update:model-value="(value) => emits('update:b', value)"
     />
@@ -54,6 +63,8 @@ const emits = defineEmits<{
       :max="5"
       :step="0.1"
       label="c"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       :model-value="props.c"
       @update:model-value="(value) => emits('update:c', value)"
     />
@@ -63,6 +74,8 @@ const emits = defineEmits<{
       :max="5"
       :step="0.1"
       label="d"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       :model-value="props.d"
       @update:model-value="(value) => emits('update:d', value)"
     />
@@ -71,6 +84,8 @@ const emits = defineEmits<{
       :max="1"
       :step="0.1"
       label="maxUtil"
+      :readonly="props.readonly"
+      :disabled="props.disabled"
       :model-value="props.maxUtil"
       @update:model-value="(value) => emits('update:maxUtil', value)"
     />

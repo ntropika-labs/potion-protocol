@@ -1,34 +1,32 @@
+import type {
+  ContractTransaction,
+  ContractReceipt,
+} from "@ethersproject/contracts";
+
 import type { PotionTestUSD } from "potion-contracts/typechain";
 import { PotionTestUSD__factory } from "potion-contracts/typechain";
-import { computed, ref, watch } from "vue";
+import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { MaxUint256 } from "@ethersproject/constants";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 
 import { useEthersContract } from "./useEthersContract";
 import { useOnboard } from "./useOnboard";
 
-export function useCollateralToken() {
+export function useCollateralTokenContract() {
   const { initContract } = useEthersContract();
   const { PotionTestUSD, PotionLiquidityPool } = contractsAddresses;
   const { connectedWallet } = useOnboard();
-  const walletConnected = computed(() => {
-    return connectedWallet.value !== null;
-  });
-  let contractSigner: PotionTestUSD | null = null;
 
-  watch(connectedWallet, (connectedWallet) => {
-    console.log(connectedWallet);
-    if (connectedWallet && connectedWallet.accounts[0].address) {
-      contractSigner = initContract(
-        true,
-        false,
-        PotionTestUSD__factory,
-        PotionTestUSD.address.toLowerCase()
-      ) as PotionTestUSD;
-    }
-  });
+  const initContractSigner = () => {
+    return initContract(
+      true,
+      false,
+      PotionTestUSD__factory,
+      PotionTestUSD.address.toLowerCase()
+    ) as PotionTestUSD;
+  };
 
   const contractProvider = initContract(
     false,
@@ -42,9 +40,8 @@ export function useCollateralToken() {
   const fetchUserCollateralBalance = async () => {
     try {
       fetchUserCollateralBalanceLoading.value = true;
-      if (walletConnected.value) {
+      if (connectedWallet.value) {
         const response = await contractProvider.balanceOf(
-          //@ts-expect-error - we know that the wallet is connected by the computed
           connectedWallet.value.accounts[0].address
         );
         userCollateralBalance.value = parseFloat(formatUnits(response, 6));
@@ -67,11 +64,15 @@ export function useCollateralToken() {
   const fetchUserCollateralAllowance = async () => {
     fetchUserAllowanceLoading.value = true;
     try {
-      if (walletConnected.value) {
+      if (connectedWallet.value) {
         const response = await contractProvider.allowance(
-          //@ts-expect-error - we know that the wallet is connected by the computed
           connectedWallet.value.accounts[0].address,
           PotionLiquidityPool.address
+        );
+        console.info(
+          `Address allowance for ${
+            PotionLiquidityPool.address
+          } is ${formatUnits(response, 6)}`
         );
         userAllowance.value = parseFloat(formatUnits(response, 6));
         fetchUserAllowanceLoading.value = false;
@@ -89,24 +90,23 @@ export function useCollateralToken() {
   };
 
   const approveLoading = ref(false);
-  const approveForPotionLiquidityPool = async (amount: number) => {
+  const approveTx = ref<ContractTransaction | null>(null);
+  const approveReceipt = ref<ContractReceipt | null>(null);
+  const approveForPotionLiquidityPool = async (
+    amount: number,
+    infinite = true
+  ) => {
     approveLoading.value = true;
     try {
-      if (walletConnected.value) {
-        await fetchUserCollateralAllowance();
-        if (userAllowance.value < amount) {
-          //@ts-expect-error - we know that the wallet is connected by the computed value
-          const tx = await contractSigner.approve(
-            PotionLiquidityPool.address,
-            // parseUnits(amount.toString(), 6)
-            MaxUint256
-          );
-          const receipt = await tx.wait();
-          console.log(receipt);
-          approveLoading.value = false;
-        } else {
-          throw new Error(`User allowance is already ${amount}`);
-        }
+      if (connectedWallet.value) {
+        const contractSigner = initContractSigner();
+
+        approveTx.value = await contractSigner.approve(
+          PotionLiquidityPool.address,
+          infinite ? MaxUint256 : parseUnits(amount.toString(), 6)
+        );
+        approveReceipt.value = await approveTx.value.wait();
+        approveLoading.value = false;
       } else {
         throw new Error("Connect your wallet first");
       }

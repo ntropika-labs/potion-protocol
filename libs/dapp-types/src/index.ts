@@ -43,3 +43,9 @@ export interface EmergingCurvePoints {
   data: number[];
   symbol: string;
 }
+
+export enum SrcsetEnum {
+  AVIF = "AVIF",
+  WEBP = "WEBP",
+  PNG = "PNG",
+}
