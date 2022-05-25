@@ -5,7 +5,8 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 
 export interface Props {
   symbol: string;
@@ -26,10 +27,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const inputElement = ref<Element>();
 const sliderThumb = ref<Element>();
+const windowSize = ref(0);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
+  (e: "update:fake", value: number): void;
 }>();
+
 const valuePercentage = computed(() => {
   const currentValue = Math.min(
     props.max,
@@ -39,13 +43,21 @@ const valuePercentage = computed(() => {
   return ((currentValue - props.min) / (props.max - props.min)) * 100;
 });
 
-const thumbPosition = computed(() => {
-  const inputWidth = (inputElement.value as HTMLElement)?.offsetWidth || 1;
-  const thumbWidth = (sliderThumb.value as HTMLElement)?.offsetWidth || 1;
+const inputWidth = ref((inputElement.value as HTMLElement)?.offsetWidth || 1);
 
+//@ts-expect-error InputElement can be undefined if the component does not mount
+useResizeObserver(inputElement, (entries) => {
+  const entry = entries[0];
+  const { width, height } = entry.contentRect;
+  console.log(width);
+  inputWidth.value = width;
+});
+
+const thumbPosition = computed(() => {
+  const thumbWidth = (sliderThumb.value as HTMLElement)?.offsetWidth || 1;
   return (
     ((props.modelValue - props.min) / (props.max - props.min)) *
-    (inputWidth - thumbWidth)
+    (inputWidth.value - thumbWidth)
   );
 });
 
@@ -61,6 +73,20 @@ const onValueChange = (event: Event) => {
     emit("update:modelValue", numericValue);
   }
 };
+
+const updateWindowSize = () => {
+  windowSize.value = window.innerWidth;
+  //const instance = getCurrentInstance();
+  //console.log(instance);
+};
+
+onMounted(() => {
+  window.addEventListener("resize", updateWindowSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateWindowSize);
+});
 </script>
 <template>
   <div class="relative w-full h-[4px] bg-dark/20">
