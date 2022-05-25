@@ -51,6 +51,17 @@
       @navigate:back="currentFormStep = 1"
     />
   </TabNavigationComponent>
+  <template v-for="[hash, info] of notifications" :key="hash">
+    <Teleport to="#toast-wrap">
+      <BaseToast
+        class="z-50"
+        :title="info.title"
+        :body="info.body"
+        :srcset-map="info.srcset"
+        @click="(ev) => removeToast(hash)"
+      ></BaseToast>
+    </Teleport>
+  </template>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
@@ -61,9 +72,12 @@ import type {
   BondingCurveParams,
   Criteria,
   EmergingCurvePoints,
+  NotificationProps,
 } from "dapp-types";
 
-import { currencyFormatter } from "potion-ui";
+import { SrcsetEnum } from "dapp-types";
+
+import { currencyFormatter, BaseToast } from "potion-ui";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useOnboard } from "@/composables/useOnboard";
 import { onMounted, ref, computed, watch } from "vue";
@@ -258,6 +272,8 @@ const {
   userAllowance,
   approveForPotionLiquidityPool,
   approveLoading,
+  approveTx,
+  approveReceipt,
 } = useCollateralTokenContract();
 
 const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
@@ -396,5 +412,64 @@ watch(connectedWallet, async (newAWallet) => {
     userCollateralBalance.value = 0;
     userAllowance.value = 0;
   }
+});
+
+const notifications = ref<Map<string, NotificationProps>>(new Map());
+
+const addToast = (index: string, info: NotificationProps) => {
+  notifications.value.set(index, info);
+
+  setTimeout(() => {
+    notifications.value.delete(index);
+  }, 20000);
+};
+const removeToast = (hash: string) => notifications.value.delete(hash);
+
+watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
+  addToast(`${transaction?.hash}`, {
+    title: "Creating pool",
+    body: "Your transaction is pending",
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/wallet.avif"],
+      [SrcsetEnum.WEBP, "/icons/wallet.webp"],
+      [SrcsetEnum.PNG, "/icons/wallet.png"],
+    ]),
+  });
+});
+
+watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
+  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
+    title: "Pool created",
+    body: "Your transaction has completed",
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(approveTx, (transaction) => {
+  addToast(`${transaction?.hash}`, {
+    title: "Approving USDC",
+    body: "Your transactions is pending",
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(approveReceipt, (receipt) => {
+  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
+    title: "USDC spending approved",
+    body: "Your transaction has completed",
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
 });
 </script>

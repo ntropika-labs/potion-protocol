@@ -12,7 +12,7 @@ export interface Props {
   body: string;
   srcsetMap: Map<SrcsetEnum, string>;
   cta?: {
-    label: string;
+    label?: string;
     url: string;
   };
 }

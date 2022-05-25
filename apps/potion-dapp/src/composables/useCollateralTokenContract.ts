@@ -131,5 +131,7 @@ export function useCollateralTokenContract() {
     fetchUserAllowanceLoading,
     approveForPotionLiquidityPool,
     approveLoading,
+    approveTx,
+    approveReceipt,
   };
 }

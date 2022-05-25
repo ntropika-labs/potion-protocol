@@ -49,3 +49,13 @@ export enum SrcsetEnum {
   WEBP = "WEBP",
   PNG = "PNG",
 }
+
+export interface NotificationProps {
+  title: string;
+  body: string;
+  srcset: Map<SrcsetEnum, string>;
+  cta?: {
+    label?: string;
+    url: string;
+  };
+}
