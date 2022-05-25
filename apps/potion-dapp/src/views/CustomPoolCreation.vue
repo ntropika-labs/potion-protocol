@@ -25,14 +25,19 @@
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :criterias="criterias"
       :disable-navigation-next="!criteriasCheck"
+      :navigate-next-label="t('next')"
       @navigate:back="currentFormStep = 0"
       @navigate:next="currentFormStep = 2"
     ></CurveSetup>
     <CreatePool
       :transaction="depositAndCreateCurveAndCriteriaTx"
-      :pool-id="poolId"
       :receipt="depositAndCreateCurveAndCriteriaReceipt"
       :action-label="deployButtonLabel"
+      :liquidity="currencyFormatter(liquidity, 'USDC')"
+      :pool-id="poolId"
+      :navigate-next-label="deployButtonLabel"
+      :criterias="criterias"
+      :disable-action="readyToDeploy"
       @deploy-pool="handleDeployPool"
     />
   </TabNavigationComponent>
@@ -294,20 +299,19 @@ const handleDeployPool = async () => {
     await fetchUserCollateralAllowance();
   }
 };
-/* this needs to be expanded with the 3 steps checks */
 
-const readyToDeploy = computed(() => {
-  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
+/* Setup navigation logic */
+
+const canNavigateToDeploy = computed(() => {
+  if (criteriasCheck.value && bondingCurveCheck.value) {
     return true;
   } else {
     return false;
   }
 });
 
-/* Setup navigation logic */
-
-const canNavigateToDeploy = computed(() => {
-  if (criteriasCheck.value && bondingCurveCheck.value) {
+const readyToDeploy = computed(() => {
+  if (liquidityCheck.value && bondingCurveCheck.value && criteriasCheck.value) {
     return true;
   } else {
     return false;
