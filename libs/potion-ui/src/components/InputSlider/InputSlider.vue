@@ -30,7 +30,6 @@ const sliderThumb = ref<Element>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
-  (e: "update:fake", value: number): void;
 }>();
 
 const valuePercentage = computed(() => {
