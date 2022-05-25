@@ -1,16 +1,12 @@
 <script lang="ts">
-import {
-  defineComponent,
-  getCurrentInstance,
-  onMounted,
-  onUnmounted,
-} from "vue";
+import { defineComponent } from "vue";
 defineComponent({
   name: "InputSlider",
 });
 </script>
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 
 export interface Props {
   symbol: string;
@@ -35,6 +31,7 @@ const windowSize = ref(0);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
+  (e: "update:fake", value: number): void;
 }>();
 
 const valuePercentage = computed(() => {
@@ -46,16 +43,21 @@ const valuePercentage = computed(() => {
   return ((currentValue - props.min) / (props.max - props.min)) * 100;
 });
 
-const thumbPosition = computed(() => {
-  const inputWidth = (inputElement.value as HTMLElement)?.offsetWidth || 1;
-  const thumbWidth = (sliderThumb.value as HTMLElement)?.offsetWidth || 1;
-  const ws = windowSize.value; // DO NOT REMOVE: even if this is totally useless, it's needed to trigger a refresh when the window size changes
-  const instance = getCurrentInstance();
-  console.log(instance);
+const inputWidth = ref((inputElement.value as HTMLElement)?.offsetWidth || 1);
 
+//@ts-expect-error InputElement can be undefined if the component does not mount
+useResizeObserver(inputElement, (entries) => {
+  const entry = entries[0];
+  const { width, height } = entry.contentRect;
+  console.log(width);
+  inputWidth.value = width;
+});
+
+const thumbPosition = computed(() => {
+  const thumbWidth = (sliderThumb.value as HTMLElement)?.offsetWidth || 1;
   return (
     ((props.modelValue - props.min) / (props.max - props.min)) *
-    (inputWidth - thumbWidth)
+    (inputWidth.value - thumbWidth)
   );
 });
 
