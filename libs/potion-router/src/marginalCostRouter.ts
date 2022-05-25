@@ -4,7 +4,7 @@ import { min as _min } from "lodash-es";
 
 import {
   calculateMarginalCostForDeltaX,
-  createCounterpartyDetail
+  createCounterpartyDetail,
 } from "./helpers";
 
 const deltaXComparator = (a: IPool, b: IPool): number =>

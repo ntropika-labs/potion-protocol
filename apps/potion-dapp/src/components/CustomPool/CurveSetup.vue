@@ -14,7 +14,7 @@ import {
 import PoolSettingsCard from "@/components/CustomPool/PoolSettingsCard.vue";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
-import { computed } from "vue";
+import { computed, onActivated } from "vue";
 import { useI18n } from "vue-i18n";
 
 interface Props {
@@ -23,15 +23,20 @@ interface Props {
   modelValue: BondingCurveParams;
   criterias: Criteria[];
   emergingCurves?: EmergingCurvePoints[];
+  unselectedTokens: string[];
   disableNavigationNext: boolean;
   navigateNextLabel: string;
 }
 
-const props = withDefaults(defineProps<Props>(), { emergingCurves: () => [] });
+const props = withDefaults(defineProps<Props>(), {
+  unselectedTokens: () => [],
+  emergingCurves: () => [],
+});
 const emits = defineEmits([
   "update:modelValue",
   "navigate:back",
   "navigate:next",
+  "activated",
 ]);
 
 const { t } = useI18n();
@@ -58,6 +63,10 @@ const bondingCurve = computed(
       props.modelValue.maxUtil
     )
 );
+
+onActivated(() => {
+  emits("activated");
+});
 </script>
 
 <template>
@@ -76,8 +85,10 @@ const bondingCurve = computed(
         <BondingCurve
           class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
-          :emerging-curves="emergingCurves"
-        ></BondingCurve>
+          :emerging-curves="props.emergingCurves"
+          :unload-keys="props.unselectedTokens"
+        >
+        </BondingCurve>
         <BaseCard
           class="p-6 gap-6 !rounded-none !ring-none xl:(border-l-1 border-t-0) border-t-1 border-white/10"
         >

@@ -1,12 +1,16 @@
-import { useGetPoolsFromCriteriaQuery } from 'subgraph-queries/generated/urql';
-import type { IPoolUntyped } from './types';
+import { useGetPoolsFromCriteriaQuery } from "subgraph-queries/generated/urql";
+import type { Criteria } from "dapp-types";
+import type { IPoolUntyped, ChartCriteriaPool } from "./types";
 
-const getPoolsFromCriteria = async (underlyingAddress: string, minDuration: string, minStrike: string) => {
+const getPoolsFromCriteria = async (
+  criteria: Criteria
+): Promise<ChartCriteriaPool> => {
+  const underlyingAddress = criteria.token.address;
   const { data } = await useGetPoolsFromCriteriaQuery({
     variables: {
       underlyingAddress,
-      minDuration,
-      minStrike,
+      minDuration: criteria.maxDuration.toString(),
+      minStrike: criteria.maxStrike.toString(),
     },
   });
   const poolsMap = new Map<string, IPoolUntyped>();
@@ -28,13 +32,12 @@ const getPoolsFromCriteria = async (underlyingAddress: string, minDuration: stri
             unlocked: pool.unlocked,
             utilization: pool.utilization,
             curve: {
-              id: template?.curve?.id ?? '',
-              a: template?.curve?.a ?? '',
-              b: template?.curve?.b ?? '',
-              c: template?.curve?.c ?? '',
-              d: template?.curve?.d ?? '',
-              maxUtil: template?.curve?.maxUtil ?? '',
-
+              id: template?.curve?.id ?? "",
+              a: template?.curve?.a ?? "",
+              b: template?.curve?.b ?? "",
+              c: template?.curve?.c ?? "",
+              d: template?.curve?.d ?? "",
+              maxUtil: template?.curve?.maxUtil ?? "",
             },
             underlyingAddress,
           });
@@ -42,9 +45,16 @@ const getPoolsFromCriteria = async (underlyingAddress: string, minDuration: stri
       });
     });
   });
-  return Array.from(poolsMap.values());
-}
+  const pools = Array.from(poolsMap.values());
+  return {
+    pools,
+    symbol: criteria.token.symbol,
+  };
+};
 
-export {
-  getPoolsFromCriteria
-}
+const getPoolsFromCriterias = async (
+  criterias: Criteria[]
+): Promise<ChartCriteriaPool[]> =>
+  await Promise.all(criterias.map(getPoolsFromCriteria));
+
+export { getPoolsFromCriteria, getPoolsFromCriterias };

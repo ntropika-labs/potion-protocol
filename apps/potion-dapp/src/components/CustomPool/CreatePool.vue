@@ -16,6 +16,8 @@
         <BondingCurve
           class="py-3 px-4"
           :bonding-curve="getCurvePoints(bondingCurve)"
+          :emerging-curves="props.emergingCurves"
+          :unload-keys="props.unselectedTokens"
         />
         <BaseCard
           class="rounded-l-none !ring-none py-3 px-4 border-t-1 xl:( border-l-1 border-t-0 ) border-white/10"
@@ -46,7 +48,11 @@ import type {
   ContractTransaction,
   ContractReceipt,
 } from "@ethersproject/contracts";
-import type { Criteria, BondingCurveParams } from "dapp-types";
+import type {
+  Criteria,
+  BondingCurveParams,
+  EmergingCurvePoints,
+} from "dapp-types";
 import { computed } from "vue";
 import { BondingCurve, BaseCard, CustomCurveParams } from "potion-ui";
 import { times as _times } from "lodash-es";
@@ -65,6 +71,8 @@ interface Props {
   disableAction: boolean;
   bondingCurveParams: BondingCurveParams;
   actionLoading: boolean;
+  emergingCurves?: EmergingCurvePoints[];
+  unselectedTokens: string[];
 }
 const props = defineProps<Props>();
 

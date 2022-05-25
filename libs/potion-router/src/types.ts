@@ -64,3 +64,8 @@ export interface IRouterReturn {
   premium: number;
   counterparties: CounterpartyDetails[];
 }
+
+export interface ChartCriteriaPool {
+  pools: IPoolUntyped[];
+  symbol: string;
+}
