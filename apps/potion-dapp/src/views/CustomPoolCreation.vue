@@ -35,7 +35,6 @@
       :action-label="deployButtonLabel"
       :liquidity="currencyFormatter(liquidity, 'USDC')"
       :pool-id="poolId"
-      :navigate-next-label="deployButtonLabel"
       :criterias="criterias"
       :disable-action="readyToDeploy"
       @deploy-pool="handleDeployPool"
