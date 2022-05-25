@@ -29,7 +29,7 @@
         :disabled="props.disableNavigationNext"
         @click="emits('navigate:next')"
       >
-        <template #post-icon>
+        <template v-if="props.navigateNextLabel === t('next')" #post-icon>
           <i class="i-ph-caret-right"></i>
         </template>
       </BaseButton>
