@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development vite",
+    "dev-test": "NODE_ENV=development vite --mode=test",
     "build": "NODE_ENV=production vue-tsc --noEmit && vite build",
     "build-test": "NODE_ENV=production  vite build --mode=test",
     "preview": "vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-watch": "vitest watch --environment jsdom",
+    "cypress": "cypress open",
     "test-e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
     "test-e2e-ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",

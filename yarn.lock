@@ -12804,9 +12804,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^9.6.0":
-  version: 9.6.0
-  resolution: "cypress@npm:9.6.0"
+"cypress@npm:^9.7.0":
+  version: 9.7.0
+  resolution: "cypress@npm:9.7.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -12852,7 +12852,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: a2d7d9035385dc5d8aa1c36afcdccfb154c47c99ecb8737624fb627b6f054eafb113eb298d5448fb06f6d292a1806de763576218c93fcf39adcada76ed65662d
+  checksum: 45398d9601e255120e1a4d520dd00a6e1c73fdbd5694c7a8b729303938c38b6e071b541d02b6c1d30d60eac4bd21cde45187f0bd7fc9a46479ac0bfcb9597747
   languageName: node
   linkType: hard
 
@@ -25329,7 +25329,7 @@ __metadata:
     console-log-colors: ^0.2.3
     cross-env: ^7.0.3
     crossenv: ^0.0.2-security
-    cypress: ^9.6.0
+    cypress: ^9.7.0
     dotenv: ^16.0.0
     dprint: ^0.27.0
     eslint: ^8.14.0
