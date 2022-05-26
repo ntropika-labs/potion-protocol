@@ -1,8 +1,12 @@
+import { Wallet } from "ethers";
 import { ref } from "vue";
 
 import { useOnboard } from "@/composables/useOnboard";
-import { Web3Provider } from "@ethersproject/providers";
+import { rpcUrl } from "@/helpers";
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
+
+const mode = import.meta.env.MODE;
 
 import type { JsonRpcSigner } from "@ethersproject/providers";
 export function useEthersSigner() {
@@ -11,9 +15,18 @@ export function useEthersSigner() {
   const ens = ref<string | null>(null);
   const ethBalance = ref<string>("");
   const loading = ref(false);
-  const getSigner = (): JsonRpcSigner => {
+  const mnemonic =
+    "test test test test test test test test test test test junk";
+  console.log(mode);
+
+  const getSigner = (): JsonRpcSigner | Wallet => {
     try {
       loading.value = true;
+      if (mode === "test") {
+        const wallet = Wallet.fromMnemonic(mnemonic);
+        const provider = new JsonRpcProvider(rpcUrl);
+        return wallet.connect(provider);
+      }
       if (onboard.connectedWallet.value) {
         const web3Provider = new Web3Provider(
           onboard.connectedWallet.value.provider

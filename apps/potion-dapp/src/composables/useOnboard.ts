@@ -1,6 +1,7 @@
 // We use vue-demi to automatically use the correct reactivity API for both Vue 2 and Vue 3
 import { computed, readonly, ref, shallowRef } from "vue";
 
+import { mockState } from "@/helpers/onboard";
 import { useStorage } from "@vueuse/core";
 // Vueuse helper to streamline the use of rxjs observables as vue refs
 import { useSubscription } from "@vueuse/rxjs";
@@ -16,6 +17,7 @@ import type {
 } from "@web3-onboard/core";
 import type { AppState } from "@web3-onboard/core/dist/types";
 import type { SetChainOptions } from "@/types";
+const mode = import.meta.env.MODE;
 
 // Onboard will be kept here to be reused every time that we access the composable
 let web3Onboard: OnboardAPI | null = null;
@@ -43,6 +45,11 @@ const init = (options: InitOptions): OnboardAPI => {
   useSubscription(
     web3Onboard.state.select().subscribe((update) => {
       onboardState.value = update;
+      if (mode === "test") {
+        console.log(mockState);
+        //@ts-expect-error - we only use this in test mode
+        onboardState.value = mockState;
+      }
       updateAlreadyConnectedWallets();
     })
   );
@@ -53,6 +60,10 @@ const useOnboard = () => {
   // Raise an error if init() wasn't called
   if (!web3Onboard) {
     throw new Error("web3Onboard is not initialized");
+  }
+  if (mode === "test") {
+    //@ts-expect-error - we only use this in test mode
+    onboardState.value = mockState;
   }
 
   const connectingWallet = ref<boolean>(false);

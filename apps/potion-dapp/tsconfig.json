@@ -5,7 +5,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "baseUrl": ".",
-    "rootDir": ".",
+    // "rootDir": ".",
     "paths": {
       "@/*": ["./src/*"]
     },

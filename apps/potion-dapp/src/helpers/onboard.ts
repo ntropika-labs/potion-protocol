@@ -55,3 +55,45 @@ export const onboardOptions = {
     ],
   },
 };
+
+export const mockState = {
+  chains: [
+    {
+      namespace: "evm",
+      id: "0x7a69",
+      rpcUrl: "http://localhost:8545",
+      label: "Test Node",
+      token: "ETH",
+      color: "#f5f5f5",
+      icon: "<svg><svg/>",
+    },
+  ],
+  walletModules: [],
+  wallets: [
+    {
+      label: "Metamask",
+      icon: "<svg><svg/>",
+      provider: {},
+      accounts: [
+        {
+          address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+          ens: null,
+          balance: {
+            eth: 10000,
+          },
+        },
+      ],
+      chains: [
+        {
+          id: "0x7a69",
+          namespace: "evm",
+        },
+      ],
+    },
+  ],
+  accountCenter: {
+    enabled: false,
+    position: "topRight",
+    expanded: false,
+  },
+};
