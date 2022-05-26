@@ -4,6 +4,7 @@ export * from "./helpers";
 import BaseButton from "./components/BaseButton/BaseButton.vue";
 import BaseCard from "./components/BaseCard/BaseCard.vue";
 import BaseTag from "./components/BaseTag/BaseTag.vue";
+import BaseToast from "./components/BaseToast/BaseToast.vue";
 import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
 import CardFooter from "./components/CardFooter/CardFooter.vue";
 import ConnectWalletButton from "./components/ConnectWalletButton/ConnectWalletButton.vue";
@@ -35,6 +36,7 @@ export {
   BaseButton,
   BaseCard,
   BaseTag,
+  BaseToast,
   BondingCurve,
   CardFooter,
   ConnectWalletButton,

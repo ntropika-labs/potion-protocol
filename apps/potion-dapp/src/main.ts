@@ -11,6 +11,7 @@ import App from "@/App.vue";
 import { init } from "@/composables/useOnboard";
 import { onboardOptions } from "@/helpers/onboard";
 import router from "@/router";
+import { vAutoAnimate } from "@formkit/auto-animate";
 import messages from "@intlify/vite-plugin-vue-i18n/messages";
 import urql from "@urql/vue";
 
@@ -32,5 +33,7 @@ app.use(urql, {
 app.use(createPinia());
 app.use(router);
 app.use(i18n);
+
+app.directive("auto-animate", vAutoAnimate);
 
 app.mount("#app");

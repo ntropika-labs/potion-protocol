@@ -1,6 +1,6 @@
 import { getTokenList } from "potion-tokenlist";
 
-console.log(import.meta.env.VITE_ETHEREUM_NETWORK);
+console.info(import.meta.env.VITE_ETHEREUM_NETWORK);
 const tokenList = getTokenList(import.meta.env.VITE_ETHEREUM_NETWORK);
 
 const useTokenList = (address: string) => {

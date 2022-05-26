@@ -12,12 +12,6 @@ export interface Props {
 }
 
 const props = defineProps<Props>();
-
-console.log(
-  props.srcsetMap,
-  props.srcsetMap.has(SrcsetEnum.AVIF),
-  props.srcsetMap.get(SrcsetEnum.AVIF)
-);
 </script>
 <template>
   <picture>
