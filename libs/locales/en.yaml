@@ -39,3 +39,17 @@ set_bonding_curve_params: Set the following parameters and define your curve.
 back: back
 approve: approve
 create_pool: create pool
+assets: Assets
+total_size: Tot. Size
+cloned: Cloned
+times: Times
+pnl: Pnl
+view_pool_recipe: view pool recipe
+template_pool_clone_hint: By providing liquidity you’re creating your pool cloning this template.
+create_potion_jumbo_title: Create protective potions by selecting asset, strike and duration.
+create_potion_jumbo_subtitle: PROTECTION POWER IN YOUR HANDS!
+create_potion: create potion
+create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
+create_pool_jumbo_title: Create custom pool from scratch
+most_cloned_title: Pools that have been cloned the most times
+most_cloned_subtitle: MOST CLONED
