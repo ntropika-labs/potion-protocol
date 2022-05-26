@@ -8,25 +8,15 @@
     "declarationMap": true,
     "declarationDir": "./dist/types",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "types": [
-      "vite/client",
-      "vue/macros",
-      "vitest"
-    ]
+    "types": ["vite/client", "vue/macros", "vitest"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.vue",
-    "vite.config.ts"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"],
   "exclude": [
     "src/stories/**/*",
     "src/**/*.stories.ts",
-    ".storybook/**/*"
+    ".storybook/**/*",
+    "src/**/*.spec.ts"
   ]
 }
