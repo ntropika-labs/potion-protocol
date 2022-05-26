@@ -17,7 +17,6 @@ export function useEthersSigner() {
   const loading = ref(false);
   const mnemonic =
     "test test test test test test test test test test test junk";
-  console.log(mode);
 
   const getSigner = (): JsonRpcSigner | Wallet => {
     try {

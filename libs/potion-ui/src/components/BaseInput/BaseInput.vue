@@ -43,6 +43,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 <template>
   <input
+    test-base-input
     type="number"
     :min="props.min"
     :max="props.max"

@@ -46,7 +46,6 @@ const init = (options: InitOptions): OnboardAPI => {
     web3Onboard.state.select().subscribe((update) => {
       onboardState.value = update;
       if (mode === "test") {
-        console.log(mockState);
         //@ts-expect-error - we only use this in test mode
         onboardState.value = mockState;
       }

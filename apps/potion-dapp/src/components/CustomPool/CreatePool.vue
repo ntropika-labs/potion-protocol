@@ -36,12 +36,6 @@
       </div>
     </BaseCard>
   </div>
-  <div>
-    <code class="bg-black break-words">
-      {{ props.transaction }}
-    </code>
-    <code class="bg-blue-900 break-words">{{ props.receipt }}</code>
-  </div>
 </template>
 <script lang="ts" setup>
 import type {
