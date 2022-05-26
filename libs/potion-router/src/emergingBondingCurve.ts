@@ -5,7 +5,7 @@ import { runMarginalCostRouter } from "./index";
 import type { EmergingCurvePoints } from "dapp-types";
 import type { ChartCriteriaPool } from "./types";
 
-const deltaX = 1000;
+const deltaX = 1;
 const curvePoints = 100;
 const sqCurvePoints = curvePoints ** 2;
 const step = 1 / curvePoints;
@@ -35,6 +35,7 @@ const getEmergingBondingCurvesFromCriterias = async (
         const { premium } = runMarginalCostRouter(pools, orderSize, deltaX, 1);
         return orderSize > 0 ? premium / orderSize : 0;
       });
+      // console.log(data);
     }
     bondingCurves.push({
       data,
