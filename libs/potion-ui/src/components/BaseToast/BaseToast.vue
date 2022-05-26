@@ -7,6 +7,7 @@ export default defineComponent({
 </script>
 <script lang="ts" setup>
 import PictureSet from "../PictureSet/PictureSet.vue";
+import { ref, onUnmounted } from "vue";
 export interface Props {
   title: string;
   body: string;
@@ -15,34 +16,49 @@ export interface Props {
     label?: string;
     url: string;
   };
+  timeout?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   cta: undefined,
+  timeout: 20000,
 });
 
 const emit = defineEmits<{
   (e: "click"): void;
 }>();
+const progress = ref(0);
+const ticker = ref(0);
+const resolution = 50;
+const interval = setInterval(function () {
+  ticker.value += resolution;
+  progress.value = (100 * ticker.value) / props.timeout;
+  if (ticker.value === props.timeout) {
+    clearInterval(interval);
+  }
+}, resolution);
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 <template>
   <div
-    class="relative w-[90%] sm:w-80 shadow-g border border-primary-500 bg-gradient-to-br from-[#262140] to-[#2e284f] rounded-2xl"
+    class="relative sm:w-80 shadow-g border-2 border-primary-600/50 bg-gradient-to-br from-deepBlack-800/50 to-deepBlack-600/50 rounded-t-2xl rounded-b-sm backdrop-filter backdrop-blur"
   >
     <div
       class="w-full grid grid-cols-4 py-3 pl-4 px-10 divide-x divide-white/10 gap-2"
     >
-      <div class="text-center self-start mt-2">
+      <div class="text-center self-center mt-2">
         <PictureSet :srcset-map="props.srcsetMap" />
       </div>
 
       <div
         class="col-span-3 font-medium leading-none text-white self-stretch flex flex-col gap-2 justify-around break-words pl-2"
       >
-        <p class="text-lg">{{ props.title }}</p>
-        <p class="text-sm">{{ props.body }}</p>
+        <p class="text-sm">{{ props.title }}</p>
+        <p class="text-xs">{{ props.body }}</p>
         <a
           v-if="props.cta"
-          class="inline-flex items-center self-start bg-white bg-opacity-10 font-normal text-xs uppercase py-0.5 px-1 rounded text-xs"
+          class="transition hover:bg-white/20 inline-flex items-center self-start bg-white/10 font-normal text-xs uppercase py-2 px-2 rounded leading-none"
           target="_blank"
           :href="props.cta.url"
           >{{ props.cta.label || "view on etherscan"
@@ -51,10 +67,16 @@ const emit = defineEmits<{
       </div>
     </div>
     <button
-      class="absolute outline-none focus:outline-none right-4 top-4 text-dwhite-400"
+      class="absolute outline-none leading-none focus:outline-none right-4 top-4 text-dwhite-400 transition hover:scale-120 rounded-full hover:bg-white/10 h-5 w-5 flex items-center justify-center"
       @click="emit('click')"
     >
       <i class="i-ph-x"></i>
     </button>
+    <div class="rounded-full w-full bg-deepBlack-600 h-1">
+      <div
+        class="rounded-full h-1 bg-accent-500/60"
+        :style="`width: ${progress}%`"
+      ></div>
+    </div>
   </div>
 </template>

@@ -57,7 +57,9 @@
         class="z-50"
         :title="info.title"
         :body="info.body"
+        :cta="info.cta"
         :srcset-map="info.srcset"
+        :timeout="20000"
         @click="(ev) => removeToast(hash)"
       ></BaseToast>
     </Teleport>
@@ -94,8 +96,9 @@ import {
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useRouter } from "vue-router";
 import { getPoolsFromCriterias } from "potion-router";
-import { worker } from "@web-worker";
+import { worker } from "@/web-worker";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+import { etherscanUrl } from "@/helpers";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -429,10 +432,14 @@ watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
   addToast(`${transaction?.hash}`, {
     title: "Creating pool",
     body: "Your transaction is pending",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${transaction?.hash}`,
+    },
     srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/wallet.avif"],
-      [SrcsetEnum.WEBP, "/icons/wallet.webp"],
-      [SrcsetEnum.PNG, "/icons/wallet.png"],
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
     ]),
   });
 });
@@ -441,6 +448,10 @@ watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
   addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
     title: "Pool created",
     body: "Your transaction has completed",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+    },
     srcset: new Map([
       [SrcsetEnum.AVIF, "/icons/atom.avif"],
       [SrcsetEnum.WEBP, "/icons/atom.webp"],
@@ -453,6 +464,10 @@ watch(approveTx, (transaction) => {
   addToast(`${transaction?.hash}`, {
     title: "Approving USDC",
     body: "Your transactions is pending",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${transaction?.hash}`,
+    },
     srcset: new Map([
       [SrcsetEnum.AVIF, "/icons/atom.avif"],
       [SrcsetEnum.WEBP, "/icons/atom.webp"],
@@ -465,6 +480,10 @@ watch(approveReceipt, (receipt) => {
   addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
     title: "USDC spending approved",
     body: "Your transaction has completed",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+    },
     srcset: new Map([
       [SrcsetEnum.AVIF, "/icons/atom.avif"],
       [SrcsetEnum.WEBP, "/icons/atom.webp"],

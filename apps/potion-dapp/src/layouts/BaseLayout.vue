@@ -11,6 +11,7 @@
     </div>
     <div
       id="toast-wrap"
+      v-auto-animate
       class="absolute fixed top-0 right-0 z-20 flex flex-col items-end justify-start px-10 pt-10 gap-5"
     ></div>
   </div>

@@ -45,7 +45,7 @@ export const onboardOptions = {
   wallets: [walletConnect, injected],
   chains: chains,
   appMetadata: {
-    name: "Potion Dapp",
+    name: "Potion Protocol",
     icon: "<svg><svg/>",
     description: "Potion Protocol frontend application",
     recommendedInjectedWallets: [
