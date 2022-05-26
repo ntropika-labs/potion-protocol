@@ -38,8 +38,8 @@ const emits = defineEmits<{
     <MinusPlusInput
       class="border-b border-white/10"
       :min="0"
-      :max="5"
-      :step="0.1"
+      :max="10"
+      :step="0.01"
       label="a"
       :model-value="props.a"
       :readonly="props.readonly"
@@ -49,8 +49,8 @@ const emits = defineEmits<{
     <MinusPlusInput
       class="border-b border-white/10"
       :min="0"
-      :max="5"
-      :step="0.1"
+      :max="20"
+      :step="0.01"
       label="b"
       :readonly="props.readonly"
       :disabled="props.disabled"
@@ -60,7 +60,7 @@ const emits = defineEmits<{
     <MinusPlusInput
       class="border-b border-white/10"
       :min="0"
-      :max="5"
+      :max="1000"
       :step="0.1"
       label="c"
       :readonly="props.readonly"
@@ -71,8 +71,8 @@ const emits = defineEmits<{
     <MinusPlusInput
       class="border-b border-white/10"
       :min="0"
-      :max="5"
-      :step="0.1"
+      :max="20"
+      :step="0.01"
       label="d"
       :readonly="props.readonly"
       :disabled="props.disabled"
