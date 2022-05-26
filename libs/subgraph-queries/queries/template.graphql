@@ -1,0 +1,143 @@
+fragment curveData on Curve {
+  a
+  b
+  c
+  d
+  maxUtil
+}
+
+fragment tokenInfo on Token {
+  address
+  decimals
+  name
+  symbol
+}
+
+fragment templateInfo on Template {
+  creator
+  id
+  numPools
+  pnlPercentage
+  size
+}
+
+fragment templateData on Template {
+  ...templateInfo
+  curve {
+    ...curveData
+  }
+  criteriaSet {
+    criterias {
+      criteria {
+        underlyingAsset {
+          ...tokenInfo
+        }
+        strikeAsset {
+          ...tokenInfo
+        }
+        maxStrikePercent
+        maxDurationInDays
+      }
+    }
+  }
+}
+
+fragment templateCardData on Template {
+  ...templateInfo
+  criteriaSet {
+    criterias {
+      criteria {
+        underlyingAsset {
+          ...tokenInfo
+        }
+      }
+    }
+  }
+}
+
+query mostPopularTemplates(
+  $size: BigDecimal!
+  $minClones: BigInt!
+  $minPnl: BigDecimal!
+  $orderDirection: OrderDirection
+  $num: Int = 8
+) {
+  byNumber: templates(
+    where: { numPools_gt: $minClones }
+    orderBy: numPools
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+  bySize: templates(
+    where: { size_gt: $size }
+    orderBy: size
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+  byPnl: templates(
+    where: { pnlPercentage_gt: $minPnl }
+    orderBy: pnlPercentage
+    orderDirection: desc
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesBySize(
+  $filteringValue: BigDecimal!
+  $orderDirection: OrderDirection
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { size_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    orderBy: size
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesByNumber(
+  $filteringValue: BigInt!
+  $orderDirection: OrderDirection
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { numPools_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    orderBy: numPools
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesByPnl(
+  $filteringValue: BigDecimal!
+  $orderDirection: OrderDirection
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { pnlPercentage_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    orderBy: pnlPercentage
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query getTemplate($id: ID!) {
+  template(id: $id) {
+    ...templateData
+  }
+}
