@@ -31,11 +31,13 @@ const props = withDefaults(defineProps<Props>(), {
 const tippyDomRef = ref<HTMLDivElement | null>(null);
 
 const mountTippy = () => {
-  tippy(tippyDomRef.value, {
-    allowHTML: true,
-    content: props.message,
-    theme: "translucent",
-  });
+  if (tippyDomRef.value) {
+    tippy(tippyDomRef.value, {
+      allowHTML: true,
+      content: props.message,
+      theme: "translucent",
+    });
+  }
 };
 
 onMounted(() => nextTick(mountTippy));
