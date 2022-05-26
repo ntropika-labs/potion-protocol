@@ -20,17 +20,12 @@ app:
   empty: Empty
   max_duration: Max Duration
   max_strike: Max Strike
-home:
-  title: Home page
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
     label: Utilization
   y_axis:
     label: Premium
-curve_formula:
-  title: Equation
-  tooltip: a = Scale b = End Point c = Convexity d = Offset
 loading: Loading..
 loading_error: Error loading data
 curve_formula_title: Equation
@@ -39,3 +34,4 @@ set_bonding_curve_params: Set the following parameters and define your curve.
 back: back
 approve: approve
 create_pool: create pool
+wrong_bonding_curve_params: parameters aren't valid
