@@ -59,7 +59,7 @@
         :body="info.body"
         :cta="info.cta"
         :srcset-map="info.srcset"
-        :timeout="20000"
+        :timeout="notificationTimeout"
         @click="(ev) => removeToast(hash)"
       ></BaseToast>
     </Teleport>
@@ -417,6 +417,12 @@ watch(connectedWallet, async (newAWallet) => {
   }
 });
 
+/*
+ * Toast notifications
+ */
+
+const notificationTimeout =
+  process.env.NODE_ENV === "development" ? 20000 : 5000;
 const notifications = ref<Map<string, NotificationProps>>(new Map());
 
 const addToast = (index: string, info: NotificationProps) => {
@@ -424,7 +430,7 @@ const addToast = (index: string, info: NotificationProps) => {
 
   setTimeout(() => {
     notifications.value.delete(index);
-  }, 20000);
+  }, notificationTimeout);
 };
 const removeToast = (hash: string) => notifications.value.delete(hash);
 
