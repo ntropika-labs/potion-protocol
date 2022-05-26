@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Starting local environment..." &&
-docker compose down && echo "Destroy the docker compose" &&
+docker compose down -v && echo "Destroy the docker compose" &&
 echo "Run and deploy the contracts and subgraph on local ganache" &&
 docker compose up -d -V && echo "Containers started..." &&
 bin/wait-for-it localhost:8545 && sleep 2 && echo "Ganache is ready" &&
