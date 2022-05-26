@@ -1,16 +1,15 @@
 import path from "path";
 import nodePolyfills from "rollup-plugin-polyfill-node";
-import comlink from "vite-plugin-comlink";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
+import comlink from "vite-plugin-comlink";
 
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vue from "@vitejs/plugin-vue";
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
-console.log(development);
 
 // https://vitejs.dev/config/
 export default defineConfig({
