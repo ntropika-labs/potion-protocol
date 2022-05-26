@@ -242,10 +242,10 @@ const criterias = computed(() => {
  * Bonding Curve and emerging curves
  */
 const bondingCurve = ref<BondingCurveParams>({
-  a: 2.5,
-  b: 2.5,
-  c: 2.5,
-  d: 2.5,
+  a: 0.05,
+  b: 0.05,
+  c: 0.05,
+  d: 0.05,
   maxUtil: 1,
 });
 
