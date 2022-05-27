@@ -28,6 +28,6 @@ const props = defineProps<Props>();
     >
       <slot></slot>
     </div>
-    <slot name="card-footer"></slot>
+    <slot name="grid-footer"></slot>
   </BaseCard>
 </template>

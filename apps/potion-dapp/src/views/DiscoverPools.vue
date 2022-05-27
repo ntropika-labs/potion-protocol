@@ -65,7 +65,7 @@ const onLoadMore = () => {
       >
       </PoolTemplateCard>
     </template>
-    <template #card-footer>
+    <template #grid-footer>
       <BaseButton
         palette="secondary-o"
         :label="t('show_more')"
