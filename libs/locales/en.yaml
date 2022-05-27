@@ -1,6 +1,6 @@
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer_description: Balance
@@ -20,17 +20,12 @@ app:
   empty: Empty
   max_duration: Max Duration
   max_strike: Max Strike
-home:
-  title: Home page
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
     label: Utilization
   y_axis:
     label: Premium
-curve_formula:
-  title: Equation
-  tooltip: a = Scale b = End Point c = Convexity d = Offset
 loading: Loading..
 loading_error: Error loading data
 curve_formula_title: Equation
@@ -54,3 +49,4 @@ create_pool_jumbo_title: Create custom pool from scratch
 most_cloned_title: Pools that have been cloned the most times
 most_cloned_subtitle: MOST CLONED
 show_more: Show more
+wrong_bonding_curve_params: parameters aren't valid

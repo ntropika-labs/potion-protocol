@@ -11,13 +11,15 @@ import BaseCard from "../BaseCard/BaseCard.vue";
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
 export interface Props {
   address: string;
-  image: string;
+  image?: string;
   name: string;
   symbol: string;
   selected?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   selected: false,
+  image:
+    "https://s.gravatar.com/avatar/da32ff79613d46d206a45e5a3018acf3?size=496&default=retro",
 });
 
 const emit = defineEmits<{

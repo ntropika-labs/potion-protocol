@@ -70,6 +70,9 @@ const onValueChange = (event: Event) => {
     emit("update:modelValue", numericValue);
   }
 };
+defineExpose({
+  valuePercentage,
+});
 </script>
 <template>
   <div class="relative w-full h-[4px] bg-dark/20">
