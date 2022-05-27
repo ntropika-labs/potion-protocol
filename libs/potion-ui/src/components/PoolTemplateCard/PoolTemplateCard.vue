@@ -5,7 +5,7 @@ export default defineComponent({
   name: "PoolTemplateCard",
 });
 
-type PnlTrend = "up" | "down";
+type PnlTrend = "up" | "down" | "flat";
 </script>
 <script lang="ts" setup>
 import type { Token } from "dapp-types";
@@ -15,6 +15,7 @@ import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import LabelValue from "../LabelValue/LabelValue.vue";
 import { useI18n } from "vue-i18n";
 import BaseButton from "../BaseButton/BaseButton.vue";
+import { getEnsOrAddress } from "../../helpers";
 
 export interface Props {
   creator: {
@@ -27,7 +28,6 @@ export interface Props {
   currencySymbol: string;
   timesCloned: string;
   totalPnl: string;
-  //pnlTrend: PnlTrend;
   templateId: string;
 }
 
@@ -40,15 +40,22 @@ const { t } = useI18n();
 const trendToColorMap: Map<PnlTrend, string> = new Map([
   ["up", "text-accent-400"],
   ["down", "text-error-400"],
+  ["flat", ""],
 ]);
 
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
-const pnlTrend = computed(() =>
-  parseFloat(props.totalPnl) > 0 ? "up" : "down"
-);
-const pnlColorClass = computed(() => {
-  return trendToColorMap.get(pnlTrend.value);
-});
+
+const getPnlTrend = (pnl: number) => {
+  if (pnl > 0) {
+    return "up";
+  } else if (pnl < 0) {
+    return "down";
+  }
+  return "flat";
+};
+
+const pnlTrend = computed(() => getPnlTrend(parseFloat(props.totalPnl)));
+const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
 </script>
 <template>
   <BaseCard :full-height="false" class="text-dwhite-400 relative">
@@ -62,8 +69,9 @@ const pnlColorClass = computed(() => {
           <BaseTag
             class="!justify-start !text-sm !rounded-lg p-2"
             :title="tagText"
-            ><p class="truncate">{{ tagText }}</p></BaseTag
           >
+            <p class="truncate">{{ tagText }}</p>
+          </BaseTag>
         </div>
         <div class="text-right">
           <BaseTag class="rounded-full gap-1">
@@ -74,7 +82,7 @@ const pnlColorClass = computed(() => {
             />
             <i v-else class="i-ph-user-fill w-3 h-3"></i>
             <a :href="props.creator.link" target="_blank">{{
-              props.creator.label
+              getEnsOrAddress(props.creator.label)
             }}</a>
           </BaseTag>
         </div>
@@ -90,6 +98,7 @@ const pnlColorClass = computed(() => {
               class="rounded-full bg-deep-black-700 -mr-2"
               :address="token.address"
               :name="token.name"
+              :image="token.image"
             />
           </div>
         </div>
@@ -132,8 +141,9 @@ const pnlColorClass = computed(() => {
             <BaseTag
               class="!justify-start !text-sm !rounded-lg p-2"
               :title="tagText"
-              ><p class="truncate">{{ tagText }}</p></BaseTag
             >
+              <p class="truncate">{{ tagText }}</p>
+            </BaseTag>
           </div>
           <div class="text-right">
             <BaseTag class="rounded-full gap-1">
@@ -144,7 +154,7 @@ const pnlColorClass = computed(() => {
               />
               <i v-else class="i-ph-user-fill w-3 h-3"></i>
               <a :href="props.creator.link" target="_blank">{{
-                props.creator.label
+                getEnsOrAddress(props.creator.label)
               }}</a>
             </BaseTag>
           </div>

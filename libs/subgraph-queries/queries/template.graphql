@@ -59,7 +59,7 @@ query mostPopularTemplates(
   $size: BigDecimal!
   $minClones: BigInt!
   $minPnl: BigDecimal!
-  $orderDirection: OrderDirection
+  $orderDirection: OrderDirection = desc
   $num: Int = 8
 ) {
   byNumber: templates(
@@ -81,7 +81,7 @@ query mostPopularTemplates(
   byPnl: templates(
     where: { pnlPercentage_gt: $minPnl }
     orderBy: pnlPercentage
-    orderDirection: desc
+    orderDirection: $orderDirection
     first: $num
   ) {
     ...templateCardData
@@ -89,13 +89,13 @@ query mostPopularTemplates(
 }
 
 query loadMoreTemplatesBySize(
-  $filteringValue: BigDecimal!
-  $orderDirection: OrderDirection
+  $size: BigDecimal!
+  $orderDirection: OrderDirection = desc
   $alreadyLoadedIds: [ID!]
   $num: Int = 8
 ) {
   templates(
-    where: { size_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    where: { size_gt: $size, id_not_in: $alreadyLoadedIds }
     orderBy: size
     orderDirection: $orderDirection
     first: $num
@@ -105,13 +105,13 @@ query loadMoreTemplatesBySize(
 }
 
 query loadMoreTemplatesByNumber(
-  $filteringValue: BigInt!
-  $orderDirection: OrderDirection
+  $minClones: BigInt!
+  $orderDirection: OrderDirection = desc
   $alreadyLoadedIds: [ID!]
   $num: Int = 8
 ) {
   templates(
-    where: { numPools_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    where: { numPools_gt: $minClones, id_not_in: $alreadyLoadedIds }
     orderBy: numPools
     orderDirection: $orderDirection
     first: $num
@@ -121,13 +121,13 @@ query loadMoreTemplatesByNumber(
 }
 
 query loadMoreTemplatesByPnl(
-  $filteringValue: BigDecimal!
-  $orderDirection: OrderDirection
+  $minPnl: BigDecimal!
+  $orderDirection: OrderDirection = desc
   $alreadyLoadedIds: [ID!]
   $num: Int = 8
 ) {
   templates(
-    where: { pnlPercentage_gt: $filteringValue, id_not_in: $alreadyLoadedIds }
+    where: { pnlPercentage_gt: $minPnl, id_not_in: $alreadyLoadedIds }
     orderBy: pnlPercentage
     orderDirection: $orderDirection
     first: $num

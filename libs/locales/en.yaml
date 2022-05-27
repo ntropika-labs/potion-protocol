@@ -15,6 +15,7 @@ hint_strike: The highest price that a buyer can exercise the Option
 duration_description: How long the insurance you are selling will be valid for.
 strike_description: Choose the maximum insurance cover.
 insurance_description: You're selling insurance for
+learn_more: Learn More
 app:
   asset: Asset
   empty: Empty
@@ -46,7 +47,11 @@ create_potion_jumbo_subtitle: PROTECTION POWER IN YOUR HANDS!
 create_potion: create potion
 create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
 create_pool_jumbo_title: Create custom pool from scratch
-most_cloned_title: Pools that have been cloned the most times
-most_cloned_subtitle: MOST CLONED
+most_cloned_templates_title: Pools that have been cloned the most times
+most_cloned_templates_subtitle: MOST CLONED
+largest_templates_title: Pools that have the most total liquidity.
+largest_templates_subtitle: LARGEST
+top_gainers_templates_title: Top PnL since creation.
+top_gainers_templates_subtitle: TOP GAINERS
 show_more: Show more
 wrong_bonding_curve_params: parameters aren't valid

@@ -16,7 +16,7 @@
           :key="r.name"
           active-class="shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400"
           :to="{ name: r.name }"
-          class="p-2 transition uppercase text-base font-serif"
+          class="p-2 transition uppercase text-base font-sans"
           >{{ r.label }}</router-link
         >
       </div>
