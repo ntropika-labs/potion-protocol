@@ -60,33 +60,53 @@ const { data: popularTemplates } = useMostPopularTemplatesQuery({
 
 // Load more
 
-// Factory to create the load more params
-const loadMoreParamsFactory = (category: DiscoverCategories, pause = true) => {
-  const variables = computed(() => {
-    const templates = getTemplates(category);
-    const ids = templates.length > 0 ? getTemplatesIds(templates) : [""];
-    return {
-      ...params,
-      alreadyLoadedIds: ids,
-    };
-  });
+// Params
+const loadMoreBySizeVariables = computed(() => {
+  const templates = getTemplates("bySize");
+  const ids = templates.length > 0 ? getTemplatesIds(templates) : [""];
   return {
-    variables,
-    pause,
+    size: params.size,
+    num: params.num,
+    alreadyLoadedIds: ids,
   };
-};
+});
+
+const loadMoreByNumberVariables = computed(() => {
+  const templates = getTemplates("byNumber");
+  const ids = templates.length > 0 ? getTemplatesIds(templates) : [""];
+  return {
+    minClones: params.minClones,
+    num: params.num,
+    alreadyLoadedIds: ids,
+  };
+});
+
+const loadMoreByPnlVariables = computed(() => {
+  const templates = getTemplates("byPnl");
+  const ids = templates.length > 0 ? getTemplatesIds(templates) : [""];
+  return {
+    minPnl: params.minPnl,
+    num: params.num,
+    alreadyLoadedIds: ids,
+  };
+});
 
 // Queries
-const { executeQuery: loadTemplatesBySize } = useLoadMoreTemplatesBySizeQuery(
-  loadMoreParamsFactory("bySize")
-);
+const { executeQuery: loadTemplatesBySize } = useLoadMoreTemplatesBySizeQuery({
+  pause: true,
+  variables: loadMoreBySizeVariables,
+});
 
 const { executeQuery: loadTemplatesByNumber } =
-  useLoadMoreTemplatesByNumberQuery(loadMoreParamsFactory("byNumber"));
+  useLoadMoreTemplatesByNumberQuery({
+    pause: true,
+    variables: loadMoreByNumberVariables,
+  });
 
-const { executeQuery: loadTemplatesByPnl } = useLoadMoreTemplatesByPnlQuery(
-  loadMoreParamsFactory("byPnl")
-);
+const { executeQuery: loadTemplatesByPnl } = useLoadMoreTemplatesByPnlQuery({
+  pause: true,
+  variables: loadMoreByPnlVariables,
+});
 
 // We store the queries in a map of categories to access them more easily and safely
 type DiscoverCategoryQuery =
