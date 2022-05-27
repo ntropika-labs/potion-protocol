@@ -23,9 +23,8 @@ const emit = defineEmits<{
 <template>
   <div test-token-selection-grid class="grid gap-6">
     <TokenCard
-      v-for="(token, index) in props.tokens"
+      v-for="token in props.tokens"
       :key="token.address"
-      :test="`token-card-${index}`"
       :symbol="token.symbol"
       :name="token.name"
       :address="token.address"
