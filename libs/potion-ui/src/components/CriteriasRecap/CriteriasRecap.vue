@@ -44,9 +44,9 @@ const props = withDefaults(defineProps<Props>(), {
         test-criterias-recap-header
         class="grid grid-cols-3 gap-3 mb-3 text-white font-medium text-center text-xs"
       >
-        <span class="text-left">{{ t("app.asset") }}</span>
-        <span>{{ t("app.max_strike") }}</span>
-        <span>{{ t("app.max_duration") }}</span>
+        <span class="text-left">{{ t("asset") }}</span>
+        <span>{{ t("max_strike") }}</span>
+        <span>{{ t("max_duration") }}</span>
       </div>
       <div
         test-criterias-recap-container
@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<Props>(), {
       </div>
     </template>
     <div v-else test-criterias-recap-empty class="text-white/10">
-      {{ t("app.empty") }}
+      {{ t("empty") }}
     </div>
   </BaseCard>
 </template>

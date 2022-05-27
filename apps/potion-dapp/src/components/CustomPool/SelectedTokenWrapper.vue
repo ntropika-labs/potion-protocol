@@ -72,7 +72,7 @@ updateStrikeDuration(maxStrike.value, maxDuration.value);
     <div class="grid md:grid-cols-2 gap-14 px-6 mt-8 mb-4">
       <div class="flex flex-col p-1">
         <div class="flex flex-row items-center gap-2 mb-6">
-          <p class="text-sm">{{ t("app.max_strike") }}</p>
+          <p class="text-sm">{{ t("max_strike") }}</p>
           <Tooltip :message="t('hint_strike')"></Tooltip>
         </div>
         <p class="text-sm">{{ t("strike_description") }}</p>
@@ -101,7 +101,7 @@ updateStrikeDuration(maxStrike.value, maxDuration.value);
       </div>
       <div class="flex flex-col p-1">
         <div class="flex flex-row items-center gap-2 mb-6">
-          <p class="text-sm">{{ t("app.max_duration") }}</p>
+          <p class="text-sm">{{ t("max_duration") }}</p>
           <Tooltip :message="t('hint_duration')"></Tooltip>
         </div>
         <p class="text-sm mb-12">{{ t("duration_description") }}</p>
