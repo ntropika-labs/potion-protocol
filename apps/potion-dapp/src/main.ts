@@ -8,14 +8,20 @@ import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 
 import App from "@/App.vue";
-import { init } from "@/composables/useOnboard";
+import { init, mockInit } from "@/composables/useOnboard";
 import { onboardOptions } from "@/helpers/onboard";
 import router from "@/router";
 import { vAutoAnimate } from "@formkit/auto-animate";
 import messages from "@intlify/vite-plugin-vue-i18n/messages";
 import urql from "@urql/vue";
 
-init(onboardOptions);
+const mode = import.meta.env.MODE;
+if (mode !== "test") {
+  init(onboardOptions);
+} else {
+  console.log("mocking onboard");
+  mockInit();
+}
 
 const i18n = createI18n({
   legacy: false,

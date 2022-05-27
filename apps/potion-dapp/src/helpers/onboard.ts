@@ -56,7 +56,20 @@ export const onboardOptions = {
   },
 };
 
-export const mockState = {
+export const mockWeb3Onboard: MockWeb3Onboard = {
+  state() {
+    return this;
+  },
+  disconnectWallet() {
+    if (this.wallets.length > 0) {
+      console.log("remove wallet");
+    }
+  },
+  connectWallet() {
+    if (this.wallets.length === 0) {
+      console.log("add wallet");
+    }
+  },
   chains: [
     {
       namespace: "evm",
@@ -97,3 +110,35 @@ export const mockState = {
     expanded: false,
   },
 };
+export interface MockAccountState {
+  address: string;
+  ens: null;
+  balance: {
+    eth: number;
+  };
+}
+export interface MockChainState {
+  id: string;
+  namespace: "evm" | undefined;
+}
+
+export interface MockWalletState {
+  label: string;
+  icon: string;
+  provider: unknown;
+  accounts: MockAccountState[];
+  chains: MockChainState[];
+}
+export interface MockWeb3Onboard {
+  state(): this;
+  disconnectWallet(): void;
+  connectWallet(): void;
+  chains: Chain[];
+  walletModules: [];
+  wallets: MockWalletState[];
+  accountCenter: {
+    enabled: boolean;
+    position: string;
+    expanded: boolean;
+  };
+}

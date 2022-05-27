@@ -1,12 +1,17 @@
 // We use vue-demi to automatically use the correct reactivity API for both Vue 2 and Vue 3
 import { computed, readonly, ref, shallowRef } from "vue";
 
-import { mockState } from "@/helpers/onboard";
+import { mockWeb3Onboard } from "@/helpers/onboard";
 import { useStorage } from "@vueuse/core";
 // Vueuse helper to streamline the use of rxjs observables as vue refs
 import { useSubscription } from "@vueuse/rxjs";
 import Web3Onboard from "@web3-onboard/core";
 
+import type {
+  MockWeb3Onboard,
+  MockWalletState,
+  MockChainState,
+} from "@/helpers/onboard";
 import type {
   ConnectedChain,
   ConnectOptions,
@@ -17,10 +22,9 @@ import type {
 } from "@web3-onboard/core";
 import type { AppState } from "@web3-onboard/core/dist/types";
 import type { SetChainOptions } from "@/types";
-const mode = import.meta.env.MODE;
 
 // Onboard will be kept here to be reused every time that we access the composable
-let web3Onboard: OnboardAPI | null = null;
+let web3Onboard: OnboardAPI | MockWeb3Onboard | null = null;
 const alreadyConnectedWallets = useStorage<string[]>(
   "alreadyConnectedWallets",
   []
@@ -36,7 +40,7 @@ const updateAlreadyConnectedWallets = () => {
   );
 };
 
-const onboardState = shallowRef<AppState>({} as AppState);
+const onboardState = shallowRef<AppState | MockWeb3Onboard>({} as AppState);
 
 const init = (options: InitOptions): OnboardAPI => {
   web3Onboard = Web3Onboard(options);
@@ -45,14 +49,17 @@ const init = (options: InitOptions): OnboardAPI => {
   useSubscription(
     web3Onboard.state.select().subscribe((update) => {
       onboardState.value = update;
-      if (mode === "test") {
-        //@ts-expect-error - we only use this in test mode
-        onboardState.value = mockState;
-      }
       updateAlreadyConnectedWallets();
     })
   );
   return web3Onboard;
+};
+
+const mockInit = () => {
+  web3Onboard = mockWeb3Onboard;
+  onboardState.value = web3Onboard.state();
+  console.log(onboardState.value);
+  updateAlreadyConnectedWallets();
 };
 
 const useOnboard = () => {
@@ -60,15 +67,11 @@ const useOnboard = () => {
   if (!web3Onboard) {
     throw new Error("web3Onboard is not initialized");
   }
-  if (mode === "test") {
-    //@ts-expect-error - we only use this in test mode
-    onboardState.value = mockState;
-  }
 
   const connectingWallet = ref<boolean>(false);
   const wallets = computed(() => onboardState.value.wallets);
 
-  const connectedWallet = computed<WalletState | null>(() => {
+  const connectedWallet = computed<WalletState | MockWalletState | null>(() => {
     return wallets.value.length > 0 ? wallets.value[0] : null;
   });
 
@@ -80,6 +83,7 @@ const useOnboard = () => {
   };
 
   const disconnectWallet = async (wallet: DisconnectOptions) => {
+    console.log("here");
     connectingWallet.value = true;
     await (web3Onboard as OnboardAPI).disconnectWallet(wallet);
     updateAlreadyConnectedWallets();
@@ -96,13 +100,14 @@ const useOnboard = () => {
 
   const settingChain = ref<boolean>(false);
 
-  const connectedChain = computed<ConnectedChain | null>(
+  const connectedChain = computed<ConnectedChain | MockChainState | null>(
     () => connectedWallet?.value?.chains[0] ?? null
   );
 
   const getChain = (walletLabel: string) => {
+    //@ts-expect-error typings problem with the mocked state
     const wallet = onboardState.value.wallets.find(
-      (w: WalletState) => w.label === walletLabel
+      (w: WalletState | MockWalletState) => w.label === walletLabel
     );
     return wallet?.chains[0] ?? null;
   };
@@ -130,4 +135,4 @@ const useOnboard = () => {
   };
 };
 
-export { init, useOnboard };
+export { init, useOnboard, mockInit };
