@@ -4,6 +4,7 @@ import { SrcsetEnum } from "dapp-types";
 import { useI18n } from "vue-i18n";
 import { getTokenList } from "potion-tokenlist";
 import { useRouter } from "vue-router";
+import BaseButton from "../../../../libs/potion-ui/src/components/BaseButton/BaseButton.vue";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -22,11 +23,14 @@ const jumboIconSrcset = new Map([
   [SrcsetEnum.WEBP, "/icons/cauldron-big.webp"],
 ]);
 
+const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
 const onTemplateIdNavigation = (templateId: string) => {
   console.log("navigate to template id", templateId);
 };
 
-const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
+const onLoadMore = () => {
+  console.log("loading more");
+};
 </script>
 <template>
   <JumboHeader
@@ -60,6 +64,13 @@ const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
         @navigate-template="onTemplateIdNavigation"
       >
       </PoolTemplateCard>
+    </template>
+    <template #card-footer>
+      <BaseButton
+        palette="secondary-o"
+        :label="t('show_more')"
+        @click="onLoadMore"
+      ></BaseButton>
     </template>
   </CardGrid>
 </template>
