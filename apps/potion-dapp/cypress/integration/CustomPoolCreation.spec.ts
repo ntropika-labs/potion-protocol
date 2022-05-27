@@ -36,11 +36,6 @@ describe("Custom Pool Creation Flow", () => {
           cy.get("[test-wrapper-card").should("contain", text);
         });
     });
-    // cy.get("[test-token-card]")
-    //   .invoke("text")
-    //   .then((text) => {
-    //     cy.get("[test-wrapper-card]").should("contain", text);
-    //   });
   });
   it("Can deselect tokens", () => {
     cy.get("[test-token-card]").each(($el, index) => {
@@ -50,9 +45,6 @@ describe("Custom Pool Creation Flow", () => {
     });
     cy.get("[test-wrapper-card]").should("have.length", 1);
   });
-  // it("Show the Token's max strike and max duration component", () => {
-  //   cy.get("[test-wrapper-card]").should("have.length", 1);
-  // });
   it("Can set the strike", () => {
     cy.get("[test-wrapper-strike]>[test-slider-input]")
       .as("range")
