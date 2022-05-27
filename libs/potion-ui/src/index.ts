@@ -18,6 +18,9 @@ import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import InputSlider from "./components/InputSlider/InputSlider.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
+import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
+import CardGrid from "./components/CardGrid/CardGrid.vue";
+import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
 
 export type {
   IconStrokeWeight,
@@ -50,4 +53,7 @@ export {
   TokenSelection,
   InputSlider,
   Tooltip,
+  JumboHeader,
+  CardGrid,
+  PoolTemplateCard,
 };

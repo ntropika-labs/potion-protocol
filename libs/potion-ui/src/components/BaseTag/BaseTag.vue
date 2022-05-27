@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-1.5 flex-inline items-center flex-wrap justify-center rounded text-xs text-white font-semibold leading-none font-sans"
+    class="max-w-full p-1.5 flex-inline text-center flex-wrap justify-center rounded text-xs text-white font-semibold leading-none font-sans overflow-hidden text-ellipsis"
     :class="{
       'bg-transparent, border border-white/10': props.isEmpty,
       'bg-white/10': !props.isEmpty,

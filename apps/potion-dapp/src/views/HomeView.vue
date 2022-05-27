@@ -1,4 +1,11 @@
 <template>
+  <JumboHeader
+    :title="t('create_potion_jumbo_title')"
+    :subtitle="t('create_potion_jumbo_subtitle')"
+    :cta-label="t('create_potion')"
+    :icon-srcset="jumboIconSrcset"
+  >
+  </JumboHeader>
   <router-link to="/about">About Page</router-link>
   <ConnectWalletButton
     :label="connectButtonLabel"
@@ -47,13 +54,14 @@
   <pre>{{ contractsAddresses }}</pre>
 </template>
 <script lang="ts" setup>
-import { ConnectWalletButton, BaseButton } from "potion-ui";
+import { ConnectWalletButton, BaseButton, JumboHeader } from "potion-ui";
 import { ref, computed } from "vue";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useOnboard } from "@/composables/useOnboard";
 import { useI18n } from "vue-i18n";
 import { useEnsAvatar } from "@/composables/useEnsAvatar";
+import { SrcsetEnum } from "dapp-types";
 
 const { t } = useI18n();
 const amount = ref(0);
@@ -88,4 +96,10 @@ const {
   fetchUserCollateralAllowance,
   approveForPotionLiquidityPool,
 } = useCollateralTokenContract();
+
+const jumboIconSrcset = new Map([
+  [SrcsetEnum.AVIF, "/icons/potion-big.avif"],
+  [SrcsetEnum.PNG, "/icons/potion-big.png"],
+  [SrcsetEnum.WEBP, "/icons/potion-big.webp"],
+]);
 </script>

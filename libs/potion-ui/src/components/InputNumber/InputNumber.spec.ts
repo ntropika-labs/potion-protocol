@@ -70,27 +70,20 @@ describe("InputNumber", () => {
     expect(wrapper.vm.inputIsValid).toBe(false);
   });
 
-  it("shows an error if the input is not a number", async () => {
-    await wrapper.setProps({ modelValue: "101" });
-    expect(wrapper.vm.inputIsValid).toBe(false);
-    await wrapper.setProps({ modelValue: "-101" });
-    expect(wrapper.vm.inputIsValid).toBe(false);
-    await wrapper.setProps({ modelValue: "101e8" });
-    expect(wrapper.vm.inputIsValid).toBe(false);
-    await wrapper.setProps({ modelValue: null });
-    expect(wrapper.vm.inputIsValid).toBe(false);
-  });
-
   it("emits an event when inputting a value", async () => {
     const input = await wrapper.find("input");
-    input.trigger("input");
+    await input.setValue("10");
+    const event = wrapper.emitted()["update:modelValue"];
     expect(wrapper.emitted()).toHaveProperty("update:modelValue");
+    expect(event[event.length - 1][0]).toBe(10);
   });
 
   it("emits an event when clicking the button, passing the max value", async () => {
     const button = await wrapper.find("button");
     button.trigger("click");
-    expect(wrapper.emitted()).toHaveProperty("update:modelValue");
-    expect(wrapper.emitted()).toHaveProperty("update:modelValue", [[0], [100]]);
+    const emitted = wrapper.emitted();
+    const emittedModelValue = emitted["update:modelValue"];
+    const lastEmittedValue = emittedModelValue[emittedModelValue.length - 1][0];
+    expect(lastEmittedValue).toBe(wrapper.props().max);
   });
 });
