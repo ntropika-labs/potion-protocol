@@ -6,11 +6,6 @@ export default defineComponent({
 });
 
 type PnlTrend = "up" | "down";
-
-const trendToColorClass: { [k in PnlTrend]: string } = {
-  up: "text-accent-400",
-  down: "text-error-400",
-};
 </script>
 <script lang="ts" setup>
 import type { Token } from "dapp-types";
@@ -42,8 +37,13 @@ const emit = defineEmits<{
 }>();
 const { t } = useI18n();
 
+const trendToColorMap: Map<PnlTrend, string> = new Map([
+  ["up", "text-accent-400"],
+  ["down", "text-error-400"],
+]);
+
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
-const pnlColorClass = computed(() => trendToColorClass[props.pnlTrend]);
+const pnlColorClass = computed(() => trendToColorMap.get(props.pnlTrend));
 </script>
 <template>
   <BaseCard :full-height="false" class="text-dwhite-400 relative">
