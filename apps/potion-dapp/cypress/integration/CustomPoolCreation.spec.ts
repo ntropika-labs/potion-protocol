@@ -15,14 +15,14 @@ describe("Custom Pool Creation Flow", () => {
     cy.get("[test-wrapper-strike]>[test-slider-input]")
       .as("range")
       .invoke("val", 120)
-      .trigger("change")
+      .trigger("input")
       .should("have.value", 120);
   });
   it("Can set the duration", () => {
     cy.get("[test-wrapper-duration]>[test-slider-input]")
       .as("range")
       .invoke("val", 200)
-      .trigger("change")
+      .trigger("input")
       .should("have.value", 200);
   });
   it("Can move to Curve Setup when the data is valid", () => {
