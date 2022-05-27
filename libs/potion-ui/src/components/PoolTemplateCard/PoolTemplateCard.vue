@@ -27,7 +27,7 @@ export interface Props {
   currencySymbol: string;
   timesCloned: string;
   totalPnl: string;
-  pnlTrend: PnlTrend;
+  //pnlTrend: PnlTrend;
   templateId: string;
 }
 
@@ -43,7 +43,12 @@ const trendToColorMap: Map<PnlTrend, string> = new Map([
 ]);
 
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
-const pnlColorClass = computed(() => trendToColorMap.get(props.pnlTrend));
+const pnlTrend = computed(() =>
+  parseFloat(props.totalPnl) > 0 ? "up" : "down"
+);
+const pnlColorClass = computed(() => {
+  return trendToColorMap.get(pnlTrend.value);
+});
 </script>
 <template>
   <BaseCard :full-height="false" class="text-dwhite-400 relative">
@@ -110,7 +115,7 @@ const pnlColorClass = computed(() => trendToColorMap.get(props.pnlTrend));
           :value="props.totalPnl"
           symbol="%"
           :value-color-class="pnlColorClass"
-          :trend="props.pnlTrend"
+          :trend="pnlTrend"
         />
       </div>
     </div>

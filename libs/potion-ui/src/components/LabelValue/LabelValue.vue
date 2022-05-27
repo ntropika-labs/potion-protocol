@@ -89,15 +89,6 @@ const formattedValue = computed(() => {
       {{ props.title }}
     </h6>
     <div class="flex flex-wrap items-center space-x-1" :class="valueAlignment">
-      <i
-        v-if="props.trend"
-        class="i-ph-arrow-circle-up-right"
-        :class="
-          props.trend === 'up'
-            ? 'text-accent-500'
-            : 'text-secondary-500 transform rotate-90'
-        "
-      ></i>
       <div class="font-bold font-bitter" :class="[valueSize, valueColorClass]">
         <span>{{ formattedValue }}</span>
         <span v-if="props.symbol" class="ml-1"> {{ props.symbol }}</span>

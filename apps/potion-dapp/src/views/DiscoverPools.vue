@@ -66,11 +66,13 @@ const onLoadMore = () => {
       </PoolTemplateCard>
     </template>
     <template #grid-footer>
-      <BaseButton
-        palette="secondary-o"
-        :label="t('show_more')"
-        @click="onLoadMore"
-      ></BaseButton>
+      <div class="flex justify-center my-4">
+        <BaseButton
+          palette="secondary-o"
+          :label="t('show_more')"
+          @click="onLoadMore"
+        ></BaseButton>
+      </div>
     </template>
   </CardGrid>
 </template>
