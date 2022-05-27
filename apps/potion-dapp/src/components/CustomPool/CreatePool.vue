@@ -20,8 +20,18 @@
           :unload-keys="props.unselectedTokens"
         />
         <BaseCard
-          class="rounded-l-none !ring-none py-3 px-4 border-t-1 xl:( border-l-1 border-t-0 ) border-white/10"
+          class="p-6 gap-6 !rounded-none !ring-none xl:(border-l-1 border-t-0) border-t-1 border-white/10"
         >
+          <CurveFormula></CurveFormula>
+          <div class="text-sm">
+            {{ t("set_bonding_curve_params") }}
+            <Tooltip
+              class="ml-[.5ch] -mb-[.125rem]"
+              :message="t('curve_formula_tooltip')"
+              icon-weight="bold"
+            >
+            </Tooltip>
+          </div>
           <CustomCurveParams
             class="!h-auto"
             :a="props.bondingCurveParams.a"
@@ -54,8 +64,14 @@ import type {
   EmergingCurvePoints,
 } from "dapp-types";
 import { computed } from "vue";
-import { BondingCurve, BaseCard, CustomCurveParams } from "potion-ui";
+import {
+  BondingCurve,
+  BaseCard,
+  CustomCurveParams,
+  CurveFormula,
+} from "potion-ui";
 import { times as _times } from "lodash-es";
+import { useI18n } from "vue-i18n";
 
 import PoolSettingsCard from "@/components/CustomPool/PoolSettingsCard.vue";
 import { HyperbolicCurve } from "contracts-math";
@@ -77,6 +93,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const curvePoints = 100;
+
+const { t } = useI18n();
 
 const getCurvePoints = (curve: HyperbolicCurve) =>
   _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
