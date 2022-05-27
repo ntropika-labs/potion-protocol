@@ -35,7 +35,7 @@ const handleInput = (e: Event) => {
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if ([",", "-", "+", "e"].includes(event.key)) {
+  if ([",", "-", "+", "e", "="].includes(event.key)) {
     event.preventDefault();
   }
 };
