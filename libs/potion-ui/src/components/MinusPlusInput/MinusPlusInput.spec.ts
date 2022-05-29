@@ -59,7 +59,7 @@ describe("MinusPlusInput", () => {
 
   it("emits an event when inputting a value", async () => {
     const input = wrapper.find("[test-unit='input']");
-    input.setValue("4");
+    await input.setValue(1);
     expect(wrapper.emitted()).toHaveProperty("update:modelValue");
     expect(wrapper.emitted()).toHaveProperty("update:isValid");
   });
