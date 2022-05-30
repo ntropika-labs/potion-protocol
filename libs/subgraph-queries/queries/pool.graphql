@@ -47,3 +47,57 @@ query getNumberOfPoolsFromUser($lp: Bytes, $ids: [ID!]) {
     id
   }
 }
+
+query getPoolById($id: ID!) {
+  pool(id: $id) {
+    id
+    poolId
+    lp
+    size
+    locked
+    pnlPercentage
+    snapshots {
+      id
+      size
+      locked
+      pnlPercentage
+      actionAmount
+      actionType
+      timestamp
+      utilization
+      liquidityAtTrades
+    }
+    template {
+      curve {
+        id
+        a
+        b
+        c
+        d
+        maxUtil
+      }
+      criteriaSet {
+        criterias {
+          criteria {
+            id
+            underlyingAsset {
+              address
+              decimals
+              symbol
+              name
+            }
+            strikeAsset {
+              address
+              decimals
+              symbol
+              name
+            }
+            isPut
+            maxStrikePercent
+            maxDurationInDays
+          }
+        }
+      }
+    }
+  }
+}

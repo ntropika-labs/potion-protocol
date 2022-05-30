@@ -62,7 +62,7 @@ const routes = [
     label: "Buy Potion",
   },
   {
-    name: "discover-pools",
+    name: "discover-templates",
     label: "Pool Liquidity",
   },
 ];

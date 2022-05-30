@@ -9,8 +9,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@onboard-composable": [
-        "./src/composables/useMockedOnboard.ts",
-        "./src/composables/useOnboard.ts"
+        "./src/composables/useOnboard.ts",
+        "./src/composables/useMockedOnboard.ts"
       ]
     },
     "importsNotUsedAsValues": "remove",
