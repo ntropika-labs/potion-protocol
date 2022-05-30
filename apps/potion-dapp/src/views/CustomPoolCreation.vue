@@ -81,7 +81,7 @@ import { SrcsetEnum } from "dapp-types";
 
 import { currencyFormatter, BaseToast } from "potion-ui";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
-import { useOnboard } from "@/composables/useOnboard";
+import { useOnboard } from "@onboard-composable";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";

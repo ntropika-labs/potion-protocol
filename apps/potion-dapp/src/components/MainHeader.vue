@@ -45,7 +45,7 @@ import { computed } from "vue";
 
 import { HeaderComponent, ConnectWalletButton } from "potion-ui";
 
-import { useOnboard } from "@/composables/useOnboard";
+import { useOnboard } from "@onboard-composable";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useEnsAvatar } from "@/composables/useEnsAvatar";
