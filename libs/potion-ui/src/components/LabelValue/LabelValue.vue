@@ -6,7 +6,7 @@ export default defineComponent({
 });
 
 type TextAlignment = "center" | "left" | "right";
-type TextSize = "sm" | "md" | "lg";
+type TextSize = "sm" | "md" | "lg" | "xl";
 type ValueTrend = "up" | "down";
 type ValueType = "raw" | "number" | "timestamp" | "date";
 </script>
@@ -46,6 +46,7 @@ const labelSizeMap: Map<TextSize, string> = new Map([
   ["sm", "text-xs"],
   ["md", "text-sm"],
   ["lg", "text-base"],
+  ["xl", "text-lg"],
 ]);
 
 // prettier-ignore
@@ -60,6 +61,7 @@ const valueSizeMap: Map<TextSize, string> = new Map([
   ["sm", "text-sm"],
   ["md", "text-base"],
   ["lg", "text-lg"],
+  ["xl", "text-xl"],
 ]);
 
 const labelAlignment = computed(() => labelAlignmentMap.get(props.alignment));
