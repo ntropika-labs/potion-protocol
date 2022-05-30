@@ -70,7 +70,6 @@ const useOnboard = () => {
   };
 
   const disconnectWallet = async (wallet: DisconnectOptions) => {
-    console.log("here");
     connectingWallet.value = true;
     await (web3Onboard as OnboardAPI).disconnectWallet(wallet);
     updateAlreadyConnectedWallets();
