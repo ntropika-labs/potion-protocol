@@ -57,7 +57,7 @@ const Template: Story<Args> = (args: Args) => ({
 
 export const interactable = Template.bind({});
 interactable.args = {
-  intraday: true,
+  intraday: false,
   showLiquidity: true,
   showUtilization: true,
   showPnl: true,

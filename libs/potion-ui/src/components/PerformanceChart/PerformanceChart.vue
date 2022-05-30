@@ -145,7 +145,7 @@ const tickFills = computed(() => {
     today.value.subtract(v, unit).unix()
   );
   let lastValidPoint = {
-    timestamp: 0,
+    timestamp: ticksTimestamps[0],
     liquidity: 0,
     utilization: 0,
     pnl: 0,
@@ -182,18 +182,21 @@ const chartDataset = computed<{
   const dataset = _sortBy(
     props.performanceData.concat(tickFills.value),
     "timestamp"
-  ).filter((point) => point.timestamp >= start && point.timestamp < end);
-  _lastUniqBy(dataset, "timestamp").forEach((point: PerformanceData) => {
-    result.liquidity.push(dataToPoint(point.timestamp, point.liquidity));
-    result.utilization.push(dataToPoint(point.timestamp, point.utilization));
-    result.pnl.push(dataToPoint(point.timestamp, point.pnl));
+  )
+    .map((point) => ({
+      ...point,
+      timestamp: getChartTime(point.timestamp),
+    }))
+    .filter((point) => point.timestamp >= start && point.timestamp < end);
+  _lastUniqBy(dataset, "timestamp").forEach((point) => {
+    result.liquidity.push({ time: point.timestamp, value: point.liquidity });
+    result.utilization.push({
+      time: point.timestamp,
+      value: point.utilization,
+    });
+    result.pnl.push({ time: point.timestamp, value: point.pnl });
   });
   return result;
-});
-
-const dataToPoint = (timestamp: number, value: number) => ({
-  time: getChartTime(timestamp),
-  value,
 });
 
 const createComponentChart = () => {
