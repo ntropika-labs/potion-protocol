@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development vite",
-    "dev-test": "NODE_ENV=development vite --mode=test",
+    "dev-test": "NODE_ENV=development MODE=test vite --mode=test",
     "build": "NODE_ENV=production vue-tsc --noEmit && vite build",
-    "build-test": "NODE_ENV=production  vite build --mode=test",
+    "build-test": "NODE_ENV=production MODE=test  vite build --mode=test",
     "preview": "vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-watch": "vitest watch --environment jsdom",

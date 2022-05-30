@@ -9,16 +9,16 @@ import type { BondingCurveParams, Criteria } from "dapp-types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria,
+  OrderedCriteria
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { parseUnits } from "@ethersproject/units";
+import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
-import { useOnboard } from "./useOnboard";
 
 export function usePotionLiquidityPoolContract() {
   const { initContract } = useEthersContract();

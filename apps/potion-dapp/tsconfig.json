@@ -5,10 +5,15 @@
   "compilerOptions": {
     "module": "ESNext",
     "baseUrl": ".",
-    // "rootDir": ".",
+    "rootDir": "../../",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@onboard-composable": [
+        "./src/composables/useMockedOnboard.ts",
+        "./src/composables/useOnboard.ts"
+      ]
     },
+    "importsNotUsedAsValues": "remove",
     "types": [
       "node",
       "vitest",
@@ -16,7 +21,8 @@
       "vite/client",
       "vue/macros",
       "@intlify/vite-plugin-vue-i18n/client",
-      "cypress"
+      "cypress",
+      "@onboard-composable"
     ]
   }
 }

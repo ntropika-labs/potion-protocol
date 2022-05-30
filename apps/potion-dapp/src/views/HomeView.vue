@@ -58,7 +58,7 @@ import { ConnectWalletButton, BaseButton, JumboHeader } from "potion-ui";
 import { ref, computed } from "vue";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { contractsAddresses } from "@/helpers/contracts";
-import { useOnboard } from "@/composables/useOnboard";
+import { useOnboard } from "@onboard-composable";
 import { useI18n } from "vue-i18n";
 import { useEnsAvatar } from "@/composables/useEnsAvatar";
 import { SrcsetEnum } from "dapp-types";
