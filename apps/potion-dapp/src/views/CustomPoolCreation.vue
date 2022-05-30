@@ -3,6 +3,7 @@
     title="Create Pool"
     :tabs="tabs"
     :default-index="currentFormStep"
+    :show-quit-tabs="true"
     @navigate-tab="(index) => (currentFormStep = index)"
     @quit-tabs="router.push('/pools')"
   >

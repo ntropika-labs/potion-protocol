@@ -11,10 +11,11 @@ type PnlTrend = "up" | "down";
 import type { Token } from "dapp-types";
 import BaseCard from "../BaseCard/BaseCard.vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
-import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import LabelValue from "../LabelValue/LabelValue.vue";
 import { useI18n } from "vue-i18n";
 import BaseButton from "../BaseButton/BaseButton.vue";
+import CreatorTag from "../CreatorTag/CreatorTag.vue";
+import AssetTag from "../AssetTag/AssetTag.vue";
 
 export interface Props {
   creator: {
@@ -65,34 +66,16 @@ const pnlColorClass = computed(() => {
             ><p class="truncate">{{ tagText }}</p></BaseTag
           >
         </div>
-        <div class="text-right">
-          <BaseTag class="rounded-full gap-1">
-            <img
-              v-if="props.creator.icon"
-              :src="props.creator.icon"
-              class="w-3 h-3"
-            />
-            <i v-else class="i-ph-user-fill w-3 h-3"></i>
-            <a :href="props.creator.link" target="_blank">{{
-              props.creator.label
-            }}</a>
-          </BaseTag>
-        </div>
+        <CreatorTag
+          class="text-right"
+          :link="props.creator.link"
+          :label="props.creator.label"
+          :icon="props.creator.icon"
+        />
       </div>
 
       <div class="grid grid-flow-row grid-cols-2 gap-2">
-        <div>
-          <h5 class="mb-2 text-sm font-medium">{{ t("assets") }}</h5>
-          <div class="flex flex-wrap">
-            <TokenIcon
-              v-for="(token, index) in props.tokens"
-              :key="`card-tokens-${index}`"
-              class="rounded-full bg-deep-black-700 -mr-2"
-              :address="token.address"
-              :name="token.name"
-            />
-          </div>
-        </div>
+        <AssetTag :tokens="props.tokens" :title="t('assets')" />
 
         <LabelValue
           size="md"
@@ -136,17 +119,11 @@ const pnlColorClass = computed(() => {
             >
           </div>
           <div class="text-right">
-            <BaseTag class="rounded-full gap-1">
-              <img
-                v-if="props.creator.icon"
-                :src="props.creator.icon"
-                class="w-3 h-3"
-              />
-              <i v-else class="i-ph-user-fill w-3 h-3"></i>
-              <a :href="props.creator.link" target="_blank">{{
-                props.creator.label
-              }}</a>
-            </BaseTag>
+            <CreatorTag
+              :link="props.creator.link"
+              :label="props.creator.label"
+              :icon="props.creator.icon"
+            />
           </div>
         </div>
         <div class="text-dirty-white-300 font-medium text-center">

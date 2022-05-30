@@ -10,7 +10,7 @@ import { BaseButton, BaseCard } from "potion-ui";
 
 export interface TabNavigationInfo {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   visited?: boolean;
   isValid: boolean;
   cta?: {
@@ -21,17 +21,20 @@ export interface TabNavigationInfo {
   enabled: boolean;
 }
 export interface Props {
-  title: string;
+  title?: string;
   tabs: TabNavigationInfo[];
   defaultIndex?: number;
   vertical?: boolean;
   hasNavigation?: boolean;
+  showQuitTabs?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: "",
   defaultIndex: 0,
   vertical: true,
   hasNavigation: false,
+  showQuitTabs: false,
 });
 
 const emit = defineEmits<{
@@ -67,8 +70,11 @@ watch(
   <!-- Start tab navigation -->
   <BaseCard>
     <div class="flex justify-between items-center pt-4 px-6 pb-2">
-      <h4 class="uppercase text-dwhite-400 text-lg">{{ props.title }}</h4>
+      <h4 v-if="props.title" class="uppercase text-dwhite-400 text-lg">
+        {{ props.title }}
+      </h4>
       <BaseButton
+        v-if="props.showQuitTabs"
         palette="flat"
         size="icon"
         label=""
@@ -106,7 +112,9 @@ watch(
         </BaseButton>
       </li>
     </ul>
-    <p class="text-center text-lg mb-2">{{ tabs[currentIndex].subtitle }}</p>
+    <p v-if="tabs[currentIndex].subtitle" class="text-center text-lg mb-2">
+      {{ tabs[currentIndex].subtitle }}
+    </p>
     <template v-if="tabs[currentIndex].cta">
       <router-link
         v-if="!tabs[currentIndex].cta?.externalUrl"
