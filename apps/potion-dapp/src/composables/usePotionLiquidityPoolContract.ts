@@ -9,7 +9,7 @@ import type { BondingCurveParams, Criteria } from "dapp-types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria
+  OrderedCriteria,
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
