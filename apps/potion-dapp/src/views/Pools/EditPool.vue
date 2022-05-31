@@ -299,7 +299,6 @@ const bondingCurve = ref<BondingCurveParams>({
 const emergingCurves = ref<EmergingCurvePoints[]>([]);
 const loadEmergingCurves = async () => {
   const poolSets = await fetchPoolsFromCriterias(criterias.value);
-  console.log(poolSets);
   emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
     poolSets
   );
@@ -309,7 +308,6 @@ const loadEmergingCurves = async () => {
 watchDebounced(
   criterias,
   async () => {
-    console.log("dio");
     await loadEmergingCurves();
   },
   { debounce: 500, maxWait: 1000 }
