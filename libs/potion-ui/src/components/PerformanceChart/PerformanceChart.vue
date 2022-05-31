@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, nextTick, toRef } from "vue";
 import { useResizeObserver } from "@vueuse/core";
 import { createChart } from "lightweight-charts";
 import {
@@ -340,8 +340,15 @@ onMounted(() => {
   });
 });
 
-watch(props.visibility, setVisibility, { deep: true });
-watch([props.performanceData, props.mode, props.intraday], reloadChartDatasets);
+watch(toRef(props, "visibility"), setVisibility, { deep: true });
+watch(
+  [
+    toRef(props, "performanceData"),
+    toRef(props, "mode"),
+    toRef(props, "intraday"),
+  ],
+  reloadChartDatasets
+);
 </script>
 
 <template>
