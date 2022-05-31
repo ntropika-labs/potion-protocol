@@ -1,20 +1,29 @@
-import { useGetPoolsFromCriteriaQuery } from "subgraph-queries/generated/urql";
+import { GetPoolsFromCriteriaDocument } from "subgraph-queries/generated/urql";
+import { createClient } from "@urql/vue";
+
 import type { Criteria } from "dapp-types";
 import type { IPoolUntyped, ChartCriteriaPool } from "./types";
+import type { GetPoolsFromCriteriaQuery } from "subgraph-queries/generated/operations";
+
+const urqlRouterClient = createClient({
+  requestPolicy: "network-only",
+  url: import.meta.env.VITE_SUBGRAPH_ADDRESS,
+});
 
 const getPoolsFromCriteria = async (
   criteria: Criteria
 ): Promise<ChartCriteriaPool> => {
   const underlyingAddress = criteria.token.address;
-  const { data } = await useGetPoolsFromCriteriaQuery({
-    variables: {
+  const result = await urqlRouterClient
+    .query(GetPoolsFromCriteriaDocument, {
       underlyingAddress,
       minDuration: criteria.maxDuration.toString(),
       minStrike: criteria.maxStrike.toString(),
-    },
-  });
+    })
+    .toPromise();
+  const data = result.data as GetPoolsFromCriteriaQuery;
   const poolsMap = new Map<string, IPoolUntyped>();
-  data?.value?.criterias?.forEach((criteria) => {
+  data?.criterias?.forEach((criteria) => {
     criteria?.criteriaSets?.forEach((criteriaSet) => {
       criteriaSet?.criteriaSet?.templates?.forEach((template) => {
         template?.pools?.forEach((pool) => {

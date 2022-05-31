@@ -2,10 +2,18 @@
   <BaseCard class="leading-none" :full-height="false">
     <div class="py-3 px-4">
       <p class="text-sm uppercase">{{ props.title }}</p>
+      <div
+        v-if="size"
+        class="flex justify-between border-b-1 border-white/10 pb-3 mt-5"
+      >
+        <p>{{ t("total-liquidity") }}</p>
+        <p class="font-semibold">{{ props.size }}</p>
+      </div>
+
       <p class="text-sm mt-6">{{ t("deposit_collateral_description") }}</p>
       <InputNumber
         class="mt-3"
-        :title="t('deposit_collateral_title')"
+        :title="props.title"
         :min="1"
         :max="props.userBalance"
         :step="0.1"
@@ -19,7 +27,7 @@
         {{ props.hint }}
       </p>
     </div>
-    <CardFooter class="flex justify-center">
+    <CardFooter class="flex justify-center gap-3">
       <slot name="card-footer"></slot>
     </CardFooter>
   </BaseCard>
@@ -34,10 +42,13 @@ interface Props {
   hint?: string;
   userBalance: number;
   modelValue: number;
+  size?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   hint: undefined,
   userBalance: 0,
   modelValue: 100,
+  size: "",
+  title: "",
 });
 </script>

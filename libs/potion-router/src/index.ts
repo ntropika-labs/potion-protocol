@@ -1,6 +1,8 @@
 import { minBy as _minBy } from "lodash-es";
 
+import { getPoolsFromCriteria, getPoolsFromCriterias } from "./dataRetrieve";
 import { depthRouter } from "./depthRouter";
+import { getEmergingBondingCurvesFromCriterias } from "./emergingBondingCurve";
 import {
   calculateDepthMarginalCost,
   calculateMarginalCostForDeltaX,
@@ -8,8 +10,6 @@ import {
   poolUntypedToTyped,
 } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";
-import { getEmergingBondingCurvesFromCriterias } from "./emergingBondingCurve";
-import { getPoolsFromCriteria, getPoolsFromCriterias } from "./dataRetrieve";
 
 import type { CounterpartyDetails, IPoolUntyped, IRouterReturn } from "./types";
 

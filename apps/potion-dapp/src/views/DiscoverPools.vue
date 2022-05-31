@@ -236,8 +236,8 @@ const onTemplateIdNavigation = (templateId: string) => {
     <CardGrid
       v-for="[key, { templates, canLoadMore }] in stateMap.entries()"
       :key="key"
-      :title="categoryTexts.get(key).title"
-      :subtitle="categoryTexts.get(key).subtitle"
+      :title="categoryTexts.get(key)?.title || ''"
+      :subtitle="categoryTexts.get(key)?.subtitle || ''"
     >
       <PoolTemplateCard
         v-for="(template, index) in templates"

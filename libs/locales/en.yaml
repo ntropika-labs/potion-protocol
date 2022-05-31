@@ -47,7 +47,6 @@ user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
 view_pool_recipe: view pool recipe
 wrong_bonding_curve_params: parameters aren't valid
-
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
@@ -60,3 +59,6 @@ add_liquidity: Add liquidity
 curve_parameters: Parameters defining the curve.
 add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
 no_options: No options to show
+total-liquidity: Total Liquidity
+add-more-liquidity: Add More Liquidity
+edit: edit
