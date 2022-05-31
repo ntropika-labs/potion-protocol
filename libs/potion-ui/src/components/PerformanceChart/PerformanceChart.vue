@@ -65,8 +65,8 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-function _lastUniqBy<T>(arr: T[], key: string) {
-  return _reverse(_uniqBy(_reverse(arr), key));
+function _lastUniqBy<T>(arr: T[], key: string): T[] {
+  return _reverse(_uniqBy(arr, key));
 }
 
 const createResponsiveChart = (
@@ -173,29 +173,36 @@ const chartDataset = computed<{
   pnl: SingleValueData[];
 }>(() => {
   const result = {
-    liquidity: [] as SingleValueData[],
-    utilization: [] as SingleValueData[],
-    pnl: [] as SingleValueData[],
+    liquidity: new Array<SingleValueData>(),
+    utilization: new Array<SingleValueData>(),
+    pnl: new Array<SingleValueData>(),
   };
   const start = fromTimestamp.value.get(props.mode) ?? 0;
   const end = timestamps.value.get("endOfDay") ?? 0;
-  const dataset = _sortBy(
-    props.performanceData.concat(tickFills.value),
-    "timestamp"
-  )
-    .map((point) => ({
-      ...point,
-      timestamp: getChartTime(point.timestamp),
-    }))
-    .filter((point) => point.timestamp >= start && point.timestamp < end);
-  _lastUniqBy(dataset, "timestamp").forEach((point) => {
-    result.liquidity.push({ time: point.timestamp, value: point.liquidity });
-    result.utilization.push({
-      time: point.timestamp,
-      value: point.utilization,
-    });
-    result.pnl.push({ time: point.timestamp, value: point.pnl });
-  });
+
+  const filteredData = props.performanceData
+    .concat(tickFills.value)
+    .filter(({ timestamp }) => timestamp >= start && timestamp <= end);
+
+  const dataset = _sortBy(filteredData, "timestamp").map(
+    ({ liquidity, utilization, pnl, timestamp }) => ({
+      liquidity,
+      utilization,
+      pnl,
+      time: getChartTime(timestamp),
+    })
+  );
+  console.log(dataset);
+  _lastUniqBy(_reverse(dataset), "time").forEach(
+    ({ time, liquidity, utilization, pnl }) => {
+      result.liquidity.push({ time, value: liquidity });
+      result.utilization.push({
+        time,
+        value: utilization,
+      });
+      result.pnl.push({ time, value: pnl });
+    }
+  );
   return result;
 });
 
