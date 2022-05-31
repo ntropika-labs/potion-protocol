@@ -71,7 +71,7 @@ import type {
   EmergingCurvePoints,
   NotificationProps,
 } from "dapp-types";
-import { fetchPoolsFromCriterias } from "potion-router";
+import { getPoolsFromCriterias } from "potion-router";
 import { worker } from "@/web-worker";
 
 import { SrcsetEnum } from "dapp-types";
@@ -296,7 +296,7 @@ const bondingCurve = ref<BondingCurveParams>({
 
 const emergingCurves = ref<EmergingCurvePoints[]>([]);
 const loadEmergingCurves = async () => {
-  const poolSets = await fetchPoolsFromCriterias(criterias.value);
+  const poolSets = await getPoolsFromCriterias(criterias.value);
   emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
     poolSets
   );

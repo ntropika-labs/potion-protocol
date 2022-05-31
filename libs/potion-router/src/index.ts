@@ -1,10 +1,6 @@
 import { minBy as _minBy } from "lodash-es";
 
-import {
-  fetchPoolsFromCriterias,
-  getPoolsFromCriteria,
-  getPoolsFromCriterias,
-} from "./dataRetrieve";
+import { getPoolsFromCriteria, getPoolsFromCriterias } from "./dataRetrieve";
 import { depthRouter } from "./depthRouter";
 import { getEmergingBondingCurvesFromCriterias } from "./emergingBondingCurve";
 import {
@@ -129,5 +125,4 @@ export {
   getEmergingBondingCurvesFromCriterias,
   getPoolsFromCriteria,
   getPoolsFromCriterias,
-  fetchPoolsFromCriterias,
 };
