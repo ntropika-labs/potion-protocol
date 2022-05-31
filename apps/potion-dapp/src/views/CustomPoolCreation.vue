@@ -4,7 +4,7 @@
     :tabs="tabs"
     :default-index="currentFormStep"
     @navigate-tab="(index) => (currentFormStep = index)"
-    @quit-tabs="router.push('/pools')"
+    @quit-tabs="router.push('/templates')"
   >
     <PoolSetup
       v-model:liquidity.number="liquidity"
