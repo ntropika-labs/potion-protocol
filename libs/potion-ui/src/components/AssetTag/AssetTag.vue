@@ -38,6 +38,7 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         class="rounded-full bg-deep-black-700 -mr-2"
         :address="token.address"
         :name="token.name"
+        :image="token.image"
       />
     </div>
   </div>
