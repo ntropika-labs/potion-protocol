@@ -4,9 +4,8 @@ import { computed, defineComponent } from "vue";
 export default defineComponent({
   name: "PoolTemplateCard",
 });
-
-type PnlTrend = "up" | "down" | "flat";
 </script>
+
 <script lang="ts" setup>
 import type { Token } from "dapp-types";
 import BaseCard from "../BaseCard/BaseCard.vue";
@@ -16,7 +15,6 @@ import { useI18n } from "vue-i18n";
 import BaseButton from "../BaseButton/BaseButton.vue";
 import CreatorTag from "../CreatorTag/CreatorTag.vue";
 import AssetTag from "../AssetTag/AssetTag.vue";
-import { getEnsOrAddress } from "../../helpers";
 
 export interface Props {
   creator: {
@@ -38,25 +36,7 @@ const emit = defineEmits<{
 }>();
 const { t } = useI18n();
 
-const trendToColorMap: Map<PnlTrend, string> = new Map([
-  ["up", "text-accent-400"],
-  ["down", "text-error-400"],
-  ["flat", ""],
-]);
-
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
-
-const getPnlTrend = (pnl: number) => {
-  if (pnl > 0) {
-    return "up";
-  } else if (pnl < 0) {
-    return "down";
-  }
-  return "flat";
-};
-
-const pnlTrend = computed(() => getPnlTrend(parseFloat(props.totalPnl)));
-const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
 </script>
 <template>
   <BaseCard :full-height="false" class="text-dwhite-400 relative">
@@ -77,7 +57,7 @@ const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
         <CreatorTag
           class="text-right"
           :link="props.creator.link"
-          :label="getEnsOrAddress(props.creator.label)"
+          :label="props.creator.label"
           :icon="props.creator.icon"
         />
       </div>
@@ -104,9 +84,8 @@ const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
           size="md"
           :title="t('pnl')"
           :value="props.totalPnl"
+          value-type="pnl"
           symbol="%"
-          :value-color-class="pnlColorClass"
-          :trend="pnlTrend"
         />
       </div>
     </div>
@@ -130,7 +109,7 @@ const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
           <div class="text-right">
             <CreatorTag
               :link="props.creator.link"
-              :label="getEnsOrAddress(props.creator.label)"
+              :label="props.creator.label"
               :icon="props.creator.icon"
             />
           </div>
