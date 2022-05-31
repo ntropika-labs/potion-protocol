@@ -66,7 +66,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 function _lastUniqBy<T>(arr: T[], key: string): T[] {
-  return _reverse(_uniqBy(arr, key));
+  const reversed = _reverse(arr);
+  return _reverse(_uniqBy(reversed, key));
 }
 
 const createResponsiveChart = (
@@ -192,8 +193,7 @@ const chartDataset = computed<{
       time: getChartTime(timestamp),
     })
   );
-  console.log(dataset);
-  _lastUniqBy(_reverse(dataset), "time").forEach(
+  _lastUniqBy(dataset, "time").forEach(
     ({ time, liquidity, utilization, pnl }) => {
       result.liquidity.push({ time, value: liquidity });
       result.utilization.push({
