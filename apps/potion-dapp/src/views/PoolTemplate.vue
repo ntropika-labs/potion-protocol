@@ -1,11 +1,17 @@
 <script lang="ts" setup>
 import { useTokenList } from "@/composables/useTokenList";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { useRoute, useRouter } from "vue-router";
 import { useGetTemplateQuery } from "subgraph-queries/generated/urql";
+import {
+  SrcsetEnum,
+  type BondingCurveParams,
+  type Criteria,
+  type NotificationProps,
+} from "dapp-types";
 import {
   BaseButton,
   BondingCurve,
@@ -16,17 +22,17 @@ import {
   AssetTag,
 } from "potion-ui";
 import AddLiquidityCard from "../components/CustomPool/AddLiquidityCard.vue";
-import OTokenClaimTable from "../components/OTokenClaimTable/OTokenClaimTable.vue";
 import { contractsAddresses } from "@/helpers/contracts";
-
-const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
+import { etherscanUrl } from "@/helpers";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
 const templateId = route.params.templateId as string;
-
+const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 const { data } = useGetTemplateQuery({
   variables: {
     id: templateId,
@@ -56,36 +62,175 @@ const curvePoints = 100;
 const getCurvePoints = (curve: HyperbolicCurve) =>
   _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
 
+const bondingCurveParams = computed<BondingCurveParams>(() => {
+  return {
+    a: parseFloat(curve?.value?.a ?? "1"),
+    b: parseFloat(curve?.value?.b ?? "1"),
+    c: parseFloat(curve?.value?.c ?? "1"),
+    d: parseFloat(curve?.value?.d ?? "1"),
+    maxUtil: parseFloat(curve?.value?.maxUtil ?? "1"),
+  };
+});
+
 const bondingCurve = computed(
   () =>
     new HyperbolicCurve(
-      parseFloat(curve?.value?.a ?? "1"),
-      parseFloat(curve?.value?.b ?? "1"),
-      parseFloat(curve?.value?.c ?? "1"),
-      parseFloat(curve?.value?.d ?? "1"),
-      parseFloat(curve?.value?.maxUtil ?? "1")
+      bondingCurveParams.value.a,
+      bondingCurveParams.value.b,
+      bondingCurveParams.value.c,
+      bondingCurveParams.value.d,
+      bondingCurveParams.value.maxUtil
     )
 );
 
 const unselectedTokens = ref([]),
   emergingCurves = ref([]),
+  criterias = ref<Array<Criteria>>([]),
   userBalance = ref(1000),
-  liquidityValue = ref(0);
-
-const onReclaim = () => {
-  console.log("RECLAIMING");
-};
+  liquidity = ref(0);
 
 const onLiquidityUpdate = (newValue: number) => {
   console.log("ON LIQUIDITY UPDATE");
-  liquidityValue.value = newValue;
-};
-
-const onAddLiquidity = () => {
-  console.log("ADDING LIQUIDITY");
+  liquidity.value = newValue;
 };
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
+
+const poolParamToNumber = computed(() => {
+  const poolId = route.params.templateId;
+  if (Array.isArray(poolId)) {
+    return null;
+  }
+  return parseInt(poolId);
+});
+
+const amountNeededToApprove = computed(() => {
+  if (userAllowance.value === 0) {
+    return liquidity.value;
+  }
+  if (liquidity.value > userAllowance.value) {
+    return parseFloat((liquidity.value - userAllowance.value).toPrecision(6));
+  }
+  return 0;
+});
+
+const {
+  fetchUserCollateralBalance,
+  fetchUserCollateralAllowance,
+  userAllowance,
+  approveForPotionLiquidityPool,
+  approveLoading,
+  approveTx,
+  approveReceipt,
+} = useCollateralTokenContract();
+
+const {
+  depositAndCreateCurveAndCriteriaTx,
+  depositAndCreateCurveAndCriteriaReceipt,
+  depositAndCreateCurveAndCriteria,
+  depositAndCreateCurveAndCriteriaLoading,
+} = usePotionLiquidityPoolContract();
+
+const handleCloneTemplate = async () => {
+  if (amountNeededToApprove.value > 0) {
+    await approveForPotionLiquidityPool(liquidity.value, true);
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  } else {
+    if (poolParamToNumber.value) {
+      await depositAndCreateCurveAndCriteria(
+        poolParamToNumber.value,
+        liquidity.value,
+        bondingCurveParams.value,
+        criterias.value
+      );
+    }
+
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
+
+/*
+ * Toast notifications
+ */
+
+const notificationTimeout =
+  process.env.NODE_ENV === "development" ? 20000 : 5000;
+const notifications = ref<Map<string, NotificationProps>>(new Map());
+
+const addToast = (index: string, info: NotificationProps) => {
+  notifications.value.set(index, info);
+
+  setTimeout(() => {
+    notifications.value.delete(index);
+  }, notificationTimeout);
+};
+const removeToast = (hash: string) => notifications.value.delete(hash);
+
+watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
+  addToast(`${transaction?.hash}`, {
+    title: "Creating pool",
+    body: "Your transaction is pending",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${transaction?.hash}`,
+    },
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
+  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
+    title: "Pool created",
+    body: "Your transaction has completed",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+    },
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(approveTx, (transaction) => {
+  addToast(`${transaction?.hash}`, {
+    title: "Approving USDC",
+    body: "Your transactions is pending",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${transaction?.hash}`,
+    },
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(approveReceipt, (receipt) => {
+  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
+    title: "USDC spending approved",
+    body: "Your transaction has completed",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+    },
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
 </script>
 <template>
   <div>
@@ -159,19 +304,12 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
           </div>
         </BaseCard>
         <!-- End bonding curve -->
-        <!-- Start options table  -->
-        <OTokenClaimTable
-          class="row-auto"
-          :price-map="{}"
-          :underlyings="[]"
-          @claim-otoken="onReclaim"
-        >
-        </OTokenClaimTable>
-        <!-- End options table -->
+        <!-- Start underlyings list  -->
+        <!-- End underlyings list -->
       </div>
       <BaseCard class="self-start" :full-height="false">
         <AddLiquidityCard
-          :model-value="liquidityValue"
+          :model-value="liquidity"
           :title="t('add_liquidity')"
           :hint="t('add_liquidity_hint')"
           :user-balance="userBalance"
@@ -184,8 +322,13 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
               palette="secondary"
               :inline="true"
               :label="t('add_liquidity')"
-              :disabled="false"
-              @click="onAddLiquidity"
+              :disabled="
+                depositAndCreateCurveAndCriteriaLoading || approveLoading
+              "
+              :loading="
+                depositAndCreateCurveAndCriteriaLoading || approveLoading
+              "
+              @click="handleCloneTemplate"
             >
               <template #pre-icon>
                 <i class="i-ph-upload-simple-bold mr-2"></i>
@@ -196,4 +339,17 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
       </BaseCard>
     </div>
   </div>
+  <template v-for="[hash, info] of notifications" :key="hash">
+    <Teleport to="#toast-wrap">
+      <BaseToast
+        class="z-50"
+        :title="info.title"
+        :body="info.body"
+        :cta="info.cta"
+        :srcset-map="info.srcset"
+        :timeout="notificationTimeout"
+        @click="() => removeToast(hash)"
+      ></BaseToast>
+    </Teleport>
+  </template>
 </template>
