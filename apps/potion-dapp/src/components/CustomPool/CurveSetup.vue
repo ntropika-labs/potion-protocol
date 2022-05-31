@@ -18,19 +18,26 @@ import { computed, onActivated } from "vue";
 import { useI18n } from "vue-i18n";
 
 interface Props {
-  liquidity: string;
-  poolId: number;
   modelValue: BondingCurveParams;
-  criterias: Criteria[];
-  emergingCurves?: EmergingCurvePoints[];
   unselectedTokens: string[];
-  disableNavigationNext: boolean;
-  navigateNextLabel: string;
+  emergingCurves?: EmergingCurvePoints[];
+  hasPoolSettings?: boolean;
+  liquidity?: string;
+  poolId?: number;
+  criterias?: Criteria[];
+  disableNavigationNext?: boolean;
+  navigateNextLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   unselectedTokens: () => [],
   emergingCurves: () => [],
+  hasPoolSettings: true,
+  criterias: () => [],
+  disableNavigationNext: false,
+  navigateNextLabel: "Next",
+  poolId: 0,
+  liquidity: "0",
 });
 const emits = defineEmits([
   "update:modelValue",
@@ -70,8 +77,16 @@ onActivated(() => {
 </script>
 
 <template>
-  <div class="grid gap-5 lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]">
+  <div
+    class="grid gap-5"
+    :class="
+      props.hasPoolSettings
+        ? 'lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_3fr]'
+        : ''
+    "
+  >
     <PoolSettingsCard
+      v-if="props.hasPoolSettings"
       :pool-id="props.poolId"
       :liquidity="props.liquidity"
       :criterias="props.criterias"

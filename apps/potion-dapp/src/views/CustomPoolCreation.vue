@@ -8,6 +8,7 @@
   >
     <PoolSetup
       v-model:liquidity.number="liquidity"
+      :liquidity-title="t('total-liquidity')"
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
       :available-tokens="availableTokens"
@@ -19,7 +20,20 @@
       @update:criteria="updateCriteria"
       @navigate:next="currentFormStep = 1"
       @valid-input="validInput = $event"
-    />
+    >
+      <BaseButton
+        test-next
+        palette="secondary"
+        :inline="true"
+        :label="t('next')"
+        :disabled="!criteriasCheck"
+        @click="currentFormStep = 1"
+      >
+        <template #post-icon>
+          <i class="i-ph-caret-right"></i>
+        </template>
+      </BaseButton>
+    </PoolSetup>
     <CurveSetup
       v-model="bondingCurve"
       :criterias="criterias"
@@ -79,7 +93,7 @@ import type {
 
 import { SrcsetEnum } from "dapp-types";
 
-import { currencyFormatter, BaseToast } from "potion-ui";
+import { currencyFormatter, BaseToast, BaseButton } from "potion-ui";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useOnboard } from "@onboard-composable";
 import { onMounted, ref, computed, watch } from "vue";
@@ -318,7 +332,7 @@ const deployButtonLabel = computed(() => {
 
 const handleDeployPool = async () => {
   if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(liquidity.value, false);
+    await approveForPotionLiquidityPool(liquidity.value, true);
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
