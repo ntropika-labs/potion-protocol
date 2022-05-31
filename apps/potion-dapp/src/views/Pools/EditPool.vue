@@ -310,7 +310,7 @@ watchDebounced(
   async () => {
     await loadEmergingCurves();
   },
-  { debounce: 500, maxWait: 1000 }
+  { debounce: 500, maxWait: 2000 }
 );
 
 const unselectedTokens = computed(() =>
