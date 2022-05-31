@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { getTokenList } from "potion-tokenlist";
+import { useTokenList } from "@/composables/useTokenList";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
+import { useRoute, useRouter } from "vue-router";
+import { useGetTemplateQuery } from "subgraph-queries/generated/urql";
 import {
   BaseButton,
   BondingCurve,
@@ -15,43 +17,53 @@ import {
 } from "potion-ui";
 import AddLiquidityCard from "../components/CustomPool/AddLiquidityCard.vue";
 import OTokenClaimTable from "../components/OTokenClaimTable/OTokenClaimTable.vue";
+import { contractsAddresses } from "@/helpers/contracts";
+
+const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 
-const tokens = getTokenList("ganache");
-const timesCloned = ref("5");
-const totalSize = ref("595833844");
-const totalPnl = ref("59");
-const currencySymbol = ref("USDC");
-const creator = ref({
-  label: "0xd34d...b33f",
-  link: "#",
-  icon: undefined,
-  //icon: "https://mocked.com/placeholder.png",
+const templateId = route.params.templateId as string;
+
+const { data } = useGetTemplateQuery({
+  variables: {
+    id: templateId,
+  },
 });
-const pnlTrend = computed(() =>
-  parseFloat(totalPnl.value) > 0 ? "up" : "down"
+
+const template = computed(() => data?.value?.template);
+const curve = computed(() => template?.value?.curve);
+const criteriaSet = computed(() => template?.value?.criteriaSet);
+
+const tokens = computed(
+  () =>
+    criteriaSet?.value?.criterias?.map(({ criteria }) => {
+      const address = criteria.underlyingAsset.address;
+      const { image, name, symbol } = useTokenList(address);
+      return { address, image, name, symbol };
+    }) ?? []
 );
+const totalLiquidity = computed(() => template?.value?.size ?? "0");
+const timesCloned = computed(() => template?.value?.numPools ?? "0");
+const pnlPercentage = computed(() => template?.value?.pnlPercentage ?? "0");
+const creator = computed(() => ({
+  label: template?.value?.creator ?? "",
+}));
 
 const curvePoints = 100;
 const getCurvePoints = (curve: HyperbolicCurve) =>
   _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
 
-const modelValue = {
-  a: 1,
-  b: 1,
-  c: 1,
-  d: 1,
-  maxUtil: 1,
-};
 const bondingCurve = computed(
   () =>
     new HyperbolicCurve(
-      modelValue.a,
-      modelValue.b,
-      modelValue.c,
-      modelValue.d,
-      modelValue.maxUtil
+      parseFloat(curve?.value?.a ?? "1"),
+      parseFloat(curve?.value?.b ?? "1"),
+      parseFloat(curve?.value?.c ?? "1"),
+      parseFloat(curve?.value?.d ?? "1"),
+      parseFloat(curve?.value?.maxUtil ?? "1")
     )
 );
 
@@ -77,7 +89,7 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 </script>
 <template>
   <div>
-    <BaseButton palette="transparent" :label="t('back')">
+    <BaseButton palette="transparent" :label="t('back')" @click="router.back">
       <template #pre-icon>
         <i class="i-ph-caret-left"></i>
       </template>
@@ -91,8 +103,8 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
       <LabelValue
         size="xl"
         :title="t('total_size')"
-        :value="totalSize"
-        :symbol="currencySymbol"
+        :value="totalLiquidity"
+        :symbol="collateral.symbol"
       />
       <LabelValue
         size="xl"
@@ -103,14 +115,14 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
       <LabelValue
         size="xl"
         :title="t('pnl')"
-        :value="totalPnl"
+        :value="pnlPercentage"
+        value-type="pnl"
         symbol="%"
-        :trend="pnlTrend"
       />
       <CreatorTag
-        :link="creator.link"
+        :link="creator?.link"
         :label="creator.label"
-        :icon="creator.icon"
+        :icon="creator?.icon"
         :with-label="true"
       />
     </BaseCard>
@@ -153,7 +165,8 @@ const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
           :price-map="{}"
           :underlyings="[]"
           @claim-otoken="onReclaim"
-        ></OTokenClaimTable>
+        >
+        </OTokenClaimTable>
         <!-- End options table -->
       </div>
       <BaseCard class="self-start" :full-height="false">
