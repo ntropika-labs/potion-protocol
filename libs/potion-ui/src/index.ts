@@ -21,6 +21,10 @@ import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
 import CardGrid from "./components/CardGrid/CardGrid.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
+import LabelValue from "./components/LabelValue/LabelValue.vue";
+import CreatorTag from "./components/CreatorTag/CreatorTag.vue";
+import AssetTag from "./components/AssetTag/AssetTag.vue";
+import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
 
 export type {
   IconStrokeWeight,
@@ -56,4 +60,8 @@ export {
   JumboHeader,
   CardGrid,
   PoolTemplateCard,
+  LabelValue,
+  CreatorTag,
+  AssetTag,
+  PutOptionsTable,
 };

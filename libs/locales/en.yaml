@@ -1,6 +1,6 @@
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer_description: Balance
@@ -50,3 +50,8 @@ most_cloned_title: Pools that have been cloned the most times
 most_cloned_subtitle: MOST CLONED
 show_more: Show more
 wrong_bonding_curve_params: parameters aren't valid
+creator: Creator
+add_liquidity: Add liquidity
+curve_parameters: Parameters defining the curve.
+add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
+no_options: No options to show

@@ -2,7 +2,7 @@
   <div class="grid md:grid-cols-12 gap-5">
     <AddLiquidityCard
       :model-value="props.liquidity"
-      :pool-id="props.poolId"
+      :title="liquidityCardTitle"
       :user-balance="userCollateralBalance"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
@@ -92,4 +92,6 @@ const handleTokenRemove = (address: string) => emits("token-remove", address);
 const selectedTokens = computed(() => {
   return props.availableTokens.filter((u) => u.selected);
 });
+
+const liquidityCardTitle = `${t("my_pool")} #${props.poolId}`;
 </script>
