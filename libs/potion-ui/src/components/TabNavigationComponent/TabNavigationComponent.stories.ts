@@ -32,6 +32,41 @@ export default {
   },
 };
 
+const tabs = [
+  {
+    title: "Tab 1",
+    subtitle: "first tab subtitle",
+    isValid: false,
+    cta: {
+      externalUrl: false,
+      label: "example url",
+      url: "#",
+    },
+    enabled: true,
+  },
+  {
+    title: "Tab 2",
+    subtitle: "this tab is disabled",
+    isValid: false,
+    cta: {
+      externalUrl: false,
+      label: "example url",
+      url: "#",
+    },
+    enabled: false,
+  },
+  {
+    title: "Tab 3",
+    subtitle: "this tab is valid",
+    isValid: true,
+    cta: {
+      externalUrl: false,
+      label: "example url",
+      url: "#",
+    },
+    enabled: true,
+  },
+];
 const Template: Story = (args: Args) => ({
   components: { TabNavigationComponent },
   setup() {
@@ -46,6 +81,7 @@ const Template: Story = (args: Args) => ({
 });
 
 export const Overview = Template.bind({});
+Overview.args = { tabs };
 
 const CreatePoolTemplate: Story = (args: Args) => ({
   components: { TabNavigationComponent },
@@ -60,3 +96,4 @@ const CreatePoolTemplate: Story = (args: Args) => ({
 });
 
 export const CreatePoolTabs = CreatePoolTemplate.bind({});
+CreatePoolTabs.args = { tabs };

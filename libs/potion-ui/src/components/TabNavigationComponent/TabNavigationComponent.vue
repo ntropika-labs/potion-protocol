@@ -11,7 +11,6 @@ import { BaseButton, BaseCard } from "potion-ui";
 export interface TabNavigationInfo {
   title: string;
   subtitle?: string;
-  visited?: boolean;
   isValid: boolean;
   cta?: {
     externalUrl?: boolean;

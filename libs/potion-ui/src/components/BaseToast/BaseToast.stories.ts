@@ -38,8 +38,6 @@ const Template: Story = (args: Args) => ({
   template: `<div class="h-[400px] w-[300px]"><BaseToast v-bind="args" ></BaseToast></div>`,
 });
 
-console.log(defaultIconSet);
-
 export const Overview = Template.bind({});
 Overview.args = {
   title: "Toast title",
