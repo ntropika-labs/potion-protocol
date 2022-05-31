@@ -16,16 +16,14 @@
   >
     <BaseButton
       test-next
-      palette="white-o"
+      class="uppercase"
+      palette="plain"
       :inline="true"
       :label="t('back')"
       @click="
         router.push(`/liquidity-provider/${route.params.lp}/${route.params.id}`)
       "
     >
-      <template #pre-icon>
-        <i class="i-ph-caret-left"></i>
-      </template>
     </BaseButton>
     <BaseButton
       test-next
