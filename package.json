@@ -113,7 +113,7 @@
     "console-log-colors": "^0.2.3",
     "cross-env": "^7.0.3",
     "crossenv": "^0.0.2-security",
-    "cypress": "^9.6.0",
+    "cypress": "^9.7.0",
     "dotenv": "^16.0.0",
     "dprint": "^0.27.0",
     "eslint": "^8.14.0",

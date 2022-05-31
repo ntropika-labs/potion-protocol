@@ -7,7 +7,7 @@ export default defineComponent({
 
 type TextAlignment = "center" | "left" | "right";
 type TextSize = "sm" | "md" | "lg" | "xl";
-type ValueTrend = "up" | "down";
+type ValueTrend = "up" | "down" | "flat";
 type ValueType = "raw" | "number" | "timestamp" | "date";
 </script>
 <script lang="ts" setup>

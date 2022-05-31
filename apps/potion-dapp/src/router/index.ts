@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import { useOnboard } from "@/composables/useOnboard";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -8,6 +7,7 @@ import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
 import DiscoverPools from "@/views/DiscoverPools.vue";
 import PoolTemplate from "@/views/PoolTemplate.vue";
 import HomeView from "@/views/HomeView.vue";
+import { useOnboard } from "@onboard-composable";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -93,6 +93,7 @@ const weightClass = computed(() =>
       props.inline ? 'inline-flex' : 'flex',
     ]"
     :type="props.type"
+    test-base-button
     @click="emit('click')"
   >
     <i v-if="props.loading" class="i-eos-icons-loading mr-2"></i>

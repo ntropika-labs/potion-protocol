@@ -46,8 +46,10 @@ const canDecrease = computed(() => isValid(props.modelValue - props.step));
 const canIncrease = computed(() => isValid(props.modelValue + props.step));
 
 const handleInput = (value: number) => {
-  emit("update:modelValue", value);
-  emit("update:isValid", isValid(value));
+  if (value) {
+    emit("update:modelValue", value);
+    emit("update:isValid", isValid(value));
+  }
 };
 
 const decrease = () => {

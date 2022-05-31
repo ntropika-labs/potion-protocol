@@ -10,9 +10,9 @@ import { ref } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
-import { useOnboard } from "./useOnboard";
 
 export function useCollateralTokenContract() {
   const { initContract } = useEthersContract();

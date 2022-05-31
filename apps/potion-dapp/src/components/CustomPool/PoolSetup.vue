@@ -10,6 +10,7 @@
     >
       <template #card-footer>
         <BaseButton
+          test-next
           palette="secondary"
           :inline="true"
           :label="t('next')"

@@ -5,7 +5,7 @@ export default defineComponent({
   name: "PoolTemplateCard",
 });
 
-type PnlTrend = "up" | "down";
+type PnlTrend = "up" | "down" | "flat";
 </script>
 <script lang="ts" setup>
 import type { Token } from "dapp-types";
@@ -16,6 +16,7 @@ import { useI18n } from "vue-i18n";
 import BaseButton from "../BaseButton/BaseButton.vue";
 import CreatorTag from "../CreatorTag/CreatorTag.vue";
 import AssetTag from "../AssetTag/AssetTag.vue";
+import { getEnsOrAddress } from "../../helpers";
 
 export interface Props {
   creator: {
@@ -28,7 +29,6 @@ export interface Props {
   currencySymbol: string;
   timesCloned: string;
   totalPnl: string;
-  //pnlTrend: PnlTrend;
   templateId: string;
 }
 
@@ -41,15 +41,22 @@ const { t } = useI18n();
 const trendToColorMap: Map<PnlTrend, string> = new Map([
   ["up", "text-accent-400"],
   ["down", "text-error-400"],
+  ["flat", ""],
 ]);
 
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
-const pnlTrend = computed(() =>
-  parseFloat(props.totalPnl) > 0 ? "up" : "down"
-);
-const pnlColorClass = computed(() => {
-  return trendToColorMap.get(pnlTrend.value);
-});
+
+const getPnlTrend = (pnl: number) => {
+  if (pnl > 0) {
+    return "up";
+  } else if (pnl < 0) {
+    return "down";
+  }
+  return "flat";
+};
+
+const pnlTrend = computed(() => getPnlTrend(parseFloat(props.totalPnl)));
+const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
 </script>
 <template>
   <BaseCard :full-height="false" class="text-dwhite-400 relative">
@@ -63,13 +70,14 @@ const pnlColorClass = computed(() => {
           <BaseTag
             class="!justify-start !text-sm !rounded-lg p-2"
             :title="tagText"
-            ><p class="truncate">{{ tagText }}</p></BaseTag
           >
+            <p class="truncate">{{ tagText }}</p>
+          </BaseTag>
         </div>
         <CreatorTag
           class="text-right"
           :link="props.creator.link"
-          :label="props.creator.label"
+          :label="getEnsOrAddress(props.creator.label)"
           :icon="props.creator.icon"
         />
       </div>
@@ -115,19 +123,20 @@ const pnlColorClass = computed(() => {
             <BaseTag
               class="!justify-start !text-sm !rounded-lg p-2"
               :title="tagText"
-              ><p class="truncate">{{ tagText }}</p></BaseTag
             >
+              <p class="truncate">{{ tagText }}</p>
+            </BaseTag>
           </div>
           <div class="text-right">
             <CreatorTag
               :link="props.creator.link"
-              :label="props.creator.label"
+              :label="getEnsOrAddress(props.creator.label)"
               :icon="props.creator.icon"
             />
           </div>
         </div>
         <div class="text-dirty-white-300 font-medium text-center">
-          {{ t("template_pool_clone_hint") }}
+          {{ t("add_liquidity_hint") }}
         </div>
         <div class="flex w-full justify-center">
           <BaseButton

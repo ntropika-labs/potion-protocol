@@ -8,11 +8,12 @@ import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 
 import App from "@/App.vue";
-import { init } from "@/composables/useOnboard";
 import { onboardOptions } from "@/helpers/onboard";
 import router from "@/router";
 import { vAutoAnimate } from "@formkit/auto-animate";
+//@ts-expect-error volar giving errors
 import messages from "@intlify/vite-plugin-vue-i18n/messages";
+import { init } from "@onboard-composable";
 import urql from "@urql/vue";
 
 init(onboardOptions);

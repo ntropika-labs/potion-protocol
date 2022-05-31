@@ -31,3 +31,10 @@ export const dateFormatter = (value: string, isTimestamp: boolean) => {
     return dayjs(value).format("ll");
   }
 };
+
+export const getEnsOrAddress = (value: string) => {
+  if (value.length === 42 && value.startsWith("0x")) {
+    return value.substring(0, 6) + "..." + value.substring(value.length - 4);
+  }
+  return value;
+};

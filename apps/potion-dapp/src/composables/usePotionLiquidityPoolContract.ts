@@ -16,9 +16,9 @@ import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { parseUnits } from "@ethersproject/units";
+import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
-import { useOnboard } from "./useOnboard";
 
 export function usePotionLiquidityPoolContract() {
   const { initContract } = useEthersContract();

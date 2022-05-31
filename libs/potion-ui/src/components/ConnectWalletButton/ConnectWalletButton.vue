@@ -59,6 +59,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import { BaseButton } from "../../index";
 import { computed } from "vue";
+import { getEnsOrAddress } from "../../helpers";
 export interface Props {
   label: string;
   avatar?: string;
@@ -70,14 +71,5 @@ defineEmits<{
   (e: "disconnectWallet"): void;
 }>();
 const props = defineProps<Props>();
-const ensOrAddress = computed(() => {
-  if (props.label.length === 42 && props.label.startsWith("0x")) {
-    return (
-      props.label.substring(0, 6) +
-      "..." +
-      props.label.substring(props.label.length - 4)
-    );
-  }
-  return props.label;
-});
+const ensOrAddress = computed(() => getEnsOrAddress(props.label));
 </script>

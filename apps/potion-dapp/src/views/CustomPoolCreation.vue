@@ -82,7 +82,7 @@ import { SrcsetEnum } from "dapp-types";
 
 import { currencyFormatter, BaseToast } from "potion-ui";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
-import { useOnboard } from "@/composables/useOnboard";
+import { useOnboard } from "@onboard-composable";
 import { onMounted, ref, computed, watch } from "vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { useTokenList } from "@/composables/useTokenList";
@@ -107,7 +107,9 @@ const router = useRouter();
 // Initial data setup
 const liquidity = ref(100);
 const { connectedWallet } = useOnboard();
-const walletAddress = ref(connectedWallet.value?.accounts[0].address ?? "");
+const walletAddress = computed(
+  () => connectedWallet.value?.accounts[0].address ?? ""
+);
 const collateral: string =
   contractsAddresses.PotionTestUSD.address.toLowerCase();
 
@@ -280,12 +282,14 @@ const {
   approveReceipt,
 } = useCollateralTokenContract();
 
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
-  variables: {
-    //@ts-expect-error URQL accepts refs, but typings are not correct here?
-    lp: walletAddress,
+const userPoolsQueryVariables = computed(() => {
+  return {
+    lp: walletAddress.value,
     ids: [""],
-  },
+  };
+});
+const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  variables: userPoolsQueryVariables,
 });
 
 const userPoolsCount = computed(() => {
@@ -408,8 +412,7 @@ const fetchUserData = async () => {
 
 onMounted(async () => await fetchUserData());
 
-watch(connectedWallet, async (newAWallet) => {
-  walletAddress.value = connectedWallet.value?.accounts[0].address ?? "";
+watch(walletAddress, async (newAWallet) => {
   if (newAWallet) {
     await fetchUserData();
   } else {
