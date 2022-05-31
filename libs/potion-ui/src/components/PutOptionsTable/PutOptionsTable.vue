@@ -18,13 +18,13 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 
 const emits = defineEmits<{
-  (e: "button-pressed", index: string | number, cellIndex: number): void;
+  (e: "button-pressed", index: number, cellIndex: number): void;
 }>();
 
 const isNotEmpty = computed(() => props.dataset.length > 0);
 const isEmpty = !isNotEmpty.value;
 
-const onButtonPressed = (index: string | number, cellIndex: number) =>
+const onButtonPressed = (index: number, cellIndex: number) =>
   emits("button-pressed", index, cellIndex);
 </script>
 
