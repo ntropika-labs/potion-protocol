@@ -70,20 +70,27 @@ describe("Edit Pool Flow", () => {
     });
   });
   it("Can select non selected assets", () => {
+    let numberOfAssets = 0;
     cy.get("[test-token-card]")
-      .then(($els) => {
-        return $els.filter((index, element) => {
-          console.log(index);
-          const textContent = Cypress.$(element).text();
-          const result = alreadySelected.filter((str) => str === textContent);
-          return !result.length;
+      .its("length")
+      .then((length) => (numberOfAssets = length));
+    console.log(numberOfAssets, alreadySelected.length);
+    if (numberOfAssets > alreadySelected.length) {
+      cy.get("[test-token-card]")
+        .then(($els) => {
+          return $els.filter((index, element) => {
+            console.log(index, $els.length);
+            const textContent = Cypress.$(element).text();
+            const result = alreadySelected.filter((str) => str === textContent);
+            return !result.length;
+          });
+        })
+        .then(($el) => {
+          cy.wrap($el).each(($el) => {
+            cy.wrap($el).click();
+          });
         });
-      })
-      .then(($el) => {
-        cy.wrap($el).each(($el) => {
-          cy.wrap($el).click();
-        });
-      });
+    }
   });
   it("Can change the curve", () => {
     cy.get(".bg-radial-glass > :nth-child(1) > .w-full").clear().type("1");
