@@ -88,7 +88,6 @@ import type {
   Token,
   BondingCurveParams,
   Criteria,
-  EmergingCurvePoints,
   NotificationProps,
 } from "dapp-types";
 
@@ -109,9 +108,8 @@ import {
   useGetNumberOfPoolsFromUserQuery,
 } from "subgraph-queries/generated/urql";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useRouter } from "vue-router";
-import { getPoolsFromCriterias } from "potion-router";
-import { worker } from "@/web-worker";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { etherscanUrl } from "@/helpers";
 
@@ -266,13 +264,7 @@ const bondingCurve = ref<BondingCurveParams>({
   maxUtil: 1,
 });
 
-const emergingCurves = ref<EmergingCurvePoints[]>([]);
-const loadEmergingCurves = async () => {
-  const poolSets = await getPoolsFromCriterias(criterias.value);
-  emergingCurves.value = await worker.getEmergingBondingCurvesFromCriterias(
-    poolSets
-  );
-};
+const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
 /*
  * Pool deployment data and functions

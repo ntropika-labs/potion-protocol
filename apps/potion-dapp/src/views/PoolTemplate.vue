@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useTokenList } from "@/composables/useTokenList";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useGetTemplateQuery } from "subgraph-queries/generated/urql";
@@ -12,12 +12,22 @@ import {
   AssetTag,
 } from "potion-ui";
 
+import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import OTokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
 import { contractsAddresses } from "@/helpers/contracts";
 
-const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
+import type { Criteria, Token } from "dapp-types";
+
+const getTokenFromAddress = (address: string): Token => {
+  const { image, name, symbol } = useTokenList(address);
+  return { address, image, name, symbol };
+};
+
+const collateral = getTokenFromAddress(
+  contractsAddresses.USDC.address.toLowerCase()
+);
 
 const { t } = useI18n();
 const route = useRoute();
@@ -34,6 +44,14 @@ const { data } = useGetTemplateQuery({
 const template = computed(() => data?.value?.template);
 const curve = computed(() => template?.value?.curve);
 const criteriaSet = computed(() => template?.value?.criteriaSet);
+const criterias = computed<Criteria[]>(
+  () =>
+    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
+      token: getTokenFromAddress(criteria.underlyingAsset.address),
+      maxStrike: parseInt(criteria.maxStrikePercent),
+      maxDuration: parseInt(criteria.maxDurationInDays),
+    })) ?? []
+);
 
 const bondingCurveParams = computed(() => ({
   a: parseFloat(curve?.value?.a ?? "0"),
@@ -43,22 +61,17 @@ const bondingCurveParams = computed(() => ({
   maxUtil: parseFloat(curve?.value?.maxUtil ?? "0"),
 }));
 
-const tokens = computed(
-  () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => {
-      const address = criteria.underlyingAsset.address;
-      const { image, name, symbol } = useTokenList(address);
-      return { address, image, name, symbol };
-    }) ?? []
-);
+const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
 const totalLiquidity = computed(() => template?.value?.size ?? "0");
 const timesCloned = computed(() => template?.value?.numPools ?? "0");
 const pnlPercentage = computed(() => template?.value?.pnlPercentage ?? "0");
 const creator = computed(() => ({
   label: template?.value?.creator ?? "",
+  link: "",
+  icon: undefined,
 }));
 
-const emergingCurves = ref([]);
+const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 const userBalance = ref(1000);
 const liquidityValue = ref(0);
 
@@ -76,6 +89,8 @@ const onAddLiquidity = () => {
 };
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
+
+watch(criterias, loadEmergingCurves);
 </script>
 <template>
   <div>
