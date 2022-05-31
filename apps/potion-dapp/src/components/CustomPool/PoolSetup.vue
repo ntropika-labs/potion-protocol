@@ -4,7 +4,6 @@
       :model-value="props.liquidity"
       :title="liquidityCardTitle"
       :size="props.size"
-      :pool-id="props.poolId"
       :user-balance="userCollateralBalance"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
