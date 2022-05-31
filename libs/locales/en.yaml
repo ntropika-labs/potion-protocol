@@ -5,7 +5,7 @@ back: back
 cloned: Cloned
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -48,10 +48,12 @@ user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
 view_pool_recipe: view pool recipe
 wrong_bonding_curve_params: parameters aren't valid
-
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
     label: Utilization
   y_axis:
     label: Premium
+total-liquidity: Total Liquidity
+add-more-liquidity: Add More Liquidity
+edit: edit

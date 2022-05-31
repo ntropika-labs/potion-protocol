@@ -63,6 +63,7 @@ import {
   BaseCard,
   CustomCurveParams,
   CurveFormula,
+  Tooltip,
 } from "potion-ui";
 import { times as _times } from "lodash-es";
 import { useI18n } from "vue-i18n";

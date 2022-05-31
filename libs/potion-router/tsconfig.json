@@ -8,5 +8,9 @@
     "declarationMap": true,
     "declarationDir": "./dist/types"
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+  "include": [
+    "env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ]
 }

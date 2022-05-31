@@ -6,11 +6,16 @@ import AboutView from "@/views/AboutView.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
 import DiscoverPools from "@/views/DiscoverPools.vue";
 import HomeView from "@/views/HomeView.vue";
+import NotFound from "@/views/NotFound.vue";
+import EditPool from "@/views/Pools/EditPool.vue";
+import ShowPool from "@/views/Pools/ShowPool.vue";
+import ViewPools from "@/views/Pools/ViewPools.vue";
 import { useOnboard } from "@onboard-composable";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
     {
       path: "/",
       name: "home",
@@ -18,8 +23,8 @@ const router = createRouter({
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
-      path: "/pools",
-      name: "discover-pools",
+      path: "/templates",
+      name: "discover-templates",
       component: DiscoverPools,
       meta: { requireWallet: false, layout: BaseLayout },
     },
@@ -28,6 +33,22 @@ const router = createRouter({
       name: "custom-pool-creation",
       component: CustomPoolCreation,
       meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/liquidity-provider/:lp",
+      name: "liquidity-provider",
+      component: ViewPools,
+      meta: { requireWallet: true, layout: BaseLayout },
+    },
+    {
+      path: "/liquidity-provider/:lp/:id",
+      component: ShowPool,
+      meta: { requiredWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/liquidity-provider/:lp/:id/edit",
+      component: EditPool,
+      meta: { requiredWallet: true, layout: BaseLayout },
     },
     {
       path: "/about",

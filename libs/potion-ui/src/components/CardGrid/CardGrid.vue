@@ -24,7 +24,7 @@ const props = defineProps<Props>();
     </h4>
     <h3 class="my-3 font-semibold text-lg">{{ props.title }}</h3>
     <div
-      class="grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-4"
+      class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-4"
     >
       <slot></slot>
     </div>
