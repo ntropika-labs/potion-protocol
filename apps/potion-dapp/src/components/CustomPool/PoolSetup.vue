@@ -2,9 +2,8 @@
   <div class="grid md:grid-cols-12 gap-5">
     <AddLiquidityCard
       :model-value="props.liquidity"
-      :title="props.liquidityTitle"
+      :title="liquidityCardTitle"
       :size="props.size"
-      :pool-id="props.poolId"
       :user-balance="userCollateralBalance"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
@@ -41,7 +40,9 @@ import type { SelectableToken, ApiTokenPrice } from "dapp-types";
 import { BaseCard, TokenSelection } from "potion-ui";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import SelectedTokenWrapper from "@/components/CustomPool/SelectedTokenWrapper.vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 interface Props {
   liquidityTitle: string;
   liquidity: number;
@@ -81,4 +82,6 @@ const handleTokenRemove = (address: string) => emits("token-remove", address);
 const selectedTokens = computed(() => {
   return props.availableTokens.filter((u) => u.selected);
 });
+
+const liquidityCardTitle = `${t("my_pool")} #${props.poolId}`;
 </script>

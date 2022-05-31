@@ -1,8 +1,7 @@
 <template>
   <BaseCard class="leading-none" :full-height="false">
     <div class="py-3 px-4">
-      <p class="text-sm uppercase">{{ t("my_pool") }} #{{ props.poolId }}</p>
-
+      <p class="text-sm uppercase">{{ props.title }}</p>
       <div
         v-if="size"
         class="flex justify-between border-b-1 border-white/10 pb-3 mt-5"
@@ -24,6 +23,9 @@
         @update:model-value="emits('update:modelValue', $event)"
         @valid-input="emits('validInput', $event)"
       />
+      <p v-if="props.hint" class="text-base text-secondary-600 my-5">
+        {{ props.hint }}
+      </p>
     </div>
     <CardFooter class="flex justify-center gap-3">
       <slot name="card-footer"></slot>
@@ -36,14 +38,14 @@ import { useI18n } from "vue-i18n";
 const emits = defineEmits(["update:modelValue", "validInput"]);
 const { t } = useI18n();
 interface Props {
-  poolId: number;
+  title: string;
+  hint?: string;
   userBalance: number;
   modelValue: number;
   size?: string;
-  title: string;
 }
 const props = withDefaults(defineProps<Props>(), {
-  poolId: 0,
+  hint: undefined,
   userBalance: 0,
   modelValue: 100,
   size: "",

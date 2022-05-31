@@ -5,7 +5,7 @@ back: back
 cloned: Cloned
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -38,7 +38,6 @@ pnl: Pnl
 set_bonding_curve_params: Set the following parameters and define your curve.
 show_more: Show more
 strike_description: Choose the maximum insurance cover.
-template_pool_clone_hint: By providing liquidity you’re creating your pool cloning this template.
 times: Times
 title: Home page
 top_gainers_templates_subtitle: TOP GAINERS
@@ -54,6 +53,12 @@ bonding_curve:
     label: Utilization
   y_axis:
     label: Premium
+
+creator: Creator
+add_liquidity: Add liquidity
+curve_parameters: Parameters defining the curve.
+add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
+no_options: No options to show
 total-liquidity: Total Liquidity
 add-more-liquidity: Add More Liquidity
 edit: edit

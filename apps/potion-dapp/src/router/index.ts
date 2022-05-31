@@ -5,6 +5,7 @@ import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import AboutView from "@/views/AboutView.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
 import DiscoverPools from "@/views/DiscoverPools.vue";
+import PoolTemplate from "@/views/PoolTemplate.vue";
 import HomeView from "@/views/HomeView.vue";
 import NotFound from "@/views/NotFound.vue";
 import EditPool from "@/views/Pools/EditPool.vue";
@@ -26,6 +27,12 @@ const router = createRouter({
       path: "/templates",
       name: "discover-templates",
       component: DiscoverPools,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/templates/:templateId",
+      name: "pool-template",
+      component: PoolTemplate,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
