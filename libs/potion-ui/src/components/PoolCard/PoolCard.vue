@@ -2,7 +2,7 @@
   <BaseCard class="text-dwhite-400" :full-height="false">
     <div class="grid grid-flow-row grid-cols-2 gap-6 py-3 px-4">
       <div class="col-span-2">
-        <BaseTag :label="activeLabel" />
+        <BaseTag class="uppercase">{{ activeLabel }}</BaseTag>
       </div>
       <AssetTag :tokens="props.tokens" :title="t('assets')" />
       <LabelValue
