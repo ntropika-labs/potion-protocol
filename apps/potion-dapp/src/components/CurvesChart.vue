@@ -43,7 +43,7 @@ const bondingCurve = computed(() => {
 
 <template>
   <BaseCard class="lg:col-span-8 xl:col-span-9">
-    <div class="grid gap-5 grid xl:grid-cols-[3fr_1fr]">
+    <div class="grid gap-5 grid grid-cols-1 xl:grid-cols-[3fr_1fr]">
       <BondingCurve
         class="py-3 px-4"
         :bonding-curve="getCurvePoints(bondingCurve)"

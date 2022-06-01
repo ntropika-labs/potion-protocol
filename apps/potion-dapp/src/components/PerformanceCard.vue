@@ -81,7 +81,7 @@ const toggleDataset = (key: string) =>
 
 <template>
   <BaseCard class="p-6 gap-6">
-    <div class="flex justify-between">
+    <div class="flex flex-col gap-4 items-start md:(justify-between flex-row)">
       <DropdownMenu
         :title="t('enable_or_disable')"
         :items="datasets"
