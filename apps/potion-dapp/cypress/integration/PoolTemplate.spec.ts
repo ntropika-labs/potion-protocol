@@ -30,6 +30,6 @@ describe("Pool template cloning Flow", () => {
   });
 
   it("Can clone the pool", () => {
-    cy.get(".gap-3 > .before\\:content-none").click();
+    cy.get("[test-clone-button]").click();
   });
 });

@@ -20,7 +20,6 @@ import {
   LabelValue,
   CreatorTag,
   AssetTag,
-  BaseToast,
 } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import AddLiquidityCard from "../components/CustomPool/AddLiquidityCard.vue";
@@ -31,6 +30,7 @@ import { etherscanUrl } from "@/helpers";
 
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import CurvesChart from "@/components/CurvesChart.vue";
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -84,6 +84,8 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
 const unselectedTokens = ref([]),
   userBalance = ref(1000),
   liquidity = ref(0);
+
+unselectedTokens.value = [];
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
@@ -191,21 +193,10 @@ const handleCloneTemplate = async () => {
  * Toast notifications
  */
 
-const notificationTimeout =
-  process.env.NODE_ENV === "development" ? 20000 : 5000;
 const notifications = ref<Map<string, NotificationProps>>(new Map());
 
-const addToast = (index: string, info: NotificationProps) => {
-  notifications.value.set(index, info);
-
-  setTimeout(() => {
-    notifications.value.delete(index);
-  }, notificationTimeout);
-};
-const removeToast = (hash: string) => notifications.value.delete(hash);
-
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  addToast(`${transaction?.hash}`, {
+  notifications.value.set(`${transaction?.hash}`, {
     title: "Creating pool",
     body: "Your transaction is pending",
     cta: {
@@ -221,23 +212,26 @@ watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
-    title: "Pool created",
-    body: "Your transaction has completed",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  notifications.value.set(
+    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
+    {
+      title: "Pool created",
+      body: "Your transaction has completed",
+      cta: {
+        label: "View on Etherscan",
+        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+      },
+      srcset: new Map([
+        [SrcsetEnum.AVIF, "/icons/atom.avif"],
+        [SrcsetEnum.WEBP, "/icons/atom.webp"],
+        [SrcsetEnum.PNG, "/icons/atom.png"],
+      ]),
+    }
+  );
 });
 
 watch(approveTx, (transaction) => {
-  addToast(`${transaction?.hash}`, {
+  notifications.value.set(`${transaction?.hash}`, {
     title: "Approving USDC",
     body: "Your transactions is pending",
     cta: {
@@ -253,19 +247,22 @@ watch(approveTx, (transaction) => {
 });
 
 watch(approveReceipt, (receipt) => {
-  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
-    title: "USDC spending approved",
-    body: "Your transaction has completed",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  notifications.value.set(
+    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
+    {
+      title: "USDC spending approved",
+      body: "Your transaction has completed",
+      cta: {
+        label: "View on Etherscan",
+        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+      },
+      srcset: new Map([
+        [SrcsetEnum.AVIF, "/icons/atom.avif"],
+        [SrcsetEnum.WEBP, "/icons/atom.webp"],
+        [SrcsetEnum.PNG, "/icons/atom.png"],
+      ]),
+    }
+  );
 });
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
@@ -338,6 +335,7 @@ watch(criterias, loadEmergingCurves);
         >
           <template #card-footer>
             <BaseButton
+              test-clone-button
               palette="secondary"
               :inline="true"
               :label="t('add_liquidity')"
@@ -358,17 +356,5 @@ watch(criterias, loadEmergingCurves);
       </BaseCard>
     </div>
   </div>
-  <template v-for="[hash, info] of notifications" :key="hash">
-    <Teleport to="#toast-wrap">
-      <BaseToast
-        class="z-50"
-        :title="info.title"
-        :body="info.body"
-        :cta="info.cta"
-        :srcset-map="info.srcset"
-        :timeout="notificationTimeout"
-        @click="() => removeToast(hash)"
-      ></BaseToast>
-    </Teleport>
-  </template>
+  <NotificationDisplay :toasts="notifications"></NotificationDisplay>
 </template>
