@@ -20,7 +20,7 @@ import type { Token } from "dapp-types";
 
 export interface Props {
   title: string;
-  tokens: Token[];
+  tokens: Token[] | Token;
   size?: LabelSize;
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -31,7 +31,7 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
 <template>
   <div>
     <h5 class="mb-2 font-medium" :class="sizeClass">{{ props.title }}</h5>
-    <div class="flex flex-wrap">
+    <div v-if="Array.isArray(props.tokens)" class="flex flex-wrap">
       <TokenIcon
         v-for="(token, index) in props.tokens"
         :key="`card-tokens-${index}`"
@@ -40,6 +40,15 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         :name="token.name"
         :image="token.image"
       />
+    </div>
+    <div v-else class="flex flex-wrap">
+      <TokenIcon
+        class="rounded-full bg-deep-black-700 mr-2"
+        :address="props.tokens.address"
+        :name="props.tokens.name"
+        :image="props.tokens.image"
+      />
+      <p>{{ props.tokens.symbol }}</p>
     </div>
   </div>
 </template>

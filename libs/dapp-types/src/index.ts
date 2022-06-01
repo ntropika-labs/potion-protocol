@@ -17,6 +17,18 @@ export interface ApiTokenPrice {
   success: boolean;
 }
 
+export interface OptionToken {
+  id: string;
+  address: string;
+  decimals?: number;
+  name: string;
+  symbol: string;
+  isPut: boolean;
+  duration: string;
+  strike: string;
+  image?: string;
+}
+
 export interface Criteria {
   token: Token;
   maxStrike: number;
