@@ -31,7 +31,7 @@ const { t } = useI18n();
     <BaseTag class="rounded-full gap-1">
       <img v-if="props.icon" :src="props.icon" class="w-3 h-3" />
       <i v-else class="i-ph-user-fill w-3 h-3"></i>
-      <a :href="props.link" target="_blank">{{
+      <a :href="props.link" target="_blank" class="font-mono">{{
         getEnsOrAddress(props.label)
       }}</a>
     </BaseTag>
