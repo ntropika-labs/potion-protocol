@@ -24,12 +24,10 @@ import {
   AssetTag,
 } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
-import AddLiquidityCard from "../components/CustomPool/AddLiquidityCard.vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { etherscanUrl } from "@/helpers";
-import { contractsAddresses } from "@/helpers/contracts";
 
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTemplateSnapshots } from "@/composables/useSnapshots";
@@ -38,12 +36,9 @@ import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
-import OTokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
 import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
-
-import type { Criteria, Token } from "dapp-types";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -429,5 +424,6 @@ watch(criterias, loadEmergingCurves);
   <NotificationDisplay
     :toasts="notifications"
     @hide-toast="(index) => notifications.delete(index)"
-  ></NotificationDisplay>
+  >
+  </NotificationDisplay>
 </template>
