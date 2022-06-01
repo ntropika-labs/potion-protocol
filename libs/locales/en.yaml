@@ -5,7 +5,7 @@ back: back
 cloned: Cloned
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -53,12 +53,20 @@ bonding_curve:
     label: Utilization
   y_axis:
     label: Premium
-
 creator: Creator
 add_liquidity: Add liquidity
 curve_parameters: Parameters defining the curve.
 add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
 no_options: No options to show
-total-liquidity: Total Liquidity
-add-more-liquidity: Add More Liquidity
+add_more_liquidity: Add More Liquidity
 edit: edit
+active: active
+inactive: inactive
+utilization: utilization
+active_potions: active potions
+total_pools: total pools
+average_pnl: average pnl
+total_liquidity: total liquidity
+my_summary: my summary
+load_more: load more
+check_pool: check_pool

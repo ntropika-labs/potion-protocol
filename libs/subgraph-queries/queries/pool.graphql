@@ -1,3 +1,10 @@
+fragment tokenInfo on Token {
+  address
+  decimals
+  name
+  symbol
+}
+
 query getPoolsFromCriteria(
   $underlyingAddress: String
   $minDuration: BigInt
@@ -45,6 +52,26 @@ query getPoolsFromCriteria(
 query getNumberOfPoolsFromUser($lp: Bytes, $ids: [ID!]) {
   pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
     id
+  }
+}
+query getPoolsFromUser($lp: Bytes, $ids: [ID!]) {
+  pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
+    id
+    pnlPercentage
+    poolId
+    size
+    utilization
+    template {
+      criteriaSet {
+        criterias {
+          criteria {
+            underlyingAsset {
+              ...tokenInfo
+            }
+          }
+        }
+      }
+    }
   }
 }
 

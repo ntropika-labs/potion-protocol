@@ -1,11 +1,10 @@
 //@unocss-include
-//
 import type { Args, Story } from "@storybook/vue3";
 import CardFooter from "../CardFooter/CardFooter.vue";
 import BaseCard from "./BaseCard.vue";
 
 export default {
-  title: "Potion UI/BaseCard",
+  title: "Potion UI/Cards/BaseCard",
   component: BaseCard,
   subcomponents: { CardFooter },
   argTypes: {
