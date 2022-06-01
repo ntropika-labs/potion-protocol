@@ -144,7 +144,7 @@ watch(criterias, loadEmergingCurves);
       />
     </BaseCard>
     <!-- End header  -->
-    <div class="mt-8 grid gap-5 xl:grid-cols-[3fr_1fr] gap-8">
+    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-[3fr_1fr]">
       <div class="flex flex-col gap-8">
         <PerformanceCard
           v-if="performanceChartDataReady"
