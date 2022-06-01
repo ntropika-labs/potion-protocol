@@ -1,13 +1,13 @@
 //@unocss-include
 //
 import type { Args, Story } from "@storybook/vue3";
+import { getTokenList } from "potion-tokenlist";
+
 import BaseCard from "../BaseCard/BaseCard.vue";
-import LabelValue from "../LabelValue/LabelValue.vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
+import LabelValue from "../LabelValue/LabelValue.vue";
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import PoolTemplateCard from "./PoolTemplateCard.vue";
-
-import { getTokenList } from "potion-tokenlist";
 
 const tokenList = getTokenList("ganache");
 const tokens = tokenList.map((token) => ({
@@ -19,7 +19,7 @@ const tokens = tokenList.map((token) => ({
 }));
 
 export default {
-  title: "Potion UI/PoolTemplateCard",
+  title: "Potion UI/Cards/PoolTemplateCard",
   component: PoolTemplateCard,
   subcomponents: { BaseCard, LabelValue, BaseTag, TokenIcon },
   argTypes: {
