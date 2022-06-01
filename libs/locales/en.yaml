@@ -1,3 +1,7 @@
+add-more-liquidity: Add More Liquidity
+add_liquidity: Add liquidity
+add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
+all: All
 approve: approve
 asset: Asset
 assets: Assets
@@ -13,18 +17,25 @@ create_pool_jumbo_title: Create custom pool from scratch
 create_potion: create potion
 create_potion_jumbo_subtitle: PROTECTION POWER IN YOUR HANDS!
 create_potion_jumbo_title: Create protective potions by selecting asset, strike and duration.
+creator: Creator
 curve_formula_title: Equation
 curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
+curve_parameters: Parameters defining the curve.
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer_description: Balance
 deposit_collateral_title: You're providing
 duration_description: How long the insurance you are selling will be valid for.
+edit: edit
 empty: Empty
+enable_or_disable: Enable/Disable
 hint_duration: The max duration that you are willing sell an Option
 hint_strike: The highest price that a buyer can exercise the Option
 insurance_description: You're selling insurance for
 largest_templates_subtitle: LARGEST
 largest_templates_title: Pools that have the most total liquidity.
+last_month: Last Month
+last_week: Last Week
+last_year: Last Year
 learn_more: Learn More
 loading: Loading..
 loading_error: Error loading data
@@ -34,7 +45,9 @@ most_cloned_templates_subtitle: MOST CLONED
 most_cloned_templates_title: Pools that have been cloned the most times
 my_pool: My Pool
 next: next
+no_options: No options to show
 pnl: Pnl
+profit_and_loss: Profit & Loss
 set_bonding_curve_params: Set the following parameters and define your curve.
 show_more: Show more
 strike_description: Choose the maximum insurance cover.
@@ -42,23 +55,18 @@ times: Times
 title: Home page
 top_gainers_templates_subtitle: TOP GAINERS
 top_gainers_templates_title: Top PnL since creation.
+total_liquidity: Total Liquidity
 total_size: Tot. Size
 user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
+utilization: Utilization
 view_pool_recipe: view pool recipe
 wrong_bonding_curve_params: parameters aren't valid
+
+
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
     label: Utilization
   y_axis:
     label: Premium
-
-creator: Creator
-add_liquidity: Add liquidity
-curve_parameters: Parameters defining the curve.
-add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
-no_options: No options to show
-total-liquidity: Total Liquidity
-add-more-liquidity: Add More Liquidity
-edit: edit

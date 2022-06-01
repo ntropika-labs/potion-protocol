@@ -6,7 +6,7 @@
         v-if="size"
         class="flex justify-between border-b-1 border-white/10 pb-3 mt-5"
       >
-        <p>{{ t("total-liquidity") }}</p>
+        <p>{{ t("total_liquidity") }}</p>
         <p class="font-semibold">{{ props.size }}</p>
       </div>
 
