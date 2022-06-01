@@ -46,7 +46,7 @@
               },
             }"
             class="uppercase"
-            >{{ t("create_pool") }}</router-link
+            >{{ t("check_pool") }}</router-link
           >
         </template>
       </PoolCard>
