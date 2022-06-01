@@ -1,5 +1,5 @@
 <template>
-  <BaseCard color="secondary-radial" class="w-full relative min-h-[330px]">
+  <BaseCard color="secondary-radial" class="w-full relative">
     <button
       class="cursor-pointer absolute w-full h-full flex items-center justify-center z-2"
       @click="$emit('click')"

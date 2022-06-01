@@ -21,7 +21,10 @@
   <InnerNav v-bind="innerNavProps" class="mt-5" />
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
     <router-link to="/custom-pool-creation">
-      <CardNewItem :label="t('create_pool')" />
+      <CardNewItem
+        class="min-h-[300px] md:min-h-auto"
+        :label="t('create_pool')"
+      />
     </router-link>
     <template v-if="userPools?.pools">
       <PoolCard
