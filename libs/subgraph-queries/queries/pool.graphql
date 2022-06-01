@@ -47,6 +47,28 @@ query getNumberOfPoolsFromUser($lp: Bytes, $ids: [ID!]) {
     id
   }
 }
+query getPoolsFromUser($lp: Bytes, $ids: [ID!]) {
+  pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
+    id
+    pnlPercentage
+    poolId
+    size
+    utilization
+    template {
+      criteriaSet {
+        criterias {
+          criteria {
+            underlyingAsset {
+              name
+              symbol
+              address
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 query getPoolById($id: ID!) {
   pool(id: $id) {
