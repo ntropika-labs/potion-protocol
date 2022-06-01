@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { JumboHeader, CardGrid, PoolTemplateCard, BaseButton } from "potion-ui";
+import InnerNav from "@/components/InnerNav.vue";
 import { SrcsetEnum } from "dapp-types";
 import { useI18n } from "vue-i18n";
 import { useTokenList } from "@/composables/useTokenList";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { get as _get } from "lodash-es";
 import { ref, watch, computed } from "vue";
 import {
@@ -12,7 +13,7 @@ import {
   useLoadMoreTemplatesBySizeQuery,
   useLoadMoreTemplatesByNumberQuery,
 } from "subgraph-queries/generated/urql";
-
+import { useOnboard } from "@onboard-composable";
 import type {
   TemplateCardDataFragment,
   TokenInfoFragment,
@@ -31,6 +32,7 @@ interface TemplateCriteria {
   };
 }
 
+const { connectedWallet } = useOnboard();
 // Base query params
 const params = {
   size: "0",
@@ -207,17 +209,38 @@ const categoryTexts = new Map<
 ]);
 
 // Navigation to other pages
+const route = useRoute();
 const router = useRouter();
 const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
 const onTemplateIdNavigation = (templateId: string) => {
   console.log("navigate to template id", templateId);
   router.push({ name: "pool-template", params: { templateId } });
 };
+
+const innerNavProps = computed(() => {
+  return {
+    currentRoute: route.name,
+    routes: [
+      {
+        name: "discover-templates",
+        label: "Discover Templates",
+        enabled: true,
+        params: {},
+      },
+      {
+        name: "liquidity-provider",
+        label: "My Pools",
+        enabled: connectedWallet.value?.accounts[0].address ? true : false,
+        params: {
+          lp: connectedWallet.value?.accounts[0].address ?? "not-valid",
+        },
+      },
+    ],
+  };
+});
 </script>
 
 <template>
-  <h1 class="text-white">Discover Pools</h1>
-  <router-link to="/custom-pool-creation">Custom Pool</router-link>
   <JumboHeader
     :title="t('create_pool_jumbo_title')"
     :subtitle="t('create_pool_jumbo_subtitle')"
@@ -232,7 +255,9 @@ const onTemplateIdNavigation = (templateId: string) => {
       }}</a>
     </div>
   </JumboHeader>
-  <div class="grid gap-8">
+  <!-- @ts-expect-error wrong -->
+  <InnerNav v-bind="innerNavProps" />
+  <div class="grid gap-8 mt-10">
     <CardGrid
       v-for="[key, { templates, canLoadMore }] in stateMap.entries()"
       :key="key"
