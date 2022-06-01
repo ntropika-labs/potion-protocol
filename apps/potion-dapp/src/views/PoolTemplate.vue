@@ -336,36 +336,37 @@ watch(criterias, loadEmergingCurves);
       </template>
     </BaseButton>
     <!-- Start header -->
-    <BaseCard
-      direction="column"
-      class="xl:flex-row justify-between px-8 py-6 mt-4"
-    >
-      <AssetTag :tokens="tokens" :title="t('assets')" size="xl" />
-      <LabelValue
-        size="xl"
-        :title="t('total_size')"
-        :value="totalLiquidity"
-        :symbol="collateral.symbol"
-      />
-      <LabelValue
-        size="xl"
-        :title="t('cloned')"
-        :value="timesCloned"
-        :symbol="t('times')"
-      />
-      <LabelValue
-        size="xl"
-        :title="t('pnl')"
-        :value="pnlPercentage"
-        value-type="pnl"
-        symbol="%"
-      />
-      <CreatorTag
-        :link="creator?.link"
-        :label="creator.label"
-        :icon="creator?.icon"
-        :with-label="true"
-      />
+    <BaseCard direction="column" class="px-8 py-6 mt-4">
+      <div
+        class="grid grid-cols-2 md:grid-cols-3 lg:flex gap-4 justify-between"
+      >
+        <AssetTag :tokens="tokens" :title="t('assets')" size="xl" />
+        <LabelValue
+          size="xl"
+          :title="t('total_size')"
+          :value="totalLiquidity"
+          :symbol="collateral.symbol"
+        />
+        <LabelValue
+          size="xl"
+          :title="t('cloned')"
+          :value="timesCloned"
+          :symbol="t('times')"
+        />
+        <LabelValue
+          size="xl"
+          :title="t('pnl')"
+          :value="pnlPercentage"
+          value-type="pnl"
+          symbol="%"
+        />
+        <CreatorTag
+          :link="creator?.link"
+          :label="creator.label"
+          :icon="creator?.icon"
+          :with-label="true"
+        />
+      </div>
     </BaseCard>
     <!-- End header  -->
     <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-[3fr_1fr]">
