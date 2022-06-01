@@ -59,3 +59,26 @@ export interface NotificationProps {
     url: string;
   };
 }
+
+export type PerformanceData = {
+  timestamp: number;
+  liquidity: number;
+  utilization: number;
+  pnl: number;
+};
+
+export type TimeMode = "week" | "month" | "year" | "all";
+export type NamedTimestamp =
+  | "now"
+  | "today"
+  | "endOfDay"
+  | "previousWeek"
+  | "previousMonth"
+  | "previousYear"
+  | "firstPoint";
+
+
+export type MenuItem = {
+  name: string;
+  label: string;
+};
