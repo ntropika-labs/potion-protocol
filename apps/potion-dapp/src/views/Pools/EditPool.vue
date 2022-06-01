@@ -2,7 +2,7 @@
   <PoolSetup
     v-model:liquidity.number="liquidity"
     :size="formattedSize"
-    :liquidity-title="t('add-more-liquidity')"
+    :liquidity-title="t('add_more_liquidity')"
     :liquidity-check="true"
     :user-collateral-balance="userCollateralBalance"
     :available-tokens="availableTokens"

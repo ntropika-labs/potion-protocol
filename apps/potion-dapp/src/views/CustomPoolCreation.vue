@@ -9,7 +9,7 @@
   >
     <PoolSetup
       v-model:liquidity.number="liquidity"
-      :liquidity-title="t('total-liquidity')"
+      :liquidity-title="t('total_liquidity')"
       :liquidity-check="liquidityCheck"
       :user-collateral-balance="userCollateralBalance"
       :available-tokens="availableTokens"

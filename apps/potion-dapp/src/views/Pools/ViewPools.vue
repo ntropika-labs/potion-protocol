@@ -1,5 +1,24 @@
 <template>
-  <InnerNav v-bind="innerNavProps" />
+  <BaseCard>
+    <div class="grid md:grid-cols-4 p-4">
+      <p class="text-xl uppercase">{{ t("my_summary") }}</p>
+      <LabelValue
+        :title="t('total_pools')"
+        :value="summaryData.totalPools.toString()"
+      />
+      <LabelValue
+        :title="t('average_pnl')"
+        :value="summaryData.averagePnl.toString()"
+        symbol="%"
+      />
+      <LabelValue
+        :title="t('total_liquidity')"
+        :value="summaryData.totalLiquidity.toString()"
+        symbol="USDC"
+      />
+    </div>
+  </BaseCard>
+  <InnerNav v-bind="innerNavProps" class="mt-5" />
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
     <router-link to="/custom-pool-creation">
       <CardNewItem :label="t('create_pool')" />
@@ -34,7 +53,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useGetPoolsFromUserQuery } from "subgraph-queries/generated/urql";
-import { PoolCard, CardNewItem } from "potion-ui";
+import { PoolCard, CardNewItem, BaseCard, LabelValue } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { computed, ref, watch } from "vue";
 import { useTokenList } from "@/composables/useTokenList";
@@ -84,6 +103,30 @@ const { data: userPools, executeQuery } = useGetPoolsFromUserQuery({
 
 watch(queryVariables, () => {
   executeQuery();
+});
+
+const summaryData = computed(() => {
+  const accPnl = userPools.value?.pools?.reduce(
+    (acc, pool) => acc + parseFloat(pool.pnlPercentage),
+    0
+  );
+  const averagePnl =
+    userPools.value && userPools.value.pools && accPnl
+      ? accPnl / userPools.value.pools.length
+      : 0;
+
+  const totalLiquidity =
+    userPools.value && userPools.value.pools
+      ? userPools.value?.pools?.reduce(
+          (acc, pool) => acc + parseFloat(pool.size),
+          0
+        )
+      : 0;
+  return {
+    totalPools: userPools.value?.pools?.length ?? 0,
+    averagePnl: averagePnl,
+    totalLiquidity: totalLiquidity,
+  };
 });
 
 const getTokens = (criterias: TemplateCriteria[]) =>
