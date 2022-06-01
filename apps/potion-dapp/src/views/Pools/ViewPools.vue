@@ -26,10 +26,10 @@
         :label="t('create_pool')"
       />
     </router-link>
-    <template v-if="userPools?.pools">
+    <template v-if="pools.length > 0">
       <PoolCard
-        v-for="(pool, index) in userPools?.pools"
-        :key="pool.id + index"
+        v-for="(pool, index) in pools"
+        :key="`${pool.id}${index}`"
         :active="true"
         :tokens="getTokens(pool.template?.criteriaSet?.criterias ?? [])"
         :size="pool.size"
@@ -58,16 +58,23 @@ import { useI18n } from "vue-i18n";
 import { useGetPoolsFromUserQuery } from "subgraph-queries/generated/urql";
 import { PoolCard, CardNewItem, BaseCard, LabelValue } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
-import { computed, ref, watch } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useTokenList } from "@/composables/useTokenList";
 import InnerNav from "@/components/InnerNav.vue";
 import { useRoute } from "vue-router";
-import type { TokenInfoFragment } from "subgraph-queries/generated/operations";
+import type {
+  TokenInfoFragment,
+  GetPoolsFromUserQuery,
+} from "subgraph-queries/generated/operations";
+
+type SubgraphPools = GetPoolsFromUserQuery["pools"];
+
 interface TemplateCriteria {
   criteria: {
     underlyingAsset: TokenInfoFragment;
   };
 }
+
 const { t } = useI18n();
 const route = useRoute();
 const innerNavProps = computed(() => {
@@ -91,42 +98,42 @@ const innerNavProps = computed(() => {
     ],
   };
 });
+
 const { connectedWallet } = useOnboard();
-const alreadyFetchedIds = ref<string[]>([""]);
+const pools = ref<SubgraphPools>([]);
+const alreadyFetchedIds = computed<string[]>(() =>
+  [""].concat(pools.value.map(({ id }) => id))
+);
+
 const queryVariables = computed(() => {
   return {
     lp: connectedWallet.value?.accounts[0].address ?? "",
     ids: alreadyFetchedIds.value,
   };
 });
-const { data: userPools, executeQuery } = useGetPoolsFromUserQuery({
+const { data, executeQuery } = useGetPoolsFromUserQuery({
   variables: queryVariables,
-  pause: !connectedWallet.value,
+  pause: true,
 });
 
-watch(queryVariables, () => {
-  executeQuery();
-});
+const loadMorePools = async () => {
+  await executeQuery();
+  pools.value = pools.value.concat(data.value?.pools ?? []);
+};
 
 const summaryData = computed(() => {
-  const accPnl = userPools.value?.pools?.reduce(
+  const accPnl = pools.value.reduce(
     (acc, pool) => acc + parseFloat(pool.pnlPercentage),
     0
   );
-  const averagePnl =
-    userPools.value && userPools.value.pools && accPnl
-      ? accPnl / userPools.value.pools.length
-      : 0;
+  const averagePnl = accPnl > 0 ? accPnl / pools.value.length : 0;
 
-  const totalLiquidity =
-    userPools.value && userPools.value.pools
-      ? userPools.value?.pools?.reduce(
-          (acc, pool) => acc + parseFloat(pool.size),
-          0
-        )
-      : 0;
+  const totalLiquidity = pools.value.reduce(
+    (acc, pool) => acc + parseFloat(pool.size),
+    0
+  );
   return {
-    totalPools: userPools.value?.pools?.length ?? 0,
+    totalPools: pools.value.length ?? 0,
     averagePnl: averagePnl,
     totalLiquidity: totalLiquidity,
   };
@@ -138,4 +145,6 @@ const getTokens = (criterias: TemplateCriteria[]) =>
     const { name, symbol, image } = useTokenList(address);
     return { address, name, symbol, image };
   });
+
+onMounted(loadMorePools);
 </script>
