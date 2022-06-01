@@ -137,6 +137,7 @@ const onLiquidityUpdate = (newValue: number) => {
 };
 
 const { connectedWallet } = useOnboard();
+const isNotConnected = computed(() => !connectedWallet.value);
 const walletAddress = computed(
   () => connectedWallet.value?.accounts[0].address ?? ""
 );
@@ -195,6 +196,7 @@ const userPoolsQueryVariables = computed(() => {
   };
 });
 const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  pause: isNotConnected,
   variables: userPoolsQueryVariables,
 });
 
@@ -388,7 +390,9 @@ watch(criterias, loadEmergingCurves);
               :inline="true"
               :label="t('add_liquidity')"
               :disabled="
-                depositAndCreateCurveAndCriteriaLoading || approveLoading
+                isNotConnected ||
+                depositAndCreateCurveAndCriteriaLoading ||
+                approveLoading
               "
               :loading="
                 depositAndCreateCurveAndCriteriaLoading || approveLoading
