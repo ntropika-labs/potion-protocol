@@ -25,6 +25,9 @@ import LabelValue from "./components/LabelValue/LabelValue.vue";
 import CreatorTag from "./components/CreatorTag/CreatorTag.vue";
 import AssetTag from "./components/AssetTag/AssetTag.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
+import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue";
+import DropdownMenu from "./components/DropdownMenu/DropdownMenu.vue";
+import InlineMenu from "./components/InlineMenu/InlineMenu.vue";
 
 export type {
   IconStrokeWeight,
@@ -64,4 +67,7 @@ export {
   CreatorTag,
   AssetTag,
   PutOptionsTable,
+  PerformanceChart,
+  DropdownMenu,
+  InlineMenu,
 };
