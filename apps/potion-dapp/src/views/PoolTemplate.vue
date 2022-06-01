@@ -127,7 +127,7 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
 });
 
 const userBalance = ref(1000),
-  liquidity = ref(0);
+  liquidity = ref(100);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
