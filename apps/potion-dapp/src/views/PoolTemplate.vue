@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useTokenList } from "@/composables/useTokenList";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useGetTemplateQuery } from "subgraph-queries/generated/urql";
@@ -13,9 +13,12 @@ import {
 } from "potion-ui";
 
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
+import { useTemplateSnapshots } from "@/composables/useSnapshots";
+import { useEthersProvider } from "@/composables/useEthersProvider";
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import OTokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
+import PerformanceCard from "@/components/PerformanceCard.vue";
 import { contractsAddresses } from "@/helpers/contracts";
 
 import type { Criteria, Token } from "dapp-types";
@@ -40,6 +43,14 @@ const { data } = useGetTemplateQuery({
     id: templateId,
   },
 });
+
+const { chartData, fetching: loadingSnapshots } =
+  useTemplateSnapshots(templateId);
+const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+
+const performanceChartDataReady = computed(
+  () => !loadingSnapshots.value && !loadingBlock.value
+);
 
 const template = computed(() => data?.value?.template);
 const curve = computed(() => template?.value?.curve);
@@ -90,6 +101,7 @@ const onAddLiquidity = () => {
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 
+onMounted(() => getBlock("latest"));
 watch(criterias, loadEmergingCurves);
 </script>
 <template>
@@ -134,15 +146,16 @@ watch(criterias, loadEmergingCurves);
     <!-- End header  -->
     <div class="mt-8 grid gap-5 xl:grid-cols-[3fr_1fr] gap-8">
       <div class="flex flex-col gap-8">
-        <!-- Start total liquidity chart -->
-        <BaseCard class="h-96 px-8 py-6" :full-height="false"></BaseCard>
-        <!-- End total liquidity chart -->
-        <!-- Start bonding cuve  -->
+        <PerformanceCard
+          v-if="performanceChartDataReady"
+          :performance-data="chartData"
+          :today-timestamp="blockTimestamp"
+        >
+        </PerformanceCard>
         <CurvesChart
           :bonding-curve-params="bondingCurveParams"
           :emerging-curves="emergingCurves"
         />
-        <!-- Start options table  -->
         <OTokenClaimTable
           class="row-auto"
           :price-map="{}"
@@ -150,7 +163,6 @@ watch(criterias, loadEmergingCurves);
           @claim-otoken="onReclaim"
         >
         </OTokenClaimTable>
-        <!-- End options table -->
       </div>
       <BaseCard class="self-start" :full-height="false">
         <AddLiquidityCard
