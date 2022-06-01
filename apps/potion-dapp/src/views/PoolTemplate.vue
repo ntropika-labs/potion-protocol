@@ -12,6 +12,7 @@ import {
   type BondingCurveParams,
   type Criteria,
   type NotificationProps,
+  type OptionToken,
   type Token,
 } from "dapp-types";
 import {
@@ -31,6 +32,8 @@ import { etherscanUrl } from "@/helpers";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import CurvesChart from "@/components/CurvesChart.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
+import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -60,6 +63,48 @@ const criterias = computed<Criteria[]>(
       maxDuration: parseInt(criteria.maxDurationInDays),
     })) ?? []
 );
+const assetsFlat = computed<OptionToken[]>(
+  () =>
+    criteriaSet?.value?.criterias?.map(({ criteria }) => {
+      const token = getTokenFromAddress(criteria.underlyingAsset.address);
+
+      return {
+        id: "",
+        isPut: false,
+        duration: criteria.maxDurationInDays,
+        strike: criteria.maxStrikePercent,
+        name: token.name,
+        symbol: token.symbol,
+        address: token.address,
+        decimals: token.decimals,
+        image: token.image,
+      };
+    }) ?? []
+);
+const tokenPricesMap = ref<Map<string, string>>(new Map());
+
+const fetchAssetsPrice = async () => {
+  const prices = new Map();
+  const addresses = criteriaSet?.value?.criterias?.map(
+    ({ criteria }) => criteria.underlyingAsset.address
+  );
+  if (!addresses) return prices;
+
+  try {
+    for (let i = 0; i < addresses.length; i++) {
+      const addr = addresses[i];
+      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
+
+      await fetchPrice();
+
+      prices.set(addr, formattedPrice.value);
+    }
+  } catch (error) {
+    console.error("Error while fetching token prices.");
+  }
+
+  return prices;
+};
 
 const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
 const totalLiquidity = computed(() => template?.value?.size ?? "0");
@@ -81,11 +126,8 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
   };
 });
 
-const unselectedTokens = ref([]),
-  userBalance = ref(1000),
+const userBalance = ref(1000),
   liquidity = ref(0);
-
-unselectedTokens.value = [];
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
@@ -118,6 +160,7 @@ const fetchUserData = async () => {
 
 onMounted(async () => {
   await fetchUserData();
+  await fetchAssetsPrice();
 });
 
 watch(walletAddress, async (newAWallet) => {
@@ -321,6 +364,11 @@ watch(criterias, loadEmergingCurves);
         />
         <!-- End bonding curve -->
         <!-- Start underlyings list  -->
+        <UnderlyingList
+          :assets-flat="assetsFlat"
+          :stable-coin-collateral="collateral.symbol"
+          :price-map="tokenPricesMap"
+        ></UnderlyingList>
         <!-- End underlyings list -->
       </div>
       <BaseCard class="self-start" :full-height="false">

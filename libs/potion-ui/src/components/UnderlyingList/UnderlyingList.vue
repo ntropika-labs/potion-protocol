@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { OptionToken, Token } from "dapp-types";
+import type { OptionToken } from "dapp-types";
 
 export default defineComponent({
   name: "UnderlyingList",
@@ -19,10 +19,8 @@ export interface Props {
 const props = defineProps<Props>();
 
 const getOptionPrice = (address: string) => {
-  return props.priceMap.get(address) as string;
+  return props.priceMap.get(address) || "";
 };
-
-const underlyingAsToken = (underlying: OptionToken) => underlying as Token;
 </script>
 <template>
   <div class="flex flex-col gap-4">
@@ -34,11 +32,7 @@ const underlyingAsToken = (underlying: OptionToken) => underlying as Token;
     >
       <div class="flex items-center">
         <div class="grid grid-flow-row grid-cols-2 md:grid-cols-4 gap-4 flex-1">
-          <AssetTag
-            size="md"
-            title="Underlying"
-            :tokens="underlyingAsToken(underlying)"
-          />
+          <AssetTag size="md" title="Underlying" :token="underlying" />
           <LabelValue
             title="Current Price"
             :value="getOptionPrice(underlying.address)"
