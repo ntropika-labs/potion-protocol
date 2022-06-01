@@ -404,5 +404,8 @@ watch(criterias, loadEmergingCurves);
       </BaseCard>
     </div>
   </div>
-  <NotificationDisplay :toasts="notifications"></NotificationDisplay>
+  <NotificationDisplay
+    :toasts="notifications"
+    @hide-toast="(index) => notifications.delete(index)"
+  ></NotificationDisplay>
 </template>

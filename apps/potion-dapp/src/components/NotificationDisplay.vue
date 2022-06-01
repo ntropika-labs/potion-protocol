@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { NotificationProps } from "dapp-types";
-import { defineComponent, ref, toRef, watch } from "vue";
+import { defineComponent, toRef, watch } from "vue";
 import { difference } from "lodash-es";
 
 export default defineComponent({
@@ -19,32 +19,28 @@ const props = withDefaults(defineProps<Props>(), {
   hideTimeout: process.env.NODE_ENV === "development" ? 20000 : 5000,
 });
 
-const incomingToasts = toRef(props, "toasts");
-const visibleToasts = ref(new Map());
+const emits = defineEmits<{
+  (e: "hide-toast", toastId: string): void;
+}>();
 
+const visibleToasts = toRef(props, "toasts");
+
+const removeToast = (hash: string) => emits("hide-toast", hash);
 const addToast = (index: string, info: NotificationProps) => {
-  visibleToasts.value.set(index, info);
-
   setTimeout(() => {
-    visibleToasts.value.delete(index);
+    removeToast(index);
   }, props.hideTimeout);
 };
-const removeToast = (hash: string) => visibleToasts.value.delete(hash);
 
 watch(
-  () => [...incomingToasts.value.keys()],
+  () => [...visibleToasts.value.keys()],
   (newMap, oldMap) => {
     console.log("triggering watch", newMap, oldMap, visibleToasts.value);
-    const diffKeys = difference(
-      newMap,
-      oldMap || [],
-      Array.from(visibleToasts.value.keys())
-    );
+    const diffKeys = difference(newMap, oldMap || []);
 
-    console.log("diff", diffKeys);
     for (let i = 0; i < diffKeys.length; i++) {
       const key = diffKeys[i];
-      const item = incomingToasts.value.get(key) as NotificationProps;
+      const item = visibleToasts.value.get(key) as NotificationProps;
 
       addToast(key, item);
     }
