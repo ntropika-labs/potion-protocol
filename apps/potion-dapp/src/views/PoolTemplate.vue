@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { useTokenList } from "@/composables/useTokenList";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { times as _times } from "lodash-es";
 import { HyperbolicCurve } from "contracts-math";
 import { useRoute, useRouter } from "vue-router";
-import { useGetTemplateQuery } from "subgraph-queries/generated/urql";
+import {
+  useGetTemplateQuery,
+  useGetNumberOfPoolsFromUserQuery,
+} from "subgraph-queries/generated/urql";
 import {
   SrcsetEnum,
   type BondingCurveParams,
@@ -20,7 +23,9 @@ import {
   CustomCurveParams,
   CreatorTag,
   AssetTag,
+  BaseToast,
 } from "potion-ui";
+import { useOnboard } from "@onboard-composable";
 import AddLiquidityCard from "../components/CustomPool/AddLiquidityCard.vue";
 import { contractsAddresses } from "@/helpers/contracts";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
@@ -56,6 +61,8 @@ const timesCloned = computed(() => template?.value?.numPools ?? "0");
 const pnlPercentage = computed(() => template?.value?.pnlPercentage ?? "0");
 const creator = computed(() => ({
   label: template?.value?.creator ?? "",
+  icon: undefined,
+  link: etherscanUrl.concat(`/${template?.value?.creator ?? ""}`),
 }));
 
 const curvePoints = 100;
@@ -96,12 +103,38 @@ const onLiquidityUpdate = (newValue: number) => {
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 
-const poolParamToNumber = computed(() => {
-  const poolId = route.params.templateId;
-  if (Array.isArray(poolId)) {
-    return null;
+const { connectedWallet } = useOnboard();
+const walletAddress = computed(
+  () => connectedWallet.value?.accounts[0].address ?? ""
+);
+
+const {
+  fetchUserCollateralBalance,
+  fetchUserCollateralAllowance,
+  userAllowance,
+  approveForPotionLiquidityPool,
+  approveLoading,
+  approveTx,
+  approveReceipt,
+} = useCollateralTokenContract();
+
+const fetchUserData = async () => {
+  if (connectedWallet.value) {
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
   }
-  return parseInt(poolId);
+};
+
+onMounted(async () => {
+  await fetchUserData();
+});
+
+watch(walletAddress, async (newAWallet) => {
+  if (newAWallet) {
+    await fetchUserData();
+  } else {
+    userAllowance.value = 0;
+  }
 });
 
 const amountNeededToApprove = computed(() => {
@@ -115,21 +148,29 @@ const amountNeededToApprove = computed(() => {
 });
 
 const {
-  fetchUserCollateralBalance,
-  fetchUserCollateralAllowance,
-  userAllowance,
-  approveForPotionLiquidityPool,
-  approveLoading,
-  approveTx,
-  approveReceipt,
-} = useCollateralTokenContract();
-
-const {
   depositAndCreateCurveAndCriteriaTx,
   depositAndCreateCurveAndCriteriaReceipt,
   depositAndCreateCurveAndCriteria,
   depositAndCreateCurveAndCriteriaLoading,
 } = usePotionLiquidityPoolContract();
+
+const userPoolsQueryVariables = computed(() => {
+  return {
+    lp: walletAddress.value,
+    ids: [""],
+  };
+});
+const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+  variables: userPoolsQueryVariables,
+});
+
+const userPoolsCount = computed(() => {
+  return userPools?.value?.pools?.length ?? 0;
+});
+
+const clonedPoolId = computed(() => {
+  return userPoolsCount.value + 1;
+});
 
 const handleCloneTemplate = async () => {
   if (amountNeededToApprove.value > 0) {
@@ -137,9 +178,15 @@ const handleCloneTemplate = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolParamToNumber.value) {
+    if (clonedPoolId.value) {
+      console.log(
+        clonedPoolId.value,
+        liquidity.value,
+        bondingCurveParams.value,
+        criterias.value
+      );
       await depositAndCreateCurveAndCriteria(
-        poolParamToNumber.value,
+        clonedPoolId.value,
         liquidity.value,
         bondingCurveParams.value,
         criterias.value
