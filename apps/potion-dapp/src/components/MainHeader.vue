@@ -10,7 +10,7 @@
         /> </router-link
     ></template>
     <template #routes>
-      <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex flex-col md:flex-row gap-6">
         <router-link
           v-for="r in routes"
           :key="r.name"

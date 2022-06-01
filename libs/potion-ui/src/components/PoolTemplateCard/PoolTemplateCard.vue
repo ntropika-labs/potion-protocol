@@ -120,7 +120,7 @@ const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
         <div class="flex w-full justify-center">
           <BaseButton
             test-card-navigate-button
-            class="self-center bg-white hover:shadow-2xl text-deep-black-900"
+            class="self-center bg-white hover:shadow-2xl text-deep-black-900 uppercase"
             size="sm"
             :label="t('view_pool_recipe')"
             palette="flat"

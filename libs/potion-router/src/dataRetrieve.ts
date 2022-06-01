@@ -23,37 +23,41 @@ const getPoolsFromCriteria = async (
     .toPromise();
   const data = result.data as GetPoolsFromCriteriaQuery;
   const poolsMap = new Map<string, IPoolUntyped>();
-  data?.criterias?.forEach((criteria) => {
-    criteria?.criteriaSets?.forEach((criteriaSet) => {
-      criteriaSet?.criteriaSet?.templates?.forEach((template) => {
-        template?.pools?.forEach((pool) => {
-          poolsMap.set(pool.id, {
-            id: pool.id,
-            isPut: criteria.isPut,
-            locked: pool.locked,
-            lp: pool.lp,
-            maxDurationInDays: criteria.maxDurationInDays,
-            maxStrikePercent: criteria.maxStrikePercent,
-            poolId: pool.poolId,
-            poolOrderSize: "0",
-            size: pool.size,
-            strikeAddress: criteria.strikeAsset.address,
-            unlocked: pool.unlocked,
-            utilization: pool.utilization,
-            curve: {
-              id: template?.curve?.id ?? "",
-              a: template?.curve?.a ?? "",
-              b: template?.curve?.b ?? "",
-              c: template?.curve?.c ?? "",
-              d: template?.curve?.d ?? "",
-              maxUtil: template?.curve?.maxUtil ?? "",
-            },
-            underlyingAddress,
+  data?.criterias?.forEach(
+    ({
+      criteriaSets,
+      maxDurationInDays,
+      maxStrikePercent,
+      strikeAsset,
+      isPut,
+    }) => {
+      criteriaSets?.forEach(({ criteriaSet }) => {
+        criteriaSet?.templates?.forEach(({ pools, curve }) => {
+          pools?.forEach((pool) => {
+            poolsMap.set(pool.id, {
+              ...pool,
+              isPut,
+              maxDurationInDays,
+              maxStrikePercent,
+              underlyingAddress,
+              poolOrderSize: "0",
+              strikeAddress: strikeAsset.address,
+              unlocked: pool.unlocked,
+              utilization: pool.utilization,
+              curve: {
+                id: curve?.id ?? "",
+                a: curve?.a ?? "",
+                b: curve?.b ?? "",
+                c: curve?.c ?? "",
+                d: curve?.d ?? "",
+                maxUtil: curve?.maxUtil ?? "",
+              },
+            });
           });
         });
       });
-    });
-  });
+    }
+  );
   const pools = Array.from(poolsMap.values());
   return {
     pools,

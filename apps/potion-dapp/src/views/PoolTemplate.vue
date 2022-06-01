@@ -2,8 +2,6 @@
 import { useTokenList } from "@/composables/useTokenList";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { times as _times } from "lodash-es";
-import { HyperbolicCurve } from "contracts-math";
 import { useRoute, useRouter } from "vue-router";
 import {
   useGetTemplateQuery,
@@ -14,13 +12,12 @@ import {
   type BondingCurveParams,
   type Criteria,
   type NotificationProps,
+  type Token,
 } from "dapp-types";
 import {
-  BaseButton,
-  BondingCurve,
   BaseCard,
+  BaseButton,
   LabelValue,
-  CustomCurveParams,
   CreatorTag,
   AssetTag,
   BaseToast,
@@ -31,6 +28,14 @@ import { contractsAddresses } from "@/helpers/contracts";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { etherscanUrl } from "@/helpers";
+
+import { useEmergingCurves } from "@/composables/useEmergingCurves";
+import CurvesChart from "@/components/CurvesChart.vue";
+
+const getTokenFromAddress = (address: string): Token => {
+  const { image, name, symbol } = useTokenList(address);
+  return { address, image, name, symbol };
+};
 
 const { t } = useI18n();
 const route = useRoute();
@@ -47,15 +52,16 @@ const { data } = useGetTemplateQuery({
 const template = computed(() => data?.value?.template);
 const curve = computed(() => template?.value?.curve);
 const criteriaSet = computed(() => template?.value?.criteriaSet);
-
-const tokens = computed(
+const criterias = computed<Criteria[]>(
   () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => {
-      const address = criteria.underlyingAsset.address;
-      const { image, name, symbol } = useTokenList(address);
-      return { address, image, name, symbol };
-    }) ?? []
+    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
+      token: getTokenFromAddress(criteria.underlyingAsset.address),
+      maxStrike: parseInt(criteria.maxStrikePercent),
+      maxDuration: parseInt(criteria.maxDurationInDays),
+    })) ?? []
 );
+
+const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
 const totalLiquidity = computed(() => template?.value?.size ?? "0");
 const timesCloned = computed(() => template?.value?.numPools ?? "0");
 const pnlPercentage = computed(() => template?.value?.pnlPercentage ?? "0");
@@ -65,43 +71,26 @@ const creator = computed(() => ({
   link: etherscanUrl.concat(`/${template?.value?.creator ?? ""}`),
 }));
 
-const curvePoints = 100;
-const getCurvePoints = (curve: HyperbolicCurve) =>
-  _times(curvePoints, (x: number) => curve.evalAt(x / curvePoints));
-
 const bondingCurveParams = computed<BondingCurveParams>(() => {
   return {
-    a: parseFloat(curve?.value?.a ?? "1"),
-    b: parseFloat(curve?.value?.b ?? "1"),
-    c: parseFloat(curve?.value?.c ?? "1"),
-    d: parseFloat(curve?.value?.d ?? "1"),
-    maxUtil: parseFloat(curve?.value?.maxUtil ?? "1"),
+    a: parseFloat(curve?.value?.a ?? "0"),
+    b: parseFloat(curve?.value?.b ?? "0"),
+    c: parseFloat(curve?.value?.c ?? "0"),
+    d: parseFloat(curve?.value?.d ?? "0"),
+    maxUtil: parseFloat(curve?.value?.maxUtil ?? "0"),
   };
 });
 
-const bondingCurve = computed(
-  () =>
-    new HyperbolicCurve(
-      bondingCurveParams.value.a,
-      bondingCurveParams.value.b,
-      bondingCurveParams.value.c,
-      bondingCurveParams.value.d,
-      bondingCurveParams.value.maxUtil
-    )
-);
-
 const unselectedTokens = ref([]),
-  emergingCurves = ref([]),
-  criterias = ref<Array<Criteria>>([]),
   userBalance = ref(1000),
   liquidity = ref(0);
+
+const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
 const onLiquidityUpdate = (newValue: number) => {
   console.log("ON LIQUIDITY UPDATE");
   liquidity.value = newValue;
 };
-
-const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 
 const { connectedWallet } = useOnboard();
 const walletAddress = computed(
@@ -278,6 +267,10 @@ watch(approveReceipt, (receipt) => {
     ]),
   });
 });
+
+const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
+
+watch(criterias, loadEmergingCurves);
 </script>
 <template>
   <div>
@@ -325,31 +318,10 @@ watch(approveReceipt, (receipt) => {
         <BaseCard class="h-96 px-8 py-6" :full-height="false"></BaseCard>
         <!-- End total liquidity chart -->
         <!-- Start bonding cuve  -->
-        <BaseCard direction="row" :full-height="false">
-          <div class="w-full grid gap-6 xl:grid-cols-[3fr_1fr]">
-            <BondingCurve
-              class="py-6 px-8"
-              :bonding-curve="getCurvePoints(bondingCurve)"
-              :emerging-curves="emergingCurves"
-              :unload-keys="unselectedTokens"
-            />
-            <BaseCard
-              class="items-center rounded-l-none !ring-none py-3 px-4 border-t-1 xl:( border-l-1 border-t-0 ) border-white/10"
-            >
-              <p>{{ t("curve_parameters") }}</p>
-              <CustomCurveParams
-                class="!h-auto"
-                :a="bondingCurve.a_number"
-                :b="bondingCurve.b_number"
-                :c="bondingCurve.c_number"
-                :d="bondingCurve.d_number"
-                :max-util="bondingCurve.max_util"
-                :readonly="true"
-                :disabled="false"
-              />
-            </BaseCard>
-          </div>
-        </BaseCard>
+        <CurvesChart
+          :bonding-curve-params="bondingCurveParams"
+          :emerging-curves="emergingCurves"
+        />
         <!-- End bonding curve -->
         <!-- Start underlyings list  -->
         <!-- End underlyings list -->
