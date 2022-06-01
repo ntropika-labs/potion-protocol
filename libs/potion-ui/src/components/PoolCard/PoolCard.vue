@@ -1,6 +1,6 @@
 <template>
   <BaseCard class="text-dwhite-400" :full-height="false">
-    <div class="grid grid-flow-row grid-cols-2 gap-6 py-3 px-4">
+    <div class="grid grid-flow-row grid-cols-2 gap-6 py-3 px-4 grow">
       <div class="col-span-2">
         <BaseTag class="uppercase">{{ activeLabel }}</BaseTag>
       </div>
