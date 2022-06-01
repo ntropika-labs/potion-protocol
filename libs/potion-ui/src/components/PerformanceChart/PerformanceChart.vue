@@ -11,6 +11,7 @@ import {
 } from "lodash-es";
 
 import dayjs from "dayjs";
+
 import type {
   ChartOptions,
   IChartApi,
@@ -20,33 +21,14 @@ import type {
   DeepPartial,
 } from "lightweight-charts";
 
-export type PerformanceData = {
-  timestamp: number;
-  liquidity: number;
-  utilization: number;
-  pnl: number;
-};
-
-export type TimeMode = "week" | "month" | "year" | "all";
-export type NamedTimestamp =
-  | "now"
-  | "today"
-  | "endOfDay"
-  | "previousWeek"
-  | "previousMonth"
-  | "previousYear"
-  | "firstPoint";
+import type { PerformanceData, TimeMode, NamedTimestamp } from "dapp-types";
 
 export interface Props {
   performanceData: PerformanceData[];
   todayTimestamp: number;
   mode: TimeMode;
   intraday: boolean;
-  visibility: {
-    liquidity: boolean;
-    utilization: boolean;
-    pnl: boolean;
-  };
+  visibility: Map<string, boolean>;
 }
 
 type AreaSeries = ISeriesApi<"Area">;
@@ -58,11 +40,12 @@ const props = withDefaults(defineProps<Props>(), {
   todayTimestamp: 0,
   mode: "week",
   intraday: false,
-  visibility: () => ({
-    liquidity: true,
-    utilization: true,
-    pnl: true,
-  }),
+  visibility: () =>
+    new Map<string, boolean>([
+      ["liquidity", true],
+      ["utilization", true],
+      ["pnl", true],
+    ]),
 });
 
 function _lastUniqBy<T>(arr: T[], key: string): T[] {
@@ -280,20 +263,21 @@ const setDatasets = (
 
 const setVisibility = () => {
   liquidity.value?.applyOptions({
-    visible: props.visibility.liquidity,
+    visible: props.visibility.get("liquidity"),
   });
   utilization.value?.applyOptions({
-    visible: props.visibility.utilization,
+    visible: props.visibility.get("utilization"),
   });
   pnl.value?.applyOptions({
-    visible: props.visibility.pnl,
+    visible: props.visibility.get("pnl"),
   });
   chart.value?.applyOptions({
     leftPriceScale: {
-      visible: props.visibility.liquidity,
+      visible: props.visibility.get("liquidity"),
     },
     rightPriceScale: {
-      visible: props.visibility.utilization || props.visibility.pnl,
+      visible:
+        props.visibility.get("utilization") || props.visibility.get("pnl"),
     },
   });
 };
@@ -352,5 +336,5 @@ watch(
 </script>
 
 <template>
-  <div ref="domChartRef" class="mt-4"></div>
+  <div ref="domChartRef"></div>
 </template>

@@ -1,10 +1,14 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 import { rpcUrl, webSocketUrl } from "@/helpers";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
+import type { Block } from "@ethersproject/providers";
 
 export function useEthersProvider() {
-  const block = ref();
+  const loading = ref(false);
+  const block = ref<Block>();
+  const blockTimestamp = computed<number>(() => block?.value?.timestamp ?? 0);
+
   const initProvider = (isWebSocket: boolean): JsonRpcProvider => {
     try {
       if (isWebSocket) {
@@ -21,14 +25,17 @@ export function useEthersProvider() {
   };
   const getBlock = async (blocktag: string) => {
     try {
+      loading.value = true;
       const provider = initProvider(false);
-      block.value = (await provider.getBlock(blocktag)).timestamp;
+      block.value = await provider.getBlock(blocktag);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
       } else {
         throw new Error("cannot get the block");
       }
+    } finally {
+      loading.value = false;
     }
   };
 
@@ -36,5 +43,7 @@ export function useEthersProvider() {
     initProvider,
     getBlock,
     block,
+    blockTimestamp,
+    loading,
   };
 }

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useTokenList } from "@/composables/useTokenList";
 import { computed, onMounted, ref, watch } from "vue";
+
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
@@ -28,12 +29,21 @@ import { contractsAddresses } from "@/helpers/contracts";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { etherscanUrl } from "@/helpers";
+import { contractsAddresses } from "@/helpers/contracts";
 
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
+import { useTemplateSnapshots } from "@/composables/useSnapshots";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+
 import CurvesChart from "@/components/CurvesChart.vue";
+import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
+import OTokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
+import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+
+import type { Criteria, Token } from "dapp-types";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -51,6 +61,14 @@ const { data } = useGetTemplateQuery({
     id: templateId,
   },
 });
+
+const { chartData, fetching: loadingSnapshots } =
+  useTemplateSnapshots(templateId);
+const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+
+const performanceChartDataReady = computed(
+  () => !loadingSnapshots.value && !loadingBlock.value
+);
 
 const template = computed(() => data?.value?.template);
 const curve = computed(() => template?.value?.curve);
@@ -312,6 +330,7 @@ watch(approveReceipt, (receipt) => {
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 
+onMounted(() => getBlock("latest"));
 watch(criterias, loadEmergingCurves);
 </script>
 <template>
@@ -354,24 +373,23 @@ watch(criterias, loadEmergingCurves);
       />
     </BaseCard>
     <!-- End header  -->
-    <div class="mt-8 grid gap-5 xl:grid-cols-[3fr_1fr] gap-8">
+    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-[3fr_1fr]">
       <div class="flex flex-col gap-8">
-        <!-- Start total liquidity chart -->
-        <BaseCard class="h-96 px-8 py-6" :full-height="false"></BaseCard>
-        <!-- End total liquidity chart -->
-        <!-- Start bonding cuve  -->
+        <PerformanceCard
+          v-if="performanceChartDataReady"
+          :performance-data="chartData"
+          :today-timestamp="blockTimestamp"
+        >
+        </PerformanceCard>
         <CurvesChart
           :bonding-curve-params="bondingCurveParams"
           :emerging-curves="emergingCurves"
         />
-        <!-- End bonding curve -->
-        <!-- Start underlyings list  -->
         <UnderlyingList
           :assets-flat="assetsFlat"
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
         ></UnderlyingList>
-        <!-- End underlyings list -->
       </div>
       <BaseCard class="self-start" :full-height="false">
         <AddLiquidityCard

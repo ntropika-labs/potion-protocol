@@ -1,0 +1,47 @@
+fragment snapshotData on PoolSnapshot {
+  id
+  size
+  actionAmount
+  actionType
+  locked
+  timestamp
+  poolId
+  pnlPercentage
+  pnlTotal
+  templatePnlPercentage
+  templateSize
+  templateUtilization
+  currentPool {
+    id
+  }
+}
+
+query getSnapshotsByTemplate(
+  $templateAddress: String
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 1000
+) {
+  poolSnapshots(
+    where: { template: $templateAddress, id_not_in: $alreadyLoadedIds }
+    first: $num
+    orderBy: timestamp
+    orderDirection: asc
+  ) {
+    ...snapshotData
+  }
+}
+
+query getSnapshotsByPool(
+  $currentPool: String
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 1000
+) {
+  poolSnapshots(
+    where: { currentPool: $currentPool, id_not_in: $alreadyLoadedIds }
+    first: $num
+    orderBy: timestamp
+    orderDirection: asc
+  ) {
+    ...snapshotData
+  }
+}

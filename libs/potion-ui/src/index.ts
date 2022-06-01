@@ -15,11 +15,14 @@ import CreatorTag from "./components/CreatorTag/CreatorTag.vue";
 import CriteriasRecap from "./components/CriteriasRecap/CriteriasRecap.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
 import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
+import DropdownMenu from "./components/DropdownMenu/DropdownMenu.vue";
+import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
+import InlineMenu from "./components/InlineMenu/InlineMenu.vue";
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import InputSlider from "./components/InputSlider/InputSlider.vue";
 import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
 import LabelValue from "./components/LabelValue/LabelValue.vue";
-import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
+import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue";
 import PoolCard from "./components/PoolCard/PoolCard.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
@@ -28,7 +31,6 @@ import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
-
 
 export type {
   IconStrokeWeight,
@@ -44,31 +46,34 @@ export type {
  * TODO: Add a folder per component and export the SFC as a named export in a TS file so we can globally import them.
  */
 export {
+  AssetTag,
   BaseButton,
   BaseCard,
   BaseTag,
   BaseToast,
   BondingCurve,
   CardFooter,
+  CardGrid,
+  CardNewItem,
   ConnectWalletButton,
+  CreatorTag,
   CriteriasRecap,
   CurveFormula,
   CustomCurveParams,
+  DropdownMenu,
   HeaderComponent,
+  InlineMenu,
   InputNumber,
+  InputSlider,
+  JumboHeader,
+  LabelValue,
+  PerformanceChart,
+  PoolCard,
+  PoolTemplateCard,
+  PutOptionsTable,
   TabNavigationComponent,
   TokenIcon,
   TokenSelection,
-  InputSlider,
   Tooltip,
-  JumboHeader,
-  CardGrid,
-  PoolTemplateCard,
-  LabelValue,
-  CreatorTag,
-  AssetTag,
-  PutOptionsTable,
-  PoolCard,
-  CardNewItem,
   UnderlyingList,
 };
