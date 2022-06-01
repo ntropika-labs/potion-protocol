@@ -4,13 +4,13 @@ import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import AboutView from "@/views/AboutView.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
-import DiscoverPools from "@/views/DiscoverPools.vue";
-import PoolTemplate from "@/views/PoolTemplate.vue";
+import DiscoverTemplates from "@/views/DiscoverTemplates.vue";
 import HomeView from "@/views/HomeView.vue";
 import NotFound from "@/views/NotFound.vue";
 import EditPool from "@/views/Pools/EditPool.vue";
 import ShowPool from "@/views/Pools/ShowPool.vue";
 import ViewPools from "@/views/Pools/ViewPools.vue";
+import PoolTemplate from "@/views/PoolTemplate.vue";
 import { useOnboard } from "@onboard-composable";
 
 const router = createRouter({
@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: "/templates",
       name: "discover-templates",
-      component: DiscoverPools,
+      component: DiscoverTemplates,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
