@@ -25,6 +25,7 @@ import LabelValue from "./components/LabelValue/LabelValue.vue";
 import CreatorTag from "./components/CreatorTag/CreatorTag.vue";
 import AssetTag from "./components/AssetTag/AssetTag.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
+import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
 
 export type {
   IconStrokeWeight,
@@ -64,4 +65,5 @@ export {
   CreatorTag,
   AssetTag,
   PutOptionsTable,
+  UnderlyingList,
 };
