@@ -70,10 +70,10 @@ user_balance: User collateral balance
 utilization: utilization
 view_pool_recipe: view pool recipe
 wrong_bonding_curve_params: parameters aren't valid
-
 bonding_curve:
   title: Premium Bonding Curve
   x_axis:
     label: Utilization
   y_axis:
     label: Premium
+status: Status

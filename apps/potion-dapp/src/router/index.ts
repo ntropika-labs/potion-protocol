@@ -55,7 +55,7 @@ const router = createRouter({
     },
     {
       path: "/liquidity-provider/:lp/:id/edit",
-      name: "/liquidity-provider-pool-edit",
+      name: "liquidity-provider-pool-edit",
       component: EditPool,
       meta: { requiredWallet: true, layout: BaseLayout },
     },
