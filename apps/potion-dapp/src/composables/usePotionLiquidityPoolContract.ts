@@ -120,6 +120,33 @@ export function usePotionLiquidityPoolContract() {
       }
     } else throw new Error("Connect your wallet first");
   };
+
+  //Withdraw Collateral
+  const withdrawTx = ref<ContractTransaction | null>(null);
+  const withdrawReceipt = ref<ContractReceipt | null>(null);
+  const withdrawLoading = ref(false);
+  const withdraw = async (poolId: number, amount: number) => {
+    if (connectedWallet.value) {
+      const contractSigner = initContractSigner();
+      try {
+        withdrawLoading.value = true;
+        withdrawTx.value = await contractSigner.withdraw(
+          poolId,
+          parseUnits(amount.toString(), 6)
+        );
+        withdrawReceipt.value = await withdrawTx.value.wait();
+        withdrawLoading.value = false;
+      } catch (error) {
+        withdrawLoading.value = false;
+        if (error instanceof Error) {
+          throw new Error(`Cannot withdraw: ${error.message}`);
+        } else {
+          throw new Error("Cannot withdraw");
+        }
+      }
+    } else throw new Error("Connect your wallet first");
+  };
+
   return {
     depositAndCreateCurveAndCriteriaTx,
     depositAndCreateCurveAndCriteriaReceipt,
@@ -127,6 +154,11 @@ export function usePotionLiquidityPoolContract() {
     depositAndCreateCurveAndCriteria,
     depositTx,
     depositReceipt,
+    depositLoading,
     deposit,
+    withdrawTx,
+    withdrawReceipt,
+    withdrawLoading,
+    withdraw,
   };
 }
