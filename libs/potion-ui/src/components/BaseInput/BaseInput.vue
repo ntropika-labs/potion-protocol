@@ -17,6 +17,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: 1,
   readonly: false,
   disabled: false,
   min: 1,
