@@ -1,16 +1,18 @@
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, unref } from "vue";
 import { useGetPoolRecordsByPoolQuery } from "subgraph-queries/generated/urql";
+import type { Ref } from "vue";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
 
-const usePoolOtokens = (pool: string) => {
+const usePoolOtokens = (pool: string | Ref<string>) => {
   const poolOtokens = ref<PoolRecordOtokenInfoFragment[]>([]);
+
   const alreadyLoadedIds = computed(() =>
     [""].concat(poolOtokens.value.map(({ id }) => id))
   );
 
   const { data, fetching } = useGetPoolRecordsByPoolQuery({
     variables: computed(() => ({
-      pool,
+      pool: unref(pool),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
   });

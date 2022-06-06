@@ -7,6 +7,9 @@ fragment PoolRecordOtokenInfo on PoolRecord {
   otoken {
     strikePrice
     expiry
+    underlyingAsset {
+      address
+    }
   }
   pool {
     poolId
@@ -16,7 +19,6 @@ fragment PoolRecordOtokenInfo on PoolRecord {
     otoken {
       id
       underlyingAsset {
-        id
         address
       }
     }

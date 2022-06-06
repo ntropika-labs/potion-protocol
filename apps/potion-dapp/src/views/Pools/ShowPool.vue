@@ -31,6 +31,7 @@ import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
 import LiquidityCard from "@/components/LiquidityCard.vue";
+import OtokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -57,7 +58,7 @@ const poolId = computed(() => {
     poolParamToNumber.value !== null &&
     Number.isInteger(poolParamToNumber.value)
   ) {
-    return lpId + hexValue(poolParamToNumber.value);
+    return `${lpId.toLowerCase()}${hexValue(poolParamToNumber.value)}`;
   } else {
     return null;
   }
@@ -449,6 +450,11 @@ const onEditClick = () =>
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
         ></UnderlyingList>
+        <OtokenClaimTable
+          :pool-id="poolId"
+          :underlyings="assetsFlat"
+          :price-map="tokenPricesMap"
+        ></OtokenClaimTable>
       </div>
       <div class="self-start">
         <LiquidityCard
