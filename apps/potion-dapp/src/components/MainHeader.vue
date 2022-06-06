@@ -1,14 +1,15 @@
 <template>
   <HeaderComponent :current-route-name="route?.name?.toString()">
-    <template #logo
-      ><router-link :to="{ name: 'home' }">
+    <template #logo>
+      <router-link :to="{ name: 'home' }">
         <img
           :src="logoImg"
           class="h-6 w-auto mb-auto mt-0"
           title="Potion"
           alt="Potion"
-        /> </router-link
-    ></template>
+        />
+      </router-link>
+    </template>
     <template #routes>
       <div class="flex flex-col md:flex-row gap-6">
         <router-link
@@ -34,7 +35,7 @@
   </HeaderComponent>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 
 export default defineComponent({
   name: "MainHeader",
@@ -67,20 +68,12 @@ const routes = [
   },
 ];
 const connectButtonLabel = computed(() => {
-  if (connectedWallet && connectedWallet.value?.accounts[0].ens) {
-    return connectedWallet.value.accounts[0].ens.name;
-  }
-  if (connectedWallet && connectedWallet.value?.accounts[0].address) {
-    return connectedWallet.value.accounts[0].address;
-  }
-  return t("connect_wallet");
+  const account = connectedWallet?.value?.accounts[0] ?? null;
+  return account?.ens?.name ?? account?.address ?? t("connect_wallet");
 });
 
-const { image, status } = useEnsAvatar(connectButtonLabel);
-const avatarLoadStatus = computed(() => {
-  if (status.value === "RUNNING") {
-    return true;
-  }
-  return false;
-});
+const { image, status, getAvatarImageUrl } = useEnsAvatar(connectButtonLabel);
+const avatarLoadStatus = computed(() => status.value === "RUNNING");
+
+onMounted(getAvatarImageUrl);
 </script>
