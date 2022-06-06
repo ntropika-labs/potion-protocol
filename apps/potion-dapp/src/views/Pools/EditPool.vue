@@ -112,7 +112,10 @@ const poolParamToNumber = computed(() => {
 });
 
 const poolId = computed(() => {
-  if (poolParamToNumber.value) {
+  if (
+    poolParamToNumber.value !== null &&
+    Number.isInteger(poolParamToNumber.value)
+  ) {
     return route.params.lp + hexValue(poolParamToNumber.value);
   } else {
     return null;

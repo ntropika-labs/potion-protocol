@@ -4,10 +4,7 @@ import { computed, onMounted, ref, watch } from "vue";
 
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import {
-  useGetNumberOfPoolsFromUserQuery,
-  useGetPoolByIdQuery,
-} from "subgraph-queries/generated/urql";
+import { useGetPoolByIdQuery } from "subgraph-queries/generated/urql";
 import {
   SrcsetEnum,
   type BondingCurveParams,
@@ -22,6 +19,7 @@ import { contractsAddresses } from "@/helpers/contracts";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { etherscanUrl } from "@/helpers";
+import { hexValue } from "@ethersproject/bytes";
 
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { usePoolSnapshots } from "@/composables/useSnapshots";
@@ -29,10 +27,10 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 
 import CurvesChart from "@/components/CurvesChart.vue";
-import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
+import LiquidityCard from "@/components/LiquidityCard.vue";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -44,16 +42,46 @@ const route = useRoute();
 const router = useRouter();
 const poolStatus = ref("Active");
 
-const poolId = route.params.id as string;
 const lpId = route.params.lp as string;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
-const { data } = useGetPoolByIdQuery({
-  variables: {
-    id: poolId,
-  },
+const poolParamToNumber = computed(() => {
+  const poolId = route.params.id;
+  if (Array.isArray(poolId)) {
+    return null;
+  }
+  return parseInt(poolId);
 });
 
-const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(poolId);
+const poolId = computed(() => {
+  if (
+    poolParamToNumber.value !== null &&
+    Number.isInteger(poolParamToNumber.value)
+  ) {
+    return lpId + hexValue(poolParamToNumber.value);
+  } else {
+    return null;
+  }
+});
+console.log(poolParamToNumber.value, poolId.value);
+const queryVariable = computed(() => {
+  return {
+    id: poolId.value,
+  };
+});
+
+const pauseQuery = computed(() => {
+  return !queryVariable.value.id;
+});
+const { data } = useGetPoolByIdQuery({
+  //@ts-expect-error queryVariable could have a null value - we pause the query if so
+  variables: queryVariable,
+  pause: pauseQuery,
+});
+console.log(pauseQuery.value, queryVariable.value, data.value);
+
+const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
+  poolId.value as string
+);
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const performanceChartDataReady = computed(
@@ -116,8 +144,18 @@ const fetchAssetsPrice = async () => {
 };
 
 const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
-const totalLiquidity = computed(() => pool?.value?.size ?? "0");
-const utilization = computed(() => pool?.value?.locked ?? "0");
+const totalLiquidity = computed(() =>
+  pool?.value?.size ? parseInt(pool.value.size) : 0
+);
+const totalUtilization = computed(() => parseInt(pool?.value?.locked || "0"));
+const unutilizedLiquidity = computed(
+  () => totalLiquidity.value - totalUtilization.value
+);
+const utilizationPercentage = computed(() => {
+  const totSize = parseInt(pool?.value?.size || "0");
+
+  return (totalUtilization.value * 100) / totSize;
+});
 const pnlPercentage = computed(() => pool?.value?.pnlPercentage ?? "0");
 
 const bondingCurveParams = computed<BondingCurveParams>(() => {
@@ -131,14 +169,15 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
 });
 
 const userBalance = ref(1000),
-  liquidity = ref(100);
+  modelDeposit = ref(100),
+  modelWithdraw = ref(100);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
-const onLiquidityUpdate = (newValue: number) => {
-  console.log("ON LIQUIDITY UPDATE");
-  liquidity.value = newValue;
-};
+// const onLiquidityUpdate = (newValue: number) => {
+//   console.log("ON LIQUIDITY UPDATE");
+//   modelDeposit.value = newValue;
+// };
 
 const { connectedWallet } = useOnboard();
 const isNotConnected = computed(() => !connectedWallet.value);
@@ -179,54 +218,46 @@ watch(walletAddress, async (newAWallet) => {
 
 const amountNeededToApprove = computed(() => {
   if (userAllowance.value === 0) {
-    return liquidity.value;
+    return modelDeposit.value;
   }
-  if (liquidity.value > userAllowance.value) {
-    return parseFloat((liquidity.value - userAllowance.value).toPrecision(6));
+  if (modelDeposit.value > userAllowance.value) {
+    return parseFloat(
+      (modelDeposit.value - userAllowance.value).toPrecision(6)
+    );
   }
   return 0;
 });
 
 const {
-  depositAndCreateCurveAndCriteriaTx,
-  depositAndCreateCurveAndCriteriaReceipt,
+  depositTx,
+  depositReceipt,
   deposit,
-  depositAndCreateCurveAndCriteriaLoading,
+  depositLoading,
+  withdrawTx,
+  withdrawReceipt,
+  withdraw,
+  withdrawLoading,
 } = usePotionLiquidityPoolContract();
 
-const userPoolsQueryVariables = computed(() => {
-  return {
-    lp: walletAddress.value,
-    ids: [""],
-  };
-});
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
-  pause: isNotConnected,
-  variables: userPoolsQueryVariables,
-});
-
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
-const clonedPoolId = computed(() => {
-  return userPoolsCount.value + 1;
-});
-
-const handleCloneTemplate = async () => {
+const handleDeposit = async () => {
   if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(liquidity.value, true);
+    await approveForPotionLiquidityPool(modelDeposit.value, true);
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (clonedPoolId.value) {
-      console.log(
-        clonedPoolId.value,
-        liquidity.value,
-        bondingCurveParams.value,
-        criterias.value
-      );
-      await deposit(clonedPoolId.value, liquidity.value);
+    if (poolParamToNumber.value) {
+      await deposit(poolParamToNumber.value, modelDeposit.value);
+    }
+
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
+
+const handleWithdraw = async () => {
+  if (unutilizedLiquidity.value < modelWithdraw.value) {
+    if (poolParamToNumber.value) {
+      await withdraw(poolParamToNumber.value, modelWithdraw.value);
     }
 
     await fetchUserCollateralBalance();
@@ -240,7 +271,7 @@ const handleCloneTemplate = async () => {
 
 const notifications = ref<Map<string, NotificationProps>>(new Map());
 
-watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
+watch(depositTx, (transaction) => {
   notifications.value.set(`${transaction?.hash}`, {
     title: "Creating pool",
     body: "Your transaction is pending",
@@ -256,11 +287,46 @@ watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
   });
 });
 
-watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
+watch(depositReceipt, (receipt) => {
   notifications.value.set(
     `${receipt?.blockNumber}${receipt?.transactionIndex}`,
     {
       title: "Pool created",
+      body: "Your transaction has completed",
+      cta: {
+        label: "View on Etherscan",
+        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
+      },
+      srcset: new Map([
+        [SrcsetEnum.AVIF, "/icons/atom.avif"],
+        [SrcsetEnum.WEBP, "/icons/atom.webp"],
+        [SrcsetEnum.PNG, "/icons/atom.png"],
+      ]),
+    }
+  );
+});
+
+watch(withdrawTx, (transaction) => {
+  notifications.value.set(`${transaction?.hash}`, {
+    title: "Approving USDC",
+    body: "Your transactions is pending",
+    cta: {
+      label: "View on Etherscan",
+      url: `${etherscanUrl}/tx/${transaction?.hash}`,
+    },
+    srcset: new Map([
+      [SrcsetEnum.AVIF, "/icons/atom.avif"],
+      [SrcsetEnum.WEBP, "/icons/atom.webp"],
+      [SrcsetEnum.PNG, "/icons/atom.png"],
+    ]),
+  });
+});
+
+watch(withdrawReceipt, (receipt) => {
+  notifications.value.set(
+    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
+    {
+      title: "USDC spending approved",
       body: "Your transaction has completed",
       cta: {
         label: "View on Etherscan",
@@ -310,14 +376,12 @@ watch(approveReceipt, (receipt) => {
   );
 });
 
-const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
-
 watch(criterias, loadEmergingCurves);
 
 const onEditClick = () =>
   router.push({
     name: "liquidity-provider-pool-edit",
-    params: { lp: lpId, id: poolId },
+    params: { lp: lpId, id: poolParamToNumber.value },
   });
 </script>
 <template>
@@ -342,13 +406,13 @@ const onEditClick = () =>
         <LabelValue
           size="xl"
           :title="t('total_size')"
-          :value="totalLiquidity"
+          :value="totalLiquidity.toString()"
           :symbol="collateral.symbol"
         />
         <LabelValue
           size="xl"
           :title="t('utilization')"
-          :value="utilization"
+          :value="utilizationPercentage.toString()"
           symbol="%"
         />
         <LabelValue
@@ -386,17 +450,35 @@ const onEditClick = () =>
           :price-map="tokenPricesMap"
         ></UnderlyingList>
       </div>
-      <BaseCard class="self-start" :full-height="false">
-        <AddLiquidityCard
-          :model-value="liquidity"
-          :title="t('add_liquidity')"
-          :hint="t('add_liquidity_hint')"
+      <div class="self-start">
+        <LiquidityCard
+          :total-liquidity="totalLiquidity"
           :user-balance="userBalance"
-          class="md:col-span-4 xl:col-span-3 self-start"
-          @update:model-value="onLiquidityUpdate"
-          @valid-input="emits('validInput', $event)"
+          :model-deposit="modelDeposit"
+          :model-withdraw="modelWithdraw"
+          :show-withdraw="true"
         >
-          <template #card-footer>
+          <template #deposit-footer>
+            <BaseButton
+              test-clone-button
+              palette="secondary"
+              :inline="true"
+              :label="t('withdraw')"
+              :disabled="
+                isNotConnected ||
+                depositLoading ||
+                approveLoading ||
+                withdrawLoading
+              "
+              :loading="depositLoading || withdrawLoading || approveLoading"
+              @click="handleDeposit"
+            >
+              <template #pre-icon>
+                <i class="i-ph-download-simple-bold mr-2"></i>
+              </template>
+            </BaseButton>
+          </template>
+          <template #withdraw-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
@@ -404,21 +486,20 @@ const onEditClick = () =>
               :label="t('add_liquidity')"
               :disabled="
                 isNotConnected ||
-                depositAndCreateCurveAndCriteriaLoading ||
-                approveLoading
+                depositLoading ||
+                approveLoading ||
+                withdrawLoading
               "
-              :loading="
-                depositAndCreateCurveAndCriteriaLoading || approveLoading
-              "
-              @click="handleCloneTemplate"
+              :loading="depositLoading || withdrawLoading || approveLoading"
+              @click="handleWithdraw"
             >
               <template #pre-icon>
                 <i class="i-ph-upload-simple-bold mr-2"></i>
               </template>
             </BaseButton>
           </template>
-        </AddLiquidityCard>
-      </BaseCard>
+        </LiquidityCard>
+      </div>
     </div>
   </div>
   <NotificationDisplay
