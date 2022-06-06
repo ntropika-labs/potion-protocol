@@ -9,7 +9,7 @@ asset: Asset
 assets: Assets
 average_pnl: average pnl
 back: back
-check_pool: check_pool
+check_pool: check pool
 cloned: Cloned
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
