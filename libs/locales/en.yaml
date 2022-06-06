@@ -77,3 +77,8 @@ bonding_curve:
   y_axis:
     label: Premium
 status: Status
+utilized_capital: Utilized Capital
+unutilized_capital: Unutilized capital
+withdraw_capital: Withdraw capital
+your_liquidity: Your liquidity
+withdraw: Withdraw
