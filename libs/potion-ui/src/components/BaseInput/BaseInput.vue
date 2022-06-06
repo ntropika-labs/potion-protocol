@@ -17,6 +17,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: 1,
   readonly: false,
   disabled: false,
   min: 1,
@@ -43,6 +44,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 <template>
   <input
+    class="bg-transparent text-dwhite-300"
     test-base-input
     type="number"
     :min="props.min"
