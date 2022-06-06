@@ -2,7 +2,7 @@ import path from "path";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 import comlink from "vite-plugin-comlink";
 
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
@@ -61,6 +61,11 @@ export default defineConfig({
     },
     commonjsOptions: {
       transformMixedEsModules: true,
+    },
+  },
+  server: {
+    fs: {
+      allow: [searchForWorkspaceRoot(process.cwd()), "../../libs"],
     },
   },
 });

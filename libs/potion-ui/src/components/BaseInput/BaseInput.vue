@@ -44,6 +44,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 <template>
   <input
+    class="bg-transparent text-dwhite-300"
     test-base-input
     type="number"
     :min="props.min"
