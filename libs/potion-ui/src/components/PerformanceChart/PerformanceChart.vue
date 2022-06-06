@@ -1,3 +1,9 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "PerformanceChart",
+});
+</script>
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted, nextTick, toRef } from "vue";
 import { useResizeObserver } from "@vueuse/core";

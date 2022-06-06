@@ -1,5 +1,9 @@
 <template>
-  <BaseCard class="leading-none" :full-height="false">
+  <BaseCard
+    class="leading-none"
+    :full-height="false"
+    test-add-liquidity-card-container
+  >
     <div class="py-3 px-4">
       <p class="text-sm uppercase">{{ props.title }}</p>
       <div

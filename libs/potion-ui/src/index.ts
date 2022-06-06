@@ -4,6 +4,7 @@ export * from "./helpers";
 import AssetTag from "./components/AssetTag/AssetTag.vue";
 import BaseButton from "./components/BaseButton/BaseButton.vue";
 import BaseCard from "./components/BaseCard/BaseCard.vue";
+import BaseInput from "./components/BaseInput/BaseInput.vue";
 import BaseTag from "./components/BaseTag/BaseTag.vue";
 import BaseToast from "./components/BaseToast/BaseToast.vue";
 import BondingCurve from "./components/BondingCurve/BondingCurve.vue";
@@ -16,12 +17,12 @@ import CriteriasRecap from "./components/CriteriasRecap/CriteriasRecap.vue";
 import CurveFormula from "./components/CurveFormula/CurveFormula.vue";
 import CustomCurveParams from "./components/CustomCurveParams/CustomCurveParams.vue";
 import DropdownMenu from "./components/DropdownMenu/DropdownMenu.vue";
-import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import InlineMenu from "./components/InlineMenu/InlineMenu.vue";
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import InputSlider from "./components/InputSlider/InputSlider.vue";
 import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
 import LabelValue from "./components/LabelValue/LabelValue.vue";
+import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
 import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue";
 import PoolCard from "./components/PoolCard/PoolCard.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
@@ -49,6 +50,7 @@ export {
   AssetTag,
   BaseButton,
   BaseCard,
+  BaseInput,
   BaseTag,
   BaseToast,
   BondingCurve,
