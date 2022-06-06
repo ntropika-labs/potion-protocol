@@ -5,7 +5,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup,
+  transformerVariantGroup
 } from "unocss";
 
 const preset = presetUno();
@@ -33,7 +33,16 @@ export default defineConfig({
     }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
-  safelist: "prose prose-sm m-auto text-left".split(" "),
+  safelist: [
+    "h-screen",
+    "p-5",
+    "font-sans",
+    "text-dwhite-300",
+    "bg-gradient-to-br",
+    "from-deepBlue",
+    "to-deepBlack-900",
+    "font-medium",
+  ],
   rules: [
     [
       "bg-radial-glass",

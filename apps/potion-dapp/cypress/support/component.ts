@@ -17,16 +17,16 @@
 // Import commands.js using ES2015 syntax:
 import "./commands";
 import "@unocss/reset/tailwind.css";
-import "uno.css";
 import "potion-unocss/src/variables.css";
 import "../../src/assets/base.css";
+import "uno.css";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 import { mount } from "cypress/vue";
-import { h } from "vue";
 import { createI18n } from "vue-i18n";
 
+//@ts-expect-error shims error
 import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
 import type { CyMountOptions } from "cypress/vue";
@@ -63,10 +63,10 @@ Cypress.Commands.add(
     options.global.plugins = options.global.plugins || [];
     options.global.plugins.push(i18n);
 
-    // return mount(comp, options);
-    return mount(() => {
-      return h(comp, options.props, []);
-    }, options);
+    return mount(comp, options);
+    // return mount(() => {
+    //   return h(comp, options.props, []);
+    // }, options);
   }
 );
 
