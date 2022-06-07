@@ -28,7 +28,8 @@
     </label>
 
     <CardFooter class="text-white">
-      <p>{{ footerText }}</p>
+      <slot v-if="$slots.footerDescription" name="footerDescription"></slot>
+      <p v-else>{{ footerText }}</p>
     </CardFooter>
   </BaseCard>
 </template>

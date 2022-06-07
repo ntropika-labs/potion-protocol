@@ -83,17 +83,7 @@ query getPoolById($id: ID!) {
     size
     locked
     pnlPercentage
-    snapshots {
-      id
-      size
-      locked
-      pnlPercentage
-      actionAmount
-      actionType
-      timestamp
-      utilization
-      liquidityAtTrades
-    }
+    utilization
     template {
       curve {
         id
