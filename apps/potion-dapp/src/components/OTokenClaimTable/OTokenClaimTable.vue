@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { uniqBy as _uniqBy } from "lodash-es";
 import { BaseCard, BaseButton } from "potion-ui";
 
 import { usePoolOtokens } from "@/composables/usePoolRecords";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 
 import PoolExpiredOTokens from "./PoolExpiredOTokens.vue";
 import PoolActiveOTokens from "./PoolActiveOTokens.vue";
@@ -17,17 +18,19 @@ enum tabs {
 }
 
 interface Props {
-  poolId: string;
-  underlyings?: Array<Token>;
+  lpId: string;
+  poolId: number;
+  poolIdentifier: string;
+  underlyings: Array<Token>;
   priceMap: Map<string, string>;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  underlyings: () => [],
-  priceMap: () => new Map<string, string>(),
-});
+const props = defineProps<Props>();
 const emits = defineEmits(["claim-otoken"]);
 
+const payoutMap = ref<Map<string, number>>(new Map());
+
+const { getOutstandingSettlements } = usePotionLiquidityPoolContract();
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const activeTab = ref(tabs.expired);
@@ -36,7 +39,7 @@ const totalSelectedUnderlyings = computed(
   () => Array.from(selectedUnderlyings.value.values()).filter(Boolean).length
 );
 
-const { poolOtokens } = usePoolOtokens(props.poolId);
+const { poolOtokens } = usePoolOtokens(props.poolIdentifier);
 const filteredOtokens = computed(() =>
   poolOtokens.value.filter(({ otoken }) =>
     selectedUnderlyings.value.get(otoken.underlyingAsset.address)
@@ -77,12 +80,23 @@ const toggleAllUnderlyings = () => {
   }
 };
 
+const getActiveTabColors = (active: boolean) =>
+  active ? "border-primary-500" : "border-white/10";
 const getButtonColor = (active: boolean) => (active ? "primary" : "filter");
 
-const claimOtoken = (oToken: any) => emits("claim-otoken", oToken);
+const claimOtoken = (index: number) => emits("claim-otoken", index);
+
 onMounted(() => {
   selectAllUnderlyings();
   getBlock("latest");
+});
+
+watch(expiredOtokens, async () => {
+  const otokens = expiredOtokens.value.map(({ otoken }) => otoken.id);
+  payoutMap.value = await getOutstandingSettlements(otokens, {
+    lp: props.lpId,
+    poolId: props.poolId,
+  });
 });
 </script>
 <template>
@@ -97,11 +111,7 @@ onMounted(() => {
       >
         <div
           class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
-          :class="
-            activeTab === tabs.expired
-              ? 'border-primary-500'
-              : 'border-white border-opacity-10'
-          "
+          :class="getActiveTabColors(activeTab === tabs.expired)"
           @click="activeTab = tabs.expired"
         >
           Expired Put Options
@@ -109,11 +119,7 @@ onMounted(() => {
 
         <div
           class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
-          :class="
-            activeTab === tabs.active
-              ? 'border-primary-500'
-              : 'border-white border-opacity-10'
-          "
+          :class="getActiveTabColors(activeTab === tabs.active)"
           @click="activeTab = tabs.active"
         >
           Active Put Options
@@ -131,7 +137,7 @@ onMounted(() => {
             size="xs"
             class="!capitalize"
             :palette="getButtonColor(totalSelectedUnderlyings === 0)"
-            @click="toggleAllUnderlyings()"
+            @click="toggleAllUnderlyings"
           />
           <BaseButton
             v-for="(underlying, index) in uniqueUnderlyings"
@@ -148,12 +154,12 @@ onMounted(() => {
           :otokens="activeOtokens"
           :underlyings="underlyings"
           :price-map="priceMap"
-          @claim-otoken="claimOtoken"
         ></PoolActiveOTokens>
         <PoolExpiredOTokens
           v-else
           :otokens="expiredOtokens"
           :underlyings="underlyings"
+          :payout-map="payoutMap"
           @claim-otoken="claimOtoken"
         >
         </PoolExpiredOTokens>

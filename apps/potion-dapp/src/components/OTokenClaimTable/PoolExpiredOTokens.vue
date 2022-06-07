@@ -1,65 +1,61 @@
 <script lang="ts" setup>
-import dayjs from "dayjs";
 import { computed } from "vue";
-import { PutOptionsTable } from "potion-ui";
+import {
+  PutOptionsTable,
+  getPnlColor,
+  dateFormatter,
+  pnlFormatter,
+  shortCurrencyFormatter,
+} from "potion-ui";
 import { useTokenList } from "@/composables/useTokenList";
 
+import type { OtokenDataset } from "dapp-types";
+import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
+
 interface Props {
-  otokens: any[];
+  otokens: PoolRecordOtokenInfoFragment[];
+  payoutMap: Map<string, number>;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  otokens: () => [],
-});
+const props = defineProps<Props>();
 
-const formatDate = (timestamp: number) => ({
-  value: dayjs.unix(timestamp).format("D MMM YY"),
-});
-
-const getPnlColor = (v: number) => (v === 0 ? "white" : "green");
-
-const formatPl = (value: number) => {
-  const prefix = value > 0 ? "+" : "";
-  return `${prefix}${value.toFixed(2)}%`;
-};
+const currency = "USDC";
 
 const calcProfitAndLoss = (
   premium: number,
   collateral: number,
   reclaimable: number
-) => {
-  const pl = (premium + collateral - reclaimable) / collateral;
-  return {
-    class: getPnlColor(pl),
-    value: formatPl(pl * 100),
-  };
-};
+) => (premium + collateral - reclaimable) / collateral;
 
-const dataset = computed(() =>
-  props.otokens.map((record) => {
-    const reclaimableAmount = record?.reclaimable ?? 0;
+const dataset = computed<OtokenDataset>(() => {
+  return props.otokens.map((item) => {
+    const address = item?.otoken.underlyingAsset.address ?? "";
+    const { symbol } = useTokenList(address);
+
+    const reclaimableAmount = props.payoutMap.get(address) ?? 0;
     const isReclaimable = reclaimableAmount > 0;
-    const token = useTokenList(record?.otoken.underlyingAsset.address);
+    const premium = parseFloat(item.premiumReceived);
+    const strikePrice = parseFloat(item.otoken.strikePrice);
+    const collateral = parseFloat(item.collateral);
+
+    const pnl = calcProfitAndLoss(premium, collateral, reclaimableAmount) * 100;
+
     return [
-      { value: token.symbol },
-      formatDate(record.otoken.expiry),
-      { value: record.premiumReceived },
-      { value: record.otoken.strikePrice },
-      { value: reclaimableAmount },
-      calcProfitAndLoss(
-        parseFloat(record.premiumReceived),
-        parseFloat(record.collateral),
-        reclaimableAmount
-      ),
+      { value: symbol },
+      { value: dateFormatter(item.otoken.expiry, true) },
+      { value: shortCurrencyFormatter(premium, currency) },
+      { value: shortCurrencyFormatter(strikePrice, currency) },
+      { value: shortCurrencyFormatter(reclaimableAmount, currency) },
+      { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
       {
         button: true,
         claimable: isReclaimable,
-        label: isReclaimable ? "Claim" : "Claimed",
+        value: isReclaimable ? "Claim" : "Claimed",
         color: isReclaimable ? "secondary-o" : "secondary",
       },
     ];
-  })
-);
+  });
+});
 
 const headings = [
   "Asset",
@@ -83,7 +79,7 @@ const onButtonPressed = (index: number, cellIndex: number) => {
 };
 </script>
 <template>
-  <div class="border border-white border-opacity-10 rounded-3xl">
+  <div class="border border-white/10 rounded-3xl">
     <PutOptionsTable
       :headings="headings"
       :dataset="dataset"
