@@ -157,6 +157,48 @@ export function usePotionLiquidityPoolContract() {
       }
     } else throw new Error("Connect your wallet first");
   };
+
+  // Outstanding settlement for a specific otoken and pool
+  const getOutstandingSettlement = async (
+    otoken: string,
+    pool: PoolIdentifierStruct
+  ) => {
+    try {
+      const provider = initContractProvider();
+      const refund = await provider.outstandingSettlement(otoken, pool);
+      return refund.toNumber();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Cannot get outstanding settlement: ${error.message}`);
+      } else {
+        throw new Error("Cannot get outstanding settlement");
+      }
+    }
+  };
+
+  const getOutstandingSettlements = async (
+    otokens: string[],
+    pool: PoolIdentifierStruct
+  ) => {
+    try {
+      const provider = initContractProvider();
+      const refundMap = new Map<string, number>();
+      await Promise.allSettled(
+        otokens.map(async (otoken) => {
+          const refund = await provider.outstandingSettlement(otoken, pool);
+          refundMap.set(otoken, refund.toNumber());
+        })
+      );
+      return refundMap;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Cannot get outstanding settlement: ${error.message}`);
+      } else {
+        throw new Error("Cannot get outstanding settlement");
+      }
+    }
+  };
+
   // Otoken settlement
   // settle
   const settleTx = ref<ContractTransaction | null>(null);
@@ -260,5 +302,8 @@ export function usePotionLiquidityPoolContract() {
     settleReceipt,
     settleLoading,
     settle,
+    // outstanding settlement
+    getOutstandingSettlement,
+    getOutstandingSettlements,
   };
 }
