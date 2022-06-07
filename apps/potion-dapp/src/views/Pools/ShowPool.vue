@@ -62,7 +62,7 @@ const poolId = computed(() => {
     return null;
   }
 });
-console.log(poolParamToNumber.value, poolId.value);
+
 const queryVariable = computed(() => {
   return {
     id: poolId.value,
@@ -72,12 +72,11 @@ const queryVariable = computed(() => {
 const pauseQuery = computed(() => {
   return !queryVariable.value.id;
 });
-const { data } = useGetPoolByIdQuery({
+const { data: poolData } = useGetPoolByIdQuery({
   //@ts-expect-error queryVariable could have a null value - we pause the query if so
   variables: queryVariable,
   pause: pauseQuery,
 });
-console.log(pauseQuery.value, queryVariable.value, data.value);
 
 const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
   poolId.value as string
@@ -88,13 +87,13 @@ const performanceChartDataReady = computed(
   () => !loadingSnapshots.value && !loadingBlock.value
 );
 
-const pool = computed(() => data?.value?.pool);
-const template = computed(() => data?.value?.pool?.template);
+const pool = computed(() => poolData?.value?.pool);
+const template = computed(() => pool.value?.template);
 const curve = computed(() => template?.value?.curve);
 const criteriaSet = computed(() => template?.value?.criteriaSet);
 const criterias = computed<Criteria[]>(
   () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
+    criteriaSet?.value?.criterias?.map(({ criteria }: any) => ({
       token: getTokenFromAddress(criteria.underlyingAsset.address),
       maxStrike: parseInt(criteria.maxStrikePercent),
       maxDuration: parseInt(criteria.maxDurationInDays),
@@ -102,7 +101,7 @@ const criterias = computed<Criteria[]>(
 );
 const assetsFlat = computed<OptionToken[]>(
   () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => {
+    criteriaSet?.value?.criterias?.map(({ criteria }: any) => {
       const token = getTokenFromAddress(criteria.underlyingAsset.address);
 
       return {
@@ -123,7 +122,7 @@ const tokenPricesMap = ref<Map<string, string>>(new Map());
 const fetchAssetsPrice = async () => {
   const prices = new Map();
   const addresses = criteriaSet?.value?.criterias?.map(
-    ({ criteria }) => criteria.underlyingAsset.address
+    ({ criteria }: any) => criteria.underlyingAsset.address
   );
   if (!addresses) return prices;
 
@@ -144,9 +143,7 @@ const fetchAssetsPrice = async () => {
 };
 
 const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
-const totalLiquidity = computed(() =>
-  pool?.value?.size ? parseInt(pool.value.size) : 0
-);
+const totalLiquidity = ref(0);
 const totalUtilization = computed(() => parseInt(pool?.value?.locked || "0"));
 const unutilizedLiquidity = computed(
   () => totalLiquidity.value - totalUtilization.value
@@ -168,8 +165,7 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
   };
 });
 
-const userBalance = ref(1000),
-  modelDeposit = ref(100),
+const modelDeposit = ref(100),
   modelWithdraw = ref(100);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
@@ -189,6 +185,7 @@ const {
   fetchUserCollateralBalance,
   fetchUserCollateralAllowance,
   userAllowance,
+  userCollateralBalance,
   approveForPotionLiquidityPool,
   approveLoading,
   approveTx,
@@ -204,7 +201,7 @@ const fetchUserData = async () => {
 
 onMounted(async () => {
   await fetchUserData();
-  await fetchAssetsPrice();
+  tokenPricesMap.value = await fetchAssetsPrice();
   await getBlock("latest");
 });
 
@@ -213,6 +210,7 @@ watch(walletAddress, async (newAWallet) => {
     await fetchUserData();
   } else {
     userAllowance.value = 0;
+    userCollateralBalance.value = 0;
   }
 });
 
@@ -245,8 +243,10 @@ const handleDeposit = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolParamToNumber.value) {
+    if (poolParamToNumber.value !== null) {
       await deposit(poolParamToNumber.value, modelDeposit.value);
+
+      totalLiquidity.value += modelDeposit.value;
     }
 
     await fetchUserCollateralBalance();
@@ -255,9 +255,11 @@ const handleDeposit = async () => {
 };
 
 const handleWithdraw = async () => {
-  if (unutilizedLiquidity.value < modelWithdraw.value) {
-    if (poolParamToNumber.value) {
+  if (unutilizedLiquidity.value > modelWithdraw.value) {
+    if (poolParamToNumber.value !== null) {
       await withdraw(poolParamToNumber.value, modelWithdraw.value);
+
+      totalLiquidity.value -= modelWithdraw.value;
     }
 
     await fetchUserCollateralBalance();
@@ -265,6 +267,23 @@ const handleWithdraw = async () => {
   }
 };
 
+const onEditClick = () =>
+  router.push({
+    name: "liquidity-provider-pool-edit",
+    params: { lp: lpId, id: poolParamToNumber.value },
+  });
+
+const addLiquidityButtonLabel = computed(() => {
+  if (amountNeededToApprove.value > 0) {
+    return `${t("approve")} USDC`;
+  }
+  return `${t("add_liquidity")}`;
+});
+
+watch(criterias, loadEmergingCurves);
+watch(poolData, (data) => {
+  totalLiquidity.value = parseInt(data?.pool?.size || "0");
+});
 /*
  * Toast notifications
  */
@@ -273,7 +292,7 @@ const notifications = ref<Map<string, NotificationProps>>(new Map());
 
 watch(depositTx, (transaction) => {
   notifications.value.set(`${transaction?.hash}`, {
-    title: "Creating pool",
+    title: "Depositing",
     body: "Your transaction is pending",
     cta: {
       label: "View on Etherscan",
@@ -291,7 +310,7 @@ watch(depositReceipt, (receipt) => {
   notifications.value.set(
     `${receipt?.blockNumber}${receipt?.transactionIndex}`,
     {
-      title: "Pool created",
+      title: "Deposit completed",
       body: "Your transaction has completed",
       cta: {
         label: "View on Etherscan",
@@ -308,7 +327,7 @@ watch(depositReceipt, (receipt) => {
 
 watch(withdrawTx, (transaction) => {
   notifications.value.set(`${transaction?.hash}`, {
-    title: "Approving USDC",
+    title: "Withdrawing",
     body: "Your transactions is pending",
     cta: {
       label: "View on Etherscan",
@@ -326,7 +345,7 @@ watch(withdrawReceipt, (receipt) => {
   notifications.value.set(
     `${receipt?.blockNumber}${receipt?.transactionIndex}`,
     {
-      title: "USDC spending approved",
+      title: "Withdraw completed",
       body: "Your transaction has completed",
       cta: {
         label: "View on Etherscan",
@@ -375,14 +394,6 @@ watch(approveReceipt, (receipt) => {
     }
   );
 });
-
-watch(criterias, loadEmergingCurves);
-
-const onEditClick = () =>
-  router.push({
-    name: "liquidity-provider-pool-edit",
-    params: { lp: lpId, id: poolParamToNumber.value },
-  });
 </script>
 <template>
   <div>
@@ -452,10 +463,11 @@ const onEditClick = () =>
       </div>
       <div class="self-start">
         <LiquidityCard
+          v-model:current-deposit.number="modelDeposit"
+          v-model:current-withdraw.number="modelWithdraw"
           :total-liquidity="totalLiquidity"
-          :user-balance="userBalance"
-          :model-deposit="modelDeposit"
-          :model-withdraw="modelWithdraw"
+          :user-balance="userCollateralBalance"
+          :utilized-liquidity="totalUtilization"
           :show-withdraw="true"
         >
           <template #deposit-footer>
@@ -471,7 +483,7 @@ const onEditClick = () =>
                 withdrawLoading
               "
               :loading="depositLoading || withdrawLoading || approveLoading"
-              @click="handleDeposit"
+              @click="handleWithdraw"
             >
               <template #pre-icon>
                 <i class="i-ph-download-simple-bold mr-2"></i>
@@ -483,7 +495,7 @@ const onEditClick = () =>
               test-clone-button
               palette="secondary"
               :inline="true"
-              :label="t('add_liquidity')"
+              :label="addLiquidityButtonLabel"
               :disabled="
                 isNotConnected ||
                 depositLoading ||
@@ -491,7 +503,7 @@ const onEditClick = () =>
                 withdrawLoading
               "
               :loading="depositLoading || withdrawLoading || approveLoading"
-              @click="handleWithdraw"
+              @click="handleDeposit"
             >
               <template #pre-icon>
                 <i class="i-ph-upload-simple-bold mr-2"></i>
