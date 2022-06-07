@@ -6,6 +6,7 @@
     :liquidity-check="true"
     :user-collateral-balance="userCollateralBalance"
     :available-tokens="availableTokens"
+    :criteria-map="criteriaMap"
     :token-prices="tokenPricesMap"
     :pool-id="poolParamToNumber ?? 0"
     :disable-navigation="false"
@@ -112,7 +113,7 @@ const poolParamToNumber = computed(() => {
 });
 
 const poolId = computed(() => {
-  if (poolParamToNumber.value) {
+  if (poolParamToNumber.value !== null && poolParamToNumber.value >= 0) {
     return route.params.lp + hexValue(poolParamToNumber.value);
   } else {
     return null;
@@ -184,6 +185,19 @@ const updateCriteria = (
   maxStrike: number,
   maxDuration: number
 ) => criteriaMap.value.set(tokenAddress, { maxStrike, maxDuration });
+
+watch(poolData, () => {
+  if (poolData.value && poolData.value.pool) {
+    const pool = poolData.value.pool;
+    pool.template?.criteriaSet?.criterias.forEach((criteria) => {
+      updateCriteria(
+        criteria.criteria.underlyingAsset.address,
+        parseInt(criteria.criteria.maxStrikePercent),
+        parseInt(criteria.criteria.maxDurationInDays)
+      );
+    });
+  }
+});
 
 const criterias = computed(() => {
   const existingCriteria: Array<Criteria> = [];

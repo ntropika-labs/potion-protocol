@@ -23,6 +23,8 @@
         <template v-for="token of selectedTokens" :key="token.address">
           <SelectedTokenWrapper
             :underlying="token"
+            :initial-max-strike="criteriaMap.get(token.address)?.maxStrike"
+            :initial-max-duration="criteriaMap.get(token.address)?.maxDuration"
             :price-info="props.tokenPrices.get(token.address)!"
             @remove-selection="handleTokenRemove"
             @update:strike-duration="
@@ -50,10 +52,15 @@ interface Props {
   userCollateralBalance: number;
   liquidityCheck: boolean;
   availableTokens: SelectableToken[];
+  criteriaMap?: Map<string, { maxStrike: number; maxDuration: number }>;
   tokenPrices: Map<string, ApiTokenPrice>;
   poolId: number;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  criteriaMap: () => new Map(),
+  size: "",
+});
+
 const emits = defineEmits<{
   (e: "update:liquidity", value: number): void;
   (
