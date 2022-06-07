@@ -6,9 +6,6 @@
     "module": "ESNext",
     "baseUrl": ".",
     "rootDir": "../../",
-    "vueCompilerOptions": {
-      "experimentalSuppressInvalidJsxElementTypeErrors": true
-    },
     "paths": {
       "@/*": ["./src/*"],
       "@onboard-composable": [
