@@ -232,7 +232,9 @@ const innerNavProps = computed(() => {
         label: "My Pools",
         enabled: connectedWallet.value?.accounts[0].address ? true : false,
         params: {
-          lp: connectedWallet.value?.accounts[0].address ?? "not-valid",
+          lp:
+            connectedWallet.value?.accounts[0].address.toLowerCase() ??
+            "not-valid",
         },
       },
     ],

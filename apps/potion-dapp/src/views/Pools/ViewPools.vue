@@ -41,7 +41,7 @@
             :to="{
               name: 'liquidity-provider-pool',
               params: {
-                lp: connectedWallet?.accounts[0].address,
+                lp: connectedWallet?.accounts[0].address.toLowerCase(),
                 id: pool.poolId,
               },
             }"
