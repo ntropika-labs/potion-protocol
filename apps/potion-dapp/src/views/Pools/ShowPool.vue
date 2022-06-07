@@ -45,7 +45,7 @@ const poolStatus = ref("Active");
 
 const lpId = route.params.lp as string;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
-const poolParamToNumber = computed(() => {
+const poolId = computed(() => {
   const poolId = route.params.id;
   if (Array.isArray(poolId)) {
     return null;
@@ -53,20 +53,16 @@ const poolParamToNumber = computed(() => {
   return parseInt(poolId);
 });
 
-const poolId = computed(() => {
-  if (
-    poolParamToNumber.value !== null &&
-    Number.isInteger(poolParamToNumber.value)
-  ) {
-    return `${lpId.toLowerCase()}${hexValue(poolParamToNumber.value)}`;
+const poolIdentifier = computed(() => {
+  if (poolId.value !== null && Number.isInteger(poolId.value)) {
+    return `${lpId.toLowerCase()}${hexValue(poolId.value)}`;
   } else {
     return null;
   }
 });
-console.log(poolParamToNumber.value, poolId.value);
 const queryVariable = computed(() => {
   return {
-    id: poolId.value,
+    id: poolIdentifier.value,
   };
 });
 
@@ -81,7 +77,7 @@ const { data } = useGetPoolByIdQuery({
 console.log(pauseQuery.value, queryVariable.value, data.value);
 
 const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
-  poolId.value as string
+  poolIdentifier.value as string
 );
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
@@ -246,8 +242,8 @@ const handleDeposit = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolParamToNumber.value) {
-      await deposit(poolParamToNumber.value, modelDeposit.value);
+    if (poolId.value) {
+      await deposit(poolId.value, modelDeposit.value);
     }
 
     await fetchUserCollateralBalance();
@@ -257,8 +253,8 @@ const handleDeposit = async () => {
 
 const handleWithdraw = async () => {
   if (unutilizedLiquidity.value < modelWithdraw.value) {
-    if (poolParamToNumber.value) {
-      await withdraw(poolParamToNumber.value, modelWithdraw.value);
+    if (poolId.value) {
+      await withdraw(poolId.value, modelWithdraw.value);
     }
 
     await fetchUserCollateralBalance();
@@ -382,7 +378,7 @@ watch(criterias, loadEmergingCurves);
 const onEditClick = () =>
   router.push({
     name: "liquidity-provider-pool-edit",
-    params: { lp: lpId, id: poolParamToNumber.value },
+    params: { lp: lpId, id: poolId.value },
   });
 </script>
 <template>
@@ -451,7 +447,9 @@ const onEditClick = () =>
           :price-map="tokenPricesMap"
         ></UnderlyingList>
         <OtokenClaimTable
+          :lp-id="lpId"
           :pool-id="poolId"
+          :pool-identifier="poolIdentifier"
           :underlyings="assetsFlat"
           :price-map="tokenPricesMap"
         ></OtokenClaimTable>
