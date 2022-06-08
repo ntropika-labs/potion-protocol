@@ -19,7 +19,7 @@ export default {
         type: "boolean",
       },
     },
-    iconSrcSet: {
+    iconSrcset: {
       name: "icon",
       control: "object",
     },
@@ -35,7 +35,7 @@ const defaultIconSet = new Map([
 const defArgs = {
   title: "Amazing SidebarLink",
   selected: false,
-  iconSrcSet: defaultIconSet,
+  iconSrcset: defaultIconSet,
 };
 const Template: Story = (args: Args) => ({
   components: { SidebarLink },
