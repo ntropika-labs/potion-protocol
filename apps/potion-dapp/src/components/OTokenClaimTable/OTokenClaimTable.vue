@@ -71,8 +71,11 @@ const getActiveTabColors = (active: boolean) =>
   active ? "border-primary-500" : "border-white/10";
 const getButtonColor = (active: boolean) => (active ? "primary" : "filter");
 
-const claimOtoken = (index: number) =>
-  emits("otoken-claimed", filteredActiveOtokens.value[index].id);
+const claimOtoken = (index: number) => {
+  if (filteredActiveOtokens.value[index]) {
+    emits("otoken-claimed", filteredActiveOtokens.value[index].otoken.id);
+  }
+};
 
 watch(uniqueUnderlyings, selectAllUnderlyings);
 </script>
