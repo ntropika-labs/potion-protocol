@@ -260,7 +260,7 @@ const handleWithdraw = async () => {
     if (poolId.value !== null) {
       await withdraw(poolId.value, modelWithdraw.value);
 
-      totalLiquidity.value -= modelDeposit.value;
+      totalLiquidity.value -= modelWithdraw.value;
     }
 
     await fetchUserCollateralBalance();
