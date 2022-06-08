@@ -35,7 +35,6 @@ const addToast = (index: string, info: NotificationProps) => {
 watch(
   () => [...visibleToasts.value.keys()],
   (newMap, oldMap) => {
-    console.log("triggering watch", newMap, oldMap, visibleToasts.value);
     const diffKeys = difference(newMap, oldMap || []);
 
     for (let i = 0; i < diffKeys.length; i++) {

@@ -146,14 +146,14 @@ export function usePotionLiquidityPoolContract() {
           parseUnits(amount.toString(), 6)
         );
         withdrawReceipt.value = await withdrawTx.value.wait();
-        withdrawLoading.value = false;
       } catch (error) {
-        withdrawLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot withdraw: ${error.message}`);
         } else {
           throw new Error("Cannot withdraw");
         }
+      } finally {
+        withdrawLoading.value = false;
       }
     } else throw new Error("Connect your wallet first");
   };

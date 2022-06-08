@@ -47,7 +47,7 @@ const useSnapshots = () => {
 const usePoolSnapshots = (currentPool: string) => {
   const { snapshots, alreadyLoadedIds, chartData } = useSnapshots();
 
-  const { data, fetching } = useGetSnapshotsByPoolQuery({
+  const { data, fetching, executeQuery } = useGetSnapshotsByPoolQuery({
     variables: computed(() => ({
       currentPool,
       alreadyLoadedIds: alreadyLoadedIds.value,
@@ -62,6 +62,7 @@ const usePoolSnapshots = (currentPool: string) => {
     chartData,
     snapshots,
     fetching,
+    executeQuery,
   };
 };
 
