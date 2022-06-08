@@ -1,0 +1,186 @@
+fragment PersonalPotionCard on BuyerRecord {
+  id
+  numberOfOTokens
+  premium
+  expiry
+  otoken {
+    id
+    decimals
+    strikePrice
+    expiry
+    underlyingAsset {
+      id
+      address
+      name
+      symbol
+    }
+  }
+}
+
+fragment PotionCard on OToken {
+  id
+  tokenAddress
+  underlyingAsset {
+    id
+    symbol
+    name
+    address
+  }
+  expiry
+  strikePrice
+}
+
+query getExpiredPotions(
+  $buyerAddress: Bytes!
+  $expiry: BigInt!
+  $alreadyLoadedIds: [ID!]
+  $first: Int = 8
+  $direction: OrderDirection = desc
+) {
+  buyerRecords(
+    orderBy: expiry
+    orderDirection: $direction
+    first: $first
+    where: {
+      buyer: $buyerAddress
+      expiry_lte: $expiry
+      id_not_in: $alreadyLoadedIds
+    }
+  ) {
+    ...PersonalPotionCard
+  }
+}
+
+query getActivePotions(
+  $buyerAddress: Bytes!
+  $expiry: BigInt!
+  $alreadyLoadedIds: [ID!]
+  $first: Int = 8
+  $direction: OrderDirection = desc
+) {
+  buyerRecords(
+    orderBy: expiry
+    orderDirection: $direction
+    first: $first
+    where: {
+      buyer: $buyerAddress
+      expiry_gt: $expiry
+      id_not_in: $alreadyLoadedIds
+    }
+  ) {
+    ...PersonalPotionCard
+  }
+}
+
+query getUserPotions(
+  $buyerAddress: Bytes!
+  $expiry: BigInt!
+  $alreadyLoadedIds: [ID!]
+  $first: Int = 8
+  $direction: OrderDirection = desc
+) {
+  expired: buyerRecords(
+    orderBy: expiry
+    orderDirection: $direction
+    first: $first
+    where: {
+      buyer: $buyerAddress
+      expiry_lte: $expiry
+      id_not_in: $alreadyLoadedIds
+    }
+  ) {
+    ...PersonalPotionCard
+  }
+  active: buyerRecords(
+    orderBy: expiry
+    orderDirection: $direction
+    first: $first
+    where: {
+      buyer: $buyerAddress
+      expiry_gt: $expiry
+      id_not_in: $alreadyLoadedIds
+    }
+  ) {
+    ...PersonalPotionCard
+  }
+}
+
+query getMostPurchasedPotions(
+  $expiry: BigInt!
+  $addresses: [String!]
+  $alreadyLoadedIds: [ID!]
+  $limit: Int = 8
+  $direction: OrderDirection = desc
+) {
+  otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gt: 1
+    }
+    orderBy: purchasesCount
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+
+query getMostCollateralizedPotions(
+  $expiry: BigInt!
+  $addresses: [String!]
+  $alreadyLoadedIds: [ID!]
+  $limit: Int = 8
+  $direction: OrderDirection = desc
+) {
+  otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gt: 1
+    }
+    orderBy: collateralized
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+
+query getMostPopularPotions(
+  $expiry: BigInt!
+  $addresses: [String!]
+  $alreadyLoadedIds: [ID!]
+  $limit: Int = 8
+  $direction: OrderDirection = desc
+) {
+  purchased: otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gt: 1
+    }
+    orderBy: purchasesCount
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+
+  collateralized: otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gt: 1
+    }
+    orderBy: collateralized
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
