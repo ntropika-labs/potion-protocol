@@ -42,6 +42,8 @@ export default defineConfig({
     "from-deepBlue",
     "to-deepBlack-900",
     "font-medium",
+    "text-accent-400",
+    "text-error-400",
   ],
   rules: [
     [
