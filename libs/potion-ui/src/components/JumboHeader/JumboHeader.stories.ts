@@ -2,6 +2,7 @@
 //
 import type { Args, Story } from "@storybook/vue3";
 import { SrcsetEnum } from "dapp-types";
+
 import PictureSet from "../PictureSet/PictureSet.vue";
 import JumboHeader from "./JumboHeader.vue";
 
@@ -54,5 +55,5 @@ Overview.args = {
   subtitle: "Jumbo subtitle",
   defaultSlot:
     "<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem obcaecati illum dolor maxime iure accusantium quas eos debitis, quae laborum, aperiam sunt repellendus consequuntur cupiditate voluptas earum iusto placeat quis.</div>",
-  srcsetMap: defaultIconSet,
+  iconSrcset: defaultIconSet,
 };
