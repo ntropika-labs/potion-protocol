@@ -70,6 +70,7 @@ export interface NotificationProps {
     label?: string;
     url: string;
   };
+  hideTimeout?: number;
 }
 
 export type PerformanceData = {
@@ -88,7 +89,6 @@ export type NamedTimestamp =
   | "previousMonth"
   | "previousYear"
   | "firstPoint";
-
 
 export type MenuItem = {
   name: string;
