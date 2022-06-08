@@ -1,20 +1,60 @@
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "PoolExpiredOTokens",
-});
-</script>
-
 <script lang="ts" setup>
-import { PutOptionsTable } from "potion-ui";
+import { computed } from "vue";
+import {
+  PutOptionsTable,
+  getPnlColor,
+  dateFormatter,
+  pnlFormatter,
+  shortCurrencyFormatter,
+} from "potion-ui";
+import { useTokenList } from "@/composables/useTokenList";
 
-export interface Props {
-  dataset: Array<Array<{ [key: string]: any }>>;
+import type { OtokenDataset } from "dapp-types";
+import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
+
+interface Props {
+  otokens: PoolRecordOtokenInfoFragment[];
+  payoutMap: Map<string, number>;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  dataset: () => [],
+const props = defineProps<Props>();
+
+const currency = "USDC";
+
+const calcProfitAndLoss = (
+  premium: number,
+  collateral: number,
+  reclaimable: number
+) => (premium + collateral - reclaimable) / collateral;
+
+const dataset = computed<OtokenDataset>(() => {
+  return props.otokens.map((item) => {
+    const address = item?.otoken.underlyingAsset.address ?? "";
+    const { symbol } = useTokenList(address);
+
+    const reclaimableAmount = props.payoutMap.get(address) ?? 0;
+    const isReclaimable = reclaimableAmount > 0;
+    const premium = parseFloat(item.premiumReceived);
+    const strikePrice = parseFloat(item.otoken.strikePrice);
+    const collateral = parseFloat(item.collateral);
+
+    const pnl = calcProfitAndLoss(premium, collateral, reclaimableAmount) * 100;
+
+    return [
+      { value: symbol },
+      { value: dateFormatter(item.otoken.expiry, true) },
+      { value: shortCurrencyFormatter(premium, currency) },
+      { value: shortCurrencyFormatter(strikePrice, currency) },
+      { value: shortCurrencyFormatter(reclaimableAmount, currency) },
+      { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+      {
+        button: true,
+        claimable: isReclaimable,
+        value: isReclaimable ? "Claim" : "Claimed",
+        color: isReclaimable ? "secondary-o" : "secondary",
+      },
+    ];
+  });
 });
 
 const headings = [
@@ -32,14 +72,14 @@ const emits = defineEmits<{
 }>();
 
 const onButtonPressed = (index: number, cellIndex: number) => {
-  const row = props.dataset[index];
+  const row = dataset.value[index];
   if (row[cellIndex].claimable) {
     emits("claim-otoken", index);
   }
 };
 </script>
 <template>
-  <div class="border border-white border-opacity-10 rounded-3xl">
+  <div class="border border-white/10 rounded-3xl">
     <PutOptionsTable
       :headings="headings"
       :dataset="dataset"

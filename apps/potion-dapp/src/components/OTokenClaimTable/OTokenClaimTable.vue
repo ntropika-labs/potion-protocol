@@ -1,97 +1,103 @@
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
-import type { Token } from "dapp-types";
-export default defineComponent({
-  name: "OTokenClaimTable",
-});
-</script>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { uniqBy as _uniqBy } from "lodash-es";
 import { BaseCard, BaseButton } from "potion-ui";
 
-export interface Props {
-  underlyings?: Array<any>;
-  priceMap?: { [key: string]: any };
+import { usePoolOtokens } from "@/composables/usePoolRecords";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+
+import PoolExpiredOTokens from "./PoolExpiredOTokens.vue";
+import PoolActiveOTokens from "./PoolActiveOTokens.vue";
+
+import type { Token } from "dapp-types";
+
+enum tabs {
+  active = "active",
+  expired = "expired",
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  underlyings: () => [],
-  priceMap: () => {
-    return {};
-  },
-});
+interface Props {
+  lpId: string;
+  poolId: number;
+  poolIdentifier: string;
+  underlyings: Array<Token>;
+  priceMap: Map<string, string>;
+}
+
+const props = defineProps<Props>();
 const emits = defineEmits(["claim-otoken"]);
 
-const activeTab = ref("PoolExpiredOTokens");
-const underlyingsAddressSelected = ref<Array<string>>([]);
+const payoutMap = ref<Map<string, number>>(new Map());
 
-const oTokens = computed(() => {
-  const result: { active: Array<any>; expired: Array<any> } = {
-    active: [],
-    expired: [],
-  };
-  selectedUnderlyings.value.forEach((underlying: any) => {
-    underlying.activeOTokens.forEach((otoken: Token) =>
-      result.active.push({
-        ...otoken,
-        symbol: underlying.symbol,
-        currentPrice: props.priceMap[underlying.address],
-      })
-    );
-    underlying.expiredOTokens.forEach((otoken: Token) =>
-      result.expired.push({ ...otoken, symbol: underlying.symbol })
-    );
-  });
-  return result;
-});
+const { getOutstandingSettlements } = usePotionLiquidityPoolContract();
+const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+
+const activeTab = ref(tabs.expired);
+const selectedUnderlyings = ref<Map<string, boolean>>(new Map());
+const totalSelectedUnderlyings = computed(
+  () => Array.from(selectedUnderlyings.value.values()).filter(Boolean).length
+);
+
+const { poolOtokens } = usePoolOtokens(props.poolIdentifier);
+const filteredOtokens = computed(() =>
+  poolOtokens.value.filter(({ otoken }) =>
+    selectedUnderlyings.value.get(otoken.underlyingAsset.address)
+  )
+);
+const activeOtokens = computed(() =>
+  filteredOtokens.value.filter(
+    ({ otoken }) =>
+      !loadingBlock.value && parseInt(otoken.expiry) > blockTimestamp.value
+  )
+);
+const expiredOtokens = computed(() =>
+  filteredOtokens.value.filter(
+    ({ otoken }) =>
+      !loadingBlock.value && parseInt(otoken.expiry) <= blockTimestamp.value
+  )
+);
+
 const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
-const selectedUnderlyings = computed(() => {
-  return uniqueUnderlyings.value.filter((und: Token) =>
-    underlyingsAddressSelected.value.includes(und.address)
-  );
-});
-const dynamicProps = computed(() => {
-  if (activeTab.value === "PoolActiveOTokens") {
-    return { oTokens: oTokens.value.active };
-  } else {
-    return { oTokens: oTokens.value.expired };
-  }
-});
 
-const selectAllUnderlyings = () => {
-  underlyingsAddressSelected.value = uniqueUnderlyings.value.map(
-    (x) => x.address
-  );
-};
-const deselectAllUnderlyings = () => {
-  underlyingsAddressSelected.value = new Array<string>();
-};
+const setUnderlying = (key: string, value: boolean) =>
+  selectedUnderlyings.value.set(key, value);
+const toggleUnderlying = (key: string) =>
+  setUnderlying(key, !selectedUnderlyings.value.get(key));
+const isActive = (key: string) => selectedUnderlyings.value.get(key);
+
+// bulk operations
+const setAllUnderlyings = (v: boolean) =>
+  uniqueUnderlyings.value.forEach(({ address }) => setUnderlying(address, v));
+const selectAllUnderlyings = () => setAllUnderlyings(true);
+const deselectAllUnderlyings = () => setAllUnderlyings(false);
+
 const toggleAllUnderlyings = () => {
-  if (underlyingsAddressSelected.value.length === 0) {
+  if (totalSelectedUnderlyings.value === 0) {
     selectAllUnderlyings();
   } else {
     deselectAllUnderlyings();
   }
 };
-const toggleUnderlying = (address: string) => {
-  if (!underlyingsAddressSelected.value.includes(address)) {
-    underlyingsAddressSelected.value.push(address);
-  } else {
-    underlyingsAddressSelected.value.splice(
-      underlyingsAddressSelected.value.indexOf(address),
-      1
-    );
-  }
-};
-const underlyingIsActive = (address: string) => {
-  return underlyingsAddressSelected.value.includes(address);
-};
 
-const claimOtoken = (oToken: any) => {
-  emits("claim-otoken", oToken);
-};
-onMounted(() => selectAllUnderlyings());
+const getActiveTabColors = (active: boolean) =>
+  active ? "border-primary-500" : "border-white/10";
+const getButtonColor = (active: boolean) => (active ? "primary" : "filter");
+
+const claimOtoken = (index: number) => emits("claim-otoken", index);
+
+onMounted(() => {
+  selectAllUnderlyings();
+  getBlock("latest");
+});
+
+watch(expiredOtokens, async () => {
+  const otokens = expiredOtokens.value.map(({ otoken }) => otoken.id);
+  payoutMap.value = await getOutstandingSettlements(otokens, {
+    lp: props.lpId,
+    poolId: props.poolId,
+  });
+});
 </script>
 <template>
   <BaseCard
@@ -104,25 +110,17 @@ onMounted(() => selectAllUnderlyings());
         class="flex flex-wrap radial-bg-glass font-poppins font-semibold text-xs rounded-t-2xl"
       >
         <div
-          class="cursor-pointer w-1/2 py-4 text-center border-b-2 uppercase transition"
-          :class="
-            activeTab === 'PoolExpiredOTokens'
-              ? 'border-primary-500'
-              : 'border-white border-opacity-10'
-          "
-          @click="activeTab = 'PoolExpiredOTokens'"
+          class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
+          :class="getActiveTabColors(activeTab === tabs.expired)"
+          @click="activeTab = tabs.expired"
         >
           Expired Put Options
         </div>
 
         <div
           class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
-          :class="
-            activeTab === 'PoolActiveOTokens'
-              ? 'border-primary-500'
-              : 'border-white border-opacity-10'
-          "
-          @click="activeTab = 'PoolActiveOTokens'"
+          :class="getActiveTabColors(activeTab === tabs.active)"
+          @click="activeTab = tabs.active"
         >
           Active Put Options
         </div>
@@ -132,33 +130,39 @@ onMounted(() => selectAllUnderlyings());
           Underlying Pool Assets
         </div>
 
-        <div class="flex space-x-3 mt-4">
+        <div class="flex gap-3 mt-4 mb-6">
           <BaseButton
             v-if="uniqueUnderlyings.length > 1"
             label="All"
             size="xs"
             class="!capitalize"
-            :color="
-              underlyingsAddressSelected.length === 0 ? 'filter' : 'primary'
-            "
-            @click="toggleAllUnderlyings()"
+            :palette="getButtonColor(totalSelectedUnderlyings === 0)"
+            @click="toggleAllUnderlyings"
           />
           <BaseButton
             v-for="(underlying, index) in uniqueUnderlyings"
             :key="`underlying-filter-${index}`"
-            :color="underlyingIsActive(underlying.address)"
+            :palette="getButtonColor(isActive(underlying.address))"
             :label="underlying.symbol"
             size="xs"
             class="!capitalize"
             @click="toggleUnderlying(underlying.address)"
           />
         </div>
-        <component
-          :is="activeTab"
-          class="mt-6"
-          v-bind="dynamicProps"
+        <PoolActiveOTokens
+          v-if="activeTab === tabs.active"
+          :otokens="activeOtokens"
+          :underlyings="underlyings"
+          :price-map="priceMap"
+        ></PoolActiveOTokens>
+        <PoolExpiredOTokens
+          v-else
+          :otokens="expiredOtokens"
+          :underlyings="underlyings"
+          :payout-map="payoutMap"
           @claim-otoken="claimOtoken"
-        />
+        >
+        </PoolExpiredOTokens>
       </div>
     </div>
   </BaseCard>

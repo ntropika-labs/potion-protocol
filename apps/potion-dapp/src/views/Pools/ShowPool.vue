@@ -31,6 +31,7 @@ import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
 import LiquidityCard from "@/components/LiquidityCard.vue";
+import OtokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -44,7 +45,7 @@ const poolStatus = ref("Active");
 
 const lpId = route.params.lp as string;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
-const poolParamToNumber = computed(() => {
+const poolId = computed(() => {
   const poolId = route.params.id;
   if (Array.isArray(poolId)) {
     return null;
@@ -52,20 +53,16 @@ const poolParamToNumber = computed(() => {
   return parseInt(poolId);
 });
 
-const poolId = computed(() => {
-  if (
-    poolParamToNumber.value !== null &&
-    Number.isInteger(poolParamToNumber.value)
-  ) {
-    return lpId + hexValue(poolParamToNumber.value);
+const poolIdentifier = computed(() => {
+  if (poolId.value !== null && Number.isInteger(poolId.value)) {
+    return `${lpId.toLowerCase()}${hexValue(poolId.value)}`;
   } else {
     return null;
   }
 });
-
 const queryVariable = computed(() => {
   return {
-    id: poolId.value,
+    id: poolIdentifier.value,
   };
 });
 
@@ -79,7 +76,7 @@ const { data: poolData } = useGetPoolByIdQuery({
 });
 
 const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
-  poolId.value as string
+  poolIdentifier.value as string
 );
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
@@ -93,7 +90,7 @@ const curve = computed(() => template?.value?.curve);
 const criteriaSet = computed(() => template?.value?.criteriaSet);
 const criterias = computed<Criteria[]>(
   () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }: any) => ({
+    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
       token: getTokenFromAddress(criteria.underlyingAsset.address),
       maxStrike: parseInt(criteria.maxStrikePercent),
       maxDuration: parseInt(criteria.maxDurationInDays),
@@ -101,7 +98,7 @@ const criterias = computed<Criteria[]>(
 );
 const assetsFlat = computed<OptionToken[]>(
   () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }: any) => {
+    criteriaSet?.value?.criterias?.map(({ criteria }) => {
       const token = getTokenFromAddress(criteria.underlyingAsset.address);
 
       return {
@@ -122,7 +119,7 @@ const tokenPricesMap = ref<Map<string, string>>(new Map());
 const fetchAssetsPrice = async () => {
   const prices = new Map();
   const addresses = criteriaSet?.value?.criterias?.map(
-    ({ criteria }: any) => criteria.underlyingAsset.address
+    ({ criteria }) => criteria.underlyingAsset.address
   );
   if (!addresses) return prices;
 
@@ -243,10 +240,8 @@ const handleDeposit = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolParamToNumber.value !== null) {
-      await deposit(poolParamToNumber.value, modelDeposit.value);
-
-      totalLiquidity.value += modelDeposit.value;
+    if (poolId.value) {
+      await deposit(poolId.value, modelDeposit.value);
     }
 
     await fetchUserCollateralBalance();
@@ -255,11 +250,9 @@ const handleDeposit = async () => {
 };
 
 const handleWithdraw = async () => {
-  if (unutilizedLiquidity.value > modelWithdraw.value) {
-    if (poolParamToNumber.value !== null) {
-      await withdraw(poolParamToNumber.value, modelWithdraw.value);
-
-      totalLiquidity.value -= modelWithdraw.value;
+  if (unutilizedLiquidity.value < modelWithdraw.value) {
+    if (poolId.value) {
+      await withdraw(poolId.value, modelWithdraw.value);
     }
 
     await fetchUserCollateralBalance();
@@ -270,7 +263,7 @@ const handleWithdraw = async () => {
 const onEditClick = () =>
   router.push({
     name: "liquidity-provider-pool-edit",
-    params: { lp: lpId, id: poolParamToNumber.value },
+    params: { lp: lpId, id: poolId.value },
   });
 
 const addLiquidityButtonLabel = computed(() => {
@@ -460,6 +453,13 @@ watch(approveReceipt, (receipt) => {
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
         ></UnderlyingList>
+        <OtokenClaimTable
+          :lp-id="lpId"
+          :pool-id="poolId"
+          :pool-identifier="poolIdentifier"
+          :underlyings="assetsFlat"
+          :price-map="tokenPricesMap"
+        ></OtokenClaimTable>
       </div>
       <div class="self-start">
         <LiquidityCard
