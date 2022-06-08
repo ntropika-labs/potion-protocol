@@ -39,11 +39,11 @@ export default {
 };
 
 const Template: Story = (args: Args) => ({
-  components: { JumboHeader },
+  components: { JumboHeader, PictureSet },
   setup() {
     return { args };
   },
-  template: `<div class="w-full w-[300px]"><JumboHeader v-bind="args" ><template v-if="${
+  template: `<div class="w-full h-[300px] text-dwhite-400"><JumboHeader v-bind="args" ><template v-if="${
     "defaultSlot" in args
   }" v-slot>${args.defaultSlot}</template></JumboHeader></div>`,
 });
@@ -53,6 +53,6 @@ Overview.args = {
   title: "Jumbo title",
   subtitle: "Jumbo subtitle",
   defaultSlot:
-    "<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem obcaecati illum dolor maxime iure accusantium quas eos debitis, quae laborum, aperiam sunt repellendus consequuntur cupiditate voluptas earum iusto placeat quis.</div>",
-  srcsetMap: defaultIconSet,
+    "<div class='max-w-[80%]'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem obcaecati illum dolor maxime iure accusantium quas eos debitis, quae laborum, aperiam sunt repellendus consequuntur cupiditate voluptas earum iusto placeat quis.</div>",
+  iconSrcset: defaultIconSet,
 };

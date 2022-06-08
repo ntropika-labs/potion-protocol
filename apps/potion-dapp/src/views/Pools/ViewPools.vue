@@ -20,7 +20,7 @@
   </BaseCard>
   <InnerNav v-bind="innerNavProps" class="mt-5" />
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
-    <router-link to="/custom-pool-creation">
+    <router-link v-if="isSameUserConnected" to="/custom-pool-creation">
       <CardNewItem
         class="min-h-[300px] md:min-h-auto"
         :label="t('create_pool')"
@@ -41,7 +41,7 @@
             :to="{
               name: 'liquidity-provider-pool',
               params: {
-                lp: connectedWallet?.accounts[0].address,
+                lp: connectedWallet?.accounts[0].address.toLowerCase(),
                 id: pool.poolId,
               },
             }"
@@ -75,8 +75,20 @@ interface TemplateCriteria {
   };
 }
 
+const { connectedWallet } = useOnboard();
+
 const { t } = useI18n();
 const route = useRoute();
+
+const isSameUserConnected = computed(() => {
+  if (
+    connectedWallet.value?.accounts[0].address.toLowerCase() === route.params.lp
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+});
 const innerNavProps = computed(() => {
   return {
     currentRoute: route.name,
@@ -99,7 +111,6 @@ const innerNavProps = computed(() => {
   };
 });
 
-const { connectedWallet } = useOnboard();
 const pools = ref<SubgraphPools>([]);
 const alreadyFetchedIds = computed<string[]>(() =>
   [""].concat(pools.value.map(({ id }) => id))

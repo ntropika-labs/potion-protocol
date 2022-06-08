@@ -13,9 +13,14 @@ import { useI18n } from "vue-i18n";
 interface Props {
   underlying: Token;
   priceInfo: ApiTokenPrice;
+  initialMaxStrike?: number;
+  initialMaxDuration?: number;
 }
 
-const props = withDefaults(defineProps<Props>(), {});
+const props = withDefaults(defineProps<Props>(), {
+  initialMaxStrike: 100,
+  initialMaxDuration: 60,
+});
 
 const emit = defineEmits<{
   (e: "removeSelection", address: string): void;
@@ -26,8 +31,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const maxStrike = ref(100);
-const maxDuration = ref(60);
+const maxStrike = ref(props.initialMaxStrike);
+const maxDuration = ref(props.initialMaxDuration);
 
 const updateStrikeDuration = (strike: number, duration: number) => {
   maxStrike.value = strike;

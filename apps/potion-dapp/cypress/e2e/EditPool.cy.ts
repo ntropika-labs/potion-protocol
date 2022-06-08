@@ -1,13 +1,53 @@
 /// <reference types="cypress" />
 
+import { aliasQuery } from "../support/utilities";
+
 describe("Edit Pool Flow", () => {
   const alreadySelected: string[] = [];
-  it("Can visit the edit page", () => {
-    cy.viewport(1920, 1080);
-    cy.visit(
-      "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/2/edit"
-    );
+  beforeEach(() => {
+    cy.intercept(
+      "POST",
+      "http://localhost:8000/subgraphs/name/potion-subgraph",
+      (req) => {
+        aliasQuery(req, "getPoolById");
+        aliasQuery(req, "allCollateralizedProductsUnderlying");
+        aliasQuery(req, "getPoolsFromCriteria");
+      }
+    ).as("getDataFromSubgraph");
   });
+
+  it("Can visit the edit page and load initial data", () => {
+    cy.viewport(1920, 1080);
+
+    cy.visit(
+      "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0/edit"
+    );
+
+    cy.wait([
+      "@getPoolById",
+      "@allCollateralizedProductsUnderlying",
+      "@getPoolsFromCriteria",
+    ]).then((interceptor) => {
+      // assert that the subgraph send us the correct pool
+      expect(interceptor[0].response.body).to.haveOwnProperty("data");
+      const poolData = interceptor[0].response.body.data;
+      expect(poolData).to.haveOwnProperty("pool");
+      const pool = interceptor[0].response.body.data.pool;
+      expect(pool).to.not.be.empty;
+      expect(pool.id).to.be.equal(
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb922660x0"
+      );
+      // assert that the subgraph send us the correct pool
+      expect(interceptor[1].response.body).to.haveOwnProperty("data");
+      const productData = interceptor[1].response.body.data;
+      expect(productData).to.haveOwnProperty("products");
+      const products = interceptor[1].response.body.data.products;
+      expect(products).to.have.length.above(0);
+    });
+  });
+  // it("Load pool data from the subgraph", () => {
+
+  // });
 
   it("Show an error if the liquidity is not valid", () => {
     cy.get(".selection\\:bg-accent-500").clear();

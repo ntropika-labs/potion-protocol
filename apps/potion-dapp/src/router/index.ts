@@ -16,7 +16,12 @@ import { useOnboard } from "@onboard-composable";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: NotFound,
+      meta: { layout: EmptyLayout },
+    },
     {
       path: "/",
       name: "home",
@@ -58,6 +63,17 @@ const router = createRouter({
       name: "liquidity-provider-pool-edit",
       component: EditPool,
       meta: { requiredWallet: true, layout: BaseLayout },
+      beforeEnter: (to, from, next) => {
+        const { connectedWallet } = useOnboard();
+        if (
+          connectedWallet.value?.accounts[0].address.toLowerCase() !==
+          to.params.lp
+        ) {
+          next({ name: "NotFound" });
+        } else {
+          next();
+        }
+      },
     },
     {
       path: "/about",
