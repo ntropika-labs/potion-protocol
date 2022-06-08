@@ -1,65 +1,72 @@
 <template>
-  <PoolSetup
-    v-model:liquidity.number="liquidity"
-    :size="formattedSize"
-    :liquidity-title="t('add_more_liquidity')"
-    :liquidity-check="true"
-    :user-collateral-balance="userCollateralBalance"
-    :available-tokens="availableTokens"
-    :criteria-map="criteriaMap"
-    :token-prices="tokenPricesMap"
-    :pool-id="poolParamToNumber ?? 0"
-    :disable-navigation="false"
-    @token-selected="toggleTokenSelection"
-    @token-remove="toggleTokenSelection"
-    @update:criteria="updateCriteria"
-    @valid-input="validInput = $event"
-  >
-    <BaseButton
-      test-next
-      class="uppercase"
-      palette="plain"
-      :inline="true"
-      :label="t('back')"
-      @click="
-        router.push(`/liquidity-provider/${route.params.lp}/${route.params.id}`)
-      "
+  <template v-if="error || !poolData || !poolData.pool">
+    Can't load the pool
+  </template>
+  <template v-if="(poolData && poolData.pool) || fetching">
+    <PoolSetup
+      v-model:liquidity.number="liquidity"
+      :size="formattedSize"
+      :liquidity-title="t('add_more_liquidity')"
+      :liquidity-check="true"
+      :user-collateral-balance="userCollateralBalance"
+      :available-tokens="availableTokens"
+      :criteria-map="criteriaMap"
+      :token-prices="tokenPricesMap"
+      :pool-id="poolParamToNumber ?? 0"
+      :disable-navigation="false"
+      @token-selected="toggleTokenSelection"
+      @token-remove="toggleTokenSelection"
+      @update:criteria="updateCriteria"
+      @valid-input="validInput = $event"
     >
-    </BaseButton>
-    <BaseButton
-      test-next
-      palette="secondary"
-      :inline="true"
-      :label="editButtonLabel"
-      :disabled="
-        !canEdit || depositAndCreateCurveAndCriteriaLoading || approveLoading
-      "
-      :loading="depositAndCreateCurveAndCriteriaLoading || approveLoading"
-      @click="handleEditPool()"
-    >
-    </BaseButton>
-  </PoolSetup>
-  <div class="grid grid-cols-12 justify-end gap-5 mt-6">
-    <CurveSetup
-      v-model="bondingCurve"
-      :has-pool-settings="false"
-      :emerging-curves="emergingCurves"
-      :unselected-tokens="unselectedTokens"
-      class="col-span-12 md:col-span-8 xl:col-span-9 col-start-1 md:col-start-5 xl:col-start-4"
-    />
-  </div>
-  <template v-for="[hash, info] of notifications" :key="hash">
-    <Teleport to="#toast-wrap">
-      <BaseToast
-        class="z-50"
-        :title="info.title"
-        :body="info.body"
-        :cta="info.cta"
-        :srcset-map="info.srcset"
-        :timeout="notificationTimeout"
-        @click="(ev) => removeToast(hash)"
-      ></BaseToast>
-    </Teleport>
+      <BaseButton
+        test-next
+        class="uppercase"
+        palette="plain"
+        :inline="true"
+        :label="t('back')"
+        @click="
+          router.push(
+            `/liquidity-provider/${route.params.lp}/${route.params.id}`
+          )
+        "
+      >
+      </BaseButton>
+      <BaseButton
+        test-next
+        palette="secondary"
+        :inline="true"
+        :label="editButtonLabel"
+        :disabled="
+          !canEdit || depositAndCreateCurveAndCriteriaLoading || approveLoading
+        "
+        :loading="depositAndCreateCurveAndCriteriaLoading || approveLoading"
+        @click="handleEditPool()"
+      >
+      </BaseButton>
+    </PoolSetup>
+    <div class="grid grid-cols-12 justify-end gap-5 mt-6">
+      <CurveSetup
+        v-model="bondingCurve"
+        :has-pool-settings="false"
+        :emerging-curves="emergingCurves"
+        :unselected-tokens="unselectedTokens"
+        class="col-span-12 md:col-span-8 xl:col-span-9 col-start-1 md:col-start-5 xl:col-start-4"
+      />
+    </div>
+    <template v-for="[hash, info] of notifications" :key="hash">
+      <Teleport to="#toast-wrap">
+        <BaseToast
+          class="z-50"
+          :title="info.title"
+          :body="info.body"
+          :cta="info.cta"
+          :srcset-map="info.srcset"
+          :timeout="notificationTimeout"
+          @click="(ev) => removeToast(hash)"
+        ></BaseToast>
+      </Teleport>
+    </template>
   </template>
 </template>
 <script lang="ts" setup>
@@ -129,11 +136,21 @@ const queryVariable = computed(() => {
 const pauseQuery = computed(() => {
   return !queryVariable.value.id;
 });
-const { data: poolData } = useGetPoolByIdQuery({
+const {
+  data: poolData,
+  error,
+  fetching,
+} = useGetPoolByIdQuery({
   //@ts-expect-error queryVariable could have a null value - we pause the query if so
   variables: queryVariable,
   pause: pauseQuery,
 });
+
+// onMounted(() => {
+//   if (!poolData.value) {
+//     router.push(`/404`);
+//   }
+// })
 
 const formattedSize = computed(() => {
   if (poolData.value && poolData.value.pool) {
