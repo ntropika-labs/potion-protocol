@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
+import CustomPotionCreation from "@/views/CustomPotionCreation.vue";
 import DiscoverPotions from "@/views/DiscoverPotions.vue";
 import DiscoverTemplates from "@/views/DiscoverTemplates.vue";
 import NotFound from "@/views/NotFound.vue";
@@ -42,6 +43,12 @@ const router = createRouter({
       path: "/custom-pool-creation",
       name: "custom-pool-creation",
       component: CustomPoolCreation,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/custom-potion-creation",
+      name: "custom-potion-creation",
+      component: CustomPotionCreation,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
