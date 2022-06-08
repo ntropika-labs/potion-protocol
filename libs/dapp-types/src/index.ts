@@ -94,3 +94,12 @@ export type MenuItem = {
   name: string;
   label: string;
 };
+
+export interface OtokenDatasetItem {
+  value: string;
+  color?: string;
+  button?: boolean;
+  claimable?: boolean;
+}
+
+export type OtokenDataset = OtokenDatasetItem[][];

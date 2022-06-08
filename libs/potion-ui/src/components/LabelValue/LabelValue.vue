@@ -7,12 +7,11 @@ export default defineComponent({
 
 type TextAlignment = "center" | "left" | "right";
 type TextSize = "sm" | "md" | "lg" | "xl";
-type PnlTrend = "up" | "down" | "flat";
 type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl";
 </script>
 <script lang="ts" setup>
 import { computed } from "vue";
-import { shortDigitFormatter, dateFormatter } from "../../helpers";
+import { shortDigitFormatter, dateFormatter, getPnlColor } from "../../helpers";
 
 export interface Props {
   alignment?: TextAlignment;
@@ -63,21 +62,6 @@ const valueSizeMap: Map<TextSize, string> = new Map([
   ["xl", "text-xl"],
 ]);
 
-const trendToColorMap: Map<PnlTrend, string> = new Map([
-  ["up", "text-accent-400"],
-  ["down", "text-error-400"],
-  ["flat", ""],
-]);
-
-const getPnlTrend = (pnl: number) => {
-  if (pnl > 0) {
-    return "up";
-  } else if (pnl < 0) {
-    return "down";
-  }
-  return "flat";
-};
-
 const labelAlignment = computed(() => labelAlignmentMap.get(props.alignment));
 const labelSize = computed(() => labelSizeMap.get(props.size));
 const valueAlignment = computed(() => valueAlignmentMap.get(props.alignment));
@@ -97,8 +81,8 @@ const formattedValue = computed(() => {
       return props.value;
   }
 });
-const pnlTrend = computed(() => getPnlTrend(parseFloat(props.value)));
-const pnlColorClass = computed(() => trendToColorMap.get(pnlTrend.value));
+
+const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
 </script>
 <template>
   <div>
