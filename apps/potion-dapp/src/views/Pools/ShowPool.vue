@@ -75,9 +75,12 @@ const { data: poolData } = useGetPoolByIdQuery({
   pause: pauseQuery,
 });
 
-const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
-  poolIdentifier.value as string
-);
+const {
+  chartData,
+  fetching: loadingSnapshots,
+  executeQuery: fetchPoolSnapshots,
+} = usePoolSnapshots(poolIdentifier.value as string);
+
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const performanceChartDataReady = computed(
@@ -199,6 +202,7 @@ const fetchUserData = async () => {
 onMounted(async () => {
   await fetchUserData();
   tokenPricesMap.value = await fetchAssetsPrice();
+  fetchPoolSnapshots();
   await getBlock("latest");
 });
 
@@ -240,8 +244,10 @@ const handleDeposit = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolId.value) {
+    if (poolId.value !== null) {
       await deposit(poolId.value, modelDeposit.value);
+
+      totalLiquidity.value += modelDeposit.value;
     }
 
     await fetchUserCollateralBalance();
@@ -250,9 +256,11 @@ const handleDeposit = async () => {
 };
 
 const handleWithdraw = async () => {
-  if (unutilizedLiquidity.value < modelWithdraw.value) {
-    if (poolId.value) {
+  if (unutilizedLiquidity.value > modelWithdraw.value) {
+    if (poolId.value !== null) {
       await withdraw(poolId.value, modelWithdraw.value);
+
+      totalLiquidity.value -= modelDeposit.value;
     }
 
     await fetchUserCollateralBalance();
@@ -277,6 +285,7 @@ watch(criterias, loadEmergingCurves);
 watch(poolData, (data) => {
   totalLiquidity.value = parseInt(data?.pool?.size || "0");
 });
+watch(totalLiquidity, fetchPoolSnapshots);
 /*
  * Toast notifications
  */
