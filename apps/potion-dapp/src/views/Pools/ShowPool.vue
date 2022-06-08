@@ -5,6 +5,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useGetPoolByIdQuery } from "subgraph-queries/generated/urql";
+
 import {
   SrcsetEnum,
   type BondingCurveParams,
@@ -13,18 +14,20 @@ import {
   type OptionToken,
   type Token,
 } from "dapp-types";
+
 import { BaseCard, BaseButton, LabelValue, AssetTag, BaseTag } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { contractsAddresses } from "@/helpers/contracts";
-import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { etherscanUrl } from "@/helpers";
 import { hexValue } from "@ethersproject/bytes";
 
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { usePoolSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { usePoolOtokens } from "@/composables/usePoolRecords";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import PerformanceCard from "@/components/PerformanceCard.vue";
@@ -42,6 +45,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const poolStatus = ref("Active");
+const payoutMap = ref<Map<string, number>>(new Map());
 
 const lpId = route.params.lp as string;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
@@ -56,10 +60,10 @@ const poolId = computed(() => {
 const poolIdentifier = computed(() => {
   if (poolId.value !== null && Number.isInteger(poolId.value)) {
     return `${lpId.toLowerCase()}${hexValue(poolId.value)}`;
-  } else {
-    return null;
   }
+  return "";
 });
+
 const queryVariable = computed(() => {
   return {
     id: poolIdentifier.value,
@@ -69,17 +73,30 @@ const queryVariable = computed(() => {
 const pauseQuery = computed(() => {
   return !queryVariable.value.id;
 });
+
 const { data } = useGetPoolByIdQuery({
-  //@ts-expect-error queryVariable could have a null value - we pause the query if so
   variables: queryVariable,
   pause: pauseQuery,
 });
-console.log(pauseQuery.value, queryVariable.value, data.value);
 
+const { poolOtokens } = usePoolOtokens(poolIdentifier.value);
 const { chartData, fetching: loadingSnapshots } = usePoolSnapshots(
   poolIdentifier.value as string
 );
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+
+const activeOtokens = computed(() =>
+  poolOtokens.value.filter(
+    ({ otoken }) =>
+      !loadingBlock.value && parseInt(otoken.expiry) > blockTimestamp.value
+  )
+);
+const expiredOtokens = computed(() =>
+  poolOtokens.value.filter(
+    ({ otoken }) =>
+      !loadingBlock.value && parseInt(otoken.expiry) <= blockTimestamp.value
+  )
+);
 
 const performanceChartDataReady = computed(
   () => !loadingSnapshots.value && !loadingBlock.value
@@ -171,11 +188,6 @@ const userBalance = ref(1000),
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
-// const onLiquidityUpdate = (newValue: number) => {
-//   console.log("ON LIQUIDITY UPDATE");
-//   modelDeposit.value = newValue;
-// };
-
 const { connectedWallet } = useOnboard();
 const isNotConnected = computed(() => !connectedWallet.value);
 const walletAddress = computed(
@@ -234,7 +246,21 @@ const {
   withdrawReceipt,
   withdraw,
   withdrawLoading,
+  getOutstandingSettlements,
+  claimCollateral,
+  claimCollateralTx,
+  claimCollateralReceipt,
 } = usePotionLiquidityPoolContract();
+
+watch(poolOtokens, async () => {
+  if (poolId.value) {
+    const otokens = poolOtokens.value.map(({ otoken }) => otoken.id);
+    payoutMap.value = await getOutstandingSettlements(otokens, {
+      lp: lpId,
+      poolId: poolId.value,
+    });
+  }
+});
 
 const handleDeposit = async () => {
   if (amountNeededToApprove.value > 0) {
@@ -262,116 +288,86 @@ const handleWithdraw = async () => {
   }
 };
 
+const claimOtoken = async (otokenId: string) => {
+  if (poolId.value) {
+    claimCollateral(otokenId, [{ lp: lpId, poolId: poolId.value }]);
+  }
+};
+
 /*
  * Toast notifications
  */
 
 const notifications = ref<Map<string, NotificationProps>>(new Map());
+const atomSrcset = new Map([
+  [SrcsetEnum.AVIF, "/icons/atom.avif"],
+  [SrcsetEnum.WEBP, "/icons/atom.webp"],
+  [SrcsetEnum.PNG, "/icons/atom.png"],
+]);
 
-watch(depositTx, (transaction) => {
+//@ts-expect-error need to find a good type for transaction
+const createTransactionNotification = (
+  transaction,
+  title: string,
+  body = "Your transaction is pending",
+  srcset = atomSrcset
+) => {
   notifications.value.set(`${transaction?.hash}`, {
-    title: "Creating pool",
-    body: "Your transaction is pending",
+    title,
+    body,
     cta: {
       label: "View on Etherscan",
       url: `${etherscanUrl}/tx/${transaction?.hash}`,
     },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
+    srcset,
   });
-});
+};
 
-watch(depositReceipt, (receipt) => {
+//@ts-expect-error need to find a good type for receipt
+const createReceiptNotification = (
+  receipt,
+  title: string,
+  body = "Your transaction has completed",
+  srcset = atomSrcset
+) => {
   notifications.value.set(
     `${receipt?.blockNumber}${receipt?.transactionIndex}`,
     {
-      title: "Pool created",
-      body: "Your transaction has completed",
+      title,
+      body,
       cta: {
         label: "View on Etherscan",
         url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
       },
-      srcset: new Map([
-        [SrcsetEnum.AVIF, "/icons/atom.avif"],
-        [SrcsetEnum.WEBP, "/icons/atom.webp"],
-        [SrcsetEnum.PNG, "/icons/atom.png"],
-      ]),
+      srcset,
     }
   );
-});
+};
 
-watch(withdrawTx, (transaction) => {
-  notifications.value.set(`${transaction?.hash}`, {
-    title: "Approving USDC",
-    body: "Your transactions is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
-});
-
-watch(withdrawReceipt, (receipt) => {
-  notifications.value.set(
-    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
-    {
-      title: "USDC spending approved",
-      body: "Your transaction has completed",
-      cta: {
-        label: "View on Etherscan",
-        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-      },
-      srcset: new Map([
-        [SrcsetEnum.AVIF, "/icons/atom.avif"],
-        [SrcsetEnum.WEBP, "/icons/atom.webp"],
-        [SrcsetEnum.PNG, "/icons/atom.png"],
-      ]),
-    }
-  );
-});
-
-watch(approveTx, (transaction) => {
-  notifications.value.set(`${transaction?.hash}`, {
-    title: "Approving USDC",
-    body: "Your transactions is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
-});
-
-watch(approveReceipt, (receipt) => {
-  notifications.value.set(
-    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
-    {
-      title: "USDC spending approved",
-      body: "Your transaction has completed",
-      cta: {
-        label: "View on Etherscan",
-        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-      },
-      srcset: new Map([
-        [SrcsetEnum.AVIF, "/icons/atom.avif"],
-        [SrcsetEnum.WEBP, "/icons/atom.webp"],
-        [SrcsetEnum.PNG, "/icons/atom.png"],
-      ]),
-    }
-  );
-});
+watch(depositTx, (transaction) =>
+  createTransactionNotification(transaction, "Creating pool")
+);
+watch(depositReceipt, (receipt) =>
+  createReceiptNotification(receipt, "Pool created")
+);
+watch(withdrawTx, (transaction) =>
+  createTransactionNotification(transaction, "Withdrawing liquidity")
+);
+watch(withdrawReceipt, (receipt) =>
+  createReceiptNotification(receipt, "Liquidity withdrawn")
+);
+watch(approveTx, (transaction) =>
+  createTransactionNotification(transaction, "Approving USDC spending")
+);
+watch(approveReceipt, (receipt) =>
+  createReceiptNotification(receipt, "USDC spending approved")
+);
+watch(claimCollateralTx, (transaction) =>
+  createTransactionNotification(transaction, "Claiming collateral")
+);
+watch(claimCollateralReceipt, (receipt) =>
+  createReceiptNotification(receipt, "Collateral claimed")
+);
 
 watch(criterias, loadEmergingCurves);
 
@@ -447,11 +443,12 @@ const onEditClick = () =>
           :price-map="tokenPricesMap"
         ></UnderlyingList>
         <OtokenClaimTable
-          :lp-id="lpId"
-          :pool-id="poolId"
-          :pool-identifier="poolIdentifier"
+          :active-otokens="activeOtokens"
+          :expired-otokens="expiredOtokens"
           :underlyings="assetsFlat"
           :price-map="tokenPricesMap"
+          :payout-map="payoutMap"
+          @otoken-claimed="claimOtoken"
         ></OtokenClaimTable>
       </div>
       <div class="self-start">

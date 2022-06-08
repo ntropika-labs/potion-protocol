@@ -32,20 +32,24 @@ const dataset = computed<OtokenDataset>(() => {
     const address = item?.otoken.underlyingAsset.address ?? "";
     const { symbol } = useTokenList(address);
 
-    const reclaimableAmount = props.payoutMap.get(address) ?? 0;
-    const isReclaimable = reclaimableAmount > 0;
+    const payout = props.payoutMap.get(address) ?? 0;
+    const isReclaimable = payout > 0;
+
+    const returned = parseFloat(item?.returned ?? "0");
     const premium = parseFloat(item.premiumReceived);
     const strikePrice = parseFloat(item.otoken.strikePrice);
     const collateral = parseFloat(item.collateral);
+    const reclaimable = payout > 0 ? payout : returned;
 
-    const pnl = calcProfitAndLoss(premium, collateral, reclaimableAmount) * 100;
+    const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
 
     return [
       { value: symbol },
       { value: dateFormatter(item.otoken.expiry, true) },
       { value: shortCurrencyFormatter(premium, currency) },
       { value: shortCurrencyFormatter(strikePrice, currency) },
-      { value: shortCurrencyFormatter(reclaimableAmount, currency) },
+      { value: shortCurrencyFormatter(payout, currency) },
+      { value: shortCurrencyFormatter(returned, currency) },
       { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
       {
         button: true,
@@ -63,6 +67,7 @@ const headings = [
   "Premium",
   "Strike Price",
   "Reclaimable",
+  "Claimed",
   "P&L",
   "Action",
 ];

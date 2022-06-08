@@ -1,16 +1,13 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { uniqBy as _uniqBy } from "lodash-es";
 import { BaseCard, BaseButton } from "potion-ui";
-
-import { usePoolOtokens } from "@/composables/usePoolRecords";
-import { useEthersProvider } from "@/composables/useEthersProvider";
-import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 
 import PoolExpiredOTokens from "./PoolExpiredOTokens.vue";
 import PoolActiveOTokens from "./PoolActiveOTokens.vue";
 
 import type { Token } from "dapp-types";
+import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
 
 enum tabs {
   active = "active",
@@ -18,20 +15,17 @@ enum tabs {
 }
 
 interface Props {
-  lpId: string;
-  poolId: number;
-  poolIdentifier: string;
+  activeOtokens: PoolRecordOtokenInfoFragment[];
+  expiredOtokens: PoolRecordOtokenInfoFragment[];
   underlyings: Array<Token>;
   priceMap: Map<string, string>;
+  payoutMap: Map<string, number>;
 }
 
 const props = defineProps<Props>();
-const emits = defineEmits(["claim-otoken"]);
-
-const payoutMap = ref<Map<string, number>>(new Map());
-
-const { getOutstandingSettlements } = usePotionLiquidityPoolContract();
-const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+const emits = defineEmits<{
+  (e: "otoken-claimed", id: string): void;
+}>();
 
 const activeTab = ref(tabs.expired);
 const selectedUnderlyings = ref<Map<string, boolean>>(new Map());
@@ -39,23 +33,16 @@ const totalSelectedUnderlyings = computed(
   () => Array.from(selectedUnderlyings.value.values()).filter(Boolean).length
 );
 
-const { poolOtokens } = usePoolOtokens(props.poolIdentifier);
-const filteredOtokens = computed(() =>
-  poolOtokens.value.filter(({ otoken }) =>
+const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) =>
+  otokens.filter(({ otoken }) =>
     selectedUnderlyings.value.get(otoken.underlyingAsset.address)
-  )
+  );
+
+const filteredActiveOtokens = computed(() =>
+  filterOtokens(props.activeOtokens)
 );
-const activeOtokens = computed(() =>
-  filteredOtokens.value.filter(
-    ({ otoken }) =>
-      !loadingBlock.value && parseInt(otoken.expiry) > blockTimestamp.value
-  )
-);
-const expiredOtokens = computed(() =>
-  filteredOtokens.value.filter(
-    ({ otoken }) =>
-      !loadingBlock.value && parseInt(otoken.expiry) <= blockTimestamp.value
-  )
+const filteredExpiredOtokens = computed(() =>
+  filterOtokens(props.expiredOtokens)
 );
 
 const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
@@ -84,20 +71,10 @@ const getActiveTabColors = (active: boolean) =>
   active ? "border-primary-500" : "border-white/10";
 const getButtonColor = (active: boolean) => (active ? "primary" : "filter");
 
-const claimOtoken = (index: number) => emits("claim-otoken", index);
+const claimOtoken = (index: number) =>
+  emits("otoken-claimed", filteredActiveOtokens.value[index].id);
 
-onMounted(() => {
-  selectAllUnderlyings();
-  getBlock("latest");
-});
-
-watch(expiredOtokens, async () => {
-  const otokens = expiredOtokens.value.map(({ otoken }) => otoken.id);
-  payoutMap.value = await getOutstandingSettlements(otokens, {
-    lp: props.lpId,
-    poolId: props.poolId,
-  });
-});
+watch(uniqueUnderlyings, selectAllUnderlyings);
 </script>
 <template>
   <BaseCard
@@ -151,15 +128,15 @@ watch(expiredOtokens, async () => {
         </div>
         <PoolActiveOTokens
           v-if="activeTab === tabs.active"
-          :otokens="activeOtokens"
+          :otokens="filteredActiveOtokens"
           :underlyings="underlyings"
           :price-map="priceMap"
         ></PoolActiveOTokens>
         <PoolExpiredOTokens
           v-else
-          :otokens="expiredOtokens"
+          :otokens="filteredExpiredOtokens"
           :underlyings="underlyings"
-          :payout-map="payoutMap"
+          :payout-map="props.payoutMap"
           @claim-otoken="claimOtoken"
         >
         </PoolExpiredOTokens>
