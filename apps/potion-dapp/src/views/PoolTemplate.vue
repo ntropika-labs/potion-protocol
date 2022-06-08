@@ -8,13 +8,11 @@ import {
   useGetTemplateQuery,
   useGetNumberOfPoolsFromUserQuery,
 } from "subgraph-queries/generated/urql";
-import {
-  SrcsetEnum,
-  type BondingCurveParams,
-  type Criteria,
-  type NotificationProps,
-  type OptionToken,
-  type Token,
+import type {
+  BondingCurveParams,
+  Criteria,
+  OptionToken,
+  Token,
 } from "dapp-types";
 import {
   BaseCard,
@@ -39,6 +37,7 @@ import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
+import { useNotifications } from "@/composables/useNotifications";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -250,77 +249,27 @@ const handleCloneTemplate = async () => {
 /*
  * Toast notifications
  */
-
-const notifications = ref<Map<string, NotificationProps>>(new Map());
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  notifications.value.set(`${transaction?.hash}`, {
-    title: "Creating pool",
-    body: "Your transaction is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createTransactionNotification(transaction, "Creating pool");
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  notifications.value.set(
-    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
-    {
-      title: "Pool created",
-      body: "Your transaction has completed",
-      cta: {
-        label: "View on Etherscan",
-        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-      },
-      srcset: new Map([
-        [SrcsetEnum.AVIF, "/icons/atom.avif"],
-        [SrcsetEnum.WEBP, "/icons/atom.webp"],
-        [SrcsetEnum.PNG, "/icons/atom.png"],
-      ]),
-    }
-  );
+  createReceiptNotification(receipt, "Pool created");
 });
 
 watch(approveTx, (transaction) => {
-  notifications.value.set(`${transaction?.hash}`, {
-    title: "Approving USDC",
-    body: "Your transactions is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createTransactionNotification(transaction, "Approving USDC");
 });
 
 watch(approveReceipt, (receipt) => {
-  notifications.value.set(
-    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
-    {
-      title: "USDC spending approved",
-      body: "Your transaction has completed",
-      cta: {
-        label: "View on Etherscan",
-        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-      },
-      srcset: new Map([
-        [SrcsetEnum.AVIF, "/icons/atom.avif"],
-        [SrcsetEnum.WEBP, "/icons/atom.webp"],
-        [SrcsetEnum.PNG, "/icons/atom.png"],
-      ]),
-    }
-  );
+  createReceiptNotification(receipt, "USDC spending approved");
 });
 
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
@@ -424,7 +373,7 @@ watch(criterias, loadEmergingCurves);
   </div>
   <NotificationDisplay
     :toasts="notifications"
-    @hide-toast="(index) => notifications.delete(index)"
+    @hide-toast="(index) => removeToast(index)"
   >
   </NotificationDisplay>
 </template>

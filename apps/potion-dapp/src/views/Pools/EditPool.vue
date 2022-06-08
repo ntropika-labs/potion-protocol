@@ -54,19 +54,11 @@
         class="col-span-12 md:col-span-8 xl:col-span-9 col-start-1 md:col-start-5 xl:col-start-4"
       />
     </div>
-    <template v-for="[hash, info] of notifications" :key="hash">
-      <Teleport to="#toast-wrap">
-        <BaseToast
-          class="z-50"
-          :title="info.title"
-          :body="info.body"
-          :cta="info.cta"
-          :srcset-map="info.srcset"
-          :timeout="notificationTimeout"
-          @click="(ev) => removeToast(hash)"
-        ></BaseToast>
-      </Teleport>
-    </template>
+    <NotificationDisplay
+      :toasts="notifications"
+      @hide-toast="(index) => removeToast(index)"
+    >
+    </NotificationDisplay>
   </template>
 </template>
 <script lang="ts" setup>
@@ -76,16 +68,14 @@ import type {
   Token,
   BondingCurveParams,
   Criteria,
-  NotificationProps,
 } from "dapp-types";
 
-import { SrcsetEnum } from "dapp-types";
 import { useI18n } from "vue-i18n";
-import { etherscanUrl } from "@/helpers";
 
-import { currencyFormatter, BaseButton, BaseToast } from "potion-ui";
+import { currencyFormatter, BaseButton } from "potion-ui";
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import { ref, computed, watch, onMounted } from "vue";
 import { hexValue } from "@ethersproject/bytes";
 import {
@@ -101,6 +91,7 @@ import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTokenList } from "@/composables/useTokenList";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { watchDebounced } from "@vueuse/core";
+import { useNotifications } from "@/composables/useNotifications";
 const { t } = useI18n();
 const collateral: string =
   contractsAddresses.PotionTestUSD.address.toLowerCase();
@@ -414,80 +405,26 @@ const handleEditPool = async () => {
  * Toast notifications
  */
 
-const notificationTimeout =
-  process.env.NODE_ENV === "development" ? 20000 : 5000;
-const notifications = ref<Map<string, NotificationProps>>(new Map());
-
-const addToast = (index: string, info: NotificationProps) => {
-  notifications.value.set(index, info);
-
-  setTimeout(() => {
-    notifications.value.delete(index);
-  }, notificationTimeout);
-};
-const removeToast = (hash: string) => notifications.value.delete(hash);
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  addToast(`${transaction?.hash}`, {
-    title: "Creating pool",
-    body: "Your transaction is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createTransactionNotification(transaction, "Creating pool");
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
-    title: "Pool created",
-    body: "Your transaction has completed",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createReceiptNotification(receipt, "Pool created");
 });
 
 watch(approveTx, (transaction) => {
-  addToast(`${transaction?.hash}`, {
-    title: "Approving USDC",
-    body: "Your transactions is pending",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createTransactionNotification(transaction, "Approving USDC");
 });
 
 watch(approveReceipt, (receipt) => {
-  addToast(`${receipt?.blockNumber}${receipt?.transactionIndex}`, {
-    title: "USDC spending approved",
-    body: "Your transaction has completed",
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-    },
-    srcset: new Map([
-      [SrcsetEnum.AVIF, "/icons/atom.avif"],
-      [SrcsetEnum.WEBP, "/icons/atom.webp"],
-      [SrcsetEnum.PNG, "/icons/atom.png"],
-    ]),
-  });
+  createReceiptNotification(receipt, "USDC spending approved");
 });
 </script>
