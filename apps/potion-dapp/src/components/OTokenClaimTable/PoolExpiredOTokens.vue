@@ -32,7 +32,7 @@ const dataset = computed<OtokenDataset>(() => {
     const address = item?.otoken.underlyingAsset.address ?? "";
     const { symbol } = useTokenList(address);
 
-    const payout = props.payoutMap.get(address) ?? 0;
+    const payout = props.payoutMap.get(item?.otoken.id) ?? 0;
     const isReclaimable = payout > 0;
 
     const returned = parseFloat(item?.returned ?? "0");
