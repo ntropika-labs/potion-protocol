@@ -11,7 +11,7 @@
         :srcset-map="props.iconSrcset"
       >
       </PictureSet>
-      <p>{{ props.title }}</p>
+      <p class="font-normal text-sm">{{ props.title }}</p>
     </div>
     <slot class="z-200" />
     <div
