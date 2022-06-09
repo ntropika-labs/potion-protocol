@@ -7,7 +7,7 @@ export default defineComponent({
 
 type TextAlignment = "center" | "left" | "right";
 type TextSize = "sm" | "md" | "lg" | "xl";
-type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl";
+type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl" | "currency";
 </script>
 <script lang="ts" setup>
 import { computed } from "vue";
@@ -69,6 +69,7 @@ const valueSize = computed(() => valueSizeMap.get(props.size));
 const formattedValue = computed(() => {
   switch (props.valueType) {
     case "number":
+    case "currency":
       return shortDigitFormatter(parseFloat(props.value));
     case "pnl":
       return shortDigitFormatter(parseFloat(props.value));
@@ -94,11 +95,12 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
     </h6>
     <div class="flex flex-wrap items-center space-x-1" :class="valueAlignment">
       <div
-        class="font-bold font-bitter"
+        class="font-bold font-serif"
         :class="[
           valueSize,
           valueColorClass,
           props.valueType === 'pnl' ? pnlColorClass : '',
+          props.valueType === 'currency' ? 'flex flex-row-reverse' : '',
         ]"
       >
         <span>{{ formattedValue }}</span>

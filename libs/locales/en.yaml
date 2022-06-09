@@ -13,7 +13,7 @@ check_pool: check pool
 cloned: Cloned
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -82,3 +82,13 @@ unutilized_capital: Unutilized capital
 withdraw_capital: Withdraw capital
 your_liquidity: Your liquidity
 withdraw: Withdraw
+expired_potions: Expired Potions
+available_payout: Available Payout
+not_withdrawable: Not withdrawable
+purchased_potions_not_expired: Purchased Potions not expired.
+expired_potins_ready_to_withdraw: Expired Potions ready to be withdrawn.
+put_option: put option
+strike_price: Strike Price
+expiration: Expiration
+quantity: Quantity
+current_payout: Current Payout
