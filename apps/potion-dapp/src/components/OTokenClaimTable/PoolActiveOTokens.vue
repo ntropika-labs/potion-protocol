@@ -1,20 +1,63 @@
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "PoolExpiredOTokens",
-});
-</script>
-
 <script lang="ts" setup>
-import { PutOptionsTable } from "potion-ui";
+import { computed } from "vue";
+import {
+  PutOptionsTable,
+  getPnlColor,
+  pnlFormatter,
+  dateFormatter,
+  shortCurrencyFormatter,
+} from "potion-ui";
+import { useTokenList } from "@/composables/useTokenList";
+
+import type { OtokenDataset } from "dapp-types";
+import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
 
 export interface Props {
-  dataset: Array<Array<{ [key: string]: any }>>;
+  otokens: PoolRecordOtokenInfoFragment[];
+  priceMap: Map<string, string>;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  dataset: () => [],
+const props = defineProps<Props>();
+
+const currency = "USDC";
+
+const calcProfitAndLoss = (
+  premium: number,
+  collateral: number,
+  strikePrice: number,
+  currentPrice: number
+) => {
+  const amountOfOtokens = collateral / strikePrice;
+  const otokenValue = Math.max(strikePrice - currentPrice, 0);
+  return (premium - amountOfOtokens * otokenValue) / collateral;
+};
+
+const dataset = computed<OtokenDataset>(() => {
+  return props.otokens.map((item) => {
+    const address = item?.otoken.underlyingAsset.address ?? "";
+    const { symbol } = useTokenList(address);
+    const currentPrice = props.priceMap.get(address) ?? "0";
+    const premium = parseFloat(item.premiumReceived);
+    const strikePrice = parseFloat(item.otoken.strikePrice);
+    const collateral = parseFloat(item.collateral);
+
+    const pnl =
+      calcProfitAndLoss(
+        premium,
+        collateral,
+        strikePrice,
+        parseFloat(currentPrice)
+      ) * 100;
+
+    return [
+      { value: symbol },
+      { value: dateFormatter(item.otoken.expiry, true) },
+      { value: shortCurrencyFormatter(premium, currency) },
+      { value: shortCurrencyFormatter(strikePrice, currency) },
+      { value: shortCurrencyFormatter(collateral, currency) },
+      { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+    ];
+  });
 });
 
 const headings = [
@@ -25,24 +68,10 @@ const headings = [
   "Collateral",
   "Projected P&L",
 ];
-
-const emits = defineEmits<{
-  (e: "claim-otoken", index: number): void;
-}>();
-
-const onButtonPressed = (index: number, cellIndex: number) => {
-  const row = props.dataset[index];
-  if (row[cellIndex].claimable) {
-    emits("claim-otoken", index);
-  }
-};
 </script>
+
 <template>
-  <div class="border border-white border-opacity-10 rounded-3xl">
-    <PutOptionsTable
-      :headings="headings"
-      :dataset="dataset"
-      @button-pressed="onButtonPressed"
-    />
+  <div class="border border-white/10 rounded-3xl">
+    <PutOptionsTable :headings="headings" :dataset="dataset" />
   </div>
 </template>

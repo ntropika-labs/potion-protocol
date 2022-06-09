@@ -82,3 +82,9 @@ duration: duration
 review_and_create: review and create
 your_strike_price: your strike price
 max_strike_price: max strike price
+status: Status
+utilized_capital: Utilized Capital
+unutilized_capital: Unutilized capital
+withdraw_capital: Withdraw capital
+your_liquidity: Your liquidity
+withdraw: Withdraw

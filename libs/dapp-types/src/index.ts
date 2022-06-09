@@ -70,6 +70,7 @@ export interface NotificationProps {
     label?: string;
     url: string;
   };
+  hideTimeout?: number;
 }
 
 export type PerformanceData = {
@@ -89,8 +90,16 @@ export type NamedTimestamp =
   | "previousYear"
   | "firstPoint";
 
-
 export type MenuItem = {
   name: string;
   label: string;
 };
+
+export interface OtokenDatasetItem {
+  value: string;
+  color?: string;
+  button?: boolean;
+  claimable?: boolean;
+}
+
+export type OtokenDataset = OtokenDatasetItem[][];

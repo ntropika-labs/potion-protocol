@@ -29,7 +29,8 @@
     </label>
 
     <CardFooter class="text-white">
-      <p class="capitalize">{{ footerText }}</p>
+      <slot v-if="$slots.footerDescription" name="footerDescription"></slot>
+      <p v-else class="capitalize">{{ footerText }}</p>
     </CardFooter>
   </BaseCard>
 </template>

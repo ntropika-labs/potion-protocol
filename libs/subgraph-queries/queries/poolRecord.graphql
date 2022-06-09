@@ -5,20 +5,11 @@ fragment PoolRecordOtokenInfo on PoolRecord {
   numberOfOTokens
   returned
   otoken {
+    id
     strikePrice
     expiry
-  }
-  pool {
-    poolId
-  }
-  lpRecord {
-    lp
-    otoken {
-      id
-      underlyingAsset {
-        id
-        address
-      }
+    underlyingAsset {
+      address
     }
   }
 }

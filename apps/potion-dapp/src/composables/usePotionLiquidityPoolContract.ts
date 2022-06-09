@@ -132,6 +132,73 @@ export function usePotionLiquidityPoolContract() {
     } else throw new Error("Connect your wallet first");
   };
 
+  //Withdraw Collateral
+  const withdrawTx = ref<ContractTransaction | null>(null);
+  const withdrawReceipt = ref<ContractReceipt | null>(null);
+  const withdrawLoading = ref(false);
+  const withdraw = async (poolId: number, amount: number) => {
+    if (connectedWallet.value) {
+      const contractSigner = initContractSigner();
+      try {
+        withdrawLoading.value = true;
+        withdrawTx.value = await contractSigner.withdraw(
+          poolId,
+          parseUnits(amount.toString(), 6)
+        );
+        withdrawReceipt.value = await withdrawTx.value.wait();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(`Cannot withdraw: ${error.message}`);
+        } else {
+          throw new Error("Cannot withdraw");
+        }
+      } finally {
+        withdrawLoading.value = false;
+      }
+    } else throw new Error("Connect your wallet first");
+  };
+
+  // Outstanding settlement for a specific otoken and pool
+  const getOutstandingSettlement = async (
+    otoken: string,
+    pool: PoolIdentifierStruct
+  ) => {
+    try {
+      const provider = initContractProvider();
+      const refund = await provider.outstandingSettlement(otoken, pool);
+      return refund.toNumber();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Cannot get outstanding settlement: ${error.message}`);
+      } else {
+        throw new Error("Cannot get outstanding settlement");
+      }
+    }
+  };
+
+  const getOutstandingSettlements = async (
+    otokens: string[],
+    pool: PoolIdentifierStruct
+  ) => {
+    try {
+      const provider = initContractProvider();
+      const refundMap = new Map<string, number>();
+      await Promise.allSettled(
+        otokens.map(async (otoken) => {
+          const refund = await provider.outstandingSettlement(otoken, pool);
+          refundMap.set(otoken, refund.toNumber());
+        })
+      );
+      return refundMap;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Cannot get outstanding settlement: ${error.message}`);
+      } else {
+        throw new Error("Cannot get outstanding settlement");
+      }
+    }
+  };
+
   // Otoken settlement
   // settle
   const settleTx = ref<ContractTransaction | null>(null);
@@ -218,7 +285,13 @@ export function usePotionLiquidityPoolContract() {
     // deposit
     depositTx,
     depositReceipt,
+    depositLoading,
     deposit,
+    // withdraw
+    withdrawTx,
+    withdrawReceipt,
+    withdrawLoading,
+    withdraw,
     // claim collateral
     claimCollateralTx,
     claimCollateralReceipt,
@@ -229,5 +302,8 @@ export function usePotionLiquidityPoolContract() {
     settleReceipt,
     settleLoading,
     settle,
+    // outstanding settlement
+    getOutstandingSettlement,
+    getOutstandingSettlements,
   };
 }

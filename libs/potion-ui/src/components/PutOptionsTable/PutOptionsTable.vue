@@ -7,11 +7,12 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
+import type { OtokenDataset } from "dapp-types";
 import BaseButton from "../BaseButton/BaseButton.vue";
 
 export interface Props {
   headings: Array<string>;
-  dataset: Array<Array<any>>;
+  dataset: OtokenDataset;
 }
 
 const props = defineProps<Props>();
@@ -54,13 +55,13 @@ const onButtonPressed = (index: number, cellIndex: number) =>
               v-if="cell.button"
               test-table-claim-button
               :palette="cell.color"
-              :label="cell.label"
+              :label="cell.value"
               :disabled="!cell.claimable"
               :inline="true"
               size="sm"
               @click="onButtonPressed(index, cellIndex)"
             />
-            <span v-else :class="cell.class">{{ cell.value }}</span>
+            <span v-else :class="cell.color">{{ cell.value }}</span>
           </td>
         </tr>
       </tbody>

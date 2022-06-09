@@ -19,12 +19,13 @@
     </div>
   </BaseCard>
   <InnerNav v-bind="innerNavProps" class="mt-5" />
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
-    <router-link v-if="isSameUserConnected" to="/custom-pool-creation">
-      <CardNewItem
-        class="min-h-[300px] md:min-h-auto"
-        :label="t('create_pool')"
-      />
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 auto-rows-fr">
+    <router-link
+      v-if="isSameUserConnected"
+      to="/custom-pool-creation"
+      class="min-h-[20rem]"
+    >
+      <CardNewItem :label="t('create_pool')" />
     </router-link>
     <template v-if="pools.length > 0">
       <PoolCard
@@ -45,9 +46,12 @@
                 id: pool.poolId,
               },
             }"
-            class="uppercase"
-            >{{ t("check_pool") }}</router-link
           >
+            <BaseButton
+              :label="t('check_pool')"
+              palette="secondary"
+            ></BaseButton>
+          </router-link>
         </template>
       </PoolCard>
     </template>
@@ -56,7 +60,13 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useGetPoolsFromUserQuery } from "subgraph-queries/generated/urql";
-import { PoolCard, CardNewItem, BaseCard, LabelValue } from "potion-ui";
+import {
+  PoolCard,
+  CardNewItem,
+  BaseCard,
+  LabelValue,
+  BaseButton,
+} from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { computed, ref, onMounted } from "vue";
 import { useTokenList } from "@/composables/useTokenList";
@@ -79,11 +89,12 @@ const { connectedWallet } = useOnboard();
 
 const { t } = useI18n();
 const route = useRoute();
+const lpId = Array.isArray(route.params.lp)
+  ? route.params.lp[0]
+  : route.params.lp;
 
 const isSameUserConnected = computed(() => {
-  if (
-    connectedWallet.value?.accounts[0].address.toLowerCase() === route.params.lp
-  ) {
+  if (connectedWallet.value?.accounts[0].address.toLowerCase() === lpId) {
     return true;
   } else {
     return false;
@@ -118,7 +129,7 @@ const alreadyFetchedIds = computed<string[]>(() =>
 
 const queryVariables = computed(() => {
   return {
-    lp: connectedWallet.value?.accounts[0].address ?? "",
+    lp: lpId,
     ids: alreadyFetchedIds.value,
   };
 });
