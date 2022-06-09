@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { TabNavigationComponent, BaseCard, SidebarLink } from "potion-ui";
+import { TokenSelection, InputNumber } from "potion-ui";
+import type { SelectableToken } from "dapp-types";
+// import AssetSelection from "@/components/CustomPotion/AssetSelection.vue";
+import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 const { t } = useI18n();
-const router = useRouter();
+// const router = useRouter();
 const currentIndex = ref(0);
-const navigateBack = () => router.push("/");
 
 const AssetActiveIcon = new Map([
   [SrcsetEnum.AVIF, "/icons/asset-active-32x32.avif"],
@@ -65,7 +66,8 @@ const sidebarItems = computed(() => {
       iconSrcset:
         currentIndex.value === 1 ? StrikeActiveIcon : StrikeDefaultIcon,
       selected: currentIndex.value === 1,
-      disabled: true,
+      // disabled: !isTokenSelected.value,
+      disabled: false,
       onClick: () => {
         currentIndex.value = 1;
       },
@@ -93,46 +95,81 @@ const sidebarItems = computed(() => {
     },
   ];
 });
+
+// Token selection
+const selectableTokens = ref<SelectableToken[]>([]);
+// const tokenSelected = computed(() => {
+//   return selectableTokens.value.find((t) => t.selected);
+// });
+// const isTokenSelected = computed(() => {
+//   return tokenSelected.value ? true : false;
+// });
+const handleTokenSelection = (address: string) => {
+  selectableTokens.value.forEach((token) => {
+    if (token.address === address) {
+      token.selected = true;
+    } else {
+      token.selected = false;
+    }
+  });
+};
+
+// Strike Selection
+const strikeSelected = ref(100);
+const maxSelectableStrike = computed(() => {
+  return 1000;
+});
+const isStrikeValid = ref(false);
+console.log(isStrikeValid);
 </script>
 
 <template>
-  <BaseCard>
-    <TabNavigationComponent
-      inner-classes="flex flex-col w-full xl:flex-row p-6 gap-4"
-      content-classes="w-full xl:w-2/3"
-      :default-index="currentIndex"
-      :title="t('your_put_recipe')"
-      :inline="true"
-      :show-quit-tabs="true"
-      @quit-tabs="navigateBack"
-    >
-      <template #tabs-header>
-        <ul
-          class="flex flex-col gap-4 w-full lg:( flex-row gap-2 justify-center items-stretch ) xl:( flex-col gap-4 w-1/3 ) items-start justify-center"
-        >
-          <SidebarLink
-            v-for="(item, index) in sidebarItems"
-            :key="`sidebar-item-${index}`"
-            :title="item.title"
-            :selected="item.selected"
-            :disabled="item.disabled"
-            :icon-srcset="item.iconSrcset"
-            class="lg:w-1/4 lg:w-full"
-          ></SidebarLink>
-        </ul>
-      </template>
-      <div class="w-full">
-        <h3 class="text-center">Choose asset</h3>
+  <BaseCard class="">
+    <div class="grid grid-cols-1 xl:grid-cols-3 p-5 gap-5">
+      <div class="w-full flex justify-between items-center xl:col-span-3">
+        <p class="capitalize">{{ t("your_put_recipe") }}</p>
+        <router-link :to="{ name: 'discover-potions' }">
+          <i class="i-ph-x"></i
+        ></router-link>
       </div>
-      <div>
-        <h3 class="text-center">Strike price</h3>
+      <ul
+        class="grid grid-cols-1 gap-2 lg:( grid-cols-4 ) gap-4 w-full xl:( grid-cols-1 ) items-start justify-center"
+      >
+        <SidebarLink
+          v-for="(item, index) in sidebarItems"
+          :key="`sidebar-item-${index}`"
+          :title="item.title"
+          :selected="item.selected"
+          :disabled="item.disabled"
+          :icon-srcset="item.iconSrcset"
+          class="lg:w-1/4 lg:w-full"
+          @click="item.onClick"
+        ></SidebarLink>
+      </ul>
+      <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
+        <TokenSelection
+          :tokens="selectableTokens"
+          @token-selected="handleTokenSelection"
+        />
       </div>
-      <div>
-        <h3 class="text-center">Duration</h3>
+      <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
+        <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
+          <div class="flex justify-between p-4">
+            <p>hello</p>
+            <p>potion</p>
+          </div>
+          <InputNumber
+            v-model.number="strikeSelected"
+            color="no-bg"
+            :title="t('your_strike_price')"
+            :min="1"
+            :max="maxSelectableStrike"
+            :step="0.1"
+            unit="USDC"
+            :footer-description="t('max_strike_price')"
+          />
+        </BaseCard>
       </div>
-      <div>
-        <h3 class="text-center">Review and create</h3>
-      </div>
-    </TabNavigationComponent>
+    </div>
   </BaseCard>
 </template>

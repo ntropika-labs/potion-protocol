@@ -1,5 +1,6 @@
 <template>
   <BaseCard
+    :color="props.color"
     :full-height="false"
     :class="{
       'focus-within:(ring-primary-500) last-children:focus-within:(bg-primary-500)':
@@ -8,7 +9,7 @@
     }"
   >
     <label class="p-3">
-      <p class="font-sans font-medium text-sm text-white">
+      <p class="font-sans font-medium text-sm text-white capitalize">
         {{ props.title }}
       </p>
       <div class="flex justify-between mt-4">
@@ -28,7 +29,7 @@
     </label>
 
     <CardFooter class="text-white">
-      <p>{{ footerText }}</p>
+      <p class="capitalize">{{ footerText }}</p>
     </CardFooter>
   </BaseCard>
 </template>
@@ -40,12 +41,20 @@ export default defineComponent({
 </script>
 <script lang="ts" setup>
 import { currencyFormatter } from "../../helpers";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
 import BaseInput from "../BaseInput/BaseInput.vue";
 import CardFooter from "../CardFooter/CardFooter.vue";
 export interface Props {
+  color?:
+    | "glass"
+    | "neutral"
+    | "no-bg"
+    | "secondary-radial"
+    | "primary-radial-inactive"
+    | "primary-radial"
+    | "clean";
   title?: string;
   unit: string;
   step: number;
@@ -58,6 +67,7 @@ export interface Props {
   maxDecimals?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
+  color: "glass",
   title: "",
   unit: "USDC",
   step: 0.1,
@@ -87,6 +97,7 @@ const decimalCount = (num: number) => {
 };
 
 const inputIsValid = computed(() => {
+  console.log("computed");
   if (
     props.modelValue < props.min ||
     props.modelValue > props.max ||
@@ -94,16 +105,21 @@ const inputIsValid = computed(() => {
     isNaN(props.modelValue) ||
     decimalCount(props.modelValue) > props.maxDecimals
   ) {
-    emits("validInput", false);
+    // emits("validInput", false);
     return false;
   }
-  emits("validInput", true);
+  // emits("validInput", true);
   return true;
+});
+
+watch(inputIsValid, () => {
+  console.log("watcher");
+  emits("validInput", inputIsValid.value);
 });
 
 const footerText = computed(() => {
   if (inputIsValid.value) {
-    return `${props.footerDescription} ${currencyFormatter(
+    return `${props.footerDescription}: ${currencyFormatter(
       props.max,
       props.unit
     )}`;

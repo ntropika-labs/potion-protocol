@@ -80,3 +80,5 @@ your_put_recipe: Your put recipe
 strike_price: strike price
 duration: duration
 review_and_create: review and create
+your_strike_price: your strike price
+max_strike_price: max strike price
