@@ -24,6 +24,8 @@ export interface Props {
   defaultIndex?: number;
   inline?: boolean;
   showQuitTabs?: boolean;
+  innerClasses?: string;
+  contentClasses?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,6 +34,8 @@ const props = withDefaults(defineProps<Props>(), {
   defaultIndex: 0,
   inline: false,
   showQuitTabs: false,
+  innerClasses: "",
+  contentClasses: "mt-6",
 });
 
 const emit = defineEmits<{
@@ -60,12 +64,12 @@ const cardColor = computed(() => (props.tabs ? "glass" : "clean"));
         </template>
       </BaseButton>
     </div>
-    <template v-if="tabs">
+    <template v-if="props.tabs">
       <ul
         class="flex flex-wrap items-center justify-center lg:justify-evenly gap-4 mx-auto pt-2 pb-6"
       >
         <li
-          v-for="(step, index) in tabs"
+          v-for="(step, index) in props.tabs"
           :key="index"
           class="text-center relative before:(content-none flex absolute bottom-0 left-[50%] w-full h-[2px] translate-x-[-50%])"
           :class="[
@@ -88,31 +92,43 @@ const cardColor = computed(() => (props.tabs ? "glass" : "clean"));
         </li>
       </ul>
       <p
-        v-if="tabs[props.defaultIndex].subtitle"
+        v-if="props.tabs[props.defaultIndex].subtitle"
         class="text-center text-lg mb-2"
       >
-        {{ tabs[props.defaultIndex].subtitle }}
+        {{ props.tabs[props.defaultIndex].subtitle }}
       </p>
-      <template v-if="tabs[props.defaultIndex].cta">
+      <template v-if="props.tabs[props.defaultIndex].cta">
         <router-link
-          v-if="!tabs[props.defaultIndex].cta?.externalUrl"
-          :to="tabs[props.defaultIndex].cta?.url"
+          v-if="!props.tabs[props.defaultIndex].cta?.externalUrl"
+          :to="props.tabs[props.defaultIndex].cta?.url"
           class="text-center text-sm text-secondary-500 uppercase mb-4"
-          >{{ tabs[props.defaultIndex].cta?.label }}</router-link
+          >{{ props.tabs[props.defaultIndex].cta?.label }}</router-link
         >
         <a
-          v-if="tabs[props.defaultIndex].cta?.externalUrl"
-          :href="tabs[props.defaultIndex].cta?.url"
+          v-if="props.tabs[props.defaultIndex].cta?.externalUrl"
+          :href="props.tabs[props.defaultIndex].cta?.url"
           class="text-center text-sm text-secondary-500 uppercase mb-4"
-          >{{ tabs[props.defaultIndex].cta?.label }}</a
+          >{{ props.tabs[props.defaultIndex].cta?.label }}</a
         >
       </template>
     </template>
-    <slot v-else name="tabs-header"></slot>
+    <div v-else :class="props.innerClasses">
+      <slot name="tabs-header"></slot>
+      <div v-if="$slots.default && !props.tabs" :class="props.contentClasses">
+        <template v-for="(step, index) in $slots.default()" :key="index">
+          <KeepAlive>
+            <component
+              :is="step"
+              v-if="index === props.defaultIndex"
+            ></component>
+          </KeepAlive>
+        </template>
+      </div>
+    </div>
   </BaseCard>
   <!-- End tab navigation -->
   <!-- Start tabs content -->
-  <div v-if="$slots.default" class="mt-6">
+  <div v-if="$slots.default && props.tabs" :class="props.contentClasses">
     <template v-for="(step, index) in $slots.default()" :key="index">
       <KeepAlive>
         <component :is="step" v-if="index === props.defaultIndex"></component>

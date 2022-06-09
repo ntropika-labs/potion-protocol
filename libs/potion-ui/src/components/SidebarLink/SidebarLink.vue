@@ -1,7 +1,7 @@
 <template>
   <button
     :disabled="props.disabled"
-    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent ring-white/10 cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) hover:( ring-white/20 ) last:children:hover-opacity-100 z-300 text-sm"
+    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent ring-white/10 cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) hover:( ring-white/20 ) last:children:hover-opacity-100 z-300"
     @click="$emit('click')"
   >
     <div class="flex gap-4 z-200 items-center">
@@ -11,9 +11,9 @@
         :srcset-map="props.iconSrcset"
       >
       </PictureSet>
-      <p class="font-normal text-sm">{{ props.title }}</p>
+      <p class="font-normal text-sm lg:text-xs capitalize">{{ props.title }}</p>
     </div>
-    <slot class="z-200 text-sm" />
+    <slot class="z-200 text-sm g:text-xs" />
     <div
       class="absolute inset-0 w-full h-full transition bg-gradient-to-br from-primary-500 to-primary-400 rounded-xl z-100"
       :class="props.selected ? 'opacity-100' : 'opacity-0'"
