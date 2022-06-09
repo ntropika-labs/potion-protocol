@@ -1,9 +1,10 @@
 <template>
   <button
-    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent ring-white/10 cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) hover:( ring-white/20 ) hover:children:last:opacity-100 z-3 text-sm"
+    :disabled="props.disabled"
+    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent ring-white/10 cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) hover:( ring-white/20 ) last:children:hover-opacity-100 z-300 text-sm"
     @click="$emit('click')"
   >
-    <div class="flex gap-4 z-2 items-center">
+    <div class="flex gap-4 z-200 items-center">
       <PictureSet
         v-if="props.iconSrcset"
         class="h-full w-full flex justify-end h-8 w-8"
@@ -12,13 +13,13 @@
       </PictureSet>
       <p>{{ props.title }}</p>
     </div>
-    <slot class="z-2" />
+    <slot class="z-200" />
     <div
-      class="absolute inset-0 w-full h-full transition bg-gradient-to-br from-primary-500 to-primary-400 rounded-xl z-1"
+      class="absolute inset-0 w-full h-full transition bg-gradient-to-br from-primary-500 to-primary-400 rounded-xl z-100"
       :class="props.selected ? 'opacity-100' : 'opacity-0'"
     ></div>
     <div
-      class="z-1 absolute inset-0 w-full h-full transition opacity-0 bg-radial-glass rounded-xl"
+      class="z-100 absolute inset-0 w-full h-full transition opacity-0 bg-radial-glass rounded-xl"
     ></div>
   </button>
 </template>
@@ -36,6 +37,7 @@ export interface Props {
   title?: string;
   iconSrcset?: Map<SrcsetEnum, string>;
   selected: boolean;
+  disabled: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   iconSrcset: undefined,
