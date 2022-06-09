@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { TokenSelection, InputNumber } from "potion-ui";
+import { TokenSelection, InputNumber, BaseButton } from "potion-ui";
 import { useTokenList } from "@/composables/useTokenList";
 import { usePoolsLiquidity } from "@/composables/useProtocolLiquidity";
 import type { SelectableToken } from "dapp-types";
@@ -144,8 +144,16 @@ const strikeSelected = ref(100);
 const maxSelectableStrike = computed(() => {
   return 1000;
 });
-const isStrikeValid = ref(false);
-console.log(isStrikeValid);
+const isStrikeValid = ref(true);
+const isNextStepEnabled = computed(() => {
+  if (currentIndex.value === 0) {
+    return isTokenSelected.value;
+  }
+  if (currentIndex.value === 1) {
+    return isStrikeValid.value;
+  }
+  return false;
+});
 </script>
 
 <template>
@@ -192,9 +200,38 @@ console.log(isStrikeValid);
             :step="0.1"
             unit="USDC"
             :footer-description="t('max_strike_price')"
+            @valid-input="isStrikeValid = $event"
           />
         </BaseCard>
       </div>
+    </div>
+    <div class="flex w-full justify-end items-center gap-3 p-4">
+      <BaseButton
+        v-if="currentIndex !== 0"
+        class="uppercase"
+        test-next
+        palette="flat"
+        :inline="true"
+        :label="t('back')"
+        :disabled="false"
+        @click="currentIndex--"
+      >
+        <template #pre-icon>
+          <i class="i-ph-caret-left"></i>
+        </template>
+      </BaseButton>
+      <BaseButton
+        test-next
+        palette="secondary"
+        :inline="true"
+        :label="t('next')"
+        :disabled="!isNextStepEnabled"
+        @click="currentIndex++"
+      >
+        <template #post-icon>
+          <i class="i-ph-caret-right"></i>
+        </template>
+      </BaseButton>
     </div>
   </BaseCard>
 </template>
