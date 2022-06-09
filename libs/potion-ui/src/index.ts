@@ -32,6 +32,7 @@ import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
+import PotionCard from "./components/PotionCard/PotionCard.vue";
 
 export type {
   IconStrokeWeight,
@@ -78,4 +79,5 @@ export {
   TokenSelection,
   Tooltip,
   UnderlyingList,
+  PotionCard,
 };
