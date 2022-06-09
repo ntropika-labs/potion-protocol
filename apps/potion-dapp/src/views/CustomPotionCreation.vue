@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { TokenSelection, InputNumber } from "potion-ui";
+import { useTokenList } from "@/composables/useTokenList";
+import { usePoolsLiquidity } from "@/composables/useProtocolLiquidity";
 import type { SelectableToken } from "dapp-types";
 // import AssetSelection from "@/components/CustomPotion/AssetSelection.vue";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 // const router = useRouter();
@@ -66,8 +68,7 @@ const sidebarItems = computed(() => {
       iconSrcset:
         currentIndex.value === 1 ? StrikeActiveIcon : StrikeDefaultIcon,
       selected: currentIndex.value === 1,
-      // disabled: !isTokenSelected.value,
-      disabled: false,
+      disabled: !isTokenSelected.value,
       onClick: () => {
         currentIndex.value = 1;
       },
@@ -96,14 +97,38 @@ const sidebarItems = computed(() => {
   ];
 });
 
+const tokenToSelectableToken = (
+  address: string,
+  decimals = 18,
+  selected = false
+): SelectableToken => {
+  const { name, symbol, image } = useTokenList(address);
+  return {
+    address,
+    decimals,
+    name,
+    symbol,
+    image,
+    selected,
+  };
+};
+
 // Token selection
 const selectableTokens = ref<SelectableToken[]>([]);
-// const tokenSelected = computed(() => {
-//   return selectableTokens.value.find((t) => t.selected);
-// });
-// const isTokenSelected = computed(() => {
-//   return tokenSelected.value ? true : false;
-// });
+const { underlyingsWithLiquidity } = usePoolsLiquidity();
+watch(underlyingsWithLiquidity, () => {
+  console.log(underlyingsWithLiquidity);
+  selectableTokens.value = underlyingsWithLiquidity.value.map((address) =>
+    tokenToSelectableToken(address)
+  );
+});
+
+const tokenSelected = computed(() => {
+  return selectableTokens.value.find((t) => t.selected);
+});
+const isTokenSelected = computed(() => {
+  return tokenSelected.value ? true : false;
+});
 const handleTokenSelection = (address: string) => {
   selectableTokens.value.forEach((token) => {
     if (token.address === address) {
