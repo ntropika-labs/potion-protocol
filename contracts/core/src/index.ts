@@ -91,10 +91,6 @@ export const Deployments = {
                 address: "0xB82E25B1194627b361e3f5A55AF6186eE5e18D5d",
                 blockNumber: 31529073,
             },
-            USDC: {
-                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-                blockNumber: 0,
-            },
             CurveManager: {
                 address: "0x5667eB067283B41e16Cfb55d021907F38aaCe9C0",
                 blockNumber: 31529075,
