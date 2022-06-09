@@ -1,7 +1,7 @@
 import {
   useGetMaxDurationForStrikeQuery,
   useGetMaxStrikeForUnderlyingQuery,
-  usePoolsWithLiquidityQuery
+  usePoolsWithLiquidityQuery,
 } from "subgraph-queries/generated/urql";
 import { computed, ref, unref, watch } from "vue";
 
