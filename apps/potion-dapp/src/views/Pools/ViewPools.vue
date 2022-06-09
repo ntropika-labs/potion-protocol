@@ -89,11 +89,12 @@ const { connectedWallet } = useOnboard();
 
 const { t } = useI18n();
 const route = useRoute();
+const lpId = Array.isArray(route.params.lp)
+  ? route.params.lp[0]
+  : route.params.lp;
 
 const isSameUserConnected = computed(() => {
-  if (
-    connectedWallet.value?.accounts[0].address.toLowerCase() === route.params.lp
-  ) {
+  if (connectedWallet.value?.accounts[0].address.toLowerCase() === lpId) {
     return true;
   } else {
     return false;
@@ -128,7 +129,7 @@ const alreadyFetchedIds = computed<string[]>(() =>
 
 const queryVariables = computed(() => {
   return {
-    lp: connectedWallet.value?.accounts[0].address ?? "",
+    lp: lpId,
     ids: alreadyFetchedIds.value,
   };
 });
