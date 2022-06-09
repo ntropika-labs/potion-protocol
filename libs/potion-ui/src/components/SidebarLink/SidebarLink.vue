@@ -13,7 +13,7 @@
       </PictureSet>
       <p class="font-normal text-sm">{{ props.title }}</p>
     </div>
-    <slot class="z-200" />
+    <slot class="z-200 text-sm" />
     <div
       class="absolute inset-0 w-full h-full transition bg-gradient-to-br from-primary-500 to-primary-400 rounded-xl z-100"
       :class="props.selected ? 'opacity-100' : 'opacity-0'"
