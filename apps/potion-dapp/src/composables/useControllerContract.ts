@@ -6,7 +6,7 @@ import type {
 import type { ControllerInterface } from "potion-contracts/typechain";
 
 import { ControllerInterface__factory } from "potion-contracts/typechain";
-import { parseUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 import { useAddressBookContract } from "./useAddressBookContract";
 import { useOnboard } from "@onboard-composable";
@@ -26,8 +26,6 @@ enum ActionType {
   Call,
   Liquidate,
 }
-
-const COLLATERAL_DECIMALS = 10 ** 6;
 
 export function useControllerContract() {
   const { initContract } = useEthersContract();
@@ -105,7 +103,7 @@ export function useControllerContract() {
         address,
         parseUnits(amount, 8)
       );
-      return payout.div(COLLATERAL_DECIMALS).toString();
+      return formatUnits(payout, 6);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot get payout: ${error.message}`);
@@ -126,7 +124,7 @@ export function useControllerContract() {
           address,
           parseUnits(amount, 8)
         );
-        payoutsMap.set(address, payout.div(COLLATERAL_DECIMALS).toString());
+        payoutsMap.set(address, formatUnits(payout, 6));
       });
       await Promise.allSettled(promises);
 
