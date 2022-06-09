@@ -72,8 +72,8 @@ const getActiveTabColors = (active: boolean) =>
 const getButtonColor = (active: boolean) => (active ? "primary" : "filter");
 
 const claimOtoken = (index: number) => {
-  if (filteredActiveOtokens.value[index]) {
-    emits("otoken-claimed", filteredActiveOtokens.value[index].otoken.id);
+  if (filteredExpiredOtokens.value[index]) {
+    emits("otoken-claimed", filteredExpiredOtokens.value[index].otoken.id);
   }
 };
 

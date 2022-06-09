@@ -256,7 +256,7 @@ const {
 } = usePotionLiquidityPoolContract();
 
 watch(poolOtokens, async () => {
-  if (poolId.value) {
+  if (poolId.value !== null) {
     const otokens = poolOtokens.value.map(({ otoken }) => otoken.id);
     payoutMap.value = await getOutstandingSettlements(otokens, {
       lp: lpId,
@@ -296,7 +296,7 @@ const handleWithdraw = async () => {
 };
 
 const claimOtoken = async (otokenId: string) => {
-  if (poolId.value) {
+  if (poolId.value !== null) {
     claimCollateral(otokenId, [{ lp: lpId, poolId: poolId.value }]);
   }
 };
