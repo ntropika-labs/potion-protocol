@@ -6,19 +6,16 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useGetPoolByIdQuery } from "subgraph-queries/generated/urql";
 
-import {
-  SrcsetEnum,
-  type BondingCurveParams,
-  type Criteria,
-  type NotificationProps,
-  type OptionToken,
-  type Token,
+import type {
+  BondingCurveParams,
+  Criteria,
+  OptionToken,
+  Token,
 } from "dapp-types";
 
 import { BaseCard, BaseButton, LabelValue, AssetTag, BaseTag } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { contractsAddresses } from "@/helpers/contracts";
-import { etherscanUrl } from "@/helpers";
 import { hexValue } from "@ethersproject/bytes";
 
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
@@ -35,6 +32,7 @@ import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
 import LiquidityCard from "@/components/LiquidityCard.vue";
 import OtokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
+import { useNotifications } from "@/composables/useNotifications";
 
 const getTokenFromAddress = (address: string): Token => {
   const { image, name, symbol } = useTokenList(address);
@@ -47,7 +45,9 @@ const router = useRouter();
 const poolStatus = ref("Active");
 const payoutMap = ref<Map<string, number>>(new Map());
 
-const lpId = route.params.lp as string;
+const lpId = Array.isArray(route.params.lp)
+  ? route.params.lp[0]
+  : route.params.lp;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 const poolId = computed(() => {
   const poolId = route.params.id;
@@ -323,52 +323,12 @@ watch(totalLiquidity, fetchPoolSnapshots);
 /*
  * Toast notifications
  */
-
-const notifications = ref<Map<string, NotificationProps>>(new Map());
-const atomSrcset = new Map([
-  [SrcsetEnum.AVIF, "/icons/atom.avif"],
-  [SrcsetEnum.WEBP, "/icons/atom.webp"],
-  [SrcsetEnum.PNG, "/icons/atom.png"],
-]);
-
-const createTransactionNotification = (
-  //@ts-expect-error need to find a good type for transaction
-  transaction,
-  title: string,
-  body = "Your transaction is pending",
-  srcset = atomSrcset
-) => {
-  notifications.value.set(`${transaction?.hash}`, {
-    title,
-    body,
-    cta: {
-      label: "View on Etherscan",
-      url: `${etherscanUrl}/tx/${transaction?.hash}`,
-    },
-    srcset,
-  });
-};
-
-const createReceiptNotification = (
-  //@ts-expect-error need to find a good type for receipt
-  receipt,
-  title: string,
-  body = "Your transaction has completed",
-  srcset = atomSrcset
-) => {
-  notifications.value.set(
-    `${receipt?.blockNumber}${receipt?.transactionIndex}`,
-    {
-      title,
-      body,
-      cta: {
-        label: "View on Etherscan",
-        url: `${etherscanUrl}/tx/${receipt?.transactionHash}`,
-      },
-      srcset,
-    }
-  );
-};
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
 
 watch(depositTx, (transaction) =>
   createTransactionNotification(transaction, "Creating pool")
@@ -522,9 +482,6 @@ watch(claimCollateralReceipt, (receipt) =>
       </div>
     </div>
   </div>
-  <NotificationDisplay
-    :toasts="notifications"
-    @hide-toast="(index) => notifications.delete(index)"
-  >
+  <NotificationDisplay :toasts="notifications" @hide-toast="removeToast">
   </NotificationDisplay>
 </template>
