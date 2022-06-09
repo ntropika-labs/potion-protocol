@@ -118,3 +118,22 @@ query getPoolById($id: ID!) {
     }
   }
 }
+
+query poolsWithLiquidity($alreadyLoadedIds: [ID!]) {
+  pools(
+    where: { size_gt: 0, utilization_lt: 100, id_not_in: $alreadyLoadedIds }
+  ) {
+    id
+    template {
+      criteriaSet {
+        criterias {
+          criteria {
+            underlyingAsset {
+              address
+            }
+          }
+        }
+      }
+    }
+  }
+}
