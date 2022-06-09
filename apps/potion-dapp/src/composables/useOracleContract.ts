@@ -1,28 +1,28 @@
 import type { Oracle } from "potion-contracts/typechain";
 
-import { contractsAddresses } from "@/helpers/contracts";
 import { Oracle__factory } from "potion-contracts/typechain";
 import { formatUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
+import { useAddressBookContract } from "./useAddressBookContract";
 
 export function useOracleContract() {
   const { initContract } = useEthersContract();
-  const { Oracle: OracleContract } = contractsAddresses;
+  const { getOracle } = useAddressBookContract();
 
   //Provider initialization
 
-  const initContractProvider = () => {
+  const initContractProvider = async () => {
     return initContract(
       false,
       false,
       Oracle__factory,
-      OracleContract.address.toLowerCase()
+      await getOracle()
     ) as Oracle;
   };
 
   const getPrice = async (address: string) => {
     try {
-      const oracleContract = initContractProvider();
+      const oracleContract = await initContractProvider();
 
       const price = await oracleContract.getPrice(address);
       return formatUnits(price, 8);
@@ -37,7 +37,7 @@ export function useOracleContract() {
 
   const getPrices = async (addresses: string[]) => {
     try {
-      const oracleContract = initContractProvider();
+      const oracleContract = await initContractProvider();
 
       const priceMap = new Map<string, string>();
 

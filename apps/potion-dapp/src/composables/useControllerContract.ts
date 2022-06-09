@@ -5,10 +5,10 @@ import type {
 
 import type { ControllerInterface } from "potion-contracts/typechain";
 
-import { contractsAddresses } from "@/helpers/contracts";
 import { ControllerInterface__factory } from "potion-contracts/typechain";
 import { parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
+import { useAddressBookContract } from "./useAddressBookContract";
 import { useOnboard } from "@onboard-composable";
 
 import { ref } from "vue";
@@ -31,26 +31,26 @@ const COLLATERAL_DECIMALS = 10 ** 6;
 
 export function useControllerContract() {
   const { initContract } = useEthersContract();
-  const { Controller } = contractsAddresses;
+  const { getController } = useAddressBookContract();
   const { connectedWallet } = useOnboard();
 
   //Provider initialization
 
-  const initContractProvider = () => {
+  const initContractProvider = async () => {
     return initContract(
       false,
       false,
       ControllerInterface__factory,
-      Controller.address.toLowerCase()
+      await getController()
     ) as ControllerInterface;
   };
 
-  const initContractSigner = () => {
+  const initContractSigner = async () => {
     return initContract(
       true,
       false,
       ControllerInterface__factory,
-      Controller.address.toLowerCase()
+      await getController()
     ) as ControllerInterface;
   };
 
@@ -64,7 +64,7 @@ export function useControllerContract() {
   ) => {
     if (connectedWallet.value) {
       try {
-        const controllerContract = initContractSigner();
+        const controllerContract = await initContractSigner();
 
         redeemLoading.value = true;
         const vault = await controllerContract.getAccountVaultCounter(
@@ -99,7 +99,7 @@ export function useControllerContract() {
 
   const getPayout = async (address: string, amount: string) => {
     try {
-      const controllerContract = initContractProvider();
+      const controllerContract = await initContractProvider();
 
       const payout = await controllerContract.getPayout(
         address,
@@ -117,7 +117,7 @@ export function useControllerContract() {
 
   const getPayouts = async (records: { address: string; amount: string }[]) => {
     try {
-      const controllerContract = initContractProvider();
+      const controllerContract = await initContractProvider();
 
       const payoutsMap = new Map<string, string>();
 
