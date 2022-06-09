@@ -1,7 +1,12 @@
 <template>
   <button
     :disabled="props.disabled"
-    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent ring-white/10 cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) hover:( ring-white/20 ) last:children:hover-opacity-100 z-300"
+    class="relative w-full flex justify-between items-center transition px-4 py-2 text-dwhite-300 ring-1 rounded-xl bg-transparent cursor-pointer outline-none focus:( outline-none ring-primary-500 ) disabled:( opacity-60 cursor-not-allowed ) last:children:hover-opacity-100 z-300"
+    :class="
+      props.selected
+        ? 'ring-primary-500'
+        : 'ring-white/10 hover:( ring-white/20 )'
+    "
     @click="$emit('click')"
   >
     <div class="flex gap-4 z-200 items-center">
