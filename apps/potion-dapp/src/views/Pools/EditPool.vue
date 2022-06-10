@@ -338,7 +338,7 @@ const liquidityCheck = computed(
   () =>
     validInput.value &&
     liquidity.value > 0 &&
-    liquidity.value < userCollateralBalance.value
+    liquidity.value <= userCollateralBalance.value
 );
 const bondingCurveCheck = computed(
   () =>
@@ -387,7 +387,7 @@ const handleEditPool = async () => {
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   } else {
-    if (poolParamToNumber.value) {
+    if (poolParamToNumber.value !== null && poolParamToNumber.value >= 0) {
       await depositAndCreateCurveAndCriteria(
         poolParamToNumber.value,
         liquidity.value,
@@ -395,7 +395,6 @@ const handleEditPool = async () => {
         criterias.value
       );
     }
-
     await fetchUserCollateralBalance();
     await fetchUserCollateralAllowance();
   }

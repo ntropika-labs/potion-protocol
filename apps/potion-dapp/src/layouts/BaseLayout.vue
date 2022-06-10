@@ -9,10 +9,12 @@
     <div class="container mx-auto mt-24 px-6 md:px-12">
       <slot />
     </div>
-    <div
-      class="absolute fixed top-0 right-0 z-20 flex flex-col items-end justify-start px-10 pt-10 gap-5"
-    >
-      <div id="toast-wrap" v-auto-animate></div>
+    <div class="absolute fixed top-0 right-0 z-20 px-10 pt-10">
+      <div
+        id="toast-wrap"
+        v-auto-animate
+        class="flex flex-col items-end justify-start gap-5"
+      ></div>
     </div>
   </div>
 </template>
