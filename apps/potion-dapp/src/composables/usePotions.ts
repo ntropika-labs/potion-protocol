@@ -30,21 +30,28 @@ const usePersonalPotions = (
   const activeIds = computed(() => getPersonalPotionsIds(activePotions));
   const allIds = computed(() => [...expiredIds.value, ...activeIds.value]);
 
+  const potionsPerQuery = 8;
+
   const variables = computed(() => ({
     buyerAddress: unref(address),
     expiry: unref(timestamp),
     alreadyLoadedIds: allIds.value,
+    first: potionsPerQuery,
   }));
 
-  const { data: userPotions, executeQuery: getUserPotionsQuery } =
-    useGetUserPotionsQuery({
-      variables,
-      pause: true,
-    });
+  const {
+    data: userPotions,
+    executeQuery: getUserPotionsQuery,
+    fetching: loadingUserPotions,
+  } = useGetUserPotionsQuery({
+    variables,
+    pause: true,
+  });
 
   const {
     data: newActivePotions,
     executeQuery: executeGetMoreActivePotionsQuery,
+    fetching: loadingActivePotions,
   } = useGetActivePotionsQuery({
     variables,
     pause: true,
@@ -53,6 +60,7 @@ const usePersonalPotions = (
   const {
     data: newExpiredPotions,
     executeQuery: executeGetMoreExpiredPotionsQuery,
+    fetching: loadingExpiredPotions,
   } = useGetExpiredPotionsQuery({
     variables,
     pause: true,
@@ -60,6 +68,8 @@ const usePersonalPotions = (
 
   const loadMoreActive = async () => {
     await executeGetMoreActivePotionsQuery();
+    canLoadMoreExpiredPotions.value =
+      newActivePotions?.value?.buyerRecords?.length === potionsPerQuery;
     activePotions.value = activePotions.value.concat(
       newActivePotions?.value?.buyerRecords ?? []
     );
@@ -67,6 +77,8 @@ const usePersonalPotions = (
 
   const loadMoreExpired = async () => {
     await executeGetMoreExpiredPotionsQuery();
+    canLoadMoreExpiredPotions.value =
+      newExpiredPotions?.value?.buyerRecords?.length === potionsPerQuery;
     expiredPotions.value = expiredPotions.value.concat(
       newExpiredPotions?.value?.buyerRecords ?? []
     );
@@ -75,6 +87,10 @@ const usePersonalPotions = (
   watch(pauseQuery, async () => {
     if (!pauseQuery.value) {
       await getUserPotionsQuery();
+      canLoadMoreExpiredPotions.value =
+        userPotions?.value?.expired?.length === potionsPerQuery;
+      canLoadMoreActivePotions.value =
+        userPotions?.value?.active?.length === potionsPerQuery;
       activePotions.value = activePotions.value.concat(
         userPotions?.value?.active ?? []
       );
@@ -91,6 +107,9 @@ const usePersonalPotions = (
     canLoadMoreExpiredPotions,
     loadMoreActive,
     loadMoreExpired,
+    loadingActivePotions,
+    loadingExpiredPotions,
+    loadingUserPotions,
   };
 };
 
