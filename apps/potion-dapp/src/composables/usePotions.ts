@@ -6,7 +6,7 @@ import {
   useGetMostCollateralizedPotionsQuery,
   useGetMostPopularPotionsQuery,
 } from "subgraph-queries/generated/urql";
-import { ref, computed, unref, onMounted } from "vue";
+import { ref, computed, unref, onMounted, watch } from "vue";
 import type { Ref } from "vue";
 import type {
   PersonalPotionCardFragment,
@@ -18,7 +18,8 @@ const getPersonalPotionsIds = (potions: Ref<PersonalPotionCardFragment[]>) =>
 
 const usePersonalPotions = (
   address: string | Ref<string>,
-  timestamp: string | Ref<string>
+  timestamp: string | Ref<string>,
+  pauseQuery: Ref<boolean>
 ) => {
   const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
   const activePotions = ref<PersonalPotionCardFragment[]>([]);
@@ -69,14 +70,17 @@ const usePersonalPotions = (
     );
   };
 
-  onMounted(async () => {
-    await getUserPotionsQuery();
-    activePotions.value = activePotions.value.concat(
-      userPotions?.value?.active ?? []
-    );
-    expiredPotions.value = expiredPotions.value.concat(
-      userPotions?.value?.expired ?? []
-    );
+  watch(pauseQuery, async () => {
+    if (!pauseQuery.value) {
+      console.log(timestamp);
+      await getUserPotionsQuery();
+      activePotions.value = activePotions.value.concat(
+        userPotions?.value?.active ?? []
+      );
+      expiredPotions.value = expiredPotions.value.concat(
+        userPotions?.value?.expired ?? []
+      );
+    }
   });
 
   return {

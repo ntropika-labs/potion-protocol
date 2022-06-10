@@ -92,3 +92,5 @@ strike_price: Strike Price
 expiration: Expiration
 quantity: Quantity
 current_payout: Current Payout
+summary: Summary
+total_payout: total payout
