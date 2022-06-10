@@ -7,17 +7,11 @@ export default defineComponent({
 
 <script lang="ts" setup>
 import { computed } from "vue";
+import type { CardColor } from "../../types";
 
 export interface Props {
   direction?: "row" | "column";
-  color?:
-    | "glass"
-    | "neutral"
-    | "no-bg"
-    | "secondary-radial"
-    | "primary-radial-inactive"
-    | "primary-radial"
-    | "clean";
+  color?: CardColor;
   fullHeight?: boolean;
   roundSize?: "none" | "small" | "default";
 }

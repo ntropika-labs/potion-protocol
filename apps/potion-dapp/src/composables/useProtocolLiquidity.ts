@@ -1,11 +1,13 @@
 import {
-  useGetMaxStrikeForUnderlyingQuery,
   useGetMaxDurationForStrikeQuery,
+  useGetMaxStrikeForUnderlyingQuery,
   usePoolsWithLiquidityQuery,
 } from "subgraph-queries/generated/urql";
-import type { CriteriaSetsWithLiquidityFragment } from "subgraph-queries/generated/operations";
-import { computed, ref, watch } from "vue";
+import { computed, ref, unref, watch } from "vue";
 
+import type { Ref } from "vue";
+
+import type { CriteriaSetsWithLiquidityFragment } from "subgraph-queries/generated/operations";
 type TemplateId = CriteriaSetsWithLiquidityFragment["criteriaSet"]["templates"];
 
 const usePoolsLiquidity = () => {
@@ -38,13 +40,12 @@ const usePoolsLiquidity = () => {
   };
 };
 
-const useUnderlyingLiquidity = (underlying: string) => {
+const useUnderlyingLiquidity = (underlying: Ref<string> | string) => {
   const maxStrike = ref(0);
   const alreadyLoadedIds = ref<string[]>([""]);
-
   const { data } = useGetMaxStrikeForUnderlyingQuery({
     variables: computed(() => ({
-      underlying,
+      underlying: unref(underlying),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
   });
@@ -71,14 +72,17 @@ const useUnderlyingLiquidity = (underlying: string) => {
   };
 };
 
-const useStrikeLiquidity = (underlying: string, strike: string) => {
+const useStrikeLiquidity = (
+  underlying: Ref<string> | string,
+  strike: Ref<string> | string
+) => {
   const maxDuration = ref(0);
   const alreadyLoadedIds = ref<string[]>([""]);
 
   const { data } = useGetMaxDurationForStrikeQuery({
     variables: computed(() => ({
-      underlying,
-      strike,
+      underlying: unref(underlying),
+      strike: unref(strike),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
   });
