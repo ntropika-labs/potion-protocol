@@ -186,7 +186,7 @@ const isNextStepEnabled = computed(() => {
           @token-selected="handleTokenSelection"
         />
         <div v-else class="text-center">
-          <p class="text-white/40 text-3xl">
+          <p class="text-white/40 text-3xl uppercase">
             {{ t("no_underlying_asset_found") }}
           </p>
         </div>

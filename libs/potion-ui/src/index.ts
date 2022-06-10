@@ -27,12 +27,12 @@ import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue
 import PoolCard from "./components/PoolCard/PoolCard.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
+import SidebarLink from "./components/SidebarLink/SidebarLink.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
 import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
-import SidebarLink from "./components/SidebarLink/SidebarLink.vue";
 
 export type {
   IconStrokeWeight,
@@ -42,6 +42,7 @@ export type {
   ButtonSize,
   ThemePalette,
   PropsMap,
+  CardColor,
 } from "./types";
 /**
  * Here, we export each of the components as a named export.

@@ -43,19 +43,13 @@ export default defineComponent({
 <script lang="ts" setup>
 import { currencyFormatter } from "../../helpers";
 import { computed, watch } from "vue";
+import type { CardColor } from "../../types";
 import BaseTag from "../BaseTag/BaseTag.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
 import BaseInput from "../BaseInput/BaseInput.vue";
 import CardFooter from "../CardFooter/CardFooter.vue";
 export interface Props {
-  color?:
-    | "glass"
-    | "neutral"
-    | "no-bg"
-    | "secondary-radial"
-    | "primary-radial-inactive"
-    | "primary-radial"
-    | "clean";
+  color?: CardColor;
   title?: string;
   unit: string;
   step: number;
@@ -98,23 +92,19 @@ const decimalCount = (num: number) => {
 };
 
 const inputIsValid = computed(() => {
-  console.log("computed");
   if (
+    typeof props.modelValue !== "number" ||
+    Number.isNaN(props.modelValue) ||
     props.modelValue < props.min ||
     props.modelValue > props.max ||
-    typeof props.modelValue !== "number" ||
-    isNaN(props.modelValue) ||
     decimalCount(props.modelValue) > props.maxDecimals
   ) {
-    // emits("validInput", false);
     return false;
   }
-  // emits("validInput", true);
   return true;
 });
 
 watch(inputIsValid, () => {
-  console.log("watcher");
   emits("validInput", inputIsValid.value);
 });
 
