@@ -107,7 +107,7 @@ const unutilizedLiquidity = computed(() => {
         test-liquidity-card-footer-withdraw
         class="flex justify-center gap-3"
       >
-        <slot name="deposit-footer"></slot>
+        <slot name="withdraw-footer"></slot>
       </CardFooter>
     </template>
     <template v-if="currentTab === 'deposit'">
@@ -146,7 +146,7 @@ const unutilizedLiquidity = computed(() => {
         test-liquidity-card-footer-deposit
         class="flex justify-center gap-3"
       >
-        <slot name="withdraw-footer"></slot>
+        <slot name="deposit-footer"></slot>
       </CardFooter>
     </template>
   </BaseCard>

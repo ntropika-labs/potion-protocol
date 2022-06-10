@@ -273,18 +273,16 @@ const handleDeposit = async () => {
   if (canDeposit.value) {
     if (amountNeededToApprove.value > 0) {
       await approveForPotionLiquidityPool(modelDeposit.value, true);
-      await fetchUserCollateralBalance();
-      await fetchUserCollateralAllowance();
     } else {
       if (poolId.value !== null) {
         await deposit(poolId.value, modelDeposit.value);
 
         totalLiquidity.value += modelDeposit.value;
       }
-
-      await fetchUserCollateralBalance();
-      await fetchUserCollateralAllowance();
     }
+
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
   }
 };
 
@@ -300,7 +298,6 @@ const handleWithdraw = async () => {
     }
 
     await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
   }
 };
 
@@ -447,7 +444,7 @@ watch(claimCollateralReceipt, (receipt) =>
           :utilized-liquidity="totalUtilization"
           :show-withdraw="true"
         >
-          <template #deposit-footer>
+          <template #withdraw-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
@@ -468,7 +465,7 @@ watch(claimCollateralReceipt, (receipt) =>
               </template>
             </BaseButton>
           </template>
-          <template #withdraw-footer>
+          <template #deposit-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
