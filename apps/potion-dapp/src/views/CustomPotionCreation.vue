@@ -181,9 +181,15 @@ const isNextStepEnabled = computed(() => {
       </ul>
       <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
         <TokenSelection
+          v-if="selectableTokens.length > 0"
           :tokens="selectableTokens"
           @token-selected="handleTokenSelection"
         />
+        <div v-else class="text-center">
+          <p class="text-white/40 text-3xl">
+            {{ t("no_underlying_asset_found") }}
+          </p>
+        </div>
       </div>
       <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
         <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
