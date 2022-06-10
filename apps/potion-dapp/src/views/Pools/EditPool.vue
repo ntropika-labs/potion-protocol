@@ -338,7 +338,7 @@ const liquidityCheck = computed(
   () =>
     validInput.value &&
     liquidity.value > 0 &&
-    liquidity.value < userCollateralBalance.value
+    liquidity.value <= userCollateralBalance.value
 );
 const bondingCurveCheck = computed(
   () =>
