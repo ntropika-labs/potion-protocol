@@ -23,6 +23,8 @@ const usePersonalPotions = (
 ) => {
   const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
   const activePotions = ref<PersonalPotionCardFragment[]>([]);
+  const canLoadMoreExpiredPotions = ref<boolean>(true);
+  const canLoadMoreActivePotions = ref<boolean>(true);
 
   const expiredIds = computed(() => getPersonalPotionsIds(expiredPotions));
   const activeIds = computed(() => getPersonalPotionsIds(activePotions));
@@ -72,7 +74,6 @@ const usePersonalPotions = (
 
   watch(pauseQuery, async () => {
     if (!pauseQuery.value) {
-      console.log(timestamp);
       await getUserPotionsQuery();
       activePotions.value = activePotions.value.concat(
         userPotions?.value?.active ?? []
@@ -86,6 +87,8 @@ const usePersonalPotions = (
   return {
     activePotions,
     expiredPotions,
+    canLoadMoreActivePotions,
+    canLoadMoreExpiredPotions,
     loadMoreActive,
     loadMoreExpired,
   };
