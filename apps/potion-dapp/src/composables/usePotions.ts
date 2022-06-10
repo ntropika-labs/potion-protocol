@@ -23,8 +23,8 @@ const usePersonalPotions = (
 ) => {
   const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
   const activePotions = ref<PersonalPotionCardFragment[]>([]);
-  const canLoadMoreExpiredPotions = ref<boolean>(true);
-  const canLoadMoreActivePotions = ref<boolean>(true);
+  const canLoadMoreExpiredPotions = ref<boolean>(false);
+  const canLoadMoreActivePotions = ref<boolean>(false);
 
   const expiredIds = computed(() => getPersonalPotionsIds(expiredPotions));
   const activeIds = computed(() => getPersonalPotionsIds(activePotions));
