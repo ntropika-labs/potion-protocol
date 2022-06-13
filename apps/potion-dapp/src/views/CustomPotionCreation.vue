@@ -6,6 +6,7 @@ import {
   usePoolsLiquidity,
   useUnderlyingLiquidity,
 } from "@/composables/useProtocolLiquidity";
+import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import type { SelectableToken } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
@@ -157,13 +158,21 @@ const handleTokenSelection = (address: string) => {
 };
 
 // Strike Selection
-const { fetchPrice, formattedPrice } = useFetchTokenPrices(
+const { fetchPrice, formattedPrice, price } = useFetchTokenPrices(
   tokenSelected.value?.address || ""
 );
 onMounted(() => {
   fetchPrice();
 });
+const { maxStrike: maxSelectableStrike } =
+  useUnderlyingLiquidity(tokenSelectedAddress);
+const maxSelectableStrikeAbsolute = computed(() => {
+  return (maxSelectableStrike.value * price.value) / 100;
+});
 const strikeSelected = ref(0);
+const strikeSelectedRelative = computed(() => {
+  return (strikeSelected.value * 100) / price.value;
+});
 
 const isStrikeValid = ref(true);
 const isNextStepEnabled = computed(() => {
@@ -177,8 +186,13 @@ const isNextStepEnabled = computed(() => {
 });
 
 // Similar By Strike
-const { maxStrike: maxSelectableStrike } =
-  useUnderlyingLiquidity(tokenSelectedAddress);
+
+const { similarByStrike, similarByAsset } = useSimilarPotions(
+  tokenSelectedAddress,
+  ref(strikeSelectedRelative),
+  ref(10),
+  ref(1200)
+);
 </script>
 
 <template>
@@ -249,7 +263,7 @@ const { maxStrike: maxSelectableStrike } =
             color="no-bg"
             :title="t('your_strike_price')"
             :min="1"
-            :max="maxSelectableStrike"
+            :max="maxSelectableStrikeAbsolute"
             :step="0.1"
             unit="USDC"
             :footer-description="t('max_strike_price')"
@@ -291,6 +305,10 @@ const { maxStrike: maxSelectableStrike } =
     <h2>Similar Potions</h2>
     <pre>
       <code class="font-mono">
+        {{similarByAsset}}
+      </code>
+      <code class="font-mono">
+        {{ similarByStrike }}
 
       </code>
     </pre>

@@ -30,6 +30,127 @@ fragment PotionCard on OToken {
   strikePrice
 }
 
+query getSimilarPotionByAsset(
+  $expiry: BigInt
+  $addresses: [String!]
+  $limit: Int
+  $strikePrice: BigDecimal
+) {
+  otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      strikePrice_gt: 0.000001
+      strikePrice_lte: $strikePrice
+    }
+    orderBy: purchasesCount
+    orderDirection: desc
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+
+query getSimilarPotionByStrike(
+  $expiry: BigInt
+  $addresses: [String!]
+  $strikePrice: BigDecimal
+  $doubleStrikePrice: BigDecimal
+  $limit: Int
+) {
+  minStrike: otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      strikePrice_gt: 0.000001
+      strikePrice_lte: $strikePrice
+    }
+    orderBy: strikePrice
+    orderDirection: desc
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+  maxStrike: otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      strikePrice_gt: $strikePrice
+      strikePrice_lte: $doubleStrikePrice
+    }
+    orderBy: strikePrice
+    orderDirection: asc
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+
+# getSimilarPotionByDuration(
+#   $expiry: BigInt!
+#   $duration: BigInt!
+#   $addresses: [String!]
+#   $strikePrice: BigDecimal!
+#   $doubleStrikePrice: BigDecimal!
+#   $limit: Int = 5
+#   ) {
+
+#    minDurationMinStrike: otokens(
+#     where: {
+#       expiry_gte: $expiry
+#       expiry_lte: $duration
+#       underlyingAsset_in: $addresses
+#       strikePrice_gt: 0.000001
+#       strikePrice_lte: $strikePrice
+#     }
+#     orderBy: strikePrice
+#     orderDirection: desc
+#     first: $limit
+#   ) {
+#     ...PotionCard
+#   }
+
+#   minDurationMaxStrike: otokens(
+#     where: {
+#       expiry_gte: $expiry
+#       expiry_lte: $duration
+#       underlyingAsset_in: $addresses
+#       strikePrice_gt: $strikePrice
+#       strikePrice_lte: $doubleStrikePrice
+#     }
+#     orderBy: strikePrice
+#     orderDirection: asc
+#     first: $limit
+#   ) {
+#     ...PotionCard
+#   },
+#   maxDurationMinStrike: otokens(
+#     where: {
+#       expiry_gt: $duration
+#       underlyingAsset_in: $addresses
+#       strikePrice_lte: $strikePrice
+#     }
+#     orderBy: strikePrice
+#     orderDirection: desc
+#     first: $limit
+#   ) {
+#     ...PotionCard
+#   },
+#   maxDurationMaxStrike: otokens(
+#     where: {
+#       expiry_gt: $duration
+#       underlyingAsset_in: $addresses
+#       strikePrice_gt: $strikePrice
+#       strikePrice_lte: $doubleStrikePrice
+#     }
+#     orderBy: strikePrice
+#     orderDirection: asc
+#     first: $limit
+#   ) {
+#     ...OtokenInfo
+#   },
+# }
+
 query getExpiredPotions(
   $buyerAddress: Bytes!
   $expiry: BigInt!
