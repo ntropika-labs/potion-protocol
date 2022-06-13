@@ -18,7 +18,7 @@ const getPersonalPotionsIds = (potions: Ref<PersonalPotionCardFragment[]>) =>
 
 const usePersonalPotions = (
   address: string | Ref<string>,
-  timestamp: string | Ref<string>,
+  timestamp: string | Ref<string> | number | Ref<number>,
   pauseQuery: Ref<boolean>
 ) => {
   const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
@@ -34,7 +34,7 @@ const usePersonalPotions = (
 
   const variables = computed(() => ({
     buyerAddress: unref(address),
-    expiry: unref(timestamp),
+    expiry: unref(timestamp).toString(),
     alreadyLoadedIds: allIds.value,
     first: potionsPerQuery,
   }));

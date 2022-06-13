@@ -20,15 +20,13 @@ const buyerAddress = Array.isArray(route.params.address)
   ? route.params.address[0]
   : route.params.address;
 
-const isSameUserConnected = computed(() => {
-  if (
-    connectedWallet.value?.accounts[0].address.toLowerCase() === buyerAddress
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-});
+const connectedWalletAddress = computed(() =>
+  connectedWallet.value?.accounts[0].address.toLowerCase()
+);
+const isSameUserConnected = computed(
+  () => connectedWalletAddress.value === buyerAddress
+);
+
 const innerNavProps = computed(() => {
   return {
     currentRoute: route.name,
@@ -42,9 +40,9 @@ const innerNavProps = computed(() => {
       {
         name: "buyer",
         label: "My Potions",
-        enabled: connectedWallet.value?.accounts[0].address ? true : false,
+        enabled: connectedWalletAddress.value ? true : false,
         params: {
-          buyer: connectedWallet.value?.accounts[0].address ?? "not-valid",
+          buyer: connectedWalletAddress.value ?? "not-valid",
         },
       },
     ],
@@ -87,11 +85,9 @@ const summaryText = computed(() =>
 );
 
 const handleWithdrawPotion = async (otokenId: string, amount: string) => {
-  const buyerAddress = connectedWallet.value?.accounts[0].address.toLowerCase();
-
-  if (!buyerAddress) return;
-
-  await redeem(otokenId, amount, buyerAddress);
+  if (connectedWalletAddress.value && isSameUserConnected.value) {
+    await redeem(otokenId, amount, connectedWalletAddress.value);
+  }
 };
 
 watch(
