@@ -91,34 +91,26 @@ const handleWithdrawPotion = async (otokenId: string, amount: string) => {
 };
 
 watch(
-  () => [...expiredPotions.value],
-  async (potions) => {
-    console.log("watching expired potions");
-    const info = potions.map((p) => ({
+  expiredPotions,
+  async () => {
+    const info = expiredPotions.value.map((p) => ({
       address: p.otoken.id,
       amount: p.numberOfOTokens,
     }));
 
-    const payouts = await getPayouts(info);
-
-    expiredPotionsPayouts.value = new Map([
-      ...expiredPotionsPayouts.value.entries(),
-      ...payouts.entries(),
-    ]);
+    expiredPotionsPayouts.value = await getPayouts(info);
   },
   { immediate: true }
 );
 
 watch(
-  () => [...activePotions.value],
-  async (potions) => {
-    console.log("watching active potions");
-
-    const potionsInfo = potions.map((potion) => potion.otoken.id);
+  activePotions,
+  async () => {
+    const potionsInfo = activePotions.value.map((potion) => potion.otoken.id);
     const prices = await getPrices(potionsInfo);
 
-    for (let i = 0; i < potions.length; i++) {
-      const potion = potions[i];
+    for (let i = 0; i < activePotions.value.length; i++) {
+      const potion = activePotions.value[i];
       const numberOfOTokens = parseFloat(potion.numberOfOTokens);
       const price = parseFloat(prices.get(potion.otoken.id) || "0");
       const strikePrice = parseFloat(potion.otoken.strikePrice);
@@ -204,36 +196,41 @@ watch(redeemReceipt, (receipt) =>
             {{ t("purchased_potions_not_expired") }}
           </h2>
         </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Get price from oracle composable -->
-          <PotionCard
-            v-for="(potion, index) in activePotions"
-            :key="`${potion.id}${index}`"
-            :withdrawable="isSameUserConnected"
-            :expiry="potion.expiry"
-            :is-expired="false"
-            :is-withdraw-enabled="false"
-            :token="potion.otoken.underlyingAsset"
-            :strike-price="potion.otoken.strikePrice"
-            :quantity="potion.numberOfOTokens"
-            :current-payout="getActivePotionPayout(potion.otoken.id)"
-          ></PotionCard>
-        </div>
-        <div class="flex justify-center mt-6">
-          <BaseButton
-            v-if="canLoadMoreActivePotions"
-            test-potions-load-more-active
-            palette="secondary-o"
-            :label="t('show_more')"
-            size="sm"
-            :disabled="
-              redeemLoading || loadingActivePotions || loadingExpiredPotions
-            "
-            @click="loadMoreActive"
-          ></BaseButton>
-          <div v-else class="text-dwhite-400/30 uppercase text-xs">
-            No more potions available
+        <template v-if="activePotions.length > 0">
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Get price from oracle composable -->
+            <PotionCard
+              v-for="(potion, index) in activePotions"
+              :key="`${potion.id}${index}`"
+              :withdrawable="isSameUserConnected"
+              :expiry="potion.expiry"
+              :is-expired="false"
+              :is-withdraw-enabled="false"
+              :token="potion.otoken.underlyingAsset"
+              :strike-price="potion.otoken.strikePrice"
+              :quantity="potion.numberOfOTokens"
+              :current-payout="getActivePotionPayout(potion.otoken.id)"
+            ></PotionCard>
           </div>
+          <div class="flex justify-center mt-6">
+            <BaseButton
+              v-if="canLoadMoreActivePotions"
+              test-potions-load-more-active
+              palette="secondary-o"
+              :label="t('show_more')"
+              size="sm"
+              :disabled="
+                redeemLoading || loadingActivePotions || loadingExpiredPotions
+              "
+              @click="loadMoreActive"
+            ></BaseButton>
+          </div>
+        </template>
+        <div
+          v-else
+          class="flex justify-center p-6 text-dwhite-400/30 uppercase text-xs"
+        >
+          {{ t("no_potions_available") }}
         </div>
       </BaseCard>
       <BaseCard class="p-6"
@@ -247,42 +244,47 @@ watch(redeemReceipt, (receipt) =>
             {{ t("expired_potins_ready_to_withdraw") }}
           </h2>
         </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <PotionCard
-            v-for="(potion, index) in expiredPotions"
-            :key="`${potion.id}${index}`"
-            text-potions-expired-potion-card
-            :withdrawable="isSameUserConnected"
-            :expiry="potion.expiry"
-            :is-expired="true"
-            :is-withdraw-enabled="!redeemLoading"
-            :token="potion.otoken.underlyingAsset"
-            :strike-price="potion.otoken.strikePrice"
-            :quantity="potion.numberOfOTokens"
-            :current-payout="getExpiredPotionPayout(potion.otoken.id)"
-            @withdraw="
-              () =>
-                handleWithdrawPotion(potion.otoken.id, potion.numberOfOTokens)
-            "
-          ></PotionCard>
-        </div>
-        <div class="flex justify-center mt-6">
-          <BaseButton
-            v-if="canLoadMoreExpiredPotions"
-            test-potions-load-more-expired
-            palette="secondary-o"
-            :label="t('show_more')"
-            size="sm"
-            :disabled="
-              redeemLoading || loadingActivePotions || loadingExpiredPotions
-            "
-            @click="loadMoreExpired"
-          ></BaseButton>
-          <div v-else class="text-dwhite-400/30 uppercase text-xs">
-            No more potions available
+        <template v-if="expiredPotions.length > 0">
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <PotionCard
+              v-for="(potion, index) in expiredPotions"
+              :key="`${potion.id}${index}`"
+              text-potions-expired-potion-card
+              :withdrawable="isSameUserConnected"
+              :expiry="potion.expiry"
+              :is-expired="true"
+              :is-withdraw-enabled="!redeemLoading"
+              :token="potion.otoken.underlyingAsset"
+              :strike-price="potion.otoken.strikePrice"
+              :quantity="potion.numberOfOTokens"
+              :current-payout="getExpiredPotionPayout(potion.otoken.id)"
+              @withdraw="
+                () =>
+                  handleWithdrawPotion(potion.otoken.id, potion.numberOfOTokens)
+              "
+            ></PotionCard>
           </div>
-        </div></BaseCard
-      >
+          <div class="flex justify-center mt-6">
+            <BaseButton
+              v-if="canLoadMoreExpiredPotions"
+              test-potions-load-more-expired
+              palette="secondary-o"
+              :label="t('show_more')"
+              size="sm"
+              :disabled="
+                redeemLoading || loadingActivePotions || loadingExpiredPotions
+              "
+              @click="loadMoreExpired"
+            ></BaseButton>
+          </div>
+        </template>
+        <div
+          v-else
+          class="flex justify-center p-6 text-dwhite-400/30 uppercase text-xs"
+        >
+          {{ t("no_potions_available") }}
+        </div>
+      </BaseCard>
     </template>
   </div>
   <NotificationDisplay
