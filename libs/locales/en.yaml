@@ -89,3 +89,4 @@ withdraw_capital: Withdraw capital
 your_liquidity: Your liquidity
 withdraw: Withdraw
 no_underlying_asset_found: no underlying asset found
+current_price: current price

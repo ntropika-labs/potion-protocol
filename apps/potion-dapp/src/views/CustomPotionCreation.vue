@@ -1,12 +1,16 @@
 <script lang="ts" setup>
 import { TokenSelection, InputNumber, BaseButton } from "potion-ui";
+import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useTokenList } from "@/composables/useTokenList";
-import { usePoolsLiquidity } from "@/composables/useProtocolLiquidity";
+import {
+  usePoolsLiquidity,
+  useUnderlyingLiquidity,
+} from "@/composables/useProtocolLiquidity";
 import type { SelectableToken } from "dapp-types";
 // import AssetSelection from "@/components/CustomPotion/AssetSelection.vue";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 // const router = useRouter();
@@ -70,6 +74,9 @@ const sidebarItems = computed(() => {
       selected: currentIndex.value === 1,
       disabled: !isTokenSelected.value,
       onClick: () => {
+        if (strikeSelected.value === 0) {
+          strikeSelected.value = 100;
+        }
         currentIndex.value = 1;
       },
     },
@@ -115,20 +122,38 @@ const tokenToSelectableToken = (
 
 // Token selection
 const selectableTokens = ref<SelectableToken[]>([]);
+// const tokenSelected =  computed(() => {
+//   const res =  selectableTokens.value.find((token) => token.selected);
+//   if (res) {
+//     return res
+//   } return null
+// });
 const { underlyingsWithLiquidity } = usePoolsLiquidity();
 watch(underlyingsWithLiquidity, () => {
-  console.log(underlyingsWithLiquidity);
   selectableTokens.value = underlyingsWithLiquidity.value.map((address) =>
     tokenToSelectableToken(address)
   );
 });
+const tokenSelected = ref<SelectableToken | null>(null);
+const tokenSelectedAddress = ref<string | null>(null);
+watch(
+  selectableTokens,
+  () => {
+    const selected = selectableTokens.value.find((token) => token.selected);
+    if (selected) {
+      tokenSelected.value = selected;
+      tokenSelectedAddress.value = selected.address;
+    }
+  },
+  {
+    deep: true,
+  }
+);
 
-const tokenSelected = computed(() => {
-  return selectableTokens.value.find((t) => t.selected);
-});
 const isTokenSelected = computed(() => {
   return tokenSelected.value ? true : false;
 });
+
 const handleTokenSelection = (address: string) => {
   selectableTokens.value.forEach((token) => {
     if (token.address === address) {
@@ -140,10 +165,14 @@ const handleTokenSelection = (address: string) => {
 };
 
 // Strike Selection
-const strikeSelected = ref(100);
-const maxSelectableStrike = computed(() => {
-  return 1000;
+const { fetchPrice, formattedPrice } = useFetchTokenPrices(
+  tokenSelected.value?.address || ""
+);
+onMounted(() => {
+  fetchPrice();
 });
+const strikeSelected = ref(0);
+
 const isStrikeValid = ref(true);
 const isNextStepEnabled = computed(() => {
   if (currentIndex.value === 0) {
@@ -154,10 +183,14 @@ const isNextStepEnabled = computed(() => {
   }
   return false;
 });
+
+// Similar By Strike
+const { maxStrike: maxSelectableStrike } =
+  useUnderlyingLiquidity(tokenSelectedAddress);
 </script>
 
 <template>
-  <BaseCard class="">
+  <BaseCard>
     <div class="grid grid-cols-1 xl:grid-cols-3 p-5 gap-5">
       <div class="w-full flex justify-between items-center xl:col-span-3">
         <p class="capitalize">{{ t("your_put_recipe") }}</p>
@@ -177,7 +210,22 @@ const isNextStepEnabled = computed(() => {
           :icon-srcset="item.iconSrcset"
           class="lg:w-1/4 lg:w-full"
           @click="item.onClick"
-        ></SidebarLink>
+        >
+          <div
+            v-if="index === 0 && tokenSelected"
+            class="flex gap-2 items-center"
+          >
+            <img
+              class="h-5 w-5"
+              :src="tokenSelected?.image"
+              :alt="tokenSelected?.symbol"
+            />
+            <p class="text-sm">{{ tokenSelected?.symbol }}</p>
+          </div>
+          <div v-if="index === 1 && strikeSelected">
+            <p class="text-sm">{{ strikeSelected }}</p>
+          </div>
+        </SidebarLink>
       </ul>
       <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
         <TokenSelection
@@ -194,8 +242,15 @@ const isNextStepEnabled = computed(() => {
       <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
         <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
           <div class="flex justify-between p-4">
-            <p>hello</p>
-            <p>potion</p>
+            <div class="flex gap-2 items-center">
+              <img
+                class="h-5 w-5"
+                :src="tokenSelected?.image"
+                :alt="tokenSelected?.symbol"
+              />
+              <p class="text-sm capitalize">{{ t("current_price") }}</p>
+            </div>
+            <p>{{ formattedPrice }}</p>
           </div>
           <InputNumber
             v-model.number="strikeSelected"
@@ -240,4 +295,12 @@ const isNextStepEnabled = computed(() => {
       </BaseButton>
     </div>
   </BaseCard>
+  <div class="mt-10">
+    <h2>Similar Potions</h2>
+    <pre>
+      <code class="font-mono">
+
+      </code>
+    </pre>
+  </div>
 </template>

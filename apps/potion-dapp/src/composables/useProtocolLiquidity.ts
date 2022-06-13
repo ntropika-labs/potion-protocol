@@ -1,7 +1,7 @@
 import {
   useGetMaxDurationForStrikeQuery,
   useGetMaxStrikeForUnderlyingQuery,
-  usePoolsWithLiquidityQuery,
+  usePoolsWithLiquidityQuery
 } from "subgraph-queries/generated/urql";
 import { computed, ref, unref, watch } from "vue";
 
@@ -40,14 +40,28 @@ const usePoolsLiquidity = () => {
   };
 };
 
-const useUnderlyingLiquidity = (underlying: Ref<string> | string) => {
+const useUnderlyingLiquidity = (
+  underlying: Ref<string> | Ref<null> | string | null
+) => {
   const maxStrike = ref(0);
   const alreadyLoadedIds = ref<string[]>([""]);
-  const { data } = useGetMaxStrikeForUnderlyingQuery({
+  const isPaused = computed(() => {
+    return unref(underlying) === "" || unref(underlying) === null
+      ? true
+      : false;
+  });
+  const { data, executeQuery } = useGetMaxStrikeForUnderlyingQuery({
     variables: computed(() => ({
       underlying: unref(underlying),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
+    pause: true,
+  });
+
+  watch(isPaused, () => {
+    if (isPaused.value === false) {
+      executeQuery();
+    }
   });
 
   watch(data, () => {

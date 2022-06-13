@@ -1,6 +1,8 @@
 import { $fetch } from "ohmyfetch";
 import { computed, ref } from "vue";
 
+const network = import.meta.env.VITE_ETHEREUM_NETWORK;
+
 export function useFetchTokenPrices(address: string, currency = "usd") {
   const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
   const success = ref(false);
@@ -16,17 +18,21 @@ export function useFetchTokenPrices(address: string, currency = "usd") {
   const fetchPrice = async () => {
     try {
       loading.value = true;
-      const response = await $fetch(
-        endpoint.concat("/simple/token_price/ethereum"),
-        {
-          params: {
-            contract_addresses: address,
-            vs_currencies: currency,
-          },
-        }
-      );
-      console.log(response);
-      price.value = response[address.toLowerCase()][currency.toLowerCase()];
+      if (network === "mainnet") {
+        const response = await $fetch(
+          endpoint.concat("/simple/token_price/ethereum"),
+          {
+            params: {
+              contract_addresses: address,
+              vs_currencies: currency,
+            },
+          }
+        );
+        price.value = response[address.toLowerCase()][currency.toLowerCase()];
+      } else {
+        price.value = 1300;
+      }
+
       loading.value = false;
       success.value = true;
     } catch (error) {
