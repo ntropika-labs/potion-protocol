@@ -19,6 +19,7 @@ export interface Props {
   strikePrice: string;
   currentPayout: string;
   quantity: string;
+  currency?: string;
   etherscan?: {
     url: string;
     label: string;
@@ -27,7 +28,10 @@ export interface Props {
 
 const { t } = useI18n();
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  currency: "USDC",
+  etherscan: () => ({ url: "", label: "" }),
+});
 const emits = defineEmits<{
   (e: "withdraw"): void;
 }>();
@@ -48,7 +52,7 @@ const payoutLabel = computed(() => {
         <BaseTag class="uppercase">{{ t("put_option") }}</BaseTag>
       </div>
 
-      <span v-if="props.etherscan">
+      <span v-if="props.etherscan.url !== ''">
         <a
           :href="props.etherscan.url"
           class="flex items-center text-xs font-serif font-semibold hover:underline self-end"
@@ -65,7 +69,7 @@ const payoutLabel = computed(() => {
         :title="t('strike_price')"
         :value="props.strikePrice"
         value-type="currency"
-        symbol="$"
+        :symbol="props.currency"
       />
       <LabelValue
         size="md"
@@ -84,14 +88,14 @@ const payoutLabel = computed(() => {
         :value="props.currentPayout"
         value-type="currency"
         value-color-class="text-secondary-500"
-        symbol="$"
+        :symbol="props.currency"
       />
     </div>
     <CardFooter v-if="props.withdrawable" class="flex justify-center gap-3">
       <BaseButton
         palette="secondary"
         :label="withdrawLabel"
-        :disabled="!props.isExpired || !props.isWithdrawEnabled"
+        :disabled="!(props.isExpired && props.isWithdrawEnabled)"
         @click="emits('withdraw')"
       ></BaseButton>
     </CardFooter>
