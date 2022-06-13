@@ -7,13 +7,11 @@ import {
   useUnderlyingLiquidity,
 } from "@/composables/useProtocolLiquidity";
 import type { SelectableToken } from "dapp-types";
-// import AssetSelection from "@/components/CustomPotion/AssetSelection.vue";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
 import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
-// const router = useRouter();
 const currentIndex = ref(0);
 
 const AssetActiveIcon = new Map([
@@ -122,12 +120,6 @@ const tokenToSelectableToken = (
 
 // Token selection
 const selectableTokens = ref<SelectableToken[]>([]);
-// const tokenSelected =  computed(() => {
-//   const res =  selectableTokens.value.find((token) => token.selected);
-//   if (res) {
-//     return res
-//   } return null
-// });
 const { underlyingsWithLiquidity } = usePoolsLiquidity();
 watch(underlyingsWithLiquidity, () => {
   selectableTokens.value = underlyingsWithLiquidity.value.map((address) =>
