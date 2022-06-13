@@ -95,12 +95,20 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
     </h6>
     <div class="flex flex-wrap items-center space-x-1" :class="valueAlignment">
       <div
+        v-if="props.valueType === 'currency'"
+        class="font-bold font-serif"
+        :class="[valueSize, valueColorClass]"
+      >
+        <span v-if="props.symbol" class="mr-1"> {{ props.symbol }}</span>
+        <span>{{ formattedValue }}</span>
+      </div>
+      <div
+        v-else
         class="font-bold font-serif"
         :class="[
           valueSize,
           valueColorClass,
           props.valueType === 'pnl' ? pnlColorClass : '',
-          props.valueType === 'currency' ? 'flex flex-row-reverse' : '',
         ]"
       >
         <span>{{ formattedValue }}</span>
