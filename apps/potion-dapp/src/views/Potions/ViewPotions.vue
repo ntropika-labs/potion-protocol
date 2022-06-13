@@ -11,8 +11,10 @@ import { useNotifications } from "@/composables/useNotifications";
 import { useControllerContract } from "@/composables/useControllerContract";
 import { useOracleContract } from "@/composables/useOracleContract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useErc20UpgradeableContract } from "@/composables/useErc20UpgradeableContract";
 
 const { connectedWallet } = useOnboard();
+const { getTokensBalance } = useErc20UpgradeableContract();
 
 const { t } = useI18n();
 const route = useRoute();
@@ -70,12 +72,21 @@ const { getPrices } = useOracleContract();
 
 const activePotionsPrices = ref(new Map<string, string>());
 const expiredPotionsPayouts = ref(new Map<string, string>());
+const redeemableBalancesMap = ref(new Map<string, string>());
+const redeemablePayoutsMap = computed(() => {
+  const result = new Map<string, number>();
+  Array.from(redeemableBalancesMap.value.entries()).forEach(([key, value]) => {
+    const payout = expiredPotionsPayouts.value.get(key);
+    if (payout && value !== "0") {
+      result.set(key, parseFloat(payout));
+    }
+  });
+  return result;
+});
 
 const availablePayout = computed(() => {
-  return Array.from(expiredPotionsPayouts.value.values()).reduce(
-    (totalPayout, value) => {
-      return totalPayout + parseFloat(value);
-    },
+  return Array.from(redeemablePayoutsMap.value.values()).reduce(
+    (acc, v) => acc + v,
     0
   );
 });
@@ -94,11 +105,16 @@ watch(
   expiredPotions,
   async () => {
     const info = expiredPotions.value.map((p) => ({
+      key: p.otoken.id,
       address: p.otoken.id,
       amount: p.numberOfOTokens,
     }));
 
     expiredPotionsPayouts.value = await getPayouts(info);
+    redeemableBalancesMap.value = await getTokensBalance(
+      buyerAddress,
+      Array.from(expiredPotionsPayouts.value.keys())
+    );
   },
   { immediate: true }
 );
@@ -131,8 +147,20 @@ onMounted(async () => await getBlock("latest"));
 const getActivePotionPayout = (address: string) =>
   activePotionsPrices.value.get(address) || "0";
 
-const getExpiredPotionPayout = (address: string) =>
-  expiredPotionsPayouts.value.get(address) || "0";
+const getExpiredPotionPayout = (address: string) => {
+  if (redeemablePayoutsMap.value.get(address)) {
+    return expiredPotionsPayouts.value.get(address) || "0";
+  }
+  return "0";
+};
+
+const isPotionWithdrawable = (address: string) => {
+  const payout = redeemablePayoutsMap.value.get(address);
+  if (isSameUserConnected.value && payout) {
+    return payout > 0;
+  }
+  return false;
+};
 
 /**
  *  Toast notifications
@@ -185,8 +213,8 @@ watch(redeemReceipt, (receipt) =>
       <i class="i-eos-icons-loading"> </i>
     </template>
     <template v-else>
-      <BaseCard class="p-6"
-        ><div>
+      <BaseCard class="p-6">
+        <div>
           <h3
             class="inline-block bg-gradient-to-r from-secondary-600 to-secondary-400 text-transparent bg-clip-text uppercase text-sm font-semibold"
           >
@@ -202,7 +230,7 @@ watch(redeemReceipt, (receipt) =>
             <PotionCard
               v-for="(potion, index) in activePotions"
               :key="`${potion.id}${index}`"
-              :withdrawable="isSameUserConnected"
+              :withdrawable="false"
               :expiry="potion.expiry"
               :is-expired="false"
               :is-withdraw-enabled="false"
@@ -233,8 +261,8 @@ watch(redeemReceipt, (receipt) =>
           {{ t("no_potions_available") }}
         </div>
       </BaseCard>
-      <BaseCard class="p-6"
-        ><div>
+      <BaseCard class="p-6">
+        <div>
           <h3
             class="inline-block bg-gradient-to-r from-secondary-600 to-secondary-400 text-transparent bg-clip-text uppercase text-sm font-semibold"
           >
@@ -250,10 +278,10 @@ watch(redeemReceipt, (receipt) =>
               v-for="(potion, index) in expiredPotions"
               :key="`${potion.id}${index}`"
               text-potions-expired-potion-card
-              :withdrawable="isSameUserConnected"
+              :withdrawable="isPotionWithdrawable(potion.otoken.id)"
               :expiry="potion.expiry"
               :is-expired="true"
-              :is-withdraw-enabled="!redeemLoading"
+              :is-withdraw-enabled="isSameUserConnected && !redeemLoading"
               :token="potion.otoken.underlyingAsset"
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
