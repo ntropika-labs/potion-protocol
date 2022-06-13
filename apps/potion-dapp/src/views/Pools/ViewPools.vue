@@ -1,7 +1,9 @@
 <template>
   <BaseCard>
-    <div class="grid md:grid-cols-4 p-4">
-      <p class="text-xl uppercase">{{ t("my_summary") }}</p>
+    <div class="grid md:grid-cols-4 py-4 px-6 md:px-12 gap-4">
+      <p class="text-3xl capitalize col-span-4 xl:col-span-1 font-semibold">
+        {{ t("my_summary") }}
+      </p>
       <LabelValue
         :title="t('total_pools')"
         :value="summaryData.totalPools.toString()"

@@ -48,7 +48,9 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
-const templateId = route.params.templateId as string;
+const templateId = Array.isArray(route.params.templateId)
+  ? route.params.templateId[0]
+  : route.params.templateId;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 const { data } = useGetTemplateQuery({
   variables: {
@@ -138,13 +140,11 @@ const bondingCurveParams = computed<BondingCurveParams>(() => {
   };
 });
 
-const userBalance = ref(1000),
-  liquidity = ref(100);
+const liquidity = ref(100);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
 const onLiquidityUpdate = (newValue: number) => {
-  console.log("ON LIQUIDITY UPDATE");
   liquidity.value = newValue;
 };
 
@@ -158,6 +158,7 @@ const {
   fetchUserCollateralBalance,
   fetchUserCollateralAllowance,
   userAllowance,
+  userCollateralBalance,
   approveForPotionLiquidityPool,
   approveLoading,
   approveTx,
@@ -174,6 +175,7 @@ const fetchUserData = async () => {
 onMounted(async () => {
   await fetchUserData();
   await fetchAssetsPrice();
+  await getBlock("latest");
 });
 
 watch(walletAddress, async (newAWallet) => {
@@ -246,6 +248,9 @@ const handleCloneTemplate = async () => {
   }
 };
 
+const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
+
+watch(criterias, loadEmergingCurves);
 /*
  * Toast notifications
  */
@@ -271,11 +276,6 @@ watch(approveTx, (transaction) => {
 watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, "USDC spending approved");
 });
-
-const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
-
-onMounted(() => getBlock("latest"));
-watch(criterias, loadEmergingCurves);
 </script>
 <template>
   <div>
@@ -341,7 +341,7 @@ watch(criterias, loadEmergingCurves);
           :model-value="liquidity"
           :title="t('add_liquidity')"
           :hint="t('add_liquidity_hint')"
-          :user-balance="userBalance"
+          :user-balance="userCollateralBalance"
           class="md:col-span-4 xl:col-span-3 self-start"
           @update:model-value="onLiquidityUpdate"
           @valid-input="emits('validInput', $event)"

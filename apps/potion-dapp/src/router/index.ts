@@ -2,10 +2,10 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
-import AboutView from "@/views/AboutView.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
+import CustomPotionCreation from "@/views/CustomPotionCreation.vue";
+import DiscoverPotions from "@/views/DiscoverPotions.vue";
 import DiscoverTemplates from "@/views/DiscoverTemplates.vue";
-import HomeView from "@/views/HomeView.vue";
 import NotFound from "@/views/NotFound.vue";
 import EditPool from "@/views/Pools/EditPool.vue";
 import ShowPool from "@/views/Pools/ShowPool.vue";
@@ -26,8 +26,7 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView,
-      meta: { requireWallet: false, layout: BaseLayout },
+      redirect: { name: "discover-potions" },
     },
     {
       path: "/templates",
@@ -45,6 +44,12 @@ const router = createRouter({
       path: "/custom-pool-creation",
       name: "custom-pool-creation",
       component: CustomPoolCreation,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/custom-potion-creation",
+      name: "custom-potion-creation",
+      component: CustomPotionCreation,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
@@ -85,8 +90,8 @@ const router = createRouter({
     {
       path: "/potions",
       name: "discover-potions",
-      component: AboutView,
-      meta: { requireWallet: true, layout: EmptyLayout },
+      component: DiscoverPotions,
+      meta: { requireWallet: false, layout: BaseLayout },
     },
   ],
 });

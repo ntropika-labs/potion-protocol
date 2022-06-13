@@ -265,16 +265,20 @@ watch(poolOtokens, async () => {
   }
 });
 
+const canDeposit = computed(
+  () =>
+    modelDeposit.value > 0 && modelDeposit.value <= userCollateralBalance.value
+);
 const handleDeposit = async () => {
-  if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(modelDeposit.value, true);
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  } else {
-    if (poolId.value !== null) {
-      await deposit(poolId.value, modelDeposit.value);
+  if (canDeposit.value) {
+    if (amountNeededToApprove.value > 0) {
+      await approveForPotionLiquidityPool(modelDeposit.value, true);
+    } else {
+      if (poolId.value !== null) {
+        await deposit(poolId.value, modelDeposit.value);
 
-      totalLiquidity.value += modelDeposit.value;
+        totalLiquidity.value += modelDeposit.value;
+      }
     }
 
     await fetchUserCollateralBalance();
@@ -282,8 +286,11 @@ const handleDeposit = async () => {
   }
 };
 
+const canWithdraw = computed(
+  () => unutilizedLiquidity.value >= modelWithdraw.value
+);
 const handleWithdraw = async () => {
-  if (unutilizedLiquidity.value > modelWithdraw.value) {
+  if (canWithdraw.value) {
     if (poolId.value !== null) {
       await withdraw(poolId.value, modelWithdraw.value);
 
@@ -291,7 +298,6 @@ const handleWithdraw = async () => {
     }
 
     await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
   }
 };
 
@@ -331,10 +337,10 @@ const {
 } = useNotifications();
 
 watch(depositTx, (transaction) =>
-  createTransactionNotification(transaction, "Creating pool")
+  createTransactionNotification(transaction, "Depositing liquidity")
 );
 watch(depositReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Pool created")
+  createReceiptNotification(receipt, "Liquidity deposited")
 );
 watch(withdrawTx, (transaction) =>
   createTransactionNotification(transaction, "Withdrawing liquidity")
@@ -438,13 +444,14 @@ watch(claimCollateralReceipt, (receipt) =>
           :utilized-liquidity="totalUtilization"
           :show-withdraw="true"
         >
-          <template #deposit-footer>
+          <template #withdraw-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
               :inline="true"
               :label="t('withdraw')"
               :disabled="
+                !canWithdraw ||
                 isNotConnected ||
                 depositLoading ||
                 approveLoading ||
@@ -458,13 +465,14 @@ watch(claimCollateralReceipt, (receipt) =>
               </template>
             </BaseButton>
           </template>
-          <template #withdraw-footer>
+          <template #deposit-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
               :inline="true"
               :label="addLiquidityButtonLabel"
               :disabled="
+                !canDeposit ||
                 isNotConnected ||
                 depositLoading ||
                 approveLoading ||

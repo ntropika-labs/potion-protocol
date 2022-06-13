@@ -64,3 +64,12 @@ export enum IconStrokeWeight {
   thin = 8,
   regular = 16,
 }
+
+export type CardColor =
+  | "glass"
+  | "neutral"
+  | "no-bg"
+  | "secondary-radial"
+  | "primary-radial-inactive"
+  | "primary-radial"
+  | "clean";

@@ -113,18 +113,20 @@ export function useControllerContract() {
     }
   };
 
-  const getPayouts = async (records: { address: string; amount: string }[]) => {
+  const getPayouts = async (
+    records: { key: string; address: string; amount: string }[]
+  ) => {
     try {
       const controllerContract = await initContractProvider();
 
       const payoutsMap = new Map<string, string>();
 
-      const promises = records.map(async ({ address, amount }) => {
+      const promises = records.map(async ({ key, address, amount }) => {
         const payout = await controllerContract.getPayout(
           address,
           parseUnits(amount, 8)
         );
-        payoutsMap.set(address, formatUnits(payout, 6));
+        payoutsMap.set(key, formatUnits(payout, 6));
       });
       await Promise.allSettled(promises);
 
