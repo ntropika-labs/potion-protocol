@@ -35,7 +35,7 @@ export interface OptionToken {
 }
 
 export interface Criteria {
-  token: Token;
+  token: Token | SelectableToken;
   maxStrike: number;
   maxDuration: number;
 }

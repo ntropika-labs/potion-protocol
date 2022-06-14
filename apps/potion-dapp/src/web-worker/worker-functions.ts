@@ -1,3 +1,6 @@
-import { getEmergingBondingCurvesFromCriterias } from "potion-router";
+import {
+  getEmergingBondingCurvesFromCriterias,
+  runDepthRouter
+} from "potion-router";
 
-export { getEmergingBondingCurvesFromCriterias };
+export { getEmergingBondingCurvesFromCriterias, runDepthRouter };

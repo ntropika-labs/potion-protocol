@@ -1,4 +1,5 @@
 import { GetPoolsFromCriteriaDocument } from "subgraph-queries/generated/urql";
+
 import { createClient } from "@urql/vue";
 
 import type { Criteria } from "dapp-types";
@@ -13,6 +14,7 @@ const urqlRouterClient = createClient({
 const getPoolsFromCriteria = async (
   criteria: Criteria
 ): Promise<ChartCriteriaPool> => {
+  console.log(criteria);
   const underlyingAddress = criteria.token.address;
   const result = await urqlRouterClient
     .query(GetPoolsFromCriteriaDocument, {

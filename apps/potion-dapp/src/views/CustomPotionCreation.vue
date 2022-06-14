@@ -9,10 +9,11 @@ import {
 } from "@/composables/useProtocolLiquidity";
 import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import type { SelectableToken } from "dapp-types";
+import { useDepthRouter } from "@/composables/useDepthRouter";
+import type { SelectableToken, Criteria } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, unref } from "vue";
 import { watchDebounced } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { offsetToDate } from "@/helpers/days";
@@ -210,11 +211,32 @@ const isDurationValid = ref(false);
 // Similar By Strike
 const { similarByStrike, similarByAsset } = useSimilarPotions(
   tokenSelectedAddress,
-  ref(strikeSelectedRelative),
+  strikeSelectedRelative,
   ref(10),
   ref(1200)
 );
 
+// Router logic
+const criteriasParam = ref<Criteria[]>([]);
+watch(tokenSelected, () => {
+  if (tokenSelected.value) {
+    const t = unref(tokenSelected) ?? { name: "", symbol: "", address: "" };
+    criteriasParam.value = [
+      {
+        token: t,
+        maxStrike: strikeSelectedRelative.value,
+        maxDuration: durationSelected.value,
+      },
+    ];
+  }
+});
+const { routerResult, runRouter, poolSets } = useDepthRouter(
+  criteriasParam,
+  ref(2000),
+  ref(1300),
+  ref(50),
+  ref(1300)
+);
 // navigation logic
 const isNextStepEnabled = computed(() => {
   if (currentIndex.value === 0) {
@@ -337,6 +359,33 @@ const isNextStepEnabled = computed(() => {
           />
         </BaseCard>
       </div>
+      <div v-if="currentIndex === 3" class="xl:col-span-2 flex justify-center">
+        <button @click="runRouter()">runrouter</button>
+        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
+          <div class="flex justify-between p-4 items-start">
+            <div class="flex gap-2 items-center">
+              <p class="text-sm capitalize">{{ t("max_duration") }}</p>
+            </div>
+            <div class="text-sm">
+              <p>{{ maxSelectableDuration }} {{ t("days") }}</p>
+              <p>{{ maxSelectableDurationInDays }}</p>
+            </div>
+          </div>
+          <InputNumber
+            v-model.number="durationSelected"
+            color="no-bg"
+            :title="t('your_potion_expires_in')"
+            :min="1"
+            :max="maxSelectableDuration"
+            :step="1"
+            unit="days"
+            :max-decimals="0"
+            :footer-description="t('expiry_date')"
+            :footer-value="durationSelectedDate"
+            @valid-input="isDurationValid = $event"
+          />
+        </BaseCard>
+      </div>
     </div>
     <div class="flex w-full justify-end items-center gap-3 p-4">
       <BaseButton
@@ -378,6 +427,13 @@ const isNextStepEnabled = computed(() => {
         {{ similarByStrike }}
 
       </code>
+       <code>
+        {{routerResult}}
+      </code>
+      <code>
+        {{poolSets}}
+      </code>
+
     </pre>
   </div>
 </template>
