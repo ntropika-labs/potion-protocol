@@ -303,7 +303,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         ></router-link>
       </div>
       <ul
-        class="grid grid-cols-1 gap-1 lg:( grid-cols-4 ) gap-4 w-full xl:( grid-cols-1 ) items-stretch justify-center"
+        class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) items-stretch justify-center"
       >
         <SidebarLink
           v-for="(item, index) in sidebarItems"
@@ -400,7 +400,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
       </div>
       <div
         v-if="currentIndex === 3"
-        class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4 justify-center"
+        class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
       >
         <BaseCard color="no-bg" class="w-full justify-between">
           <div class="flex justify-between p-4 items-start text-sm">
