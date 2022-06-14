@@ -53,14 +53,14 @@ const DurationDefaultIcon = new Map([
   [SrcsetEnum.WEBP, "/icons/duration-default-32x32.webp"],
 ]);
 const ReviewActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/review-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
-]);
-const ReviewDefaultIcon = new Map([
   [SrcsetEnum.AVIF, "/icons/review-default-32x32.avif"],
   [SrcsetEnum.PNG, "/icons/review-default-32x32.png"],
   [SrcsetEnum.WEBP, "/icons/review-default-32x32.webp"],
+]);
+const ReviewDefaultIcon = new Map([
+  [SrcsetEnum.AVIF, "/icons/review-active-32x32.avif"],
+  [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
+  [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
 ]);
 const sidebarItems = computed(() => {
   return [
@@ -87,7 +87,7 @@ const sidebarItems = computed(() => {
       },
     },
     {
-      title: t("duration"),
+      title: t("expiration"),
       iconSrcset:
         currentIndex.value === 2 ? DurationActiveIcon : DurationDefaultIcon,
       selected: currentIndex.value === 2,
@@ -102,7 +102,7 @@ const sidebarItems = computed(() => {
     {
       title: t("review_and_create"),
       iconSrcset:
-        currentIndex.value === 2 ? ReviewActiveIcon : ReviewDefaultIcon,
+        currentIndex.value === 3 ? ReviewActiveIcon : ReviewDefaultIcon,
       selected: currentIndex.value === 3,
       disabled:
         !isTokenSelected.value ||
@@ -303,7 +303,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         ></router-link>
       </div>
       <ul
-        class="grid grid-cols-1 gap-2 lg:( grid-cols-4 ) gap-4 w-full xl:( grid-cols-1 ) items-start justify-center"
+        class="grid grid-cols-1 gap-1 lg:( grid-cols-4 ) gap-4 w-full xl:( grid-cols-1 ) items-stretch justify-center"
       >
         <SidebarLink
           v-for="(item, index) in sidebarItems"
@@ -324,13 +324,13 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
               :src="tokenSelected?.image"
               :alt="tokenSelected?.symbol"
             />
-            <p class="text-sm">{{ tokenSelected?.symbol }}</p>
+            <p class="text-xs">{{ tokenSelected?.symbol }}</p>
           </div>
           <div v-if="index === 1 && strikeSelected">
-            <p class="text-sm">USDC {{ strikeSelected }}</p>
+            <p class="text-xs">USDC {{ strikeSelected }}</p>
           </div>
           <div v-if="index === 2 && durationSelected">
-            <p class="text-sm">Expiry: {{ durationSelectedDate }}</p>
+            <p class="text-xs">{{ durationSelectedDate }}</p>
           </div>
         </SidebarLink>
       </ul>
@@ -392,7 +392,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
             :step="1"
             unit="days"
             :max-decimals="0"
-            :footer-description="t('expiry_date')"
+            :footer-description="t('expiration')"
             :footer-value="durationSelectedDate"
             @valid-input="isDurationValid = $event"
           />

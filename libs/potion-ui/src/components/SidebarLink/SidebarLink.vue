@@ -9,7 +9,7 @@
     "
     @click="$emit('click')"
   >
-    <div class="flex gap-4 z-200 items-center">
+    <div class="flex gap-2 z-200 items-center">
       <PictureSet
         v-if="props.iconSrcset"
         class="h-full w-full flex justify-end h-8 w-8"
