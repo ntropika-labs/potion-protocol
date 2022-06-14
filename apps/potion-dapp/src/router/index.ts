@@ -11,6 +11,7 @@ import EditPool from "@/views/Pools/EditPool.vue";
 import ShowPool from "@/views/Pools/ShowPool.vue";
 import ViewPools from "@/views/Pools/ViewPools.vue";
 import PoolTemplate from "@/views/PoolTemplate.vue";
+import ViewPotions from "@/views/Potions/ViewPotions.vue";
 import { useOnboard } from "@onboard-composable";
 
 const router = createRouter({
@@ -79,6 +80,12 @@ const router = createRouter({
           next();
         }
       },
+    },
+    {
+      path: "/buyer/:address",
+      name: "buyer",
+      component: ViewPotions,
+      meta: { requireWallet: false, layout: BaseLayout },
     },
     {
       path: "/potions",
