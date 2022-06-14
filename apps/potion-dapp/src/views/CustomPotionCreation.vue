@@ -314,6 +314,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         </template>
       </BaseButton>
       <BaseButton
+        v-if="currentIndex !== sidebarItems.length - 1"
         test-next
         palette="secondary"
         :inline="true"
