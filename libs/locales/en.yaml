@@ -90,3 +90,6 @@ your_liquidity: Your liquidity
 withdraw: Withdraw
 no_underlying_asset_found: no underlying asset found
 current_price: current price
+expiry_date: expiry date
+days: days
+your_potion_expires_in: your potion expires in

@@ -60,6 +60,7 @@ export interface Props {
   readonly?: boolean;
   modelValue: number;
   footerDescription?: string;
+  footerValue?: string;
   maxDecimals?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -73,6 +74,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: 1,
   footerDescription: "Balance",
   maxDecimals: 6,
+  footerValue: "",
 });
 
 const emits = defineEmits(["update:modelValue", "validInput"]);
@@ -104,17 +106,20 @@ const inputIsValid = computed(() => {
   }
   return true;
 });
+emits("validInput", inputIsValid.value);
 
 watch(inputIsValid, () => {
   emits("validInput", inputIsValid.value);
 });
 
 const footerText = computed(() => {
-  if (inputIsValid.value) {
+  if (inputIsValid.value && props.footerValue === "") {
     return `${props.footerDescription}: ${currencyFormatter(
       props.max,
       props.unit
     )}`;
+  } else if (inputIsValid.value && props.footerValue !== "") {
+    return `${props.footerDescription}: ${props.footerValue}`;
   } else {
     if (decimalCount(props.modelValue) > props.maxDecimals) {
       return `The max number of decimals is ${props.maxDecimals}`;

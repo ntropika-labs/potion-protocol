@@ -1,7 +1,8 @@
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 import { rpcUrl, webSocketUrl } from "@/helpers";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
+
 import type { Block } from "@ethersproject/providers";
 
 export function useEthersProvider() {

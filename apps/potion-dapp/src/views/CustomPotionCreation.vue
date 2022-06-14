@@ -5,15 +5,19 @@ import { useTokenList } from "@/composables/useTokenList";
 import {
   usePoolsLiquidity,
   useUnderlyingLiquidity,
-  // useStrikeLiquidity,
+  useStrikeLiquidity,
 } from "@/composables/useProtocolLiquidity";
 import { useSimilarPotions } from "@/composables/useSimilarPotions";
+import { useEthersProvider } from "@/composables/useEthersProvider";
 import type { SelectableToken } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
 import { ref, computed, watch, onMounted } from "vue";
+import { watchDebounced } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { offsetToDate } from "@/helpers/days";
 const { t } = useI18n();
+const { blockTimestamp, getBlock } = useEthersProvider();
 const currentIndex = ref(0);
 
 const AssetActiveIcon = new Map([
@@ -74,9 +78,8 @@ const sidebarItems = computed(() => {
       selected: currentIndex.value === 1,
       disabled: !isTokenSelected.value,
       onClick: () => {
-        console.log("here", strikeSelected.value);
         if (strikeSelected.value === 0) {
-          strikeSelected.value = 100;
+          strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
         }
         currentIndex.value = 1;
       },
@@ -86,8 +89,11 @@ const sidebarItems = computed(() => {
       iconSrcset:
         currentIndex.value === 2 ? DurationActiveIcon : DurationDefaultIcon,
       selected: currentIndex.value === 2,
-      disabled: true,
+      disabled: !isTokenSelected.value || !isStrikeValid.value,
       onClick: () => {
+        if (durationSelected.value === 0) {
+          durationSelected.value = 1;
+        }
         currentIndex.value = 2;
       },
     },
@@ -163,41 +169,67 @@ const handleTokenSelection = (address: string) => {
 const { fetchPrice, formattedPrice, price } = useFetchTokenPrices(
   tokenSelected.value?.address || ""
 );
+
 onMounted(() => {
   fetchPrice();
 });
+
 const { maxStrike: maxSelectableStrike } =
   useUnderlyingLiquidity(tokenSelectedAddress);
+
 const maxSelectableStrikeAbsolute = computed(() => {
   return (maxSelectableStrike.value * price.value) / 100;
 });
+
 const strikeSelected = ref(0);
+
 const strikeSelectedRelative = computed(() => {
   return parseFloat(((strikeSelected.value * 100) / price.value).toFixed(2));
 });
 
-const isStrikeValid = ref(true);
-const isNextStepEnabled = computed(() => {
-  if (currentIndex.value === 0) {
-    return isTokenSelected.value;
-  }
-  if (currentIndex.value === 1) {
-    return isStrikeValid.value;
-  }
-  return false;
-});
+const isStrikeValid = ref(false);
 
 // Duration Selection
-// const durationSelected = ref(0);
+const durationSelected = ref(0);
+watchDebounced(
+  durationSelected,
+  () => {
+    getBlock("latest");
+  },
+  { debounce: 1000 }
+);
+const durationSelectedDate = computed(() => {
+  return offsetToDate(blockTimestamp.value, durationSelected.value);
+});
+const {
+  maxDuration: maxSelectableDuration,
+  maxDurationInDays: maxSelectableDurationInDays,
+} = useStrikeLiquidity(tokenSelectedAddress, strikeSelectedRelative);
+const isDurationValid = ref(false);
 
 // Similar By Strike
-
 const { similarByStrike, similarByAsset } = useSimilarPotions(
   tokenSelectedAddress,
   ref(strikeSelectedRelative),
   ref(10),
   ref(1200)
 );
+
+// navigation logic
+const isNextStepEnabled = computed(() => {
+  if (currentIndex.value === 0) {
+    return isTokenSelected.value;
+  }
+  if (currentIndex.value === 1) {
+    return isTokenSelected.value && isStrikeValid.value ? true : false;
+  }
+  if (currentIndex.value === 2) {
+    return isTokenSelected.value && isStrikeValid.value && isDurationValid.value
+      ? true
+      : false;
+  }
+  return false;
+});
 </script>
 
 <template>
@@ -236,6 +268,9 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
           <div v-if="index === 1 && strikeSelected">
             <p class="text-sm">USDC {{ strikeSelected }}</p>
           </div>
+          <div v-if="index === 2 && durationSelected">
+            <p class="text-sm">Expiry: {{ durationSelectedDate }}</p>
+          </div>
         </SidebarLink>
       </ul>
       <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
@@ -251,7 +286,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         </div>
       </div>
       <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
-        <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
+        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
           <div class="flex justify-between p-4">
             <div class="flex gap-2 items-center">
               <img
@@ -277,23 +312,28 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         </BaseCard>
       </div>
       <div v-if="currentIndex === 2" class="xl:col-span-2 flex justify-center">
-        <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
-          <div class="flex justify-between p-4">
+        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
+          <div class="flex justify-between p-4 items-start">
             <div class="flex gap-2 items-center">
               <p class="text-sm capitalize">{{ t("max_duration") }}</p>
             </div>
-            <!-- <p>{{ formattedDuration }}</p> -->
+            <div class="text-sm">
+              <p>{{ maxSelectableDuration }} {{ t("days") }}</p>
+              <p>{{ maxSelectableDurationInDays }}</p>
+            </div>
           </div>
           <InputNumber
-            v-model.number="strikeSelected"
+            v-model.number="durationSelected"
             color="no-bg"
-            :title="t('your_strike_price')"
+            :title="t('your_potion_expires_in')"
             :min="1"
-            :max="maxSelectableStrikeAbsolute"
-            :step="0.1"
-            unit="USDC"
-            :footer-description="t('max_strike_price')"
-            @valid-input="isStrikeValid = $event"
+            :max="maxSelectableDuration"
+            :step="1"
+            unit="days"
+            :max-decimals="0"
+            :footer-description="t('expiry_date')"
+            :footer-value="durationSelectedDate"
+            @valid-input="isDurationValid = $event"
           />
         </BaseCard>
       </div>

@@ -1,11 +1,14 @@
 import {
   useGetMaxDurationForStrikeQuery,
   useGetMaxStrikeForUnderlyingQuery,
-  usePoolsWithLiquidityQuery,
+  usePoolsWithLiquidityQuery
 } from "subgraph-queries/generated/urql";
 import { computed, ref, unref, watch } from "vue";
 
-import type { Ref } from "vue";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { offsetToDate } from "@/helpers/days";
+
+import type { MaybeStringRef, MaybeNumberRef } from "dapp-types";
 
 import type { CriteriaSetsWithLiquidityFragment } from "subgraph-queries/generated/operations";
 type TemplateId = CriteriaSetsWithLiquidityFragment["criteriaSet"]["templates"];
@@ -40,19 +43,17 @@ const usePoolsLiquidity = () => {
   };
 };
 
-const useUnderlyingLiquidity = (
-  underlying: Ref<string> | Ref<null> | string | null
-) => {
+const useUnderlyingLiquidity = (underlyingAddress: MaybeStringRef) => {
   const maxStrike = ref(0);
   const alreadyLoadedIds = ref<string[]>([""]);
   const isPaused = computed(() => {
-    return unref(underlying) === "" || unref(underlying) === null
+    return unref(underlyingAddress) === "" || unref(underlyingAddress) === null
       ? true
       : false;
   });
   const { data, executeQuery } = useGetMaxStrikeForUnderlyingQuery({
     variables: computed(() => ({
-      underlying: unref(underlying),
+      underlying: unref(underlyingAddress),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
     pause: true,
@@ -87,20 +88,34 @@ const useUnderlyingLiquidity = (
 };
 
 const useStrikeLiquidity = (
-  underlying: Ref<string> | string,
-  strike: Ref<string> | string
+  underlyingAddress: MaybeStringRef,
+  strikeRelative: MaybeNumberRef
 ) => {
+  const { blockTimestamp, getBlock } = useEthersProvider();
   const maxDuration = ref(0);
   const alreadyLoadedIds = ref<string[]>([""]);
-
-  const { data } = useGetMaxDurationForStrikeQuery({
+  const isPaused = computed(() => {
+    return unref(underlyingAddress) === "" ||
+      unref(underlyingAddress) === null ||
+      unref(strikeRelative) === 0 ||
+      unref(strikeRelative) === null
+      ? true
+      : false;
+  });
+  const { data, executeQuery } = useGetMaxDurationForStrikeQuery({
     variables: computed(() => ({
-      underlying: unref(underlying),
-      strike: unref(strike),
+      underlying: unref(underlyingAddress) ?? "",
+      strike: (unref(strikeRelative) ?? 0).toString(),
       alreadyLoadedIds: alreadyLoadedIds.value,
     })),
+    pause: true,
   });
-
+  watch(isPaused, async () => {
+    if (isPaused.value === false) {
+      await getBlock("latest");
+      executeQuery();
+    }
+  });
   watch(data, () => {
     data?.value?.criterias.forEach(({ criteriaSets, maxDurationInDays }) => {
       const templates =
@@ -120,9 +135,13 @@ const useStrikeLiquidity = (
       data?.value?.criterias.map(({ id }) => id) ?? []
     );
   });
+  const maxDurationInDays = computed(() => {
+    return offsetToDate(blockTimestamp.value, maxDuration.value);
+  });
 
   return {
     maxDuration,
+    maxDurationInDays,
   };
 };
 
