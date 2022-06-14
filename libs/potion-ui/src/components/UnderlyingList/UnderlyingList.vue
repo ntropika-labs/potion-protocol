@@ -19,7 +19,7 @@ export interface Props {
 const props = defineProps<Props>();
 
 const getOptionPrice = (address: string) => {
-  return props.priceMap.get(address) || "";
+  return props.priceMap.get(address) || "-1";
 };
 </script>
 <template>

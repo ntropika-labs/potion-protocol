@@ -139,20 +139,18 @@ const tokenPricesMap = ref<Map<string, string>>(new Map());
 
 const fetchAssetsPrice = async () => {
   const prices = new Map();
-  const addresses = criteriaSet?.value?.criterias?.map(
-    ({ criteria }) => criteria.underlyingAsset.address
-  );
-  if (!addresses) return prices;
+  const addresses =
+    criteriaSet?.value?.criterias?.map(
+      ({ criteria }) => criteria.underlyingAsset.address
+    ) ?? [];
 
   try {
-    for (let i = 0; i < addresses.length; i++) {
-      const addr = addresses[i];
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
-
+    const promises = addresses.map(async (address) => {
+      const { fetchPrice, formattedPrice } = useFetchTokenPrices(address);
       await fetchPrice();
-
-      prices.set(addr, formattedPrice.value);
-    }
+      prices.set(address, formattedPrice.value);
+    });
+    await Promise.allSettled(promises);
   } catch (error) {
     console.error("Error while fetching token prices.");
   }
