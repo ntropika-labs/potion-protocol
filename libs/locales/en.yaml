@@ -93,3 +93,11 @@ current_price: current price
 expiry_date: expiry date
 days: days
 your_potion_expires_in: your potion expires in
+max_number_of_potions: max number of potions
+number_of_potions: number of potions
+max_value: max value
+available_potions: available potions
+market_size: market size
+price_per_potion: price per potion
+total: total
+slippage_tolerance: slippage tolerance

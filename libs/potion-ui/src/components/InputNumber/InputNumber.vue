@@ -15,7 +15,7 @@
       <div class="flex justify-between mt-4">
         <BaseTag>{{ props.unit }}</BaseTag>
         <BaseInput
-          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
+          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) px-2 font-serif text-xl font-bold grow"
           type="number"
           :readonly="props.readonly"
           :disabled="props.disabled"

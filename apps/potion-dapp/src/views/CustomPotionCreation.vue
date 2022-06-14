@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { TokenSelection, InputNumber, BaseButton } from "potion-ui";
+import { TokenSelection, InputNumber, BaseButton, BaseTag } from "potion-ui";
 import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
 import { useTokenList } from "@/composables/useTokenList";
+import { currencyFormatter } from "potion-ui";
 import {
   usePoolsLiquidity,
   useUnderlyingLiquidity,
@@ -102,9 +103,11 @@ const sidebarItems = computed(() => {
       title: t("review_and_create"),
       iconSrcset:
         currentIndex.value === 2 ? ReviewActiveIcon : ReviewDefaultIcon,
-
       selected: currentIndex.value === 3,
-      disabled: true,
+      disabled:
+        !isTokenSelected.value ||
+        !isStrikeValid.value ||
+        !isDurationValid.value,
       onClick: () => {
         currentIndex.value = 3;
       },
@@ -208,15 +211,53 @@ const {
 } = useStrikeLiquidity(tokenSelectedAddress, strikeSelectedRelative);
 const isDurationValid = ref(false);
 
-// Similar By Strike
-const { similarByStrike, similarByAsset } = useSimilarPotions(
-  tokenSelectedAddress,
-  strikeSelectedRelative,
-  ref(10),
-  ref(1200)
-);
+// Potion Quantity
+const potionQuantity = ref(0.001);
+const isPotionQuantityValid = ref(false);
+
+const orderSize = computed(() => {
+  return strikeSelected.value * potionQuantity.value;
+});
+
+// const totalPrice = computed(() => {
+//   if (routerResult.value && routerResult.value.premium) {
+//     return potionQuantity.value * routerResult.value.premium;
+//   }
+//   return 0;
+// });
+// const formattedTotalPrice = computed(() => {
+//   return currencyFormatter(totalPrice.value, "USDC");
+// });
 
 // Router logic
+const slippage = ref([
+  { value: 0.005, label: "0.5%", selected: true },
+  { value: 0.02, label: "2%", selected: false },
+  { value: 0.05, label: "5%", selected: false },
+]);
+
+const handleSlippageSelection = (index: number) => {
+  slippage.value.forEach((slippage, i) => {
+    if (i === index) {
+      slippage.selected = true;
+    } else {
+      slippage.selected = false;
+    }
+  });
+};
+const premiumSlippage = computed(() => {
+  const selectedSlippage = slippage.value.find((s) => s.selected);
+  if (selectedSlippage && routerResult.value && routerResult.value.premium) {
+    return (
+      routerResult.value.premium * selectedSlippage.value +
+      routerResult.value.premium
+    );
+  }
+  return 0;
+});
+const formattedPremiumSlippage = computed(() => {
+  return currencyFormatter(premiumSlippage.value, "USDC");
+});
 const criteriasParam = ref<Criteria[]>([]);
 watch(tokenSelected, () => {
   if (tokenSelected.value) {
@@ -230,28 +271,26 @@ watch(tokenSelected, () => {
     ];
   }
 });
-const { routerResult, runRouter, poolSets } = useDepthRouter(
+const {
+  routerResult,
+  maxNumberOfPotions,
+  formattedMarketSize,
+  formattedPremium,
+} = useDepthRouter(
   criteriasParam,
-  ref(2000),
-  ref(1300),
+  orderSize,
+  strikeSelected,
   ref(50),
   ref(1300)
 );
-// navigation logic
-const isNextStepEnabled = computed(() => {
-  if (currentIndex.value === 0) {
-    return isTokenSelected.value;
-  }
-  if (currentIndex.value === 1) {
-    return isTokenSelected.value && isStrikeValid.value ? true : false;
-  }
-  if (currentIndex.value === 2) {
-    return isTokenSelected.value && isStrikeValid.value && isDurationValid.value
-      ? true
-      : false;
-  }
-  return false;
-});
+
+// Similar By Strike
+const { similarByStrike, similarByAsset } = useSimilarPotions(
+  tokenSelectedAddress,
+  strikeSelectedRelative,
+  ref(10),
+  ref(1200)
+);
 </script>
 
 <template>
@@ -359,31 +398,69 @@ const isNextStepEnabled = computed(() => {
           />
         </BaseCard>
       </div>
-      <div v-if="currentIndex === 3" class="xl:col-span-2 flex justify-center">
-        <button @click="runRouter()">runrouter</button>
-        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
-          <div class="flex justify-between p-4 items-start">
+      <div
+        v-if="currentIndex === 3"
+        class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4 justify-center"
+      >
+        <BaseCard color="no-bg" class="w-full justify-between">
+          <div class="flex justify-between p-4 items-start text-sm">
             <div class="flex gap-2 items-center">
-              <p class="text-sm capitalize">{{ t("max_duration") }}</p>
+              <p class="capitalize">{{ t("market_size") }}</p>
             </div>
-            <div class="text-sm">
-              <p>{{ maxSelectableDuration }} {{ t("days") }}</p>
-              <p>{{ maxSelectableDurationInDays }}</p>
+            <div>
+              <p>{{ formattedMarketSize }}</p>
             </div>
           </div>
           <InputNumber
-            v-model.number="durationSelected"
+            v-model.number="potionQuantity"
             color="no-bg"
-            :title="t('your_potion_expires_in')"
-            :min="1"
-            :max="maxSelectableDuration"
+            :title="t('number_of_potions')"
+            :min="0.00000001"
+            :max="maxNumberOfPotions"
             :step="1"
-            unit="days"
-            :max-decimals="0"
-            :footer-description="t('expiry_date')"
-            :footer-value="durationSelectedDate"
-            @valid-input="isDurationValid = $event"
+            unit="POTION"
+            :max-decimals="8"
+            :footer-description="t('max_number_of_potions')"
+            @valid-input="isPotionQuantityValid = $event"
           />
+        </BaseCard>
+        <BaseCard color="no-bg" class="w-full gap-8 pt-4">
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("price_per_potion") }}</p>
+              <p>{{ formattedPremium }}</p>
+            </div>
+          </div>
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("number_of_potions") }}</p>
+              <p>{{ potionQuantity }}</p>
+            </div>
+          </div>
+          <div
+            class="flex justify-between px-4 items-start text-sm text-secondary-500"
+          >
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("total") }}</p>
+              <p>{{ formattedPremiumSlippage }}</p>
+            </div>
+          </div>
+          <BaseCard color="no-bg" class="p-4">
+            <p class="text-lg font-bold capitalize">
+              {{ t("slippage_tolerance") }}
+            </p>
+            <div class="flex gap-3 mt-3">
+              <button
+                v-for="(s, index) in slippage"
+                :key="`slippage-${index}`"
+                @click="handleSlippageSelection(index)"
+              >
+                <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{
+                  s.label
+                }}</BaseTag>
+              </button>
+            </div>
+          </BaseCard>
         </BaseCard>
       </div>
     </div>
@@ -408,7 +485,7 @@ const isNextStepEnabled = computed(() => {
         palette="secondary"
         :inline="true"
         :label="t('next')"
-        :disabled="!isNextStepEnabled"
+        :disabled="sidebarItems[currentIndex + 1].disabled"
         @click="sidebarItems[currentIndex + 1].onClick()"
       >
         <template #post-icon>
@@ -419,21 +496,19 @@ const isNextStepEnabled = computed(() => {
   </BaseCard>
   <div class="mt-10">
     <h2>Similar Potions</h2>
-    <pre>
-      <code class="font-mono">
+    <pre class="font-mono">
+      <code>
         {{similarByAsset}}
       </code>
-      <code class="font-mono">
+      <code>
         {{ similarByStrike }}
-
+      </code>
+      <code>
+        max number of potions: {{maxNumberOfPotions}}
       </code>
        <code>
         {{routerResult}}
       </code>
-      <code>
-        {{poolSets}}
-      </code>
-
     </pre>
   </div>
 </template>

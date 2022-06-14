@@ -1,4 +1,5 @@
 import { getPoolsFromCriterias } from "potion-router";
+import { currencyFormatter } from "potion-ui";
 import { computed, isRef, ref, toRaw, unref } from "vue";
 
 import { worker } from "@/web-worker";
@@ -23,6 +24,21 @@ export const useDepthRouter = (
     });
     return pools;
   });
+  const marketSize = computed(() => {
+    return poolsUntyped.value.reduce((sum, pool) => {
+      return sum + parseFloat(pool.unlocked);
+    }, 0);
+  });
+  const maxNumberOfPotions = computed(() => {
+    if (
+      isRef(strikePriceUSDC) &&
+      strikePriceUSDC.value &&
+      strikePriceUSDC.value > 0
+    ) {
+      return parseFloat((marketSize.value / unref(strikePriceUSDC)).toFixed(8));
+    }
+    return 0;
+  });
   const routerResult = ref<DepthRouterReturn | null>(null);
   const routerParams = computed(() => {
     return {
@@ -38,8 +54,13 @@ export const useDepthRouter = (
     poolSets.value = await getPoolsFromCriterias(rawCriterias);
     const { pools, orderSize, strikePriceUSDC, gas, ethPrice } =
       unref(routerParams);
-    if (pools.length > 0) {
-      console.log("run router");
+    if (
+      pools.length > 0 &&
+      orderSize > 0 &&
+      strikePriceUSDC > 0 &&
+      ethPrice > 0
+    ) {
+      console.log("run router", orderSize, strikePriceUSDC, gas, ethPrice);
       routerResult.value = await worker.runDepthRouter(
         pools,
         orderSize,
@@ -49,6 +70,18 @@ export const useDepthRouter = (
       );
     }
   };
+  const formattedMarketSize = computed(() => {
+    if (marketSize.value > 0) {
+      return currencyFormatter(marketSize.value, "USDC");
+    }
+    return currencyFormatter(0, "USDC");
+  });
+  const formattedPremium = computed(() => {
+    if (routerResult.value && routerResult.value.premium) {
+      return currencyFormatter(routerResult.value.premium, "USDC");
+    }
+    return currencyFormatter(0, "USDC");
+  });
 
   if (
     isRef(criterias) &&
@@ -62,13 +95,18 @@ export const useDepthRouter = (
       () => {
         runRouter();
       },
-      { debounce: 2000 }
+      { debounce: 1000 }
     );
   }
 
   return {
     poolSets,
+    poolsUntyped,
     routerResult,
+    marketSize,
+    maxNumberOfPotions,
+    formattedPremium,
+    formattedMarketSize,
     runRouter,
   };
 };

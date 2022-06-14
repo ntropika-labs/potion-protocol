@@ -4,7 +4,9 @@
     :class="[
       {
         'bg-transparent border border-white/10': props.isEmpty,
-        'bg-white/10': !props.isEmpty,
+        'bg-white/10': props.color === 'base',
+        'bg-secondary-500': props.color === 'secondary',
+        'bg-primary-500': props.color === 'primary',
       },
       sizeClass,
     ]"
@@ -19,6 +21,7 @@ export default defineComponent({
 });
 
 type LabelSize = "sm" | "md" | "lg" | "xl";
+type Color = "primary" | "secondary" | "base";
 // prettier-ignore
 const labelSizeMap: Map<LabelSize, string> = new Map([
   ["sm", "text-xs"],
@@ -33,10 +36,12 @@ import { computed } from "vue";
 export interface Props {
   isEmpty?: boolean;
   size?: LabelSize;
+  color?: Color;
 }
 const props = withDefaults(defineProps<Props>(), {
   isEmpty: false,
   size: "sm",
+  color: "base",
 });
 
 const sizeClass = computed(() => labelSizeMap.get(props.size));
