@@ -5,6 +5,7 @@ import { useTokenList } from "@/composables/useTokenList";
 import {
   usePoolsLiquidity,
   useUnderlyingLiquidity,
+  // useStrikeLiquidity,
 } from "@/composables/useProtocolLiquidity";
 import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import type { SelectableToken } from "dapp-types";
@@ -73,6 +74,7 @@ const sidebarItems = computed(() => {
       selected: currentIndex.value === 1,
       disabled: !isTokenSelected.value,
       onClick: () => {
+        console.log("here", strikeSelected.value);
         if (strikeSelected.value === 0) {
           strikeSelected.value = 100;
         }
@@ -171,7 +173,7 @@ const maxSelectableStrikeAbsolute = computed(() => {
 });
 const strikeSelected = ref(0);
 const strikeSelectedRelative = computed(() => {
-  return (strikeSelected.value * 100) / price.value;
+  return parseFloat(((strikeSelected.value * 100) / price.value).toFixed(2));
 });
 
 const isStrikeValid = ref(true);
@@ -184,6 +186,9 @@ const isNextStepEnabled = computed(() => {
   }
   return false;
 });
+
+// Duration Selection
+// const durationSelected = ref(0);
 
 // Similar By Strike
 
@@ -229,7 +234,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
             <p class="text-sm">{{ tokenSelected?.symbol }}</p>
           </div>
           <div v-if="index === 1 && strikeSelected">
-            <p class="text-sm">{{ strikeSelected }}</p>
+            <p class="text-sm">USDC {{ strikeSelected }}</p>
           </div>
         </SidebarLink>
       </ul>
@@ -271,12 +276,33 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
           />
         </BaseCard>
       </div>
+      <div v-if="currentIndex === 2" class="xl:col-span-2 flex justify-center">
+        <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
+          <div class="flex justify-between p-4">
+            <div class="flex gap-2 items-center">
+              <p class="text-sm capitalize">{{ t("max_duration") }}</p>
+            </div>
+            <!-- <p>{{ formattedDuration }}</p> -->
+          </div>
+          <InputNumber
+            v-model.number="strikeSelected"
+            color="no-bg"
+            :title="t('your_strike_price')"
+            :min="1"
+            :max="maxSelectableStrikeAbsolute"
+            :step="0.1"
+            unit="USDC"
+            :footer-description="t('max_strike_price')"
+            @valid-input="isStrikeValid = $event"
+          />
+        </BaseCard>
+      </div>
     </div>
     <div class="flex w-full justify-end items-center gap-3 p-4">
       <BaseButton
         v-if="currentIndex !== 0"
         class="uppercase"
-        test-next
+        test-back
         palette="flat"
         :inline="true"
         :label="t('back')"
@@ -293,7 +319,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         :inline="true"
         :label="t('next')"
         :disabled="!isNextStepEnabled"
-        @click="currentIndex++"
+        @click="sidebarItems[currentIndex + 1].onClick()"
       >
         <template #post-icon>
           <i class="i-ph-caret-right"></i>
