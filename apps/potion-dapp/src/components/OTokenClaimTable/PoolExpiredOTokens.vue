@@ -8,6 +8,8 @@ import {
   shortCurrencyFormatter,
 } from "potion-ui";
 import { useTokenList } from "@/composables/useTokenList";
+import { useI18n } from "vue-i18n";
+import { contractsAddresses } from "@/helpers/contracts";
 
 import type { OtokenDataset } from "dapp-types";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
@@ -19,7 +21,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const currency = "USDC";
+const { t } = useI18n();
+const { symbol: currency } = useTokenList(
+  contractsAddresses.USDC.address.toLowerCase()
+);
 
 const calcProfitAndLoss = (
   premium: number,
@@ -54,7 +59,7 @@ const dataset = computed<OtokenDataset>(() => {
       {
         button: true,
         claimable: isReclaimable,
-        value: isReclaimable ? "Claim" : "Claimed",
+        value: isReclaimable ? t("claim") : t("claimed"),
         color: isReclaimable ? "secondary-o" : "secondary",
       },
     ];
@@ -62,14 +67,14 @@ const dataset = computed<OtokenDataset>(() => {
 });
 
 const headings = [
-  "Asset",
-  "Exp. Date",
-  "Premium",
-  "Strike Price",
-  "Reclaimable",
-  "Claimed",
-  "P&L",
-  "Action",
+  t("asset"),
+  t("expiration_date"),
+  t("premium"),
+  t("strike_price"),
+  t("reclaimable"),
+  t("claimed"),
+  t("pnl"),
+  t("action"),
 ];
 
 const emits = defineEmits<{

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
 import { uniqBy as _uniqBy } from "lodash-es";
+import { useI18n } from "vue-i18n";
+
 import { BaseCard, BaseButton } from "potion-ui";
 
 import PoolExpiredOTokens from "./PoolExpiredOTokens.vue";
@@ -26,6 +28,8 @@ const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: "otoken-claimed", id: string): void;
 }>();
+
+const { t } = useI18n();
 
 const activeTab = ref(tabs.expired);
 const selectedUnderlyings = ref<Map<string, boolean>>(new Map());
@@ -94,7 +98,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :class="getActiveTabColors(activeTab === tabs.expired)"
           @click="activeTab = tabs.expired"
         >
-          Expired Put Options
+          {{ t("expired_options") }}
         </div>
 
         <div
@@ -102,12 +106,12 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :class="getActiveTabColors(activeTab === tabs.active)"
           @click="activeTab = tabs.active"
         >
-          Active Put Options
+          {{ t("active_options") }}
         </div>
       </div>
       <div class="py-4 px-5 radial-bg-glass">
         <div class="font-poppins font-medium text-md">
-          Underlying Pool Assets
+          {{ t("pool_underlyings") }}
         </div>
 
         <div class="flex gap-3 mt-4 mb-6">

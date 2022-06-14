@@ -269,7 +269,7 @@ watch(redeemReceipt, (receipt) =>
             {{ t("expired_potions") }}
           </h3>
           <h2 class="my-3 w-3/4 text-xl">
-            {{ t("expired_potins_ready_to_withdraw") }}
+            {{ t("withdraw_expired_potions") }}
           </h2>
         </div>
         <template v-if="expiredPotions.length > 0">
