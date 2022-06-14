@@ -453,6 +453,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
               <button
                 v-for="(s, index) in slippage"
                 :key="`slippage-${index}`"
+                class="outline-none focus:outline-none"
                 @click="handleSlippageSelection(index)"
               >
                 <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{

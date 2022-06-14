@@ -37,13 +37,13 @@ export default defineComponent({
 <script lang="ts" setup>
 import type { SrcsetEnum } from "dapp-types";
 import PictureSet from "../PictureSet/PictureSet.vue";
-
 export interface Props {
   title?: string;
   iconSrcset?: Map<SrcsetEnum, string>;
   selected: boolean;
   disabled: boolean;
 }
+defineEmits(["click"]);
 const props = withDefaults(defineProps<Props>(), {
   iconSrcset: undefined,
   title: "Title",
