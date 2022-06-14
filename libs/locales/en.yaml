@@ -10,6 +10,9 @@ assets: Assets
 available_payout: Available Payout
 average_pnl: average pnl
 back: back
+bonding_curve_title: Premium Bonding Curve
+bonding_curve_x_axis: Utilization
+bonding_curve_y_axis: Premium
 check_pool: check pool
 cloned: Cloned
 connect_wallet: Connect Wallet
@@ -95,10 +98,3 @@ wrong_bonding_curve_params: parameters aren't valid
 your_liquidity: Your liquidity
 your_put_recipe: Your put recipe
 your_strike_price: your strike price
-
-bonding_curve:
-  title: Premium Bonding Curve
-  x_axis:
-    label: Utilization
-  y_axis:
-    label: Premium
