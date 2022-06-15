@@ -23,7 +23,7 @@
         :step="0.1"
         unit="USDC"
         :model-value="props.modelValue"
-        :footer-description="t('deposit_collateral_footer_description')"
+        :footer-description="t('deposit_collateral_footer')"
         @update:model-value="emits('update:modelValue', $event)"
         @valid-input="emits('validInput', $event)"
       />

@@ -1,5 +1,7 @@
+action: Action
 active: active
-active_potions: active potions
+active_options: Active Put Options
+active_potions: Active Potions
 add_liquidity: Add liquidity
 add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
 add_more_liquidity: Add More Liquidity
@@ -7,31 +9,43 @@ all: All
 approve: approve
 asset: Asset
 assets: Assets
+available_payout: Available Payout
 average_pnl: average pnl
 back: back
+bonding_curve_title: Premium Bonding Curve
+bonding_curve_x_axis: Utilization
+bonding_curve_y_axis: Premium
 check_pool: check pool
+claimed: Claimed
 cloned: Cloned
+collateral: Collateral
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 create_pool: create pool
-create_pool_jumbo_subtitle: GREAT POWER, GREAT RESPONSABILITY!
-create_pool_jumbo_title: Create custom pool from scratch
+create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
+create_pool_title: Create custom pool from scratch
 create_potion: create potion
-create_potion_jumbo_subtitle: PROTECTION POWER IN YOUR HANDS!
-create_potion_jumbo_title: Create protective potions by selecting asset, strike and duration.
+create_potion_subtitle: PROTECTION POWER IN YOUR HANDS!
+create_potion_title: Create protective potions by selecting asset, strike and duration.
 creator: Creator
+current_payout: Current Payout
 curve_formula_title: Equation
 curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
 curve_parameters: Parameters defining the curve.
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
-deposit_collateral_footer_description: Balance
+deposit_collateral_footer: Balance
 deposit_collateral_title: You're providing
+duration: duration
 duration_description: How long the insurance you are selling will be valid for.
 edit: edit
 empty: Empty
 enable_or_disable: Enable/Disable
+expiration: Expiration
+expiration_date: Exp. Date
+expired_options: Expired Put Options
+expired_potions: Expired Potions
 hint_duration: The max duration that you are willing sell an Option
 hint_strike: The highest price that a buyer can exercise the Option
 inactive: inactive
@@ -47,48 +61,46 @@ loading: Loading..
 loading_error: Error loading data
 max_duration: Max Duration
 max_strike: Max Strike
+max_strike_price: max strike price
 most_cloned_templates_subtitle: MOST CLONED
 most_cloned_templates_title: Pools that have been cloned the most times
 my_pool: My Pool
 my_summary: my summary
 next: next
 no_options: No options to show
+no_potions_available: No potions to show
+no_underlying_asset_found: no underlying asset found
+not_withdrawable: Not withdrawable
 pnl: Pnl
+pool_underlyings: Underlying Pool Assets
 profit_and_loss: Profit & Loss
+projected_pnl: Projected P&L
+purchased_potions_not_expired: Purchased Potions not expired.
+put_option: put option
+quantity: Quantity
+reclaimable: reclaimable
+review_and_create: review and create
 set_bonding_curve_params: Set the following parameters and define your curve.
 show_more: Show more
+status: Status
 strike_description: Choose the maximum insurance cover.
+strike_price: Strike Price
+summary: Summary
 times: Times
 title: Home page
 top_gainers_templates_subtitle: TOP GAINERS
 top_gainers_templates_title: Top PnL since creation.
 total_liquidity: Total Liquidity
+total_payout: total payout
 total_pools: total pools
 total_size: Tot. Size
+unutilized_capital: Unutilized capital
 user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
 utilization: utilization
-view_pool_recipe: view pool recipe
-wrong_bonding_curve_params: parameters aren't valid
-bonding_curve:
-  title: Premium Bonding Curve
-  x_axis:
-    label: Utilization
-  y_axis:
-    label: Premium
-your_put_recipe: Your put recipe
-strike_price: strike price
-duration: duration
-review_and_create: review and create
-your_strike_price: your strike price
-max_strike_price: max strike price
-status: Status
 utilized_capital: Utilized Capital
-unutilized_capital: Unutilized capital
-withdraw_capital: Withdraw capital
-your_liquidity: Your liquidity
+view_pool_recipe: view pool recipe
 withdraw: Withdraw
-no_underlying_asset_found: no underlying asset found
 current_price: current price
 expiry_date: expiry date
 days: days
@@ -101,6 +113,11 @@ market_size: market size
 price_per_potion: price per potion
 total: total
 slippage_tolerance: slippage tolerance
-expiration: expiration
 similar_potions: similar potions
 similar_potion_message: You are saving { dollars } in gas by buying an existing Potion
+withdraw_capital: Withdraw capital
+withdraw_expired_potions: Expired Potions ready to be withdrawn.
+wrong_bonding_curve_params: parameters aren't valid
+your_liquidity: Your liquidity
+your_put_recipe: Your put recipe
+your_strike_price: your strike price

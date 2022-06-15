@@ -1,7 +1,7 @@
 <template>
   <JumboHeader
-    :title="t('create_potion_jumbo_title')"
-    :subtitle="t('create_potion_jumbo_subtitle')"
+    :title="t('create_potion_title')"
+    :subtitle="t('create_potion_subtitle')"
     :cta-label="t('create_potion')"
     :icon-srcset="jumboIconSrcset"
     @click="navigateToPotionCreation"

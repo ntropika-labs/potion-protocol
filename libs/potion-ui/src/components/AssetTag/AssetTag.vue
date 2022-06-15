@@ -5,13 +5,14 @@ export default defineComponent({
   name: "AssetTag",
 });
 
-type LabelSize = "sm" | "md" | "lg" | "xl";
+type LabelSize = "sm" | "md" | "lg" | "xl" | "2xl";
 // prettier-ignore
 const labelSizeMap: Map<LabelSize, string> = new Map([
   ["sm", "text-xs"],
   ["md", "text-sm"],
   ["lg", "text-base"],
   ["xl", "text-lg"],
+  ["2xl", "text-xl font-semibold"],
 ]);
 </script>
 <script lang="ts" setup>
@@ -44,7 +45,7 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         :image="tkn.image"
       />
     </div>
-    <div v-else-if="props.token" class="flex flex-wrap">
+    <div v-else-if="props.token" class="flex flex-wrap items-center">
       <TokenIcon
         class="rounded-full bg-deep-black-700 mr-2"
         :address="props.token.address"

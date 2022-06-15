@@ -4,31 +4,16 @@ import {
 } from "subgraph-queries/generated/urql";
 import { computed, ref, watch } from "vue";
 import type { SnapshotDataFragment } from "subgraph-queries/generated/operations";
+import type { PerformanceData } from "dapp-types";
 
-const snapshotFragmentToChartData = (snapshot: SnapshotDataFragment) => {
-  const size = parseFloat(snapshot.size);
-  const locked = parseFloat(snapshot.locked);
-  const timestamp = parseInt(snapshot.timestamp);
-  const actionAmount = parseFloat(snapshot.actionAmount);
-  const actionType = parseInt(snapshot.actionType);
-  const absPnL = parseFloat(snapshot.pnlTotal);
-  const pnl = parseFloat(snapshot?.templatePnlPercentage ?? "0");
-  const liquidity = parseFloat(snapshot?.templateSize ?? "0");
-  const utilization = 100 * parseFloat(snapshot?.templateUtilization ?? "0");
-  return {
-    size,
-    locked,
-    timestamp,
-    actionAmount,
-    actionType,
-    absPnL,
-    pnl,
-    liquidity,
-    utilization,
-  };
-};
+const getFloat = (value: null | undefined | string) =>
+  value ? parseFloat(value) : 0;
 
-const useSnapshots = () => {
+const useSnapshots = (
+  snapshotFragmentToChartData: (
+    snapshot: SnapshotDataFragment
+  ) => PerformanceData
+) => {
   const snapshots = ref<SnapshotDataFragment[]>([]);
   const alreadyLoadedIds = computed(() =>
     [""].concat(snapshots.value.map(({ id }) => id))
@@ -45,7 +30,16 @@ const useSnapshots = () => {
 };
 
 const usePoolSnapshots = (currentPool: string) => {
-  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots();
+  const snapshotFragmentToChartData = (snapshot: SnapshotDataFragment) => ({
+    timestamp: parseInt(snapshot.timestamp),
+    pnl: getFloat(snapshot.pnlPercentage),
+    liquidity: getFloat(snapshot.size),
+    utilization: 100 * getFloat(snapshot.utilization),
+  });
+
+  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots(
+    snapshotFragmentToChartData
+  );
 
   const { data, fetching, executeQuery } = useGetSnapshotsByPoolQuery({
     variables: computed(() => ({
@@ -67,7 +61,16 @@ const usePoolSnapshots = (currentPool: string) => {
 };
 
 const useTemplateSnapshots = (templateAddress: string) => {
-  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots();
+  const snapshotFragmentToChartData = (snapshot: SnapshotDataFragment) => ({
+    timestamp: parseInt(snapshot.timestamp),
+    pnl: getFloat(snapshot.templatePnlPercentage),
+    liquidity: getFloat(snapshot.templateSize),
+    utilization: 100 * getFloat(snapshot.templateUtilization),
+  });
+
+  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots(
+    snapshotFragmentToChartData
+  );
 
   const { data, fetching } = useGetSnapshotsByTemplateQuery({
     variables: computed(() => ({

@@ -38,7 +38,7 @@ describe("InputNumber", () => {
 
   it("renders the footer text properly", () => {
     expect(wrapper.vm.footerText).toBe(
-      `${wrapper.props().footerDescription} ${currencyFormatter(
+      `${wrapper.props().footerDescription}: ${currencyFormatter(
         wrapper.props().max,
         wrapper.props().unit
       )}`
