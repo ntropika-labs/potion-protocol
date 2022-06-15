@@ -9,7 +9,7 @@ import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria
+  OrderedCriteria,
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
@@ -223,8 +223,7 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         settleLoading.value = false;
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
   // Is settled
   const isSettled = async (address: string) => {
@@ -274,8 +273,7 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         claimCollateralLoading.value = false;
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   //Buy Potions
@@ -308,8 +306,7 @@ export function usePotionLiquidityPoolContract() {
           `Error buying from otoken with address ${oTokenAddress}`
         );
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   const createAndBuyOtokens = async (
@@ -352,8 +349,7 @@ export function usePotionLiquidityPoolContract() {
         }
         throw new Error(`Error deploy and buy otoken`);
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   return {
