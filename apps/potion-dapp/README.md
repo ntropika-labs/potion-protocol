@@ -57,3 +57,65 @@ npm run test:e2e # or `npm run test:e2e:ci` for headless testing
 ```sh
 npm run lint
 ```
+
+### NX custom commands
+
+Execution can be customized by passing the `redeploy` flag:
+
+- [DEFAULT] When `true` will instruct docker to always deploy a fresh environment (even if one is already available)
+- When `false` an existing environment will be used if any.
+  **WARNING: currently the script has no way of detecting an healthy enviroment and will only check for running containers**
+
+#### `local-dev`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev [redeploy=(true/false)]
+```
+
+Used to spin up the development environment.
+
+- Start `docker-compose` containers
+- Start `vite` dev server by running `yarn nx run potion-dapp:dev`
+
+_The command runs in **foreground**_
+
+#### `local-dev-test`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev-test [redeploy=(true/false)]
+```
+
+Used to spin up the development environment with mocked Onboard.
+
+- Start `docker-compose` containers
+- Start `vite` dev server **with mocked Onboard** by running `yarn nx run potion-dapp:dev-test`
+
+_The command runs in **foreground**_
+
+#### `local-dev-test-e2e`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev-test-e2e [redeploy=(true/false)]
+```
+
+Used as a utility command to run in parallel the dev server and Cypress client
+
+- Start `vite` dev server **with mocked Onboard** by running `yarn nx run potion-dapp:dev-test`
+- start `cypress` client by running `yarn nx run potion-dapp:test-e2e-dev`
+
+_The command runs in **foreground**, command needs to be terminated manually_
+
+#### `local-test-e2e`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-test-e2e
+```
+
+- Start `docker-compose` containers
+- Run `yarn nx run potion-dapp:local-dev-test-e2e` to spin up the dev server and cypress client simultaneously
+
+_The command runs in **foreground**, command needs to be terminated manually_

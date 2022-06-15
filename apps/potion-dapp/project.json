@@ -1,0 +1,68 @@
+{
+  "root": "apps/potion-dapp/",
+  "sourceRoot": "apps/potion-dapp/",
+  "projectType": "application",
+  "targets": {
+    "local-dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/start-local-env-headless",
+            "forwardAllArgs": true
+          },
+          { "command": "yarn nx run potion-dapp:dev", "forwardAllArgs": false }
+        ],
+        "parallel": false
+      }
+    },
+    "local-dev-test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/start-local-env-headless",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "local-dev-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-dev",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
+    },
+    "local-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/start-local-env-headless",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:local-dev-test-e2e",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
+      }
+    }
+  }
+}
