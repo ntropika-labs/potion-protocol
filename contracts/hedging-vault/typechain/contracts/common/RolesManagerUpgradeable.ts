@@ -27,32 +27,28 @@ import type {
 
 export interface RolesManagerUpgradeableInterface extends utils.Interface {
   functions: {
-    "adminRole()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
     "changeKeeper(address)": FunctionFragment;
-    "keeperRole()": FunctionFragment;
+    "getAdmin()": FunctionFragment;
+    "getKeeper()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "adminRole"
       | "changeAdmin"
       | "changeKeeper"
-      | "keeperRole"
+      | "getAdmin"
+      | "getKeeper"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "adminRole", values?: undefined): string;
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
     functionFragment: "changeKeeper",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "keeperRole",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "adminRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changeAdmin",
     data: BytesLike
@@ -61,14 +57,30 @@ export interface RolesManagerUpgradeableInterface extends utils.Interface {
     functionFragment: "changeKeeper",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "keeperRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
 
   events: {
+    "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "KeeperChanged(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  prevAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -76,6 +88,17 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface KeeperChangedEventObject {
+  prevKeeper: string;
+  newKeeper: string;
+}
+export type KeeperChangedEvent = TypedEvent<
+  [string, string],
+  KeeperChangedEventObject
+>;
+
+export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
 
 export interface RolesManagerUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -104,8 +127,6 @@ export interface RolesManagerUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    adminRole(overrides?: CallOverrides): Promise<[string]>;
-
     changeAdmin(
       newAdmin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -116,10 +137,10 @@ export interface RolesManagerUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    keeperRole(overrides?: CallOverrides): Promise<[string]>;
-  };
+    getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-  adminRole(overrides?: CallOverrides): Promise<string>;
+    getKeeper(overrides?: CallOverrides): Promise<[string]>;
+  };
 
   changeAdmin(
     newAdmin: string,
@@ -131,26 +152,44 @@ export interface RolesManagerUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  keeperRole(overrides?: CallOverrides): Promise<string>;
+  getAdmin(overrides?: CallOverrides): Promise<string>;
+
+  getKeeper(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    adminRole(overrides?: CallOverrides): Promise<string>;
-
     changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
 
     changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
 
-    keeperRole(overrides?: CallOverrides): Promise<string>;
+    getAdmin(overrides?: CallOverrides): Promise<string>;
+
+    getKeeper(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
+    "AdminChanged(address,address)"(
+      prevAdmin?: string | null,
+      newAdmin?: string | null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      prevAdmin?: string | null,
+      newAdmin?: string | null
+    ): AdminChangedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "KeeperChanged(address,address)"(
+      prevKeeper?: string | null,
+      newKeeper?: string | null
+    ): KeeperChangedEventFilter;
+    KeeperChanged(
+      prevKeeper?: string | null,
+      newKeeper?: string | null
+    ): KeeperChangedEventFilter;
   };
 
   estimateGas: {
-    adminRole(overrides?: CallOverrides): Promise<BigNumber>;
-
     changeAdmin(
       newAdmin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -161,12 +200,12 @@ export interface RolesManagerUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    keeperRole(overrides?: CallOverrides): Promise<BigNumber>;
+    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adminRole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     changeAdmin(
       newAdmin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -177,6 +216,8 @@ export interface RolesManagerUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    keeperRole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

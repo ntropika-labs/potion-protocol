@@ -11,6 +11,9 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/securit
 
     @notice Helper contract that allows the Admin to pause all the functionality of the vault in case
     of an emergency
+
+    @dev No storage gaps have been added as the functionlity of this contract is considered to be
+    final and there is no need to add more storage variables
  */
 
 contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeable {
@@ -21,8 +24,8 @@ contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeabl
 
         @dev This contract does not need to initialize anything for itself. This contract
         replaces the Pausable contract. The Pausable contracts MUST NOT be used anywhere
-        else in the inheritance chain. Assuming this, we can initialize the Pausable contract
-        here
+        else in the inheritance chain. Assuming this, we can safely initialize the Pausable
+        contract here
 
         @dev The name of the init function is marked as `_unchained` because we assume that the
         Pausable contract is not used anywhere else, and thus the functionality is that of an

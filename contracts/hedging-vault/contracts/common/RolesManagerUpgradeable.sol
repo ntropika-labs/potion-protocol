@@ -25,8 +25,8 @@ import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/Co
 
 contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     // STORAGE
-    address public adminRole;
-    address public keeperRole;
+    address private _adminRole;
+    address private _keeperRole;
 
     /// MODIFIERS
 
@@ -34,7 +34,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
       @notice Modifier to scope functions to only be accessible by the Admin
      */
     modifier onlyAdmin() {
-        require(_msgSender() == adminRole, "Only the Admin can call this function");
+        require(_msgSender() == _adminRole, "Only the Admin can call this function");
         _;
     }
 
@@ -42,9 +42,13 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
       @notice Modifier to scope functions to only be accessible by the Keeper
      */
     modifier onlyKeeper() {
-        require(_msgSender() == keeperRole, "Only the Admin can call this function");
+        require(_msgSender() == _keeperRole, "Only the Admin can call this function");
         _;
     }
+
+    /// EVENTS
+    event AdminChanged(address indexed prevAdmin, address indexed newAdmin);
+    event KeeperChanged(address indexed prevKeeper, address indexed newKeeper);
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -54,8 +58,8 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
      */
     // solhint-disable-next-line func-name-mixedcase
     function __RolesManager_init_unchained(address adminRole_, address keeperRole_) internal onlyInitializing {
-        adminRole = adminRole_;
-        keeperRole = keeperRole_;
+        _adminRole = adminRole_;
+        _keeperRole = keeperRole_;
     }
 
     /// FUNCTIONS
@@ -68,7 +72,11 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     function changeAdmin(address newAdmin) external onlyAdmin {
         require(newAdmin != address(0), "New admin address cannot be the null address");
 
-        adminRole = newAdmin;
+        address prevAdmin = _adminRole;
+
+        _adminRole = newAdmin;
+
+        emit AdminChanged(prevAdmin, newAdmin);
     }
 
     /**
@@ -79,7 +87,25 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     function changeKeeper(address newKeeper) external onlyAdmin {
         require(newKeeper != address(0), "New keeper address cannot be the null address");
 
-        keeperRole = newKeeper;
+        address prevKeeper = _keeperRole;
+
+        _keeperRole = newKeeper;
+
+        emit KeeperChanged(prevKeeper, newKeeper);
+    }
+
+    /**
+        @notice Returns the current Admin address
+     */
+    function getAdmin() public view returns (address) {
+        return _adminRole;
+    }
+
+    /**
+        @notice Returns the current Keeper address
+     */
+    function getKeeper() public view returns (address) {
+        return _keeperRole;
     }
 
     /**

@@ -3,3 +3,13 @@
 /* eslint-disable */
 import type * as common from "./common";
 export type { common };
+import type * as extensions from "./extensions";
+export type { extensions };
+import type * as interfaces from "./interfaces";
+export type { interfaces };
+import type * as openzeppelin from "./openzeppelin";
+export type { openzeppelin };
+import type * as vault from "./vault";
+export type { vault };
+import type * as versioning from "./versioning";
+export type { versioning };

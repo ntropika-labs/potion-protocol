@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { LifecycleStates } from "./LifecycleStates";
+export type { LifecycleStatesUpgradeable } from "./LifecycleStatesUpgradeable";

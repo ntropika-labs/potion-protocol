@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { LifecycleStates__factory } from "./LifecycleStates__factory";
+export { LifecycleStatesUpgradeable__factory } from "./LifecycleStatesUpgradeable__factory";
