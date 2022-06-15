@@ -329,7 +329,7 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
         ></router-link>
       </div>
       <ul
-        class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) items-stretch justify-center"
+        class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) self-start items-start justify-center"
       >
         <SidebarLink
           v-for="(item, index) in sidebarItems"
