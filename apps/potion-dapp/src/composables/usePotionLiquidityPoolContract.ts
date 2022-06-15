@@ -227,8 +227,7 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         settleLoading.value = false;
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
   // Is settled
   const isSettled = async (address: string) => {
@@ -278,8 +277,7 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         claimCollateralLoading.value = false;
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   //Buy Potions
@@ -312,8 +310,7 @@ export function usePotionLiquidityPoolContract() {
           `Error buying from otoken with address ${oTokenAddress}`
         );
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   const createAndBuyOtokens = async (
@@ -359,8 +356,7 @@ export function usePotionLiquidityPoolContract() {
         }
         throw new Error(`Error deploy and buy otoken`);
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
 
   // Method to conditionally buy or create and buy otokens
