@@ -9,7 +9,7 @@ import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria,
+  OrderedCriteria
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
@@ -18,7 +18,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { contractsAddresses } from "@/helpers/contracts";
 import { createValidExpiry } from "@/helpers/time";
-import { parseUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
@@ -318,7 +318,7 @@ export function usePotionLiquidityPoolContract() {
     strikeAddress = PotionTestUSD.address.toLowerCase(),
     collateralAddress = PotionTestUSD.address.toLowerCase(),
     strikePrice: number,
-    duration: number,
+    expiry: number,
     isPut: true,
     counterparties: CounterpartyDetails[],
     maxPremium: number
@@ -327,21 +327,24 @@ export function usePotionLiquidityPoolContract() {
       try {
         buyPotionLoading.value = true;
 
-        const { getBlock, blockTimestamp } = useEthersProvider();
-        await getBlock("latest");
-        const validExpiry = createValidExpiry(blockTimestamp.value, duration);
         const contractSigner = initContractSigner();
 
         const maxPremiumToBigNumber = parseUnits(maxPremium.toFixed(6), 6);
-        console.log(maxPremiumToBigNumber);
-        const strikePriceToBigNumber = parseUnits(strikePrice.toFixed(6), 6);
-        console.log(strikePriceToBigNumber);
+        console.log(
+          maxPremiumToBigNumber,
+          formatUnits(maxPremiumToBigNumber, 6)
+        );
+        const strikePriceToBigNumber = parseUnits(strikePrice.toFixed(8), 8);
+        console.log(
+          strikePriceToBigNumber,
+          formatUnits(strikePriceToBigNumber, 8)
+        );
         buyPotionTx.value = await contractSigner.createAndBuyOtokens(
           underlyingAddress,
           strikeAddress,
           collateralAddress,
           strikePriceToBigNumber,
-          validExpiry,
+          expiry,
           isPut,
           counterparties,
           maxPremiumToBigNumber
@@ -382,12 +385,15 @@ export function usePotionLiquidityPoolContract() {
       isPut &&
       maxPremium
     ) {
+      const { getBlock, blockTimestamp } = useEthersProvider();
+      await getBlock("latest");
+      const validExpiry = createValidExpiry(blockTimestamp.value, duration);
       const newOtokenAddress = await getTargetOtokenAddress(
         underlyingAddress,
         strikeAddress,
         collateralAddress,
         strikePrice,
-        duration,
+        validExpiry,
         isPut
       );
       const existingOtokenAddress = await getOtoken(
@@ -395,7 +401,7 @@ export function usePotionLiquidityPoolContract() {
         strikeAddress,
         collateralAddress,
         strikePrice,
-        duration,
+        validExpiry,
         isPut
       );
       const exists = newOtokenAddress === existingOtokenAddress;
@@ -407,7 +413,7 @@ export function usePotionLiquidityPoolContract() {
           strikeAddress,
           collateralAddress,
           strikePrice,
-          duration,
+          validExpiry,
           isPut,
           counterparties,
           maxPremium

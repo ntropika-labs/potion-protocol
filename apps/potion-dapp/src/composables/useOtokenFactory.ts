@@ -34,10 +34,11 @@ export function useOtokenFactory() {
       underlyingAddress,
       strikeAddress,
       collateralAddress,
-      parseUnits(strikePrice.toString(), 6),
+      parseUnits(strikePrice.toFixed(8), 8),
       expiry,
       isPut
     );
+    console.log(otokenAddress, "getTargetOtokenAddress");
     return otokenAddress;
   };
 
@@ -54,10 +55,11 @@ export function useOtokenFactory() {
       underlyingAddress,
       strikeAddress,
       collateralAddress,
-      parseUnits(strikePrice.toString(), 6),
+      parseUnits(strikePrice.toFixed(8), 8),
       expiry,
       isPut
     );
+    console.log(otokenAddress, "getOtoken");
     return otokenAddress;
   };
 

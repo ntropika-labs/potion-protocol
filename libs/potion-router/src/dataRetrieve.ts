@@ -60,6 +60,7 @@ const getPoolsFromCriteria = async (
     }
   );
   const pools = Array.from(poolsMap.values());
+  console.log(pools);
   return {
     pools,
     symbol: criteria.token.symbol,
