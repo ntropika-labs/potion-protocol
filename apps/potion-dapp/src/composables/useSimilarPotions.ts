@@ -1,6 +1,6 @@
 import {
   useGetSimilarPotionByAssetQuery,
-  useGetSimilarPotionByStrikeQuery
+  useGetSimilarPotionByStrikeQuery,
 } from "subgraph-queries/generated/urql";
 import { isRef, onMounted, ref, unref } from "vue";
 
