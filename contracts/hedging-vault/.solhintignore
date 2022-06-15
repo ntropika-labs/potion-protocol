@@ -1,0 +1,5 @@
+# directories
+**/artifacts/
+**/node_modules/
+**/contracts/packages/**
+**/contracts/test/**
