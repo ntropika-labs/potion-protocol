@@ -12,6 +12,8 @@ import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+
 import type { SelectableToken, Criteria } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
@@ -310,6 +312,27 @@ const {
   ethPrice
 );
 
+// Buy logic
+const { buyPotions } = usePotionLiquidityPoolContract();
+const handleBuyPotions = async () => {
+  if (
+    routerResult.value &&
+    routerResult.value.counterparties &&
+    tokenSelectedAddress.value
+  ) {
+    await buyPotions(
+      routerResult.value?.counterparties,
+      premiumSlippage.value,
+      undefined,
+      tokenSelectedAddress.value,
+      strikeSelected.value,
+      durationSelected.value
+    );
+  } else {
+    console.info("you miss some parameters to be set");
+  }
+};
+
 // Similar By Strike
 const { similarByStrike, similarByAsset } = useSimilarPotions(
   tokenSelectedAddress,
@@ -519,6 +542,11 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
           <i class="i-ph-caret-right"></i>
         </template>
       </BaseButton>
+      <BaseButton
+        v-if="currentIndex === sidebarItems.length - 1"
+        label="create"
+        @click="handleBuyPotions()"
+      />
     </div>
   </BaseCard>
   <div class="mt-10">
