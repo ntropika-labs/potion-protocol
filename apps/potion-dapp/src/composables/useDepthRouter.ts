@@ -60,7 +60,12 @@ export const useDepthRouter = (
       strikePriceUSDC > 0 &&
       ethPrice > 0
     ) {
-      console.log("run router", orderSize, strikePriceUSDC, gas, ethPrice);
+      console.info("Router is running with: ", {
+        orderSize,
+        strikePriceUSDC,
+        gas,
+        ethPrice,
+      });
       routerResult.value = await worker.runDepthRouter(
         pools,
         orderSize,

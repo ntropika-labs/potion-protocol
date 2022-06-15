@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { TokenSelection, InputNumber, BaseButton, BaseTag } from "potion-ui";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useTokenList } from "@/composables/useTokenList";
 import { currencyFormatter } from "potion-ui";
 import {
@@ -11,6 +11,7 @@ import {
 import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useDepthRouter } from "@/composables/useDepthRouter";
+import { useBlockNative } from "@/composables/useBlockNative";
 import type { SelectableToken, Criteria } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
@@ -62,6 +63,30 @@ const ReviewDefaultIcon = new Map([
   [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
   [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
 ]);
+
+const gasUnitsToDeployOtoken = 840000;
+const { getGas, gasPrice } = useBlockNative();
+const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);
+const ethPrice = computed(() => {
+  if (coinsPrices.value && coinsPrices.value.ethereum.usd) {
+    return coinsPrices.value.ethereum.usd;
+  }
+  return 0;
+});
+onMounted(async () => {
+  await fetchCoinsPrices();
+  await getGas();
+});
+const savingByPickSimilar = computed(() => {
+  if (ethPrice.value && gasPrice.value) {
+    const saving =
+      ((gasPrice.value * 10e8 * gasUnitsToDeployOtoken) / 1e18) *
+      ethPrice.value;
+    return currencyFormatter(saving, "$");
+  }
+  return currencyFormatter(0, "$");
+});
+
 const sidebarItems = computed(() => {
   return [
     {
@@ -170,12 +195,13 @@ const handleTokenSelection = (address: string) => {
 };
 
 // Strike Selection
-const { fetchPrice, formattedPrice, price } = useFetchTokenPrices(
+const { fetchTokenPrice, formattedPrice, price } = useCoinGecko(
+  undefined,
   tokenSelected.value?.address || ""
 );
 
 onMounted(() => {
-  fetchPrice();
+  fetchTokenPrice();
 });
 
 const { maxStrike: maxSelectableStrike } =
@@ -280,8 +306,8 @@ const {
   criteriasParam,
   orderSize,
   strikeSelected,
-  ref(50),
-  ref(1300)
+  gasPrice,
+  ethPrice
 );
 
 // Similar By Strike
@@ -496,7 +522,12 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
     </div>
   </BaseCard>
   <div class="mt-10">
-    <h2>Similar Potions</h2>
+    <h2 class="uppercase text-secondary-500 text-sm">
+      {{ t("similar_potions") }}
+    </h2>
+    <p class="text-sm">
+      {{ t("similar_potion_message", { dollars: savingByPickSimilar }) }}
+    </p>
     <pre class="font-mono">
       <code>
         {{similarByAsset}}

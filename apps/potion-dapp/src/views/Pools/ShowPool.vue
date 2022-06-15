@@ -23,7 +23,7 @@ import { useCollateralTokenContract } from "@/composables/useCollateralTokenCont
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { usePoolSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { usePoolOtokens } from "@/composables/usePoolRecords";
 
 import CurvesChart from "@/components/CurvesChart.vue";
@@ -147,9 +147,9 @@ const fetchAssetsPrice = async () => {
   try {
     for (let i = 0; i < addresses.length; i++) {
       const addr = addresses[i];
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
+      const { fetchTokenPrice, formattedPrice } = useCoinGecko(addr);
 
-      await fetchPrice();
+      await fetchTokenPrice();
 
       prices.set(addr, formattedPrice.value);
     }

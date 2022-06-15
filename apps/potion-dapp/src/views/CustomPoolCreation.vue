@@ -99,7 +99,7 @@ import {
   useAllCollateralizedProductsUnderlyingQuery,
   useGetNumberOfPoolsFromUserQuery,
 } from "subgraph-queries/generated/urql";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useRouter } from "vue-router";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
@@ -178,11 +178,12 @@ const toggleTokenSelection = (address: string) => {
 
 const updateTokenPrice = async (token: Token) => {
   console.log("[updateTokenPrice] for: ", token.name);
-  const { success, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
+  const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko(
+    undefined,
     token.address
   );
   try {
-    await fetchPrice();
+    await fetchTokenPrice();
 
     console.log(
       "[updateTokenPrice] completed for: ",

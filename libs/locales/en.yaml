@@ -102,3 +102,5 @@ price_per_potion: price per potion
 total: total
 slippage_tolerance: slippage tolerance
 expiration: expiration
+similar_potions: similar potions
+similar_potion_message: You are saving { dollars } in gas by buying an existing Potion

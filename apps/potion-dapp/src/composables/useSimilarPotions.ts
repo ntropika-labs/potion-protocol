@@ -1,6 +1,6 @@
 import {
   useGetSimilarPotionByAssetQuery,
-  useGetSimilarPotionByStrikeQuery,
+  useGetSimilarPotionByStrikeQuery
 } from "subgraph-queries/generated/urql";
 import { isRef, onMounted, ref, unref } from "vue";
 
@@ -65,7 +65,6 @@ export function useSimilarPotions(
     watchDebounced(
       [underlyingAssetAddress, strike, duration, assetPrice],
       () => {
-        console.log("firing queries");
         const variables = {
           expiry: unref(blockTimestamp).toString(),
           addresses: [unref(underlyingAssetAddress) ?? ""],
@@ -73,9 +72,14 @@ export function useSimilarPotions(
           strikePrice: unref(strike)?.toString() ?? "0",
           doubleStrikePrice: ((unref(strike) ?? 0) * 2)?.toString() ?? "0",
         };
-        console.info(variables);
-        getByAsset();
-        getByStrike();
+        if (
+          underlyingAssetAddress.value !== null &&
+          underlyingAssetAddress.value !== ""
+        ) {
+          console.info("Search similar potions with:", variables);
+          getByAsset();
+          getByStrike();
+        }
       },
       { debounce: 1000 }
     );

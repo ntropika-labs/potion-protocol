@@ -14,7 +14,6 @@ const urqlRouterClient = createClient({
 const getPoolsFromCriteria = async (
   criteria: Criteria
 ): Promise<ChartCriteriaPool> => {
-  console.log(criteria);
   const underlyingAddress = criteria.token.address;
   const result = await urqlRouterClient
     .query(GetPoolsFromCriteriaDocument, {

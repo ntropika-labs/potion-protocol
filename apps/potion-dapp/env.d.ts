@@ -14,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_INFURA_KEY: string;
   readonly VITE_DEVELOPMENT_MNEMONIC: string;
   readonly VITE_DEVELOPMENT_ADDRESS: string;
+  readonly VITE_BLOCKNATIVE_API_KEY: string;
 }
 
 interface ImportMeta {

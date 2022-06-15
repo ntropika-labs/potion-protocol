@@ -30,7 +30,7 @@ import { etherscanUrl } from "@/helpers";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTemplateSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
@@ -107,9 +107,9 @@ const fetchAssetsPrice = async () => {
   try {
     for (let i = 0; i < addresses.length; i++) {
       const addr = addresses[i];
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
+      const { fetchTokenPrice, formattedPrice } = useCoinGecko(addr);
 
-      await fetchPrice();
+      await fetchTokenPrice();
 
       prices.set(addr, formattedPrice.value);
     }
