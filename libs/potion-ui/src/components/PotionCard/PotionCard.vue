@@ -27,14 +27,14 @@
         :title="t('strike_price')"
         :value="props.strikePrice"
         value-type="currency"
-        class="group-hover:opacity-0"
+        class="group-hover:opacity-0 transition"
       />
       <LabelValue
         size="md"
         :title="t('expiration')"
         :value="props.expiration"
         value-type="timestamp"
-        class="group-hover:opacity-0"
+        class="group-hover:opacity-0 transition"
       />
     </div>
     <div
