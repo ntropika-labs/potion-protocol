@@ -1,0 +1,48 @@
+name: Development branch actions
+
+# run when issued manually, push or pr
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat-ci-cd-implementation-CU-2er6b37]
+  pull_request:
+    branches: [feat-ci-cd-implementation-CU-2er6b37]
+
+permissions:
+  contents: read
+  # Needed for the 'trilom/file-changes-action' action
+  pull-requests: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Start containers
+        run: ./bin/start-local-env-headless
+        shell: bash
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Run tests
+        run: yarn nx run potion-dapp:ci-test-e2e
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down

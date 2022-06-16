@@ -63,6 +63,22 @@
         ],
         "parallel": false
       }
+    },
+    "ci-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-ci-dev",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
     }
   }
 }
