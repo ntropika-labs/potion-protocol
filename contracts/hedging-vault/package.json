@@ -3,7 +3,7 @@
     "main": "./src/index.ts",
     "version": "0.0.1",
     "private": true,
-    "author": "Potion",
+    "author": "Ntropika",
     "bugs": {
         "url": "https://github.com/ntropika-labs/potion-protocol/issues"
     },
