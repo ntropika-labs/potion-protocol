@@ -86,7 +86,7 @@ const formattedValue = computed(() => {
 const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
 </script>
 <template>
-  <div>
+  <div class="text-dwhite-300">
     <h6
       class="capitalize font-medium mb-2"
       :class="[labelAlignment, labelSize]"

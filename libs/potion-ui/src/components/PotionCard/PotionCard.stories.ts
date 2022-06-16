@@ -1,7 +1,7 @@
 import type { Args, Story } from "@storybook/vue3";
 import { getTokenList } from "potion-tokenlist";
 
-import MyPotionCard from "./MyPotionCard.vue";
+import PotionCard from "./PotionCard.vue";
 
 const tokenList = getTokenList("ganache");
 const token = tokenList
@@ -14,19 +14,13 @@ const token = tokenList
   .pop();
 
 export default {
-  title: "Potion UI/Cards/MyPotionCard",
-  component: MyPotionCard,
+  title: "Potion UI/Cards/PotionCard",
+  component: PotionCard,
   argTypes: {
-    withdrawable: {
-      name: "Withdrawable",
-      control: {
-        type: "boolean",
-      },
-    },
-    expiry: {
+    expiration: {
       name: "Expiration timestamp",
       control: {
-        type: "number",
+        type: "text",
       },
     },
     strikePrice: {
@@ -35,38 +29,26 @@ export default {
         type: "text",
       },
     },
-    currentPayout: {
-      name: "Current Payout",
+    otokenAddress: {
+      name: "OToken address",
       control: {
         type: "text",
-      },
-    },
-    quantity: {
-      name: "Quantity",
-      control: {
-        type: "number",
       },
     },
   },
 };
 const defArgs = {
   token: token,
-  withdrawable: true,
   expiry: "1659385444",
-  strikePrice: "1000000",
-  currentPayout: "34",
-  quantity: "38",
-  etherscan: {
-    url: "#",
-    label: "0xd34db33f",
-  },
+  strikePrice: "2348",
+  otokenAddress: "0x0000000000000000000000000000000000000000",
 };
 const Template: Story = (args: Args) => ({
-  components: { MyPotionCard },
+  components: { PotionCard },
   setup() {
     return { args };
   },
-  template: `<div class="h-[400px] w-[300px]"><MyPotionCard v-bind="args" ></MyPotionCard></div>`,
+  template: `<div class="w-[300px]"><PotionCard v-bind="args" ></PotionCard></div>`,
 });
 
 export const Overview = Template.bind({});

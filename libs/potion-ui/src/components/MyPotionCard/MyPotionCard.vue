@@ -1,3 +1,9 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "MyPotionCard",
+});
+</script>
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { Token } from "dapp-types";

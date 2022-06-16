@@ -21,7 +21,7 @@ cloned: Cloned
 collateral: Collateral
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -121,3 +121,4 @@ wrong_bonding_curve_params: parameters aren't valid
 your_liquidity: Your liquidity
 your_put_recipe: Your put recipe
 your_strike_price: your strike price
+show: show
