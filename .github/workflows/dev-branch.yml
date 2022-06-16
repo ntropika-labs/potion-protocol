@@ -56,6 +56,8 @@ jobs:
         with:
           start: yarn nx run potion-dapp:preview
           wait-on: "http://localhost:5050"
+          config-file: ./apps/potion-dapp/cypress.config.ts
+          config: pageLoadTimeout=100000,baseUrl=http://localhost:5050
 
       - uses: actions/upload-artifact@v2
         if: failure()
