@@ -51,11 +51,23 @@ jobs:
       - name: Build app with mocked onboard
         run: yarn nx run potion-dapp:build-test
 
-      - name: Run vite preview
-        run: yarn nx run potion-dapp:preview
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          start: yarn nx run potion-dapp:preview
+          wait-on: "http://localhost:5050"
 
-      - name: Run vite preview
-        run: yarn nx run potion-dapp:test-e2e-ci
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
 
       - name: Stop containers
         if: always()
