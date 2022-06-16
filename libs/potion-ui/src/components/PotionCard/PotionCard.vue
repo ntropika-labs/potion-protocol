@@ -40,7 +40,12 @@
     <div
       class="absolute z-10 bottom-4 left-0 w-full justify-center hidden group-hover:flex transition"
     >
-      <BaseButton :label="t('show')" palette="white" size="sm" />
+      <BaseButton
+        :label="t('show')"
+        palette="white"
+        size="sm"
+        @click="$emit('click')"
+      />
     </div>
   </BaseCard>
 </template>
@@ -62,7 +67,7 @@ export interface Props {
   expiration: string;
 }
 const props = defineProps<Props>();
-
+defineEmits(["click"]);
 const { t } = useI18n();
 
 const etherscanUrl = computed(() => {
