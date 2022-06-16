@@ -247,16 +247,6 @@ const orderSize = computed(() => {
   return strikeSelected.value * potionQuantity.value;
 });
 
-// const totalPrice = computed(() => {
-//   if (routerResult.value && routerResult.value.premium) {
-//     return potionQuantity.value * routerResult.value.premium;
-//   }
-//   return 0;
-// });
-// const formattedTotalPrice = computed(() => {
-//   return currencyFormatter(totalPrice.value, "USDC");
-// });
-
 // Router logic
 const slippage = ref([
   { value: 0.005, label: "0.5%", selected: true },

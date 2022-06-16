@@ -1,7 +1,7 @@
 import type { Args, Story } from "@storybook/vue3";
 import { getTokenList } from "potion-tokenlist";
 
-import PotionCard from "./PotionCard.vue";
+import MyPotionCard from "./MyPotionCard.vue";
 
 const tokenList = getTokenList("ganache");
 const token = tokenList
@@ -14,8 +14,8 @@ const token = tokenList
   .pop();
 
 export default {
-  title: "Potion UI/Cards/PotionCard",
-  component: PotionCard,
+  title: "Potion UI/Cards/MyPotionCard",
+  component: MyPotionCard,
   argTypes: {
     withdrawable: {
       name: "Withdrawable",
@@ -62,7 +62,7 @@ const defArgs = {
   },
 };
 const Template: Story = (args: Args) => ({
-  components: { PotionCard },
+  components: { MyPotionCard },
   setup() {
     return { args };
   },
