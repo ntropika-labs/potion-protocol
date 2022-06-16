@@ -69,7 +69,9 @@ services:
 
   ganache:
     container_name: potion_ganache
-    image: trufflesuite/ganache:latest
+    image: trufflesuite/ganache:v7.3.0
     ports:
       - "8545:8545"
-    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}'
+    volumes:
+      - ${GANACHE_VOLUME}:/opt
+    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}' --database.dbPath='${DATABASE_PATH}'
