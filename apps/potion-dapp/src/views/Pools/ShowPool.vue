@@ -139,20 +139,18 @@ const tokenPricesMap = ref<Map<string, string>>(new Map());
 
 const fetchAssetsPrice = async () => {
   const prices = new Map();
-  const addresses = criteriaSet?.value?.criterias?.map(
-    ({ criteria }) => criteria.underlyingAsset.address
-  );
-  if (!addresses) return prices;
+  const addresses =
+    criteriaSet?.value?.criterias?.map(
+      ({ criteria }) => criteria.underlyingAsset.address
+    ) ?? [];
 
   try {
-    for (let i = 0; i < addresses.length; i++) {
-      const addr = addresses[i];
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
-
+    const promises = addresses.map(async (address) => {
+      const { fetchPrice, formattedPrice } = useFetchTokenPrices(address);
       await fetchPrice();
-
-      prices.set(addr, formattedPrice.value);
-    }
+      prices.set(address, formattedPrice.value);
+    });
+    await Promise.allSettled(promises);
   } catch (error) {
     console.error("Error while fetching token prices.");
   }
@@ -265,16 +263,20 @@ watch(poolOtokens, async () => {
   }
 });
 
+const canDeposit = computed(
+  () =>
+    modelDeposit.value > 0 && modelDeposit.value <= userCollateralBalance.value
+);
 const handleDeposit = async () => {
-  if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(modelDeposit.value, true);
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  } else {
-    if (poolId.value !== null) {
-      await deposit(poolId.value, modelDeposit.value);
+  if (canDeposit.value) {
+    if (amountNeededToApprove.value > 0) {
+      await approveForPotionLiquidityPool(modelDeposit.value, true);
+    } else {
+      if (poolId.value !== null) {
+        await deposit(poolId.value, modelDeposit.value);
 
-      totalLiquidity.value += modelDeposit.value;
+        totalLiquidity.value += modelDeposit.value;
+      }
     }
 
     await fetchUserCollateralBalance();
@@ -282,8 +284,11 @@ const handleDeposit = async () => {
   }
 };
 
+const canWithdraw = computed(
+  () => unutilizedLiquidity.value >= modelWithdraw.value
+);
 const handleWithdraw = async () => {
-  if (unutilizedLiquidity.value > modelWithdraw.value) {
+  if (canWithdraw.value) {
     if (poolId.value !== null) {
       await withdraw(poolId.value, modelWithdraw.value);
 
@@ -291,7 +296,6 @@ const handleWithdraw = async () => {
     }
 
     await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
   }
 };
 
@@ -331,10 +335,10 @@ const {
 } = useNotifications();
 
 watch(depositTx, (transaction) =>
-  createTransactionNotification(transaction, "Creating pool")
+  createTransactionNotification(transaction, "Depositing liquidity")
 );
 watch(depositReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Pool created")
+  createReceiptNotification(receipt, "Liquidity deposited")
 );
 watch(withdrawTx, (transaction) =>
   createTransactionNotification(transaction, "Withdrawing liquidity")
@@ -438,13 +442,14 @@ watch(claimCollateralReceipt, (receipt) =>
           :utilized-liquidity="totalUtilization"
           :show-withdraw="true"
         >
-          <template #deposit-footer>
+          <template #withdraw-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
               :inline="true"
               :label="t('withdraw')"
               :disabled="
+                !canWithdraw ||
                 isNotConnected ||
                 depositLoading ||
                 approveLoading ||
@@ -458,13 +463,14 @@ watch(claimCollateralReceipt, (receipt) =>
               </template>
             </BaseButton>
           </template>
-          <template #withdraw-footer>
+          <template #deposit-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
               :inline="true"
               :label="addLiquidityButtonLabel"
               :disabled="
+                !canDeposit ||
                 isNotConnected ||
                 depositLoading ||
                 approveLoading ||

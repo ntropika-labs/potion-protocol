@@ -5,10 +5,10 @@ import type {
 
 import type { ControllerInterface } from "potion-contracts/typechain";
 
-import { contractsAddresses } from "@/helpers/contracts";
 import { ControllerInterface__factory } from "potion-contracts/typechain";
-import { parseUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
+import { useAddressBookContract } from "./useAddressBookContract";
 import { useOnboard } from "@onboard-composable";
 
 import { ref } from "vue";
@@ -27,30 +27,28 @@ enum ActionType {
   Liquidate,
 }
 
-const COLLATERAL_DECIMALS = 10 ** 6;
-
 export function useControllerContract() {
   const { initContract } = useEthersContract();
-  const { Controller } = contractsAddresses;
+  const { getController } = useAddressBookContract();
   const { connectedWallet } = useOnboard();
 
   //Provider initialization
 
-  const initContractProvider = () => {
+  const initContractProvider = async () => {
     return initContract(
       false,
       false,
       ControllerInterface__factory,
-      Controller.address.toLowerCase()
+      await getController()
     ) as ControllerInterface;
   };
 
-  const initContractSigner = () => {
+  const initContractSigner = async () => {
     return initContract(
       true,
       false,
       ControllerInterface__factory,
-      Controller.address.toLowerCase()
+      await getController()
     ) as ControllerInterface;
   };
 
@@ -64,7 +62,7 @@ export function useControllerContract() {
   ) => {
     if (connectedWallet.value) {
       try {
-        const controllerContract = initContractSigner();
+        const controllerContract = await initContractSigner();
 
         redeemLoading.value = true;
         const vault = await controllerContract.getAccountVaultCounter(
@@ -99,13 +97,13 @@ export function useControllerContract() {
 
   const getPayout = async (address: string, amount: string) => {
     try {
-      const controllerContract = initContractProvider();
+      const controllerContract = await initContractProvider();
 
       const payout = await controllerContract.getPayout(
         address,
         parseUnits(amount, 8)
       );
-      return payout.div(COLLATERAL_DECIMALS).toString();
+      return formatUnits(payout, 6);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot get payout: ${error.message}`);
@@ -115,18 +113,20 @@ export function useControllerContract() {
     }
   };
 
-  const getPayouts = async (records: { address: string; amount: string }[]) => {
+  const getPayouts = async (
+    records: { key: string; address: string; amount: string }[]
+  ) => {
     try {
-      const controllerContract = initContractProvider();
+      const controllerContract = await initContractProvider();
 
       const payoutsMap = new Map<string, string>();
 
-      const promises = records.map(async ({ address, amount }) => {
+      const promises = records.map(async ({ key, address, amount }) => {
         const payout = await controllerContract.getPayout(
           address,
           parseUnits(amount, 8)
         );
-        payoutsMap.set(address, payout.div(COLLATERAL_DECIMALS).toString());
+        payoutsMap.set(key, formatUnits(payout, 6));
       });
       await Promise.allSettled(promises);
 

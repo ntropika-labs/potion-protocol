@@ -11,6 +11,7 @@ fragment snapshotData on PoolSnapshot {
   templatePnlPercentage
   templateSize
   templateUtilization
+  utilization
   currentPool {
     id
   }

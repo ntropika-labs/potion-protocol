@@ -244,8 +244,8 @@ const innerNavProps = computed(() => {
 
 <template>
   <JumboHeader
-    :title="t('create_pool_jumbo_title')"
-    :subtitle="t('create_pool_jumbo_subtitle')"
+    :title="t('create_pool_title')"
+    :subtitle="t('create_pool_subtitle')"
     :cta-label="t('create_pool')"
     :icon-srcset="jumboIconSrcset"
     class="mb-16"

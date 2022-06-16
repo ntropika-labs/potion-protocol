@@ -2,15 +2,16 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
-import AboutView from "@/views/AboutView.vue";
 import CustomPoolCreation from "@/views/CustomPoolCreation.vue";
+import CustomPotionCreation from "@/views/CustomPotionCreation.vue";
+import DiscoverPotions from "@/views/DiscoverPotions.vue";
 import DiscoverTemplates from "@/views/DiscoverTemplates.vue";
-import HomeView from "@/views/HomeView.vue";
 import NotFound from "@/views/NotFound.vue";
 import EditPool from "@/views/Pools/EditPool.vue";
 import ShowPool from "@/views/Pools/ShowPool.vue";
 import ViewPools from "@/views/Pools/ViewPools.vue";
 import PoolTemplate from "@/views/PoolTemplate.vue";
+import ViewPotions from "@/views/Potions/ViewPotions.vue";
 import { useOnboard } from "@onboard-composable";
 
 const router = createRouter({
@@ -25,8 +26,7 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView,
-      meta: { requireWallet: false, layout: BaseLayout },
+      redirect: { name: "discover-potions" },
     },
     {
       path: "/templates",
@@ -44,6 +44,12 @@ const router = createRouter({
       path: "/custom-pool-creation",
       name: "custom-pool-creation",
       component: CustomPoolCreation,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/custom-potion-creation",
+      name: "custom-potion-creation",
+      component: CustomPotionCreation,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
@@ -76,10 +82,16 @@ const router = createRouter({
       },
     },
     {
-      path: "/about",
-      name: "about",
-      component: AboutView,
-      meta: { requireWallet: true, layout: EmptyLayout },
+      path: "/buyer/:address",
+      name: "buyer",
+      component: ViewPotions,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/potions",
+      name: "discover-potions",
+      component: DiscoverPotions,
+      meta: { requireWallet: false, layout: BaseLayout },
     },
   ],
 });
