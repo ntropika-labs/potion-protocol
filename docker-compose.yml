@@ -43,4 +43,4 @@ services:
     image: trufflesuite/ganache:latest
     ports:
       - "8545:8545"
-    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}'
+    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}' --miner.blockGasLimit 0x1C9C380 --miner.callGasLimit 0x1C9C380 --miner.defaultTransactionGasLimit 0x1C9C380
