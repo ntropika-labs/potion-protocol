@@ -41,6 +41,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
+    getContractFactory(
+      name: "ISwapRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapRouter__factory>;
+    getContractFactory(
       name: "EmergencyLockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EmergencyLockUpgradeable__factory>;
@@ -64,6 +72,10 @@ declare module "hardhat/types/runtime" {
       name: "IAction",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
+    getContractFactory(
+      name: "UniswapV3Helper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniswapV3Helper__factory>;
     getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -129,6 +141,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
+      name: "IUniswapV3SwapCallback",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    getContractAt(
+      name: "ISwapRouter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapRouter>;
+    getContractAt(
       name: "EmergencyLockUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -158,6 +180,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
+    getContractAt(
+      name: "UniswapV3Helper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniswapV3Helper>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,
