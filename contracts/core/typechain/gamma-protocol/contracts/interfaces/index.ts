@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { AddressBookInterface } from "./AddressBookInterface";
+export type { AggregatorInterface } from "./AggregatorInterface";
 export type { CalleeInterface } from "./CalleeInterface";
 export type { ERC20Interface } from "./ERC20Interface";
 export type { MarginCalculatorInterface } from "./MarginCalculatorInterface";
