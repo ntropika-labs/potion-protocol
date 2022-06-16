@@ -44,12 +44,12 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: Build app with mocked onboard
-        run: yarn nx run potion-dapp:build-test
-
       - name: Start containers
         run: ./bin/start-local-env-headless
         shell: bash
+
+      - name: Build app with mocked onboard
+        run: yarn nx run potion-dapp:build-test
 
       - name: Run vite preview
         run: yarn nx run potion-dapp:preview
