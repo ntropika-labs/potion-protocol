@@ -26,6 +26,10 @@ export type { IUniswapV3SwapCallback } from "./@uniswap/v3-core/contracts/interf
 export { IUniswapV3SwapCallback__factory } from "./factories/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
+export type { UniswapV3HelperUpgradeable } from "./contracts/actions/common/UniswapV3HelperUpgradeable";
+export { UniswapV3HelperUpgradeable__factory } from "./factories/contracts/actions/common/UniswapV3HelperUpgradeable__factory";
+export type { UniswapV3OracleUpgradeable } from "./contracts/actions/common/UniswapV3OracleUpgradeable";
+export { UniswapV3OracleUpgradeable__factory } from "./factories/contracts/actions/common/UniswapV3OracleUpgradeable__factory";
 export type { EmergencyLockUpgradeable } from "./contracts/common/EmergencyLockUpgradeable";
 export { EmergencyLockUpgradeable__factory } from "./factories/contracts/common/EmergencyLockUpgradeable__factory";
 export type { LifecycleStatesUpgradeable } from "./contracts/common/LifecycleStatesUpgradeable";
@@ -38,8 +42,8 @@ export type { ERC4626CapUpgradeable } from "./contracts/extensions/ERC4626CapUpg
 export { ERC4626CapUpgradeable__factory } from "./factories/contracts/extensions/ERC4626CapUpgradeable__factory";
 export type { IAction } from "./contracts/interfaces/IAction";
 export { IAction__factory } from "./factories/contracts/interfaces/IAction__factory";
-export type { UniswapV3Helper } from "./contracts/library/UniswapV3Helper";
-export { UniswapV3Helper__factory } from "./factories/contracts/library/UniswapV3Helper__factory";
+export type { UniswapV3SwapLib } from "./contracts/library/UniswapV3SwapLib";
+export { UniswapV3SwapLib__factory } from "./factories/contracts/library/UniswapV3SwapLib__factory";
 export type { ERC4626Upgradeable } from "./contracts/openzeppelin/ERC4626Upgradeable";
 export { ERC4626Upgradeable__factory } from "./factories/contracts/openzeppelin/ERC4626Upgradeable__factory";
 export type { IERC4626Upgradeable } from "./contracts/openzeppelin/IERC4626Upgradeable";

@@ -49,6 +49,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapRouter__factory>;
     getContractFactory(
+      name: "UniswapV3HelperUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniswapV3HelperUpgradeable__factory>;
+    getContractFactory(
+      name: "UniswapV3OracleUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniswapV3OracleUpgradeable__factory>;
+    getContractFactory(
       name: "EmergencyLockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EmergencyLockUpgradeable__factory>;
@@ -73,9 +81,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
-      name: "UniswapV3Helper",
+      name: "UniswapV3SwapLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UniswapV3Helper__factory>;
+    ): Promise<Contracts.UniswapV3SwapLib__factory>;
     getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -151,6 +159,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISwapRouter>;
     getContractAt(
+      name: "UniswapV3HelperUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniswapV3HelperUpgradeable>;
+    getContractAt(
+      name: "UniswapV3OracleUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniswapV3OracleUpgradeable>;
+    getContractAt(
       name: "EmergencyLockUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -181,10 +199,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
-      name: "UniswapV3Helper",
+      name: "UniswapV3SwapLib",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.UniswapV3Helper>;
+    ): Promise<Contracts.UniswapV3SwapLib>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,
