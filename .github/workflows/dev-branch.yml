@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     env:
-      - DEPLOYER_MNEMONIC="test test test test test test test test test test test junk"
+      DEPLOYER_MNEMONIC: "test test test test test test test test test test test junk"
 
     steps:
       - name: Checkout
