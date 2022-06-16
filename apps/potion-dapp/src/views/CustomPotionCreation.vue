@@ -332,13 +332,16 @@ const handleBuyPotions = async () => {
     console.info("you miss some parameters to be set");
   }
 };
-
-// Similar By Strike
-const { similarByStrike, similarByAsset } = useSimilarPotions(
+//Similar Potions
+const {
+  computedSimilarByAsset,
+  computedSimilarByStrike,
+  computedSimilarByDuration,
+} = useSimilarPotions(
   tokenSelectedAddress,
-  strikeSelectedRelative,
-  ref(10),
-  ref(1200)
+  strikeSelected,
+  durationSelected,
+  price
 );
 </script>
 
@@ -558,16 +561,13 @@ const { similarByStrike, similarByAsset } = useSimilarPotions(
     </p>
     <pre class="font-mono">
       <code>
-        {{similarByAsset}}
+        {{computedSimilarByAsset}}
       </code>
       <code>
-        {{ similarByStrike }}
+        {{ computedSimilarByStrike }}
       </code>
       <code>
-        max number of potions: {{maxNumberOfPotions}}
-      </code>
-       <code>
-        {{routerResult}}
+        {{computedSimilarByDuration}}
       </code>
     </pre>
   </div>

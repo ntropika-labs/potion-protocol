@@ -10,6 +10,7 @@ import type { ExternalProvider } from "@ethersproject/providers";
 const mode = import.meta.env.MODE;
 const mnemonic = import.meta.env.VITE_DEVELOPMENT_MNEMONIC;
 import type { JsonRpcSigner } from "@ethersproject/providers";
+
 export function useEthersSigner() {
   const { connectedWallet } = useOnboard();
   const address = ref<string>("");

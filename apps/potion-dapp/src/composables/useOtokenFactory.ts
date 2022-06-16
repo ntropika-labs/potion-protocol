@@ -6,12 +6,9 @@ import { parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 
 import type { OtokenFactory } from "potion-contracts/typechain";
-// import { useOnboard } from "@onboard-composable";
-
 export function useOtokenFactory() {
   const { initContract } = useEthersContract();
   const { OtokenFactory, PotionTestUSD } = contractsAddresses;
-  // const { connectedWallet } = useOnboard();
   const initContractProvider = () => {
     return initContract(
       false,
@@ -38,7 +35,6 @@ export function useOtokenFactory() {
       expiry,
       isPut
     );
-    console.log(otokenAddress, "getTargetOtokenAddress");
     return otokenAddress;
   };
 
@@ -59,7 +55,6 @@ export function useOtokenFactory() {
       expiry,
       isPut
     );
-    console.log(otokenAddress, "getOtoken");
     return otokenAddress;
   };
 

@@ -92,7 +92,7 @@ query getSimilarPotionByDuration(
   $addresses: [String!]
   $strikePrice: BigDecimal!
   $doubleStrikePrice: BigDecimal!
-  $limit: Int = 5
+  $limit: Int
 ) {
   minDurationMinStrike: otokens(
     where: {
