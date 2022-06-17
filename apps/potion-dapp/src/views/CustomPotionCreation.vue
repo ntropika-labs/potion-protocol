@@ -666,7 +666,7 @@ const similarPotionShown = computed(() => {
         :strike-price="potion.strikePrice"
         :expiration="potion.expiry"
         ><router-link
-          to="/home"
+          :to="`/potion/${potion.tokenAddress}`"
           class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
           >{{ t("show") }}</router-link
         ></PotionCard
