@@ -40,12 +40,7 @@
     <div
       class="absolute z-10 bottom-4 left-0 w-full justify-center hidden group-hover:flex transition"
     >
-      <BaseButton
-        :label="t('show')"
-        palette="white"
-        size="sm"
-        @click="$emit('click')"
-      />
+      <slot />
     </div>
   </BaseCard>
 </template>
@@ -53,7 +48,6 @@
 import BaseCard from "../BaseCard/BaseCard.vue";
 import AssetTag from "../AssetTag/AssetTag.vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
-import BaseButton from "../BaseButton/BaseButton.vue";
 import LabelValue from "../LabelValue/LabelValue.vue";
 
 import { computed } from "vue";
