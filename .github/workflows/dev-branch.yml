@@ -75,9 +75,8 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install: false
-          start: yarn nx run potion-dapp:preview
+          start: yarn preview
           wait-on: "http://localhost:5050"
-          config-file: apps/potion-dapp/cypress.config.ts
           browser: chrome
           record: true
           working-directory: apps/potion-dapp

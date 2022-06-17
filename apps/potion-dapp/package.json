@@ -8,7 +8,7 @@
     "build": "NODE_ENV=production MODE=production vite build",
     "build-test": "NODE_ENV=production MODE=test vite build --mode=test",
     "build-tsc": "NODE_ENV=production vue-tsc --noEmit",
-    "preview": "vite preview --port 5050",
+    "preview": "yarn run -T vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-watch": "vitest watch --environment jsdom",
     "cypress": "cypress open",
