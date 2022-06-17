@@ -43,6 +43,20 @@ jobs:
           node-version: 16.x
           cache: "yarn"
 
+      - name: Cache node modules
+        id: cache-yarn
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          # yarn cache files are stored in `~/.yarn` on Linux/macOS
+          path: ~/.yarn
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
@@ -63,13 +77,15 @@ jobs:
           record: true
           spec: ./apps/potion-dapp/cypress/e2e/*
 
-      - uses: actions/upload-artifact@v2
+      - name: Archive screenshots code coverage results
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v2
+      - name: Archive videos code coverage results
+        uses: actions/upload-artifact@v2
         if: always()
         with:
           name: cypress-videos
