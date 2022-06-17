@@ -340,22 +340,29 @@ onMounted(async () => {
 const buyPotionButtonState = computed(() => {
   if (
     connectedWallet.value &&
-    userCollateralBalance.value >= userAllowance.value &&
+    userCollateralBalance.value >= premiumSlippage.value &&
     areStepsValid.value
   ) {
-    return {
-      label: t("buy_potion"),
-      disabled: false,
-    };
+    if (userAllowance.value >= premiumSlippage.value) {
+      return {
+        label: t("buy_potion"),
+        disabled: false,
+      };
+    } else {
+      return {
+        label: t("approve"),
+        disabled: false,
+      };
+    }
   }
   if (
     connectedWallet.value &&
-    userCollateralBalance.value < userAllowance.value &&
+    userCollateralBalance.value < premiumSlippage.value &&
     areStepsValid.value
   ) {
     return {
-      label: t("approve"),
-      disabled: false,
+      label: t("not_enough_collateral"),
+      disabled: true,
     };
   }
   if (!areStepsValid.value) {
@@ -382,8 +389,9 @@ const handleBuyPotions = async () => {
     routerResult.value.counterparties &&
     tokenSelectedAddress.value
   ) {
-    if (userCollateralBalance.value <= userAllowance.value) {
+    if (premiumSlippage.value > userAllowance.value) {
       await approveForPotionLiquidityPool(premiumSlippage.value, true);
+      await fetchUserData();
     } else {
       await buyPotions(
         routerResult.value?.counterparties,
@@ -393,6 +401,7 @@ const handleBuyPotions = async () => {
         strikeSelected.value,
         durationSelected.value
       );
+      await fetchUserData();
     }
   } else {
     console.info("You are missing some parameters to be set");
