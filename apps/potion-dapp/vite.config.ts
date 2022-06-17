@@ -66,6 +66,24 @@ export default defineConfig({
           brotliSize: true,
         }),
       ],
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            if (id.includes("ethers")) {
+              return "ethers";
+            }
+            if (id.includes("lodash")) {
+              return "lodash";
+            }
+            if (id.includes("lightweight-charts")) {
+              return "lightweight-charts";
+            }
+            if (id.includes("billboard")) {
+              return "billboard";
+            }
+          }
+        },
+      },
     },
     commonjsOptions: {
       transformMixedEsModules: true,

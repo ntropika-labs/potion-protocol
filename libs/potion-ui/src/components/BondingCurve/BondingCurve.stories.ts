@@ -1,13 +1,14 @@
 // @unocss-include
 
 import { HyperbolicCurve } from "contracts-math";
-import { random as _random, times as _times } from "lodash-es";
+import _times from "lodash.times";
 import { getTokenList } from "potion-tokenlist";
 
 import BondingCurve from "./BondingCurve.vue";
 
 import type { Args, Story } from "@storybook/vue3";
 
+const _random = (min: number, max: number) => Math.random() * (max - min) + min;
 const tokenList = getTokenList("ganache");
 const curvePoints = 100;
 const getCurvePoints = (curve: HyperbolicCurve) =>
@@ -31,11 +32,11 @@ const Template: Story<Args> = (args: Args) => ({
   setup() {
     const getRandomCurve = () =>
       new HyperbolicCurve(
-        _random(args.aParam * 0.5, args.aParam * 1.5, true),
-        _random(args.bParam * 0.5, args.bParam * 1.5, true),
-        _random(args.cParam * 0.5, args.cParam * 1.5, true),
-        _random(args.dParam * 0.5, args.dParam * 1.5, true),
-        _random(0, 1, true)
+        _random(args.aParam * 0.5, args.aParam * 1.5),
+        _random(args.bParam * 0.5, args.bParam * 1.5),
+        _random(args.cParam * 0.5, args.cParam * 1.5),
+        _random(args.dParam * 0.5, args.dParam * 1.5),
+        _random(0, 1)
       );
 
     return {

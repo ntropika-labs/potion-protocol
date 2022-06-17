@@ -1,6 +1,6 @@
 import type { CounterpartyDetails, IPool } from "./types";
 import type { DepthRouterReturn } from ".";
-import { sortBy as _sortBy } from "lodash-es";
+import _sortBy from "lodash.sortby";
 
 import { calculateMarginalCostForDeltaX } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";

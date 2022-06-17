@@ -5,7 +5,6 @@ import { SrcsetEnum } from "dapp-types";
 import { useI18n } from "vue-i18n";
 import { useTokenList } from "@/composables/useTokenList";
 import { useRouter, useRoute } from "vue-router";
-import { get as _get } from "lodash-es";
 import { ref, watch, computed } from "vue";
 import {
   useMostPopularTemplatesQuery,
@@ -51,7 +50,7 @@ const stateMap = ref(
 );
 
 const getTemplates = (key: DiscoverCategories) =>
-  _get(stateMap.value.get(key), "templates", [] as TemplateCardDataFragment[]);
+  stateMap.value.get(key)?.templates ?? new Array<TemplateCardDataFragment>();
 
 const updateState = (
   templates: TemplateCardDataFragment[] | readonly TemplateCardDataFragment[],
@@ -64,7 +63,7 @@ const updateState = (
 };
 
 const getTemplatesIds = (templates: TemplateCardDataFragment[]) =>
-  templates.map((template) => _get(template, "id", ""));
+  templates.map((template) => template.id);
 
 // Base query, it will fetch all categories in a single HTTP request
 const { data: popularTemplates } = useMostPopularTemplatesQuery({
@@ -138,11 +137,8 @@ const loadMore = async (key: DiscoverCategories) => {
   const executeQuery = queryMap.get(key);
   if (executeQuery) {
     const { data } = await executeQuery();
-    const templates = _get(
-      data.value,
-      "templates",
-      [] as TemplateCardDataFragment[]
-    );
+    const templates =
+      data.value?.templates ?? new Array<TemplateCardDataFragment>();
     updateState(templates, key);
   }
 };
@@ -150,11 +146,8 @@ const loadMore = async (key: DiscoverCategories) => {
 // Populate the state with the initial templates
 watch(popularTemplates, () => {
   for (const key of stateMap.value.keys()) {
-    const templates = _get(
-      popularTemplates.value,
-      key,
-      [] as TemplateCardDataFragment[]
-    );
+    const templates =
+      popularTemplates.value?.[key] ?? new Array<TemplateCardDataFragment>();
     updateState(templates, key);
   }
 });

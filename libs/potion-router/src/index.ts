@@ -1,4 +1,4 @@
-import { minBy as _minBy } from "lodash-es";
+import _minBy from "lodash.minby";
 
 import { getPoolsFromCriteria, getPoolsFromCriterias } from "./dataRetrieve";
 import { depthRouter } from "./depthRouter";
