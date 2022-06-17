@@ -20,6 +20,8 @@
           :readonly="props.readonly"
           :disabled="props.disabled"
           :model-value="props.modelValue"
+          :min="props.min"
+          :max="props.max"
           @update:model-value="handleInput"
         ></BaseInput>
         <button @click="emits('update:modelValue', handleSetMax())">
