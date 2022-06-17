@@ -12353,8 +12353,6 @@ __metadata:
 "contracts-math@*, contracts-math@workspace:^, contracts-math@workspace:libs/contracts-math":
   version: 0.0.0-use.local
   resolution: "contracts-math@workspace:libs/contracts-math"
-  dependencies:
-    potion-contracts: "*"
   languageName: unknown
   linkType: soft
 
