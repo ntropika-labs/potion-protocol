@@ -34,7 +34,9 @@
         v-for="(pool, index) in pools"
         :key="`${pool.id}${index}`"
         :active="true"
-        :tokens="getTokens(pool.template?.criteriaSet?.criterias ?? [])"
+        :tokens="
+          getTokens(pool.template?.criteriaSet?.criterias ?? emptyCriterias)
+        "
         :size="pool.size"
         :utilization="pool.utilization"
         :pnl="pool.pnlPercentage"
@@ -169,6 +171,8 @@ const getTokens = (criterias: TemplateCriteria[]) =>
     const { name, symbol, image } = useTokenList(address);
     return { address, name, symbol, image };
   });
+
+const emptyCriterias = new Array<TemplateCriteria>();
 
 onMounted(loadMorePools);
 </script>
