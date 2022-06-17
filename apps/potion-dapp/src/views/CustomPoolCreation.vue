@@ -423,18 +423,18 @@ const {
 } = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  createTransactionNotification(transaction, "Creating pool");
+  createTransactionNotification(transaction, t("creating_pool"));
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Pool created");
+  createReceiptNotification(receipt, t("pool_created"));
 });
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, "Approving USDC");
+  createTransactionNotification(transaction, t("approving_usdc"));
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, "USDC spending approved");
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>

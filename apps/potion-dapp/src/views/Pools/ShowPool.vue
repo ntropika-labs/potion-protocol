@@ -338,28 +338,28 @@ const {
 } = useNotifications();
 
 watch(depositTx, (transaction) =>
-  createTransactionNotification(transaction, "Depositing liquidity")
+  createTransactionNotification(transaction, t("depositing_liquidity"))
 );
 watch(depositReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity deposited")
+  createReceiptNotification(receipt, t("liquidity_deposited"))
 );
 watch(withdrawTx, (transaction) =>
-  createTransactionNotification(transaction, "Withdrawing liquidity")
+  createTransactionNotification(transaction, t("withdrawing_liquidity"))
 );
 watch(withdrawReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity withdrawn")
+  createReceiptNotification(receipt, t("liquidity_withdrawn"))
 );
 watch(approveTx, (transaction) =>
-  createTransactionNotification(transaction, "Approving USDC spending")
+  createTransactionNotification(transaction, t("approving_usdc"))
 );
 watch(approveReceipt, (receipt) =>
-  createReceiptNotification(receipt, "USDC spending approved")
+  createReceiptNotification(receipt, t("usdc_approved"))
 );
 watch(claimCollateralTx, (transaction) =>
-  createTransactionNotification(transaction, "Claiming collateral")
+  createTransactionNotification(transaction, t("claiming_collateral"))
 );
 watch(claimCollateralReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Collateral claimed")
+  createReceiptNotification(receipt, t("collateral_claimed"))
 );
 </script>
 <template>

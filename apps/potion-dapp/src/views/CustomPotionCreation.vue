@@ -29,6 +29,10 @@ import { watchDebounced } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { offsetToDate } from "@/helpers/days";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
+import { useNotifications } from "@/composables/useNotifications";
+
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+
 const { t } = useI18n();
 const { blockTimestamp, getBlock } = useEthersProvider();
 const currentIndex = ref(0);
@@ -324,6 +328,8 @@ const areStepsValid = computed(() => {
 const {
   userCollateralBalance,
   userAllowance,
+  approveTx,
+  approveReceipt,
   fetchUserCollateralAllowance,
   fetchUserCollateralBalance,
   approveForPotionLiquidityPool,
@@ -382,7 +388,8 @@ const buyPotionButtonState = computed(() => {
     disabled: true,
   };
 });
-const { buyPotions } = usePotionLiquidityPoolContract();
+const { buyPotions, buyPotionTx, buyPotionReceipt } =
+  usePotionLiquidityPoolContract();
 const handleBuyPotions = async () => {
   if (
     routerResult.value &&
@@ -407,6 +414,30 @@ const handleBuyPotions = async () => {
     console.info("You are missing some parameters to be set");
   }
 };
+
+// Notifications
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
+
+watch(approveTx, (transaction) => {
+  createTransactionNotification(transaction, t("approving_usdc"));
+});
+
+watch(approveReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
+});
+
+watch(buyPotionTx, (transaction) => {
+  createTransactionNotification(transaction, t("buying_potion"));
+});
+watch(buyPotionReceipt, (transaction) => {
+  createTransactionNotification(transaction, t("potion_bought"));
+});
+
 //Similar Potions
 const {
   computedSimilarByAsset,
@@ -673,4 +704,9 @@ const similarPotionShown = computed(() => {
       >
     </div>
   </div>
+  <NotificationDisplay
+    :toasts="notifications"
+    @hide-toast="(index) => removeToast(index)"
+  >
+  </NotificationDisplay>
 </template>

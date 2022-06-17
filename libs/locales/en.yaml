@@ -125,3 +125,15 @@ show: show
 buy_potion: buy potion
 invalid_potion: invalid potion
 not_enough_collateral: not enough collateral
+creating_pool: creating pool
+pool_created: pool created
+approving_usdc: approving usdc
+usdc_approved: usdc approved
+buying_potion: buying potion
+potion_bought: potion bought
+depositing_liquidity: depositing liquidity
+liquidity_deposited: liquidity deposited
+withdrawing_liquidity: withdrawing liquidity
+liquidity_withdrawn: liquidity withdrawn
+claiming_collateral: claiming collateral
+collateral_claimed: collateral claimed
