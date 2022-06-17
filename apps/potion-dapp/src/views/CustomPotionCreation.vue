@@ -395,7 +395,7 @@ const handleBuyPotions = async () => {
       );
     }
   } else {
-    console.info("you miss some parameters to be set");
+    console.info("You are missing some parameters to be set");
   }
 };
 //Similar Potions
