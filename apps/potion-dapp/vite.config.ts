@@ -1,4 +1,6 @@
 import path from "path";
+import gzipPlugin from "rollup-plugin-gzip";
+import { brotliCompressSync } from "zlib";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
@@ -60,6 +62,14 @@ export default defineConfig({
     rollupOptions: {
       plugins: [
         nodePolyfills(),
+        // GZIP compression as .gz files
+        VITE_MODE === "production" && gzipPlugin(),
+        // Brotil compression as .br files
+        VITE_MODE === "production" &&
+          gzipPlugin({
+            customCompression: (c) => brotliCompressSync(Buffer.from(c)),
+            fileName: ".br",
+          }),
         visualizer({
           filename: "dist/report.html",
           gzipSize: true,

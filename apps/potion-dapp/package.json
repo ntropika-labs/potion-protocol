@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development vite",
     "dev-test": "NODE_ENV=development MODE=test vite --mode=test",
-    "build": "NODE_ENV=production vite build",
+    "build": "NODE_ENV=production MODE=production vite build",
     "build-test": "NODE_ENV=production MODE=test vite build --mode=test",
     "build-tsc": "NODE_ENV=production vue-tsc --noEmit",
     "preview": "vite preview --port 5050",
