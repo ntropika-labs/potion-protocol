@@ -1,6 +1,10 @@
 import { SrcsetEnum, type NotificationProps } from "dapp-types";
 import { ref, type Ref } from "vue";
 import { etherscanUrl } from "@/helpers";
+import type {
+  ContractTransaction,
+  ContractReceipt,
+} from "@ethersproject/contracts";
 
 const atomSrcset = new Map([
   [SrcsetEnum.AVIF, "/icons/atom.avif"],
@@ -15,8 +19,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
   const removeToast = (hash: string) => notifications.value.delete(hash);
 
   const createTransactionNotification = (
-    //@ts-expect-error need to find a good type for transaction
-    transaction,
+    transaction: ContractTransaction | null,
     title: string,
     body = "Your transaction is pending",
     srcset = atomSrcset
@@ -39,8 +42,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
   };
 
   const createReceiptNotification = (
-    //@ts-expect-error need to find a good type for receipt
-    receipt,
+    receipt: ContractReceipt | null,
     title: string,
     body = "Your transaction has completed",
     srcset = atomSrcset
