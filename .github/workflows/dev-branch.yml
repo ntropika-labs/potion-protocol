@@ -77,9 +77,10 @@ jobs:
           install: false
           start: yarn nx run potion-dapp:preview
           wait-on: "http://localhost:5050"
-          config-file: ./apps/potion-dapp/cypress.config.ts
+          config-file: apps/potion-dapp/cypress.config.ts
           browser: chrome
           record: true
+          spec: apps/potion-dapp/cypress/e2e/**/*.cy.{js,jsx,ts,tsx}
 
       - name: Archive screenshots code coverage results
         uses: actions/upload-artifact@v2
