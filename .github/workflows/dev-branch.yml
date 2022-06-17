@@ -29,6 +29,10 @@ jobs:
       VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
       GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
       DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+      # pass GitHub token to allow accurately detecting a build vs a re-run build
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # pass the project ID from the secrets through environment variable
+      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       VITE_ETHEREUM_NETWORK: "localhost"
       VITE_ENDPOINT_PROVIDER: "alchemy"
       VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
