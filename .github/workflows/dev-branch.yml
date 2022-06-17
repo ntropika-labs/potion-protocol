@@ -45,7 +45,7 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: Start containers
-        run: ./bin/start-local-env-headless
+        run: ./bin/create-local-env-headless
         shell: bash
 
       - name: Build app with mocked onboard
@@ -57,7 +57,9 @@ jobs:
           start: yarn nx run potion-dapp:preview
           wait-on: "http://localhost:5050"
           config-file: ./apps/potion-dapp/cypress.config.ts
-          config: pageLoadTimeout=100000,baseUrl=http://localhost:5050
+          browser: chrome
+          record: true
+          spec: ./apps/potion-dapp/cypress/e2e/*
 
       - uses: actions/upload-artifact@v2
         if: failure()
