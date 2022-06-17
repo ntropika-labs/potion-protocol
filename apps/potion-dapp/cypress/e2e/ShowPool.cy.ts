@@ -22,7 +22,7 @@ describe("Show Pool Flow", () => {
       .first()
       .then(($el) => {
         expectedLiquidityNumber = parseFloat($el.text().slice(1)) - 101;
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
       })
       .then(() => {
         cy.get("[test-liquidity-card-withdraw] input").clear().type("101");
@@ -36,7 +36,7 @@ describe("Show Pool Flow", () => {
           .contains("$" + expectedLiquidityNumber);
       });
 
-    console.log(expectedLiquidityNumber);
+    console.info(expectedLiquidityNumber);
   });
 
   it("Can deposit", () => {
@@ -47,10 +47,10 @@ describe("Show Pool Flow", () => {
       .first()
       .then(($el) => {
         expectedLiquidityNumber = parseFloat($el.text().slice(1)) + 101;
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
       })
       .then(() => {
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
         cy.get("[test-liquidity-card-deposit] input").clear().type("101");
 
         cy.get("[test-liquidity-card-footer-deposit]>button")

@@ -177,25 +177,17 @@ const toggleTokenSelection = (address: string) => {
 };
 
 const updateTokenPrice = async (token: Token) => {
-  console.log("[updateTokenPrice] for: ", token.name);
   const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko(
     undefined,
     token.address
   );
   try {
     await fetchTokenPrice();
-
-    console.log(
-      "[updateTokenPrice] completed for: ",
-      token.name,
-      success.value
-    );
   } catch (error) {
     console.error(
       "Error while fetching token price. Affected token: " + token.name
     );
   } finally {
-    console.log("[updateTokenPrice] running finally ");
     tokenPricesMap.value.set(token.address, {
       loading: false,
       price: price.value,

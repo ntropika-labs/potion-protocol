@@ -19,6 +19,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+import { useOnboard } from "@onboard-composable";
 
 import type { SelectableToken, Criteria } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
@@ -27,10 +28,11 @@ import { ref, computed, watch, onMounted, unref } from "vue";
 import { watchDebounced } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { offsetToDate } from "@/helpers/days";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 const { t } = useI18n();
 const { blockTimestamp, getBlock } = useEthersProvider();
 const currentIndex = ref(0);
-
+const { connectedWallet } = useOnboard();
 const AssetActiveIcon = new Map([
   [SrcsetEnum.AVIF, "/icons/asset-active-32x32.avif"],
   [SrcsetEnum.PNG, "/icons/asset-active-32x32.png"],
@@ -308,7 +310,71 @@ const {
   ethPrice
 );
 
+// Steps validity
+const areStepsValid = computed(() => {
+  return (
+    isTokenSelected.value &&
+    isStrikeValid.value &&
+    isDurationValid.value &&
+    isPotionQuantityValid.value
+  );
+});
+
 // Buy logic
+const {
+  userCollateralBalance,
+  userAllowance,
+  fetchUserCollateralAllowance,
+  fetchUserCollateralBalance,
+  approveForPotionLiquidityPool,
+} = useCollateralTokenContract();
+const fetchUserData = async () => {
+  if (connectedWallet.value) {
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
+onMounted(async () => {
+  await fetchUserData();
+});
+const buyPotionButtonState = computed(() => {
+  if (
+    connectedWallet.value &&
+    userCollateralBalance.value >= userAllowance.value &&
+    areStepsValid.value
+  ) {
+    return {
+      label: t("buy_potion"),
+      disabled: false,
+    };
+  }
+  if (
+    connectedWallet.value &&
+    userCollateralBalance.value < userAllowance.value &&
+    areStepsValid.value
+  ) {
+    return {
+      label: t("approve"),
+      disabled: false,
+    };
+  }
+  if (!areStepsValid.value) {
+    return {
+      label: t("invalid_potion"),
+      disabled: true,
+    };
+  }
+  if (!connectedWallet.value) {
+    return {
+      label: t("connect_wallet"),
+      disabled: true,
+    };
+  }
+  return {
+    label: t("buy_potion"),
+    disabled: true,
+  };
+});
 const { buyPotions } = usePotionLiquidityPoolContract();
 const handleBuyPotions = async () => {
   if (
@@ -316,14 +382,18 @@ const handleBuyPotions = async () => {
     routerResult.value.counterparties &&
     tokenSelectedAddress.value
   ) {
-    await buyPotions(
-      routerResult.value?.counterparties,
-      premiumSlippage.value,
-      undefined,
-      tokenSelectedAddress.value,
-      strikeSelected.value,
-      durationSelected.value
-    );
+    if (userCollateralBalance.value <= userAllowance.value) {
+      await approveForPotionLiquidityPool(premiumSlippage.value, true);
+    } else {
+      await buyPotions(
+        routerResult.value?.counterparties,
+        premiumSlippage.value,
+        undefined,
+        tokenSelectedAddress.value,
+        strikeSelected.value,
+        durationSelected.value
+      );
+    }
   } else {
     console.info("you miss some parameters to be set");
   }
@@ -556,7 +626,9 @@ const similarPotionShown = computed(() => {
       </BaseButton>
       <BaseButton
         v-if="currentIndex === sidebarItems.length - 1"
-        label="create"
+        palette="secondary"
+        :label="buyPotionButtonState.label"
+        :disabled="buyPotionButtonState.disabled"
         @click="handleBuyPotions()"
       />
     </div>
@@ -584,7 +656,11 @@ const similarPotionShown = computed(() => {
         :otoken-address="potion.tokenAddress"
         :strike-price="potion.strikePrice"
         :expiration="potion.expiry"
-        >Show</PotionCard
+        ><router-link
+          to="/home"
+          class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
+          >{{ t("show") }}</router-link
+        ></PotionCard
       >
     </div>
   </div>

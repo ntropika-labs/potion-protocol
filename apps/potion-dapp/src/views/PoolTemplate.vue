@@ -232,12 +232,6 @@ const handleCloneTemplate = async () => {
     await fetchUserCollateralAllowance();
   } else {
     if (clonedPoolId.value) {
-      console.log(
-        clonedPoolId.value,
-        liquidity.value,
-        bondingCurveParams.value,
-        criterias.value
-      );
       await depositAndCreateCurveAndCriteria(
         clonedPoolId.value,
         liquidity.value,

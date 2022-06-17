@@ -122,3 +122,5 @@ your_liquidity: Your liquidity
 your_put_recipe: Your put recipe
 your_strike_price: your strike price
 show: show
+buy_potion: buy potion
+invalid_potion: invalid potion

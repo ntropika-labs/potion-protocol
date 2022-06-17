@@ -62,12 +62,12 @@ export const mockWeb3Onboard: MockWeb3Onboard = {
   },
   disconnectWallet() {
     if (this.wallets.length > 0) {
-      console.log("remove wallet");
+      console.info("remove wallet");
     }
   },
   connectWallet() {
     if (this.wallets.length === 0) {
-      console.log("add wallet");
+      console.info("add wallet");
     }
   },
   chains: [

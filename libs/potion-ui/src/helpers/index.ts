@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+
 dayjs.extend(localizedFormat);
 
 const locale = navigator.language ?? "en-US";
@@ -28,7 +29,6 @@ export const shortDigitFormatter = (value: number): string =>
   value === 0 ? "0" : shortNumberFormatter.format(value);
 export const dateFormatter = (value: string, isTimestamp: boolean) => {
   if (isTimestamp) {
-    console.log(value, dayjs.unix(parseInt(value)).format("ll"));
     return dayjs.unix(parseInt(value)).format("ll");
   }
   return dayjs(value).format("ll");
