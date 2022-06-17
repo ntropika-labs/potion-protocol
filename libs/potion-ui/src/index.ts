@@ -27,6 +27,7 @@ import MyPotionCard from "./components/MyPotionCard/MyPotionCard.vue";
 import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue";
 import PoolCard from "./components/PoolCard/PoolCard.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
+import PotionCard from "./components/PotionCard/PotionCard.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
 import SidebarLink from "./components/SidebarLink/SidebarLink.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
@@ -75,6 +76,7 @@ export {
   PerformanceChart,
   PoolCard,
   PoolTemplateCard,
+  PotionCard,
   PutOptionsTable,
   TabNavigationComponent,
   TokenIcon,

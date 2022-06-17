@@ -1,7 +1,7 @@
 import {
   useGetSimilarPotionByAssetQuery,
   useGetSimilarPotionByDurationQuery,
-  useGetSimilarPotionByStrikeQuery,
+  useGetSimilarPotionByStrikeQuery
 } from "subgraph-queries/generated/urql";
 import { isRef, onMounted, unref } from "vue";
 
@@ -39,15 +39,15 @@ export function useSimilarPotions(
     return {
       expiry: unref(blockTimestamp).toString(),
       addresses: [unref(underlyingAssetAddress) ?? ""],
-      strikePrice: unref(currentPrice)?.toString() ?? "0",
-      limit: 5,
+      strikePrice: ((unref(currentPrice) ?? 0) * 3).toString() ?? "0",
+      limit: 6,
     };
   });
   const strikeStepVariables = computed(() => {
     return {
       expiry: unref(blockTimestamp).toString(),
       addresses: [unref(underlyingAssetAddress) ?? ""],
-      limit: 5,
+      limit: 6,
       strikePrice: unref(strike)?.toString() ?? "",
       doubleStrikePrice: ((unref(strike) ?? 0) * 2)?.toString() ?? "",
     };
@@ -56,7 +56,7 @@ export function useSimilarPotions(
     return {
       expiry: unref(blockTimestamp).toString(),
       addresses: [unref(underlyingAssetAddress) ?? ""],
-      limit: 5,
+      limit: 6,
       strikePrice: unref(strike)?.toString() ?? "",
       doubleStrikePrice: ((unref(strike) ?? 0) * 2)?.toString() ?? "",
       duration: validExpiry.value.toString(),

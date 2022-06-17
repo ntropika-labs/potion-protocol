@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import { TokenSelection, InputNumber, BaseButton, BaseTag } from "potion-ui";
+import {
+  TokenSelection,
+  InputNumber,
+  BaseButton,
+  BaseTag,
+  PotionCard,
+} from "potion-ui";
 import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useTokenList } from "@/composables/useTokenList";
 import { currencyFormatter } from "potion-ui";
@@ -333,6 +339,19 @@ const {
   durationSelected,
   price
 );
+
+const similarPotionShown = computed(() => {
+  if (currentIndex.value === 0) {
+    return computedSimilarByAsset.value;
+  } else if (currentIndex.value === 1) {
+    return computedSimilarByStrike.value;
+  } else if (currentIndex.value === 2) {
+    return computedSimilarByDuration.value;
+  } else if (currentIndex.value === 3) {
+    return computedSimilarByDuration.value;
+  }
+  return [];
+});
 </script>
 
 <template>
@@ -549,16 +568,24 @@ const {
     <p class="text-sm">
       {{ t("similar_potion_message", { dollars: savingByPickSimilar }) }}
     </p>
-    <pre class="font-mono">
-      <code>
-        {{computedSimilarByAsset}}
-      </code>
-      <code>
-        {{ computedSimilarByStrike }}
-      </code>
-      <code>
-        {{computedSimilarByDuration}}
-      </code>
-    </pre>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10">
+      <PotionCard
+        v-for="(potion, index) in similarPotionShown"
+        :key="`${index}-similar-potion`"
+        :token="
+          tokenSelected ?? {
+            name: '',
+            symbol: '',
+            address: '',
+            decimals: 18,
+            image: '',
+          }
+        "
+        :otoken-address="potion.tokenAddress"
+        :strike-price="potion.strikePrice"
+        :expiration="potion.expiry"
+        >Show</PotionCard
+      >
+    </div>
   </div>
 </template>

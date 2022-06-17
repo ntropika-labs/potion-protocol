@@ -4,7 +4,6 @@ import { isNil as _isNil } from "lodash-es";
 const _exists = (x: number) => !_isNil(x);
 
 export const offsetToDate = (blockTimestamp: number, offset: number) => {
-  console.log(blockTimestamp);
   return _exists(offset)
     ? dayjs.unix(blockTimestamp).add(offset, "day").format("ll")
     : "Invalid Date";

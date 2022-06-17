@@ -10,7 +10,7 @@
       <span class="self-center justify-self-end text-dwhite-300 font-mono z-10">
         <a
           :href="etherscanUrl"
-          class="flex items-center text-xs font-serif font-semibold hover:underline"
+          class="flex items-center text-xs font-semibold hover:underline"
         >
           <i class="i-ph-arrow-square-in mr-1"></i>
           {{ otokenAddress.substring(0, 8) }}...
@@ -51,11 +51,11 @@ import BaseTag from "../BaseTag/BaseTag.vue";
 import LabelValue from "../LabelValue/LabelValue.vue";
 
 import { computed } from "vue";
-import type { Token } from "dapp-types";
+import type { Token, SelectableToken } from "dapp-types";
 import { useI18n } from "vue-i18n";
 
 export interface Props {
-  token: Token;
+  token: Token | SelectableToken;
   otokenAddress: string;
   strikePrice: string;
   expiration: string;
