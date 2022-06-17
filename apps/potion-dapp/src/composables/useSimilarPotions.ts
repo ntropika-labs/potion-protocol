@@ -1,7 +1,7 @@
 import {
   useGetSimilarPotionByAssetQuery,
   useGetSimilarPotionByDurationQuery,
-  useGetSimilarPotionByStrikeQuery
+  useGetSimilarPotionByStrikeQuery,
 } from "subgraph-queries/generated/urql";
 import { isRef, onMounted, unref } from "vue";
 
