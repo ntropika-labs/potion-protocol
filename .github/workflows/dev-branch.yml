@@ -27,6 +27,8 @@ jobs:
       VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
       VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
       VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+      GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
       VITE_ETHEREUM_NETWORK: "localhost"
       VITE_ENDPOINT_PROVIDER: "alchemy"
       VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
