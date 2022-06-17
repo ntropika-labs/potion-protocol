@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "potion-ui";
 import PoolSettingsCard from "@/components/CustomPool/PoolSettingsCard.vue";
-import { times as _times } from "lodash-es";
+import _times from "lodash.times";
 import { HyperbolicCurve } from "contracts-math";
 import { computed, onActivated } from "vue";
 import { useI18n } from "vue-i18n";

@@ -1,6 +1,5 @@
 import type { IPool, IPoolUntyped } from "./types";
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
-import { min as _min } from "lodash-es";
 
 import { parseUnits } from "@ethersproject/units";
 
@@ -59,7 +58,7 @@ const calculateDepthMarginalCost = (
 ): number => {
   const unlocked =
     pool.maxUtil * pool.size - (pool.locked + pool.poolOrderSize);
-  const selectedOrderSize = _min([unlocked, currentOrderSize]) || 0;
+  const selectedOrderSize = Math.min(unlocked, currentOrderSize);
 
   const lookupDepth =
     deltaX * (1 - depthFactor) + selectedOrderSize * depthFactor;

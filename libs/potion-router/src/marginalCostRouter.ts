@@ -1,6 +1,5 @@
 import type { IPool, IRouterReturn, CounterpartyDetails } from "./types";
 import { Heap } from "heap-js";
-import { min as _min } from "lodash-es";
 
 import {
   calculateMarginalCostForDeltaX,
@@ -31,13 +30,13 @@ const marginalCostRouter = (
   while (currentOrderSize > 0) {
     const minCostPool = minMarginalCostForDeltaXHeap.pop();
     if (!minCostPool) break;
-    const min = _min([
+    const min = Math.min(
       deltaX,
       minCostPool.maxUtil * minCostPool.size -
         minCostPool.poolOrderSize -
         minCostPool.locked,
-      currentOrderSize,
-    ]);
+      currentOrderSize
+    );
     const fillAmount = min ? min : 0;
     currentOrderSize -= fillAmount;
     /* update the pool ordersize */
