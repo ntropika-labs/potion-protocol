@@ -23580,7 +23580,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.23, nanoid@npm:^3.3.3":
+"nanoid@npm:^3.1.23, nanoid@npm:^3.1.32, nanoid@npm:^3.3.3":
   version: 3.3.4
   resolution: "nanoid@npm:3.3.4"
   bin:
@@ -25553,6 +25553,7 @@ __metadata:
     prettier: ^2.6.2
     prettier-plugin-solidity: ^1.0.0-dev.21
     rollup-plugin-polyfill-node: ^0.9.0
+    rollup-plugin-visualizer: ^5.6.0
     solc-0.8: "npm:solc@0.8.4"
     solhint: ^3.3.7
     solhint-plugin-prettier: ^0.0.5
@@ -27621,6 +27622,22 @@ __metadata:
   peerDependencies:
     rollup: ^1.20.0 || ^2.0.0
   checksum: e7e2d3a8bfe87361326daef544da9733ee22bae7a4b6a95c18d30cc53e6dca757f3c1b223e20e6b4acaf88c967508e71af9b73a1e4972d1f3a591041bf9bb151
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-visualizer@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "rollup-plugin-visualizer@npm:5.6.0"
+  dependencies:
+    nanoid: ^3.1.32
+    open: ^8.4.0
+    source-map: ^0.7.3
+    yargs: ^17.3.1
+  peerDependencies:
+    rollup: ^2.0.0
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: 27964e64ac15a4ab8df8dcfcdfedb4db686e3b16f8b0110cd2eaaf9e977c4c4f8f3c7479b7f1cd32274a3b05eafad26da87d75d2eaf7d68664823810361dc488
   languageName: node
   linkType: hard
 
@@ -33442,6 +33459,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 7507f425e56863620e386367409ad23a188de9507d2ff687b9ddb90443a68024395aaf0b34bccd6312da83f681b7ab92a2725ffc10ba95aea5582ed8a7e4922d
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.3.1":
+  version: 17.5.1
+  resolution: "yargs@npm:17.5.1"
+  dependencies:
+    cliui: ^7.0.2
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.0.0
+  checksum: 240535ab9018b0af7e8717b3b6a32b7bf293c5537823eb37078bbade0a896edcd1d9fe3dd03362bdfa5e94d9864566a989a1b94a3454ff7ff2bd3cb33d0fcfa4
   languageName: node
   linkType: hard
 

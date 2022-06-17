@@ -7,6 +7,7 @@ import comlink from "vite-plugin-comlink";
 
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vue from "@vitejs/plugin-vue";
+import { visualizer } from "rollup-plugin-visualizer";
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
@@ -57,7 +58,14 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      plugins: [nodePolyfills()],
+      plugins: [
+        nodePolyfills(),
+        visualizer({
+          filename: "dist/report.html",
+          gzipSize: true,
+          brotliSize: true,
+        }),
+      ],
     },
     commonjsOptions: {
       transformMixedEsModules: true,
