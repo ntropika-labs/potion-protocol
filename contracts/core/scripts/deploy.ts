@@ -1,7 +1,7 @@
 import type { Contract } from "ethers";
 import { network, ethers } from "hardhat";
 import { PotionLiquidityPool } from "../typechain";
-import { config as deployConfiguration } from "./lib/deployConfig";
+import { config as deployConfiguration, NetworkDeployConfig } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
@@ -16,6 +16,7 @@ if (process.env.INDEPENDENT_DEPLOYMENT) {
 }
 
 const deployConfig = deployConfiguration[networkName];
+
 if (!deployConfig) {
     throw new Error(`No deploy config found for network '${networkName}'`);
 }
@@ -28,6 +29,7 @@ const MARGIN_POOL_CONTRACT_NAME = "MarginPool";
 const MARGIN_CALCULATOR_CONTRACT_NAME = "MarginCalculator";
 const CONTROLLER_CONTRACT_NAME = "Controller";
 const MARGIN_VAULT_LIB_NAME = "MarginVaultLib";
+const CHAINLINK_PRICER_CONTRACT_NAME = "ChainLinkPricer";
 const CONTRACTS_TO_DEPLOY_WITH_NO_PARAM = [OTOKEN_CONTRACT_NAME, ORACLE_CONTRACT_NAME];
 const CONTRACTS_TO_DEPLOY_WITH_ORACLE_PARAM = [MARGIN_CALCULATOR_CONTRACT_NAME];
 const CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM = [
@@ -83,7 +85,9 @@ async function updateAddressBook(addressbook: Contract) {
 }
 
 // Deploys all of the Opyn contracts and returns the address of the addressbook contract
-async function deployOpynContracts(): Promise<string> {
+async function deployOpynContracts(deployConfig: NetworkDeployConfig): Promise<string> {
+    console.log("Deploying Opyn Gamma protocol...");
+
     // Deploy the address book and other Opyn contracts
     const addressbook = await deploy(ADDRESS_BOOK_CONTRACT_NAME);
 
@@ -125,6 +129,36 @@ async function deployOpynContracts(): Promise<string> {
     contractAddresses.set(CONTROLLER_CONTRACT_NAME, controller.address);
 
     await updateAddressBook(addressbook);
+
+    if (deployConfig.pricerConfigs !== undefined) {
+        const oracleAddress = contractAddresses.get(ORACLE_CONTRACT_NAME);
+        const oracleFactory = await ethers.getContractFactory(ORACLE_CONTRACT_NAME);
+        const oracle = await oracleFactory.attach(oracleAddress);
+
+        console.log("Deploying pricers...");
+        for (const pricerConfig of deployConfig.pricerConfigs) {
+            const pricer = await deploy(
+                CHAINLINK_PRICER_CONTRACT_NAME,
+                [
+                    pricerConfig.relayerAddress,
+                    pricerConfig.assetAddress,
+                    pricerConfig.chainlinkAggregatorAddress,
+                    contractAddresses.get(ORACLE_CONTRACT_NAME),
+                ],
+                {
+                    alias: CHAINLINK_PRICER_CONTRACT_NAME + pricerConfig.assetName,
+                },
+            );
+
+            console.log(`  - Deployed ${pricerConfig.assetName} pricer to ${pricer.address}`);
+
+            const tx = await oracle.setAssetPricer(pricerConfig.assetAddress, pricer.address);
+            await tx.wait();
+
+            console.log(`  - Configured ${pricerConfig.assetName} pricer for Oracle`);
+        }
+    }
+
     return addressbook.address;
 }
 
@@ -132,7 +166,7 @@ async function main() {
     await init();
 
     if (!deployConfig.opynAddressBook) {
-        deployConfig.opynAddressBook = await deployOpynContracts();
+        deployConfig.opynAddressBook = await deployOpynContracts(deployConfig);
     }
     const AddressBookFactory = await ethers.getContractFactory("AddressBook");
     const addressBook = await AddressBookFactory.attach(deployConfig.opynAddressBook);

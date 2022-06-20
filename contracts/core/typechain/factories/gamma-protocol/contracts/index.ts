@@ -5,3 +5,4 @@ export * as core from "./core";
 export * as interfaces from "./interfaces";
 export * as mocks from "./mocks";
 export * as packages from "./packages";
+export * as pricers from "./pricers";

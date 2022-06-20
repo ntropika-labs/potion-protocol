@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { AddressBookInterface__factory } from "./AddressBookInterface__factory";
+export { AggregatorInterface__factory } from "./AggregatorInterface__factory";
 export { CalleeInterface__factory } from "./CalleeInterface__factory";
 export { ERC20Interface__factory } from "./ERC20Interface__factory";
 export { MarginCalculatorInterface__factory } from "./MarginCalculatorInterface__factory";

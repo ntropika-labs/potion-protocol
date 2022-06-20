@@ -25,7 +25,7 @@ async function onExit(childProcess: ChildProcess) {
 }
 
 async function runNode(network: NetworksType, blocktime: number | undefined) {
-    const ganacheArgs = [];
+    const ganacheArgs = ["-m", String(process.env.DEPLOYER_MNEMONIC)];
 
     const config = getChainConfig(network) as HttpNetworkConfig;
     ganacheArgs.push(...["-f", config.url, "--chain.chainId", String(config.chainId)]);
