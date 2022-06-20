@@ -9,3 +9,5 @@ import type * as mocks from "./mocks";
 export type { mocks };
 import type * as packages from "./packages";
 export type { packages };
+import type * as pricers from "./pricers";
+export type { pricers };

@@ -1,9 +1,5 @@
 import type { Wallet } from "ethers";
-import {
-  CurveCriteria,
-  CurveParamsAsBigNumbers,
-  HyperbolicCurve
-} from "contracts-math";
+import { CurveCriteria, CurveParamsAsBigNumbers, HyperbolicCurve } from "contracts-math";
 import { BigNumber, BigNumberish } from "ethers";
 
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
