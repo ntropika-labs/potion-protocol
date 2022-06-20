@@ -66,6 +66,8 @@ export type { ERC4626CapUpgradeable } from "./contracts/extensions/ERC4626CapUpg
 export { ERC4626CapUpgradeable__factory } from "./factories/contracts/extensions/ERC4626CapUpgradeable__factory";
 export type { IAction } from "./contracts/interfaces/IAction";
 export { IAction__factory } from "./factories/contracts/interfaces/IAction__factory";
+export type { IOtoken } from "./contracts/interfaces/IOtoken.sol/IOtoken";
+export { IOtoken__factory } from "./factories/contracts/interfaces/IOtoken.sol/IOtoken__factory";
 export type { UniswapV3SwapLib } from "./contracts/library/UniswapV3SwapLib";
 export { UniswapV3SwapLib__factory } from "./factories/contracts/library/UniswapV3SwapLib__factory";
 export type { ERC4626Upgradeable } from "./contracts/openzeppelin/ERC4626Upgradeable";

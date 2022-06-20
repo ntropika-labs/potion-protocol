@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -25,6 +26,99 @@ import type {
   OnEvent,
 } from "../../../common";
 
+export declare namespace ICurveManager {
+  export type CurveStruct = {
+    a_59x18: BigNumberish;
+    b_59x18: BigNumberish;
+    c_59x18: BigNumberish;
+    d_59x18: BigNumberish;
+    max_util_59x18: BigNumberish;
+  };
+
+  export type CurveStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    a_59x18: BigNumber;
+    b_59x18: BigNumber;
+    c_59x18: BigNumber;
+    d_59x18: BigNumber;
+    max_util_59x18: BigNumber;
+  };
+}
+
+export declare namespace ICriteriaManager {
+  export type CriteriaStruct = {
+    underlyingAsset: string;
+    strikeAsset: string;
+    isPut: boolean;
+    maxStrikePercent: BigNumberish;
+    maxDurationInDays: BigNumberish;
+  };
+
+  export type CriteriaStructOutput = [
+    string,
+    string,
+    boolean,
+    BigNumber,
+    BigNumber
+  ] & {
+    underlyingAsset: string;
+    strikeAsset: string;
+    isPut: boolean;
+    maxStrikePercent: BigNumber;
+    maxDurationInDays: BigNumber;
+  };
+}
+
+export declare namespace IPotionLiquidityPool {
+  export type CounterpartyDetailsStruct = {
+    lp: string;
+    poolId: BigNumberish;
+    curve: ICurveManager.CurveStruct;
+    criteria: ICriteriaManager.CriteriaStruct;
+    orderSizeInOtokens: BigNumberish;
+  };
+
+  export type CounterpartyDetailsStructOutput = [
+    string,
+    BigNumber,
+    ICurveManager.CurveStructOutput,
+    ICriteriaManager.CriteriaStructOutput,
+    BigNumber
+  ] & {
+    lp: string;
+    poolId: BigNumber;
+    curve: ICurveManager.CurveStructOutput;
+    criteria: ICriteriaManager.CriteriaStructOutput;
+    orderSizeInOtokens: BigNumber;
+  };
+}
+
+export declare namespace PotionProtocolOracleUpgradeable {
+  export type PotionBuyInfoStruct = {
+    otoken: string;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+    maxPremium: BigNumberish;
+    totalSizeInOtokens: BigNumberish;
+  };
+
+  export type PotionBuyInfoStructOutput = [
+    string,
+    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+    BigNumber,
+    BigNumber
+  ] & {
+    otoken: string;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+    maxPremium: BigNumber;
+    totalSizeInOtokens: BigNumber;
+  };
+}
+
 export interface PotionProtocolOracleUpgradeableInterface
   extends utils.Interface {
   functions: {
@@ -32,6 +126,8 @@ export interface PotionProtocolOracleUpgradeableInterface
     "changeKeeper(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getKeeper()": FunctionFragment;
+    "getSwapInfo(address)": FunctionFragment;
+    "setSwapInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
   getFunction(
@@ -40,6 +136,8 @@ export interface PotionProtocolOracleUpgradeableInterface
       | "changeKeeper"
       | "getAdmin"
       | "getKeeper"
+      | "getSwapInfo"
+      | "setSwapInfo"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
@@ -49,6 +147,11 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getSwapInfo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setSwapInfo",
+    values: [PotionProtocolOracleUpgradeable.PotionBuyInfoStruct]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "changeAdmin",
@@ -60,6 +163,14 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapInfo",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
@@ -141,6 +252,16 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
     getKeeper(overrides?: CallOverrides): Promise<[string]>;
+
+    getSwapInfo(
+      otoken: string,
+      overrides?: CallOverrides
+    ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
+
+    setSwapInfo(
+      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   changeAdmin(
@@ -157,6 +278,16 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   getKeeper(overrides?: CallOverrides): Promise<string>;
 
+  getSwapInfo(
+    otoken: string,
+    overrides?: CallOverrides
+  ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+  setSwapInfo(
+    info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
 
@@ -165,6 +296,16 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
     getKeeper(overrides?: CallOverrides): Promise<string>;
+
+    getSwapInfo(
+      otoken: string,
+      overrides?: CallOverrides
+    ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+    setSwapInfo(
+      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -204,6 +345,13 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
     getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getSwapInfo(otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setSwapInfo(
+      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -220,5 +368,15 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getSwapInfo(
+      otoken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setSwapInfo(
+      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

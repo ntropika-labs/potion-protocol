@@ -125,6 +125,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
+      name: "IOtoken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOtoken__factory>;
+    getContractFactory(
+      name: "OtokenInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OtokenInterface__factory>;
+    getContractFactory(
       name: "UniswapV3SwapLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UniswapV3SwapLib__factory>;
@@ -297,6 +305,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
+    getContractAt(
+      name: "IOtoken",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOtoken>;
+    getContractAt(
+      name: "OtokenInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OtokenInterface>;
     getContractAt(
       name: "UniswapV3SwapLib",
       address: string,

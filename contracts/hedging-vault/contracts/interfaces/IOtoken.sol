@@ -2,7 +2,7 @@
 // Adapted from public domain Opyn code
 pragma solidity 0.8.14;
 
-interface OtokenInterface {
+interface IOtoken {
     function underlyingAsset() external view returns (address);
 
     function strikeAsset() external view returns (address);

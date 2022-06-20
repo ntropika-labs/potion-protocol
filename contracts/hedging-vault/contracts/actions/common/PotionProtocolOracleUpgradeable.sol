@@ -5,7 +5,7 @@ pragma solidity 0.8.14;
 
 import "../../common/RolesManagerUpgradeable.sol";
 
-import { OtokenInterface } from "../../interfaces/IOtoken.sol";
+import { IOtoken } from "../../interfaces/IOtoken.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
 
 /**
@@ -35,7 +35,7 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
         @custom:member totalSizeInOtokens The total number of otokens to buy using the given sellers list
      */
     struct PotionBuyInfo {
-        OtokenInterface otoken;
+        IOtoken otoken;
         IPotionLiquidityPool.CounterpartyDetails[] sellers;
         uint256 maxPremium;
         uint256 totalSizeInOtokens;
@@ -46,7 +46,7 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
 
         @dev otoken => PotionBuyInfo
     */
-    mapping(OtokenInterface => PotionBuyInfo) private _potionBuyInfo;
+    mapping(IOtoken => PotionBuyInfo) private _potionBuyInfo;
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -82,7 +82,7 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
         @return The Potion Buy information for the given otoken
 
      */
-    function getSwapInfo(OtokenInterface otoken) public view returns (PotionBuyInfo memory) {
+    function getSwapInfo(IOtoken otoken) public view returns (PotionBuyInfo memory) {
         return _potionBuyInfo[otoken];
     }
 }
