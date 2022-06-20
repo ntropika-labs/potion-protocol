@@ -1,4 +1,5 @@
 import { $fetch } from "ohmyfetch";
+import { currencyFormatter } from "potion-ui";
 import { computed, ref } from "vue";
 
 const network = import.meta.env.VITE_ETHEREUM_NETWORK;
@@ -16,10 +17,7 @@ export function useCoinGecko(
   const loading = ref(false);
   const price = ref(0);
   const formattedPrice = computed(() => {
-    return new Intl.NumberFormat(navigator.language, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-    }).format(price.value);
+    return currencyFormatter(price.value, currency === "usd" ? "$" : currency);
   });
 
   const coinsPrices = ref<CoinPricesResponse>();
