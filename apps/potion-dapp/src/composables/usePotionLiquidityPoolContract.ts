@@ -5,7 +5,7 @@ import type {
 
 import type { PotionLiquidityPool } from "potion-contracts/typechain";
 import type { BondingCurveParams, Criteria } from "dapp-types";
-
+import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
@@ -14,7 +14,10 @@ import {
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
 
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { contractsAddresses } from "@/helpers/contracts";
+import { createValidExpiry } from "@/helpers/time";
 import { parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 
@@ -221,8 +224,7 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         settleLoading.value = false;
       }
-    }
-    throw new Error("Connect your wallet first");
+    } else throw new Error("Connect your wallet first");
   };
   // Is settled
   const isSettled = async (address: string) => {
@@ -272,8 +274,146 @@ export function usePotionLiquidityPoolContract() {
       } finally {
         claimCollateralLoading.value = false;
       }
+    } else throw new Error("Connect your wallet first");
+  };
+
+  //Buy Potions
+  const buyPotionTx = ref<ContractTransaction | null>(null);
+  const buyPotionReceipt = ref<ContractReceipt | null>(null);
+  const buyPotionLoading = ref(false);
+  const buyOtokens = async (
+    oTokenAddress: string,
+    counterparties: CounterpartyDetails[],
+    maxPremium: number
+  ) => {
+    if (connectedWallet.value) {
+      try {
+        buyPotionLoading.value = true;
+        const contractSigner = initContractSigner();
+        const maxPremiumToBigNumber = parseUnits(maxPremium.toFixed(6), 6);
+        buyPotionTx.value = await contractSigner.buyOtokens(
+          oTokenAddress,
+          counterparties,
+          maxPremiumToBigNumber
+        );
+        buyPotionReceipt.value = await buyPotionTx.value.wait();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(
+            `Error buying from otoken with address ${oTokenAddress}: ${error.message}`
+          );
+        }
+        throw new Error(
+          `Error buying from otoken with address ${oTokenAddress}`
+        );
+      } finally {
+        buyPotionLoading.value = false;
+      }
+    } else throw new Error("Connect your wallet first");
+  };
+
+  const createAndBuyOtokens = async (
+    underlyingAddress: string,
+    strikeAddress = PotionTestUSD.address.toLowerCase(),
+    collateralAddress = PotionTestUSD.address.toLowerCase(),
+    strikePrice: number,
+    expiry: number,
+    isPut: true,
+    counterparties: CounterpartyDetails[],
+    maxPremium: number
+  ) => {
+    if (connectedWallet.value) {
+      try {
+        buyPotionLoading.value = true;
+
+        const contractSigner = initContractSigner();
+
+        const maxPremiumToBigNumber = parseUnits(maxPremium.toFixed(6), 6);
+        const strikePriceToBigNumber = parseUnits(strikePrice.toFixed(8), 8);
+
+        buyPotionTx.value = await contractSigner.createAndBuyOtokens(
+          underlyingAddress,
+          strikeAddress,
+          collateralAddress,
+          strikePriceToBigNumber,
+          expiry,
+          isPut,
+          counterparties,
+          maxPremiumToBigNumber
+        );
+        buyPotionReceipt.value = await buyPotionTx.value.wait();
+        buyPotionLoading.value = false;
+      } catch (error) {
+        buyPotionLoading.value = false;
+
+        if (error instanceof Error) {
+          throw new Error(`Error deploy and buy from otoken: ${error.message}`);
+        }
+        throw new Error(`Error deploy and buy otoken`);
+      }
+    } else throw new Error("Connect your wallet first");
+  };
+
+  // Method to conditionally buy or create and buy otokens
+  const buyPotions = async (
+    counterparties: CounterpartyDetails[],
+    maxPremium: number,
+    oTokenAddress?: string,
+    underlyingAddress?: string,
+    strikePrice?: number,
+    duration?: number,
+    isPut = true,
+    strikeAddress = PotionTestUSD.address.toLowerCase(),
+    collateralAddress = PotionTestUSD.address.toLowerCase()
+  ) => {
+    if (oTokenAddress) {
+      await buyOtokens(oTokenAddress, counterparties, maxPremium);
+    } else if (
+      underlyingAddress &&
+      strikeAddress &&
+      collateralAddress &&
+      strikePrice &&
+      duration &&
+      isPut &&
+      maxPremium
+    ) {
+      const { getTargetOtokenAddress, getOtoken } = useOtokenFactory();
+
+      const { getBlock, blockTimestamp } = useEthersProvider();
+      await getBlock("latest");
+      const validExpiry = createValidExpiry(blockTimestamp.value, duration);
+      const newOtokenAddress = await getTargetOtokenAddress(
+        underlyingAddress,
+        strikeAddress,
+        collateralAddress,
+        strikePrice,
+        validExpiry,
+        isPut
+      );
+      const existingOtokenAddress = await getOtoken(
+        underlyingAddress,
+        strikeAddress,
+        collateralAddress,
+        strikePrice,
+        validExpiry,
+        isPut
+      );
+      const exists = newOtokenAddress === existingOtokenAddress;
+      if (exists) {
+        await buyOtokens(existingOtokenAddress, counterparties, maxPremium);
+      } else {
+        await createAndBuyOtokens(
+          underlyingAddress,
+          strikeAddress,
+          collateralAddress,
+          strikePrice,
+          validExpiry,
+          isPut,
+          counterparties,
+          maxPremium
+        );
+      }
     }
-    throw new Error("Connect your wallet first");
   };
 
   return {
@@ -305,5 +445,12 @@ export function usePotionLiquidityPoolContract() {
     // outstanding settlement
     getOutstandingSettlement,
     getOutstandingSettlements,
+    // BuyPotions
+    buyPotionTx,
+    buyPotionReceipt,
+    buyPotionLoading,
+    buyOtokens,
+    createAndBuyOtokens,
+    buyPotions,
   };
 }

@@ -1,3 +1,8 @@
+import type { Ref } from "vue";
+
+export type MaybeStringRef = Ref<string> | Ref<null> | string | null;
+export type MaybeNumberRef = Ref<number> | Ref<null> | number | null;
+
 export interface Token {
   name: string;
   symbol: string;
@@ -30,7 +35,7 @@ export interface OptionToken {
 }
 
 export interface Criteria {
-  token: Token;
+  token: Token | SelectableToken;
   maxStrike: number;
   maxDuration: number;
 }

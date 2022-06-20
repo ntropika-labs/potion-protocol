@@ -52,7 +52,9 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         :name="props.token.name"
         :image="props.token.image"
       />
-      <p>{{ props.token.symbol }}</p>
+      <p class="text-dwhite-300 font-bold uppercase">
+        {{ props.token.symbol }}
+      </p>
     </div>
   </div>
 </template>

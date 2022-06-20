@@ -23,7 +23,7 @@ import { useCollateralTokenContract } from "@/composables/useCollateralTokenCont
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { usePoolSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { usePoolOtokens } from "@/composables/usePoolRecords";
 
 import CurvesChart from "@/components/CurvesChart.vue";
@@ -146,8 +146,11 @@ const fetchAssetsPrice = async () => {
 
   try {
     const promises = addresses.map(async (address) => {
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(address);
-      await fetchPrice();
+      const { fetchTokenPrice, formattedPrice } = useCoinGecko(
+        undefined,
+        address
+      );
+      await fetchTokenPrice();
       prices.set(address, formattedPrice.value);
     });
     await Promise.allSettled(promises);
@@ -335,28 +338,28 @@ const {
 } = useNotifications();
 
 watch(depositTx, (transaction) =>
-  createTransactionNotification(transaction, "Depositing liquidity")
+  createTransactionNotification(transaction, t("depositing_liquidity"))
 );
 watch(depositReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity deposited")
+  createReceiptNotification(receipt, t("liquidity_deposited"))
 );
 watch(withdrawTx, (transaction) =>
-  createTransactionNotification(transaction, "Withdrawing liquidity")
+  createTransactionNotification(transaction, t("withdrawing_liquidity"))
 );
 watch(withdrawReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity withdrawn")
+  createReceiptNotification(receipt, t("liquidity_withdrawn"))
 );
 watch(approveTx, (transaction) =>
-  createTransactionNotification(transaction, "Approving USDC spending")
+  createTransactionNotification(transaction, t("approving_usdc"))
 );
 watch(approveReceipt, (receipt) =>
-  createReceiptNotification(receipt, "USDC spending approved")
+  createReceiptNotification(receipt, t("usdc_approved"))
 );
 watch(claimCollateralTx, (transaction) =>
-  createTransactionNotification(transaction, "Claiming collateral")
+  createTransactionNotification(transaction, t("claiming_collateral"))
 );
 watch(claimCollateralReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Collateral claimed")
+  createReceiptNotification(receipt, t("collateral_claimed"))
 );
 </script>
 <template>

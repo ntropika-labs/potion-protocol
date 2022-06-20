@@ -30,7 +30,7 @@ import { etherscanUrl } from "@/helpers";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTemplateSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
@@ -106,9 +106,12 @@ const fetchAssetsPrice = async () => {
 
   try {
     const promises = addresses.map(async (address) => {
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(address);
+      const { fetchTokenPrice, formattedPrice } = useCoinGecko(
+        undefined,
+        address
+      );
 
-      await fetchPrice();
+      await fetchTokenPrice();
 
       prices.set(address, formattedPrice.value);
     });
@@ -229,12 +232,6 @@ const handleCloneTemplate = async () => {
     await fetchUserCollateralAllowance();
   } else {
     if (clonedPoolId.value) {
-      console.log(
-        clonedPoolId.value,
-        liquidity.value,
-        bondingCurveParams.value,
-        criterias.value
-      );
       await depositAndCreateCurveAndCriteria(
         clonedPoolId.value,
         liquidity.value,
@@ -262,19 +259,19 @@ const {
 } = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  createTransactionNotification(transaction, "Creating pool");
+  createTransactionNotification(transaction, t("creating_pool"));
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Pool created");
+  createReceiptNotification(receipt, t("pool_created"));
 });
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, "Approving USDC");
+  createTransactionNotification(transaction, t("approving_usdc"));
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, "USDC spending approved");
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
 <template>

@@ -27,7 +27,7 @@ describe("Show Potions Flow", () => {
         ? interceptor[0]?.response.body
         : (interceptor as any)?.response.body;
 
-      console.log(response);
+      console.info(response);
       // assert that the subgraph send us the correct sets of buyer potions
       expect(response).to.haveOwnProperty("data");
       const buyerPotionsData = response.data;

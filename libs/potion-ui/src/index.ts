@@ -23,9 +23,11 @@ import InputSlider from "./components/InputSlider/InputSlider.vue";
 import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
 import LabelValue from "./components/LabelValue/LabelValue.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
+import MyPotionCard from "./components/MyPotionCard/MyPotionCard.vue";
 import PerformanceChart from "./components/PerformanceChart/PerformanceChart.vue";
 import PoolCard from "./components/PoolCard/PoolCard.vue";
 import PoolTemplateCard from "./components/PoolTemplateCard/PoolTemplateCard.vue";
+import PotionCard from "./components/PotionCard/PotionCard.vue";
 import PutOptionsTable from "./components/PutOptionsTable/PutOptionsTable.vue";
 import SidebarLink from "./components/SidebarLink/SidebarLink.vue";
 import TabNavigationComponent from "./components/TabNavigationComponent/TabNavigationComponent.vue";
@@ -33,7 +35,6 @@ import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
-import PotionCard from "./components/PotionCard/PotionCard.vue";
 
 export type {
   IconStrokeWeight,
@@ -75,12 +76,13 @@ export {
   PerformanceChart,
   PoolCard,
   PoolTemplateCard,
+  PotionCard,
   PutOptionsTable,
   TabNavigationComponent,
   TokenIcon,
   TokenSelection,
   Tooltip,
   UnderlyingList,
-  PotionCard,
+  MyPotionCard,
   SidebarLink,
 };
