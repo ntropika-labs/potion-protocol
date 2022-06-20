@@ -6,7 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
   useGetTemplateQuery,
-  useGetNumberOfPoolsFromUserQuery,
+  useGetLatestPoolIdQuery,
 } from "subgraph-queries/generated/urql";
 import type {
   BondingCurveParams,
@@ -209,20 +209,16 @@ const {
 const userPoolsQueryVariables = computed(() => {
   return {
     lp: walletAddress.value,
-    ids: [""],
   };
 });
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+const { data: userPools } = useGetLatestPoolIdQuery({
   pause: isNotConnected,
   variables: userPoolsQueryVariables,
 });
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
 const clonedPoolId = computed(() => {
-  return userPoolsCount.value + 1;
+  const id = userPools?.value?.pools?.[0]?.poolId;
+  return id ? 1 + parseInt(id) : 0;
 });
 
 const handleCloneTemplate = async () => {
