@@ -69,6 +69,8 @@
         "set-price": "yarn run -T hardhat setPrices"
     },
     "dependencies": {
+        "@prb/math": "^2.5.0",
+        "@uniswap/v3-periphery": "^1.4.1",
         "potion-contracts": "workspace:^"
     }
 }

@@ -57,9 +57,9 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
         Also this contract does not need to initialize anything itself.
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __RolesManager_init_unchained(address adminRole_, address keeperRole_) internal onlyInitializing {
-        _adminRole = adminRole_;
-        _keeperRole = keeperRole_;
+    function __RolesManager_init_unchained(address adminRole, address keeperRole) internal onlyInitializing {
+        _adminRole = adminRole;
+        _keeperRole = keeperRole;
     }
 
     /// FUNCTIONS
