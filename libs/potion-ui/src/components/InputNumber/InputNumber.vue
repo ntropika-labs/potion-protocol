@@ -25,7 +25,9 @@
           @update:model-value="handleInput"
         ></BaseInput>
         <button @click="emits('update:modelValue', handleSetMax())">
-          <BaseTag :is-empty="true">MAX</BaseTag>
+          <BaseTag class="transition hover:bg-primary-500" :is-empty="true"
+            >MAX</BaseTag
+          >
         </button>
       </div>
     </label>
@@ -64,6 +66,7 @@ export interface Props {
   footerDescription?: string;
   footerValue?: string;
   maxDecimals?: number;
+  useUnit?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   color: "glass",
@@ -77,6 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
   footerDescription: "Balance",
   maxDecimals: 6,
   footerValue: "",
+  useUnit: true,
 });
 
 const emits = defineEmits(["update:modelValue", "validInput"]);
@@ -113,12 +117,16 @@ emits("validInput", inputIsValid.value);
 watch(inputIsValid, () => {
   emits("validInput", inputIsValid.value);
 });
-
+const unit = computed(() => {
+  if (props.useUnit) {
+    return props.unit;
+  } else return "";
+});
 const footerText = computed(() => {
   if (inputIsValid.value && props.footerValue === "") {
     return `${props.footerDescription}: ${currencyFormatter(
       props.max,
-      props.unit
+      unit.value
     )}`;
   } else if (inputIsValid.value && props.footerValue !== "") {
     return `${props.footerDescription}: ${props.footerValue}`;
@@ -130,8 +138,8 @@ const footerText = computed(() => {
         props.footerDescription
       } is ${currencyFormatter(
         props.max,
-        props.unit
-      )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
+        unit.value
+      )} - Minimum is ${currencyFormatter(props.min, unit.value)}.`;
     }
   }
 });

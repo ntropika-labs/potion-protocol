@@ -592,6 +592,7 @@ const similarPotionShown = computed(() => {
             unit="POTION"
             :max-decimals="8"
             :footer-description="t('max_number_of_potions')"
+            :use-unit="false"
             @valid-input="isPotionQuantityValid = $event"
           />
         </BaseCard>
