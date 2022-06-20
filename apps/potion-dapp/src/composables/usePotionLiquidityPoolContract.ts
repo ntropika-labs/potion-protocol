@@ -9,7 +9,7 @@ import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria,
+  OrderedCriteria
 } from "contracts-math";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
@@ -306,6 +306,8 @@ export function usePotionLiquidityPoolContract() {
         throw new Error(
           `Error buying from otoken with address ${oTokenAddress}`
         );
+      } finally {
+        buyPotionLoading.value = false;
       }
     } else throw new Error("Connect your wallet first");
   };
