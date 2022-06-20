@@ -76,6 +76,8 @@ jobs:
           browser: chrome
           record: false
           working-directory: apps/potion-dapp
+        env:
+          CYPRESS_port: 5050
 
       - name: Archive screenshots code coverage results
         uses: actions/upload-artifact@v2
