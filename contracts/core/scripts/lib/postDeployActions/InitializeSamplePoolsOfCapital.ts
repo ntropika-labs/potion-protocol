@@ -6,12 +6,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { DepositParams } from "../lpHelpers";
-import {
-  parseUsdcAmount,
-  PostDeployAction,
-  PostDeployActionResult,
-  PostDeployActionsResults
-} from "../postDeploy";
+import { parseUsdcAmount, PostDeployAction, PostDeployActionResult, PostDeployActionsResults } from "../postDeploy";
 
 type DepositGenerator = {
     (dataSoFar: PostDeployActionsResults): Promise<DepositParams[]>;
