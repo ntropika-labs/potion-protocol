@@ -15,7 +15,7 @@ import "../../library/PriceUtils.sol";
     @dev It is very basic and it just aims to abstract the idea of an Oracle into a separate contract
     but it is still very coupled with UniswapV3HelperUpgradeable.
 
-    @dev It inherits from the RolesManagerUpgradeable contract to scope the the parameters setting
+    @dev It inherits from the RolesManagerUpgradeable contract to scope the parameters setting
     functions for only the Keeper role.
 
     @dev It does not initialize the RolesManagerUpgradeable as that is a contract that is shared

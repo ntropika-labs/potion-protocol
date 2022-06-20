@@ -3,7 +3,7 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { PotionLiquidityPool } from "potion-contracts/typechain";
+import type { PotionLiquidityPool } from "@potion-protocol/core/typechain";
 import type { BondingCurveParams, Criteria } from "dapp-types";
 
 import {
@@ -11,7 +11,7 @@ import {
   HyperbolicCurve,
   OrderedCriteria,
 } from "contracts-math";
-import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
+import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";

@@ -1,6 +1,6 @@
-import type { ERC20Upgradeable } from "potion-contracts/typechain";
+import type { ERC20Upgradeable } from "@potion-protocol/core/typechain";
 
-import { ERC20Upgradeable__factory } from "potion-contracts/typechain";
+import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 import { formatUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 
