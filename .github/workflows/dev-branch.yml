@@ -60,7 +60,10 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable --immutable-cache
 
-      - name: Start containers
+      - name: Debug docker compose config
+        run: docker compose config
+
+      - name: Create and seed environment
         run: ./bin/create-local-env-headless
         shell: bash
 
@@ -83,14 +86,14 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: apps/potion-dapp/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: Archive videos code coverage results
         uses: actions/upload-artifact@v2
         if: always()
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: apps/potion-dapp/cypress/videos
 
       - name: Stop containers
         if: always()
