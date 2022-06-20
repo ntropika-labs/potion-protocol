@@ -71,7 +71,6 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install: false
-          build: false
           start: yarn preview
           wait-on: "http://127.0.0.1:5050"
           browser: chrome
