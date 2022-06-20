@@ -71,13 +71,13 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install: false
+          build: false
           start: yarn preview
-          wait-on: "http://localhost:5050"
+          wait-on: "http://127.0.0.1:5050"
           browser: chrome
           record: false
           working-directory: apps/potion-dapp
-        env:
-          CYPRESS_port: 5050
+          config: pageLoadTimeout=100000,baseUrl=http://localhost:5050
 
       - name: Archive screenshots code coverage results
         uses: actions/upload-artifact@v2
