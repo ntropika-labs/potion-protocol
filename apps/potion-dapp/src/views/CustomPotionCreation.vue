@@ -334,6 +334,10 @@ const {
   fetchUserCollateralBalance,
   approveForPotionLiquidityPool,
 } = useCollateralTokenContract();
+
+const userCollateralBalanceFormatted = computed(() => {
+  return currencyFormatter(userCollateralBalance.value, "USDC");
+});
 const fetchUserData = async () => {
   if (connectedWallet.value) {
     await fetchUserCollateralBalance();
@@ -367,7 +371,7 @@ const buyPotionButtonState = computed(() => {
     areStepsValid.value
   ) {
     return {
-      label: t("not_enough_collateral"),
+      label: t("not_enough_usdc"),
       disabled: true,
     };
   }
@@ -614,7 +618,12 @@ const similarPotionShown = computed(() => {
           >
             <div class="flex gap-2 items-center justify-between w-full">
               <p class="capitalize">{{ t("total") }}</p>
-              <p>{{ formattedPremiumSlippage }}</p>
+              <div>
+                <p>{{ formattedPremiumSlippage }}</p>
+                <p class="text-xs capitalize text-dwhite-300/30">
+                  {{ t("balance") }}: {{ userCollateralBalanceFormatted }}
+                </p>
+              </div>
             </div>
           </div>
           <BaseCard color="no-bg" class="p-4">

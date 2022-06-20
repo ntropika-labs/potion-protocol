@@ -137,3 +137,5 @@ withdrawing_liquidity: withdrawing liquidity
 liquidity_withdrawn: liquidity withdrawn
 claiming_collateral: claiming collateral
 collateral_claimed: collateral claimed
+not_enough_usdc: not enough usdc
+balance: balance
