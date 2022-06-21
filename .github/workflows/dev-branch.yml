@@ -10,89 +10,47 @@ on:
 
 permissions:
   contents: read
-  # Needed for the 'trilom/file-changes-action' action
   pull-requests: read
 
-# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.number || github.ref }}"
   cancel-in-progress: true
 
 jobs:
   test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    env:
-      DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
-      VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
-      VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
-      VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
-      VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
-      GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
-      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
-      VITE_ETHEREUM_NETWORK: "localhost"
-      VITE_ENDPOINT_PROVIDER: "alchemy"
-      VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: "yarn"
-
-      - name: Cache node modules
-        id: cache-yarn
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          # yarn cache files are stored in `~/.yarn` on Linux/macOS
-          path: ~/.yarn
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn --immutable --immutable-cache
+      - name: Setup environment
+        uses: ./.github/workflows/call-setup-environment.yml
 
       - name: Create and seed environment
         run: ./bin/create-local-env-headless
         shell: bash
+        env:
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
 
-      - name: Build app with mocked onboard
-        run: yarn nx run potion-dapp:build-test
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v4
+      - name: Build app with mocked onboard and run tests
+        uses: ./.github/workflows/call-run-tests.yml
         with:
-          install: false
-          start: yarn preview
-          wait-on: "http://127.0.0.1:5050"
-          browser: chrome
-          record: false
-          working-directory: apps/potion-dapp
-          config: pageLoadTimeout=100000,baseUrl=http://localhost:5050
-
-      - name: Archive screenshots code coverage results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: apps/potion-dapp/cypress/screenshots
-      # Test run video was always captured, so this action uses "always()" condition
-      - name: Archive videos code coverage results
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: cypress-videos
-          path: apps/potion-dapp/cypress/videos
+          VITE_ETHEREUM_NETWORK: "localhost"
+          VITE_ENDPOINT_PROVIDER: "alchemy"
+          VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
+        secrets:
+          VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+          VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+          VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
 
       - name: Stop containers
         if: always()
         run: docker-compose -f "docker-compose.yml" down
+  #update-storybook:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - nane: Build Storybook
+  #      run: yarn nx run potion-ui:build-storybook
+  #  TODO: upload build files to remote host
