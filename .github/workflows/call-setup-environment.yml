@@ -42,4 +42,4 @@ jobs:
         if: |
           steps.yarn-cache.outputs.cache-hit != 'true' ||
           steps.node-modules-cache.outputs.cache-hit != 'true'
-        run: yarn --immutable --immutable-cache --prefer-offline
+        run: yarn install --immutable --immutable-cache
