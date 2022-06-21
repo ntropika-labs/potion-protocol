@@ -17,17 +17,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  setup-node:
+    uses: ./.github/workflows/call-setup-environment.yml
+
+  setup-docker:
+    name: Setup docker
+    needs: setup-node
     timeout-minutes: 15
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup environment
-        uses: ./.github/workflows/call-setup-environment.yml
-
       - name: Create and seed environment
         run: ./bin/create-local-env-headless
         shell: bash
@@ -36,17 +35,25 @@ jobs:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
           DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
 
-      - name: Build app with mocked onboard and run tests
-        uses: ./.github/workflows/call-run-tests.yml
-        with:
-          VITE_ETHEREUM_NETWORK: "localhost"
-          VITE_ENDPOINT_PROVIDER: "alchemy"
-          VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
-          VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
-          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
-          VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
-          VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+  test:
+    needs: setup-docker
+    uses: ./.github/workflows/call-run-tests.yml
+    with:
+      VITE_ETHEREUM_NETWORK: "localhost"
+      VITE_ENDPOINT_PROVIDER: "alchemy"
+      VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
+    secrets:
+      VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+      VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+      VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
 
+  cleanup:
+    name: Cleanup actions
+    needs: test
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
       - name: Stop containers
         if: always()
         run: docker-compose -f "docker-compose.yml" down
