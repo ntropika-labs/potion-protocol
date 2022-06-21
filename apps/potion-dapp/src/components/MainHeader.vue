@@ -59,7 +59,7 @@ const { connectedWallet, connectWallet, disconnectConnectedWallet } =
 
 const routes = [
   {
-    name: "home",
+    name: "discover-potions",
     label: "Buy Potion",
   },
   {
