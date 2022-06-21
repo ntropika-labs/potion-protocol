@@ -146,12 +146,9 @@ const fetchAssetsPrice = async () => {
 
   try {
     const promises = addresses.map(async (address) => {
-      const { fetchTokenPrice, formattedPrice } = useCoinGecko(
-        undefined,
-        address
-      );
+      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
       await fetchTokenPrice();
-      prices.set(address, formattedPrice.value);
+      prices.set(address, price.value);
     });
     await Promise.allSettled(promises);
   } catch (error) {
