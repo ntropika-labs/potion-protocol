@@ -618,7 +618,7 @@ const similarPotionShown = computed(() => {
           >
             <div class="flex gap-2 items-center justify-between w-full">
               <p class="capitalize">{{ t("total") }}</p>
-              <div>
+              <div class="text-right">
                 <p>{{ formattedPremiumSlippage }}</p>
                 <p class="text-xs capitalize text-dwhite-300/30">
                   {{ t("balance") }}: {{ userCollateralBalanceFormatted }}
@@ -690,7 +690,7 @@ const similarPotionShown = computed(() => {
     <p class="text-sm">
       {{ t("similar_potion_message", { dollars: savingByPickSimilar }) }}
     </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
       <PotionCard
         v-for="(potion, index) in similarPotionShown"
         :key="`${index}-similar-potion`"

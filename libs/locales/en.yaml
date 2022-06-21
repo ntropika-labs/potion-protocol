@@ -139,3 +139,4 @@ claiming_collateral: claiming collateral
 collateral_claimed: collateral claimed
 not_enough_usdc: not enough usdc
 balance: balance
+timestamp: timestamp

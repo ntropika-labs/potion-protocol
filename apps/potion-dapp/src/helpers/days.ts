@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { isNil as _isNil } from "lodash-es";
 
+import { createValidExpiry } from "./time";
+
 const _exists = (x: number) => !_isNil(x);
 
 export const offsetToDate = (blockTimestamp: number, offset: number) => {
@@ -12,7 +14,7 @@ export const offsetToDate = (blockTimestamp: number, offset: number) => {
 export const dateToOffset = (blockTimestamp: number, offset: number) => {
   if (_exists(offset)) {
     const expiration = dayjs.unix(offset);
-    const today = dayjs.unix(blockTimestamp);
+    const today = dayjs.unix(createValidExpiry(blockTimestamp, 0));
     const diff = expiration.diff(today, "day");
     return diff;
   }
