@@ -18,7 +18,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { contractsAddresses } from "@/helpers/contracts";
 import { createValidExpiry } from "@/helpers/time";
-import { parseUnits } from "@ethersproject/units";
+import { parseUnits, formatUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
@@ -169,7 +169,7 @@ export function usePotionLiquidityPoolContract() {
     try {
       const provider = initContractProvider();
       const refund = await provider.outstandingSettlement(otoken, pool);
-      return refund.toNumber();
+      return parseFloat(formatUnits(refund, 6));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot get outstanding settlement: ${error.message}`);
@@ -189,7 +189,7 @@ export function usePotionLiquidityPoolContract() {
       await Promise.allSettled(
         otokens.map(async (otoken) => {
           const refund = await provider.outstandingSettlement(otoken, pool);
-          refundMap.set(otoken, refund.toNumber());
+          refundMap.set(otoken, parseFloat(formatUnits(refund, 6)));
         })
       );
       return refundMap;
