@@ -48,6 +48,8 @@ export type { IUniswapV3SwapCallback } from "./@uniswap/v3-core/contracts/interf
 export { IUniswapV3SwapCallback__factory } from "./factories/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
+export type { PotionProtocolHelperUpgradeable } from "./contracts/actions/common/PotionProtocolHelperUpgradeable";
+export { PotionProtocolHelperUpgradeable__factory } from "./factories/contracts/actions/common/PotionProtocolHelperUpgradeable__factory";
 export type { PotionProtocolOracleUpgradeable } from "./contracts/actions/common/PotionProtocolOracleUpgradeable";
 export { PotionProtocolOracleUpgradeable__factory } from "./factories/contracts/actions/common/PotionProtocolOracleUpgradeable__factory";
 export type { UniswapV3HelperUpgradeable } from "./contracts/actions/common/UniswapV3HelperUpgradeable";
@@ -66,10 +68,12 @@ export type { ERC4626CapUpgradeable } from "./contracts/extensions/ERC4626CapUpg
 export { ERC4626CapUpgradeable__factory } from "./factories/contracts/extensions/ERC4626CapUpgradeable__factory";
 export type { IAction } from "./contracts/interfaces/IAction";
 export { IAction__factory } from "./factories/contracts/interfaces/IAction__factory";
-export type { IOtoken } from "./contracts/interfaces/IOtoken.sol/IOtoken";
-export { IOtoken__factory } from "./factories/contracts/interfaces/IOtoken.sol/IOtoken__factory";
-export type { UniswapV3SwapLib } from "./contracts/library/UniswapV3SwapLib";
-export { UniswapV3SwapLib__factory } from "./factories/contracts/library/UniswapV3SwapLib__factory";
+export type { IOtoken } from "./contracts/interfaces/IOtoken";
+export { IOtoken__factory } from "./factories/contracts/interfaces/IOtoken__factory";
+export type { IPotionLiquidityPool } from "./contracts/interfaces/IPotionLiquidityPool";
+export { IPotionLiquidityPool__factory } from "./factories/contracts/interfaces/IPotionLiquidityPool__factory";
+export type { SlippageUtils } from "./contracts/library/SlippageUtils";
+export { SlippageUtils__factory } from "./factories/contracts/library/SlippageUtils__factory";
 export type { ERC4626Upgradeable } from "./contracts/openzeppelin/ERC4626Upgradeable";
 export { ERC4626Upgradeable__factory } from "./factories/contracts/openzeppelin/ERC4626Upgradeable__factory";
 export type { IERC4626Upgradeable } from "./contracts/openzeppelin/IERC4626Upgradeable";

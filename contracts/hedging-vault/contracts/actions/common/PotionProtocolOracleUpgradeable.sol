@@ -5,14 +5,13 @@ pragma solidity 0.8.14;
 
 import "../../common/RolesManagerUpgradeable.sol";
 
-import { IOtoken } from "../../interfaces/IOtoken.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
 
 /**
     @title PotionProtocolOracleUpgradeable
 
     @notice Oracle contract for the Potion Protocol potion buy. It takes care of holding the information
-    about the counterparties that will be used to buy a particular potion (otoken) with a maximum allowed
+    about the counterparties that will be used to buy a particular potion (potion) with a maximum allowed
     premium
 
     @dev It is very basic and it just aims to abstract the idea of an Oracle into a separate contract
@@ -27,26 +26,26 @@ import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol"
  */
 contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
     /**
-        @notice The information required to buy a specific otoken with a specific maximum premium requirement
+        @notice The information required to buy a specific potion with a specific maximum premium requirement
 
-        @custom:member otoken The address of the otoken to buy
-        @custom:member counterpartyDetails The list of liquidity providers that will be used to buy the otoken
-        @custom:member maxPremium The maximum allowed premium for the otoken buy
-        @custom:member totalSizeInOtokens The total number of otokens to buy using the given sellers list
+        @custom:member potion The address of the potion (otoken) to buy
+        @custom:member sellers The list of liquidity providers that will be used to buy the potion
+        @custom:member expectedPremium The expected premium to be paid for the given order size and the given sellers
+        @custom:member totalSizeInPotions The total number of potions to buy using the given sellers list
      */
     struct PotionBuyInfo {
-        IOtoken otoken;
+        address potion;
         IPotionLiquidityPool.CounterpartyDetails[] sellers;
-        uint256 maxPremium;
-        uint256 totalSizeInOtokens;
+        uint256 expectedPremium;
+        uint256 totalSizeInPotions;
     }
 
     /**
         @notice Information on the buy of an OToken 
 
-        @dev otoken => PotionBuyInfo
+        @dev potion => PotionBuyInfo
     */
-    mapping(IOtoken => PotionBuyInfo) private _potionBuyInfo;
+    mapping(address => PotionBuyInfo) private _potionBuyInfo;
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -62,27 +61,27 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Sets the potion buy information for a specific otoken
+        @notice Sets the potion buy information for a specific potion
 
-        @param info The swap information for the pair
+        @param info The potion buy information for the potion
 
         @dev Only the Keeper role can call this function
 
         @dev See { PotionBuyInfo }
      */
-    function setSwapInfo(PotionBuyInfo calldata info) external onlyKeeper {
-        _potionBuyInfo[info.otoken] = info;
+    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyKeeper {
+        _potionBuyInfo[info.potion] = info;
     }
 
     /**
         @notice Gets the potion buy information for a given OToken
 
-        @param otoken The address of the otoken to buy from
+        @param potion The address of the potion to buy from
 
-        @return The Potion Buy information for the given otoken
+        @return The Potion Buy information for the given potion
 
      */
-    function getSwapInfo(IOtoken otoken) public view returns (PotionBuyInfo memory) {
-        return _potionBuyInfo[otoken];
+    function getPotionBuyInfo(address potion) public view returns (PotionBuyInfo memory) {
+        return _potionBuyInfo[potion];
     }
 }

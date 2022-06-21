@@ -71,6 +71,8 @@ contract UniswapV3OracleUpgradeable is RolesManagerUpgradeable {
         @param info The swap information for the pair
 
         @dev Only the Keeper role can call this function
+
+        @dev See { SwapInfo }
      */
     function setSwapInfo(SwapInfo calldata info) external onlyKeeper {
         _swapInfo[info.inputToken][info.outputToken] = info;

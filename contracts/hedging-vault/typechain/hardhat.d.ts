@@ -89,6 +89,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapRouter__factory>;
     getContractFactory(
+      name: "PotionProtocolHelperUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PotionProtocolHelperUpgradeable__factory>;
+    getContractFactory(
       name: "PotionProtocolOracleUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionProtocolOracleUpgradeable__factory>;
@@ -129,13 +133,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOtoken__factory>;
     getContractFactory(
-      name: "OtokenInterface",
+      name: "IPotionLiquidityPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OtokenInterface__factory>;
+    ): Promise<Contracts.IPotionLiquidityPool__factory>;
     getContractFactory(
-      name: "UniswapV3SwapLib",
+      name: "SlippageUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UniswapV3SwapLib__factory>;
+    ): Promise<Contracts.SlippageUtils__factory>;
     getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -261,6 +265,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISwapRouter>;
     getContractAt(
+      name: "PotionProtocolHelperUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PotionProtocolHelperUpgradeable>;
+    getContractAt(
       name: "PotionProtocolOracleUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -311,15 +320,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IOtoken>;
     getContractAt(
-      name: "OtokenInterface",
+      name: "IPotionLiquidityPool",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.OtokenInterface>;
+    ): Promise<Contracts.IPotionLiquidityPool>;
     getContractAt(
-      name: "UniswapV3SwapLib",
+      name: "SlippageUtils",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.UniswapV3SwapLib>;
+    ): Promise<Contracts.SlippageUtils>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,

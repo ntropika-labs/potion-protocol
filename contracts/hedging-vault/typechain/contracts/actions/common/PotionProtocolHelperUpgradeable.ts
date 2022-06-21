@@ -119,14 +119,17 @@ export declare namespace PotionProtocolOracleUpgradeable {
   };
 }
 
-export interface PotionProtocolOracleUpgradeableInterface
+export interface PotionProtocolHelperUpgradeableInterface
   extends utils.Interface {
   functions: {
     "changeAdmin(address)": FunctionFragment;
     "changeKeeper(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getKeeper()": FunctionFragment;
+    "getPotion(address)": FunctionFragment;
     "getPotionBuyInfo(address)": FunctionFragment;
+    "getUSDC()": FunctionFragment;
+    "getUSDCBalance(address)": FunctionFragment;
     "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
@@ -136,7 +139,10 @@ export interface PotionProtocolOracleUpgradeableInterface
       | "changeKeeper"
       | "getAdmin"
       | "getKeeper"
+      | "getPotion"
       | "getPotionBuyInfo"
+      | "getUSDC"
+      | "getUSDCBalance"
       | "setPotionBuyInfo"
   ): FunctionFragment;
 
@@ -147,8 +153,14 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getPotion", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getUSDCBalance",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -166,8 +178,14 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPotion", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPotionBuyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getUSDCBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -215,12 +233,12 @@ export type KeeperChangedEvent = TypedEvent<
 
 export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
 
-export interface PotionProtocolOracleUpgradeable extends BaseContract {
+export interface PotionProtocolHelperUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PotionProtocolOracleUpgradeableInterface;
+  interface: PotionProtocolHelperUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -256,10 +274,22 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getKeeper(overrides?: CallOverrides): Promise<[string]>;
 
+    getPotion(
+      hedgedAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
+
+    getUSDC(overrides?: CallOverrides): Promise<[string]>;
+
+    getUSDCBalance(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -281,10 +311,19 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   getKeeper(overrides?: CallOverrides): Promise<string>;
 
+  getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
+
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
   ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+  getUSDC(overrides?: CallOverrides): Promise<string>;
+
+  getUSDCBalance(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   setPotionBuyInfo(
     info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -300,10 +339,19 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getKeeper(overrides?: CallOverrides): Promise<string>;
 
+    getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
+
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+    getUSDC(overrides?: CallOverrides): Promise<string>;
+
+    getUSDCBalance(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -349,8 +397,20 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPotion(
+      hedgedAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPotionBuyInfo(
       potion: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUSDCBalance(
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -375,8 +435,20 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getPotion(
+      hedgedAsset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPotionBuyInfo(
       potion: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUSDCBalance(
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
