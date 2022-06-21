@@ -1,0 +1,45 @@
+# Setup the node environment and install dependencies reading from cache if available
+
+on:
+  workflow_call:
+
+jobs:
+  setup-environment:
+    name: Setup environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn
+        uses: actions/cache@v3
+        id: yarn-cache # (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-cache-
+
+      - name: Cache node modules
+        id: node-modules-cache
+        uses: actions/cache@v3
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-node-modules-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-cache-
+
+      - name: Install dependencies
+        if: |
+          steps.yarn-cache.outputs.cache-hit != 'true' ||
+          steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: yarn --immutable --immutable-cache --prefer-offline
