@@ -94,6 +94,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
         class="flex flex-wrap radial-bg-glass font-poppins font-semibold text-xs rounded-t-2xl"
       >
         <div
+          test-claim-table-expired-tab-switch
           class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
           :class="getActiveTabColors(activeTab === tabs.expired)"
           @click="activeTab = tabs.expired"
@@ -102,6 +103,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
         </div>
 
         <div
+          test-claim-table-active-tab-switch
           class="cursor-pointer w-1/2 py-4 border-b-2 text-center uppercase transition"
           :class="getActiveTabColors(activeTab === tabs.active)"
           @click="activeTab = tabs.active"
