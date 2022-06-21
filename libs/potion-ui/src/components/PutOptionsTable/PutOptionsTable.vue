@@ -45,7 +45,11 @@ const onButtonPressed = (index: number, cellIndex: number) =>
         </th>
       </thead>
       <tbody v-if="isNotEmpty" class="font-serif font-bold text-base">
-        <tr v-for="(row, index) in dataset" :key="`row-${index}`">
+        <tr
+          v-for="(row, index) in dataset"
+          :key="`row-${index}`"
+          test-table-row
+        >
           <td
             v-for="(cell, cellIndex) in row"
             :key="`cell-${index}-${cellIndex}`"

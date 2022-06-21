@@ -213,7 +213,6 @@ const route = useRoute();
 const router = useRouter();
 const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
 const onTemplateIdNavigation = (templateId: string) => {
-  console.log("navigate to template id", templateId);
   router.push({ name: "pool-template", params: { templateId } });
 };
 

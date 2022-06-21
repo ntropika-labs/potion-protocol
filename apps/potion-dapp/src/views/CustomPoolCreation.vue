@@ -97,9 +97,9 @@ import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import {
   useAllCollateralizedProductsUnderlyingQuery,
-  useGetNumberOfPoolsFromUserQuery,
+  useGetLatestPoolIdQuery,
 } from "subgraph-queries/generated/urql";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useRouter } from "vue-router";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
@@ -177,24 +177,17 @@ const toggleTokenSelection = (address: string) => {
 };
 
 const updateTokenPrice = async (token: Token) => {
-  console.log("[updateTokenPrice] for: ", token.name);
-  const { success, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
+  const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko(
+    undefined,
     token.address
   );
   try {
-    await fetchPrice();
-
-    console.log(
-      "[updateTokenPrice] completed for: ",
-      token.name,
-      success.value
-    );
+    await fetchTokenPrice();
   } catch (error) {
     console.error(
       "Error while fetching token price. Affected token: " + token.name
     );
   } finally {
-    console.log("[updateTokenPrice] running finally ");
     tokenPricesMap.value.set(token.address, {
       loading: false,
       price: price.value,
@@ -283,19 +276,15 @@ const {
 const userPoolsQueryVariables = computed(() => {
   return {
     lp: walletAddress.value,
-    ids: [""],
   };
 });
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+const { data: userPools } = useGetLatestPoolIdQuery({
   variables: userPoolsQueryVariables,
 });
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
 const poolId = computed(() => {
-  return userPoolsCount.value + 1;
+  const id = userPools?.value?.pools?.[0]?.poolId;
+  return id ? 1 + parseInt(id) : 0;
 });
 
 const amountNeededToApprove = computed(() => {
@@ -430,18 +419,18 @@ const {
 } = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  createTransactionNotification(transaction, "Creating pool");
+  createTransactionNotification(transaction, t("creating_pool"));
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Pool created");
+  createReceiptNotification(receipt, t("pool_created"));
 });
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, "Approving USDC");
+  createTransactionNotification(transaction, t("approving_usdc"));
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, "USDC spending approved");
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>

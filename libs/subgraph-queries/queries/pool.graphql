@@ -34,7 +34,12 @@ query getPoolsFromCriteria(
             d
             maxUtil
           }
-          pools(first: 1000, orderBy: averageCost, orderDirection: asc) {
+          pools(
+            first: 1000
+            orderBy: averageCost
+            orderDirection: asc
+            where: { utilization_lt: 100 }
+          ) {
             id
             size
             locked
@@ -46,6 +51,12 @@ query getPoolsFromCriteria(
         }
       }
     }
+  }
+}
+
+query getLatestPoolId($lp: Bytes) {
+  pools(where: { lp: $lp }, first: 1, orderBy: poolId, orderDirection: desc) {
+    poolId
   }
 }
 

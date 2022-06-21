@@ -6,7 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
   useGetTemplateQuery,
-  useGetNumberOfPoolsFromUserQuery,
+  useGetLatestPoolIdQuery,
 } from "subgraph-queries/generated/urql";
 import type {
   BondingCurveParams,
@@ -30,7 +30,7 @@ import { etherscanUrl } from "@/helpers";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTemplateSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
@@ -106,13 +106,14 @@ const fetchAssetsPrice = async () => {
 
   try {
     const promises = addresses.map(async (address) => {
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(address);
+      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
 
-      await fetchPrice();
+      await fetchTokenPrice();
 
-      prices.set(address, formattedPrice.value);
+      prices.set(address, price.value);
     });
     await Promise.allSettled(promises);
+    tokenPricesMap.value = prices;
   } catch (error) {
     console.error("Error while fetching token prices.");
   }
@@ -206,20 +207,16 @@ const {
 const userPoolsQueryVariables = computed(() => {
   return {
     lp: walletAddress.value,
-    ids: [""],
   };
 });
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+const { data: userPools } = useGetLatestPoolIdQuery({
   pause: isNotConnected,
   variables: userPoolsQueryVariables,
 });
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
 const clonedPoolId = computed(() => {
-  return userPoolsCount.value + 1;
+  const id = userPools?.value?.pools?.[0]?.poolId;
+  return id ? 1 + parseInt(id) : 0;
 });
 
 const handleCloneTemplate = async () => {
@@ -229,12 +226,6 @@ const handleCloneTemplate = async () => {
     await fetchUserCollateralAllowance();
   } else {
     if (clonedPoolId.value) {
-      console.log(
-        clonedPoolId.value,
-        liquidity.value,
-        bondingCurveParams.value,
-        criterias.value
-      );
       await depositAndCreateCurveAndCriteria(
         clonedPoolId.value,
         liquidity.value,
@@ -262,19 +253,19 @@ const {
 } = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  createTransactionNotification(transaction, "Creating pool");
+  createTransactionNotification(transaction, t("creating_pool"));
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Pool created");
+  createReceiptNotification(receipt, t("pool_created"));
 });
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, "Approving USDC");
+  createTransactionNotification(transaction, t("approving_usdc"));
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, "USDC spending approved");
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
 <template>

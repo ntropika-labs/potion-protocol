@@ -15,15 +15,19 @@
       <div class="flex justify-between mt-4">
         <BaseTag>{{ props.unit }}</BaseTag>
         <BaseInput
-          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) w-full px-2 font-serif text-xl font-bold"
+          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) px-2 font-serif text-xl font-bold grow"
           type="number"
           :readonly="props.readonly"
           :disabled="props.disabled"
           :model-value="props.modelValue"
+          :min="props.min"
+          :max="props.max"
           @update:model-value="handleInput"
         ></BaseInput>
         <button @click="emits('update:modelValue', handleSetMax())">
-          <BaseTag :is-empty="true">MAX</BaseTag>
+          <BaseTag class="transition hover:bg-primary-500" :is-empty="true"
+            >MAX</BaseTag
+          >
         </button>
       </div>
     </label>
@@ -60,7 +64,9 @@ export interface Props {
   readonly?: boolean;
   modelValue: number;
   footerDescription?: string;
+  footerValue?: string;
   maxDecimals?: number;
+  useUnit?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   color: "glass",
@@ -73,6 +79,8 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: 1,
   footerDescription: "Balance",
   maxDecimals: 6,
+  footerValue: "",
+  useUnit: true,
 });
 
 const emits = defineEmits(["update:modelValue", "validInput"]);
@@ -104,17 +112,24 @@ const inputIsValid = computed(() => {
   }
   return true;
 });
+emits("validInput", inputIsValid.value);
 
 watch(inputIsValid, () => {
   emits("validInput", inputIsValid.value);
 });
-
+const unit = computed(() => {
+  if (props.useUnit) {
+    return props.unit;
+  } else return "";
+});
 const footerText = computed(() => {
-  if (inputIsValid.value) {
+  if (inputIsValid.value && props.footerValue === "") {
     return `${props.footerDescription}: ${currencyFormatter(
       props.max,
-      props.unit
+      unit.value
     )}`;
+  } else if (inputIsValid.value && props.footerValue !== "") {
+    return `${props.footerDescription}: ${props.footerValue}`;
   } else {
     if (decimalCount(props.modelValue) > props.maxDecimals) {
       return `The max number of decimals is ${props.maxDecimals}`;
@@ -123,8 +138,8 @@ const footerText = computed(() => {
         props.footerDescription
       } is ${currencyFormatter(
         props.max,
-        props.unit
-      )} - Minimum is ${currencyFormatter(props.min, props.unit)}.`;
+        unit.value
+      )} - Minimum is ${currencyFormatter(props.min, unit.value)}.`;
     }
   }
 });

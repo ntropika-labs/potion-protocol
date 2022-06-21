@@ -54,7 +54,7 @@ onUnmounted(() => {
       <div
         class="col-span-3 font-medium leading-none text-white self-stretch flex flex-col gap-2 justify-around break-words pl-2"
       >
-        <p class="text-sm">{{ props.title }}</p>
+        <p class="text-sm uppercase">{{ props.title }}</p>
         <p class="text-xs">{{ props.body }}</p>
         <a
           v-if="props.cta"

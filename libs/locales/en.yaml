@@ -21,7 +21,7 @@ cloned: Cloned
 collateral: Collateral
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 create_pool: create pool
 create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
@@ -101,9 +101,41 @@ utilization: utilization
 utilized_capital: Utilized Capital
 view_pool_recipe: view pool recipe
 withdraw: Withdraw
+current_price: current price
+expiry_date: expiry date
+days: days
+your_potion_expires_in: your potion expires in
+max_number_of_potions: max number of potions
+number_of_potions: number of potions
+max_value: max value
+available_potions: available potions
+market_size: market size
+price_per_potion: price per potion
+total: total
+slippage_tolerance: slippage tolerance
+similar_potions: similar potions
+similar_potion_message: You are saving { dollars } in gas by buying an existing Potion
 withdraw_capital: Withdraw capital
 withdraw_expired_potions: Expired Potions ready to be withdrawn.
 wrong_bonding_curve_params: parameters aren't valid
 your_liquidity: Your liquidity
 your_put_recipe: Your put recipe
 your_strike_price: your strike price
+show: show
+buy_potion: buy potion
+invalid_potion: invalid potion
+not_enough_collateral: not enough collateral
+creating_pool: creating pool
+pool_created: pool created
+approving_usdc: approving usdc
+usdc_approved: usdc approved
+buying_potion: buying potion
+potion_bought: potion bought
+depositing_liquidity: depositing liquidity
+liquidity_deposited: liquidity deposited
+withdrawing_liquidity: withdrawing liquidity
+liquidity_withdrawn: liquidity withdrawn
+claiming_collateral: claiming collateral
+collateral_claimed: collateral claimed
+not_enough_usdc: not enough usdc
+balance: balance

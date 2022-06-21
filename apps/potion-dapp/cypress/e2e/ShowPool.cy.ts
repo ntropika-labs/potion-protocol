@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Show Pool Flow", () => {
-  it("Can visit the edit page", () => {
+  it("Can visit the pool page", () => {
     cy.viewport(1920, 1080);
     cy.visit(
       "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0"
@@ -22,7 +22,7 @@ describe("Show Pool Flow", () => {
       .first()
       .then(($el) => {
         expectedLiquidityNumber = parseFloat($el.text().slice(1)) - 101;
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
       })
       .then(() => {
         cy.get("[test-liquidity-card-withdraw] input").clear().type("101");
@@ -36,7 +36,7 @@ describe("Show Pool Flow", () => {
           .contains("$" + expectedLiquidityNumber);
       });
 
-    console.log(expectedLiquidityNumber);
+    console.info(expectedLiquidityNumber);
   });
 
   it("Can deposit", () => {
@@ -47,10 +47,10 @@ describe("Show Pool Flow", () => {
       .first()
       .then(($el) => {
         expectedLiquidityNumber = parseFloat($el.text().slice(1)) + 101;
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
       })
       .then(() => {
-        console.log(expectedLiquidityNumber);
+        console.info(expectedLiquidityNumber);
         cy.get("[test-liquidity-card-deposit] input").clear().type("101");
 
         cy.get("[test-liquidity-card-footer-deposit]>button")

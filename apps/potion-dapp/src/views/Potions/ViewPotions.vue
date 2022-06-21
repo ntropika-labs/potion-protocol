@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { usePersonalPotions } from "@/composables/usePotions";
-import { BaseCard, LabelValue, BaseButton, PotionCard } from "potion-ui";
+import { BaseCard, LabelValue, BaseButton, MyPotionCard } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { computed, onMounted, ref, watch } from "vue";
 import InnerNav from "@/components/InnerNav.vue";
@@ -77,7 +77,7 @@ const redeemablePayoutsMap = computed(() => {
   const result = new Map<string, number>();
   Array.from(redeemableBalancesMap.value.entries()).forEach(([key, value]) => {
     const payout = expiredPotionsPayouts.value.get(key);
-    if (payout && value !== "0") {
+    if (payout && parseInt(value) !== 0) {
       result.set(key, parseFloat(payout));
     }
   });
@@ -227,7 +227,7 @@ watch(redeemReceipt, (receipt) =>
         <template v-if="activePotions.length > 0">
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Get price from oracle composable -->
-            <PotionCard
+            <MyPotionCard
               v-for="(potion, index) in activePotions"
               :key="`${potion.id}${index}`"
               :withdrawable="false"
@@ -238,7 +238,8 @@ watch(redeemReceipt, (receipt) =>
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
               :current-payout="getActivePotionPayout(potion.otoken.id)"
-            ></PotionCard>
+            >
+            </MyPotionCard>
           </div>
           <div class="flex justify-center mt-6">
             <BaseButton
@@ -274,7 +275,7 @@ watch(redeemReceipt, (receipt) =>
         </div>
         <template v-if="expiredPotions.length > 0">
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <PotionCard
+            <MyPotionCard
               v-for="(potion, index) in expiredPotions"
               :key="`${potion.id}${index}`"
               text-potions-expired-potion-card
@@ -290,7 +291,7 @@ watch(redeemReceipt, (receipt) =>
                 () =>
                   handleWithdrawPotion(potion.otoken.id, potion.numberOfOTokens)
               "
-            ></PotionCard>
+            ></MyPotionCard>
           </div>
           <div class="flex justify-center mt-6">
             <BaseButton
