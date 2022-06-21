@@ -45,11 +45,11 @@ jobs:
         with:
           install: false
           start: yarn preview
-          wait-on: ${{ env.PREVIEW_URL }}
+          wait-on: "$env:PREVIEW_URL"
           browser: chrome
           record: false
           working-directory: apps/potion-dapp
-          config: pageLoadTimeout=100000,baseUrl=${{ env.PREVIEW_URL }}
+          config: "pageLoadTimeout=100000,baseUrl=$env:PREVIEW_URL"
 
       - name: Archive screenshots code coverage results
         uses: actions/upload-artifact@v2
