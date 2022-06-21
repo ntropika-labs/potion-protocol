@@ -238,7 +238,8 @@ watch(redeemReceipt, (receipt) =>
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
               :current-payout="getActivePotionPayout(potion.otoken.id)"
-            ></MyPotionCard>
+            >
+            </MyPotionCard>
           </div>
           <div class="flex justify-center mt-6">
             <BaseButton
@@ -274,7 +275,7 @@ watch(redeemReceipt, (receipt) =>
         </div>
         <template v-if="expiredPotions.length > 0">
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <PotionCard
+            <MyPotionCard
               v-for="(potion, index) in expiredPotions"
               :key="`${potion.id}${index}`"
               text-potions-expired-potion-card
@@ -290,7 +291,7 @@ watch(redeemReceipt, (receipt) =>
                 () =>
                   handleWithdrawPotion(potion.otoken.id, potion.numberOfOTokens)
               "
-            ></PotionCard>
+            ></MyPotionCard>
           </div>
           <div class="flex justify-center mt-6">
             <BaseButton
