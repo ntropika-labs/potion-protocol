@@ -4,9 +4,9 @@ name: Development branch actions
 on:
   workflow_dispatch:
   push:
-    branches: [feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
   pull_request:
-    branches: [feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
 
 permissions:
   contents: read
@@ -22,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Setup environment
         uses: ./.github/workflows/call-setup-environment.yml
 
