@@ -144,3 +144,4 @@ most_purchased: most purchased
 most_purchased_description: Potions that have been purchased the most times.
 most_collateralized: most collateralized
 most_collateralized_description: Top Potions by Locked Collateral
+number_of_transactions: number of transactions

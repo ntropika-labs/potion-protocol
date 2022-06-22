@@ -314,6 +314,9 @@ const {
   ethPrice
 );
 
+const numberOfTransactions = computed(() => {
+  return Math.ceil(routerResult.value?.counterparties.length ?? 0 / 100);
+});
 // Steps validity
 const areStepsValid = computed(() => {
   return (
@@ -611,6 +614,12 @@ const similarPotionShown = computed(() => {
             <div class="flex gap-2 items-center justify-between w-full">
               <p class="capitalize">{{ t("number_of_potions") }}</p>
               <p>{{ potionQuantity }}</p>
+            </div>
+          </div>
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("number_of_transactions") }}</p>
+              <p>{{ numberOfTransactions }}</p>
             </div>
           </div>
           <div
