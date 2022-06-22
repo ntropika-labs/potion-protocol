@@ -34,7 +34,7 @@
         :title="t('expiration')"
         :value="props.expiration"
         value-type="timestamp"
-        class="group-hover:opacity-0 transition"
+        class="group-hover:opacity-0 transition justify-self-end"
       />
     </div>
     <div
