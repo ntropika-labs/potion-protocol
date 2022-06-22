@@ -1,6 +1,12 @@
 /// <reference types="cypress" />
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../support/index.d.ts" />
 
 describe("Pool template cloning Flow", () => {
+  it("Can start the blockchain with the correct seed", () => {
+    cy.seed("/opt/e2e-pool-template");
+  });
+
   it("Can visit the edit page", () => {
     cy.viewport(1920, 1080);
     cy.visit(

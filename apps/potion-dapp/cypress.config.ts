@@ -8,7 +8,6 @@ export default defineConfig({
       // implement node event listeners here
       console.log(on, config);
     },
-    supportFile: false,
   },
 
   component: {
