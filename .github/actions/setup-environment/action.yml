@@ -4,9 +4,6 @@ description: "Install Node environment reading packages from cache if available"
 runs:
   using: "composite"
   step:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-
     - name: Install node
       uses: actions/setup-node@v3
       with:
