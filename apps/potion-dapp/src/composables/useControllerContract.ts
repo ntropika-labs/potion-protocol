@@ -3,9 +3,9 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { ControllerInterface } from "potion-contracts/typechain";
+import type { ControllerInterface } from "@potion-protocol/core/typechain";
 
-import { ControllerInterface__factory } from "potion-contracts/typechain";
+import { ControllerInterface__factory } from "@potion-protocol/core/typechain";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 import { useAddressBookContract } from "./useAddressBookContract";
