@@ -9,7 +9,7 @@ import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria,
+  OrderedCriteria
 } from "contracts-math";
 import { chunk as _chunk } from "lodash-es";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
@@ -357,7 +357,20 @@ export function usePotionLiquidityPoolContract() {
     } else throw new Error("Connect your wallet first");
   };
 
-  // Method to conditionally buy or create and buy otokens
+  /**
+   * Method to conditionally buy or create and buy otokens
+   * if the number of counterparties is > maxCounterparties, we split the order by chunking the counterparties by 100
+   * This is done to prevent gas limits to be hit. It's to be considered an hack solution for a very edge case considering the ethereum network and how the router works.
+   * @param counterparties
+   * @param maxPremium
+   * @param oTokenAddress
+   * @param underlyingAddress
+   * @param strikePrice
+   * @param duration
+   * @param isPut
+   * @param strikeAddress
+   * @param collateralAddress
+   */
   const buyPotions = async (
     counterparties: CounterpartyDetails[],
     maxPremium: number,
@@ -369,8 +382,27 @@ export function usePotionLiquidityPoolContract() {
     strikeAddress = PotionTestUSD.address.toLowerCase(),
     collateralAddress = PotionTestUSD.address.toLowerCase()
   ) => {
-    if (oTokenAddress) {
+    const contractSigner = initContractSigner();
+    const contractInterface = contractSigner.interface;
+    // if you're trying to buy from an oToken you know and the counterparties are less than 100, run normally
+    if (oTokenAddress && counterparties.length <= maxCounterparties) {
       await buyOtokens(oTokenAddress, counterparties, maxPremium);
+    } else if (oTokenAddress && counterparties.length > maxCounterparties) {
+      // else, chunk the counterparties and create a tx for each of the chunks
+      const cpChunks = _chunk(counterparties, maxCounterparties);
+      let newMaxPremium = 0;
+      for (const chunk of cpChunks) {
+        const receipt = await buyOtokens(
+          oTokenAddress,
+          chunk,
+          maxPremium - newMaxPremium
+        );
+        const log = contractInterface.parseLog(
+          receipt.logs[receipt.logs.length - 1]
+        );
+        newMaxPremium = newMaxPremium - parseFloat(formatUnits(log.args[3], 6));
+      }
+      //if we do not pass otokenaddress, this means that we want to know if the otoken exists before creating it
     } else if (
       underlyingAddress &&
       strikeAddress &&
@@ -380,9 +412,9 @@ export function usePotionLiquidityPoolContract() {
       isPut &&
       maxPremium
     ) {
+      // if we don't know the otokenaddress, we need to check if an otoken with the same parameters exists
+      // and calculate the valid expiration for it
       const { getTargetOtokenAddress, getOtoken } = useOtokenFactory();
-      const contractSigner = initContractSigner();
-      const contractInterface = contractSigner.interface;
       const { getBlock, blockTimestamp } = useEthersProvider();
       await getBlock("latest");
       const validExpiry = createValidExpiry(blockTimestamp.value, duration);
@@ -402,10 +434,13 @@ export function usePotionLiquidityPoolContract() {
         validExpiry,
         isPut
       );
+      // getOtokens returns 0x0000... if the otoken does not exist and it return a valid address if it exists
+      // getTargetOtokenAddress creates a valid address for an hypotetical otoken. If the addresses are the same, the otoken exists
       const exists = newOtokenAddress === existingOtokenAddress;
-      if (counterparties.length >= maxCounterparties) {
+      // if we hit the counterparties limit we chunk them
+      if (counterparties.length > maxCounterparties) {
         const cpChunks = _chunk(counterparties, maxCounterparties);
-
+        //if the otoken exists, we fire n TX by calling buyOtokens
         if (exists) {
           let newMaxPremium = 0;
           for (const chunk of cpChunks) {
@@ -421,11 +456,12 @@ export function usePotionLiquidityPoolContract() {
               newMaxPremium - parseFloat(formatUnits(log.args[3], 6));
           }
         } else {
+          //if the otoken doesn't exist, we need to create one with the first tx by selecting the first counterparty
           let newMaxPremium = 0;
           const receipt = await createAndBuyOtokens(
             underlyingAddress,
             strikeAddress,
-            collateralAddress,
+            cpChunks[0],
             strikePrice,
             validExpiry,
             isPut,
@@ -437,7 +473,7 @@ export function usePotionLiquidityPoolContract() {
           );
           newMaxPremium =
             newMaxPremium - parseFloat(formatUnits(log.args[3], 6));
-
+          // we get the address of the otoken created above
           const existingOtokenAddress = await getOtoken(
             underlyingAddress,
             strikeAddress,
@@ -446,6 +482,7 @@ export function usePotionLiquidityPoolContract() {
             validExpiry,
             isPut
           );
+          // we can then buy from that otoken by starting from the second counterparty
           for (let index = 1; index < cpChunks.length; index++) {
             const receipt = await buyOtokens(
               existingOtokenAddress,
@@ -459,8 +496,10 @@ export function usePotionLiquidityPoolContract() {
               newMaxPremium + parseFloat(formatUnits(log.args[3], 6));
           }
         }
+        //we buy the otoken with the address calculated before
       } else if (exists) {
         await buyOtokens(existingOtokenAddress, counterparties, maxPremium);
+        // we buy the otoken by creating it
       } else {
         await createAndBuyOtokens(
           underlyingAddress,
@@ -512,5 +551,6 @@ export function usePotionLiquidityPoolContract() {
     buyOtokens,
     createAndBuyOtokens,
     buyPotions,
+    maxCounterparties,
   };
 }

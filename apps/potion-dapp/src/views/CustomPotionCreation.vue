@@ -315,7 +315,9 @@ const {
 );
 
 const numberOfTransactions = computed(() => {
-  return Math.ceil(routerResult.value?.counterparties.length ?? 0 / 100);
+  return Math.ceil(
+    routerResult.value?.counterparties.length ?? 0 / maxCounterparties
+  );
 });
 // Steps validity
 const areStepsValid = computed(() => {
@@ -395,7 +397,7 @@ const buyPotionButtonState = computed(() => {
     disabled: true,
   };
 });
-const { buyPotions, buyPotionTx, buyPotionReceipt } =
+const { buyPotions, buyPotionTx, buyPotionReceipt, maxCounterparties } =
   usePotionLiquidityPoolContract();
 const handleBuyPotions = async () => {
   if (
