@@ -102,7 +102,7 @@ export declare namespace PotionProtocolOracleUpgradeable {
   export type PotionBuyInfoStruct = {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-    expectedPremium: BigNumberish;
+    expectedPremiumInUSDC: BigNumberish;
     totalSizeInPotions: BigNumberish;
   };
 
@@ -114,37 +114,64 @@ export declare namespace PotionProtocolOracleUpgradeable {
   ] & {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-    expectedPremium: BigNumber;
+    expectedPremiumInUSDC: BigNumber;
     totalSizeInPotions: BigNumber;
+  };
+}
+
+export declare namespace UniswapV3OracleUpgradeable {
+  export type SwapInfoStruct = {
+    inputToken: string;
+    outputToken: string;
+    expectedPriceRate: BigNumberish;
+    swapPath: BytesLike;
+  };
+
+  export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
+    inputToken: string;
+    outputToken: string;
+    expectedPriceRate: BigNumber;
+    swapPath: string;
   };
 }
 
 export interface PotionBuyActionInterface extends utils.Interface {
   functions: {
-    "canPositionBeExited()": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
+    "getOperator()": FunctionFragment;
     "getPotion(address)": FunctionFragment;
     "getPotionBuyInfo(address)": FunctionFragment;
+    "getStrategist()": FunctionFragment;
+    "getSwapInfo(address,address)": FunctionFragment;
+    "getSwapInputAmount(address,address,uint256)": FunctionFragment;
+    "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
+    "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
-    "initialize(address,address,address,address,address)": FunctionFragment;
+    "initialize(address,address,address,address,address,address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
+    "maxSwapDurationSecs()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "premiumSlippage()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
+    "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
+    "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
+    "setSwapSlippage(uint256)": FunctionFragment;
+    "swapSlippage()": FunctionFragment;
     "unpause()": FunctionFragment;
   };
 
@@ -154,32 +181,43 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "canRefund"
       | "canRefundETH"
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "enterPosition"
       | "exitPosition"
       | "getAdmin"
-      | "getKeeper"
       | "getLifecycleState"
+      | "getOperator"
       | "getPotion"
       | "getPotionBuyInfo"
+      | "getStrategist"
+      | "getSwapInfo"
+      | "getSwapInputAmount"
+      | "getSwapOutputAmount"
+      | "getSwapRouter"
       | "getUSDC"
       | "getUSDCBalance"
       | "initialize"
       | "maxPremiumPercentage"
+      | "maxSwapDurationSecs"
       | "pause"
       | "paused"
       | "premiumSlippage"
       | "refund"
       | "refundETH"
       | "setMaxPremiumPercentage"
+      | "setMaxSwapDuration"
       | "setPotionBuyInfo"
       | "setPremiumSlippage"
+      | "setSwapInfo"
+      | "setSwapSlippage"
+      | "swapSlippage"
       | "unpause"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values?: undefined
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
   encodeFunctionData(
@@ -188,7 +226,11 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -200,15 +242,38 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOperator",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getPotion", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapInfo",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapInputAmount",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapOutputAmount",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapRouter",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
   encodeFunctionData(
@@ -217,10 +282,25 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, string, string]
+    values: [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "maxPremiumPercentage",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxSwapDurationSecs",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -242,12 +322,28 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxSwapDuration",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
     values: [PotionProtocolOracleUpgradeable.PotionBuyInfoStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setPremiumSlippage",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapInfo",
+    values: [UniswapV3OracleUpgradeable.SwapInfoStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapSlippage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapSlippage",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
@@ -265,7 +361,11 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -277,14 +377,37 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOperator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPotion", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPotionBuyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInputAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapOutputAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapRouter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
@@ -295,6 +418,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxSwapDurationSecs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -310,6 +437,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setMaxSwapDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPotionBuyInfo",
     data: BytesLike
   ): Result;
@@ -317,28 +448,80 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "setPremiumSlippage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapSlippage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
     "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
+    "MaxPremiumPercentageChanged(uint256)": EventFragment;
+    "MaxSwapDurationChanged(uint256)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "PremiumSlippageChanged(uint256)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
+    "SwapSlippageChanged(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
+export interface ActionPositionEnteredEventObject {
+  investmentAsset: string;
+  amountToInvest: BigNumber;
+}
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
+>;
+
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
+
+export interface ActionPositionExitedEventObject {
+  investmentAsset: string;
+  amountReturned: BigNumber;
+}
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
+>;
+
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
+
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -354,17 +537,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
-}
-export type KeeperChangedEvent = TypedEvent<
-  [string, string],
-  KeeperChangedEventObject
->;
-
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
-
 export interface LifecycleStateChangedEventObject {
   prevState: number;
   newState: number;
@@ -377,12 +549,79 @@ export type LifecycleStateChangedEvent = TypedEvent<
 export type LifecycleStateChangedEventFilter =
   TypedEventFilter<LifecycleStateChangedEvent>;
 
+export interface MaxPremiumPercentageChangedEventObject {
+  maxPremiumPercentage: BigNumber;
+}
+export type MaxPremiumPercentageChangedEvent = TypedEvent<
+  [BigNumber],
+  MaxPremiumPercentageChangedEventObject
+>;
+
+export type MaxPremiumPercentageChangedEventFilter =
+  TypedEventFilter<MaxPremiumPercentageChangedEvent>;
+
+export interface MaxSwapDurationChangedEventObject {
+  maxSwapDurationSecs: BigNumber;
+}
+export type MaxSwapDurationChangedEvent = TypedEvent<
+  [BigNumber],
+  MaxSwapDurationChangedEventObject
+>;
+
+export type MaxSwapDurationChangedEventFilter =
+  TypedEventFilter<MaxSwapDurationChangedEvent>;
+
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
+}
+export type OperatorChangedEvent = TypedEvent<
+  [string, string],
+  OperatorChangedEventObject
+>;
+
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+
 export interface PausedEventObject {
   account: string;
 }
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface PremiumSlippageChangedEventObject {
+  premiumSlippage: BigNumber;
+}
+export type PremiumSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  PremiumSlippageChangedEventObject
+>;
+
+export type PremiumSlippageChangedEventFilter =
+  TypedEventFilter<PremiumSlippageChangedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
+
+export interface SwapSlippageChangedEventObject {
+  swapSlippage: BigNumber;
+}
+export type SwapSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  SwapSlippageChangedEventObject
+>;
+
+export type SwapSlippageChangedEventFilter =
+  TypedEventFilter<SwapSlippageChangedEvent>;
 
 export interface UnpausedEventObject {
   account: string;
@@ -418,35 +657,46 @@ export interface PotionBuyAction extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<[boolean]>;
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canExit: boolean }>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     enterPosition(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    exitPosition(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    exitPosition(
+      investmentAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
+
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getPotion(
       hedgedAsset: string,
@@ -458,6 +708,30 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
 
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<[UniswapV3OracleUpgradeable.SwapInfoStructOutput]>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
+
     getUSDC(overrides?: CallOverrides): Promise<[string]>;
 
     getUSDCBalance(
@@ -466,15 +740,22 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<[BigNumber]>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
-      loanedAsset: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
+      investmentAsset: string,
       USDC: string,
       potionLiquidityPoolManager: string,
+      maxPremiumPercentage_: BigNumberish,
+      premiumSlippage_: BigNumberish,
+      swapSlippage_: BigNumberish,
+      maxSwapDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -502,6 +783,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -512,40 +798,63 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setSwapInfo(
+      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+  canPositionBeExited(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   enterPosition(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<void>;
+    investmentAsset: string,
+    amountToInvest: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  exitPosition(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  exitPosition(
+    investmentAsset: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
+
+  getOperator(overrides?: CallOverrides): Promise<string>;
 
   getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
 
@@ -553,6 +862,30 @@ export interface PotionBuyAction extends BaseContract {
     potion: string,
     overrides?: CallOverrides
   ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
+
+  getSwapInfo(
+    inputToken: string,
+    outputToken: string,
+    overrides?: CallOverrides
+  ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+
+  getSwapInputAmount(
+    inputToken: string,
+    outputToken: string,
+    amountOut: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSwapOutputAmount(
+    inputToken: string,
+    outputToken: string,
+    amountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
   getUSDC(overrides?: CallOverrides): Promise<string>;
 
@@ -562,15 +895,22 @@ export interface PotionBuyAction extends BaseContract {
   ): Promise<BigNumber>;
 
   initialize(
-    adminRole: string,
-    keeperRole: string,
-    loanedAsset: string,
+    adminAddress: string,
+    strategistAddress: string,
+    operatorAddress: string,
+    investmentAsset: string,
     USDC: string,
     potionLiquidityPoolManager: string,
+    maxPremiumPercentage_: BigNumberish,
+    premiumSlippage_: BigNumberish,
+    swapSlippage_: BigNumberish,
+    maxSwapDurationSecs_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -598,6 +938,11 @@ export interface PotionBuyAction extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMaxSwapDuration(
+    durationSeconds: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setPotionBuyInfo(
     info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -608,34 +953,63 @@ export interface PotionBuyAction extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setSwapInfo(
+    info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setSwapSlippage(
+    swapSlippage_: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
   unpause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
-
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
-
-    enterPosition(
-      arg0: string,
-      arg1: BigNumberish,
+    changeAdmin(
+      newAdminAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    exitPosition(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    exitPosition(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
+
+    getOperator(overrides?: CallOverrides): Promise<string>;
 
     getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
 
@@ -643,6 +1017,30 @@ export interface PotionBuyAction extends BaseContract {
       potion: string,
       overrides?: CallOverrides
     ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
+
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
     getUSDC(overrides?: CallOverrides): Promise<string>;
 
@@ -652,15 +1050,22 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
-      loanedAsset: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
+      investmentAsset: string,
       USDC: string,
       potionLiquidityPoolManager: string,
+      maxPremiumPercentage_: BigNumberish,
+      premiumSlippage_: BigNumberish,
+      swapSlippage_: BigNumberish,
+      maxSwapDurationSecs_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -686,6 +1091,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
       overrides?: CallOverrides
@@ -696,30 +1106,51 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setSwapInfo(
+      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
     unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
       prevState?: BigNumberish | null,
@@ -730,43 +1161,98 @@ export interface PotionBuyAction extends BaseContract {
       newState?: BigNumberish | null
     ): LifecycleStateChangedEventFilter;
 
+    "MaxPremiumPercentageChanged(uint256)"(
+      maxPremiumPercentage?: null
+    ): MaxPremiumPercentageChangedEventFilter;
+    MaxPremiumPercentageChanged(
+      maxPremiumPercentage?: null
+    ): MaxPremiumPercentageChangedEventFilter;
+
+    "MaxSwapDurationChanged(uint256)"(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
+    MaxSwapDurationChanged(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
+
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "PremiumSlippageChanged(uint256)"(
+      premiumSlippage?: null
+    ): PremiumSlippageChangedEventFilter;
+    PremiumSlippageChanged(
+      premiumSlippage?: null
+    ): PremiumSlippageChangedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+
+    "SwapSlippageChanged(uint256)"(
+      swapSlippage?: null
+    ): SwapSlippageChangedEventFilter;
+    SwapSlippageChanged(swapSlippage?: null): SwapSlippageChangedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     enterPosition(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    exitPosition(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    exitPosition(
+      investmentAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotion(
       hedgedAsset: string,
@@ -778,6 +1264,30 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUSDCBalance(
@@ -786,15 +1296,22 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
-      loanedAsset: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
+      investmentAsset: string,
       USDC: string,
       potionLiquidityPoolManager: string,
+      maxPremiumPercentage_: BigNumberish,
+      premiumSlippage_: BigNumberish,
+      swapSlippage_: BigNumberish,
+      maxSwapDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -822,6 +1339,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -832,6 +1354,18 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setSwapInfo(
+      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -839,6 +1373,7 @@ export interface PotionBuyAction extends BaseContract {
 
   populateTransaction: {
     canPositionBeExited(
+      investmentAsset: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -850,31 +1385,36 @@ export interface PotionBuyAction extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      arg0: string,
-      overrides?: CallOverrides
+      investmentAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPotion(
       hedgedAsset: string,
@@ -886,6 +1426,30 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUSDCBalance(
@@ -894,15 +1458,24 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
-      loanedAsset: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
+      investmentAsset: string,
       USDC: string,
       potionLiquidityPoolManager: string,
+      maxPremiumPercentage_: BigNumberish,
+      premiumSlippage_: BigNumberish,
+      swapSlippage_: BigNumberish,
+      maxSwapDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     maxPremiumPercentage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxSwapDurationSecs(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -932,6 +1505,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -941,6 +1519,18 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    setSwapInfo(
+      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }

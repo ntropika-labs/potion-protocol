@@ -29,6 +29,25 @@ abstract contract PotionBuyActionV0 {
 
     uint256 public premiumSlippage;
 
+    /**
+        @notice The percentage of slippage that is allowed on Uniswap when it the asset is swapped for USDC and back
+
+        @dev The percentage is stored in the form of a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+     */
+
+    uint256 public swapSlippage;
+
+    /**
+        @notice The maximum duration of a Uniswap swap operation, in seconds
+     */
+    uint256 public maxSwapDurationSecs;
+
+    /// EVENTS
+    event MaxPremiumPercentageChanged(uint256 maxPremiumPercentage);
+    event PremiumSlippageChanged(uint256 premiumSlippage);
+    event SwapSlippageChanged(uint256 swapSlippage);
+    event MaxSwapDurationChanged(uint256 maxSwapDurationSecs);
+
     /// FUNCTIONS
 
     /**
@@ -45,4 +64,16 @@ abstract contract PotionBuyActionV0 {
         @dev Reverts if the percentage is less than 0 or greater than 100
      */
     function setPremiumSlippage(uint256 premiumSlippage_) external virtual;
+
+    /**
+        @notice Sets the new slippage allowed on Uniswap when the assets are swapped
+
+        @dev Reverts if the percentage is less than 0 or greater than 100
+     */
+    function setSwapSlippage(uint256 swapSlippage_) external virtual;
+
+    /**
+        @notice Sets the maximum duration in seconds for a Uniswap swap operation
+     */
+    function setMaxSwapDuration(uint256 durationSeconds) external virtual;
 }

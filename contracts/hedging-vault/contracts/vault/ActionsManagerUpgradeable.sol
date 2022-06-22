@@ -53,10 +53,10 @@ contract ActionsManagerUpgradeable is Initializable {
         initialize the RolesManagerUpgradeable contract
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __ActionsManager_init_unchained(address[] calldata actions) internal onlyInitializing {
+    function __ActionsManager_init_unchained(IAction[] calldata actions) internal onlyInitializing {
         _actions = new IAction[](actions.length);
         for (uint256 i = 0; i < actions.length; i++) {
-            _actions[i] = IAction(actions[i]);
+            _actions[i] = actions[i];
         }
 
         emit ActionsAdded(_actions);

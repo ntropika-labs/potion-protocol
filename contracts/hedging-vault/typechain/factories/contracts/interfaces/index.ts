@@ -2,5 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { IAction__factory } from "./IAction__factory";
+export { IOpynController__factory } from "./IOpynController__factory";
 export { IOtoken__factory } from "./IOtoken__factory";
 export { IPotionLiquidityPool__factory } from "./IPotionLiquidityPool__factory";

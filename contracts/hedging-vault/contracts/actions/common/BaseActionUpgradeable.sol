@@ -45,11 +45,13 @@ abstract contract BaseActionUpgradeable is
      */
     // solhint-disable-next-line func-name-mixedcase
     function __BaseAction_init_chained(
-        address adminRole,
-        address keeperRole,
+        address adminAddress,
+        address strategistAddress,
+        address operatorAddress,
         address[] memory cannotRefundTokens
     ) internal onlyInitializing {
-        __RolesManager_init_unchained(adminRole, keeperRole);
+        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+        __EmergencyLock_init_unchained();
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundTokens, false);

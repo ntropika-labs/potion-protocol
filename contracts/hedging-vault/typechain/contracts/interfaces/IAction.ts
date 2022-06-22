@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -24,7 +28,7 @@ import type {
 
 export interface IActionInterface extends utils.Interface {
   functions: {
-    "canPositionBeExited()": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
   };
@@ -38,7 +42,7 @@ export interface IActionInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values?: undefined
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
@@ -62,8 +66,38 @@ export interface IActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
 }
+
+export interface ActionPositionEnteredEventObject {
+  investmentAsset: string;
+  amountToInvest: BigNumber;
+}
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
+>;
+
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
+
+export interface ActionPositionExitedEventObject {
+  investmentAsset: string;
+  amountReturned: BigNumber;
+}
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
+>;
+
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
 
 export interface IAction extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -93,80 +127,108 @@ export interface IAction extends BaseContract {
 
   functions: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canExit: boolean }>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   canPositionBeExited(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   enterPosition(
-    asset: string,
-    amountReceived: BigNumberish,
+    investmentAsset: string,
+    amountToInvest: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    asset: string,
+    investmentAsset: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    exitPosition(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    exitPosition(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+  };
 
   estimateGas: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

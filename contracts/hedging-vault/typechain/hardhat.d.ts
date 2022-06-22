@@ -137,6 +137,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
+      name: "IOpynController",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpynController__factory>;
+    getContractFactory(
       name: "IOtoken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOtoken__factory>;
@@ -148,10 +152,6 @@ declare module "hardhat/types/runtime" {
       name: "PercentageUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PercentageUtils__factory>;
-    getContractFactory(
-      name: "SlippageUtils",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SlippageUtils__factory>;
     getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -341,6 +341,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
+      name: "IOpynController",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpynController>;
+    getContractAt(
       name: "IOtoken",
       address: string,
       signer?: ethers.Signer
@@ -355,11 +360,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PercentageUtils>;
-    getContractAt(
-      name: "SlippageUtils",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SlippageUtils>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,

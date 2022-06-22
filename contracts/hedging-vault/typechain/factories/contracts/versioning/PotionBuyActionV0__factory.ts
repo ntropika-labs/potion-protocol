@@ -11,8 +11,73 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "maxPremiumPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "MaxPremiumPercentageChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "maxSwapDurationSecs",
+        type: "uint256",
+      },
+    ],
+    name: "MaxSwapDurationChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "premiumSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "PremiumSlippageChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "swapSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "SwapSlippageChanged",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "maxPremiumPercentage",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxSwapDurationSecs",
     outputs: [
       {
         internalType: "uint256",
@@ -53,6 +118,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "durationSeconds",
+        type: "uint256",
+      },
+    ],
+    name: "setMaxSwapDuration",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "premiumSlippage_",
         type: "uint256",
       },
@@ -60,6 +138,32 @@ const _abi = [
     name: "setPremiumSlippage",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "swapSlippage_",
+        type: "uint256",
+      },
+    ],
+    name: "setSwapSlippage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "swapSlippage",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

@@ -28,9 +28,11 @@ import type {
 export interface EmergencyLockUpgradeableInterface extends utils.Interface {
   functions: {
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
+    "getOperator()": FunctionFragment;
+    "getStrategist()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -39,9 +41,11 @@ export interface EmergencyLockUpgradeableInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "getAdmin"
-      | "getKeeper"
+      | "getOperator"
+      | "getStrategist"
       | "pause"
       | "paused"
       | "unpause"
@@ -49,11 +53,22 @@ export interface EmergencyLockUpgradeableInterface extends utils.Interface {
 
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getOperator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
@@ -63,11 +78,22 @@ export interface EmergencyLockUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -75,21 +101,23 @@ export interface EmergencyLockUpgradeableInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -105,16 +133,16 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
 }
-export type KeeperChangedEvent = TypedEvent<
+export type OperatorChangedEvent = TypedEvent<
   [string, string],
-  KeeperChangedEventObject
+  OperatorChangedEventObject
 >;
 
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
 
 export interface PausedEventObject {
   account: string;
@@ -122,6 +150,18 @@ export interface PausedEventObject {
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
 
 export interface UnpausedEventObject {
   account: string;
@@ -158,18 +198,25 @@ export interface EmergencyLockUpgradeable extends BaseContract {
 
   functions: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
+
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -183,18 +230,25 @@ export interface EmergencyLockUpgradeable extends BaseContract {
   };
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
+  getOperator(overrides?: CallOverrides): Promise<string>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -207,13 +261,26 @@ export interface EmergencyLockUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
+    changeAdmin(
+      newAdminAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
+    getOperator(overrides?: CallOverrides): Promise<string>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -224,28 +291,37 @@ export interface EmergencyLockUpgradeable extends BaseContract {
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
@@ -253,18 +329,25 @@ export interface EmergencyLockUpgradeable extends BaseContract {
 
   estimateGas: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -279,18 +362,25 @@ export interface EmergencyLockUpgradeable extends BaseContract {
 
   populateTransaction: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }

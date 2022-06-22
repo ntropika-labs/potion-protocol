@@ -47,7 +47,7 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Swaps the given amount of input asset for a certain amount of output asset
+        @notice Swaps the exact given amount of input asset for some amount of output asset
 
         @param inputToken The address of the input token to be swapped
         @param outputToken The address of the output token to be received
@@ -70,7 +70,6 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
         uint256 maxDuration
     ) internal returns (uint256 actualAmountOut) {
         SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
-
         uint256 expectedAmountOut = PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);
 
         UniswapV3SwapLib.SwapInputParameters memory swapParameters = UniswapV3SwapLib.SwapInputParameters({
@@ -82,11 +81,11 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
             swapPath: swapInfo.swapPath
         });
 
-        actualAmountOut = _swapRouter._swapInput(swapParameters);
+        actualAmountOut = _swapRouter.swapInput(swapParameters);
     }
 
     /**
-        @notice Swaps the amount of input asset to obtain an exact amount of output asset
+        @notice Swaps some amount of input asset to obtain an exact amount of output asset
 
         @param inputToken The address of the input token to be swapped
         @param outputToken The address of the output token to be received
@@ -109,7 +108,6 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
         uint256 maxDuration
     ) internal returns (uint256 actualAmountIn) {
         SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
-
         uint256 expectedAmountIn = PriceUtils.toInputAmount(swapInfo.expectedPriceRate, amountOut);
 
         UniswapV3SwapLib.SwapOutputParameters memory swapParameters = UniswapV3SwapLib.SwapOutputParameters({
@@ -121,7 +119,7 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
             swapPath: swapInfo.swapPath
         });
 
-        actualAmountIn = _swapRouter._swapOutput(swapParameters);
+        actualAmountIn = _swapRouter.swapOutput(swapParameters);
     }
 
     /**
@@ -129,5 +127,39 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
      */
     function getSwapRouter() public view returns (ISwapRouter) {
         return _swapRouter;
+    }
+
+    /**
+        @notice Returns the output amount that can be received from the given input amount,
+        when swapping from the input token to the output token
+
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountIn The exact amount of input token to be swapped
+     */
+    function getSwapOutputAmount(
+        address inputToken,
+        address outputToken,
+        uint256 amountIn
+    ) public view returns (uint256) {
+        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
+        return PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);
+    }
+
+    /**
+        @notice Returns the input amount needed to receive the exact given output amount,
+        when swapping from the input token to the output token
+
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountOut The exact amount of output token to be received
+     */
+    function getSwapInputAmount(
+        address inputToken,
+        address outputToken,
+        uint256 amountOut
+    ) public view returns (uint256) {
+        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
+        return PriceUtils.toInputAmount(swapInfo.expectedPriceRate, amountOut);
     }
 }

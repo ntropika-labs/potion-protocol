@@ -28,16 +28,18 @@ import type {
 
 export interface BaseActionUpgradeableInterface extends utils.Interface {
   functions: {
-    "canPositionBeExited()": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
+    "getOperator()": FunctionFragment;
+    "getStrategist()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
@@ -51,12 +53,14 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
       | "canRefund"
       | "canRefundETH"
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "enterPosition"
       | "exitPosition"
       | "getAdmin"
-      | "getKeeper"
       | "getLifecycleState"
+      | "getOperator"
+      | "getStrategist"
       | "pause"
       | "paused"
       | "refund"
@@ -66,7 +70,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values?: undefined
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
   encodeFunctionData(
@@ -75,7 +79,11 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -87,9 +95,16 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOperator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -118,7 +133,11 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -130,9 +149,16 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -142,25 +168,55 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
     "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
+export interface ActionPositionEnteredEventObject {
+  investmentAsset: string;
+  amountToInvest: BigNumber;
+}
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
+>;
+
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
+
+export interface ActionPositionExitedEventObject {
+  investmentAsset: string;
+  amountReturned: BigNumber;
+}
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
+>;
+
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
+
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -176,17 +232,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
-}
-export type KeeperChangedEvent = TypedEvent<
-  [string, string],
-  KeeperChangedEventObject
->;
-
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
-
 export interface LifecycleStateChangedEventObject {
   prevState: number;
   newState: number;
@@ -199,12 +244,35 @@ export type LifecycleStateChangedEvent = TypedEvent<
 export type LifecycleStateChangedEventFilter =
   TypedEventFilter<LifecycleStateChangedEvent>;
 
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
+}
+export type OperatorChangedEvent = TypedEvent<
+  [string, string],
+  OperatorChangedEventObject
+>;
+
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+
 export interface PausedEventObject {
   account: string;
 }
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
 
 export interface UnpausedEventObject {
   account: string;
@@ -241,39 +309,47 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   functions: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canExit: boolean }>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
+
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
+
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -300,39 +376,47 @@ export interface BaseActionUpgradeable extends BaseContract {
   };
 
   canPositionBeExited(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   enterPosition(
-    asset: string,
-    amountReceived: BigNumberish,
+    investmentAsset: string,
+    amountToInvest: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    asset: string,
+    investmentAsset: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
+
+  getOperator(overrides?: CallOverrides): Promise<string>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -358,29 +442,48 @@ export interface BaseActionUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
-
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
-
-    enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+    changeAdmin(
+      newAdminAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    exitPosition(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    exitPosition(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
+
+    getOperator(overrides?: CallOverrides): Promise<string>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -403,26 +506,35 @@ export interface BaseActionUpgradeable extends BaseContract {
   };
 
   filters: {
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
       prevState?: BigNumberish | null,
@@ -433,8 +545,26 @@ export interface BaseActionUpgradeable extends BaseContract {
       newState?: BigNumberish | null
     ): LifecycleStateChangedEventFilter;
 
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
@@ -442,7 +572,8 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   estimateGas: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -450,31 +581,38 @@ export interface BaseActionUpgradeable extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -502,7 +640,8 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   populateTransaction: {
     canPositionBeExited(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canRefund(
@@ -513,31 +652,38 @@ export interface BaseActionUpgradeable extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      asset: string,
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }

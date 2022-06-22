@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -25,17 +29,25 @@ import type {
 export interface PotionBuyActionV0Interface extends utils.Interface {
   functions: {
     "maxPremiumPercentage()": FunctionFragment;
+    "maxSwapDurationSecs()": FunctionFragment;
     "premiumSlippage()": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
+    "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
+    "setSwapSlippage(uint256)": FunctionFragment;
+    "swapSlippage()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "maxPremiumPercentage"
+      | "maxSwapDurationSecs"
       | "premiumSlippage"
       | "setMaxPremiumPercentage"
+      | "setMaxSwapDuration"
       | "setPremiumSlippage"
+      | "setSwapSlippage"
+      | "swapSlippage"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -43,6 +55,10 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "maxSwapDurationSecs",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "premiumSlippage",
     values?: undefined
   ): string;
@@ -51,12 +67,28 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxSwapDuration",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPremiumSlippage",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapSlippage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapSlippage",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxSwapDurationSecs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -68,12 +100,80 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setMaxSwapDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPremiumSlippage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapSlippage",
+    data: BytesLike
+  ): Result;
 
-  events: {};
+  events: {
+    "MaxPremiumPercentageChanged(uint256)": EventFragment;
+    "MaxSwapDurationChanged(uint256)": EventFragment;
+    "PremiumSlippageChanged(uint256)": EventFragment;
+    "SwapSlippageChanged(uint256)": EventFragment;
+  };
+
+  getEvent(
+    nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
 }
+
+export interface MaxPremiumPercentageChangedEventObject {
+  maxPremiumPercentage: BigNumber;
+}
+export type MaxPremiumPercentageChangedEvent = TypedEvent<
+  [BigNumber],
+  MaxPremiumPercentageChangedEventObject
+>;
+
+export type MaxPremiumPercentageChangedEventFilter =
+  TypedEventFilter<MaxPremiumPercentageChangedEvent>;
+
+export interface MaxSwapDurationChangedEventObject {
+  maxSwapDurationSecs: BigNumber;
+}
+export type MaxSwapDurationChangedEvent = TypedEvent<
+  [BigNumber],
+  MaxSwapDurationChangedEventObject
+>;
+
+export type MaxSwapDurationChangedEventFilter =
+  TypedEventFilter<MaxSwapDurationChangedEvent>;
+
+export interface PremiumSlippageChangedEventObject {
+  premiumSlippage: BigNumber;
+}
+export type PremiumSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  PremiumSlippageChangedEventObject
+>;
+
+export type PremiumSlippageChangedEventFilter =
+  TypedEventFilter<PremiumSlippageChangedEvent>;
+
+export interface SwapSlippageChangedEventObject {
+  swapSlippage: BigNumber;
+}
+export type SwapSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  SwapSlippageChangedEventObject
+>;
+
+export type SwapSlippageChangedEventFilter =
+  TypedEventFilter<SwapSlippageChangedEvent>;
 
 export interface PotionBuyActionV0 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -104,6 +204,8 @@ export interface PotionBuyActionV0 extends BaseContract {
   functions: {
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setMaxPremiumPercentage(
@@ -111,13 +213,27 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -126,13 +242,27 @@ export interface PotionBuyActionV0 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMaxSwapDuration(
+    durationSeconds: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setPremiumSlippage(
     premiumSlippage_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setSwapSlippage(
+    swapSlippage_: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -141,17 +271,57 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "MaxPremiumPercentageChanged(uint256)"(
+      maxPremiumPercentage?: null
+    ): MaxPremiumPercentageChangedEventFilter;
+    MaxPremiumPercentageChanged(
+      maxPremiumPercentage?: null
+    ): MaxPremiumPercentageChangedEventFilter;
+
+    "MaxSwapDurationChanged(uint256)"(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
+    MaxSwapDurationChanged(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
+
+    "PremiumSlippageChanged(uint256)"(
+      premiumSlippage?: null
+    ): PremiumSlippageChangedEventFilter;
+    PremiumSlippageChanged(
+      premiumSlippage?: null
+    ): PremiumSlippageChangedEventFilter;
+
+    "SwapSlippageChanged(uint256)"(
+      swapSlippage?: null
+    ): SwapSlippageChangedEventFilter;
+    SwapSlippageChanged(swapSlippage?: null): SwapSlippageChangedEventFilter;
+  };
 
   estimateGas: {
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     setMaxPremiumPercentage(
@@ -159,14 +329,30 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     maxPremiumPercentage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxSwapDurationSecs(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -177,9 +363,21 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setMaxSwapDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    setSwapSlippage(
+      swapSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

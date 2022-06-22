@@ -11,7 +11,51 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionEntered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionExited",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
     name: "canPositionBeExited",
     outputs: [
       {
@@ -20,19 +64,19 @@ const _abi = [
         type: "bool",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
       {
-        internalType: "contract IERC20",
-        name: "asset",
+        internalType: "address",
+        name: "investmentAsset",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amountReceived",
+        name: "amountToInvest",
         type: "uint256",
       },
     ],
@@ -44,8 +88,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
-        name: "asset",
+        internalType: "address",
+        name: "investmentAsset",
         type: "address",
       },
     ],

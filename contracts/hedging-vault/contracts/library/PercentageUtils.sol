@@ -39,8 +39,7 @@ library PercentageUtils {
             (1.0 + percentage) * amount
      */
     function addPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
-        // TODO: used Math.mulDiv when it is released
-        return (amount * (PERCENTAGE_100 + percentage)) / PERCENTAGE_FACTOR;
+        return applyPercentage(amount, PERCENTAGE_100 + percentage);
     }
 
     /**
@@ -52,7 +51,19 @@ library PercentageUtils {
             (1.0 + slippage) * amount
      */
     function substractPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
+        return applyPercentage(amount, PERCENTAGE_100 - percentage);
+    }
+
+    /**
+        @notice Applies the given percentage to the given amount and returns the result
+
+        @param amount The amount to apply the percentage to
+        @param percentage The percentage to apply to the amount
+
+        @return The amount after the percentage is applied
+     */
+    function applyPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
         // TODO: used Math.mulDiv when it is released
-        return (amount * (PERCENTAGE_100 - percentage)) / PERCENTAGE_FACTOR;
+        return (amount * percentage) / PERCENTAGE_FACTOR;
     }
 }

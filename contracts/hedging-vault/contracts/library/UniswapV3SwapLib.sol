@@ -80,7 +80,7 @@ library UniswapV3SwapLib {
 
         @dev The `maxDuration` parameter is used to calculate the deadline from the current block timestamp
      */
-    function _swapInput(ISwapRouter swapRouter, SwapInputParameters memory parameters)
+    function swapInput(ISwapRouter swapRouter, SwapInputParameters memory parameters)
         internal
         returns (uint256 amountOut)
     {
@@ -118,7 +118,7 @@ library UniswapV3SwapLib {
 
         @dev The `maxDuration` parameter is used to calculate the deadline from the current block timestamp
      */
-    function _swapOutput(ISwapRouter swapRouter, SwapOutputParameters memory parameters)
+    function swapOutput(ISwapRouter swapRouter, SwapOutputParameters memory parameters)
         internal
         returns (uint256 amountIn)
     {

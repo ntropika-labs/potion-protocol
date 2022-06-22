@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { PercentageUtils__factory } from "./PercentageUtils__factory";
-export { SlippageUtils__factory } from "./SlippageUtils__factory";

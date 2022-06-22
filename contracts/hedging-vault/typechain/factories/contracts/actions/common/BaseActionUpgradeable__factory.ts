@@ -16,13 +16,51 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "prevAdmin",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionEntered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionExited",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "prevAdminAddress",
         type: "address",
       },
       {
         indexed: true,
         internalType: "address",
-        name: "newAdmin",
+        name: "newAdminAddress",
         type: "address",
       },
     ],
@@ -40,25 +78,6 @@ const _abi = [
       },
     ],
     name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "prevKeeper",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newKeeper",
-        type: "address",
-      },
-    ],
-    name: "KeeperChanged",
     type: "event",
   },
   {
@@ -84,6 +103,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "prevOperatorAddress",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOperatorAddress",
+        type: "address",
+      },
+    ],
+    name: "OperatorChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "address",
         name: "account",
@@ -91,6 +129,25 @@ const _abi = [
       },
     ],
     name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "prevStrategistAddress",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newStrategistAddress",
+        type: "address",
+      },
+    ],
+    name: "StrategistChanged",
     type: "event",
   },
   {
@@ -107,7 +164,13 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
     name: "canPositionBeExited",
     outputs: [
       {
@@ -116,7 +179,7 @@ const _abi = [
         type: "bool",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -155,7 +218,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newAdmin",
+        name: "newAdminAddress",
         type: "address",
       },
     ],
@@ -168,11 +231,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newKeeper",
+        name: "newOperatorAddress",
         type: "address",
       },
     ],
-    name: "changeKeeper",
+    name: "changeOperator",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -180,13 +243,26 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
-        name: "asset",
+        internalType: "address",
+        name: "newStrategistAddress",
+        type: "address",
+      },
+    ],
+    name: "changeStrategist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amountReceived",
+        name: "amountToInvest",
         type: "uint256",
       },
     ],
@@ -198,8 +274,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
-        name: "asset",
+        internalType: "address",
+        name: "investmentAsset",
         type: "address",
       },
     ],
@@ -229,7 +305,20 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getKeeper",
+    name: "getLifecycleState",
+    outputs: [
+      {
+        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getOperator",
     outputs: [
       {
         internalType: "address",
@@ -242,12 +331,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getLifecycleState",
+    name: "getStrategist",
     outputs: [
       {
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "address",
         name: "",
-        type: "uint8",
+        type: "address",
       },
     ],
     stateMutability: "view",

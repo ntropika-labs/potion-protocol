@@ -39,19 +39,27 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
  */
 interface IAction {
+    /// EVENTS
+    event ActionPositionEntered(address indexed investmentAsset, uint256 amountToInvest);
+    event ActionPositionExited(address indexed investmentAsset, uint256 amountReturned);
+
+    /// FUNCTIONS
     /**
         @notice Function called to enter the investment position
 
-        @param asset The asset available to the action contract for the investment 
+        @param investmentAsset The asset available to the action contract for the investment 
+        @param amountToInvest The amount of the asset that the action contract is allowed to use in the investment
 
         @dev When called, the action should have been approved for the given amount
         of asset. The action will retrieve the required amount of asset from the caller
         and invest it according to its logic
      */
-    function enterPosition(IERC20 asset, uint256 amountReceived) external;
+    function enterPosition(address investmentAsset, uint256 amountToInvest) external;
 
     /**
         @notice Function called to exit the investment position
+
+        @param investmentAsset The asset reclaim from the investment position
 
         @return amountReturned The amount of asset that the action contract received from the caller
         plus the profit or minus the loss of the investment cycle
@@ -62,12 +70,14 @@ interface IAction {
 
         @dev See { IAction } description for more information on `amountReturned`
      */
-    function exitPosition(IERC20 asset) external returns (uint256 amountReturned);
+    function exitPosition(address investmentAsset) external returns (uint256 amountReturned);
 
     /**
         @notice It indicates if the position can be exited or not
 
+        @param investmentAsset The asset for which position can be exited or not
+
         @return canExit true if the position can be exited, false otherwise
      */
-    function canPositionBeExited() external returns (bool canExit);
+    function canPositionBeExited(address investmentAsset) external view returns (bool canExit);
 }

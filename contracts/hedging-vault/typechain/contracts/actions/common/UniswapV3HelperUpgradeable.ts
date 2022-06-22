@@ -45,10 +45,14 @@ export declare namespace UniswapV3OracleUpgradeable {
 export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
   functions: {
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
+    "getOperator()": FunctionFragment;
+    "getStrategist()": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
+    "getSwapInputAmount(address,address,uint256)": FunctionFragment;
+    "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
     "getSwapRouter()": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
@@ -56,24 +60,47 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "getAdmin"
-      | "getKeeper"
+      | "getOperator"
+      | "getStrategist"
       | "getSwapInfo"
+      | "getSwapInputAmount"
+      | "getSwapOutputAmount"
       | "getSwapRouter"
       | "setSwapInfo"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getOperator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getSwapInfo",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapInputAmount",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapOutputAmount",
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapRouter",
@@ -89,13 +116,32 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSwapInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInputAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapOutputAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -110,17 +156,19 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -136,16 +184,28 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
 }
-export type KeeperChangedEvent = TypedEvent<
+export type OperatorChangedEvent = TypedEvent<
   [string, string],
-  KeeperChangedEventObject
+  OperatorChangedEventObject
 >;
 
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
 
 export interface UniswapV3HelperUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -175,24 +235,45 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
   functions: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
+
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
     getSwapInfo(
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<[UniswapV3OracleUpgradeable.SwapInfoStructOutput]>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -203,24 +284,45 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
   };
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
+  getOperator(overrides?: CallOverrides): Promise<string>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
 
   getSwapInfo(
     inputToken: string,
     outputToken: string,
     overrides?: CallOverrides
   ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+
+  getSwapInputAmount(
+    inputToken: string,
+    outputToken: string,
+    amountOut: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSwapOutputAmount(
+    inputToken: string,
+    outputToken: string,
+    amountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
@@ -230,19 +332,46 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
+    changeAdmin(
+      newAdminAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
+    getOperator(overrides?: CallOverrides): Promise<string>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getSwapInfo(
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
@@ -254,45 +383,75 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
   };
 
   estimateGas: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSwapInfo(
       inputToken: string,
       outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -306,22 +465,43 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
   populateTransaction: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getSwapInfo(
       inputToken: string,
       outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapInputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapOutputAmount(
+      inputToken: string,
+      outputToken: string,
+      amountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -11,15 +11,24 @@ import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/Co
 
     @author Roberto Cano <robercano>
     
-    @notice The RolesManager contract is a helper contract that provides a two access roles: Admin
-    and Keeper, and the corresponding modifiers to scope the access of functions in inheriting contracts
-    
+    @notice The RolesManager contract is a helper contract that provides a three access roles: Admin,
+    Strategist and Operator. The scope of the different roles is as follows:
+      - Admin: The admin role is the only role that can change the other roles, including the Admin
+      role itself. 
+      - Strategist: The strategist role is the one that can change the vault and action parameters
+      related to the investment strategy. Things like slippage percentage, maximum premium, principal
+      percentages, etc...
+      - Operator: The operator role is the one that can cycle the vault and the action through its
+      different states
+
+
     @dev It provides a functionality similar to the AccessControl contract from OpenZeppelin. The decision
     to implement the roles manually was made to avoid exposiing a higher attack surface area coming from 
     the AccessControl contract, plus reducing the size of the deployment as well
 
-    @dev The Admin can always change the Keeper address and also change the Admin address. The Keeper
-    role has no special access except that given explicitely by using the `onlyKeeper` modifier.
+    @dev The Admin can always change the Strategist address, Operator address and also change the Admin address.
+    The Strategist and Operator roles have no special access except the access given explcitiely by their
+    respective modifiers `onlyStrategist` and `onlyOperator`
 
     @dev This contract is intended to be always initialized in an unchained way as it may be shared
     among different helper contracts that need to scope their functions to the Admin or Keeper role.
@@ -27,8 +36,28 @@ import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/Co
 
 contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     // STORAGE
-    address private _adminRole;
-    address private _keeperRole;
+
+    /**
+        @notice The address of the admin role
+
+        @dev The admin role is the only role that can change the other roles, including the Admin itself
+     */
+    address private _adminAddress;
+
+    /**
+        @notice The address of the strategist role
+
+        @dev The strategist role is the one that can change the vault and action parameters related to the
+        investment strategy. Things like slippage percentage, maximum premium, principal percentages, etc...
+     */
+    address private _operatorAddress;
+
+    /**
+        @notice The address of the operator role
+
+        @dev The operator role is the one that can cycle the vault and the action through its different states
+     */
+    address private _strategistAddress;
 
     /// MODIFIERS
 
@@ -36,21 +65,30 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
       @notice Modifier to scope functions to only be accessible by the Admin
      */
     modifier onlyAdmin() {
-        require(_msgSender() == _adminRole, "Only the Admin can call this function");
+        require(_msgSender() == _adminAddress, "Only the Admin can call this function");
         _;
     }
 
     /**
-      @notice Modifier to scope functions to only be accessible by the Keeper
+      @notice Modifier to scope functions to only be accessible by the Strategist
      */
-    modifier onlyKeeper() {
-        require(_msgSender() == _keeperRole, "Only the Admin can call this function");
+    modifier onlyStrategist() {
+        require(_msgSender() == _strategistAddress, "Only the Strategist can call this function");
+        _;
+    }
+
+    /**
+      @notice Modifier to scope functions to only be accessible by the Operator
+     */
+    modifier onlyOperator() {
+        require(_msgSender() == _operatorAddress, "Only the Operator can call this function");
         _;
     }
 
     /// EVENTS
-    event AdminChanged(address indexed prevAdmin, address indexed newAdmin);
-    event KeeperChanged(address indexed prevKeeper, address indexed newKeeper);
+    event AdminChanged(address indexed prevAdminAddress, address indexed newAdminAddress);
+    event StrategistChanged(address indexed prevStrategistAddress, address indexed newStrategistAddress);
+    event OperatorChanged(address indexed prevOperatorAddress, address indexed newOperatorAddress);
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -59,9 +97,14 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
         Also this contract does not need to initialize anything itself.
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __RolesManager_init_unchained(address adminRole, address keeperRole) internal onlyInitializing {
-        _adminRole = adminRole;
-        _keeperRole = keeperRole;
+    function __RolesManager_init_unchained(
+        address adminAddress,
+        address strategistAddress,
+        address operatorAddress
+    ) internal onlyInitializing {
+        _adminAddress = adminAddress;
+        _strategistAddress = strategistAddress;
+        _operatorAddress = operatorAddress;
     }
 
     /// FUNCTIONS
@@ -71,43 +114,65 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
 
         @dev Only the previous Admin can change the address to a new one
      */
-    function changeAdmin(address newAdmin) external onlyAdmin {
-        require(newAdmin != address(0), "New admin address cannot be the null address");
+    function changeAdmin(address newAdminAddress) external onlyAdmin {
+        require(newAdminAddress != address(0), "New Admin address cannot be the null address");
 
-        address prevAdmin = _adminRole;
+        address prevAdminAddress = _adminAddress;
 
-        _adminRole = newAdmin;
+        _adminAddress = newAdminAddress;
 
-        emit AdminChanged(prevAdmin, newAdmin);
+        emit AdminChanged(prevAdminAddress, newAdminAddress);
     }
 
     /**
-        @notice Changes the existing Keeper address to a new one
+        @notice Changes the existing Strategist address to a new one
 
         @dev Only the Admin can change the address to a new one
      */
-    function changeKeeper(address newKeeper) external onlyAdmin {
-        require(newKeeper != address(0), "New keeper address cannot be the null address");
+    function changeStrategist(address newStrategistAddress) external onlyAdmin {
+        require(newStrategistAddress != address(0), "New Strategist address cannot be the null address");
 
-        address prevKeeper = _keeperRole;
+        address prevStrategistAddress = _strategistAddress;
 
-        _keeperRole = newKeeper;
+        _strategistAddress = newStrategistAddress;
 
-        emit KeeperChanged(prevKeeper, newKeeper);
+        emit StrategistChanged(prevStrategistAddress, newStrategistAddress);
+    }
+
+    /**
+        @notice Changes the existing Operator address to a new one
+
+        @dev Only the Admin can change the address to a new one
+     */
+    function changeOperator(address newOperatorAddress) external onlyAdmin {
+        require(newOperatorAddress != address(0), "New Strategist address cannot be the null address");
+
+        address prevOperatorAddress = _operatorAddress;
+
+        _operatorAddress = newOperatorAddress;
+
+        emit StrategistChanged(prevOperatorAddress, newOperatorAddress);
     }
 
     /**
         @notice Returns the current Admin address
      */
     function getAdmin() public view returns (address) {
-        return _adminRole;
+        return _adminAddress;
     }
 
     /**
-        @notice Returns the current Keeper address
+        @notice Returns the current Strategist address
      */
-    function getKeeper() public view returns (address) {
-        return _keeperRole;
+    function getStrategist() public view returns (address) {
+        return _strategistAddress;
+    }
+
+    /**
+        @notice Returns the current Operator address
+     */
+    function getOperator() public view returns (address) {
+        return _operatorAddress;
     }
 
     /**
@@ -118,5 +183,5 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
        @dev The size of the gap plus the size of the storage variables defined
        above must equal 50 storage slots
      */
-    uint256[48] private __gap;
+    uint256[47] private __gap;
 }
