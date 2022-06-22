@@ -43,7 +43,6 @@
       :label="t('load_more')"
       @click="mostPurchasedPotionsQuery()"
     >
-      load more
     </BaseButton>
   </BaseCard>
   <BaseCard class="p-4 mt-10">
