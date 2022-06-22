@@ -1,7 +1,7 @@
-import type { AddressBook } from "potion-contracts/typechain";
+import type { AddressBook } from "@potion-protocol/core/typechain";
 
 import { contractsAddresses } from "@/helpers/contracts";
-import { AddressBook__factory } from "potion-contracts/typechain";
+import { AddressBook__factory } from "@potion-protocol/core/typechain";
 import { useEthersContract } from "./useEthersContract";
 
 export function useAddressBookContract() {
