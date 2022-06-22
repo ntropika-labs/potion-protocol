@@ -12,6 +12,7 @@ runs:
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
+      shell: bash
 
     - name: Cache yarn
       uses: actions/cache@v3
@@ -36,3 +37,4 @@ runs:
         steps.yarn-cache.outputs.cache-hit != 'true' ||
         steps.node-modules-cache.outputs.cache-hit != 'true'
       run: yarn install --immutable --immutable-cache
+      shell: bash
