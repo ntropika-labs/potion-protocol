@@ -48,6 +48,10 @@ jobs:
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
 
+      - name: Run codegens
+        run: yarn codegen subgraph-queries
+        shell: bash
+
       # - name: Create and seed environment
       #   run: ./bin/create-local-env-headless
       #   shell: bash
@@ -76,6 +80,9 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v4
+        env:
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
         with:
           install: false
           start: yarn preview
