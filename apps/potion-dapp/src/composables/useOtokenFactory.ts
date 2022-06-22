@@ -1,11 +1,11 @@
-import { OtokenFactoryInterface__factory } from "potion-contracts/typechain";
+import { OtokenFactoryInterface__factory } from "@potion-protocol/core/typechain";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { parseUnits } from "@ethersproject/units";
 
 import { useEthersContract } from "./useEthersContract";
 
-import type { OtokenFactory } from "potion-contracts/typechain";
+import type { OtokenFactory } from "@potion-protocol/core/typechain";
 export function useOtokenFactory() {
   const { initContract } = useEthersContract();
   const { OtokenFactory, PotionTestUSD } = contractsAddresses;

@@ -3,7 +3,7 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { PotionLiquidityPool } from "potion-contracts/typechain";
+import type { PotionLiquidityPool } from "@potion-protocol/core/typechain";
 import type { BondingCurveParams, Criteria } from "dapp-types";
 import type { CounterpartyDetails } from "potion-router/src/types";
 import {
@@ -12,7 +12,7 @@ import {
   OrderedCriteria,
 } from "contracts-math";
 import { chunk as _chunk } from "lodash-es";
-import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
+import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 import { ref } from "vue";
 
 import { useEthersProvider } from "@/composables/useEthersProvider";
