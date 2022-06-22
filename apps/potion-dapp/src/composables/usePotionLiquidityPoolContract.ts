@@ -9,8 +9,9 @@ import type { CounterpartyDetails } from "potion-router/src/types";
 import {
   CurveCriteria,
   HyperbolicCurve,
-  OrderedCriteria,
+  OrderedCriteria
 } from "contracts-math";
+import { chunk as _chunk } from "lodash-es";
 import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
 
@@ -18,7 +19,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { contractsAddresses } from "@/helpers/contracts";
 import { createValidExpiry } from "@/helpers/time";
-import { parseUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
@@ -29,7 +30,7 @@ export function usePotionLiquidityPoolContract() {
   const { initContract } = useEthersContract();
   const { PotionLiquidityPool, PotionTestUSD } = contractsAddresses;
   const { connectedWallet } = useOnboard();
-
+  const maxCounterparties = 100;
   //Provider initialization
 
   const initContractProvider = () => {
@@ -297,6 +298,7 @@ export function usePotionLiquidityPoolContract() {
           maxPremiumToBigNumber
         );
         buyPotionReceipt.value = await buyPotionTx.value.wait();
+        return buyPotionReceipt.value;
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(
@@ -343,6 +345,7 @@ export function usePotionLiquidityPoolContract() {
         );
         buyPotionReceipt.value = await buyPotionTx.value.wait();
         buyPotionLoading.value = false;
+        return buyPotionReceipt.value;
       } catch (error) {
         buyPotionLoading.value = false;
 
@@ -378,7 +381,8 @@ export function usePotionLiquidityPoolContract() {
       maxPremium
     ) {
       const { getTargetOtokenAddress, getOtoken } = useOtokenFactory();
-
+      const contractSigner = initContractSigner();
+      const contractInterface = contractSigner.interface;
       const { getBlock, blockTimestamp } = useEthersProvider();
       await getBlock("latest");
       const validExpiry = createValidExpiry(blockTimestamp.value, duration);
@@ -399,7 +403,63 @@ export function usePotionLiquidityPoolContract() {
         isPut
       );
       const exists = newOtokenAddress === existingOtokenAddress;
-      if (exists) {
+      if (counterparties.length >= maxCounterparties) {
+        const cpChunks = _chunk(counterparties, maxCounterparties);
+
+        if (exists) {
+          let newMaxPremium = 0;
+          for (const chunk of cpChunks) {
+            const receipt = await buyOtokens(
+              existingOtokenAddress,
+              chunk,
+              maxPremium - newMaxPremium
+            );
+            const log = contractInterface.parseLog(
+              receipt.logs[receipt.logs.length - 1]
+            );
+            newMaxPremium =
+              newMaxPremium - parseFloat(formatUnits(log.args[3], 6));
+          }
+        } else {
+          let newMaxPremium = 0;
+          const receipt = await createAndBuyOtokens(
+            underlyingAddress,
+            strikeAddress,
+            collateralAddress,
+            strikePrice,
+            validExpiry,
+            isPut,
+            counterparties,
+            maxPremium - newMaxPremium
+          );
+          const log = contractInterface.parseLog(
+            receipt.logs[receipt.logs.length - 1]
+          );
+          newMaxPremium =
+            newMaxPremium - parseFloat(formatUnits(log.args[3], 6));
+
+          const existingOtokenAddress = await getOtoken(
+            underlyingAddress,
+            strikeAddress,
+            collateralAddress,
+            strikePrice,
+            validExpiry,
+            isPut
+          );
+          for (let index = 1; index < cpChunks.length; index++) {
+            const receipt = await buyOtokens(
+              existingOtokenAddress,
+              cpChunks[index],
+              maxPremium - newMaxPremium
+            );
+            const log = contractInterface.parseLog(
+              receipt.logs[receipt.logs.length - 1]
+            );
+            newMaxPremium =
+              newMaxPremium + parseFloat(formatUnits(log.args[3], 6));
+          }
+        }
+      } else if (exists) {
         await buyOtokens(existingOtokenAddress, counterparties, maxPremium);
       } else {
         await createAndBuyOtokens(
