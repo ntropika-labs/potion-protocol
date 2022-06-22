@@ -38,3 +38,9 @@ runs:
         steps.node-modules-cache.outputs.cache-hit != 'true'
       run: yarn install --immutable --immutable-cache
       shell: bash
+
+    - name: Copy seeds in the Ganache volume
+      run: bin/prepare-seeds-headless
+      shell: bash
+      env:
+        GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
