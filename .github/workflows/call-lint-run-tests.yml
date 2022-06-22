@@ -35,11 +35,11 @@ jobs:
     env:
       PREVIEW_URL: "http://127.0.0.1:5050"
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      #- name: Checkout repo
+      #  uses: actions/checkout@v3
 
       - name: Setup environment
-        uses: ./.github/actions/action-setup-environment.yml
+        uses: ./.github/actions/setup-environment
 
       - name: Create and seed environment
         run: ./bin/create-local-env-headless
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup environment
-        uses: ./.github/actions/action-setup-environment.yml
+        uses: ./.github/actions/setup-environment
 
       - name: Nx linting
         run: yarn lint

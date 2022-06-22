@@ -38,11 +38,11 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      #- name: Checkout repo
+      #  uses: actions/checkout@v3
 
       - name: Setup environment
-        uses: ./.github/actions/action-setup-environment.yml
+        uses: ./.github/actions/setup-environment
 
       - name: Update main branch
         env:
