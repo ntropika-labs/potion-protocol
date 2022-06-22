@@ -30,6 +30,15 @@
         :expiration="ptn.expiry"
       />
     </div>
+    <BaseButton
+      v-if="canLoadMoreMostPurchasedPotions"
+      :inline="true"
+      class="self-center mt-5"
+      :label="t('load_more')"
+      @click="mostPurchasedPotionsQuery()"
+    >
+      load more
+    </BaseButton>
   </BaseCard>
   <BaseCard class="p-4 mt-10">
     <h1 class="uppercase text-secondary-500 text-xs">
@@ -53,16 +62,19 @@
         :expiration="ptn.expiry"
       />
     </div>
+    <BaseButton
+      v-if="canLoadMoreMostCollateralizedPotions"
+      :label="t('load_more')"
+      class="self-center mt-5"
+      @click="mostCollateralizedPotionsQuery()"
+    >
+    </BaseButton>
   </BaseCard>
-
-  <pre>{{ underlyingsWithLiquidity }}</pre>
-  <pre>{{ loadedMostPurchasedPotions }}</pre>
-  <pre>{{ loadedMostCollateralizedPotions }}</pre>
 </template>
 <script lang="ts" setup>
 import InnerNav from "@/components/InnerNav.vue";
 import type { Token } from "dapp-types";
-import { PotionCard, BaseCard } from "potion-ui";
+import { PotionCard, BaseCard, BaseButton } from "potion-ui";
 import {
   useGetMostPurchasedPotionsQuery,
   useGetMostCollateralizedPotionsQuery,
@@ -139,10 +151,28 @@ interface Otoken {
   expiry: string;
   strikePrice: string;
 }
+const defaultLimit = 8;
 
 const loadedMostPurchasedPotions = ref<Otoken[]>([]);
 const loadedMostCollateralizedPotions = ref<Otoken[]>([]);
-
+const canLoadMoreMostPurchasedPotions = computed(() => {
+  if (
+    loadedMostPurchasedPotions.value.length >= 8 &&
+    loadedMostPurchasedPotions.value.length % 8 === 0
+  ) {
+    return true;
+  }
+  return false;
+});
+const canLoadMoreMostCollateralizedPotions = computed(() => {
+  if (
+    loadedMostCollateralizedPotions.value.length >= 8 &&
+    loadedMostCollateralizedPotions.value.length % 8 === 0
+  ) {
+    return true;
+  }
+  return false;
+});
 const mostPurchasedPotionsParams = computed(() => {
   return {
     expiry: blockTimestamp.value.toString(),
@@ -151,6 +181,7 @@ const mostPurchasedPotionsParams = computed(() => {
       loadedMostPurchasedPotions.value.length > 0
         ? loadedMostPurchasedPotions.value.map((otoken) => otoken.id)
         : [""],
+    limit: defaultLimit,
   };
 });
 const mostCollateralizedPotionsParams = computed(() => {
@@ -161,6 +192,7 @@ const mostCollateralizedPotionsParams = computed(() => {
       loadedMostCollateralizedPotions.value.length > 0
         ? loadedMostCollateralizedPotions.value.map((otoken) => otoken.id)
         : [""],
+    limit: defaultLimit,
   };
 });
 const { data: mostPurchasedPotions, executeQuery: mostPurchasedPotionsQuery } =
@@ -203,10 +235,4 @@ watch(mostCollateralizedPotions, () => {
     );
   }
 });
-// const handleMostPurchasedLoadMore = () => {
-//   mostPurchasedPotionsQuery();
-// };
-// const handleMostCollateralizedLoadMore = () => {
-//   mostCollateralizedPotionsQuery();
-// };
 </script>
