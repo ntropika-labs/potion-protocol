@@ -1,12 +1,9 @@
-name: 'Install Node environment'
-description: 'Install Node environment reading packages from cache if available'
+name: "Install Node environment"
+description: "Install Node environment reading packages from cache if available"
 
 runs:
   using: "composite"
   step:
-    - name: Checkout
-        uses: actions/checkout@v3
-
     - name: Install node
       uses: actions/setup-node@v3
       with:
@@ -33,7 +30,7 @@ runs:
         key: ${{ runner.os }}-node-modules-cache-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-node-modules-cache-
-          
+
     - name: Install dependencies
       if: |
         steps.yarn-cache.outputs.cache-hit != 'true' ||
