@@ -3,7 +3,7 @@ description: "Install Node environment reading packages from cache if available"
 
 runs:
   using: "composite"
-  step:
+  steps:
     - name: Install node
       uses: actions/setup-node@v3
       with:
