@@ -239,7 +239,7 @@ query getMostPurchasedPotions(
       expiry_gte: $expiry
       underlyingAsset_in: $addresses
       id_not_in: $alreadyLoadedIds
-      purchasesCount_gt: 1
+      purchasesCount_gte: 1
     }
     orderBy: purchasesCount
     orderDirection: $direction
@@ -261,7 +261,7 @@ query getMostCollateralizedPotions(
       expiry_gte: $expiry
       underlyingAsset_in: $addresses
       id_not_in: $alreadyLoadedIds
-      purchasesCount_gt: 1
+      purchasesCount_gte: 1
     }
     orderBy: collateralized
     orderDirection: $direction
@@ -283,7 +283,7 @@ query getMostPopularPotions(
       expiry_gte: $expiry
       underlyingAsset_in: $addresses
       id_not_in: $alreadyLoadedIds
-      purchasesCount_gt: 1
+      purchasesCount_gte: 1
     }
     orderBy: purchasesCount
     orderDirection: $direction
@@ -297,7 +297,50 @@ query getMostPopularPotions(
       expiry_gte: $expiry
       underlyingAsset_in: $addresses
       id_not_in: $alreadyLoadedIds
-      purchasesCount_gt: 1
+      purchasesCount_gte: 1
+    }
+    orderBy: collateralized
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+query getMostPurchasedPotions(
+  $expiry: BigInt!
+  $addresses: [String!]
+  $alreadyLoadedIds: [ID!]
+  $limit: Int = 8
+  $direction: OrderDirection = desc
+) {
+  otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gte: 1
+    }
+    orderBy: purchasesCount
+    orderDirection: $direction
+    first: $limit
+  ) {
+    ...PotionCard
+  }
+}
+
+query getMostCollateralizedPotions(
+  $expiry: BigInt!
+  $addresses: [String!]
+  $alreadyLoadedIds: [ID!]
+  $limit: Int = 8
+  $direction: OrderDirection = desc
+) {
+  otokens(
+    where: {
+      expiry_gte: $expiry
+      underlyingAsset_in: $addresses
+      id_not_in: $alreadyLoadedIds
+      purchasesCount_gte: 1
     }
     orderBy: collateralized
     orderDirection: $direction
