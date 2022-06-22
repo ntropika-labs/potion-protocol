@@ -28,7 +28,13 @@
         :otoken-address="ptn.tokenAddress"
         :strike-price="ptn.strikePrice"
         :expiration="ptn.expiry"
-      />
+      >
+        <router-link
+          :to="`/potions/${ptn.tokenAddress}`"
+          class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
+          >{{ t("show") }}</router-link
+        >
+      </PotionCard>
     </div>
     <BaseButton
       v-if="canLoadMoreMostPurchasedPotions"
@@ -60,7 +66,13 @@
         :otoken-address="ptn.tokenAddress"
         :strike-price="ptn.strikePrice"
         :expiration="ptn.expiry"
-      />
+      >
+        <router-link
+          :to="`/potions/${ptn.tokenAddress}`"
+          class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
+          >{{ t("show") }}</router-link
+        ></PotionCard
+      >
     </div>
     <BaseButton
       v-if="canLoadMoreMostCollateralizedPotions"
