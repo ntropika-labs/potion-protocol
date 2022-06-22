@@ -97,6 +97,8 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         uint256 slippage
     ) internal returns (uint256 actualPremium) {
         address potion = getPotion(hedgedAsset);
+        require(potion != address(0), "Potion not found for the given asset");
+
         PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);
 
         require(amount == buyInfo.totalSizeInPotions, "Insured amount greater than expected amount");

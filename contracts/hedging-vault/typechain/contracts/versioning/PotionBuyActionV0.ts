@@ -22,55 +22,65 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface IActionInterface extends utils.Interface {
+export interface PotionBuyActionV0Interface extends utils.Interface {
   functions: {
-    "canPositionBeExited()": FunctionFragment;
-    "enterPosition(address,uint256)": FunctionFragment;
-    "exitPosition(address)": FunctionFragment;
+    "maxPremiumPercentage()": FunctionFragment;
+    "premiumSlippage()": FunctionFragment;
+    "setMaxPremiumPercentage(uint256)": FunctionFragment;
+    "setPremiumSlippage(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "canPositionBeExited"
-      | "enterPosition"
-      | "exitPosition"
+      | "maxPremiumPercentage"
+      | "premiumSlippage"
+      | "setMaxPremiumPercentage"
+      | "setPremiumSlippage"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "canPositionBeExited",
+    functionFragment: "maxPremiumPercentage",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "enterPosition",
-    values: [string, BigNumberish]
+    functionFragment: "premiumSlippage",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "exitPosition",
-    values: [string]
+    functionFragment: "setMaxPremiumPercentage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPremiumSlippage",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "canPositionBeExited",
+    functionFragment: "maxPremiumPercentage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enterPosition",
+    functionFragment: "premiumSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "exitPosition",
+    functionFragment: "setMaxPremiumPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPremiumSlippage",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface IAction extends BaseContract {
+export interface PotionBuyActionV0 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IActionInterface;
+  interface: PotionBuyActionV0Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -92,81 +102,83 @@ export interface IAction extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    canPositionBeExited(
+    maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    premiumSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    setMaxPremiumPercentage(
+      maxPremiumPercentage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    exitPosition(
-      asset: string,
+    setPremiumSlippage(
+      premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  canPositionBeExited(
+  maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  setMaxPremiumPercentage(
+    maxPremiumPercentage_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  enterPosition(
-    asset: string,
-    amountReceived: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  exitPosition(
-    asset: string,
+  setPremiumSlippage(
+    premiumSlippage_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+    maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
-    enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
+    premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setMaxPremiumPercentage(
+      maxPremiumPercentage_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    exitPosition(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    setPremiumSlippage(
+      premiumSlippage_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    canPositionBeExited(
+    maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setMaxPremiumPercentage(
+      maxPremiumPercentage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exitPosition(
-      asset: string,
+    setPremiumSlippage(
+      premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    canPositionBeExited(
+    maxPremiumPercentage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    premiumSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setMaxPremiumPercentage(
+      maxPremiumPercentage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    enterPosition(
-      asset: string,
-      amountReceived: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exitPosition(
-      asset: string,
+    setPremiumSlippage(
+      premiumSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

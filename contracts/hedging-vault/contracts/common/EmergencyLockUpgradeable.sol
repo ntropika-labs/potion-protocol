@@ -9,6 +9,8 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/securit
 /**
     @title EmergencyLock
 
+    @author Roberto Cano <robercano>
+    
     @notice Helper contract that allows the Admin to pause all the functionality of the vault in case
     of an emergency
 

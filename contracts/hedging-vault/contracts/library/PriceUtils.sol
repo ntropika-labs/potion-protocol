@@ -6,6 +6,10 @@ pragma solidity 0.8.14;
 import "@prb/math/contracts/PRBMathUD60x18.sol";
 
 /**
+    @title PriceUtils
+
+    @author Roberto Cano <robercano>
+    
     @notice Utility library to convert an input amount into an output amount using
     the given price as the conversion factor
  */

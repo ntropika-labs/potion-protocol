@@ -6,15 +6,17 @@ pragma solidity 0.8.14;
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
-import "./SlippageUtils.sol";
+import "./PercentageUtils.sol";
 
 /**
     @title UniswapV3SwapLib
 
+    @author Roberto Cano <robercano>
+
     @notice Helper library to perform Uniswap V3 multi-hop swaps
  */
 library UniswapV3SwapLib {
-    using SlippageUtils for uint256;
+    using PercentageUtils for uint256;
 
     /// STRUCTS
 
@@ -82,7 +84,7 @@ library UniswapV3SwapLib {
         internal
         returns (uint256 amountOut)
     {
-        uint256 amountOutMinimum = parameters.expectedAmountOut.substractSlippage(parameters.slippage);
+        uint256 amountOutMinimum = parameters.expectedAmountOut.substractPercentage(parameters.slippage);
 
         TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), parameters.exactAmountIn);
 
@@ -120,7 +122,7 @@ library UniswapV3SwapLib {
         internal
         returns (uint256 amountIn)
     {
-        uint256 amountInMaximum = parameters.expectedAmountIn.addSlippage(parameters.slippage);
+        uint256 amountInMaximum = parameters.expectedAmountIn.addPercentage(parameters.slippage);
 
         TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), amountInMaximum);
 

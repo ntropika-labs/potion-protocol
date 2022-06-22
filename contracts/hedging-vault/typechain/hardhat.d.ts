@@ -89,6 +89,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapRouter__factory>;
     getContractFactory(
+      name: "BaseActionUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaseActionUpgradeable__factory>;
+    getContractFactory(
       name: "PotionProtocolHelperUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionProtocolHelperUpgradeable__factory>;
@@ -104,6 +108,10 @@ declare module "hardhat/types/runtime" {
       name: "UniswapV3OracleUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UniswapV3OracleUpgradeable__factory>;
+    getContractFactory(
+      name: "PotionBuyAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PotionBuyAction__factory>;
     getContractFactory(
       name: "EmergencyLockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -137,6 +145,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPotionLiquidityPool__factory>;
     getContractFactory(
+      name: "PercentageUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PercentageUtils__factory>;
+    getContractFactory(
       name: "SlippageUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SlippageUtils__factory>;
@@ -168,6 +180,10 @@ declare module "hardhat/types/runtime" {
       name: "HedgingVaultV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HedgingVaultV0__factory>;
+    getContractFactory(
+      name: "PotionBuyActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PotionBuyActionV0__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -265,6 +281,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISwapRouter>;
     getContractAt(
+      name: "BaseActionUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaseActionUpgradeable>;
+    getContractAt(
       name: "PotionProtocolHelperUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -284,6 +305,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.UniswapV3OracleUpgradeable>;
+    getContractAt(
+      name: "PotionBuyAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PotionBuyAction>;
     getContractAt(
       name: "EmergencyLockUpgradeable",
       address: string,
@@ -325,6 +351,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IPotionLiquidityPool>;
     getContractAt(
+      name: "PercentageUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PercentageUtils>;
+    getContractAt(
       name: "SlippageUtils",
       address: string,
       signer?: ethers.Signer
@@ -364,6 +395,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HedgingVaultV0>;
+    getContractAt(
+      name: "PotionBuyActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PotionBuyActionV0>;
 
     // default types
     getContractFactory(

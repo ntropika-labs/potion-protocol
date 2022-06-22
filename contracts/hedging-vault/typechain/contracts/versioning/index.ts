@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { HedgingVaultV0 } from "./HedgingVaultV0";
+export type { PotionBuyActionV0 } from "./PotionBuyActionV0";

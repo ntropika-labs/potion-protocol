@@ -12,15 +12,51 @@ import type {
 const _abi = [
   {
     inputs: [],
+    name: "canPositionBeExited",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canExit",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "asset",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountReceived",
+        type: "uint256",
+      },
+    ],
     name: "enterPosition",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "asset",
+        type: "address",
+      },
+    ],
     name: "exitPosition",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

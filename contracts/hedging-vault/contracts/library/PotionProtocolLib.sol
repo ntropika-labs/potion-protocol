@@ -6,15 +6,17 @@ pragma solidity 0.8.14;
 import { IPotionLiquidityPool } from "../interfaces/IPotionLiquidityPool.sol";
 import { IOtoken } from "../interfaces/IOtoken.sol";
 
-import "./SlippageUtils.sol";
+import "./PercentageUtils.sol";
 
 /**
-    @title UniswapV3SwapLib
+    @title PotionProtocolLib
 
-    @notice Helper library to perform Uniswap V3 multi-hop swaps
+    @author Roberto Cano <robercano>
+
+    @notice Helper library to buy potions from the Potion Protocol
  */
 library PotionProtocolLib {
-    using SlippageUtils for uint256;
+    using PercentageUtils for uint256;
 
     /// FUNCTIONS
 
@@ -40,7 +42,7 @@ library PotionProtocolLib {
         uint256 expectedPremium,
         uint256 slippage
     ) internal returns (uint256 actualPremium) {
-        uint256 maxPremium = expectedPremium.addSlippage(slippage);
+        uint256 maxPremium = expectedPremium.addPercentage(slippage);
 
         actualPremium = potionLiquidityPoolManager.buyOtokens(IOtoken(potion), sellers, maxPremium);
     }

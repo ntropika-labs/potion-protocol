@@ -9,6 +9,8 @@ import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/Co
 /**
     @title RolesManagerUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice The RolesManager contract is a helper contract that provides a two access roles: Admin
     and Keeper, and the corresponding modifiers to scope the access of functions in inheriting contracts
     

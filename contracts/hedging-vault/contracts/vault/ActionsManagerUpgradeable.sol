@@ -9,6 +9,8 @@ import { IAction } from "../interfaces/IAction.sol";
 /**
     @title ActionsManagerUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice Base contract for the Vault contract. It serves as a commonplace to take care of
     the inheritance order and the storage order of the contracts, as this is very important
     to keep consistent in order to be able to upgrade the contracts. The order of the contracts
