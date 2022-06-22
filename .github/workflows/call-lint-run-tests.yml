@@ -11,6 +11,12 @@ on:
         required: true
       VITE_SUBGRAPH_ADDRESS:
         required: true
+      DEPLOYER_MNEMONIC:
+        required: true
+      GANACHE_VOLUME:
+        required: true
+      DATABASE_PATH:
+        required: true
     inputs:
       VITE_ETHEREUM_NETWORK:
         required: true
@@ -29,6 +35,17 @@ jobs:
     env:
       PREVIEW_URL: "http://127.0.0.1:5050"
     steps:
+      - name: Setup environment
+        uses: ./.github/actions/action-setup-environment.yml
+
+      - name: Create and seed environment
+        run: ./bin/create-local-env-headless
+        shell: bash
+        env:
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+
       - name: Build app with mocked onboard
         run: yarn nx run potion-dapp:build-test
         env:
@@ -66,3 +83,17 @@ jobs:
           name: cypress-videos
           path: apps/potion-dapp/cypress/videos
           retention-days: 25
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
+
+  lint:
+    name: Run linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup environment
+        uses: ./.github/actions/action-setup-environment.yml
+
+      - name: Nx linting
+        run: yarn lint

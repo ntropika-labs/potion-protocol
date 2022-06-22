@@ -17,27 +17,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  setup-node:
-    uses: ./.github/workflows/call-setup-environment.yml
-
-  setup-docker:
-    name: Setup docker
-    needs: setup-node
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Create and seed environment
-        run: ./bin/create-local-env-headless
-        shell: bash
-        env:
-          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
-          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
-          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
-
-  test:
+  test-lint:
     needs: setup-docker
-    uses: ./.github/workflows/call-run-tests.yml
+    uses: ./.github/workflows/call-lint-run-tests.yml
     with:
       VITE_ETHEREUM_NETWORK: "localhost"
       VITE_ENDPOINT_PROVIDER: "alchemy"
@@ -47,16 +29,10 @@ jobs:
       VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
       VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
       VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+      DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
 
-  cleanup:
-    name: Cleanup actions
-    needs: test
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop containers
-        if: always()
-        run: docker-compose -f "docker-compose.yml" down
   #update-storybook:
   #  runs-on: ubuntu-latest
   #  steps:
