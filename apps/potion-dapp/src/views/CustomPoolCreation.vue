@@ -97,7 +97,7 @@ import CreatePool from "@/components/CustomPool/CreatePool.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import {
   useAllCollateralizedProductsUnderlyingQuery,
-  useGetNumberOfPoolsFromUserQuery,
+  useGetLatestPoolIdQuery,
 } from "subgraph-queries/generated/urql";
 import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
@@ -276,19 +276,15 @@ const {
 const userPoolsQueryVariables = computed(() => {
   return {
     lp: walletAddress.value,
-    ids: [""],
   };
 });
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+const { data: userPools } = useGetLatestPoolIdQuery({
   variables: userPoolsQueryVariables,
 });
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
 const poolId = computed(() => {
-  return userPoolsCount.value + 1;
+  const id = userPools?.value?.pools?.[0]?.poolId;
+  return id ? 1 + parseInt(id) : 0;
 });
 
 const amountNeededToApprove = computed(() => {

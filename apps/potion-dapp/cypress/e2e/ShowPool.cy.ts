@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Show Pool Flow", () => {
-  it("Can visit the edit page", () => {
+  it("Can visit the pool page", () => {
     cy.viewport(1920, 1080);
     cy.visit(
       "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0"

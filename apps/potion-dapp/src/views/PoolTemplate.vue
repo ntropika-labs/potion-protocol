@@ -6,7 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
   useGetTemplateQuery,
-  useGetNumberOfPoolsFromUserQuery,
+  useGetLatestPoolIdQuery,
 } from "subgraph-queries/generated/urql";
 import type {
   BondingCurveParams,
@@ -106,16 +106,14 @@ const fetchAssetsPrice = async () => {
 
   try {
     const promises = addresses.map(async (address) => {
-      const { fetchTokenPrice, formattedPrice } = useCoinGecko(
-        undefined,
-        address
-      );
+      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
 
       await fetchTokenPrice();
 
-      prices.set(address, formattedPrice.value);
+      prices.set(address, price.value);
     });
     await Promise.allSettled(promises);
+    tokenPricesMap.value = prices;
   } catch (error) {
     console.error("Error while fetching token prices.");
   }
@@ -209,20 +207,16 @@ const {
 const userPoolsQueryVariables = computed(() => {
   return {
     lp: walletAddress.value,
-    ids: [""],
   };
 });
-const { data: userPools } = useGetNumberOfPoolsFromUserQuery({
+const { data: userPools } = useGetLatestPoolIdQuery({
   pause: isNotConnected,
   variables: userPoolsQueryVariables,
 });
 
-const userPoolsCount = computed(() => {
-  return userPools?.value?.pools?.length ?? 0;
-});
-
 const clonedPoolId = computed(() => {
-  return userPoolsCount.value + 1;
+  const id = userPools?.value?.pools?.[0]?.poolId;
+  return id ? 1 + parseInt(id) : 0;
 });
 
 const handleCloneTemplate = async () => {

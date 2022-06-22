@@ -77,7 +77,7 @@ const redeemablePayoutsMap = computed(() => {
   const result = new Map<string, number>();
   Array.from(redeemableBalancesMap.value.entries()).forEach(([key, value]) => {
     const payout = expiredPotionsPayouts.value.get(key);
-    if (payout && value !== "0") {
+    if (payout && parseInt(value) !== 0) {
       result.set(key, parseFloat(payout));
     }
   });
@@ -238,7 +238,8 @@ watch(redeemReceipt, (receipt) =>
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
               :current-payout="getActivePotionPayout(potion.otoken.id)"
-            ></MyPotionCard>
+            >
+            </MyPotionCard>
           </div>
           <div class="flex justify-center mt-6">
             <BaseButton

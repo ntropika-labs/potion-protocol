@@ -9,9 +9,9 @@
     "format": "prettier --write 'src/**/*.{ts,js}'"
   },
   "dependencies": {
+    "@potion-protocol/core": "*",
     "contracts-math": "*",
     "dapp-types": "*",
-    "potion-contracts": "*",
     "subgraph-queries": "*"
   }
 }

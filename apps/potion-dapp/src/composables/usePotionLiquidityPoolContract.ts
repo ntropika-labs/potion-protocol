@@ -3,7 +3,7 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { PotionLiquidityPool } from "potion-contracts/typechain";
+import type { PotionLiquidityPool } from "@potion-protocol/core/typechain";
 import type { BondingCurveParams, Criteria } from "dapp-types";
 import type { CounterpartyDetails } from "potion-router/src/types";
 import {
@@ -12,7 +12,7 @@ import {
   OrderedCriteria,
 } from "contracts-math";
 import { chunk as _chunk } from "lodash-es";
-import { PotionLiquidityPool__factory } from "potion-contracts/typechain";
+import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 import { ref } from "vue";
 
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -170,7 +170,7 @@ export function usePotionLiquidityPoolContract() {
     try {
       const provider = initContractProvider();
       const refund = await provider.outstandingSettlement(otoken, pool);
-      return refund.toNumber();
+      return parseFloat(formatUnits(refund, 6));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot get outstanding settlement: ${error.message}`);
@@ -190,7 +190,7 @@ export function usePotionLiquidityPoolContract() {
       await Promise.allSettled(
         otokens.map(async (otoken) => {
           const refund = await provider.outstandingSettlement(otoken, pool);
-          refundMap.set(otoken, refund.toNumber());
+          refundMap.set(otoken, parseFloat(formatUnits(refund, 6)));
         })
       );
       return refundMap;
