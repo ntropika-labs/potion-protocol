@@ -1,0 +1,23 @@
+#!/bin/bash
+echo "Loading .env file..."
+
+SEEDS_FOLDER="ganache_seeds"
+
+unload_env() {
+echo "Unloading all variables from the .env file..."
+unset $(grep -v '^#' .env | sed -E 's/(.*)=.*/\1/' | xargs)
+}
+
+export $(grep -v '^#' .env | xargs)
+if [[ -z $GANACHE_VOLUME ]]; then
+  echo "GANACHE_VOLUME is missing in your .env file!"
+  unload_env
+  exit 1
+else
+  echo $GANACHE_VOLUME
+  echo "Creating the ganache custom folder if it doesn't exist..."
+  mkdir -p $GANACHE_VOLUME
+  echo "Copying the default ganache seeds to your custom folder..."
+  cp -r "$SEEDS_FOLDER"/* $GANACHE_VOLUME && echo "Seeds copied successfully"
+  unload_env
+fi
