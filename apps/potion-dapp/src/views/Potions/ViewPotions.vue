@@ -207,7 +207,7 @@ watch(redeemReceipt, (receipt) =>
       />
     </div>
   </BaseCard>
-  <InnerNav v-bind="innerNavProps" class="mt-5" />
+  <InnerNav v-bind="innerNavProps" class="mt-10" />
   <div class="flex flex-col gap-6 mt-10">
     <template v-if="loadingUserPotions">
       <i class="i-eos-icons-loading"> </i>

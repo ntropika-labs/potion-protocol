@@ -20,7 +20,7 @@
       />
     </div>
   </BaseCard>
-  <InnerNav v-bind="innerNavProps" class="mt-5" />
+  <InnerNav v-bind="innerNavProps" class="mt-10" />
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 auto-rows-fr">
     <router-link
       v-if="isSameUserConnected"
