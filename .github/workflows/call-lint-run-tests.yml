@@ -101,6 +101,10 @@ jobs:
           path: apps/potion-dapp/cypress/videos
           retention-days: 25
 
+      - name: Setup tmate session to debug errors
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+
       - name: Stop containers
         if: always()
         run: docker-compose -f "docker-compose.yml" down
