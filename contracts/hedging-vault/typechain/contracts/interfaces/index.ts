@@ -2,5 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IAction } from "./IAction";
-export type { IOtoken } from "./IOtoken";
-export type { IPotionLiquidityPool } from "./IPotionLiquidityPool";

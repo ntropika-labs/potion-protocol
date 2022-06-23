@@ -20,8 +20,8 @@
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
   },
   "dependencies": {
-    "@potion-protocol/core": "*",
     "dapp-types": "*",
+    "potion-contracts": "*",
     "potion-router": "*",
     "potion-tokenlist": "*",
     "potion-ui": "*",

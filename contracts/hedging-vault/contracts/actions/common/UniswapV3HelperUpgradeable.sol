@@ -10,7 +10,7 @@ import "../../library/PriceUtils.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 /**
-    @title UniswapV3HelperUpgradeable
+    @title UniswapV3Helper
 
     @notice Helper contract that handles the configuration to perform Uniswap V3 multi-hop swaps. It
     uses the `UniswapV3SwapLib` to perform the swaps.

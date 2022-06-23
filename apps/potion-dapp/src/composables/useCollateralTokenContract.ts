@@ -3,8 +3,8 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { PotionTestUSD } from "@potion-protocol/core/typechain";
-import { PotionTestUSD__factory } from "@potion-protocol/core/typechain";
+import type { PotionTestUSD } from "potion-contracts/typechain";
+import { PotionTestUSD__factory } from "potion-contracts/typechain";
 import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";

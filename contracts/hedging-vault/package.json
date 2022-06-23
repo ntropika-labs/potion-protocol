@@ -1,5 +1,5 @@
 {
-    "name": "@potion-protocol/hedging-vault",
+    "name": "potion-hedging-vault",
     "main": "./src/index.ts",
     "version": "0.0.1",
     "private": true,
@@ -69,8 +69,8 @@
         "set-price": "yarn run -T hardhat setPrices"
     },
     "dependencies": {
-        "@potion-protocol/core": "workspace:^",
         "@prb/math": "^2.5.0",
-        "@uniswap/v3-periphery": "^1.4.1"
+        "@uniswap/v3-periphery": "^1.4.1",
+        "potion-contracts": "workspace:^"
     }
 }

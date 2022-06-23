@@ -1,4 +1,4 @@
-import { Deployments } from "@potion-protocol/core";
+import { Deployments } from "potion-contracts";
 
 import { ethereumNetwork } from "./";
 

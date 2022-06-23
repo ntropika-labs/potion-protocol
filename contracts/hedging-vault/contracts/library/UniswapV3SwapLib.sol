@@ -6,16 +6,12 @@ pragma solidity 0.8.14;
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
-import "./SlippageUtils.sol";
-
 /**
     @title UniswapV3SwapLib
 
     @notice Helper library to perform Uniswap V3 multi-hop swaps
  */
 library UniswapV3SwapLib {
-    using SlippageUtils for uint256;
-
     /// STRUCTS
 
     /**
@@ -58,6 +54,26 @@ library UniswapV3SwapLib {
     }
 
     /// CONSTANTS
+
+    /**
+        @notice The number of decimals used for the slippage percentage
+     */
+    uint256 public constant SLIPPAGE_DECIMALS = 6;
+
+    /**
+        @notice The factor used to scale the slippage percentage when calculating the slippage
+        on an amount
+     */
+    uint256 public constant SLIPPAGE_FACTOR = 10**SLIPPAGE_DECIMALS;
+
+    /**
+        @notice Slippage percentage of 100% with the given `SLIPPAGE_DECIMALS`
+
+        @dev As 100% is represented in decimal as 1.0, it is exactly the same as the
+        `SLIPPAGE_FACTOR` constant. It is aliased here for better code documentation
+     */
+    uint256 public constant SLIPPAGE_100 = SLIPPAGE_FACTOR;
+
     /**
         @notice Performs a multi-hop swap with an exact amount of input tokens and a variable amount
         of output tokens
@@ -82,7 +98,9 @@ library UniswapV3SwapLib {
         internal
         returns (uint256 amountOut)
     {
-        uint256 amountOutMinimum = parameters.expectedAmountOut.substractSlippage(parameters.slippage);
+        // TODO: used Math.mulDiv when it is released
+        uint256 amountOutMinimum = (parameters.expectedAmountOut * (SLIPPAGE_100 - parameters.slippage)) /
+            SLIPPAGE_FACTOR;
 
         TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), parameters.exactAmountIn);
 
@@ -120,7 +138,9 @@ library UniswapV3SwapLib {
         internal
         returns (uint256 amountIn)
     {
-        uint256 amountInMaximum = parameters.expectedAmountIn.addSlippage(parameters.slippage);
+        // TODO: used Math.mulDiv when it is released
+        uint256 amountInMaximum = (parameters.expectedAmountIn * (SLIPPAGE_100 + parameters.slippage)) /
+            SLIPPAGE_FACTOR;
 
         TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), amountInMaximum);
 

@@ -13,10 +13,6 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "OwnableUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OwnableUpgradeable__factory>;
-    getContractFactory(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
@@ -45,42 +41,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "ICriteriaManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ICriteriaManager__factory>;
-    getContractFactory(
-      name: "ICurveManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ICurveManager__factory>;
-    getContractFactory(
-      name: "AddressBookInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AddressBookInterface__factory>;
-    getContractFactory(
-      name: "ControllerInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ControllerInterface__factory>;
-    getContractFactory(
-      name: "OracleInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OracleInterface__factory>;
-    getContractFactory(
-      name: "OtokenFactoryInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OtokenFactoryInterface__factory>;
-    getContractFactory(
-      name: "OtokenInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OtokenInterface__factory>;
-    getContractFactory(
-      name: "WhitelistInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.WhitelistInterface__factory>;
-    getContractFactory(
-      name: "PotionLiquidityPool",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PotionLiquidityPool__factory>;
-    getContractFactory(
       name: "IUniswapV3SwapCallback",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
@@ -88,14 +48,6 @@ declare module "hardhat/types/runtime" {
       name: "ISwapRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapRouter__factory>;
-    getContractFactory(
-      name: "PotionProtocolHelperUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PotionProtocolHelperUpgradeable__factory>;
-    getContractFactory(
-      name: "PotionProtocolOracleUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PotionProtocolOracleUpgradeable__factory>;
     getContractFactory(
       name: "UniswapV3HelperUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -129,17 +81,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
-      name: "IOtoken",
+      name: "UniswapV3SwapLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IOtoken__factory>;
-    getContractFactory(
-      name: "IPotionLiquidityPool",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IPotionLiquidityPool__factory>;
-    getContractFactory(
-      name: "SlippageUtils",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SlippageUtils__factory>;
+    ): Promise<Contracts.UniswapV3SwapLib__factory>;
     getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -169,11 +113,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HedgingVaultV0__factory>;
 
-    getContractAt(
-      name: "OwnableUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OwnableUpgradeable>;
     getContractAt(
       name: "Initializable",
       address: string,
@@ -210,51 +149,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "ICriteriaManager",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ICriteriaManager>;
-    getContractAt(
-      name: "ICurveManager",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ICurveManager>;
-    getContractAt(
-      name: "AddressBookInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.AddressBookInterface>;
-    getContractAt(
-      name: "ControllerInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ControllerInterface>;
-    getContractAt(
-      name: "OracleInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OracleInterface>;
-    getContractAt(
-      name: "OtokenFactoryInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OtokenFactoryInterface>;
-    getContractAt(
-      name: "OtokenInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OtokenInterface>;
-    getContractAt(
-      name: "WhitelistInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.WhitelistInterface>;
-    getContractAt(
-      name: "PotionLiquidityPool",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PotionLiquidityPool>;
-    getContractAt(
       name: "IUniswapV3SwapCallback",
       address: string,
       signer?: ethers.Signer
@@ -264,16 +158,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ISwapRouter>;
-    getContractAt(
-      name: "PotionProtocolHelperUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PotionProtocolHelperUpgradeable>;
-    getContractAt(
-      name: "PotionProtocolOracleUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PotionProtocolOracleUpgradeable>;
     getContractAt(
       name: "UniswapV3HelperUpgradeable",
       address: string,
@@ -315,20 +199,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
-      name: "IOtoken",
+      name: "UniswapV3SwapLib",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IOtoken>;
-    getContractAt(
-      name: "IPotionLiquidityPool",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IPotionLiquidityPool>;
-    getContractAt(
-      name: "SlippageUtils",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SlippageUtils>;
+    ): Promise<Contracts.UniswapV3SwapLib>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,

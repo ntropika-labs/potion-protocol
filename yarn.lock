@@ -4529,25 +4529,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@potion-protocol/core@*, @potion-protocol/core@workspace:^, @potion-protocol/core@workspace:contracts/core":
-  version: 0.0.0-use.local
-  resolution: "@potion-protocol/core@workspace:contracts/core"
-  dependencies:
-    contracts-math: "workspace:^"
-    gamma-protocol: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@potion-protocol/hedging-vault@workspace:contracts/hedging-vault":
-  version: 0.0.0-use.local
-  resolution: "@potion-protocol/hedging-vault@workspace:contracts/hedging-vault"
-  dependencies:
-    "@potion-protocol/core": "workspace:^"
-    "@prb/math": ^2.5.0
-    "@uniswap/v3-periphery": ^1.4.1
-  languageName: unknown
-  linkType: soft
-
 "@prb/math@npm:^2.5.0":
   version: 2.5.0
   resolution: "@prb/math@npm:2.5.0"
@@ -12407,7 +12388,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "contracts-math@workspace:libs/contracts-math"
   dependencies:
-    "@potion-protocol/core": "*"
+    potion-contracts: "*"
   languageName: unknown
   linkType: soft
 
@@ -25379,17 +25360,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"potion-contracts@*, potion-contracts@workspace:^, potion-contracts@workspace:contracts/core":
+  version: 0.0.0-use.local
+  resolution: "potion-contracts@workspace:contracts/core"
+  dependencies:
+    contracts-math: "workspace:^"
+    gamma-protocol: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "potion-dapp@workspace:apps/potion-dapp":
   version: 0.0.0-use.local
   resolution: "potion-dapp@workspace:apps/potion-dapp"
   dependencies:
-    "@potion-protocol/core": "*"
     dapp-types: "*"
+    potion-contracts: "*"
     potion-router: "*"
     potion-tokenlist: "*"
     potion-ui: "*"
     potion-unocss: "*"
     subgraph-queries: "*"
+  languageName: unknown
+  linkType: soft
+
+"potion-hedging-vault@workspace:contracts/hedging-vault":
+  version: 0.0.0-use.local
+  resolution: "potion-hedging-vault@workspace:contracts/hedging-vault"
+  dependencies:
+    "@prb/math": ^2.5.0
+    "@uniswap/v3-periphery": ^1.4.1
+    potion-contracts: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -25538,9 +25538,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "potion-router@workspace:libs/potion-router"
   dependencies:
-    "@potion-protocol/core": "*"
     contracts-math: "*"
     dapp-types: "*"
+    potion-contracts: "*"
     subgraph-queries: "*"
   languageName: unknown
   linkType: soft
