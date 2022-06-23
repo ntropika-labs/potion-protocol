@@ -75,6 +75,8 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
             IAction action = getAction(i);
 
             totalAmountReturned += action.exitPosition(investmentAsset);
+
+            IERC20(investmentAsset).safeApprove(address(action), 0);
         }
 
         _setLifecycleState(LifecycleState.Unlocked);
