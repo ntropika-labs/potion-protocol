@@ -12,6 +12,8 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 /**
     @title ERC4626CapUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice Adds a cap to the amount of principal that the vault can manage, thus imposing
     a restriction on deposits and mints
 

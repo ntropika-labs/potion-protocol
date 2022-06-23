@@ -37,7 +37,8 @@ export interface HedgingVaultInterface extends utils.Interface {
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -47,13 +48,14 @@ export interface HedgingVaultInterface extends utils.Interface {
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
+    "getOperator()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
+    "getStrategist()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address,address,uint256,uint256,address,address[])": FunctionFragment;
+    "initialize(address,address,address,address,uint256,uint256,address,address[])": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -93,7 +95,8 @@ export interface HedgingVaultInterface extends utils.Interface {
       | "canRefund"
       | "canRefundETH"
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
@@ -103,10 +106,11 @@ export interface HedgingVaultInterface extends utils.Interface {
       | "getAction"
       | "getActionsLength"
       | "getAdmin"
-      | "getKeeper"
       | "getLifecycleState"
       | "getManagementFee"
+      | "getOperator"
       | "getPerformanceFee"
+      | "getStrategist"
       | "getVaultCap"
       | "increaseAllowance"
       | "initialize"
@@ -160,7 +164,11 @@ export interface HedgingVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -190,7 +198,6 @@ export interface HedgingVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
     values?: undefined
@@ -200,7 +207,15 @@ export interface HedgingVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getOperator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPerformanceFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -214,6 +229,7 @@ export interface HedgingVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
+      string,
       string,
       string,
       string,
@@ -320,7 +336,11 @@ export interface HedgingVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -344,7 +364,6 @@ export interface HedgingVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
     data: BytesLike
@@ -354,7 +373,15 @@ export interface HedgingVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPerformanceFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -438,11 +465,12 @@ export interface HedgingVaultInterface extends utils.Interface {
     "FeesReceipientChanged(address,address)": EventFragment;
     "FeesSent(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "ManagementFeeChanged(uint256,uint256)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
@@ -457,11 +485,12 @@ export interface HedgingVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FeesReceipientChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesSent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ManagementFeeChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultCapChanged"): EventFragment;
@@ -476,8 +505,8 @@ export type ActionsAddedEvent = TypedEvent<[string[]], ActionsAddedEventObject>;
 export type ActionsAddedEventFilter = TypedEventFilter<ActionsAddedEvent>;
 
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -555,17 +584,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
-}
-export type KeeperChangedEvent = TypedEvent<
-  [string, string],
-  KeeperChangedEventObject
->;
-
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
-
 export interface LifecycleStateChangedEventObject {
   prevState: number;
   newState: number;
@@ -590,6 +608,17 @@ export type ManagementFeeChangedEvent = TypedEvent<
 export type ManagementFeeChangedEventFilter =
   TypedEventFilter<ManagementFeeChangedEvent>;
 
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
+}
+export type OperatorChangedEvent = TypedEvent<
+  [string, string],
+  OperatorChangedEventObject
+>;
+
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+
 export interface PausedEventObject {
   account: string;
 }
@@ -608,6 +637,18 @@ export type PerformanceFeeChangedEvent = TypedEvent<
 
 export type PerformanceFeeChangedEventFilter =
   TypedEventFilter<PerformanceFeeChangedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
 
 export interface TransferEventObject {
   from: string;
@@ -705,12 +746,17 @@ export interface HedgingVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -749,13 +795,15 @@ export interface HedgingVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
     getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
+
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -766,8 +814,9 @@ export interface HedgingVault extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
       underlyingAsset: string,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
@@ -917,12 +966,17 @@ export interface HedgingVault extends BaseContract {
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -958,13 +1012,15 @@ export interface HedgingVault extends BaseContract {
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
   getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getOperator(overrides?: CallOverrides): Promise<string>;
+
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -975,8 +1031,9 @@ export interface HedgingVault extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
-    adminRole: string,
-    keeperRole: string,
+    adminAddress: string,
+    strategistAddress: string,
+    operatorAddress: string,
     underlyingAsset: string,
     managementFee: BigNumberish,
     performanceFee: BigNumberish,
@@ -1122,9 +1179,20 @@ export interface HedgingVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
+    changeAdmin(
+      newAdminAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     convertToAssets(
       shares: BigNumberish,
@@ -1158,13 +1226,15 @@ export interface HedgingVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOperator(overrides?: CallOverrides): Promise<string>;
+
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1175,8 +1245,9 @@ export interface HedgingVault extends BaseContract {
     ): Promise<boolean>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
       underlyingAsset: string,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
@@ -1296,12 +1367,12 @@ export interface HedgingVault extends BaseContract {
     ActionsAdded(actions?: null): ActionsAddedEventFilter;
 
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Approval(address,address,uint256)"(
@@ -1364,15 +1435,6 @@ export interface HedgingVault extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-
     "LifecycleStateChanged(uint8,uint8)"(
       prevState?: BigNumberish | null,
       newState?: BigNumberish | null
@@ -1391,6 +1453,15 @@ export interface HedgingVault extends BaseContract {
       newManagementFee?: null
     ): ManagementFeeChangedEventFilter;
 
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
@@ -1402,6 +1473,15 @@ export interface HedgingVault extends BaseContract {
       oldPerformanceFee?: null,
       newPerformanceFee?: null
     ): PerformanceFeeChangedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: string | null,
@@ -1468,12 +1548,17 @@ export interface HedgingVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1512,13 +1597,15 @@ export interface HedgingVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1529,8 +1616,9 @@ export interface HedgingVault extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
       underlyingAsset: string,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
@@ -1684,12 +1772,17 @@ export interface HedgingVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1728,13 +1821,15 @@ export interface HedgingVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getManagementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1745,8 +1840,9 @@ export interface HedgingVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      adminRole: string,
-      keeperRole: string,
+      adminAddress: string,
+      strategistAddress: string,
+      operatorAddress: string,
       underlyingAsset: string,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,

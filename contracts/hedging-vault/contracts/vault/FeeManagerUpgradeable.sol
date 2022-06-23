@@ -11,6 +11,8 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 /**
     @title FeeManagerUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice Handles the fees that the vault pays-off to the Keeper
 
     @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the

@@ -9,6 +9,8 @@ import "../versioning/HedgingVaultV0.sol";
 /**
     @title HedgingVault
 
+    @author Roberto Cano <robercano>
+    
     @notice Hedging Vault contract that manages the vault and its actions...
 
     TODO

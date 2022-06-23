@@ -14,6 +14,8 @@ import "./ActionsManagerUpgradeable.sol";
 /**
     @title BaseVaultUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice Base contract for the Vault contract. It serves as a commonplace to take care of
     the inheritance order and the storage order of the contracts, as this is very important
     to keep consistent in order to be able to upgrade the contracts. The order of the contracts
@@ -44,15 +46,25 @@ contract BaseVaultUpgradeable is
         @notice Takes care of the initialization of all the contracts hierarchy. Any changes
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
+
+        @param adminAddress The address of the admin of the Vault
+        @param strategistAddress The address of the strategist of the Vault
+        @param operatorAddress The address of the operator of the Vault
+        @param underlyingAsset The address of the asset managed by this vault
+        @param managementFee The fee percentage charged for the management of the Vault
+        @param performanceFee The fee percentage charged for the performance of the Vault
+        @param feesRecipient The address of the account that will receive the fees
+        @param actions The list of investment actions to be executed in the Vault
      */
     function initialize(
-        address adminRole,
-        address keeperRole,
+        address adminAddress,
+        address strategistAddress,
+        address operatorAddress,
         address underlyingAsset,
         uint256 managementFee,
         uint256 performanceFee,
         address payable feesRecipient,
-        address[] calldata actions
+        IAction[] calldata actions
     ) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
         // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
@@ -60,7 +72,7 @@ contract BaseVaultUpgradeable is
         address[] memory cannotRefundToken = new address[](1);
         cannotRefundToken[0] = underlyingAsset;
 
-        __RolesManager_init_unchained(adminRole, keeperRole);
+        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
         __ERC4626Cap_init_unchained(underlyingAsset);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();

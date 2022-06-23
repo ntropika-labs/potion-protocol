@@ -74,7 +74,7 @@ contract UniswapV3OracleUpgradeable is RolesManagerUpgradeable {
 
         @dev See { SwapInfo }
      */
-    function setSwapInfo(SwapInfo calldata info) external onlyKeeper {
+    function setSwapInfo(SwapInfo calldata info) external onlyStrategist {
         _swapInfo[info.inputToken][info.outputToken] = info;
     }
 

@@ -102,7 +102,7 @@ export declare namespace PotionProtocolOracleUpgradeable {
   export type PotionBuyInfoStruct = {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-    expectedPremium: BigNumberish;
+    expectedPremiumInUSDC: BigNumberish;
     totalSizeInPotions: BigNumberish;
   };
 
@@ -114,7 +114,7 @@ export declare namespace PotionProtocolOracleUpgradeable {
   ] & {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-    expectedPremium: BigNumber;
+    expectedPremiumInUSDC: BigNumber;
     totalSizeInPotions: BigNumber;
   };
 }
@@ -123,33 +123,48 @@ export interface PotionProtocolOracleUpgradeableInterface
   extends utils.Interface {
   functions: {
     "changeAdmin(address)": FunctionFragment;
-    "changeKeeper(address)": FunctionFragment;
+    "changeOperator(address)": FunctionFragment;
+    "changeStrategist(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
-    "getKeeper()": FunctionFragment;
+    "getOperator()": FunctionFragment;
     "getPotionBuyInfo(address)": FunctionFragment;
+    "getStrategist()": FunctionFragment;
     "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "changeAdmin"
-      | "changeKeeper"
+      | "changeOperator"
+      | "changeStrategist"
       | "getAdmin"
-      | "getKeeper"
+      | "getOperator"
       | "getPotionBuyInfo"
+      | "getStrategist"
       | "setPotionBuyInfo"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeStrategist",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getKeeper", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getOperator",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategist",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
@@ -161,13 +176,24 @@ export interface PotionProtocolOracleUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeKeeper",
+    functionFragment: "changeOperator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getKeeper", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getOperator",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPotionBuyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -178,17 +204,19 @@ export interface PotionProtocolOracleUpgradeableInterface
   events: {
     "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "KeeperChanged(address,address)": EventFragment;
+    "OperatorChanged(address,address)": EventFragment;
+    "StrategistChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KeeperChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
-  prevAdmin: string;
-  newAdmin: string;
+  prevAdminAddress: string;
+  newAdminAddress: string;
 }
 export type AdminChangedEvent = TypedEvent<
   [string, string],
@@ -204,16 +232,28 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface KeeperChangedEventObject {
-  prevKeeper: string;
-  newKeeper: string;
+export interface OperatorChangedEventObject {
+  prevOperatorAddress: string;
+  newOperatorAddress: string;
 }
-export type KeeperChangedEvent = TypedEvent<
+export type OperatorChangedEvent = TypedEvent<
   [string, string],
-  KeeperChangedEventObject
+  OperatorChangedEventObject
 >;
 
-export type KeeperChangedEventFilter = TypedEventFilter<KeeperChangedEvent>;
+export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+
+export interface StrategistChangedEventObject {
+  prevStrategistAddress: string;
+  newStrategistAddress: string;
+}
+export type StrategistChangedEvent = TypedEvent<
+  [string, string],
+  StrategistChangedEventObject
+>;
+
+export type StrategistChangedEventFilter =
+  TypedEventFilter<StrategistChangedEvent>;
 
 export interface PotionProtocolOracleUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -243,23 +283,30 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   functions: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    getKeeper(overrides?: CallOverrides): Promise<[string]>;
+    getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
+
+    getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -268,23 +315,30 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
   };
 
   changeAdmin(
-    newAdmin: string,
+    newAdminAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeKeeper(
-    newKeeper: string,
+  changeOperator(
+    newOperatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeStrategist(
+    newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
-  getKeeper(overrides?: CallOverrides): Promise<string>;
+  getOperator(overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
   ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+  getStrategist(overrides?: CallOverrides): Promise<string>;
 
   setPotionBuyInfo(
     info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -292,18 +346,31 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
+    changeAdmin(
+      newAdminAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    changeKeeper(newKeeper: string, overrides?: CallOverrides): Promise<void>;
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeStrategist(
+      newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
-    getKeeper(overrides?: CallOverrides): Promise<string>;
+    getOperator(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+
+    getStrategist(overrides?: CallOverrides): Promise<string>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -313,46 +380,62 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdmin?: string | null,
-      newAdmin?: string | null
+      prevAdminAddress?: string | null,
+      newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "KeeperChanged(address,address)"(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
-    KeeperChanged(
-      prevKeeper?: string | null,
-      newKeeper?: string | null
-    ): KeeperChangedEventFilter;
+    "OperatorChanged(address,address)"(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+    OperatorChanged(
+      prevOperatorAddress?: string | null,
+      newOperatorAddress?: string | null
+    ): OperatorChangedEventFilter;
+
+    "StrategistChanged(address,address)"(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
+    StrategistChanged(
+      prevStrategistAddress?: string | null,
+      newStrategistAddress?: string | null
+    ): StrategistChangedEventFilter;
   };
 
   estimateGas: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getKeeper(overrides?: CallOverrides): Promise<BigNumber>;
+    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
@@ -362,23 +445,30 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   populateTransaction: {
     changeAdmin(
-      newAdmin: string,
+      newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeKeeper(
-      newKeeper: string,
+    changeOperator(
+      newOperatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeStrategist(
+      newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getKeeper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
       info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,

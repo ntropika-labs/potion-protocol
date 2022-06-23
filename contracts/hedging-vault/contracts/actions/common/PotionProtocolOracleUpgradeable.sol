@@ -30,13 +30,14 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
 
         @custom:member potion The address of the potion (otoken) to buy
         @custom:member sellers The list of liquidity providers that will be used to buy the potion
-        @custom:member expectedPremium The expected premium to be paid for the given order size and the given sellers
+        @custom:member expectedPremiumInUSDC The expected premium to be paid for the given order size
+                       and the given sellers, in USDC
         @custom:member totalSizeInPotions The total number of potions to buy using the given sellers list
      */
     struct PotionBuyInfo {
         address potion;
         IPotionLiquidityPool.CounterpartyDetails[] sellers;
-        uint256 expectedPremium;
+        uint256 expectedPremiumInUSDC;
         uint256 totalSizeInPotions;
     }
 
@@ -69,7 +70,7 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
 
         @dev See { PotionBuyInfo }
      */
-    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyKeeper {
+    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyStrategist {
         _potionBuyInfo[info.potion] = info;
     }
 

@@ -5,9 +5,13 @@ pragma solidity 0.8.14;
 
 import { PotionProtocolOracleUpgradeable } from "./PotionProtocolOracleUpgradeable.sol";
 import "../../library/PotionProtocolLib.sol";
+import "../../library/PercentageUtils.sol";
+import "../../library/OpynProtocolLib.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
+import { IOpynController } from "../../interfaces/IOpynController.sol";
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
@@ -23,11 +27,20 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
  */
 contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     using PotionProtocolLib for IPotionLiquidityPool;
+    using OpynProtocolLib for IOpynController;
+    using PercentageUtils for uint256;
 
     /**
         @notice The address of the Potion Protocol liquidity pool manager
      */
     IPotionLiquidityPool private _potionLiquidityPoolManager;
+
+    /**
+        @notice The address of the Opyn Protocol controller
+
+        @dev Used to determine if a potion can be redeemed or not
+     */
+    IOpynController private _opynController;
 
     /**
         @notice Maps the address of an asset with the address of the potion that will be used to hedge it
@@ -89,6 +102,36 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     }
 
     /**
+        @notice Calculates the premium required to buy potions for the indicated amount of
+        assets and the intended slippage
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param amount The amount of assets to be hedged
+        @param slippage The slippage percentage to be used to calculate the premium
+
+        @return isValid Whether the maximum premium could be calculated or not
+        @return maxPremiumInUSDC The maximum premium needed to buy the potions
+     */
+    function _calculateMaxPremium(
+        address hedgedAsset,
+        uint256 amount,
+        uint256 slippage
+    ) internal view returns (bool isValid, uint256 maxPremiumInUSDC) {
+        address potion = getPotion(hedgedAsset);
+        if (potion == address(0)) {
+            return (false, type(uint256).max);
+        }
+
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);
+        if (amount != buyInfo.totalSizeInPotions) {
+            return (false, type(uint256).max);
+        }
+
+        isValid = true;
+        maxPremiumInUSDC = buyInfo.expectedPremiumInUSDC.addPercentage(slippage);
+    }
+
+    /**
         @notice Buys potions from the Potion Protocol to insure the specific amount of assets
      */
     function _buyPotions(
@@ -97,15 +140,18 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         uint256 slippage
     ) internal returns (uint256 actualPremium) {
         address potion = getPotion(hedgedAsset);
+        require(potion != address(0), "Potion not found for the given asset");
+
         PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);
 
         require(amount == buyInfo.totalSizeInPotions, "Insured amount greater than expected amount");
 
-        actualPremium = _potionLiquidityPoolManager._buyPotions(
+        actualPremium = _potionLiquidityPoolManager.buyPotion(
             potion,
             buyInfo.sellers,
-            buyInfo.expectedPremium,
-            slippage
+            buyInfo.expectedPremiumInUSDC,
+            slippage,
+            getUSDC()
         );
     }
 
@@ -116,9 +162,21 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         address potion = getPotion(hedgedAsset);
         uint256 prevUSDCBalance = getUSDCBalance(address(this));
 
-        _potionLiquidityPoolManager._redeemPotions(potion);
+        _potionLiquidityPoolManager.redeemPotion(potion);
 
         settledAmount = getUSDCBalance(address(this)) - prevUSDCBalance;
+    }
+
+    /**
+        @notice Checks if the potion for the given asset can be redeemed already
+
+        @param hedgedAsset The address of the hedged asset related to the potion to be redeemed
+
+        @return Whether the potion can be redeemed or not
+     */
+    function _isPotionRedeemable(address hedgedAsset) internal view returns (bool) {
+        address potion = getPotion(hedgedAsset);
+        return _opynController.isPotionRedeemable(potion);
     }
 
     /**

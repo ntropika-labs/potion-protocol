@@ -11,16 +11,96 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionEntered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
+    ],
+    name: "ActionPositionExited",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
+    name: "canPositionBeExited",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canExit",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountToInvest",
+        type: "uint256",
+      },
+    ],
     name: "enterPosition",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
     name: "exitPosition",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

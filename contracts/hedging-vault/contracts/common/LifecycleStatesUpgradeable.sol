@@ -8,6 +8,8 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 /**
     @title LifecycleStatesUpgradeable
 
+    @author Roberto Cano <robercano>
+    
     @notice Handles the lifecycle of the hedging vault and provides the necessary modifiers
     to scope functions that must only work in certain states. It also provides a getter
     to query the current state and an internal setter to change the state

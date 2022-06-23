@@ -25,8 +25,6 @@ import type {
 export interface HedgingVaultV0Interface extends utils.Interface {
   functions: {
     "MIN_CYCLE_DURATION()": FunctionFragment;
-    "PERCENTAGE_DECIMALS()": FunctionFragment;
-    "PERCENTAGE_SCALE()": FunctionFragment;
     "commitStrategy()": FunctionFragment;
     "cycleDurationSeconds()": FunctionFragment;
     "enterPosition()": FunctionFragment;
@@ -39,8 +37,6 @@ export interface HedgingVaultV0Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MIN_CYCLE_DURATION"
-      | "PERCENTAGE_DECIMALS"
-      | "PERCENTAGE_SCALE"
       | "commitStrategy"
       | "cycleDurationSeconds"
       | "enterPosition"
@@ -52,14 +48,6 @@ export interface HedgingVaultV0Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "MIN_CYCLE_DURATION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERCENTAGE_DECIMALS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERCENTAGE_SCALE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -93,14 +81,6 @@ export interface HedgingVaultV0Interface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "MIN_CYCLE_DURATION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERCENTAGE_DECIMALS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERCENTAGE_SCALE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -164,10 +144,6 @@ export interface HedgingVaultV0 extends BaseContract {
   functions: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    PERCENTAGE_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    PERCENTAGE_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     commitStrategy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -199,10 +175,6 @@ export interface HedgingVaultV0 extends BaseContract {
   };
 
   MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  PERCENTAGE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-  PERCENTAGE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
   commitStrategy(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -236,10 +208,6 @@ export interface HedgingVaultV0 extends BaseContract {
   callStatic: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PERCENTAGE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERCENTAGE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
     commitStrategy(overrides?: CallOverrides): Promise<void>;
 
     cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
@@ -268,10 +236,6 @@ export interface HedgingVaultV0 extends BaseContract {
 
   estimateGas: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERCENTAGE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERCENTAGE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
     commitStrategy(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -307,12 +271,6 @@ export interface HedgingVaultV0 extends BaseContract {
     MIN_CYCLE_DURATION(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    PERCENTAGE_DECIMALS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    PERCENTAGE_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     commitStrategy(
       overrides?: Overrides & { from?: string | Promise<string> }

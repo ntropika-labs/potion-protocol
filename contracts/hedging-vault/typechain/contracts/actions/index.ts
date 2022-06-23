@@ -3,3 +3,4 @@
 /* eslint-disable */
 import type * as common from "./common";
 export type { common };
+export type { PotionBuyAction } from "./PotionBuyAction";

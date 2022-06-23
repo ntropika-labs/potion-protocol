@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { HedgingVaultV0__factory } from "./HedgingVaultV0__factory";
+export { PotionBuyActionV0__factory } from "./PotionBuyActionV0__factory";

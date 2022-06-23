@@ -57,32 +57,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "PERCENTAGE_DECIMALS",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "PERCENTAGE_SCALE",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "commitStrategy",
     outputs: [],
     stateMutability: "nonpayable",

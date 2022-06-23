@@ -11,6 +11,8 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 /**
     @title RefundsHelperUpgreadable
 
+    @author Roberto Cano <robercano>
+    
     @notice Helper contract that allows the Admin to refund tokens or ETH sent to the vault
     by mistake. At construction time it receives the list of tokens that cannot be refunded.
     Those tokens are typically the asset managed by the vault and any intermediary tokens
