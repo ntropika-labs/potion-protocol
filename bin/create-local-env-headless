@@ -133,7 +133,7 @@ spin_up_environment() {
   docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
-  ./bin/wait-for-it localhost:8545
+  ./bin/wait-for-tcp localhost:8545
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
 
   yarn nx run potion-contracts:deploy-local
@@ -145,7 +145,7 @@ spin_up_environment() {
   yarn nx run potion-subgraph:codegen
   msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"
 
-  ./bin/wait-for-it localhost:8020
+  ./bin/wait-for-tcp localhost:8020
   msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
 
   yarn nx run potion-subgraph:create-local

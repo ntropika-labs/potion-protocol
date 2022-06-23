@@ -5,7 +5,7 @@ docker compose up -d
 
 echo "Containers restarted..."
 
-./bin/wait-for-it localhost:8545
+./bin/wait-for-tcp localhost:8545
 
 echo "graph-node is ready"
 
