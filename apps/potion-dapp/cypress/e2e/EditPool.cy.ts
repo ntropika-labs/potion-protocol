@@ -29,11 +29,14 @@ describe("Edit Pool Flow", () => {
       "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0/edit"
     );
 
-    cy.wait([
-      "@getPoolById",
-      "@allCollateralizedProductsUnderlying",
-      "@getPoolsFromCriteria",
-    ]).then((interceptor) => {
+    cy.wait(
+      [
+        "@getPoolById",
+        "@allCollateralizedProductsUnderlying",
+        "@getPoolsFromCriteria",
+      ],
+      { timeout: 20000 }
+    ).then((interceptor) => {
       // assert that the subgraph send us the correct pool
       expect(interceptor[0].response.body).to.haveOwnProperty("data");
       const poolData = interceptor[0].response.body.data;

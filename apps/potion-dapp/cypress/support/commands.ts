@@ -29,7 +29,7 @@
 import "@testing-library/cypress/add-commands";
 
 Cypress.Commands.add("seed", (databasePath) => {
-  cy.exec("cd ../../ && bin/start-local-env", {
+  cy.exec("cd ../../ && bin/start-local-env-headless", {
     env: { DATABASE_PATH: databasePath },
     failOnNonZeroExit: false,
     timeout: 180000,

@@ -1,0 +1,19 @@
+#!/bin/bash
+echo "Run and deploy the subgraph on local ganache"
+
+docker compose up -d
+
+echo "Containers restarted..."
+
+./bin/wait-for-it localhost:8545
+
+echo "graph-node is ready"
+
+yarn nx run potion-subgraph:create-local
+
+echo "Potion subgraph created"
+
+yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
+
+echo "Potion subgraph deployed"
+echo "stack is ready"
