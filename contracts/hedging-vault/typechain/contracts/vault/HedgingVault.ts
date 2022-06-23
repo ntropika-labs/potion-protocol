@@ -43,7 +43,6 @@ export interface HedgingVaultInterface extends utils.Interface {
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
-    "dummy()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
     "getAdmin()": FunctionFragment;
@@ -99,7 +98,6 @@ export interface HedgingVaultInterface extends utils.Interface {
       | "decimals"
       | "decreaseAllowance"
       | "deposit"
-      | "dummy"
       | "getAction"
       | "getActionsLength"
       | "getAdmin"
@@ -180,7 +178,6 @@ export interface HedgingVaultInterface extends utils.Interface {
     functionFragment: "deposit",
     values: [BigNumberish, string]
   ): string;
-  encodeFunctionData(functionFragment: "dummy", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getAction",
     values: [BigNumberish]
@@ -337,7 +334,6 @@ export interface HedgingVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "dummy", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAction", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getActionsLength",
@@ -738,8 +734,6 @@ export interface HedgingVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    dummy(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getAction(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -950,8 +944,6 @@ export interface HedgingVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  dummy(overrides?: CallOverrides): Promise<BigNumber>;
-
   getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1149,8 +1141,6 @@ export interface HedgingVault extends BaseContract {
       receiver: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    dummy(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -1501,8 +1491,6 @@ export interface HedgingVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    dummy(overrides?: CallOverrides): Promise<BigNumber>;
-
     getAction(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -1716,8 +1704,6 @@ export interface HedgingVault extends BaseContract {
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    dummy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAction(
       index: BigNumberish,
