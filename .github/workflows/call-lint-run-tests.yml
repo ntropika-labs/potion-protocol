@@ -104,8 +104,11 @@ jobs:
           retention-days: 25
 
       - name: Setup tmate session to debug errors
-        if: ${{ failure() }} # if: ${{ github.event_name == 'workflow_dispatch' }}
+        # if: ${{ failure() }} 
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
       - name: Stop containers
         if: always()
