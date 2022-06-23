@@ -25225,7 +25225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"potion-contracts@*, potion-contracts@workspace:^, potion-contracts@workspace:contracts/core":
+"potion-contracts@*, potion-contracts@workspace:contracts/core":
   version: 0.0.0-use.local
   resolution: "potion-contracts@workspace:contracts/core"
   dependencies:
@@ -25245,14 +25245,6 @@ __metadata:
     potion-ui: "*"
     potion-unocss: "*"
     subgraph-queries: "*"
-  languageName: unknown
-  linkType: soft
-
-"potion-hedging-vault@workspace:contracts/hedging-vault":
-  version: 0.0.0-use.local
-  resolution: "potion-hedging-vault@workspace:contracts/hedging-vault"
-  dependencies:
-    potion-contracts: "workspace:^"
   languageName: unknown
   linkType: soft
 
