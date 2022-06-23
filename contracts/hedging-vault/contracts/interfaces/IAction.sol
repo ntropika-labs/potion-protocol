@@ -73,11 +73,30 @@ interface IAction {
     function exitPosition(address investmentAsset) external returns (uint256 amountReturned);
 
     /**
+        @notice It inficates if the position can be entered or not
+
+        @param investmentAsset The asset for which position can be entered or not
+
+        @return canEnter true if the position can be entered, false otherwise
+
+        @dev The function checks if the position can be entered for the current block. If it returns
+        true then it indicates that the position can be entered at any moment from the current block.
+        This invariant only takes into account the current state of the action itself and not any external
+        dependendencies that the action may have
+     */
+    function canPositionBeEntered(address investmentAsset) external view returns (bool canEnter);
+
+    /**
         @notice It indicates if the position can be exited or not
 
         @param investmentAsset The asset for which position can be exited or not
 
         @return canExit true if the position can be exited, false otherwise
+
+        @dev The function checks if the position can be exited for the current block. If it returns
+        true then it indicates that the position can be exited at any moment from the current block.
+        This invariant only takes into account the current state of the action itself and not any external
+        dependendencies that the action may have
      */
     function canPositionBeExited(address investmentAsset) external view returns (bool canExit);
 }

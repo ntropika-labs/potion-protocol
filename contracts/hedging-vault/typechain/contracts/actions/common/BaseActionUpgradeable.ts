@@ -28,6 +28,7 @@ import type {
 
 export interface BaseActionUpgradeableInterface extends utils.Interface {
   functions: {
+    "canPositionBeEntered(address)": FunctionFragment;
     "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
@@ -49,6 +50,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "canPositionBeEntered"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
@@ -68,6 +70,10 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
       | "unpause"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "canPositionBeEntered",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values: [string]
@@ -119,6 +125,10 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "canPositionBeEntered",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
@@ -308,6 +318,11 @@ export interface BaseActionUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -374,6 +389,11 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  canPositionBeEntered(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canPositionBeExited(
     investmentAsset: string,
@@ -442,6 +462,11 @@ export interface BaseActionUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -571,6 +596,11 @@ export interface BaseActionUpgradeable extends BaseContract {
   };
 
   estimateGas: {
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -639,6 +669,11 @@ export interface BaseActionUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides

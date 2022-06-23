@@ -8,6 +8,7 @@ import "../../common/EmergencyLockUpgradeable.sol";
 import "../../common/LifecycleStatesUpgradeable.sol";
 import "../../common/RefundsHelperUpgreadable.sol";
 import "../../common/RolesManagerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 /**
     @title BaseVaultUpgradeable
@@ -34,7 +35,8 @@ abstract contract BaseActionUpgradeable is
     RolesManagerUpgradeable, // Making explicit inheritance here, although it is not necessary
     EmergencyLockUpgradeable,
     LifecycleStatesUpgradeable,
-    RefundsHelperUpgreadable
+    RefundsHelperUpgreadable,
+    ReentrancyGuardUpgradeable
 {
     // UPGRADEABLE INITIALIZER
 
@@ -55,5 +57,6 @@ abstract contract BaseActionUpgradeable is
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundTokens, false);
+        __ReentrancyGuard_init_unchained();
     }
 }

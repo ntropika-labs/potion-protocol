@@ -4,4 +4,4 @@
 export type { ActionsManagerUpgradeable } from "./ActionsManagerUpgradeable";
 export type { BaseVaultUpgradeable } from "./BaseVaultUpgradeable";
 export type { FeeManagerUpgradeable } from "./FeeManagerUpgradeable";
-export type { HedgingVault } from "./HedgingVault";
+export type { InvestmentVault } from "./InvestmentVault";

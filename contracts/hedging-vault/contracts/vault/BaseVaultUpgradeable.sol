@@ -10,6 +10,8 @@ import "../common/RolesManagerUpgradeable.sol";
 import "../extensions/ERC4626CapUpgradeable.sol";
 import "./FeeManagerUpgradeable.sol";
 import "./ActionsManagerUpgradeable.sol";
+import "../interfaces/IVault.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 /**
     @title BaseVaultUpgradeable
@@ -29,16 +31,24 @@ import "./ActionsManagerUpgradeable.sol";
     @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the
     upgradeability of the contract. Only the unchained initializer is provided as all
     contracts in the inheritance will be initialized in the Vault and Action contract
+
+    @dev The separation between the base vault and the vault itself is based on the upgradeability
+    of the contracts. Up to this point all contracts support upgradeability by allocating gaps in
+    their storage definitions. Or not allocating gaps, in which case the storage of that particular
+    contract cannot be updated. The main vault contract will inherit first from the base vault,
+    and then use the versioning contracts to expand its storage in case it is needed.
  */
 
-contract BaseVaultUpgradeable is
+abstract contract BaseVaultUpgradeable is
     RolesManagerUpgradeable, // Making explicit inheritance here, although it is not necessary
     ERC4626CapUpgradeable,
     EmergencyLockUpgradeable,
     LifecycleStatesUpgradeable,
     RefundsHelperUpgreadable,
     FeeManagerUpgradeable,
-    ActionsManagerUpgradeable
+    ActionsManagerUpgradeable,
+    ReentrancyGuardUpgradeable,
+    IVault
 {
     // UPGRADEABLE INITIALIZER
 
@@ -79,5 +89,6 @@ contract BaseVaultUpgradeable is
         __RefundsHelper_init_unchained(cannotRefundToken, false);
         __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
         __ActionsManager_init_unchained(actions);
+        __ReentrancyGuard_init_unchained();
     }
 }

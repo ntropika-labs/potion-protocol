@@ -11,6 +11,68 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "cycleDurationSecs",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minCycleDurationSecs",
+        type: "uint256",
+      },
+    ],
+    name: "CycleDurationTooShort",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "maxPremiumPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "MaxPremiumPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "premiumSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "PremiumSlippageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "swapSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "SwapSlippageOutOfRange",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "cycleDurationSecs",
+        type: "uint256",
+      },
+    ],
+    name: "CycleDurationChanged",
+    type: "event",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -64,6 +126,32 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MIN_CYCLE_DURATION",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "cycleDurationSecs",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "maxPremiumPercentage",
     outputs: [
       {
@@ -90,6 +178,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "nextCycleStartTimestamp",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "premiumSlippage",
     outputs: [
       {
@@ -99,6 +200,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "durationSeconds",
+        type: "uint256",
+      },
+    ],
+    name: "setCycleDuration",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
