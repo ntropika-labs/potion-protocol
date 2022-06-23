@@ -4,20 +4,13 @@
 pragma solidity 0.8.14;
 
 /**    
-    @title HedgingVaultV0
+    @title InvestmentVaultV0
         
     @author Roberto Cano <robercano>
 
-    @notice Storage and interface for the first version of the Vault
+    @notice Storage and interface for the first version of the Investment Vault
  */
-abstract contract HedgingVaultV0 {
-    // CONSTANTS
-
-    /**
-        @notice The minimum duration of a cycle in seconds
-     */
-    uint256 public constant MIN_CYCLE_DURATION = 1 days;
-
+abstract contract InvestmentVaultV0 {
     // STORAGE
 
     /**
@@ -29,16 +22,23 @@ abstract contract HedgingVaultV0 {
     uint256[] public principalPercentages;
 
     /**
-        @notice The duration of the investment cycle in seconds
+        @notice Sum of all the principal percentages
+
+        @dev Used to do sanity checks on the operations of the vault
      */
-    uint256 public cycleDurationSeconds;
+    uint256 public totalPrincipalPercentages;
 
     /// ERRORS
     error PrincipalPercentagesMismatch(
         uint256 _principalPercentagesLength,
         uint256 _principalPercentagesLengthExpected
     );
-    error CycleDurationTooShort(uint256 _cycleDurationSeconds, uint256 _cycleDurationSecondsExpected);
+    error PrincipalPercentageOutOfRange(uint256 index, uint256 value);
+    error PrincipalPercentagesSumMoreThan100(uint256 totalSumOfPercentages);
+    error InvestmentTotalTooHigh(uint256 totalInvestment, uint256 expectedMaxInvestment);
+
+    /// EVENTS
+    event PrincipalPercentagesUpdated(uint256[] principalPercentages);
 
     /// FUNCTIONS
 
@@ -48,17 +48,4 @@ abstract contract HedgingVaultV0 {
         @dev Reverts if the number of percentages is not the same as the number of actions in the vault
      */
     function setPrincipalPercentages(uint256[] calldata principalPercentages_) external virtual;
-
-    /**
-        @notice Sets the new duration of the investment cycle in seconds
-
-        @dev Reverts is the duration is less than the minimum duration allowed
-     */
-    function setCycleDuration(uint256 cycleDurationSeconds_) external virtual;
-
-    function commitStrategy() external virtual;
-
-    function enterPosition() external virtual;
-
-    function exitPosition() external virtual;
 }

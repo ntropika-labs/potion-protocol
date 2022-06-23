@@ -14,6 +14,11 @@ abstract contract PotionBuyActionV0 {
     // STORAGE
 
     /**
+        @notice The minimum duration of a cycle in seconds
+     */
+    uint256 public constant MIN_CYCLE_DURATION = 1 days;
+
+    /**
         @notice The maximum percentage of the received loan that can be used as premium to buy potions
 
         @dev The percentage is stored in the form of a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
@@ -42,11 +47,35 @@ abstract contract PotionBuyActionV0 {
      */
     uint256 public maxSwapDurationSecs;
 
+    /**
+        @notice Timestamp when the next investment cycle can start. The action cannot enter the position
+        before this timestamp
+     */
+    uint256 public nextCycleStartTimestamp;
+
+    /**
+        @notice Duration of the investment cycle in seconds
+     */
+    uint256 public cycleDurationSecs;
+
+    /// MODIFIERS
+    modifier onlyAfterCycleStart() {
+        require(block.timestamp >= nextCycleStartTimestamp, "Next cycle has not started yet");
+        _;
+    }
+
     /// EVENTS
     event MaxPremiumPercentageChanged(uint256 maxPremiumPercentage);
     event PremiumSlippageChanged(uint256 premiumSlippage);
     event SwapSlippageChanged(uint256 swapSlippage);
     event MaxSwapDurationChanged(uint256 maxSwapDurationSecs);
+    event CycleDurationChanged(uint256 cycleDurationSecs);
+
+    /// ERRORS
+    error MaxPremiumPercentageOutOfRange(uint256 maxPremiumPercentage);
+    error PremiumSlippageOutOfRange(uint256 premiumSlippage);
+    error SwapSlippageOutOfRange(uint256 swapSlippage);
+    error CycleDurationTooShort(uint256 cycleDurationSecs, uint256 minCycleDurationSecs);
 
     /// FUNCTIONS
 
@@ -76,4 +105,9 @@ abstract contract PotionBuyActionV0 {
         @notice Sets the maximum duration in seconds for a Uniswap swap operation
      */
     function setMaxSwapDuration(uint256 durationSeconds) external virtual;
+
+    /**
+        @notice Set the investment cycle duration in seconds
+     */
+    function setCycleDuration(uint256 durationSeconds) external virtual;
 }

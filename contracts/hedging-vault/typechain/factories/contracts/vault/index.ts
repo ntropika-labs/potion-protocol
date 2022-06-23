@@ -4,4 +4,4 @@
 export { ActionsManagerUpgradeable__factory } from "./ActionsManagerUpgradeable__factory";
 export { BaseVaultUpgradeable__factory } from "./BaseVaultUpgradeable__factory";
 export { FeeManagerUpgradeable__factory } from "./FeeManagerUpgradeable__factory";
-export { HedgingVault__factory } from "./HedgingVault__factory";
+export { InvestmentVault__factory } from "./InvestmentVault__factory";

@@ -137,12 +137,15 @@ export declare namespace UniswapV3OracleUpgradeable {
 
 export interface PotionBuyActionInterface extends utils.Interface {
   functions: {
+    "MIN_CYCLE_DURATION()": FunctionFragment;
+    "canPositionBeEntered(address)": FunctionFragment;
     "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "cycleDurationSecs()": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
@@ -157,14 +160,16 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
-    "initialize(address,address,address,address,address,address,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "initialize(address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
+    "nextCycleStartTimestamp()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "premiumSlippage()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
+    "setCycleDuration(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
@@ -177,12 +182,15 @@ export interface PotionBuyActionInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "MIN_CYCLE_DURATION"
+      | "canPositionBeEntered"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "cycleDurationSecs"
       | "enterPosition"
       | "exitPosition"
       | "getAdmin"
@@ -200,11 +208,13 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "initialize"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
+      | "nextCycleStartTimestamp"
       | "pause"
       | "paused"
       | "premiumSlippage"
       | "refund"
       | "refundETH"
+      | "setCycleDuration"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPotionBuyInfo"
@@ -215,6 +225,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "unpause"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "MIN_CYCLE_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPositionBeEntered",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values: [string]
@@ -232,6 +250,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "changeStrategist",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cycleDurationSecs",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
@@ -292,6 +314,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
       BigNumberish,
       BigNumberish,
       BigNumberish,
+      BigNumberish,
       BigNumberish
     ]
   ): string;
@@ -301,6 +324,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "maxSwapDurationSecs",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nextCycleStartTimestamp",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -316,6 +343,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "refundETH",
     values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCycleDuration",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxPremiumPercentage",
@@ -348,6 +379,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
+    functionFragment: "MIN_CYCLE_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "canPositionBeEntered",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
@@ -366,6 +405,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cycleDurationSecs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -424,6 +467,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "maxSwapDurationSecs",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "nextCycleStartTimestamp",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -432,6 +479,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setMaxPremiumPercentage",
     data: BytesLike
@@ -466,6 +517,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "ActionPositionEntered(address,uint256)": EventFragment;
     "ActionPositionExited(address,uint256)": EventFragment;
     "AdminChanged(address,address)": EventFragment;
+    "CycleDurationChanged(uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
@@ -481,6 +533,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
   getEvent(
@@ -529,6 +582,17 @@ export type AdminChangedEvent = TypedEvent<
 >;
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface CycleDurationChangedEventObject {
+  cycleDurationSecs: BigNumber;
+}
+export type CycleDurationChangedEvent = TypedEvent<
+  [BigNumber],
+  CycleDurationChangedEventObject
+>;
+
+export type CycleDurationChangedEventFilter =
+  TypedEventFilter<CycleDurationChangedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -657,6 +721,13 @@ export interface PotionBuyAction extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    canPositionBeEntered(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -680,6 +751,8 @@ export interface PotionBuyAction extends BaseContract {
       newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     enterPosition(
       investmentAsset: string,
@@ -750,12 +823,15 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage_: BigNumberish,
       swapSlippage_: BigNumberish,
       maxSwapDurationSecs_: BigNumberish,
+      cycleDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -775,6 +851,11 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -815,6 +896,13 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  canPositionBeEntered(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canPositionBeExited(
     investmentAsset: string,
     overrides?: CallOverrides
@@ -838,6 +926,8 @@ export interface PotionBuyAction extends BaseContract {
     newStrategistAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   enterPosition(
     investmentAsset: string,
@@ -905,12 +995,15 @@ export interface PotionBuyAction extends BaseContract {
     premiumSlippage_: BigNumberish,
     swapSlippage_: BigNumberish,
     maxSwapDurationSecs_: BigNumberish,
+    cycleDurationSecs_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+  nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -930,6 +1023,11 @@ export interface PotionBuyAction extends BaseContract {
   refundETH(
     amount: BigNumberish,
     recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCycleDuration(
+    durationSeconds: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -970,6 +1068,13 @@ export interface PotionBuyAction extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canPositionBeEntered(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -993,6 +1098,8 @@ export interface PotionBuyAction extends BaseContract {
       newStrategistAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
       investmentAsset: string,
@@ -1060,12 +1167,15 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage_: BigNumberish,
       swapSlippage_: BigNumberish,
       maxSwapDurationSecs_: BigNumberish,
+      cycleDurationSecs_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -1083,6 +1193,11 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1149,6 +1264,13 @@ export interface PotionBuyAction extends BaseContract {
       newAdminAddress?: string | null
     ): AdminChangedEventFilter;
 
+    "CycleDurationChanged(uint256)"(
+      cycleDurationSecs?: null
+    ): CycleDurationChangedEventFilter;
+    CycleDurationChanged(
+      cycleDurationSecs?: null
+    ): CycleDurationChangedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
@@ -1213,6 +1335,13 @@ export interface PotionBuyAction extends BaseContract {
   };
 
   estimateGas: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canPositionBeEntered(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -1236,6 +1365,8 @@ export interface PotionBuyAction extends BaseContract {
       newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
       investmentAsset: string,
@@ -1306,12 +1437,15 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage_: BigNumberish,
       swapSlippage_: BigNumberish,
       maxSwapDurationSecs_: BigNumberish,
+      cycleDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1331,6 +1465,11 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1372,6 +1511,15 @@ export interface PotionBuyAction extends BaseContract {
   };
 
   populateTransaction: {
+    MIN_CYCLE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canPositionBeEntered(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       investmentAsset: string,
       overrides?: CallOverrides
@@ -1398,6 +1546,8 @@ export interface PotionBuyAction extends BaseContract {
       newStrategistAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     enterPosition(
       investmentAsset: string,
@@ -1468,6 +1618,7 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage_: BigNumberish,
       swapSlippage_: BigNumberish,
       maxSwapDurationSecs_: BigNumberish,
+      cycleDurationSecs_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1476,6 +1627,10 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxSwapDurationSecs(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nextCycleStartTimestamp(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1497,6 +1652,11 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

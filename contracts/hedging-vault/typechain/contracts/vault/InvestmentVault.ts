@@ -26,10 +26,11 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface BaseVaultUpgradeableInterface extends utils.Interface {
+export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
     "FEE_DECIMALS()": FunctionFragment;
     "FEE_SCALE()": FunctionFragment;
+    "MIN_CYCLE_DURATION()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "asset()": FunctionFragment;
@@ -43,6 +44,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "changeStrategist(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
+    "cycleDurationSeconds()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
@@ -71,15 +73,19 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "previewWithdraw(uint256)": FunctionFragment;
+    "principalPercentages(uint256)": FunctionFragment;
     "redeem(uint256,address,address)": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
+    "setCycleDuration(uint256)": FunctionFragment;
     "setFeesRecipient(address)": FunctionFragment;
     "setManagementFee(uint256)": FunctionFragment;
     "setPerformanceFee(uint256)": FunctionFragment;
+    "setPrincipalPercentages(uint256[])": FunctionFragment;
     "setVaultCap(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalAssets()": FunctionFragment;
+    "totalPrincipalPercentages()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -91,6 +97,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "FEE_DECIMALS"
       | "FEE_SCALE"
+      | "MIN_CYCLE_DURATION"
       | "allowance"
       | "approve"
       | "asset"
@@ -104,6 +111,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "changeStrategist"
       | "convertToAssets"
       | "convertToShares"
+      | "cycleDurationSeconds"
       | "decimals"
       | "decreaseAllowance"
       | "deposit"
@@ -132,15 +140,19 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "previewMint"
       | "previewRedeem"
       | "previewWithdraw"
+      | "principalPercentages"
       | "redeem"
       | "refund"
       | "refundETH"
+      | "setCycleDuration"
       | "setFeesRecipient"
       | "setManagementFee"
       | "setPerformanceFee"
+      | "setPrincipalPercentages"
       | "setVaultCap"
       | "symbol"
       | "totalAssets"
+      | "totalPrincipalPercentages"
       | "totalSupply"
       | "transfer"
       | "transferFrom"
@@ -153,6 +165,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "FEE_SCALE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MIN_CYCLE_DURATION",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -192,6 +208,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "convertToShares",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cycleDurationSeconds",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
@@ -288,6 +308,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "principalPercentages",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "redeem",
     values: [BigNumberish, string, string]
   ): string;
@@ -298,6 +322,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "refundETH",
     values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCycleDuration",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
@@ -312,12 +340,20 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPrincipalPercentages",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setVaultCap",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalAssets",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalPrincipalPercentages",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -343,6 +379,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "FEE_SCALE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_CYCLE_DURATION",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
@@ -378,6 +418,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "convertToShares",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cycleDurationSeconds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
@@ -456,9 +500,17 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "previewWithdraw",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "principalPercentages",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setFeesRecipient",
     data: BytesLike
@@ -472,12 +524,20 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPrincipalPercentages",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setVaultCap",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAssets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalPrincipalPercentages",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -757,12 +817,12 @@ export type WithdrawEvent = TypedEvent<
 
 export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 
-export interface BaseVaultUpgradeable extends BaseContract {
+export interface InvestmentVault extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: BaseVaultUpgradeableInterface;
+  interface: InvestmentVaultInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -787,6 +847,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
     FEE_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     FEE_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     allowance(
       owner: string,
@@ -840,6 +902,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
+
+    cycleDurationSeconds(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -947,6 +1011,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    principalPercentages(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     redeem(
       shares: BigNumberish,
       receiver: string,
@@ -967,6 +1036,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setCycleDuration(
+      cycleDurationSeconds_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -982,6 +1056,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setVaultCap(
       newCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -990,6 +1069,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    totalPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1021,6 +1102,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
   FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
   FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
   allowance(
     owner: string,
@@ -1070,6 +1153,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
     assets: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1171,6 +1256,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  principalPercentages(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   redeem(
     shares: BigNumberish,
     receiver: string,
@@ -1191,6 +1281,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setCycleDuration(
+    cycleDurationSeconds_: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setFeesRecipient(
     newFeesRecipient: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1206,6 +1301,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setPrincipalPercentages(
+    newPrincipalPercentages: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setVaultCap(
     newCap: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1214,6 +1314,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
   symbol(overrides?: CallOverrides): Promise<string>;
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+  totalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1245,6 +1347,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
     FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
     FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -1294,6 +1398,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1389,6 +1495,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    principalPercentages(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     redeem(
       shares: BigNumberish,
       receiver: string,
@@ -1409,6 +1520,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setCycleDuration(
+      cycleDurationSeconds_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: CallOverrides
@@ -1424,11 +1540,18 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setVaultCap(newCap: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1636,6 +1759,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       owner: string,
       spender: string,
@@ -1684,6 +1809,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1788,6 +1915,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    principalPercentages(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     redeem(
       shares: BigNumberish,
       receiver: string,
@@ -1808,6 +1940,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setCycleDuration(
+      cycleDurationSeconds_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1823,6 +1960,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setVaultCap(
       newCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1831,6 +1973,8 @@ export interface BaseVaultUpgradeable extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1863,6 +2007,10 @@ export interface BaseVaultUpgradeable extends BaseContract {
     FEE_DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     FEE_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MIN_CYCLE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -1920,6 +2068,10 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     convertToShares(
       assets: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cycleDurationSeconds(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2038,6 +2190,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    principalPercentages(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     redeem(
       shares: BigNumberish,
       receiver: string,
@@ -2058,6 +2215,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setCycleDuration(
+      cycleDurationSeconds_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2073,6 +2235,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setVaultCap(
       newCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2081,6 +2248,10 @@ export interface BaseVaultUpgradeable extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalPrincipalPercentages(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

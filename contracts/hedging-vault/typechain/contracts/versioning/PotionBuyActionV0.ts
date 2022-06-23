@@ -28,9 +28,13 @@ import type {
 
 export interface PotionBuyActionV0Interface extends utils.Interface {
   functions: {
+    "MIN_CYCLE_DURATION()": FunctionFragment;
+    "cycleDurationSecs()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
+    "nextCycleStartTimestamp()": FunctionFragment;
     "premiumSlippage()": FunctionFragment;
+    "setCycleDuration(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
@@ -40,9 +44,13 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "MIN_CYCLE_DURATION"
+      | "cycleDurationSecs"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
+      | "nextCycleStartTimestamp"
       | "premiumSlippage"
+      | "setCycleDuration"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
@@ -50,6 +58,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
       | "swapSlippage"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "MIN_CYCLE_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cycleDurationSecs",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "maxPremiumPercentage",
     values?: undefined
@@ -59,8 +75,16 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "nextCycleStartTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "premiumSlippage",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCycleDuration",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxPremiumPercentage",
@@ -84,6 +108,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "MIN_CYCLE_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cycleDurationSecs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
     data: BytesLike
   ): Result;
@@ -92,7 +124,15 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "nextCycleStartTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "premiumSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCycleDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -117,12 +157,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): Result;
 
   events: {
+    "CycleDurationChanged(uint256)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
@@ -130,6 +172,17 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
 }
+
+export interface CycleDurationChangedEventObject {
+  cycleDurationSecs: BigNumber;
+}
+export type CycleDurationChangedEvent = TypedEvent<
+  [BigNumber],
+  CycleDurationChangedEventObject
+>;
+
+export type CycleDurationChangedEventFilter =
+  TypedEventFilter<CycleDurationChangedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
   maxPremiumPercentage: BigNumber;
@@ -202,11 +255,22 @@ export interface PotionBuyActionV0 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setMaxPremiumPercentage(
       maxPremiumPercentage_: BigNumberish,
@@ -231,11 +295,22 @@ export interface PotionBuyActionV0 extends BaseContract {
     swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
+  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
+  nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
   premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  setCycleDuration(
+    durationSeconds: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setMaxPremiumPercentage(
     maxPremiumPercentage_: BigNumberish,
@@ -260,11 +335,22 @@ export interface PotionBuyActionV0 extends BaseContract {
   swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setMaxPremiumPercentage(
       maxPremiumPercentage_: BigNumberish,
@@ -290,6 +376,13 @@ export interface PotionBuyActionV0 extends BaseContract {
   };
 
   filters: {
+    "CycleDurationChanged(uint256)"(
+      cycleDurationSecs?: null
+    ): CycleDurationChangedEventFilter;
+    CycleDurationChanged(
+      cycleDurationSecs?: null
+    ): CycleDurationChangedEventFilter;
+
     "MaxPremiumPercentageChanged(uint256)"(
       maxPremiumPercentage?: null
     ): MaxPremiumPercentageChangedEventFilter;
@@ -318,11 +411,22 @@ export interface PotionBuyActionV0 extends BaseContract {
   };
 
   estimateGas: {
+    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setMaxPremiumPercentage(
       maxPremiumPercentage_: BigNumberish,
@@ -348,6 +452,12 @@ export interface PotionBuyActionV0 extends BaseContract {
   };
 
   populateTransaction: {
+    MIN_CYCLE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     maxPremiumPercentage(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -356,7 +466,16 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    nextCycleStartTimestamp(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     premiumSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setCycleDuration(
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setMaxPremiumPercentage(
       maxPremiumPercentage_: BigNumberish,

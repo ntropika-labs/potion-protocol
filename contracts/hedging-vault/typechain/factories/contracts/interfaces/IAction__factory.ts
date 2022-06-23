@@ -56,6 +56,25 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "canPositionBeEntered",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canEnter",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
     name: "canPositionBeExited",
     outputs: [
       {

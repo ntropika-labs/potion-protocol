@@ -52,6 +52,12 @@ contract PotionBuyAction is
         @param investmentAsset The address of the asset managed by this Action
         @param USDC The address of the USDC token
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
+        @param maxPremiumPercentage_ The maximum percentage of the received investment that can be used as premium
+        @param premiumSlippage_ The slippage percentage allowed on the premium when buying potions
+        @param swapSlippage_ The slippage percentage allowed on the swap operation
+        @param maxSwapDurationSecs_ The maximum duration of the swap operation in seconds
+        @param cycleDurationSecs_ The duration of the investment cycle in seconds
+
      */
     function initialize(
         address adminAddress,
@@ -63,7 +69,8 @@ contract PotionBuyAction is
         uint256 maxPremiumPercentage_,
         uint256 premiumSlippage_,
         uint256 swapSlippage_,
-        uint256 maxSwapDurationSecs_
+        uint256 maxSwapDurationSecs_,
+        uint256 cycleDurationSecs_
     ) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the loaned
         // asset is not allowed to be refunded and also USDC because the action will hold some of it
@@ -79,13 +86,11 @@ contract PotionBuyAction is
         _setPremiumSlippage(premiumSlippage_);
         _setSwapSlippage(swapSlippage_);
         _setMaxSwapDuration(maxSwapDurationSecs_);
+        _setCycleDuration(cycleDurationSecs_);
     }
 
     /**
-        @notice Enters the investment position for the given asset and the given invesment amount
-
-        @param investmentAsset The address of the asset to be invested
-        @param amountToInvest The amount of the asset to be invested
+        @inheritdoc IAction
 
         @dev The Potion Buy action takes the following steps to enter a position:
             - Transfer the investment amount to the Action contract
@@ -96,9 +101,17 @@ contract PotionBuyAction is
             - Buy the potions using the calculated premium and the new USDC balance in the Action
               contract
 
-        @inheritdoc IAction
      */
-    function enterPosition(address investmentAsset, uint256 amountToInvest) external onlyOperator {
+    function enterPosition(address investmentAsset, uint256 amountToInvest)
+        external
+        onlyOperator
+        onlyUnlocked
+        onlyAfterCycleStart
+        nonReentrant
+    {
+        _updateNextCycleStart();
+        _setLifecycleState(LifecycleState.Locked);
+
         // TODO: We could calculate the amount of USDC that will be needed to buy the potion and just
         // TODO: transfer enough asset needed to swap for that. However it is simpler to transfer everything for now
 
@@ -130,7 +143,13 @@ contract PotionBuyAction is
     /**
         @inheritdoc IAction
      */
-    function exitPosition(address investmentAsset) external onlyOperator returns (uint256 amountReturned) {
+    function exitPosition(address investmentAsset)
+        external
+        onlyOperator
+        onlyLocked
+        nonReentrant
+        returns (uint256 amountReturned)
+    {
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
 
         _redeemPotions(investmentAsset);
@@ -142,14 +161,28 @@ contract PotionBuyAction is
 
         SafeERC20.safeTransfer(investmentAssetERC20, _msgSender(), amountReturned);
 
+        _setLifecycleState(LifecycleState.Unlocked);
+
         emit ActionPositionExited(investmentAsset, amountReturned);
     }
 
     /**
         @inheritdoc IAction
      */
+    function canPositionBeEntered(
+        address /*investmentAsset*/
+    ) public view returns (bool canEnter) {
+        canEnter = _isNextCycleStarted() && getLifecycleState() == LifecycleState.Unlocked;
+    }
+
+    /**
+        @inheritdoc IAction
+     */
     function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
-        canExit = _isPotionRedeemable(investmentAsset);
+        canExit =
+            _isNextCycleStarted() &&
+            _isPotionRedeemable(investmentAsset) &&
+            getLifecycleState() == LifecycleState.Locked;
     }
 
     /**
@@ -180,16 +213,23 @@ contract PotionBuyAction is
         _setMaxSwapDuration(durationSeconds);
     }
 
+    /**
+        @inheritdoc PotionBuyActionV0
+     */
+    function setCycleDuration(uint256 durationSeconds) external override onlyStrategist {
+        _setCycleDuration(durationSeconds);
+    }
+
     /// INTERNAL FUNCTIONS
 
     /**
         @dev See { setMaxPremiumPercentage }
      */
     function _setMaxPremiumPercentage(uint256 maxPremiumPercentage_) internal {
-        require(
-            maxPremiumPercentage_ > 0 && maxPremiumPercentage_ <= PercentageUtils.PERCENTAGE_100,
-            "Max. premium percentage must be >0 or <= 100"
-        );
+        if (maxPremiumPercentage_ <= 0 || maxPremiumPercentage_ > PercentageUtils.PERCENTAGE_100) {
+            revert MaxPremiumPercentageOutOfRange(maxPremiumPercentage_);
+        }
+
         maxPremiumPercentage = maxPremiumPercentage_;
 
         emit MaxPremiumPercentageChanged(maxPremiumPercentage_);
@@ -199,10 +239,10 @@ contract PotionBuyAction is
         @dev See { setPremiumSlippage }
     */
     function _setPremiumSlippage(uint256 premiumSlippage_) internal {
-        require(
-            premiumSlippage_ > 0 && premiumSlippage_ <= PercentageUtils.PERCENTAGE_100,
-            "Premium slippage must be >0 or <= 100"
-        );
+        if (premiumSlippage_ <= 0 || premiumSlippage_ > PercentageUtils.PERCENTAGE_100) {
+            revert PremiumSlippageOutOfRange(premiumSlippage_);
+        }
+
         premiumSlippage = premiumSlippage_;
 
         emit PremiumSlippageChanged(premiumSlippage_);
@@ -212,10 +252,10 @@ contract PotionBuyAction is
         @dev See { setSwapSlippage }
      */
     function _setSwapSlippage(uint256 swapSlippage_) internal {
-        require(
-            swapSlippage_ > 0 && swapSlippage_ <= PercentageUtils.PERCENTAGE_100,
-            "Swap slippage must be >0 or <= 100"
-        );
+        if (swapSlippage_ <= 0 || swapSlippage_ >= PercentageUtils.PERCENTAGE_100) {
+            revert SwapSlippageOutOfRange(swapSlippage_);
+        }
+
         swapSlippage = swapSlippage_;
 
         emit SwapSlippageChanged(swapSlippage_);
@@ -228,5 +268,44 @@ contract PotionBuyAction is
         maxSwapDurationSecs = durationSeconds;
 
         emit MaxSwapDurationChanged(durationSeconds);
+    }
+
+    /**
+        @dev See { setCycleDuration }
+     */
+    function _setCycleDuration(uint256 durationSeconds) internal {
+        if (durationSeconds < MIN_CYCLE_DURATION) {
+            revert CycleDurationTooShort(durationSeconds, MIN_CYCLE_DURATION);
+        }
+
+        cycleDurationSecs = durationSeconds;
+
+        emit CycleDurationChanged(durationSeconds);
+    }
+
+    /**
+        @notice Checks if the next cycle has already started or not
+
+        @return True if the next cycle has already started, false otherwise
+     */
+
+    function _isNextCycleStarted() internal view returns (bool) {
+        return block.timestamp >= nextCycleStartTimestamp;
+    }
+
+    /**
+        @notice Updates the start of the next investment cycle
+
+        @dev It has a bit of a complex logic to account for skipped cycles. If one or more
+        cycles have been skipped, then we need to bring the next cycle start close to the current
+        timestamp. To do so we calculate the current cycle offset from the cycle start that is closest
+        to now, but in the past. Then we substract this offset from now to get the start of the current
+        cycle. We then calculate the next cycle start from the previous by adding the cycle duration
+     */
+    function _updateNextCycleStart() internal {
+        uint256 currentCycleOffset = (block.timestamp - nextCycleStartTimestamp) % cycleDurationSecs;
+        uint256 lastCycleExpectedStart = block.timestamp - currentCycleOffset;
+
+        nextCycleStartTimestamp = lastCycleExpectedStart + cycleDurationSecs;
     }
 }
