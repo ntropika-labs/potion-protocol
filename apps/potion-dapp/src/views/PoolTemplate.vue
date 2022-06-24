@@ -309,8 +309,8 @@ watch(approveReceipt, (receipt) => {
       </div>
     </BaseCard>
     <!-- End header  -->
-    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-[3fr_1fr]">
-      <div class="flex flex-col gap-8">
+    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-3">
+      <div class="flex flex-col gap-8 xl:col-span-2">
         <PerformanceCard
           v-if="performanceChartDataReady"
           :performance-data="chartData"
