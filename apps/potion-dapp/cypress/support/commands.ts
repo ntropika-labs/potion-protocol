@@ -23,4 +23,18 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../support/index.d.ts" />
+
 import "@testing-library/cypress/add-commands";
+
+Cypress.Commands.add("seed", (databasePath) => {
+  cy.exec("cd ../../ && bin/start-local-env", {
+    env: { DATABASE_PATH: databasePath },
+    failOnNonZeroExit: false,
+    timeout: 180000,
+  }).then((result) => {
+    expect(result.code).to.eq(0);
+    expect(result.stdout).to.contain("stack is ready");
+  });
+});

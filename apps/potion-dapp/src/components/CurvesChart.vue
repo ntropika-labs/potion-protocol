@@ -8,7 +8,7 @@ import {
   CurveFormula,
   Tooltip,
 } from "potion-ui";
-import { times as _times } from "lodash-es";
+import _times from "lodash.times";
 import { useI18n } from "vue-i18n";
 
 import { HyperbolicCurve } from "contracts-math";

@@ -1,8 +1,6 @@
 <template>
-  <template v-if="error || !poolData || !poolData.pool">
-    Can't load the pool
-  </template>
-  <template v-if="(poolData && poolData.pool) || fetching">
+  <template v-if="error || !poolData?.pool"> Can't load the pool </template>
+  <template v-if="!fetching && poolData?.pool">
     <PoolSetup
       v-model:liquidity.number="liquidity"
       :size="formattedSize"
@@ -296,14 +294,21 @@ watch(availableProducts, () => {
         parseInt(product.underlying.decimals)
       )
     ) ?? [];
-  poolData.value?.pool?.template?.criteriaSet?.criterias.forEach((criteria) => {
-    const token = availableTokens.value.find(
-      (token) => token.address === criteria.criteria.underlyingAsset.address
+});
+
+watch([availableTokens, poolData], () => {
+  if (availableTokens.value.length > 0) {
+    poolData.value?.pool?.template?.criteriaSet?.criterias.forEach(
+      (criteria) => {
+        const token = availableTokens.value.find(
+          (token) => token.address === criteria.criteria.underlyingAsset.address
+        );
+        if (token) {
+          toggleTokenSelection(token.address);
+        }
+      }
     );
-    if (token) {
-      toggleTokenSelection(token.address);
-    }
-  });
+  }
 });
 
 const bondingCurve = ref<BondingCurveParams>({

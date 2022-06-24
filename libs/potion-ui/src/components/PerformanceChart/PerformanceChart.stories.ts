@@ -1,11 +1,13 @@
 // @unocss-include
 
-import { random as _random, times as _times } from "lodash-es";
+import _times from "lodash.times";
 import PerformanceChart from "./PerformanceChart.vue";
 
 import type { Args, Story } from "@storybook/vue3";
 
 const dayInSeconds = 24 * 60 * 60;
+
+const _random = (min: number, max: number) => Math.random() * (max - min) + min;
 
 export default {
   component: PerformanceChart,

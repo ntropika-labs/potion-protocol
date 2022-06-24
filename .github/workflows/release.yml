@@ -1,0 +1,50 @@
+name: Release on main
+
+# run when issued manually, push on "release" branch or pr on "main" or "release"
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, release]
+  push:
+    branches: [release]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  test-lint:
+    uses: ./.github/workflows/call-lint-run-tests.yml
+    with:
+      VITE_ETHEREUM_NETWORK: "localhost"
+      VITE_ENDPOINT_PROVIDER: "alchemy"
+      VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
+    secrets:
+      VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+      VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+      VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+      DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+
+  release-to-main:
+    name: Cleanup actions
+    needs: test-lint
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Update main branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn semantic-release

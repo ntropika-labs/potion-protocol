@@ -8,7 +8,7 @@ export default defineComponent({
 
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted, nextTick } from "vue";
-import { range as _range } from "lodash-es";
+import _range from "lodash.range";
 import bb, { spline } from "billboard.js";
 import { useI18n } from "vue-i18n";
 import "billboard.js/dist/theme/insight.min.css";

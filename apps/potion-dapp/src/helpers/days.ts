@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { isNil as _isNil } from "lodash-es";
+import _isNil from "lodash.isnil";
 
 import { createValidExpiry } from "./time";
 

@@ -8,13 +8,10 @@ export default defineComponent({
 import { ref, computed, watch, onMounted, nextTick, toRef } from "vue";
 import { useResizeObserver } from "@vueuse/core";
 import { createChart } from "lightweight-charts";
-import {
-  rangeRight as _rangeRight,
-  findLast as _findLast,
-  sortBy as _sortBy,
-  reverse as _reverse,
-  uniqBy as _uniqBy,
-} from "lodash-es";
+import _sortBy from "lodash.sortby";
+import _findLast from "lodash.findlast";
+import _uniqBy from "lodash.uniqby";
+import _rangeRight from "lodash.rangeright";
 
 import dayjs from "dayjs";
 
@@ -55,8 +52,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 function _lastUniqBy<T>(arr: T[], key: string): T[] {
-  const reversed = _reverse(arr);
-  return _reverse(_uniqBy(reversed, key));
+  const reversed = arr.slice().reverse();
+  return _uniqBy(reversed, key).reverse();
 }
 
 const createResponsiveChart = (

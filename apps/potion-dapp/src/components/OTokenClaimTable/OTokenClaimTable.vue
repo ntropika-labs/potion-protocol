@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
-import { uniqBy as _uniqBy } from "lodash-es";
+import _uniqBy from "lodash.uniqby";
 import { useI18n } from "vue-i18n";
-
 import { BaseCard, BaseButton } from "potion-ui";
 
 import PoolExpiredOTokens from "./PoolExpiredOTokens.vue";
