@@ -286,7 +286,7 @@ const toggleTokenSelection = (address: string) => {
   }
 };
 
-watch([availableProducts, poolData], () => {
+watch(availableProducts, () => {
   availableTokens.value =
     availableProducts?.value?.products?.map((product) =>
       tokenToSelectableToken(
@@ -294,14 +294,21 @@ watch([availableProducts, poolData], () => {
         parseInt(product.underlying.decimals)
       )
     ) ?? [];
-  poolData.value?.pool?.template?.criteriaSet?.criterias.forEach((criteria) => {
-    const token = availableTokens.value.find(
-      (token) => token.address === criteria.criteria.underlyingAsset.address
+});
+
+watch([availableTokens, poolData], () => {
+  if (availableTokens.value.length > 0) {
+    poolData.value?.pool?.template?.criteriaSet?.criterias.forEach(
+      (criteria) => {
+        const token = availableTokens.value.find(
+          (token) => token.address === criteria.criteria.underlyingAsset.address
+        );
+        if (token) {
+          toggleTokenSelection(token.address);
+        }
+      }
     );
-    if (token) {
-      toggleTokenSelection(token.address);
-    }
-  });
+  }
 });
 
 const bondingCurve = ref<BondingCurveParams>({
