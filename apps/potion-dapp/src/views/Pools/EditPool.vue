@@ -1,10 +1,4 @@
 <template>
-  <pre>
-    CI DEBUG:
-    collateral: {{ collateral }}
-    availableTokens: {{ JSON.stringify(availableTokens) }}
-    criteriaMap: {{ JSON.stringify(Object.fromEntries(criteriaMap.entries())) }}
-  </pre>
   <template v-if="error || !poolData || !poolData.pool">
     Can't load the pool
   </template>
