@@ -1,6 +1,4 @@
 /// <reference types="cypress" />
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../support/index.d.ts" />
 
 import { aliasQuery } from "../support/utilities";
 
@@ -16,10 +14,6 @@ describe("Edit Pool Flow", () => {
         aliasQuery(req, "getPoolsFromCriteria");
       }
     ).as("getDataFromSubgraph");
-  });
-
-  it("Can start the blockchain with the correct seed", () => {
-    cy.seed("/opt/e2e-edit-pool");
   });
 
   it("Can visit the edit page and load initial data", () => {

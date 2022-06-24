@@ -1,13 +1,7 @@
 /// <reference types="cypress" />
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../support/index.d.ts" />
 
 describe("Custom Pool Creation Flow", () => {
   let assetText = "";
-
-  it("Can start the blockchain with the correct seed", () => {
-    cy.seed("/opt/e2e-create-pool");
-  });
 
   it("Can visit custom-pool-creation", () => {
     cy.viewport(1920, 1080);
