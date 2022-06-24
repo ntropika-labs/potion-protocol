@@ -32,14 +32,14 @@ const roundValue = (value: number) => (value * 100).toFixed(2);
 
 const axis: bb.Axis = {
   x: {
-    label: t("bonding_curve.x_axis.label"),
+    label: t("bonding_curve_x_axis"),
     tick: {
       values: _range(0, 101, 10),
       format: (n: number) => `${n}%`,
     },
   },
   y: {
-    label: t("bonding_curve.y_axis.label"),
+    label: t("bonding_curve_y_axis"),
     tick: {
       format: (n: number) => `${roundValue(n)}%`,
     },
@@ -122,7 +122,7 @@ watch(chartData, () => nextTick(updateChart));
 
 <template>
   <div class="flex flex-col text-white">
-    <div class="w-full text-sm">{{ t("bonding_curve.title") }}</div>
+    <div class="w-full text-sm">{{ t("bonding_curve_title") }}</div>
     <div ref="chartContainer" test-chart-container class="h-[32rem]">
       <div ref="bondingCurveChart" test-billboard-chart></div>
     </div>

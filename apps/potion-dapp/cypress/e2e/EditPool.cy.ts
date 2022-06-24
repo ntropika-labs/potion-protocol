@@ -117,12 +117,12 @@ describe("Edit Pool Flow", () => {
     cy.get("[test-token-card]")
       .its("length")
       .then((length) => (numberOfAssets = length));
-    console.log(numberOfAssets, alreadySelected.length);
+    console.info(numberOfAssets, alreadySelected.length);
     if (numberOfAssets > alreadySelected.length) {
       cy.get("[test-token-card]")
         .then(($els) => {
           return $els.filter((index, element) => {
-            console.log(index, $els.length);
+            console.info(index, $els.length);
             const textContent = Cypress.$(element).text();
             const result = alreadySelected.filter((str) => str === textContent);
             return !result.length;

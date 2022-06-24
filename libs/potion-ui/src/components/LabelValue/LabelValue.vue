@@ -7,7 +7,7 @@ export default defineComponent({
 
 type TextAlignment = "center" | "left" | "right";
 type TextSize = "sm" | "md" | "lg" | "xl";
-type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl";
+type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl" | "currency";
 </script>
 <script lang="ts" setup>
 import { computed } from "vue";
@@ -69,6 +69,7 @@ const valueSize = computed(() => valueSizeMap.get(props.size));
 const formattedValue = computed(() => {
   switch (props.valueType) {
     case "number":
+    case "currency":
       return shortDigitFormatter(parseFloat(props.value));
     case "pnl":
       return shortDigitFormatter(parseFloat(props.value));
@@ -85,7 +86,7 @@ const formattedValue = computed(() => {
 const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
 </script>
 <template>
-  <div>
+  <div class="text-dwhite-300">
     <h6
       class="capitalize font-medium mb-2"
       :class="[labelAlignment, labelSize]"
@@ -94,7 +95,16 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
     </h6>
     <div class="flex flex-wrap items-center space-x-1" :class="valueAlignment">
       <div
-        class="font-bold font-bitter"
+        v-if="props.valueType === 'currency'"
+        class="font-bold font-serif"
+        :class="[valueSize, valueColorClass]"
+      >
+        <span v-if="props.symbol" class="mr-1"> {{ props.symbol }}</span>
+        <span>{{ formattedValue }}</span>
+      </div>
+      <div
+        v-else
+        class="font-bold font-serif"
         :class="[
           valueSize,
           valueColorClass,

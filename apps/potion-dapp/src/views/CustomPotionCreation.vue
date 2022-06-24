@@ -1,17 +1,42 @@
 <script lang="ts" setup>
-import { TokenSelection, InputNumber, BaseButton } from "potion-ui";
+import {
+  TokenSelection,
+  InputNumber,
+  BaseButton,
+  BaseTag,
+  PotionCard,
+} from "potion-ui";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useTokenList } from "@/composables/useTokenList";
-import { usePoolsLiquidity } from "@/composables/useProtocolLiquidity";
-import type { SelectableToken } from "dapp-types";
-// import AssetSelection from "@/components/CustomPotion/AssetSelection.vue";
+import { currencyFormatter } from "potion-ui";
+import {
+  usePoolsLiquidity,
+  useUnderlyingLiquidity,
+  useStrikeLiquidity,
+} from "@/composables/useProtocolLiquidity";
+import { useSimilarPotions } from "@/composables/useSimilarPotions";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useDepthRouter } from "@/composables/useDepthRouter";
+import { useBlockNative } from "@/composables/useBlockNative";
+import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
+import { useOnboard } from "@onboard-composable";
+
+import type { SelectableToken, Criteria } from "dapp-types";
 import { BaseCard, SidebarLink } from "potion-ui";
 import { SrcsetEnum } from "dapp-types";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, unref } from "vue";
+import { watchDebounced } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
-const { t } = useI18n();
-// const router = useRouter();
-const currentIndex = ref(0);
+import { offsetToDate } from "@/helpers/days";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
+import { useNotifications } from "@/composables/useNotifications";
 
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+
+const { t } = useI18n();
+const { blockTimestamp, getBlock } = useEthersProvider();
+const currentIndex = ref(0);
+const { connectedWallet } = useOnboard();
 const AssetActiveIcon = new Map([
   [SrcsetEnum.AVIF, "/icons/asset-active-32x32.avif"],
   [SrcsetEnum.PNG, "/icons/asset-active-32x32.png"],
@@ -43,15 +68,39 @@ const DurationDefaultIcon = new Map([
   [SrcsetEnum.WEBP, "/icons/duration-default-32x32.webp"],
 ]);
 const ReviewActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/review-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
-]);
-const ReviewDefaultIcon = new Map([
   [SrcsetEnum.AVIF, "/icons/review-default-32x32.avif"],
   [SrcsetEnum.PNG, "/icons/review-default-32x32.png"],
   [SrcsetEnum.WEBP, "/icons/review-default-32x32.webp"],
 ]);
+const ReviewDefaultIcon = new Map([
+  [SrcsetEnum.AVIF, "/icons/review-active-32x32.avif"],
+  [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
+  [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
+]);
+
+const gasUnitsToDeployOtoken = 840000;
+const { getGas, gasPrice } = useBlockNative();
+const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);
+const ethPrice = computed(() => {
+  if (coinsPrices.value && coinsPrices.value.ethereum.usd) {
+    return coinsPrices.value.ethereum.usd;
+  }
+  return 0;
+});
+onMounted(async () => {
+  await fetchCoinsPrices();
+  await getGas();
+});
+const savingByPickSimilar = computed(() => {
+  if (ethPrice.value && gasPrice.value) {
+    const saving =
+      ((gasPrice.value * 10e8 * gasUnitsToDeployOtoken) / 1e18) *
+      ethPrice.value;
+    return currencyFormatter(saving, "$");
+  }
+  return currencyFormatter(0, "$");
+});
+
 const sidebarItems = computed(() => {
   return [
     {
@@ -70,26 +119,34 @@ const sidebarItems = computed(() => {
       selected: currentIndex.value === 1,
       disabled: !isTokenSelected.value,
       onClick: () => {
+        if (strikeSelected.value === 0) {
+          strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
+        }
         currentIndex.value = 1;
       },
     },
     {
-      title: t("duration"),
+      title: t("expiration"),
       iconSrcset:
         currentIndex.value === 2 ? DurationActiveIcon : DurationDefaultIcon,
       selected: currentIndex.value === 2,
-      disabled: true,
+      disabled: !isTokenSelected.value || !isStrikeValid.value,
       onClick: () => {
+        if (durationSelected.value === 0) {
+          durationSelected.value = 1;
+        }
         currentIndex.value = 2;
       },
     },
     {
       title: t("review_and_create"),
       iconSrcset:
-        currentIndex.value === 2 ? ReviewActiveIcon : ReviewDefaultIcon,
-
+        currentIndex.value === 3 ? ReviewActiveIcon : ReviewDefaultIcon,
       selected: currentIndex.value === 3,
-      disabled: true,
+      disabled:
+        !isTokenSelected.value ||
+        !isStrikeValid.value ||
+        !isDurationValid.value,
       onClick: () => {
         currentIndex.value = 3;
       },
@@ -117,18 +174,30 @@ const tokenToSelectableToken = (
 const selectableTokens = ref<SelectableToken[]>([]);
 const { underlyingsWithLiquidity } = usePoolsLiquidity();
 watch(underlyingsWithLiquidity, () => {
-  console.log(underlyingsWithLiquidity);
   selectableTokens.value = underlyingsWithLiquidity.value.map((address) =>
     tokenToSelectableToken(address)
   );
 });
+const tokenSelected = ref<SelectableToken | null>(null);
+const tokenSelectedAddress = ref<string | null>(null);
+watch(
+  selectableTokens,
+  () => {
+    const selected = selectableTokens.value.find((token) => token.selected);
+    if (selected) {
+      tokenSelected.value = selected;
+      tokenSelectedAddress.value = selected.address;
+    }
+  },
+  {
+    deep: true,
+  }
+);
 
-const tokenSelected = computed(() => {
-  return selectableTokens.value.find((t) => t.selected);
-});
 const isTokenSelected = computed(() => {
   return tokenSelected.value ? true : false;
 });
+
 const handleTokenSelection = (address: string) => {
   selectableTokens.value.forEach((token) => {
     if (token.address === address) {
@@ -140,24 +209,272 @@ const handleTokenSelection = (address: string) => {
 };
 
 // Strike Selection
-const strikeSelected = ref(100);
-const maxSelectableStrike = computed(() => {
-  return 1000;
+const { fetchTokenPrice, formattedPrice, price } = useCoinGecko(
+  undefined,
+  tokenSelected.value?.address || ""
+);
+
+onMounted(() => {
+  fetchTokenPrice();
 });
-const isStrikeValid = ref(true);
-const isNextStepEnabled = computed(() => {
+
+const { maxStrike: maxSelectableStrike } =
+  useUnderlyingLiquidity(tokenSelectedAddress);
+
+const maxSelectableStrikeAbsolute = computed(() => {
+  return (maxSelectableStrike.value * price.value) / 100;
+});
+
+const strikeSelected = ref(0);
+
+const strikeSelectedRelative = computed(() => {
+  return parseFloat(((strikeSelected.value * 100) / price.value).toFixed(2));
+});
+
+const isStrikeValid = ref(false);
+
+// Duration Selection
+const durationSelected = ref(0);
+watchDebounced(
+  durationSelected,
+  () => {
+    getBlock("latest");
+  },
+  { debounce: 1000 }
+);
+const durationSelectedDate = computed(() => {
+  return offsetToDate(blockTimestamp.value, durationSelected.value);
+});
+const {
+  maxDuration: maxSelectableDuration,
+  maxDurationInDays: maxSelectableDurationInDays,
+} = useStrikeLiquidity(tokenSelectedAddress, strikeSelectedRelative);
+const isDurationValid = ref(false);
+
+// Potion Quantity
+const potionQuantity = ref(0.001);
+const isPotionQuantityValid = ref(false);
+
+const orderSize = computed(() => {
+  return strikeSelected.value * potionQuantity.value;
+});
+
+// Router logic
+const slippage = ref([
+  { value: 0.005, label: "0.5%", selected: true },
+  { value: 0.02, label: "2%", selected: false },
+  { value: 0.05, label: "5%", selected: false },
+]);
+
+const handleSlippageSelection = (index: number) => {
+  slippage.value.forEach((slippage, i) => {
+    if (i === index) {
+      slippage.selected = true;
+    } else {
+      slippage.selected = false;
+    }
+  });
+};
+const premiumSlippage = computed(() => {
+  const selectedSlippage = slippage.value.find((s) => s.selected);
+  if (selectedSlippage && routerResult.value && routerResult.value.premium) {
+    return (
+      routerResult.value.premium * selectedSlippage.value +
+      routerResult.value.premium
+    );
+  }
+  return 0;
+});
+const formattedPremiumSlippage = computed(() => {
+  return currencyFormatter(premiumSlippage.value, "USDC");
+});
+const criteriasParam = ref<Criteria[]>([]);
+watch(tokenSelected, () => {
+  if (tokenSelected.value) {
+    const t = unref(tokenSelected) ?? { name: "", symbol: "", address: "" };
+    criteriasParam.value = [
+      {
+        token: t,
+        maxStrike: strikeSelectedRelative.value,
+        maxDuration: durationSelected.value,
+      },
+    ];
+  }
+});
+const {
+  routerResult,
+  maxNumberOfPotions,
+  formattedMarketSize,
+  formattedPremium,
+} = useDepthRouter(
+  criteriasParam,
+  orderSize,
+  strikeSelected,
+  gasPrice,
+  ethPrice
+);
+
+const numberOfTransactions = computed(() => {
+  return Math.ceil(
+    routerResult.value?.counterparties.length ?? 0 / maxCounterparties
+  );
+});
+// Steps validity
+const areStepsValid = computed(() => {
+  return (
+    isTokenSelected.value &&
+    isStrikeValid.value &&
+    isDurationValid.value &&
+    isPotionQuantityValid.value
+  );
+});
+
+// Buy logic
+const {
+  userCollateralBalance,
+  userAllowance,
+  approveTx,
+  approveReceipt,
+  fetchUserCollateralAllowance,
+  fetchUserCollateralBalance,
+  approveForPotionLiquidityPool,
+} = useCollateralTokenContract();
+
+const userCollateralBalanceFormatted = computed(() => {
+  return currencyFormatter(userCollateralBalance.value, "USDC");
+});
+const fetchUserData = async () => {
+  if (connectedWallet.value) {
+    await fetchUserCollateralBalance();
+    await fetchUserCollateralAllowance();
+  }
+};
+onMounted(async () => {
+  await fetchUserData();
+});
+const buyPotionButtonState = computed(() => {
+  if (
+    connectedWallet.value &&
+    userCollateralBalance.value >= premiumSlippage.value &&
+    areStepsValid.value
+  ) {
+    if (userAllowance.value >= premiumSlippage.value) {
+      return {
+        label: t("buy_potion"),
+        disabled: false,
+      };
+    } else {
+      return {
+        label: t("approve"),
+        disabled: false,
+      };
+    }
+  }
+  if (
+    connectedWallet.value &&
+    userCollateralBalance.value < premiumSlippage.value &&
+    areStepsValid.value
+  ) {
+    return {
+      label: t("not_enough_usdc"),
+      disabled: true,
+    };
+  }
+  if (!areStepsValid.value) {
+    return {
+      label: t("invalid_potion"),
+      disabled: true,
+    };
+  }
+  if (!connectedWallet.value) {
+    return {
+      label: t("connect_wallet"),
+      disabled: true,
+    };
+  }
+  return {
+    label: t("buy_potion"),
+    disabled: true,
+  };
+});
+const { buyPotions, buyPotionTx, buyPotionReceipt, maxCounterparties } =
+  usePotionLiquidityPoolContract();
+const handleBuyPotions = async () => {
+  if (
+    routerResult.value &&
+    routerResult.value.counterparties &&
+    tokenSelectedAddress.value
+  ) {
+    if (premiumSlippage.value > userAllowance.value) {
+      await approveForPotionLiquidityPool(premiumSlippage.value, true);
+      await fetchUserData();
+    } else {
+      await buyPotions(
+        routerResult.value?.counterparties,
+        premiumSlippage.value,
+        undefined,
+        tokenSelectedAddress.value,
+        strikeSelected.value,
+        durationSelected.value
+      );
+      await fetchUserData();
+    }
+  } else {
+    console.info("You are missing some parameters to be set");
+  }
+};
+
+// Notifications
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
+
+watch(approveTx, (transaction) => {
+  createTransactionNotification(transaction, t("approving_usdc"));
+});
+
+watch(approveReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
+});
+
+watch(buyPotionTx, (transaction) => {
+  createTransactionNotification(transaction, t("buying_potion"));
+});
+watch(buyPotionReceipt, (transaction) => {
+  createTransactionNotification(transaction, t("potion_bought"));
+});
+
+//Similar Potions
+const {
+  computedSimilarByAsset,
+  computedSimilarByStrike,
+  computedSimilarByDuration,
+} = useSimilarPotions(
+  tokenSelectedAddress,
+  strikeSelected,
+  durationSelected,
+  price
+);
+
+const similarPotionShown = computed(() => {
   if (currentIndex.value === 0) {
-    return isTokenSelected.value;
+    return computedSimilarByAsset.value;
+  } else if (currentIndex.value === 1) {
+    return computedSimilarByStrike.value;
+  } else if (currentIndex.value === 2) {
+    return computedSimilarByDuration.value;
+  } else if (currentIndex.value === 3) {
+    return computedSimilarByDuration.value;
   }
-  if (currentIndex.value === 1) {
-    return isStrikeValid.value;
-  }
-  return false;
+  return [];
 });
 </script>
 
 <template>
-  <BaseCard class="">
+  <BaseCard>
     <div class="grid grid-cols-1 xl:grid-cols-3 p-5 gap-5">
       <div class="w-full flex justify-between items-center xl:col-span-3">
         <p class="capitalize">{{ t("your_put_recipe") }}</p>
@@ -166,7 +483,7 @@ const isNextStepEnabled = computed(() => {
         ></router-link>
       </div>
       <ul
-        class="grid grid-cols-1 gap-2 lg:( grid-cols-4 ) gap-4 w-full xl:( grid-cols-1 ) items-start justify-center"
+        class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) self-start items-start justify-center"
       >
         <SidebarLink
           v-for="(item, index) in sidebarItems"
@@ -177,7 +494,25 @@ const isNextStepEnabled = computed(() => {
           :icon-srcset="item.iconSrcset"
           class="lg:w-1/4 lg:w-full"
           @click="item.onClick"
-        ></SidebarLink>
+        >
+          <div
+            v-if="index === 0 && tokenSelected"
+            class="flex gap-2 items-center"
+          >
+            <img
+              class="h-5 w-5"
+              :src="tokenSelected?.image"
+              :alt="tokenSelected?.symbol"
+            />
+            <p class="text-xs">{{ tokenSelected?.symbol }}</p>
+          </div>
+          <div v-if="index === 1 && strikeSelected">
+            <p class="text-xs">USDC {{ strikeSelected }}</p>
+          </div>
+          <div v-if="index === 2 && durationSelected">
+            <p class="text-xs">{{ durationSelectedDate }}</p>
+          </div>
+        </SidebarLink>
       </ul>
       <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
         <TokenSelection
@@ -192,17 +527,24 @@ const isNextStepEnabled = computed(() => {
         </div>
       </div>
       <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
-        <BaseCard color="no-bg" class="w-full xl:w-3/7 justify-between">
+        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
           <div class="flex justify-between p-4">
-            <p>hello</p>
-            <p>potion</p>
+            <div class="flex gap-2 items-center">
+              <img
+                class="h-5 w-5"
+                :src="tokenSelected?.image"
+                :alt="tokenSelected?.symbol"
+              />
+              <p class="text-sm capitalize">{{ t("current_price") }}</p>
+            </div>
+            <p>{{ formattedPrice }}</p>
           </div>
           <InputNumber
             v-model.number="strikeSelected"
             color="no-bg"
             :title="t('your_strike_price')"
             :min="1"
-            :max="maxSelectableStrike"
+            :max="maxSelectableStrikeAbsolute"
             :step="0.1"
             unit="USDC"
             :footer-description="t('max_strike_price')"
@@ -210,12 +552,116 @@ const isNextStepEnabled = computed(() => {
           />
         </BaseCard>
       </div>
+      <div v-if="currentIndex === 2" class="xl:col-span-2 flex justify-center">
+        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
+          <div class="flex justify-between p-4 items-start">
+            <div class="flex gap-2 items-center">
+              <p class="text-sm capitalize">{{ t("max_duration") }}</p>
+            </div>
+            <div class="text-sm">
+              <p>{{ maxSelectableDuration }} {{ t("days") }}</p>
+              <p>{{ maxSelectableDurationInDays }}</p>
+            </div>
+          </div>
+          <InputNumber
+            v-model.number="durationSelected"
+            color="no-bg"
+            :title="t('your_potion_expires_in')"
+            :min="1"
+            :max="maxSelectableDuration"
+            :step="1"
+            unit="days"
+            :max-decimals="0"
+            :footer-description="t('expiration')"
+            :footer-value="durationSelectedDate"
+            @valid-input="isDurationValid = $event"
+          />
+        </BaseCard>
+      </div>
+      <div
+        v-if="currentIndex === 3"
+        class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
+      >
+        <BaseCard color="no-bg" class="w-full justify-between">
+          <div class="flex justify-between p-4 items-start text-sm">
+            <div class="flex gap-2 items-center">
+              <p class="capitalize">{{ t("market_size") }}</p>
+            </div>
+            <div>
+              <p>{{ formattedMarketSize }}</p>
+            </div>
+          </div>
+          <InputNumber
+            v-model.number="potionQuantity"
+            color="no-bg"
+            :title="t('number_of_potions')"
+            :min="0.00000001"
+            :max="maxNumberOfPotions"
+            :step="1"
+            unit="POTION"
+            :max-decimals="8"
+            :footer-description="t('max_number_of_potions')"
+            :use-unit="false"
+            @valid-input="isPotionQuantityValid = $event"
+          />
+        </BaseCard>
+        <BaseCard color="no-bg" class="w-full gap-8 pt-4">
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("price_per_potion") }}</p>
+              <p>{{ formattedPremium }}</p>
+            </div>
+          </div>
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("number_of_potions") }}</p>
+              <p>{{ potionQuantity }}</p>
+            </div>
+          </div>
+          <div class="flex justify-between px-4 items-start text-sm">
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("number_of_transactions") }}</p>
+              <p>{{ numberOfTransactions }}</p>
+            </div>
+          </div>
+          <div
+            class="flex justify-between px-4 items-start text-sm text-secondary-500"
+          >
+            <div class="flex gap-2 items-center justify-between w-full">
+              <p class="capitalize">{{ t("total") }}</p>
+              <div class="text-right">
+                <p>{{ formattedPremiumSlippage }}</p>
+                <p class="text-xs capitalize text-dwhite-300/30">
+                  {{ t("balance") }}: {{ userCollateralBalanceFormatted }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <BaseCard color="no-bg" class="p-4">
+            <p class="text-lg font-bold capitalize">
+              {{ t("slippage_tolerance") }}
+            </p>
+            <div class="flex gap-3 mt-3">
+              <button
+                v-for="(s, index) in slippage"
+                :key="`slippage-${index}`"
+                class="outline-none focus:outline-none"
+                @click="handleSlippageSelection(index)"
+              >
+                <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{
+                  s.label
+                }}</BaseTag>
+              </button>
+            </div>
+          </BaseCard>
+        </BaseCard>
+      </div>
     </div>
     <div class="flex w-full justify-end items-center gap-3 p-4">
       <BaseButton
         v-if="currentIndex !== 0"
         class="uppercase"
-        test-next
+        test-back
         palette="flat"
         :inline="true"
         :label="t('back')"
@@ -227,17 +673,61 @@ const isNextStepEnabled = computed(() => {
         </template>
       </BaseButton>
       <BaseButton
+        v-if="currentIndex !== sidebarItems.length - 1"
         test-next
         palette="secondary"
         :inline="true"
         :label="t('next')"
-        :disabled="!isNextStepEnabled"
-        @click="currentIndex++"
+        :disabled="sidebarItems[currentIndex + 1].disabled"
+        @click="sidebarItems[currentIndex + 1].onClick()"
       >
         <template #post-icon>
           <i class="i-ph-caret-right"></i>
         </template>
       </BaseButton>
+      <BaseButton
+        v-if="currentIndex === sidebarItems.length - 1"
+        palette="secondary"
+        :label="buyPotionButtonState.label"
+        :disabled="buyPotionButtonState.disabled"
+        @click="handleBuyPotions()"
+      />
     </div>
   </BaseCard>
+  <div class="mt-10">
+    <h2 class="uppercase text-secondary-500 text-sm">
+      {{ t("similar_potions") }}
+    </h2>
+    <p class="text-sm">
+      {{ t("similar_potion_message", { dollars: savingByPickSimilar }) }}
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
+      <PotionCard
+        v-for="(potion, index) in similarPotionShown"
+        :key="`${index}-similar-potion`"
+        :token="
+          tokenSelected ?? {
+            name: '',
+            symbol: '',
+            address: '',
+            decimals: 18,
+            image: '',
+          }
+        "
+        :otoken-address="potion.tokenAddress"
+        :strike-price="potion.strikePrice"
+        :expiration="potion.expiry"
+        ><router-link
+          :to="`/potions/${potion.tokenAddress}`"
+          class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
+          >{{ t("show") }}</router-link
+        ></PotionCard
+      >
+    </div>
+  </div>
+  <NotificationDisplay
+    :toasts="notifications"
+    @hide-toast="(index) => removeToast(index)"
+  >
+  </NotificationDisplay>
 </template>

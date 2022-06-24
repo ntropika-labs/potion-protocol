@@ -23,7 +23,7 @@ import { useCollateralTokenContract } from "@/composables/useCollateralTokenCont
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { usePoolSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { usePoolOtokens } from "@/composables/usePoolRecords";
 
 import CurvesChart from "@/components/CurvesChart.vue";
@@ -139,20 +139,18 @@ const tokenPricesMap = ref<Map<string, string>>(new Map());
 
 const fetchAssetsPrice = async () => {
   const prices = new Map();
-  const addresses = criteriaSet?.value?.criterias?.map(
-    ({ criteria }) => criteria.underlyingAsset.address
-  );
-  if (!addresses) return prices;
+  const addresses =
+    criteriaSet?.value?.criterias?.map(
+      ({ criteria }) => criteria.underlyingAsset.address
+    ) ?? [];
 
   try {
-    for (let i = 0; i < addresses.length; i++) {
-      const addr = addresses[i];
-      const { fetchPrice, formattedPrice } = useFetchTokenPrices(addr);
-
-      await fetchPrice();
-
-      prices.set(addr, formattedPrice.value);
-    }
+    const promises = addresses.map(async (address) => {
+      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
+      await fetchTokenPrice();
+      prices.set(address, price.value);
+    });
+    await Promise.allSettled(promises);
   } catch (error) {
     console.error("Error while fetching token prices.");
   }
@@ -337,28 +335,28 @@ const {
 } = useNotifications();
 
 watch(depositTx, (transaction) =>
-  createTransactionNotification(transaction, "Depositing liquidity")
+  createTransactionNotification(transaction, t("depositing_liquidity"))
 );
 watch(depositReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity deposited")
+  createReceiptNotification(receipt, t("liquidity_deposited"))
 );
 watch(withdrawTx, (transaction) =>
-  createTransactionNotification(transaction, "Withdrawing liquidity")
+  createTransactionNotification(transaction, t("withdrawing_liquidity"))
 );
 watch(withdrawReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Liquidity withdrawn")
+  createReceiptNotification(receipt, t("liquidity_withdrawn"))
 );
 watch(approveTx, (transaction) =>
-  createTransactionNotification(transaction, "Approving USDC spending")
+  createTransactionNotification(transaction, t("approving_usdc"))
 );
 watch(approveReceipt, (receipt) =>
-  createReceiptNotification(receipt, "USDC spending approved")
+  createReceiptNotification(receipt, t("usdc_approved"))
 );
 watch(claimCollateralTx, (transaction) =>
-  createTransactionNotification(transaction, "Claiming collateral")
+  createTransactionNotification(transaction, t("claiming_collateral"))
 );
 watch(claimCollateralReceipt, (receipt) =>
-  createReceiptNotification(receipt, "Collateral claimed")
+  createReceiptNotification(receipt, t("collateral_claimed"))
 );
 </script>
 <template>
@@ -409,8 +407,8 @@ watch(claimCollateralReceipt, (receipt) =>
       </div>
     </BaseCard>
     <!-- End header  -->
-    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-[3fr_1fr]">
-      <div class="flex flex-col gap-8">
+    <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-3">
+      <div class="flex flex-col gap-8 xl:col-span-2">
         <PerformanceCard
           v-if="performanceChartDataReady"
           :performance-data="chartData"

@@ -161,6 +161,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AddressBookInterface__factory>;
     getContractFactory(
+      name: "AggregatorInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorInterface__factory>;
+    getContractFactory(
       name: "CalleeInterface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CalleeInterface__factory>;
@@ -252,6 +256,10 @@ declare module "hardhat/types/runtime" {
       name: "Spawn",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Spawn__factory>;
+    getContractFactory(
+      name: "ChainLinkPricer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ChainLinkPricer__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -439,6 +447,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.AddressBookInterface>;
     getContractAt(
+      name: "AggregatorInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorInterface>;
+    getContractAt(
       name: "CalleeInterface",
       address: string,
       signer?: ethers.Signer
@@ -553,6 +566,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Spawn>;
+    getContractAt(
+      name: "ChainLinkPricer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ChainLinkPricer>;
 
     // default types
     getContractFactory(

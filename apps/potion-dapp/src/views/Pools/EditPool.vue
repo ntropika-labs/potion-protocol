@@ -87,7 +87,7 @@ import { useCollateralTokenContract } from "@/composables/useCollateralTokenCont
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useTokenList } from "@/composables/useTokenList";
-import { useFetchTokenPrices } from "@/composables/useFetchTokenPrices";
+import { useCoinGecko } from "@/composables/useCoinGecko";
 import { watchDebounced } from "@vueuse/core";
 import { useNotifications } from "@/composables/useNotifications";
 const { t } = useI18n();
@@ -230,11 +230,11 @@ const { data: availableProducts } = useAllCollateralizedProductsUnderlyingQuery(
   }
 );
 const updateTokenPrice = async (token: Token) => {
-  const { success, price, formattedPrice, fetchPrice } = useFetchTokenPrices(
-    token.address
-  );
+  const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko([
+    token.address,
+  ]);
   try {
-    await fetchPrice();
+    await fetchTokenPrice();
   } catch (error) {
     console.error(
       "Error while fetching token price. Affected token: " + token.name
@@ -417,18 +417,18 @@ const {
 } = useNotifications();
 
 watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
-  createTransactionNotification(transaction, "Creating pool");
+  createTransactionNotification(transaction, t("creating_pool"));
 });
 
 watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Pool created");
+  createReceiptNotification(receipt, t("pool_created"));
 });
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, "Approving USDC");
+  createTransactionNotification(transaction, t("approving_usdc"));
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, "USDC spending approved");
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>

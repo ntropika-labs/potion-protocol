@@ -206,7 +206,6 @@ const route = useRoute();
 const router = useRouter();
 const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
 const onTemplateIdNavigation = (templateId: string) => {
-  console.log("navigate to template id", templateId);
   router.push({ name: "pool-template", params: { templateId } });
 };
 
@@ -237,11 +236,10 @@ const innerNavProps = computed(() => {
 
 <template>
   <JumboHeader
-    :title="t('create_pool_jumbo_title')"
-    :subtitle="t('create_pool_jumbo_subtitle')"
+    :title="t('create_pool_title')"
+    :subtitle="t('create_pool_subtitle')"
     :cta-label="t('create_pool')"
     :icon-srcset="jumboIconSrcset"
-    class="mb-16"
     @click="navigateToCustomPoolCreation"
   >
     <div class="pt-2 pb-4">
@@ -250,8 +248,7 @@ const innerNavProps = computed(() => {
       }}</a>
     </div>
   </JumboHeader>
-  <!-- @ts-expect-error wrong -->
-  <InnerNav v-bind="innerNavProps" />
+  <InnerNav class="mt-10" v-bind="innerNavProps" />
   <div class="grid gap-8 mt-10">
     <CardGrid
       v-for="[key, { templates, canLoadMore }] in stateMap.entries()"
