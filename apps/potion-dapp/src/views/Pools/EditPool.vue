@@ -1,10 +1,4 @@
 <template>
-  <pre>
-    CI DEBUG:
-    collateral: {{ collateral }}
-    availableTokens: {{ JSON.stringify(availableTokens) }}
-    criteriaMap: {{ JSON.stringify(Object.fromEntries(criteriaMap.entries())) }}
-  </pre>
   <template v-if="error || !poolData?.pool"> Can't load the pool </template>
   <template v-if="!fetching && poolData?.pool">
     <PoolSetup
@@ -292,7 +286,7 @@ const toggleTokenSelection = (address: string) => {
   }
 };
 
-watch(availableProducts, () => {
+watch([availableProducts, poolData], () => {
   availableTokens.value =
     availableProducts?.value?.products?.map((product) =>
       tokenToSelectableToken(
