@@ -5,10 +5,8 @@
     availableTokens: {{ JSON.stringify(availableTokens) }}
     criteriaMap: {{ JSON.stringify(Object.fromEntries(criteriaMap.entries())) }}
   </pre>
-  <template v-if="error || !poolData || !poolData.pool">
-    Can't load the pool
-  </template>
-  <template v-if="(poolData && poolData.pool) || fetching">
+  <template v-if="error || !poolData?.pool"> Can't load the pool </template>
+  <template v-if="!fetching && poolData?.pool">
     <PoolSetup
       v-model:liquidity.number="liquidity"
       :size="formattedSize"
