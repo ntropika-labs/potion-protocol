@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import { IRefundsHelper } from "../interfaces/IRefundsHelper.sol";
 import { RolesManagerUpgradeable } from "./RolesManagerUpgradeable.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -13,10 +14,7 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
     @author Roberto Cano <robercano>
     
-    @notice Helper contract that allows the Admin to refund tokens or ETH sent to the vault
-    by mistake. At construction time it receives the list of tokens that cannot be refunded.
-    Those tokens are typically the asset managed by the vault and any intermediary tokens
-    that the vault may use to manage the asset.
+    @notice See { IRefundsHelper}
 
     @dev It inherits from the RolesManagerUpgradeable contract to scope the refund functions
     for only the Admin role.
@@ -29,7 +27,7 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
     final and there is no need to add more storage variables
  */
 
-contract RefundsHelperUpgreadable is RolesManagerUpgradeable {
+contract RefundsHelperUpgreadable is RolesManagerUpgradeable, IRefundsHelper {
     using Address for address payable;
 
     /// STORAGE
@@ -77,10 +75,7 @@ contract RefundsHelperUpgreadable is RolesManagerUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Refunds the given amount of tokens to the given address
-        @param token address of the token to be refunded
-        @param amount amount of tokens to be refunded
-        @param recipient address to which the tokens will be refunded
+        @inheritdoc IRefundsHelper
 
         @dev This function can be only called by the admin and only if the token is not in the
         list of tokens that cannot be refunded.
@@ -97,9 +92,7 @@ contract RefundsHelperUpgreadable is RolesManagerUpgradeable {
     }
 
     /**
-        @notice Refunds the given amount of ETH to the given address
-        @param amount amount of tokens to be refunded
-        @param recipient address to which the tokens will be refunded
+        @inheritdoc IRefundsHelper
 
         @dev This function can be only called by the admin and only if ETH is allowed to be
         refunded
@@ -114,20 +107,14 @@ contract RefundsHelperUpgreadable is RolesManagerUpgradeable {
     /// GETTERS
 
     /**
-        @notice Returns whether the given token is refundable or not
-
-        @param token address of the token to be checked
-
-        @return true if the token is refundable, false otherwise
+        @inheritdoc IRefundsHelper
      */
     function canRefund(address token) public view returns (bool) {
         return !_cannotRefund[token];
     }
 
     /**
-        @notice Returns whether the ETH is refundable or not
-
-        @return true if ETH is refundable, false otherwise
+        @inheritdoc IRefundsHelper
      */
     function canRefundETH() public view returns (bool) {
         return !_cannotRefundETH;

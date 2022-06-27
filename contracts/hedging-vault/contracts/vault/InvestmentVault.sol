@@ -125,7 +125,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
     }
 
     /**
-        @inheritdoc InvestmentVaultV0
+        @inheritdoc IInvestmentVaultV0
      */
     function setPrincipalPercentages(uint256[] calldata newPrincipalPercentages) external override onlyStrategist {
         uint256 numActions = getActionsLength();

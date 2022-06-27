@@ -3,12 +3,11 @@
  */
 pragma solidity 0.8.14;
 
+import "../../interfaces/IPotionProtocolOracle.sol";
 import "../../common/RolesManagerUpgradeable.sol";
 
-import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
-
 /**
-    @title PotionProtocolOracleUpgradeable
+    @title IPotionProtocolOracle
 
     @notice Oracle contract for the Potion Protocol potion buy. It takes care of holding the information
     about the counterparties that will be used to buy a particular potion (potion) with a maximum allowed
@@ -24,23 +23,7 @@ import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol"
     among several other contracts of the Action. The initialization will happen in the Action contract
 
  */
-contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
-    /**
-        @notice The information required to buy a specific potion with a specific maximum premium requirement
-
-        @custom:member potion The address of the potion (otoken) to buy
-        @custom:member sellers The list of liquidity providers that will be used to buy the potion
-        @custom:member expectedPremiumInUSDC The expected premium to be paid for the given order size
-                       and the given sellers, in USDC
-        @custom:member totalSizeInPotions The total number of potions to buy using the given sellers list
-     */
-    struct PotionBuyInfo {
-        address potion;
-        IPotionLiquidityPool.CounterpartyDetails[] sellers;
-        uint256 expectedPremiumInUSDC;
-        uint256 totalSizeInPotions;
-    }
-
+contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerUpgradeable {
     /**
         @notice Information on the buy of an OToken 
 
@@ -62,25 +45,14 @@ contract PotionProtocolOracleUpgradeable is RolesManagerUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Sets the potion buy information for a specific potion
-
-        @param info The potion buy information for the potion
-
-        @dev Only the Keeper role can call this function
-
-        @dev See { PotionBuyInfo }
+        @inheritdoc IPotionProtocolOracle
      */
-    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyStrategist {
+    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyOperator {
         _potionBuyInfo[info.potion] = info;
     }
 
     /**
-        @notice Gets the potion buy information for a given OToken
-
-        @param potion The address of the potion to buy from
-
-        @return The Potion Buy information for the given potion
-
+        @inheritdoc IPotionProtocolOracle
      */
     function getPotionBuyInfo(address potion) public view returns (PotionBuyInfo memory) {
         return _potionBuyInfo[potion];

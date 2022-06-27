@@ -3,14 +3,16 @@
  */
 pragma solidity 0.8.14;
 
+import { IInvestmentVaultV0 } from "../interfaces/IInvestmentVaultV0.sol";
+
 /**    
     @title InvestmentVaultV0
         
     @author Roberto Cano <robercano>
 
-    @notice Storage and interface for the first version of the Investment Vault
+    @notice Storage for the first version of the Investment Vault
  */
-abstract contract InvestmentVaultV0 {
+abstract contract InvestmentVaultV0 is IInvestmentVaultV0 {
     // STORAGE
 
     /**
@@ -27,25 +29,4 @@ abstract contract InvestmentVaultV0 {
         @dev Used to do sanity checks on the operations of the vault
      */
     uint256 public totalPrincipalPercentages;
-
-    /// ERRORS
-    error PrincipalPercentagesMismatch(
-        uint256 _principalPercentagesLength,
-        uint256 _principalPercentagesLengthExpected
-    );
-    error PrincipalPercentageOutOfRange(uint256 index, uint256 value);
-    error PrincipalPercentagesSumMoreThan100(uint256 totalSumOfPercentages);
-    error InvestmentTotalTooHigh(uint256 totalInvestment, uint256 expectedMaxInvestment);
-
-    /// EVENTS
-    event PrincipalPercentagesUpdated(uint256[] principalPercentages);
-
-    /// FUNCTIONS
-
-    /**
-        @notice Sets the new percentages of the principal assigned to each action in the vault
-
-        @dev Reverts if the number of percentages is not the same as the number of actions in the vault
-     */
-    function setPrincipalPercentages(uint256[] calldata principalPercentages_) external virtual;
 }

@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
 import { RolesManagerUpgradeable } from "./RolesManagerUpgradeable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
@@ -11,14 +12,13 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/securit
 
     @author Roberto Cano <robercano>
     
-    @notice Helper contract that allows the Admin to pause all the functionality of the vault in case
-    of an emergency
+    @notice See { IEmergencyLock }
 
     @dev No storage gaps have been added as the functionlity of this contract is considered to be
     final and there is no need to add more storage variables
  */
 
-contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeable {
+contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeable, IEmergencyLock {
     /// UPGRADEABLE INITIALIZERS
 
     /**
@@ -44,7 +44,7 @@ contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeabl
     // FUNCTIONS
 
     /**
-        @notice Pauses the contract
+        @inheritdoc IEmergencyLock
 
         @dev Only functions marked with the `whenPaused` modifier will be executed
         when the contract is paused
@@ -56,7 +56,7 @@ contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeabl
     }
 
     /**
-        @notice Unpauses the contract
+        @inheritdoc IEmergencyLock
 
         @dev Only functions marked with the `whenUnpaused` modifier will be executed
         when the contract is unpaused

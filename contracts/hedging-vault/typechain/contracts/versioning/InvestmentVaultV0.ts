@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -24,38 +28,20 @@ import type {
 
 export interface InvestmentVaultV0Interface extends utils.Interface {
   functions: {
-    "MIN_CYCLE_DURATION()": FunctionFragment;
-    "cycleDurationSeconds()": FunctionFragment;
     "principalPercentages(uint256)": FunctionFragment;
-    "setCycleDuration(uint256)": FunctionFragment;
     "setPrincipalPercentages(uint256[])": FunctionFragment;
     "totalPrincipalPercentages()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "MIN_CYCLE_DURATION"
-      | "cycleDurationSeconds"
       | "principalPercentages"
-      | "setCycleDuration"
       | "setPrincipalPercentages"
       | "totalPrincipalPercentages"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "MIN_CYCLE_DURATION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cycleDurationSeconds",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "principalPercentages",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCycleDuration",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -68,19 +54,7 @@ export interface InvestmentVaultV0Interface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "MIN_CYCLE_DURATION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cycleDurationSeconds",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "principalPercentages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCycleDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -92,8 +66,25 @@ export interface InvestmentVaultV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "PrincipalPercentagesUpdated(uint256[])": EventFragment;
+  };
+
+  getEvent(
+    nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
+  ): EventFragment;
 }
+
+export interface PrincipalPercentagesUpdatedEventObject {
+  principalPercentages: BigNumber[];
+}
+export type PrincipalPercentagesUpdatedEvent = TypedEvent<
+  [BigNumber[]],
+  PrincipalPercentagesUpdatedEventObject
+>;
+
+export type PrincipalPercentagesUpdatedEventFilter =
+  TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
 
 export interface InvestmentVaultV0 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -122,19 +113,10 @@ export interface InvestmentVaultV0 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     principalPercentages(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     setPrincipalPercentages(
       principalPercentages_: BigNumberish[],
@@ -144,19 +126,10 @@ export interface InvestmentVaultV0 extends BaseContract {
     totalPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
-
   principalPercentages(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  setCycleDuration(
-    cycleDurationSeconds_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   setPrincipalPercentages(
     principalPercentages_: BigNumberish[],
@@ -166,19 +139,10 @@ export interface InvestmentVaultV0 extends BaseContract {
   totalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
-
     principalPercentages(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setPrincipalPercentages(
       principalPercentages_: BigNumberish[],
@@ -188,21 +152,19 @@ export interface InvestmentVaultV0 extends BaseContract {
     totalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "PrincipalPercentagesUpdated(uint256[])"(
+      principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+    PrincipalPercentagesUpdated(
+      principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+  };
 
   estimateGas: {
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
-
     principalPercentages(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setPrincipalPercentages(
@@ -214,22 +176,9 @@ export interface InvestmentVaultV0 extends BaseContract {
   };
 
   populateTransaction: {
-    MIN_CYCLE_DURATION(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    cycleDurationSeconds(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     principalPercentages(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setPrincipalPercentages(

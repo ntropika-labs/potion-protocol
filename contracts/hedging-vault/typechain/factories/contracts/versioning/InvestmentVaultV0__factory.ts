@@ -14,22 +14,6 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_cycleDurationSeconds",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_cycleDurationSecondsExpected",
-        type: "uint256",
-      },
-    ],
-    name: "CycleDurationTooShort",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "totalInvestment",
         type: "uint256",
       },
@@ -86,30 +70,17 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "MIN_CYCLE_DURATION",
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        indexed: false,
+        internalType: "uint256[]",
+        name: "principalPercentages",
+        type: "uint256[]",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "cycleDurationSeconds",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    name: "PrincipalPercentagesUpdated",
+    type: "event",
   },
   {
     inputs: [
@@ -128,19 +99,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "cycleDurationSeconds_",
-        type: "uint256",
-      },
-    ],
-    name: "setCycleDuration",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {

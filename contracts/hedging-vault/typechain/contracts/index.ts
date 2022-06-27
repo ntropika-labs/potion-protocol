@@ -7,6 +7,8 @@ import type * as common from "./common";
 export type { common };
 import type * as extensions from "./extensions";
 export type { extensions };
+import type * as helpers from "./helpers";
+export type { helpers };
 import type * as interfaces from "./interfaces";
 export type { interfaces };
 import type * as library from "./library";

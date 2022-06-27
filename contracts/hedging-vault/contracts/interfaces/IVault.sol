@@ -3,6 +3,11 @@
  */
 pragma solidity 0.8.14;
 
+import { IRolesManager } from "../interfaces/IRolesManager.sol";
+import { ILifecycleStates } from "../interfaces/ILifecycleStates.sol";
+import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
+import { IRefundsHelper } from "../interfaces/IRefundsHelper.sol";
+import { IFeeManager } from "../interfaces/IFeeManager.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**  
@@ -17,7 +22,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
     actions succeed, then the position is entered. Once the position can be exited, the investment
     actions are also exited and the profit/loss of the investment cycle is realized.
  */
-interface IVault {
+interface IVault is IRolesManager, ILifecycleStates, IEmergencyLock, IRefundsHelper, IFeeManager {
     /// EVENTS
     event VaultPositionEntered(uint256 totalPrincipalAmount, uint256 principalAmountInvested);
     event VaultPositionExited(uint256 newPrincipalAmount);

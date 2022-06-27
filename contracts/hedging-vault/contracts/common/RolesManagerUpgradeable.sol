@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import { IRolesManager } from "../interfaces/IRolesManager.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
@@ -34,7 +35,7 @@ import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/Co
     among different helper contracts that need to scope their functions to the Admin or Keeper role.
  */
 
-contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
+contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesManager {
     // STORAGE
 
     /**
@@ -85,11 +86,6 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
         _;
     }
 
-    /// EVENTS
-    event AdminChanged(address indexed prevAdminAddress, address indexed newAdminAddress);
-    event StrategistChanged(address indexed prevStrategistAddress, address indexed newStrategistAddress);
-    event OperatorChanged(address indexed prevOperatorAddress, address indexed newOperatorAddress);
-
     /// UPGRADEABLE INITIALIZERS
 
     /**
@@ -110,7 +106,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Changes the existing Admin address to a new one
+        @inheritdoc IRolesManager
 
         @dev Only the previous Admin can change the address to a new one
      */
@@ -125,7 +121,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     }
 
     /**
-        @notice Changes the existing Strategist address to a new one
+        @inheritdoc IRolesManager
 
         @dev Only the Admin can change the address to a new one
      */
@@ -140,7 +136,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     }
 
     /**
-        @notice Changes the existing Operator address to a new one
+        @inheritdoc IRolesManager
 
         @dev Only the Admin can change the address to a new one
      */
@@ -155,21 +151,21 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable {
     }
 
     /**
-        @notice Returns the current Admin address
+        @inheritdoc IRolesManager
      */
     function getAdmin() public view returns (address) {
         return _adminAddress;
     }
 
     /**
-        @notice Returns the current Strategist address
+        @inheritdoc IRolesManager
      */
     function getStrategist() public view returns (address) {
         return _strategistAddress;
     }
 
     /**
-        @notice Returns the current Operator address
+        @inheritdoc IRolesManager
      */
     function getOperator() public view returns (address) {
         return _operatorAddress;

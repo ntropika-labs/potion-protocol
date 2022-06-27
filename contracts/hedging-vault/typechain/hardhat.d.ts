@@ -41,6 +41,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContextUpgradeable__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -97,9 +101,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626CapUpgradeable__factory>;
     getContractFactory(
+      name: "HedgingVaultOperatorHelper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HedgingVaultOperatorHelper__factory>;
+    getContractFactory(
       name: "IAction",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
+    getContractFactory(
+      name: "IActionsManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IActionsManager__factory>;
+    getContractFactory(
+      name: "IEmergencyLock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IEmergencyLock__factory>;
+    getContractFactory(
+      name: "IFeeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFeeManager__factory>;
+    getContractFactory(
+      name: "IInvestmentVaultV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IInvestmentVaultV0__factory>;
+    getContractFactory(
+      name: "ILifecycleStates",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILifecycleStates__factory>;
     getContractFactory(
       name: "IOpynController",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -109,9 +137,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOtoken__factory>;
     getContractFactory(
+      name: "IPotionBuyAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPotionBuyAction__factory>;
+    getContractFactory(
+      name: "IPotionBuyActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPotionBuyActionV0__factory>;
+    getContractFactory(
       name: "IPotionLiquidityPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPotionLiquidityPool__factory>;
+    getContractFactory(
+      name: "IPotionProtocolOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPotionProtocolOracle__factory>;
+    getContractFactory(
+      name: "IRefundsHelper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRefundsHelper__factory>;
+    getContractFactory(
+      name: "IRolesManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRolesManager__factory>;
+    getContractFactory(
+      name: "IUniswapV3Oracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3Oracle__factory>;
     getContractFactory(
       name: "IVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -189,6 +241,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ContextUpgradeable>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
@@ -259,10 +316,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC4626CapUpgradeable>;
     getContractAt(
+      name: "HedgingVaultOperatorHelper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HedgingVaultOperatorHelper>;
+    getContractAt(
       name: "IAction",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
+    getContractAt(
+      name: "IActionsManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IActionsManager>;
+    getContractAt(
+      name: "IEmergencyLock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IEmergencyLock>;
+    getContractAt(
+      name: "IFeeManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFeeManager>;
+    getContractAt(
+      name: "IInvestmentVaultV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IInvestmentVaultV0>;
+    getContractAt(
+      name: "ILifecycleStates",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILifecycleStates>;
     getContractAt(
       name: "IOpynController",
       address: string,
@@ -274,10 +361,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IOtoken>;
     getContractAt(
+      name: "IPotionBuyAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPotionBuyAction>;
+    getContractAt(
+      name: "IPotionBuyActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPotionBuyActionV0>;
+    getContractAt(
       name: "IPotionLiquidityPool",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IPotionLiquidityPool>;
+    getContractAt(
+      name: "IPotionProtocolOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPotionProtocolOracle>;
+    getContractAt(
+      name: "IRefundsHelper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRefundsHelper>;
+    getContractAt(
+      name: "IRolesManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRolesManager>;
+    getContractAt(
+      name: "IUniswapV3Oracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3Oracle>;
     getContractAt(
       name: "IVault",
       address: string,
