@@ -98,7 +98,7 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export declare namespace PotionProtocolOracleUpgradeable {
+export declare namespace IPotionProtocolOracle {
   export type PotionBuyInfoStruct = {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
@@ -119,7 +119,7 @@ export declare namespace PotionProtocolOracleUpgradeable {
   };
 }
 
-export declare namespace UniswapV3OracleUpgradeable {
+export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
     inputToken: string;
     outputToken: string;
@@ -358,7 +358,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
-    values: [PotionProtocolOracleUpgradeable.PotionBuyInfoStruct]
+    values: [IPotionProtocolOracle.PotionBuyInfoStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setPremiumSlippage",
@@ -366,7 +366,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
-    values: [UniswapV3OracleUpgradeable.SwapInfoStruct]
+    values: [IUniswapV3Oracle.SwapInfoStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapSlippage",
@@ -779,7 +779,7 @@ export interface PotionBuyAction extends BaseContract {
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
-    ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
+    ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
@@ -787,7 +787,7 @@ export interface PotionBuyAction extends BaseContract {
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
-    ): Promise<[UniswapV3OracleUpgradeable.SwapInfoStructOutput]>;
+    ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     getSwapInputAmount(
       inputToken: string,
@@ -870,7 +870,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -880,7 +880,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -951,7 +951,7 @@ export interface PotionBuyAction extends BaseContract {
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
-  ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+  ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -959,7 +959,7 @@ export interface PotionBuyAction extends BaseContract {
     inputToken: string,
     outputToken: string,
     overrides?: CallOverrides
-  ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+  ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   getSwapInputAmount(
     inputToken: string,
@@ -1042,7 +1042,7 @@ export interface PotionBuyAction extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setPotionBuyInfo(
-    info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+    info: IPotionProtocolOracle.PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1052,7 +1052,7 @@ export interface PotionBuyAction extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setSwapInfo(
-    info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+    info: IUniswapV3Oracle.SwapInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1123,7 +1123,7 @@ export interface PotionBuyAction extends BaseContract {
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
-    ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+    ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -1131,7 +1131,7 @@ export interface PotionBuyAction extends BaseContract {
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
-    ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+    ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
     getSwapInputAmount(
       inputToken: string,
@@ -1212,7 +1212,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<void>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1222,7 +1222,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<void>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1484,7 +1484,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1494,7 +1494,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1671,7 +1671,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1681,7 +1681,7 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

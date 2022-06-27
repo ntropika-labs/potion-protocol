@@ -109,9 +109,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOtoken__factory>;
     getContractFactory(
+      name: "IPotionBuyAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPotionBuyAction__factory>;
+    getContractFactory(
       name: "IPotionLiquidityPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPotionLiquidityPool__factory>;
+    getContractFactory(
+      name: "IPotionProtocolOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPotionProtocolOracle__factory>;
+    getContractFactory(
+      name: "IUniswapV3Oracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3Oracle__factory>;
     getContractFactory(
       name: "IVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -274,10 +286,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IOtoken>;
     getContractAt(
+      name: "IPotionBuyAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPotionBuyAction>;
+    getContractAt(
       name: "IPotionLiquidityPool",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IPotionLiquidityPool>;
+    getContractAt(
+      name: "IPotionProtocolOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPotionProtocolOracle>;
+    getContractAt(
+      name: "IUniswapV3Oracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3Oracle>;
     getContractAt(
       name: "IVault",
       address: string,

@@ -4,5 +4,8 @@
 export { IAction__factory } from "./IAction__factory";
 export { IOpynController__factory } from "./IOpynController__factory";
 export { IOtoken__factory } from "./IOtoken__factory";
+export { IPotionBuyAction__factory } from "./IPotionBuyAction__factory";
 export { IPotionLiquidityPool__factory } from "./IPotionLiquidityPool__factory";
+export { IPotionProtocolOracle__factory } from "./IPotionProtocolOracle__factory";
+export { IUniswapV3Oracle__factory } from "./IUniswapV3Oracle__factory";
 export { IVault__factory } from "./IVault__factory";

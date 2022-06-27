@@ -98,7 +98,7 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export declare namespace PotionProtocolOracleUpgradeable {
+export declare namespace IPotionProtocolOracle {
   export type PotionBuyInfoStruct = {
     potion: string;
     sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
@@ -180,7 +180,7 @@ export interface PotionProtocolHelperUpgradeableInterface
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
-    values: [PotionProtocolOracleUpgradeable.PotionBuyInfoStruct]
+    values: [IPotionProtocolOracle.PotionBuyInfoStruct]
   ): string;
 
   decodeFunctionResult(
@@ -327,7 +327,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
-    ): Promise<[PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput]>;
+    ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
@@ -339,7 +339,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     ): Promise<[BigNumber]>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -368,7 +368,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
-  ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+  ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -380,7 +380,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
   ): Promise<BigNumber>;
 
   setPotionBuyInfo(
-    info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+    info: IPotionProtocolOracle.PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -409,7 +409,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
-    ): Promise<PotionProtocolOracleUpgradeable.PotionBuyInfoStructOutput>;
+    ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -421,7 +421,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -498,7 +498,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -543,7 +543,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
-      info: PotionProtocolOracleUpgradeable.PotionBuyInfoStruct,
+      info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

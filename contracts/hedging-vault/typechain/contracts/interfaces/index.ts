@@ -4,5 +4,8 @@
 export type { IAction } from "./IAction";
 export type { IOpynController } from "./IOpynController";
 export type { IOtoken } from "./IOtoken";
+export type { IPotionBuyAction } from "./IPotionBuyAction";
 export type { IPotionLiquidityPool } from "./IPotionLiquidityPool";
+export type { IPotionProtocolOracle } from "./IPotionProtocolOracle";
+export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";

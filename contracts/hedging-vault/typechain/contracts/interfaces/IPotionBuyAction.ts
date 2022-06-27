@@ -24,7 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../../../common";
+} from "../../common";
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
@@ -119,73 +119,93 @@ export declare namespace IPotionProtocolOracle {
   };
 }
 
-export interface PotionProtocolOracleUpgradeableInterface
-  extends utils.Interface {
+export declare namespace IUniswapV3Oracle {
+  export type SwapInfoStruct = {
+    inputToken: string;
+    outputToken: string;
+    expectedPriceRate: BigNumberish;
+    swapPath: BytesLike;
+  };
+
+  export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
+    inputToken: string;
+    outputToken: string;
+    expectedPriceRate: BigNumber;
+    swapPath: string;
+  };
+}
+
+export interface IPotionBuyActionInterface extends utils.Interface {
   functions: {
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getOperator()": FunctionFragment;
+    "canPositionBeEntered(address)": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
+    "enterPosition(address,uint256)": FunctionFragment;
+    "exitPosition(address)": FunctionFragment;
     "getPotionBuyInfo(address)": FunctionFragment;
-    "getStrategist()": FunctionFragment;
+    "getSwapInfo(address,address)": FunctionFragment;
     "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "getAdmin"
-      | "getOperator"
+      | "canPositionBeEntered"
+      | "canPositionBeExited"
+      | "enterPosition"
+      | "exitPosition"
       | "getPotionBuyInfo"
-      | "getStrategist"
+      | "getSwapInfo"
       | "setPotionBuyInfo"
+      | "setSwapInfo"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "changeOperator",
+    functionFragment: "canPositionBeEntered",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "changeStrategist",
+    functionFragment: "canPositionBeExited",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
+    functionFragment: "enterPosition",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitPosition",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getSwapInfo",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
     values: [IPotionProtocolOracle.PotionBuyInfoStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapInfo",
+    values: [IUniswapV3Oracle.SwapInfoStruct]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "changeAdmin",
+    functionFragment: "canPositionBeEntered",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeOperator",
+    functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeStrategist",
+    functionFragment: "enterPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getOperator",
+    functionFragment: "exitPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -193,74 +213,57 @@ export interface PotionProtocolOracleUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getSwapInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setPotionBuyInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapInfo",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "AdminChanged(address,address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
 }
 
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
+export interface ActionPositionEnteredEventObject {
+  investmentAsset: string;
+  amountToInvest: BigNumber;
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
 >;
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
 
-export interface InitializedEventObject {
-  version: number;
+export interface ActionPositionExitedEventObject {
+  investmentAsset: string;
+  amountReturned: BigNumber;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
 >;
 
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
-}
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
->;
-
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
-
-export interface PotionProtocolOracleUpgradeable extends BaseContract {
+export interface IPotionBuyAction extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PotionProtocolOracleUpgradeableInterface;
+  interface: IPotionBuyActionInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -282,196 +285,239 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    changeAdmin(
-      newAdminAddress: string,
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canExit: boolean }>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeOperator(
-      newOperatorAddress: string,
+    exitPosition(
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     setPotionBuyInfo(
       info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  changeAdmin(
-    newAdminAddress: string,
+  canPositionBeEntered(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  canPositionBeExited(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  enterPosition(
+    investmentAsset: string,
+    amountToInvest: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeOperator(
-    newOperatorAddress: string,
+  exitPosition(
+    investmentAsset: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
-  getOperator(overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
   ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+  getSwapInfo(
+    inputToken: string,
+    outputToken: string,
+    overrides?: CallOverrides
+  ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   setPotionBuyInfo(
     info: IPotionProtocolOracle.PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setSwapInfo(
+    info: IUniswapV3Oracle.SwapInfoStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    changeAdmin(
-      newAdminAddress: string,
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    changeOperator(
-      newOperatorAddress: string,
+    exitPosition(
+      investmentAsset: string,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
-    getOperator(overrides?: CallOverrides): Promise<string>;
+    ): Promise<BigNumber>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
     setPotionBuyInfo(
       info: IPotionProtocolOracle.PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
-    ): AdminChangedEventFilter;
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: string | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
-    ): OperatorChangedEventFilter;
-
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
-    ): StrategistChangedEventFilter;
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: string | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
   };
 
   estimateGas: {
-    changeAdmin(
-      newAdminAddress: string,
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeOperator(
-      newOperatorAddress: string,
+    exitPosition(
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setPotionBuyInfo(
       info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    changeAdmin(
-      newAdminAddress: string,
+    canPositionBeEntered(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canPositionBeExited(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    enterPosition(
+      investmentAsset: string,
+      amountToInvest: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeOperator(
-      newOperatorAddress: string,
+    exitPosition(
+      investmentAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getSwapInfo(
+      inputToken: string,
+      outputToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
       info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

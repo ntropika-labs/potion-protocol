@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import "../../interfaces/IUniswapV3Oracle.sol";
 import "../../common/RolesManagerUpgradeable.sol";
 import "../../library/PriceUtils.sol";
 
@@ -22,25 +23,7 @@ import "../../library/PriceUtils.sol";
     among several other contracts of the Action. The initialization will happen in the Action contract
 
  */
-contract UniswapV3OracleUpgradeable is RolesManagerUpgradeable {
-    /**
-        @notice The information required to perform a safe swap
-
-        @custom:member inputToken The address of the input token in the swap
-        @custom:member outputToken The address of the output token in the swap
-        @custom:member expectedPriceRate The expected price of the swap as a fixed point SD59x18 number
-        @custom:member swapPath The path to use for the swap as an ABI encoded array of bytes
-
-        @dev See [Multi-hop Swaps](https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps) for
-        more information on the `swapPath` format
-     */
-    struct SwapInfo {
-        address inputToken;
-        address outputToken;
-        uint256 expectedPriceRate;
-        bytes swapPath;
-    }
-
+contract UniswapV3OracleUpgradeable is IUniswapV3Oracle, RolesManagerUpgradeable {
     /**
         @notice Swap information for each pair of input and output tokens
 
@@ -65,26 +48,14 @@ contract UniswapV3OracleUpgradeable is RolesManagerUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Sets the swap information for an input/output token pair. The information
-        includes the swap path and the expected swap price
-
-        @param info The swap information for the pair
-
-        @dev Only the Keeper role can call this function
-
-        @dev See { SwapInfo }
+        @inheritdoc IUniswapV3Oracle
      */
-    function setSwapInfo(SwapInfo calldata info) external onlyStrategist {
+    function setSwapInfo(SwapInfo calldata info) external onlyOperator {
         _swapInfo[info.inputToken][info.outputToken] = info;
     }
 
     /**
-        @notice Gets the swap information for the given input/output token pair
-
-        @param inputToken The address of the input token in the swap
-        @param outputToken The address of the output token in the swap
-
-        @return The swap information for the pair
+        @inheritdoc IUniswapV3Oracle
 
      */
     function getSwapInfo(address inputToken, address outputToken) public view returns (SwapInfo memory) {

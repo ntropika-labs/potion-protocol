@@ -30,7 +30,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
     "FEE_DECIMALS()": FunctionFragment;
     "FEE_SCALE()": FunctionFragment;
-    "MIN_CYCLE_DURATION()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "asset()": FunctionFragment;
@@ -44,7 +43,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "changeStrategist(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
-    "cycleDurationSeconds()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
@@ -77,7 +75,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "redeem(uint256,address,address)": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
-    "setCycleDuration(uint256)": FunctionFragment;
     "setFeesRecipient(address)": FunctionFragment;
     "setManagementFee(uint256)": FunctionFragment;
     "setPerformanceFee(uint256)": FunctionFragment;
@@ -97,7 +94,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "FEE_DECIMALS"
       | "FEE_SCALE"
-      | "MIN_CYCLE_DURATION"
       | "allowance"
       | "approve"
       | "asset"
@@ -111,7 +107,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "changeStrategist"
       | "convertToAssets"
       | "convertToShares"
-      | "cycleDurationSeconds"
       | "decimals"
       | "decreaseAllowance"
       | "deposit"
@@ -144,7 +139,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "redeem"
       | "refund"
       | "refundETH"
-      | "setCycleDuration"
       | "setFeesRecipient"
       | "setManagementFee"
       | "setPerformanceFee"
@@ -165,10 +159,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "FEE_SCALE", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "MIN_CYCLE_DURATION",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -208,10 +198,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "convertToShares",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cycleDurationSeconds",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
@@ -324,10 +310,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setCycleDuration",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setFeesRecipient",
     values: [string]
   ): string;
@@ -379,10 +361,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "FEE_SCALE", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "MIN_CYCLE_DURATION",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
@@ -418,10 +396,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "convertToShares",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cycleDurationSeconds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
@@ -508,10 +482,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setCycleDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setFeesRecipient",
     data: BytesLike
   ): Result;
@@ -566,6 +536,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
+    "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
@@ -588,6 +559,9 @@ export interface InvestmentVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
@@ -738,6 +712,17 @@ export type PerformanceFeeChangedEvent = TypedEvent<
 export type PerformanceFeeChangedEventFilter =
   TypedEventFilter<PerformanceFeeChangedEvent>;
 
+export interface PrincipalPercentagesUpdatedEventObject {
+  principalPercentages: BigNumber[];
+}
+export type PrincipalPercentagesUpdatedEvent = TypedEvent<
+  [BigNumber[]],
+  PrincipalPercentagesUpdatedEventObject
+>;
+
+export type PrincipalPercentagesUpdatedEventFilter =
+  TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
+
 export interface StrategistChangedEventObject {
   prevStrategistAddress: string;
   newStrategistAddress: string;
@@ -848,8 +833,6 @@ export interface InvestmentVault extends BaseContract {
 
     FEE_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     allowance(
       owner: string,
       spender: string,
@@ -902,8 +885,6 @@ export interface InvestmentVault extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -1036,11 +1017,6 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1103,8 +1079,6 @@ export interface InvestmentVault extends BaseContract {
 
   FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
   allowance(
     owner: string,
     spender: string,
@@ -1153,8 +1127,6 @@ export interface InvestmentVault extends BaseContract {
     assets: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1281,11 +1253,6 @@ export interface InvestmentVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setCycleDuration(
-    cycleDurationSeconds_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setFeesRecipient(
     newFeesRecipient: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1348,8 +1315,6 @@ export interface InvestmentVault extends BaseContract {
 
     FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1398,8 +1363,6 @@ export interface InvestmentVault extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1517,11 +1480,6 @@ export interface InvestmentVault extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1690,6 +1648,13 @@ export interface InvestmentVault extends BaseContract {
       newPerformanceFee?: null
     ): PerformanceFeeChangedEventFilter;
 
+    "PrincipalPercentagesUpdated(uint256[])"(
+      principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+    PrincipalPercentagesUpdated(
+      principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+
     "StrategistChanged(address,address)"(
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
@@ -1759,8 +1724,6 @@ export interface InvestmentVault extends BaseContract {
 
     FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1809,8 +1772,6 @@ export interface InvestmentVault extends BaseContract {
       assets: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    cycleDurationSeconds(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1940,11 +1901,6 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setFeesRecipient(
       newFeesRecipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2008,10 +1964,6 @@ export interface InvestmentVault extends BaseContract {
 
     FEE_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    MIN_CYCLE_DURATION(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     allowance(
       owner: string,
       spender: string,
@@ -2068,10 +2020,6 @@ export interface InvestmentVault extends BaseContract {
 
     convertToShares(
       assets: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    cycleDurationSeconds(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2212,11 +2160,6 @@ export interface InvestmentVault extends BaseContract {
     refundETH(
       amount: BigNumberish,
       recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setCycleDuration(
-      cycleDurationSeconds_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

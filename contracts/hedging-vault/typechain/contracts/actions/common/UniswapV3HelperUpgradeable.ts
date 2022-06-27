@@ -26,7 +26,7 @@ import type {
   OnEvent,
 } from "../../../common";
 
-export declare namespace UniswapV3OracleUpgradeable {
+export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
     inputToken: string;
     outputToken: string;
@@ -108,7 +108,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
-    values: [UniswapV3OracleUpgradeable.SwapInfoStruct]
+    values: [IUniswapV3Oracle.SwapInfoStruct]
   ): string;
 
   decodeFunctionResult(
@@ -259,7 +259,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
-    ): Promise<[UniswapV3OracleUpgradeable.SwapInfoStructOutput]>;
+    ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     getSwapInputAmount(
       inputToken: string,
@@ -278,7 +278,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -308,7 +308,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     inputToken: string,
     outputToken: string,
     overrides?: CallOverrides
-  ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+  ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   getSwapInputAmount(
     inputToken: string,
@@ -327,7 +327,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
   getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
   setSwapInfo(
-    info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+    info: IUniswapV3Oracle.SwapInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -357,7 +357,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
       inputToken: string,
       outputToken: string,
       overrides?: CallOverrides
-    ): Promise<UniswapV3OracleUpgradeable.SwapInfoStructOutput>;
+    ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
     getSwapInputAmount(
       inputToken: string,
@@ -376,7 +376,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -458,7 +458,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -508,7 +508,7 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setSwapInfo(
-      info: UniswapV3OracleUpgradeable.SwapInfoStruct,
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
