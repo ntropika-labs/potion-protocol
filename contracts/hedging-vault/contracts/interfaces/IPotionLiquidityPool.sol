@@ -8,6 +8,7 @@ import "./ICriteriaManager.sol";
 
 import "./IOtoken.sol";
 
+// TODO: Add a description of the interface
 interface IPotionLiquidityPool {
     struct CounterpartyDetails {
         address lp; // The LP to buy from

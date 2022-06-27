@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import "../interfaces/ILifecycleStates.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 /**
@@ -10,9 +11,7 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 
     @author Roberto Cano <robercano>
     
-    @notice Handles the lifecycle of the hedging vault and provides the necessary modifiers
-    to scope functions that must only work in certain states. It also provides a getter
-    to query the current state and an internal setter to change the state
+    @notice See { ILifecycleStates }
 
     @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the
     upgradeability of the contract. Only the unchained initializer is provided as all
@@ -23,35 +22,13 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
     can be safely extended without affecting the storage
  */
 
-contract LifecycleStatesUpgradeable is Initializable {
-    /// STATES
-
-    /**
-        @notice States defined for the vault. Although the exact meaning of each state is
-        dependent on the HedgingVault contract, the following assumptions are made here:
-            - Unlocked: the vault accepts immediate deposits and withdrawals and the specific
-            configuration of the next investment strategy is not yet known.
-            - Committed: the vault accepts immediate deposits and withdrawals but the specific
-            configuration of the next investment strategy is already known
-            - Locked: the vault is locked and cannot accept immediate deposits or withdrawals. All
-            of the assets managed by the vault are locked in it. It could accept deferred deposits
-            and withdrawals though
-     */
-    enum LifecycleState {
-        Unlocked,
-        Committed,
-        Locked
-    }
-
+contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
     /// STORAGE
 
     /**
          @notice The current state of the vault
      */
     LifecycleState private _state;
-
-    /// EVENTS
-    event LifecycleStateChanged(LifecycleState indexed prevState, LifecycleState indexed newState);
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -109,8 +86,7 @@ contract LifecycleStatesUpgradeable is Initializable {
     }
 
     /**
-        @notice Function to get the current state of the vault
-        @return The current state of the vault
+        @inheritdoc ILifecycleStates
      */
     function getLifecycleState() public view returns (LifecycleState) {
         return _state;

@@ -28,8 +28,6 @@ import type {
 
 export interface FeeManagerUpgradeableInterface extends utils.Interface {
   functions: {
-    "FEE_DECIMALS()": FunctionFragment;
-    "FEE_SCALE()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
@@ -45,8 +43,6 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "FEE_DECIMALS"
-      | "FEE_SCALE"
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
@@ -60,11 +56,6 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
       | "setPerformanceFee"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "FEE_DECIMALS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "FEE_SCALE", values?: undefined): string;
   encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
@@ -104,11 +95,6 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "FEE_DECIMALS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "FEE_SCALE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changeAdmin",
     data: BytesLike
@@ -303,10 +289,6 @@ export interface FeeManagerUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     changeAdmin(
       newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -347,10 +329,6 @@ export interface FeeManagerUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-  FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
   changeAdmin(
     newAdminAddress: string,
@@ -393,10 +371,6 @@ export interface FeeManagerUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
     changeAdmin(
       newAdminAddress: string,
       overrides?: CallOverrides
@@ -522,10 +496,6 @@ export interface FeeManagerUpgradeable extends BaseContract {
   };
 
   estimateGas: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
     changeAdmin(
       newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -568,10 +538,6 @@ export interface FeeManagerUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     changeAdmin(
       newAdminAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }

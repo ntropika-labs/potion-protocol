@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+// TODO: Add a description of the interface
 interface ICriteriaManager {
     struct Criteria {
         address underlyingAsset;

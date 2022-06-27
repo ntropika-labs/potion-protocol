@@ -85,13 +85,13 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "prevState",
         type: "uint8",
       },
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "newState",
         type: "uint8",
       },
@@ -327,7 +327,7 @@ const _abi = [
     name: "getLifecycleState",
     outputs: [
       {
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "",
         type: "uint8",
       },

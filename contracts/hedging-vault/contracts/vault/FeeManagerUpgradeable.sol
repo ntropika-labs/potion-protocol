@@ -3,7 +3,9 @@
  */
 pragma solidity 0.8.14;
 
+import { IFeeManager } from "../interfaces/IFeeManager.sol";
 import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
+import "../library/PercentageUtils.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
@@ -15,27 +17,17 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
     
     @notice Handles the fees that the vault pays-off to the Keeper
 
+    @dev See { IFeeManager }
+
     @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the
     upgradeability of the contract. Only the unchained initializer is provided as all
     contracts in the inheritance will be initialized in the Vault and Action contract
  */
 
-contract FeeManagerUpgradeable is RolesManagerUpgradeable {
+contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
     using SafeERC20 for IERC20;
     using Address for address payable;
-
-    /// CONSTANTS
-
-    /**
-        @notice The number of decimals used for the fee percentage
-     */
-    uint256 public constant FEE_DECIMALS = 6;
-
-    /**
-        @notice The factor used to scale the fee percentage when calculating the fee
-        on an amount
-     */
-    uint256 public constant FEE_SCALE = 10**FEE_DECIMALS;
+    using PercentageUtils for uint256;
 
     /// STORAGE
 
@@ -62,18 +54,6 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
      */
     address payable private _feesRecipient;
 
-    /// EVENTS
-    event ManagementFeeChanged(uint256 oldManagementFee, uint256 newManagementFee);
-    event PerformanceFeeChanged(uint256 oldPerformanceFee, uint256 newPerformanceFee);
-    event FeesReceipientChanged(address indexed oldFeeReceipient, address indexed newFeeReceipient);
-    event FeesSent(
-        address indexed receipient,
-        address indexed token,
-        uint256 managementAmount,
-        uint256 performanceAmount
-    );
-    event FeesETHSent(address indexed receipient, uint256 managementAmount, uint256 performanceAmount);
-
     /// UPGRADEABLE INITIALIZERS
 
     /**
@@ -98,49 +78,35 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Sets the new management fee
-
-        @param newManagementFee The new management fee with `FEE_DECIMALS` decimals
-
-        @dev Only the admin can change the management fee
+        @inheritdoc IFeeManager
      */
     function setManagementFee(uint256 newManagementFee) external onlyAdmin {
         _setManagementFee(newManagementFee);
     }
 
     /**
-        @notice Sets the new performance fee
-
-        @param newPerformanceFee The new performance fee with `FEE_DECIMALS` decimals
-
-        @dev Only the admin can change the performance fee
+        @inheritdoc IFeeManager
      */
     function setPerformanceFee(uint256 newPerformanceFee) external onlyAdmin {
         _setPerformanceFee(newPerformanceFee);
     }
 
     /**
-        @notice Returns the current management fee
-
-        @return The current management fee with `FEE_DECIMALS` decimals
+        @inheritdoc IFeeManager
      */
     function getManagementFee() public view returns (uint256) {
         return _managementFee;
     }
 
     /**
-        @notice Returns the current performance fee
-
-        @return The current performance fee with `FEE_DECIMALS` decimals
+        @inheritdoc IFeeManager
      */
     function getPerformanceFee() public view returns (uint256) {
         return _performanceFee;
     }
 
     /**
-        @notice Sets the new performance fee
-
-        @dev Only the admin can change the performance fee
+        @inheritdoc IFeeManager
      */
     function setFeesRecipient(address payable newFeesRecipient) external onlyAdmin {
         _setFeesRecipient(newFeesRecipient);
@@ -155,9 +121,7 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
         @dev TODO Use the new OpenZeppelin Math.mulDiv once it is released 
     */
     function _calculateManagementPayment(uint256 principalAmount) internal view returns (uint256) {
-        // Solidity rounds down by default which is desired in this case. No need to use the SafeMath
-        // anymore since Solidity 0.8
-        return (principalAmount * _managementFee) / FEE_SCALE;
+        return principalAmount.applyPercentage(_managementFee);
     }
 
     /**
@@ -167,9 +131,7 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
         @dev TODO Use the new OpenZeppelin Math.mulDiv once it is released 
     */
     function _calculatePerformancePayment(uint256 earningsAmount) internal view returns (uint256) {
-        // Solidity rounds down by default which is desired in this case. No need to use the SafeMath
-        // anymore since Solidity 0.8
-        return (earningsAmount * _performanceFee) / FEE_SCALE;
+        return earningsAmount.applyPercentage(_performanceFee);
     }
 
     /**
@@ -215,7 +177,10 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
         @notice Sets the new management fee
      */
     function _setManagementFee(uint256 newManagementFee) private {
-        require(newManagementFee <= 100 * FEE_SCALE, "Management fee must be less than or equal to 100");
+        require(
+            PercentageUtils.isPercentageInRange(newManagementFee),
+            "Management fee must be less than or equal to 100"
+        );
         uint256 oldManagementFee = _managementFee;
 
         _managementFee = newManagementFee;
@@ -242,7 +207,10 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable {
         @notice Sets the new performance fee
      */
     function _setPerformanceFee(uint256 newPerformanceFee) private {
-        require(newPerformanceFee <= 100 * FEE_SCALE, "Performance fee must be less than or equal to 100");
+        require(
+            PercentageUtils.isPercentageInRange(newPerformanceFee),
+            "Performance fee must be less than or equal to 100"
+        );
         uint256 oldPerformanceFee = _performanceFee;
         _performanceFee = newPerformanceFee;
 

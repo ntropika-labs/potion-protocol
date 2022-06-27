@@ -28,8 +28,6 @@ import type {
 
 export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
-    "FEE_DECIMALS()": FunctionFragment;
-    "FEE_SCALE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "asset()": FunctionFragment;
@@ -92,8 +90,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "FEE_DECIMALS"
-      | "FEE_SCALE"
       | "allowance"
       | "approve"
       | "asset"
@@ -154,11 +150,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "withdraw"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "FEE_DECIMALS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "FEE_SCALE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -356,11 +347,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values: [BigNumberish, string, string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "FEE_DECIMALS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "FEE_SCALE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
@@ -829,10 +815,6 @@ export interface InvestmentVault extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1075,10 +1057,6 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-  FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
   allowance(
     owner: string,
     spender: string,
@@ -1311,10 +1289,6 @@ export interface InvestmentVault extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1720,10 +1694,6 @@ export interface InvestmentVault extends BaseContract {
   };
 
   estimateGas: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1960,10 +1930,6 @@ export interface InvestmentVault extends BaseContract {
   };
 
   populateTransaction: {
-    FEE_DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    FEE_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     allowance(
       owner: string,
       spender: string,

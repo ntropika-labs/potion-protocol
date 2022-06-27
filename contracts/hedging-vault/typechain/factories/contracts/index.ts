@@ -4,6 +4,7 @@
 export * as actions from "./actions";
 export * as common from "./common";
 export * as extensions from "./extensions";
+export * as helpers from "./helpers";
 export * as interfaces from "./interfaces";
 export * as library from "./library";
 export * as openzeppelin from "./openzeppelin";

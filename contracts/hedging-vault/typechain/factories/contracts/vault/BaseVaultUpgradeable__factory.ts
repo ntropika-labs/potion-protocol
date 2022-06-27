@@ -191,13 +191,13 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "prevState",
         type: "uint8",
       },
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "newState",
         type: "uint8",
       },
@@ -419,32 +419,6 @@ const _abi = [
     ],
     name: "Withdraw",
     type: "event",
-  },
-  {
-    inputs: [],
-    name: "FEE_DECIMALS",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "FEE_SCALE",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
   },
   {
     inputs: [
@@ -792,7 +766,7 @@ const _abi = [
     name: "getLifecycleState",
     outputs: [
       {
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "",
         type: "uint8",
       },

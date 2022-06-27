@@ -186,35 +186,35 @@ contract PotionBuyAction is
     }
 
     /**
-        @inheritdoc PotionBuyActionV0
+        @inheritdoc IPotionBuyActionV0
      */
     function setMaxPremiumPercentage(uint256 maxPremiumPercentage_) external override onlyStrategist {
         _setMaxPremiumPercentage(maxPremiumPercentage_);
     }
 
     /**
-        @inheritdoc PotionBuyActionV0
+        @inheritdoc IPotionBuyActionV0
      */
     function setPremiumSlippage(uint256 premiumSlippage_) external override onlyStrategist {
         _setPremiumSlippage(premiumSlippage_);
     }
 
     /**
-        @inheritdoc PotionBuyActionV0
+        @inheritdoc IPotionBuyActionV0
      */
     function setSwapSlippage(uint256 swapSlippage_) external override onlyStrategist {
         _setSwapSlippage(swapSlippage_);
     }
 
     /**
-        @inheritdoc PotionBuyActionV0
+        @inheritdoc IPotionBuyActionV0
      */
     function setMaxSwapDuration(uint256 durationSeconds) external override onlyStrategist {
         _setMaxSwapDuration(durationSeconds);
     }
 
     /**
-        @inheritdoc PotionBuyActionV0
+        @inheritdoc IPotionBuyActionV0
      */
     function setCycleDuration(uint256 durationSeconds) external override onlyStrategist {
         _setCycleDuration(durationSeconds);

@@ -66,4 +66,15 @@ library PercentageUtils {
         // TODO: used Math.mulDiv when it is released
         return (amount * percentage) / PERCENTAGE_FACTOR;
     }
+
+    /**
+        @notice Checks if the given percentage is in range, this is, if it is between 0 and 100
+
+        @param percentage The percentage to check
+
+        @return True if the percentage is in range, false otherwise
+     */
+    function isPercentageInRange(uint256 percentage) internal pure returns (bool) {
+        return percentage <= PERCENTAGE_100;
+    }
 }

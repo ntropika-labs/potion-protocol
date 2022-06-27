@@ -27,13 +27,13 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "prevState",
         type: "uint8",
       },
       {
         indexed: true,
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "newState",
         type: "uint8",
       },
@@ -46,7 +46,7 @@ const _abi = [
     name: "getLifecycleState",
     outputs: [
       {
-        internalType: "enum LifecycleStatesUpgradeable.LifecycleState",
+        internalType: "enum ILifecycleStates.LifecycleState",
         name: "",
         type: "uint8",
       },
@@ -57,7 +57,7 @@ const _abi = [
 ];
 
 const _bytecode =
-  "0x6080604052348015600f57600080fd5b5060aa8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80635479cf7914602d575b600080fd5b60005462010000900460ff1660405160449190604d565b60405180910390f35b6020810160038310606e57634e487b7160e01b600052602160045260246000fd5b9190529056fea2646970667358221220db29b48e7d2f5fa6bfa766d65ed7ac1181964ed50a1834f9715729c9e5f01a4964736f6c634300080e0033";
+  "0x6080604052348015600f57600080fd5b5060aa8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80635479cf7914602d575b600080fd5b60005462010000900460ff1660405160449190604d565b60405180910390f35b6020810160038310606e57634e487b7160e01b600052602160045260246000fd5b9190529056fea264697066735822122074ebf72eedbc074ee9d562336dd82a9ce187a0ef85ee1ba4880d37b0e94d56f164736f6c634300080e0033";
 
 type LifecycleStatesUpgradeableConstructorParams =
   | [signer?: Signer]
