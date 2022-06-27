@@ -1,0 +1,128 @@
+# Builds potion-dapp project in test mode and runs testing
+
+on:
+  workflow_call:
+    secrets:
+      VITE_DEVELOPMENT_MNEMONIC:
+        required: true
+      VITE_ALCHEMY_KEY:
+        required: true
+      VITE_DEVELOPMENT_ADDRESS:
+        required: true
+      VITE_SUBGRAPH_ADDRESS:
+        required: true
+      DEPLOYER_MNEMONIC:
+        required: true
+      GANACHE_VOLUME:
+        required: true
+      DATABASE_PATH:
+        required: true
+    inputs:
+      VITE_ETHEREUM_NETWORK:
+        required: true
+        type: string
+      VITE_ENDPOINT_PROVIDER:
+        required: true
+        type: string
+      VITE_COINGECKO_API_ENDPOINT:
+        required: true
+        type: string
+
+jobs:
+  run-tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_URL: "http://127.0.0.1:5050"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Copy seeds in the Ganache volume
+        run: bin/prepare-seeds-headless
+        shell: bash
+        env:
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+
+      - name: Create and seed environment
+        run: ./bin/create-local-env-headless
+        shell: bash
+        env:
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+          VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+          VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+          VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
+          VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
+          VITE_COINGECKO_API_ENDPOINT: ${{ inputs.VITE_COINGECKO_API_ENDPOINT }}
+
+      - name: Build app with mocked onboard
+        run: yarn nx run potion-dapp:build-test
+        env:
+          VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+          VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+          VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+          VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
+          VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
+          VITE_COINGECKO_API_ENDPOINT: ${{ inputs.VITE_COINGECKO_API_ENDPOINT }}
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        env:
+          GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+        with:
+          install: false
+          start: yarn preview
+          wait-on: ${{ env.PREVIEW_URL }}
+          browser: chrome
+          record: false
+          working-directory: apps/potion-dapp
+          config: "pageLoadTimeout=100000,baseUrl=${{ env.PREVIEW_URL }}"
+
+      - name: Archive screenshots code coverage results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/potion-dapp/cypress/screenshots
+          retention-days: 25
+
+      - name: Archive videos code coverage results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: apps/potion-dapp/cypress/videos
+          retention-days: 25
+
+      - name: Setup tmate session to debug errors
+        # if: ${{ failure() }} 
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
+
+  lint:
+    name: Run linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Nx linting
+        run: yarn lint-all

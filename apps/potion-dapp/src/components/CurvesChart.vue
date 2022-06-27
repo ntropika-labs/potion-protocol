@@ -8,7 +8,7 @@ import {
   CurveFormula,
   Tooltip,
 } from "potion-ui";
-import { times as _times } from "lodash-es";
+import _times from "lodash.times";
 import { useI18n } from "vue-i18n";
 
 import { HyperbolicCurve } from "contracts-math";
@@ -43,9 +43,9 @@ const bondingCurve = computed(() => {
 
 <template>
   <BaseCard class="lg:col-span-8 xl:col-span-9">
-    <div class="grid gap-5 grid grid-cols-1 xl:grid-cols-[3fr_1fr]">
+    <div class="grid gap-5 grid grid-cols-1 xl:grid-cols-3">
       <BondingCurve
-        class="py-3 px-4"
+        class="py-3 px-4 xl:col-span-2"
         :bonding-curve="getCurvePoints(bondingCurve)"
         :emerging-curves="props.emergingCurves"
         :unload-keys="props.unselectedTokens"

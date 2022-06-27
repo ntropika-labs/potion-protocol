@@ -3,8 +3,9 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import type { PotionTestUSD } from "@potion-protocol/core/typechain";
-import { PotionTestUSD__factory } from "@potion-protocol/core/typechain";
+import type { ERC20Upgradeable } from "@potion-protocol/core/typechain";
+import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
+
 import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
@@ -16,24 +17,24 @@ import { useEthersContract } from "./useEthersContract";
 
 export function useCollateralTokenContract() {
   const { initContract } = useEthersContract();
-  const { PotionTestUSD, PotionLiquidityPool } = contractsAddresses;
+  const { USDC, PotionLiquidityPool } = contractsAddresses;
   const { connectedWallet } = useOnboard();
 
   const initContractSigner = () => {
     return initContract(
       true,
       false,
-      PotionTestUSD__factory,
-      PotionTestUSD.address.toLowerCase()
-    ) as PotionTestUSD;
+      ERC20Upgradeable__factory,
+      USDC.address.toLowerCase()
+    ) as ERC20Upgradeable;
   };
 
   const contractProvider = initContract(
     false,
     false,
-    PotionTestUSD__factory,
-    PotionTestUSD.address.toLowerCase()
-  ) as PotionTestUSD;
+    ERC20Upgradeable__factory,
+    USDC.address.toLowerCase()
+  ) as ERC20Upgradeable;
 
   const userCollateralBalance = ref(0);
   const fetchUserCollateralBalanceLoading = ref(false);

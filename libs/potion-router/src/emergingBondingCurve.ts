@@ -1,4 +1,4 @@
-import { min as _min, range as _range } from "lodash-es";
+import _range from "lodash.range";
 
 import { runMarginalCostRouter } from "./index";
 
@@ -10,9 +10,9 @@ const curvePoints = 100;
 const sqCurvePoints = curvePoints ** 2;
 const step = 1 / curvePoints;
 
-const initialPoint = [_min([step / 10, 1 / sqCurvePoints]) as number];
+const initialPoint = Math.min(step / 10, 1 / sqCurvePoints);
 
-const stepArray = initialPoint.concat(_range(step, 1, step));
+const stepArray = [initialPoint].concat(_range(step, 1, step));
 
 /**
  *
@@ -33,7 +33,7 @@ const getEmergingBondingCurvesFromCriterias = async (
       data = stepArray.map((step) => {
         const orderSize = totalUnlocked * step;
         //min of the orderSize or initialDeltaX
-        let newDeltaX = _min([orderSize / 100, deltaX]);
+        let newDeltaX = Math.min(orderSize / 100, deltaX);
         if (!newDeltaX) {
           console.error(`deltaX is undefined: `, newDeltaX);
           newDeltaX = 1;

@@ -2,6 +2,7 @@
 
 describe("Custom Pool Creation Flow", () => {
   let assetText = "";
+
   it("Can visit custom-pool-creation", () => {
     cy.viewport(1920, 1080);
     cy.visit("/custom-pool-creation");

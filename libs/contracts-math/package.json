@@ -6,8 +6,5 @@
   "types": "./src/index.ts",
   "scripts": {
     "test": "mocha"
-  },
-  "dependencies": {
-    "@potion-protocol/core": "*"
   }
 }

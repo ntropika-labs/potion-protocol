@@ -11,7 +11,7 @@ import {
   HyperbolicCurve,
   OrderedCriteria,
 } from "contracts-math";
-import { chunk as _chunk } from "lodash-es";
+import _chunk from "lodash.chunk";
 import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 import { ref } from "vue";
 
