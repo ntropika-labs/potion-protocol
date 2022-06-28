@@ -157,9 +157,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
-      name: "IActionsManager",
+      name: "IActionsContainer",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IActionsManager__factory>;
+    ): Promise<Contracts.IActionsContainer__factory>;
     getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -229,6 +229,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC4626Upgradeable__factory>;
     getContractFactory(
+      name: "TestWrapperActionsContainer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperActionsContainer__factory>;
+    getContractFactory(
       name: "TestWrapperEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperEmergencyLock__factory>;
@@ -237,9 +241,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperERC20PresetMinterPauser__factory>;
     getContractFactory(
+      name: "TestWrapperFeeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperFeeManager__factory>;
+    getContractFactory(
       name: "TestWrapperLifecycleStates",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperLifecycleStates__factory>;
+    getContractFactory(
+      name: "TestWrapperPercentageUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPercentageUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperPriceUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPriceUtils__factory>;
     getContractFactory(
       name: "TestWrapperRefundsHelper",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -249,9 +265,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperRolesManager__factory>;
     getContractFactory(
-      name: "ActionsManagerUpgradeable",
+      name: "ActionsContainerUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ActionsManagerUpgradeable__factory>;
+    ): Promise<Contracts.ActionsContainerUpgradeable__factory>;
     getContractFactory(
       name: "BaseVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -454,10 +470,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
-      name: "IActionsManager",
+      name: "IActionsContainer",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IActionsManager>;
+    ): Promise<Contracts.IActionsContainer>;
     getContractAt(
       name: "IEmergencyLock",
       address: string,
@@ -544,6 +560,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC4626Upgradeable>;
     getContractAt(
+      name: "TestWrapperActionsContainer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperActionsContainer>;
+    getContractAt(
       name: "TestWrapperEmergencyLock",
       address: string,
       signer?: ethers.Signer
@@ -554,10 +575,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperERC20PresetMinterPauser>;
     getContractAt(
+      name: "TestWrapperFeeManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperFeeManager>;
+    getContractAt(
       name: "TestWrapperLifecycleStates",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperLifecycleStates>;
+    getContractAt(
+      name: "TestWrapperPercentageUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPercentageUtils>;
+    getContractAt(
+      name: "TestWrapperPriceUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPriceUtils>;
     getContractAt(
       name: "TestWrapperRefundsHelper",
       address: string,
@@ -569,10 +605,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperRolesManager>;
     getContractAt(
-      name: "ActionsManagerUpgradeable",
+      name: "ActionsContainerUpgradeable",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ActionsManagerUpgradeable>;
+    ): Promise<Contracts.ActionsContainerUpgradeable>;
     getContractAt(
       name: "BaseVaultUpgradeable",
       address: string,

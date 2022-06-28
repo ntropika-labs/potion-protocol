@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for vault/FeeManagerUpgradeable.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">vault/</a> FeeManagerUpgradeable.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>31/31</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>6/6</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>14/14</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>31/31</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import { IFeeManager } from "../interfaces/IFeeManager.sol";
+import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
+import "../library/PercentageUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+&nbsp;
+/**
+    @title FeeManagerUpgradeable
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+    
+    @notice Handles the fees that the vault pays-off to the Keeper
+&nbsp;
+    @dev See { IFeeManager }
+&nbsp;
+    @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the
+    upgradeability of the contract. Only the unchained initializer is provided as all
+    contracts in the inheritance will be initialized in the Vault and Action contract
+ */
+&nbsp;
+contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
+    using SafeERC20 for IERC20;
+    using Address for address payable;
+    using PercentageUtils for uint256;
+&nbsp;
+    /// STORAGE
+&nbsp;
+    /**
+        @notice Management fee that the vault pays-off to the Keeper, typically
+        based on the principal amount that the vault manages at a certain point in time.
+        Used to incentivize the Keeper to keep the vault running.
+&nbsp;
+        @dev This fee is a percentage with `FEE_DECIMALS` decimals
+     */
+    uint256 private _managementFee;
+&nbsp;
+    /**
+        @notice Performance fee that the vault pays-off to the Keeper, typically
+        based on the earnings of the vault until a certain point in time.
+        Used to incentivize the Keeper to select the best investment strategy.
+&nbsp;
+        @dev This fee is a percentage with `FEE_DECIMALS` decimals
+     */
+    uint256 private _performanceFee;
+&nbsp;
+    /**
+        @notice The receipient of all the fees defined in the manager
+     */
+    address payable private _feesRecipient;
+&nbsp;
+    /// UPGRADEABLE INITIALIZERS
+&nbsp;
+    /**
+        @notice Initializes the current state to Unlocked
+&nbsp;
+        @dev Can only be called if the contracts has NOT been initialized
+&nbsp;
+        @dev The name of the init function is marked as `_unchained` because it does not
+        initialize the RolesManagerUpgradeable contract
+     */
+    // solhint-disable-next-line func-name-mixedcase
+    function __FeeManager_init_unchained(
+        uint256 managementFee_,
+        uint256 performanceFee_,
+        address payable feeReceipient_
+    ) internal onlyInitializing {
+        _setManagementFee(managementFee_);
+        _setPerformanceFee(performanceFee_);
+        _setFeesRecipient(feeReceipient_);
+    }
+&nbsp;
+    /// FUNCTIONS
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function setManagementFee(uint256 newManagementFee) external onlyAdmin {
+        _setManagementFee(newManagementFee);
+    }
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function setPerformanceFee(uint256 newPerformanceFee) external onlyAdmin {
+        _setPerformanceFee(newPerformanceFee);
+    }
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function getManagementFee() public view returns (uint256) {
+        return _managementFee;
+    }
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function getPerformanceFee() public view returns (uint256) {
+        return _performanceFee;
+    }
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function setFeesRecipient(address payable newFeesRecipient) external onlyAdmin {
+        _setFeesRecipient(newFeesRecipient);
+    }
+&nbsp;
+    /**
+        @inheritdoc IFeeManager
+     */
+    function getFeesRecipient() external view returns (address) {
+        return _feesRecipient;
+    }
+&nbsp;
+    // INTERNALS
+&nbsp;
+    /**
+        @notice Calculates the amount to be payed according to the management fee
+        @param principalAmount The amount of principal to which the management fee is applied
+&nbsp;
+        @dev TODO Use the new OpenZeppelin Math.mulDiv once it is released 
+    */
+    function _calculateManagementPayment(uint256 principalAmount) internal view returns (uint256) {
+        return principalAmount.applyPercentage(_managementFee);
+    }
+&nbsp;
+    /**
+        @notice Calculates the amount to be payed according to the performance fee
+        @param earningsAmount The amount of earnings to which the performance fee is applied
+&nbsp;
+        @dev TODO Use the new OpenZeppelin Math.mulDiv once it is released 
+    */
+    function _calculatePerformancePayment(uint256 earningsAmount) internal view returns (uint256) {
+        return earningsAmount.applyPercentage(_performanceFee);
+    }
+&nbsp;
+    /**
+        @notice Calculates the total amount of management + performance fee to be payed and
+        sends it to the fees recipient in the given token
+&nbsp;
+        @param token The token to be used for the payment
+        @param principalAmount The amount of principal to which the management fee is applied
+        @param earningsAmount The amount of earnings to which the performance fee is applied
+     */
+    function _payFees(
+        IERC20 token,
+        uint256 principalAmount,
+        uint256 earningsAmount
+    ) internal {
+        uint256 managementAmount = _calculateManagementPayment(principalAmount);
+        uint256 performanceAmount = _calculatePerformancePayment(earningsAmount);
+&nbsp;
+        emit FeesSent(_feesRecipient, address(token), managementAmount, performanceAmount);
+&nbsp;
+        token.safeTransfer(_feesRecipient, managementAmount + performanceAmount);
+    }
+&nbsp;
+    /**
+        @notice Calculates the total amount of management + performance fee to be payed and
+        sends it to the fees recipient in ETH
+&nbsp;
+        @param principalAmount The amount of principal to which the management fee is applied
+        
+    */
+    function _payFeesETH(uint256 principalAmount, uint256 earningsAmount) internal {
+        uint256 managementAmount = _calculateManagementPayment(principalAmount);
+        uint256 performanceAmount = _calculatePerformancePayment(earningsAmount);
+&nbsp;
+        emit FeesETHSent(_feesRecipient, managementAmount, performanceAmount);
+&nbsp;
+        _feesRecipient.sendValue(managementAmount + performanceAmount);
+    }
+&nbsp;
+    /// PRIVATE FUNCTIONS
+&nbsp;
+    /**
+        @notice Sets the new management fee
+     */
+    function _setManagementFee(uint256 newManagementFee) private {
+        require(
+            PercentageUtils.isPercentageInRange(newManagementFee),
+            "Management fee must be less than or equal to 100"
+        );
+        uint256 oldManagementFee = _managementFee;
+&nbsp;
+        _managementFee = newManagementFee;
+&nbsp;
+        emit ManagementFeeChanged(oldManagementFee, newManagementFee);
+    }
+&nbsp;
+    /**
+        @notice Sets the new performance fee
+     */
+    function _setPerformanceFee(uint256 newPerformanceFee) private {
+        require(
+            PercentageUtils.isPercentageInRange(newPerformanceFee),
+            "Performance fee must be less than or equal to 100"
+        );
+        uint256 oldPerformanceFee = _performanceFee;
+        _performanceFee = newPerformanceFee;
+&nbsp;
+        emit ManagementFeeChanged(oldPerformanceFee, newPerformanceFee);
+    }
+&nbsp;
+    /**
+        @notice Sets the new performance fee
+&nbsp;
+        @dev Only the admin can change the performance fee
+     */
+    function _setFeesRecipient(address payable newFeesRecipient) private {
+        require(newFeesRecipient != _feesRecipient, "Fees recipient is the same as before");
+&nbsp;
+        address oldFeesReceipient = newFeesRecipient;
+&nbsp;
+        _feesRecipient = newFeesRecipient;
+&nbsp;
+        emit FeesReceipientChanged(oldFeesReceipient, newFeesRecipient);
+    }
+&nbsp;
+    /**
+       @dev This empty reserved space is put in place to allow future versions to add new
+       variables without shifting down storage in the inheritance chain.
+       See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     
+       @dev The size of the gap plus the size of the storage variables defined
+       above must equal 50 storage slots
+     */
+    uint256[47] private __gap;
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 12:30:51 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

@@ -9,7 +9,7 @@ import "../common/RefundsHelperUpgreadable.sol";
 import "../common/RolesManagerUpgradeable.sol";
 import "../extensions/ERC4626CapUpgradeable.sol";
 import "./FeeManagerUpgradeable.sol";
-import "./ActionsManagerUpgradeable.sol";
+import "./ActionsContainerUpgradeable.sol";
 import "../interfaces/IVault.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
@@ -46,7 +46,7 @@ abstract contract BaseVaultUpgradeable is
     LifecycleStatesUpgradeable,
     RefundsHelperUpgreadable,
     FeeManagerUpgradeable,
-    ActionsManagerUpgradeable,
+    ActionsContainerUpgradeable,
     ReentrancyGuardUpgradeable,
     IVault
 {
@@ -88,7 +88,7 @@ abstract contract BaseVaultUpgradeable is
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundToken, false);
         __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsManager_init_unchained(actions);
+        __ActionsContainer_init_unchained(actions);
         __ReentrancyGuard_init_unchained();
     }
 }

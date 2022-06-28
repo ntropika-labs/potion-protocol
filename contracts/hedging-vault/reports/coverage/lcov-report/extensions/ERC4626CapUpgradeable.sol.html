@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for extensions/ERC4626CapUpgradeable.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">extensions/</a> ERC4626CapUpgradeable.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/13</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/5</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/13</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
+import { ERC4626Upgradeable } from "../openzeppelin/ERC4626Upgradeable.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+&nbsp;
+/**
+    @title ERC4626CapUpgradeable
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+    
+    @notice Adds a cap to the amount of principal that the vault can manage, thus imposing
+    a restriction on deposits and mints
+&nbsp;
+    @dev The contract is upgradeable and follows the OpenZeppelin pattern to implement the
+    upgradeability of the contract. Only the unchained initializer is provided as all
+    contracts in the inheritance will be initialized in the Vault and Action contract
+&nbsp;
+    @dev No storage gaps have been added as the functionlity of this contract is considered to be
+    final and there is no need to add more storage variables
+ */
+&nbsp;
+contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
+    //STORAGE
+&nbsp;
+    /**
+        @notice Maximum amount of principal that the vault can manage
+     */
+    uint256 private _cap;
+&nbsp;
+    // EVENTS
+    event VaultCapChanged(uint256 indexed prevCap, uint256 indexed newCap);
+&nbsp;
+    // UPGRADEABLE INITIALIZER
+&nbsp;
+    /**
+        @notice Unchained initializer
+&nbsp;
+        @dev This contract replaces the ERC4626Upgradeable contract. The ERC4626Upgradeable 
+        contracts MUST NOT be used anywhere else in the inheritance chain. Assuming this,
+        we can safely initialize the ERC4626Upgradeable contract here
+&nbsp;
+        @dev The name of the init function is marked as `_unchained` because we assume that the
+        ERC4626Upgradeable contract is not used anywhere else, and thus the functionality is 
+        that of an unchained initialization
+&nbsp;
+        @dev The RolesManager contract MUST BE initialized in the Vault/Action contract as it
+        it shared among other helper contracts
+     */
+    // solhint-disable-next-line func-name-mixedcase
+<span class="fstat-no" title="function not covered" >    function __ERC4626Cap_init_unchained(address asset_) internal onlyInitializing {</span>
+<span class="cstat-no" title="statement not covered" >        __ERC4626_init_unchained(IERC20MetadataUpgradeable(asset_))</span>;
+    }
+&nbsp;
+    // FUNCTIONS
+&nbsp;
+    /**
+        @notice Updates the cap for the vault principal
+&nbsp;
+        @param newCap New cap for the vault principal
+&nbsp;
+        @dev Can only be called by the Admin
+     */
+<span class="fstat-no" title="function not covered" >    function setVaultCap(uint256 newCap) external onlyAdmin {</span>
+<span class="cstat-no" title="statement not covered" >        uint256 prevCap = _cap;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        prevCap = newCap</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        emit VaultCapChanged(prevCap, newCap);</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the current cap for the vault principal
+&nbsp;
+        @return Current cap for the vault principal
+     */
+<span class="fstat-no" title="function not covered" >    function getVaultCap() external view returns (uint256) {</span>
+<span class="cstat-no" title="statement not covered" >        return _cap;</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the maximum amount of principal that a user can deposit into the vault at
+        this moment. This is a function of the vault cap and the amount of principal that the vault
+        is currently managing. As we don't want the vault to manage more than `_cap`, the
+        value returned here is the difference between the cap and the current amount of principal when
+        the cap is higher than the principal. It will return 0 otherwise
+&nbsp;
+        @param receiver The receiver of the shares after the deposit. Only used to call the parent's
+        `maxDeposit`
+&nbsp;
+        @dev The only input parameter is unnamed because it is not used in the function
+     */
+<span class="fstat-no" title="function not covered" >    function maxDeposit(address receiver) public view virtual override returns (uint256) {</span>
+        // First check if the OZ ERC4626 vault allows deposits at this time. It usually has an edge
+        // case in which deposits are disabled and we want to abide by that logic. Getting the minimum here
+        // ensures that we get either 0 or the amount defined in principal Cap
+<span class="cstat-no" title="statement not covered" >        uint256 currentCap = Math.min(super.maxDeposit(receiver), _cap);</span>
+&nbsp;
+        //
+<span class="cstat-no" title="statement not covered" >        if (currentCap &lt; totalAssets()) {</span>
+<span class="cstat-no" title="statement not covered" >            return 0;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return currentCap - totalAssets();</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the maximum amount of shares that can be minted, taking into account the
+        current deposit cap
+&nbsp;
+        @param receiver The receiver of the shares after the minting. Only used to call the parent's
+        maxMint
+&nbsp;
+        @dev If the total number of assets is grater than the cap then no more shares can be minted
+&nbsp;
+        @dev The maximum number of shares is calculated from the maximum amount of principal that can
+        still be deposited in the vault. This calculation rounds down to the nearest integer, ensuring
+        than requesting to mint that number of shares will always require an amount equal or less than
+        the current existing deposit cap
+     */
+<span class="fstat-no" title="function not covered" >    function maxMint(address receiver) public view virtual override returns (uint256) {</span>
+<span class="cstat-no" title="statement not covered" >        if (_cap &lt; totalAssets()) {</span>
+<span class="cstat-no" title="statement not covered" >            return 0;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        uint256 maxAssetsAmount = Math.min(super.maxMint(receiver), _cap - totalAssets());</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return _convertToShares(maxAssetsAmount);</span>
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 12:30:51 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

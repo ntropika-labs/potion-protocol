@@ -3,7 +3,11 @@
 /* eslint-disable */
 import type * as testWrapperErc20MinterPauserSol from "./TestWrapperERC20MinterPauser.sol";
 export type { testWrapperErc20MinterPauserSol };
+export type { TestWrapperActionsContainer } from "./TestWrapperActionsContainer";
 export type { TestWrapperEmergencyLock } from "./TestWrapperEmergencyLock";
+export type { TestWrapperFeeManager } from "./TestWrapperFeeManager";
 export type { TestWrapperLifecycleStates } from "./TestWrapperLifecycleStates";
+export type { TestWrapperPercentageUtils } from "./TestWrapperPercentageUtils";
+export type { TestWrapperPriceUtils } from "./TestWrapperPriceUtils";
 export type { TestWrapperRefundsHelper } from "./TestWrapperRefundsHelper";
 export type { TestWrapperRolesManager } from "./TestWrapperRolesManager";

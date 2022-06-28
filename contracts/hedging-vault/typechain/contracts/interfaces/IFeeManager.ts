@@ -28,6 +28,7 @@ import type {
 
 export interface IFeeManagerInterface extends utils.Interface {
   functions: {
+    "getFeesRecipient()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
     "setFeesRecipient(address)": FunctionFragment;
@@ -37,6 +38,7 @@ export interface IFeeManagerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getFeesRecipient"
       | "getManagementFee"
       | "getPerformanceFee"
       | "setFeesRecipient"
@@ -44,6 +46,10 @@ export interface IFeeManagerInterface extends utils.Interface {
       | "setPerformanceFee"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getFeesRecipient",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getManagementFee",
     values?: undefined
@@ -65,6 +71,10 @@ export interface IFeeManagerInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getFeesRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getManagementFee",
     data: BytesLike
@@ -189,6 +199,8 @@ export interface IFeeManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getFeesRecipient(overrides?: CallOverrides): Promise<[string]>;
+
     getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -208,6 +220,8 @@ export interface IFeeManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  getFeesRecipient(overrides?: CallOverrides): Promise<string>;
 
   getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -229,6 +243,8 @@ export interface IFeeManager extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    getFeesRecipient(overrides?: CallOverrides): Promise<string>;
+
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -303,6 +319,8 @@ export interface IFeeManager extends BaseContract {
   };
 
   estimateGas: {
+    getFeesRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -324,6 +342,8 @@ export interface IFeeManager extends BaseContract {
   };
 
   populateTransaction: {
+    getFeesRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getManagementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;

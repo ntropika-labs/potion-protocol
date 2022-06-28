@@ -24,11 +24,8 @@ library PercentageUtils {
 
     /**
         @notice Percentage of 100% with the given `PERCENTAGE_DECIMALS`
-
-        @dev As 100% is represented in decimal as 1.0, it is exactly the same as the
-        `PERCENTAGE_FACTOR` constant. It is aliased here for better code documentation
      */
-    uint256 public constant PERCENTAGE_100 = PERCENTAGE_FACTOR;
+    uint256 public constant PERCENTAGE_100 = 100 * PERCENTAGE_FACTOR;
 
     /**
         @notice Adds the percentage to the given amount and returns the result
@@ -36,7 +33,7 @@ library PercentageUtils {
         @return The amount after the percentage is applied
 
         @dev It performs the following operation:
-            (1.0 + percentage) * amount
+            (100.0 + percentage) * amount
      */
     function addPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
         return applyPercentage(amount, PERCENTAGE_100 + percentage);
@@ -48,7 +45,7 @@ library PercentageUtils {
         @return The amount after the percentage is applied
 
         @dev It performs the following operation:
-            (1.0 + slippage) * amount
+            (100.0 - percentage) * amount
      */
     function substractPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
         return applyPercentage(amount, PERCENTAGE_100 - percentage);
@@ -64,7 +61,7 @@ library PercentageUtils {
      */
     function applyPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
         // TODO: used Math.mulDiv when it is released
-        return (amount * percentage) / PERCENTAGE_FACTOR;
+        return (amount * percentage) / PERCENTAGE_100;
     }
 
     /**

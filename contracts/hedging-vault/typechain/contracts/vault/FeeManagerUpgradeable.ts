@@ -32,6 +32,7 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
+    "getFeesRecipient()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
@@ -47,6 +48,7 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
       | "changeOperator"
       | "changeStrategist"
       | "getAdmin"
+      | "getFeesRecipient"
       | "getManagementFee"
       | "getOperator"
       | "getPerformanceFee"
@@ -66,6 +68,10 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getFeesRecipient",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getManagementFee",
     values?: undefined
@@ -108,6 +114,10 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeesRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getManagementFee",
     data: BytesLike
@@ -306,6 +316,8 @@ export interface FeeManagerUpgradeable extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
+    getFeesRecipient(overrides?: CallOverrides): Promise<[string]>;
+
     getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
@@ -347,6 +359,8 @@ export interface FeeManagerUpgradeable extends BaseContract {
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
+  getFeesRecipient(overrides?: CallOverrides): Promise<string>;
+
   getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getOperator(overrides?: CallOverrides): Promise<string>;
@@ -387,6 +401,8 @@ export interface FeeManagerUpgradeable extends BaseContract {
     ): Promise<void>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
+
+    getFeesRecipient(overrides?: CallOverrides): Promise<string>;
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -513,6 +529,8 @@ export interface FeeManagerUpgradeable extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getFeesRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
@@ -554,6 +572,8 @@ export interface FeeManagerUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getFeesRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getManagementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

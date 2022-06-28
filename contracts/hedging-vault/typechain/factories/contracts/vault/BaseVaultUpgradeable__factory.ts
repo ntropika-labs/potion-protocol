@@ -763,6 +763,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getFeesRecipient",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getLifecycleState",
     outputs: [
       {

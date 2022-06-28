@@ -49,6 +49,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
     "getAdmin()": FunctionFragment;
+    "getFeesRecipient()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
     "getOperator()": FunctionFragment;
@@ -111,6 +112,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "getAction"
       | "getActionsLength"
       | "getAdmin"
+      | "getFeesRecipient"
       | "getLifecycleState"
       | "getManagementFee"
       | "getOperator"
@@ -216,6 +218,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getFeesRecipient",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
     values?: undefined
@@ -404,6 +410,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeesRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
     data: BytesLike
@@ -899,6 +909,8 @@ export interface InvestmentVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
+    getFeesRecipient(overrides?: CallOverrides): Promise<[string]>;
+
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
     getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -1134,6 +1146,8 @@ export interface InvestmentVault extends BaseContract {
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
+  getFeesRecipient(overrides?: CallOverrides): Promise<string>;
+
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
   getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1361,6 +1375,8 @@ export interface InvestmentVault extends BaseContract {
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<string>;
+
+    getFeesRecipient(overrides?: CallOverrides): Promise<string>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
@@ -1774,6 +1790,8 @@ export interface InvestmentVault extends BaseContract {
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getFeesRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2019,6 +2037,8 @@ export interface InvestmentVault extends BaseContract {
     getActionsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getFeesRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

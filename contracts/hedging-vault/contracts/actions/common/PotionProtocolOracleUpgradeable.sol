@@ -38,7 +38,7 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
         Also this contract does not need to initialize anything itself.
      */
     // solhint-disable-next-line func-name-mixedcase, no-empty-blocks
-    function __PotionProtocolOracle_init_unchained() internal onlyInitializing {
+    function __PotionProtocolOracle_init_unchained() internal view onlyInitializing {
         // Empty on purpose
     }
 
