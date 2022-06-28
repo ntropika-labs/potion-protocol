@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { BaseInput } from "../../src/index";
+import BaseInput from "./BaseInput.vue";
 
 describe("Test BaseInput. component", () => {
   it("is visible", () => {
