@@ -152,10 +152,12 @@ describe("Custom Pool Creation Flow", () => {
     cy.wait("@blockchainCall");
     cy.wait("@blockchainCall");
     cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall").then((interception) => {
+      expect(interception.response.body.result.to).to.be.equal(
+        localDeploymentAddresses.contracts.USDC.address.toLowerCase()
+      );
+    });
+
     cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
   });
 });

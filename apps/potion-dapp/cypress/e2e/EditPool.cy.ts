@@ -1,9 +1,12 @@
 /// <reference types="cypress" />
 
-import { aliasQuery } from "../support/utilities";
+import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Edit Pool Flow", () => {
   const alreadySelected: string[] = [];
+  before(async () => {
+    await resetApproval();
+  });
   beforeEach(() => {
     cy.intercept(
       "POST",
@@ -142,7 +145,46 @@ describe("Edit Pool Flow", () => {
     cy.get(".bg-radial-glass > :nth-child(4) > .w-full").clear().type("1.4");
     cy.get(":nth-child(5) > .w-full").clear().type("1");
   });
-  it("Can edit the pool", () => {
+  it("Can set the approval", () => {
+    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get(".gap-3 > .before\\:content-none").click();
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
+      "approved"
+    );
+  });
+  it("Can edit the pool", () => {
+    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
+    cy.get(".gap-3 > .before\\:content-none").click();
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.wait("@blockchainCall");
+    cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
   });
 });
