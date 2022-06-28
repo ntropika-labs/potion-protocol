@@ -73,7 +73,9 @@ defineExpose({
 <template>
   <div class="p-3 flex items-center gap-2 text-white">
     <div class="flex items-center px-2 py-1 rounded-md bg-white bg-opacity-10">
-      <label class="text-xs text-white leading-none">{{ props.label }}</label>
+      <label class="text-xs text-white leading-none" test-unit="label">{{
+        props.label
+      }}</label>
     </div>
     <BaseInput
       test-unit="input"
