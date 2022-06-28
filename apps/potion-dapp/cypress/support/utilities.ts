@@ -24,7 +24,8 @@ export const aliasQuery = (req: any, operationName: string) => {
 
 // Create a Wallet from mnemonic and reset the approval for USDC
 const usdcAddress = localDeploymentAddresses.contracts.USDC.address;
-const potionLiquidityAddress = "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1";
+const potionLiquidityAddress =
+  localDeploymentAddresses.contracts.PotionLiquidityPool.address;
 
 const mnemonic = "test test test test test test test test test test test junk";
 const wallet = Wallet.fromMnemonic(mnemonic);
