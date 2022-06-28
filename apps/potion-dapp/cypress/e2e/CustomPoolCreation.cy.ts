@@ -1,6 +1,11 @@
 /// <reference types="cypress" />
 
+import { resetApproval } from "../support/utilities";
+
 describe("Custom Pool Creation Flow", () => {
+  before(async () => {
+    await resetApproval();
+  });
   let assetText = "";
 
   it("Can visit custom-pool-creation", () => {

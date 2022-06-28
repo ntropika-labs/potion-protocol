@@ -13,7 +13,7 @@
     "test-unit-watch": "vitest watch --environment jsdom",
     "cypress": "cypress open",
     "test-e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --config baseUrl=http://127.0.0.1:5050/'",
-    "test-e2e-dev": "cypress open --config baseUrl=http://127.0.0.1:3000/",
+    "test-e2e-dev": "DEBUG=cypress:webpack cypress open --config baseUrl=http://127.0.0.1:3000/",
     "test-e2e-ci-dev": "cypress run --config baseUrl=http://127.0.0.1:3000/  --browser chrome",
     "test-e2e-ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run --config baseUrl=http://127.0.0.1:5050/  --browser chrome'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
