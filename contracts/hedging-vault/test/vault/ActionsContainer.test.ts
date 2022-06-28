@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { TestWrapperActionsContainer } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-describe("actionsContainer", function () {
+describe("ActionsContainer", function () {
     let actionsContainer: TestWrapperActionsContainer;
     let actions: string[];
 

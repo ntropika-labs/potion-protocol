@@ -4,6 +4,11 @@ import { ethers } from "hardhat";
 import { TestWrapperEmergencyLock } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+/**
+    @notice EmergencyLock unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
 describe("EmergencyLock", function () {
     let ownerAccount: SignerWithAddress;
     let unpriviledgedAccount: SignerWithAddress;

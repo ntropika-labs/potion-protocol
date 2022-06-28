@@ -4,6 +4,11 @@ import { ethers } from "hardhat";
 import { TestWrapperRefundsHelper, TestWrapperERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+/**
+    @notice RefundsHelper unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
 describe("RefundsHelper", function () {
     let ownerAccount: SignerWithAddress;
     let unpriviledgedAccount: SignerWithAddress;

@@ -4,6 +4,11 @@ import { ethers } from "hardhat";
 
 import { TestWrapperPercentageUtils } from "../../typechain";
 
+/**
+    @notice PercentageUtils unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
 describe("PercentageUtils", function () {
     let percentageUtils: TestWrapperPercentageUtils;
     let PercentageDecimals: BigNumber;

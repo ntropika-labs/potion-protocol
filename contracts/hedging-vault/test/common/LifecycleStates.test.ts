@@ -4,6 +4,11 @@ import { ethers } from "hardhat";
 import { TestWrapperLifecycleStates } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+/**
+    @notice LifecycleStates unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
 describe("LifecycleStates", function () {
     enum LifecycleStates {
         Unlocked = 0,

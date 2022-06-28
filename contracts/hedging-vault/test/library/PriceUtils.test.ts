@@ -3,7 +3,12 @@ import { ethers } from "hardhat";
 
 import { TestWrapperPriceUtils } from "../../typechain";
 
-describe("PercentageUtils", function () {
+/**
+    @notice PriceUtils unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
+describe("PriceUtils", function () {
     let priceUtils: TestWrapperPriceUtils;
 
     // Using ethers.utils.parseEther because PriceUtils uses 18 decimals for the prices

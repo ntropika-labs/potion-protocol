@@ -249,9 +249,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperLifecycleStates__factory>;
     getContractFactory(
+      name: "TestWrapperOpynProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperOpynProtocolLib__factory>;
+    getContractFactory(
       name: "TestWrapperPercentageUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperPercentageUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperPotionProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPotionProtocolLib__factory>;
     getContractFactory(
       name: "TestWrapperPriceUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -264,6 +272,10 @@ declare module "hardhat/types/runtime" {
       name: "TestWrapperRolesManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperRolesManager__factory>;
+    getContractFactory(
+      name: "TestWrapperUniswapV3SwapLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
     getContractFactory(
       name: "ActionsContainerUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -585,10 +597,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperLifecycleStates>;
     getContractAt(
+      name: "TestWrapperOpynProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperOpynProtocolLib>;
+    getContractAt(
       name: "TestWrapperPercentageUtils",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperPercentageUtils>;
+    getContractAt(
+      name: "TestWrapperPotionProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPotionProtocolLib>;
     getContractAt(
       name: "TestWrapperPriceUtils",
       address: string,
@@ -604,6 +626,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperRolesManager>;
+    getContractAt(
+      name: "TestWrapperUniswapV3SwapLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
     getContractAt(
       name: "ActionsContainerUpgradeable",
       address: string,

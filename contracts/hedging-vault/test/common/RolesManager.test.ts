@@ -4,6 +4,11 @@ import { ethers } from "hardhat";
 import { TestWrapperRolesManager } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+/**
+    @notice RolesManager unit tests    
+    
+    @author Roberto Cano <robercano>
+ */
 describe("RolesManager", function () {
     let adminAccount: SignerWithAddress;
     let strategistAccount: SignerWithAddress;
