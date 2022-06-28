@@ -1,6 +1,5 @@
 import { Contract, Wallet } from "ethers";
 
-// import { ERC20Upgradeable__factory } from "potion-contracts/typechain";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 import ERC20Abi from "../../../../contracts/core/abis/ERC20.json";
@@ -24,7 +23,6 @@ export const aliasQuery = (req: any, operationName: string) => {
 };
 
 // Create a Wallet from mnemonic and reset the approval for USDC
-
 const usdcAddress = localDeploymentAddresses.contracts.USDC.address;
 const potionLiquidityAddress = "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1";
 
