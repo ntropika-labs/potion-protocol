@@ -36,8 +36,8 @@ describe("Custom Potion Creation Flow", () => {
     console.log("here");
     cy.contains("WETH").click();
     cy.wait("@getSimilarPotionByAsset").then((interceptor) => {
-      expect(interceptor.response.body).to.haveOwnProperty("data");
-      const similarPotionsByAsset = interceptor.response.body.data;
+      expect(interceptor.response?.body).to.haveOwnProperty("data");
+      const similarPotionsByAsset = interceptor.response?.body.data;
       expect(similarPotionsByAsset).to.haveOwnProperty("otokens");
       if (similarPotionsByAsset.otokens.length > 0) {
         cy.get(":nth-child(2) > .grid-cols-1")
@@ -54,13 +54,13 @@ describe("Custom Potion Creation Flow", () => {
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "min")
       .then((min) => {
-        minStrike = parseFloat(min);
+        minStrike = parseFloat(min ?? "0");
         expect(minStrike).to.be.greaterThan(0);
       });
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "max")
       .then((max) => {
-        maxStrike = parseFloat(max);
+        maxStrike = parseFloat(max ?? "0");
         expect(maxStrike).to.be.greaterThan(minStrike);
       });
   });
@@ -98,13 +98,13 @@ describe("Custom Potion Creation Flow", () => {
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "min")
       .then((min) => {
-        minDuration = parseFloat(min);
+        minDuration = parseFloat(min ?? "0");
         expect(minDuration).to.be.greaterThan(0);
       });
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "max")
       .then((max) => {
-        maxDuration = parseFloat(max);
+        maxDuration = parseFloat(max ?? "0");
         expect(maxDuration).to.be.greaterThan(minDuration);
       });
   });
@@ -141,13 +141,13 @@ describe("Custom Potion Creation Flow", () => {
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "min")
       .then((min) => {
-        minQuantity = parseFloat(min);
+        minQuantity = parseFloat(min ?? "0");
         expect(minQuantity).to.be.greaterThan(0);
       });
     cy.get(".p-3 > .flex > .text-dwhite-300")
       .invoke("attr", "max")
       .then((max) => {
-        maxQuantity = parseFloat(max);
+        maxQuantity = parseFloat(max ?? "0");
         expect(maxQuantity).to.be.greaterThan(minQuantity);
       });
   });

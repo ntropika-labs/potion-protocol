@@ -21,14 +21,6 @@ describe("Show Pool Flow", () => {
   it("Can withdraw", () => {
     cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get("[test-liquidity-card-header]>button").first().click();
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
 
     let expectedLiquidityNumber = -1;
     cy.get("[test-liquidity-card-total-liquidity]")
@@ -53,29 +45,18 @@ describe("Show Pool Flow", () => {
   });
   it("Can set approval", () => {
     cy.get("[test-liquidity-card-header]>button").last().click();
+    cy.wait(200);
 
-    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
+    // cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get("[test-liquidity-card-footer-deposit]>button").click();
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
+    cy.wait(200);
+
     cy.get(":nth-child(4) > .grid");
   });
 
   it("Can deposit", () => {
     cy.get("[test-liquidity-card-header]>button").last().click();
+    cy.wait(200);
 
     let expectedLiquidityNumber = -1;
     cy.get("[test-liquidity-card-total-liquidity]")
@@ -91,8 +72,9 @@ describe("Show Pool Flow", () => {
         cy.get("[test-liquidity-card-footer-deposit]>button")
           .first()
           .trigger("click");
+        cy.wait(200);
         cy.get("#toast-wrap > :nth-child(2) > .grid");
-
+        cy.wait(200);
         cy.get("[test-liquidity-card-total-liquidity]")
           .first()
           .contains("$" + expectedLiquidityNumber);

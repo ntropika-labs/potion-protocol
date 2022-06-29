@@ -24,7 +24,7 @@ describe("Show Potions Flow", () => {
       timeout: 20000,
     }).then((interceptor) => {
       const response = Array.isArray(interceptor)
-        ? interceptor[0]?.response.body
+        ? interceptor[0]?.response?.body
         : (interceptor as any)?.response.body;
 
       console.info(response);
@@ -52,7 +52,7 @@ describe("Show Potions Flow", () => {
         timeout: 20000,
       }).then((interceptor) => {
         const response = Array.isArray(interceptor)
-          ? interceptor[0]?.response.body
+          ? interceptor[0]?.response?.body
           : (interceptor as any)?.response.body;
         // assert that the subgraph send us the correct set of active potions
         expect(response).to.haveOwnProperty("data");
@@ -70,7 +70,7 @@ describe("Show Potions Flow", () => {
         timeout: 20000,
       }).then((interceptor) => {
         const response = Array.isArray(interceptor)
-          ? interceptor[0]?.response.body
+          ? interceptor[0]?.response?.body
           : (interceptor as any)?.response.body;
         // assert that the subgraph send us the correct set of expired potions
         expect(response).to.haveOwnProperty("data");
@@ -85,7 +85,7 @@ describe("Show Potions Flow", () => {
 
     cy.wait(["@getUserPotions"]).then((interceptor) => {
       const response = Array.isArray(interceptor)
-        ? interceptor[0]?.response.body
+        ? interceptor[0]?.response?.body
         : (interceptor as any)?.response.body;
       // assert that the subgraph send us the correct set of expired potions
       expect(response).to.haveOwnProperty("data");

@@ -35,19 +35,19 @@ describe("Edit Pool Flow", () => {
       { timeout: 20000 }
     ).then((interceptor) => {
       // assert that the subgraph send us the correct pool
-      expect(interceptor[0].response.body).to.haveOwnProperty("data");
-      const poolData = interceptor[0].response.body.data;
+      expect(interceptor[0].response?.body).to.haveOwnProperty("data");
+      const poolData = interceptor[0].response?.body.data;
       expect(poolData).to.haveOwnProperty("pool");
-      const pool = interceptor[0].response.body.data.pool;
+      const pool = interceptor[0].response?.body.data.pool;
       expect(pool).to.not.be.empty;
       expect(pool.id).to.be.equal(
         "0xf39fd6e51aad88f6f4ce6ab8827279cfffb922660x0"
       );
       // assert that the subgraph send us the correct pool
-      expect(interceptor[1].response.body).to.haveOwnProperty("data");
-      const productData = interceptor[1].response.body.data;
+      expect(interceptor[1].response?.body).to.haveOwnProperty("data");
+      const productData = interceptor[1].response?.body.data;
       expect(productData).to.haveOwnProperty("products");
-      const products = interceptor[1].response.body.data.products;
+      const products = interceptor[1].response?.body.data.products;
       expect(products).to.have.length.above(0);
     });
   });
@@ -146,24 +146,9 @@ describe("Edit Pool Flow", () => {
     cy.get(":nth-child(5) > .w-full").clear().type("1");
   });
   it("Can set the approval", () => {
-    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get(".gap-3 > .before\\:content-none").click();
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
+
+    cy.wait(1000);
     cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
       "approved"
     );
@@ -171,20 +156,8 @@ describe("Edit Pool Flow", () => {
   it("Can edit the pool", () => {
     cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get(".gap-3 > .before\\:content-none").click();
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
+
+    cy.wait(1000);
     cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
   });
 });

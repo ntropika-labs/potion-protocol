@@ -3,8 +3,8 @@
   "include": ["*/**/*.ts", "*/**/*.js", "*/**/*.json"],
   "compilerOptions": {
     "isolatedModules": false,
-    "target": "esnext",
-    "lib": ["esnext", "dom"],
+    "target": "es5",
+    "lib": ["es5", "dom"],
     "types": ["cypress", "@testing-library/cypress"]
   }
 }
