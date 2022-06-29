@@ -51,14 +51,14 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         @dev The strategist role is the one that can change the vault and action parameters related to the
         investment strategy. Things like slippage percentage, maximum premium, principal percentages, etc...
      */
-    address private _operatorAddress;
+    address private _strategistAddress;
 
     /**
         @notice The address of the operator role
 
         @dev The operator role is the one that can cycle the vault and the action through its different states
      */
-    address private _strategistAddress;
+    address private _operatorAddress;
 
     /// MODIFIERS
 

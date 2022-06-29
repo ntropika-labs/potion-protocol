@@ -51,6 +51,7 @@ contract PotionBuyAction is
         @param operatorAddress The address of the operator of the Action
         @param investmentAsset The address of the asset managed by this Action
         @param USDC The address of the USDC token
+        @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
         @param maxPremiumPercentage_ The maximum percentage of the received investment that can be used as premium
         @param premiumSlippage_ The slippage percentage allowed on the premium when buying potions
@@ -65,6 +66,7 @@ contract PotionBuyAction is
         address operatorAddress,
         address investmentAsset,
         address USDC,
+        address uniswapV3SwapRouter,
         address potionLiquidityPoolManager,
         uint256 maxPremiumPercentage_,
         uint256 premiumSlippage_,
@@ -80,6 +82,7 @@ contract PotionBuyAction is
         cannotRefundTokens[1] = USDC;
 
         __BaseAction_init_chained(adminAddress, strategistAddress, operatorAddress, cannotRefundTokens);
+        __UniswapV3Helper_init_unchained(uniswapV3SwapRouter);
         __PotionProtocolHelper_init_unchained(potionLiquidityPoolManager, USDC);
 
         _setMaxPremiumPercentage(maxPremiumPercentage_);
