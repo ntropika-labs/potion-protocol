@@ -101,7 +101,6 @@ export function useCollateralTokenContract() {
     try {
       if (connectedWallet.value) {
         const contractSigner = initContractSigner();
-
         approveTx.value = await contractSigner.approve(
           PotionLiquidityPool.address,
           infinite ? MaxUint256 : parseUnits(amount.toString(), 6)

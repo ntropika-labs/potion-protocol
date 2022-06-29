@@ -1,6 +1,10 @@
 /// <reference types="cypress" />
+import { resetApproval } from "../support/utilities";
 
 describe("Show Pool Flow", () => {
+  before(async () => {
+    await resetApproval();
+  });
   it("Can visit the pool page", () => {
     cy.viewport(1920, 1080);
     cy.visit(
@@ -35,12 +39,22 @@ describe("Show Pool Flow", () => {
           .first()
           .contains("$" + expectedLiquidityNumber);
       });
-
+    cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm");
     console.info(expectedLiquidityNumber);
+  });
+  it("Can set approval", () => {
+    cy.get("[test-liquidity-card-header]>button").last().click();
+    cy.wait(200);
+
+    cy.get("[test-liquidity-card-footer-deposit]>button").click();
+    cy.wait(200);
+
+    cy.get(":nth-child(4) > .grid");
   });
 
   it("Can deposit", () => {
     cy.get("[test-liquidity-card-header]>button").last().click();
+    cy.wait(200);
 
     let expectedLiquidityNumber = -1;
     cy.get("[test-liquidity-card-total-liquidity]")
@@ -56,7 +70,9 @@ describe("Show Pool Flow", () => {
         cy.get("[test-liquidity-card-footer-deposit]>button")
           .first()
           .trigger("click");
-
+        cy.wait(200);
+        cy.get("#toast-wrap > :nth-child(2) > .grid");
+        cy.wait(200);
         cy.get("[test-liquidity-card-total-liquidity]")
           .first()
           .contains("$" + expectedLiquidityNumber);

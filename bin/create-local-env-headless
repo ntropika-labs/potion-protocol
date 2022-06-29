@@ -64,8 +64,8 @@ parse_params() {
         NO_COLOR=1
         ;;
       -f | --force) # force flag
-        force=1 
-        ;; 
+        force=1
+        ;;
       -n | --no-redeploy) # no_redeploy flag
         no_redeploy=1
         ;;
@@ -101,15 +101,15 @@ check_environment_running() {
   local services="$(docker compose ps --services)"
 
   if [ "$running_containers" != "$services" ]; then
-      msg "${RED}Following services are not running:" 
+      msg "${RED}Following services are not running:"
       # Bash specific
       comm -13 <(sort <<<"$running_containers") <(sort <<<"$services")
 
       msg "${NOFORMAT}"
   elif [ $total_containers -ne 4 ]; then
       local offline_services=(4 - $total_containers)
-      msg "${RED}Some services are not running:" 
-      msg "${RED}- total services not running: ${offline_services} ${NOFORMAT}" 
+      msg "${RED}Some services are not running:"
+      msg "${RED}- total services not running: ${offline_services} ${NOFORMAT}"
   else
       msg "${GREEN}All services are running${NOFORMAT}"
 
@@ -133,7 +133,7 @@ spin_up_environment() {
   docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
-  ./bin/wait-for-tcp localhost:8545
+  ./bin/wait-for-it localhost:8545
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
 
   yarn nx run potion-contracts:deploy-local
@@ -145,7 +145,7 @@ spin_up_environment() {
   yarn nx run potion-subgraph:codegen
   msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"
 
-  ./bin/wait-for-tcp localhost:8020
+  ./bin/wait-for-it localhost:8020
   msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
 
   yarn nx run potion-subgraph:create-local

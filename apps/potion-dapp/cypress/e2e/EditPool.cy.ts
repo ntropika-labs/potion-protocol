@@ -1,9 +1,12 @@
 /// <reference types="cypress" />
 
-import { aliasQuery } from "../support/utilities";
+import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Edit Pool Flow", () => {
   const alreadySelected: string[] = [];
+  before(async () => {
+    await resetApproval();
+  });
   beforeEach(() => {
     cy.intercept(
       "POST",
@@ -32,19 +35,19 @@ describe("Edit Pool Flow", () => {
       { timeout: 20000 }
     ).then((interceptor) => {
       // assert that the subgraph send us the correct pool
-      expect(interceptor[0].response.body).to.haveOwnProperty("data");
-      const poolData = interceptor[0].response.body.data;
+      expect(interceptor[0].response?.body).to.haveOwnProperty("data");
+      const poolData = interceptor[0].response?.body.data;
       expect(poolData).to.haveOwnProperty("pool");
-      const pool = interceptor[0].response.body.data.pool;
+      const pool = interceptor[0].response?.body.data.pool;
       expect(pool).to.not.be.empty;
       expect(pool.id).to.be.equal(
         "0xf39fd6e51aad88f6f4ce6ab8827279cfffb922660x0"
       );
       // assert that the subgraph send us the correct pool
-      expect(interceptor[1].response.body).to.haveOwnProperty("data");
-      const productData = interceptor[1].response.body.data;
+      expect(interceptor[1].response?.body).to.haveOwnProperty("data");
+      const productData = interceptor[1].response?.body.data;
       expect(productData).to.haveOwnProperty("products");
-      const products = interceptor[1].response.body.data.products;
+      const products = interceptor[1].response?.body.data.products;
       expect(products).to.have.length.above(0);
     });
   });
@@ -142,7 +145,18 @@ describe("Edit Pool Flow", () => {
     cy.get(".bg-radial-glass > :nth-child(4) > .w-full").clear().type("1.4");
     cy.get(":nth-child(5) > .w-full").clear().type("1");
   });
+  it("Can set the approval", () => {
+    cy.get(".gap-3 > .before\\:content-none").click();
+
+    cy.wait(1000);
+    cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
+      "approved"
+    );
+  });
   it("Can edit the pool", () => {
     cy.get(".gap-3 > .before\\:content-none").click();
+
+    cy.wait(1000);
+    cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
   });
 });
