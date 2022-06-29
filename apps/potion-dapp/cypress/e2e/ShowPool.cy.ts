@@ -19,7 +19,6 @@ describe("Show Pool Flow", () => {
   });
 
   it("Can withdraw", () => {
-    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get("[test-liquidity-card-header]>button").first().click();
 
     let expectedLiquidityNumber = -1;
@@ -47,7 +46,6 @@ describe("Show Pool Flow", () => {
     cy.get("[test-liquidity-card-header]>button").last().click();
     cy.wait(200);
 
-    // cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get("[test-liquidity-card-footer-deposit]>button").click();
     cy.wait(200);
 

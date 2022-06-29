@@ -33,23 +33,8 @@ describe("Pool template cloning Flow", () => {
     cy.get(".selection\\:bg-accent-500").clear().type("100.123456");
   });
   it("Can set the approval", () => {
-    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get(".gap-3 > .whitespace-nowrap").click();
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
-    cy.wait("@blockchainCall");
+    cy.wait(2000);
     cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
       "approved"
     );

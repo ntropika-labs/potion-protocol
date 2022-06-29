@@ -154,7 +154,6 @@ describe("Edit Pool Flow", () => {
     );
   });
   it("Can edit the pool", () => {
-    cy.intercept("POST", "http://localhost:8545").as("blockchainCall");
     cy.get(".gap-3 > .before\\:content-none").click();
 
     cy.wait(1000);
