@@ -112,6 +112,13 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
         _setFeesRecipient(newFeesRecipient);
     }
 
+    /**
+        @inheritdoc IFeeManager
+     */
+    function getFeesRecipient() external view returns (address) {
+        return _feesRecipient;
+    }
+
     // INTERNALS
 
     /**
@@ -190,6 +197,20 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
 
     /**
         @notice Sets the new performance fee
+     */
+    function _setPerformanceFee(uint256 newPerformanceFee) private {
+        require(
+            PercentageUtils.isPercentageInRange(newPerformanceFee),
+            "Performance fee must be less than or equal to 100"
+        );
+        uint256 oldPerformanceFee = _performanceFee;
+        _performanceFee = newPerformanceFee;
+
+        emit ManagementFeeChanged(oldPerformanceFee, newPerformanceFee);
+    }
+
+    /**
+        @notice Sets the new performance fee
 
         @dev Only the admin can change the performance fee
      */
@@ -201,20 +222,6 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
         _feesRecipient = newFeesRecipient;
 
         emit FeesReceipientChanged(oldFeesReceipient, newFeesRecipient);
-    }
-
-    /**
-        @notice Sets the new performance fee
-     */
-    function _setPerformanceFee(uint256 newPerformanceFee) private {
-        require(
-            PercentageUtils.isPercentageInRange(newPerformanceFee),
-            "Performance fee must be less than or equal to 100"
-        );
-        uint256 oldPerformanceFee = _performanceFee;
-        _performanceFee = newPerformanceFee;
-
-        emit ManagementFeeChanged(oldPerformanceFee, newPerformanceFee);
     }
 
     /**

@@ -58,7 +58,12 @@ interface IFeeManager {
     function getPerformanceFee() external view returns (uint256);
 
     /**
-        @notice Sets the new performance fee
+        @notice Sets the new fees recipient
      */
     function setFeesRecipient(address payable newFeesRecipient) external;
+
+    /**
+        @notice Returns the current fees recipient
+     */
+    function getFeesRecipient() external view returns (address);
 }

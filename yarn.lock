@@ -1680,6 +1680,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@defi-wonderland/smock@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@defi-wonderland/smock@npm:2.1.0"
+  dependencies:
+    "@nomiclabs/ethereumjs-vm": ^4.2.2
+    diff: ^5.0.0
+    lodash.isequal: ^4.5.0
+    lodash.isequalwith: ^4.4.0
+    rxjs: ^7.2.0
+    semver: ^7.3.5
+  peerDependencies:
+    "@ethersproject/abi": ^5
+    "@ethersproject/abstract-provider": ^5
+    "@ethersproject/abstract-signer": ^5
+    "@nomiclabs/hardhat-ethers": ^2
+    ethers: ^5
+    hardhat: ^2
+  checksum: 3a4bccfd0d7c7c9939f87e9c2777891705d98bf07d29be71ac7d1c939c4d68a0470b60bbc4c9f907b6fe467ecc318f197eb9fe0e4f027f211e50c9cd8faee0a8
+  languageName: node
+  linkType: hard
+
 "@discoveryjs/json-ext@npm:^0.5.3":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -4141,6 +4162,29 @@ __metadata:
     "@nodelib/fs.scandir": 2.1.5
     fastq: ^1.6.0
   checksum: 218c38db2f384b11e25756618c2fe44d07734607cf691b3e25c4828a3b81d05bfc46a97f6738d9b2d50d98cba5a0aa028bef98491ad9d1d8bc1e4d6d9431ce95
+  languageName: node
+  linkType: hard
+
+"@nomiclabs/ethereumjs-vm@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "@nomiclabs/ethereumjs-vm@npm:4.2.2"
+  dependencies:
+    async: ^2.1.2
+    async-eventemitter: ^0.2.2
+    core-js-pure: ^3.0.1
+    ethereumjs-account: ^3.0.0
+    ethereumjs-block: ^2.2.2
+    ethereumjs-blockchain: ^4.0.3
+    ethereumjs-common: ^1.5.0
+    ethereumjs-tx: ^2.1.2
+    ethereumjs-util: ^6.2.0
+    fake-merkle-patricia-tree: ^1.0.1
+    functional-red-black-tree: ^1.0.1
+    merkle-patricia-tree: 3.0.0
+    rustbn.js: ~0.2.0
+    safe-buffer: ^5.1.1
+    util.promisify: ^1.0.0
+  checksum: 958e003813081947db14579af83f20139dc72c826fc128fade44cb87856eac32b9ff04be7ee20e708aa9ab8f2050df625d8edf298fbed5fbdbcc316c69ddd2fa
   languageName: node
   linkType: hard
 
@@ -23428,6 +23472,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.isequal@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
+  languageName: node
+  linkType: hard
+
+"lodash.isequalwith@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "lodash.isequalwith@npm:4.4.0"
+  checksum: 428ba7a57c47ec05e2dd18c03a4b4c45dac524a46af7ce3f412594bfc7be6a5acaa51acf9ea113d0002598e9aafc6e19ee8d20bc28363145fcb4d21808c9039f
+  languageName: node
+  linkType: hard
+
 "lodash.isinteger@npm:^4.0.4":
   version: 4.0.4
   resolution: "lodash.isinteger@npm:4.0.4"
@@ -27374,6 +27432,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "potion-protocol@workspace:."
   dependencies:
+    "@defi-wonderland/smock": ^2.1.0
     "@ethersproject/abi": ^5.6.1
     "@ethersproject/address": ^5.6.0
     "@ethersproject/bignumber": ^5.6.0
@@ -29834,7 +29893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.1.0, rxjs@npm:^7.5.1, rxjs@npm:^7.5.2, rxjs@npm:^7.5.5":
+"rxjs@npm:^7.1.0, rxjs@npm:^7.2.0, rxjs@npm:^7.5.1, rxjs@npm:^7.5.2, rxjs@npm:^7.5.5":
   version: 7.5.5
   resolution: "rxjs@npm:7.5.5"
   dependencies:

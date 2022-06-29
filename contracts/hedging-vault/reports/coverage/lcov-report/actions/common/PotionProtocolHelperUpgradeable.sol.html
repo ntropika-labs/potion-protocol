@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for actions/common/PotionProtocolHelperUpgradeable.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">actions/common/</a> PotionProtocolHelperUpgradeable.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/26</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/26</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import { PotionProtocolOracleUpgradeable } from "./PotionProtocolOracleUpgradeable.sol";
+import "../../library/PotionProtocolLib.sol";
+import "../../library/PercentageUtils.sol";
+import "../../library/OpynProtocolLib.sol";
+import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
+import { IOpynController } from "../../interfaces/IOpynController.sol";
+&nbsp;
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+&nbsp;
+/**
+    @title PotionProtocolHelperUpgradeable
+&nbsp;
+    @notice Helper contract that handles the configuration to perform Uniswap V3 multi-hop swaps. It
+    uses the `UniswapV3SwapLib` to perform the swaps.
+&nbsp;
+    @dev It inherits from the RolesManagerUpgradeable contract to scope the the parameters setting
+    functions for only the Keeper role.
+&nbsp;
+    @dev It does not initialize the RolesManagerUpgradeable as that is a contract that is shared
+    among several other contracts of the Action. The initialization will happen in the Action contract
+ */
+contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
+    using PotionProtocolLib for IPotionLiquidityPool;
+    using OpynProtocolLib for IOpynController;
+    using PercentageUtils for uint256;
+&nbsp;
+    /**
+        @notice The address of the Potion Protocol liquidity pool manager
+     */
+    IPotionLiquidityPool private _potionLiquidityPoolManager;
+&nbsp;
+    /**
+        @notice The address of the Opyn Protocol controller
+&nbsp;
+        @dev Used to determine if a potion can be redeemed or not
+     */
+    IOpynController private _opynController;
+&nbsp;
+    /**
+        @notice Maps the address of an asset with the address of the potion that will be used to hedge it
+&nbsp;
+        @dev token address =&gt; potion address
+     */
+    mapping(address =&gt; address) private _potionAssetpotion;
+&nbsp;
+    /**
+        @notice Address of the USDC contract. Used to calculate the settled amounts for
+        redeeming potions
+&nbsp;
+        @dev Unfortunately the Potion Protocol does not return the settled amount when 
+        calling redeemPotions, so it is needed to get the USDC balance before and after the call
+        to be able to calculate the settled amount
+     */
+    IERC20 private _USDC;
+&nbsp;
+    /// UPGRADEABLE INITIALIZERS
+&nbsp;
+    /**
+        @notice It does chain the initialization to the parent contract because both contracts
+        are quite coupled and `UniswapV3OracleUpgradeable` MUST not be used anywhere else in
+        the inheritance chain.
+     */
+    // solhint-disable-next-line func-name-mixedcase
+<span class="fstat-no" title="function not covered" >    function __PotionProtocolHelper_init_unchained(address potionLiquidityPoolManager, address USDC)</span>
+        internal
+        onlyInitializing
+    {
+<span class="cstat-no" title="statement not covered" >        __PotionProtocolOracle_init_unchained()</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _potionLiquidityPoolManager = IPotionLiquidityPool(potionLiquidityPoolManager)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _USDC = IERC20(USDC)</span>;
+    }
+&nbsp;
+    /// FUNCTIONS
+&nbsp;
+    /**
+        @notice Sets the potion associated with a hedged asset
+&nbsp;
+        @param hedgedAsset The address of the asset to be hedged
+        @param potion The address of the potion that will be used to hedge the asset
+     */
+<span class="fstat-no" title="function not covered" >    function _setPotion(address hedgedAsset, address potion) internal {</span>
+<span class="cstat-no" title="statement not covered" >        _potionAssetpotion[hedgedAsset] = potion</span>;
+    }
+&nbsp;
+    /**
+        @notice Returns the potion associated with a hedged asset
+&nbsp;
+        @param hedgedAsset The address of the asset to be hedged
+&nbsp;
+        @return The address of the potion that will be used to hedge the asset
+     */
+<span class="fstat-no" title="function not covered" >    function getPotion(address hedgedAsset) public view returns (address) {</span>
+<span class="cstat-no" title="statement not covered" >        return _potionAssetpotion[hedgedAsset];</span>
+    }
+&nbsp;
+    /**
+        @notice Calculates the premium required to buy potions for the indicated amount of
+        assets and the intended slippage
+&nbsp;
+        @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param amount The amount of assets to be hedged
+        @param slippage The slippage percentage to be used to calculate the premium
+&nbsp;
+        @return isValid Whether the maximum premium could be calculated or not
+        @return maxPremiumInUSDC The maximum premium needed to buy the potions
+     */
+<span class="fstat-no" title="function not covered" >    function _calculateMaxPremium(</span>
+        address hedgedAsset,
+        uint256 amount,
+        uint256 slippage
+    ) internal view returns (bool isValid, uint256 maxPremiumInUSDC) {
+<span class="cstat-no" title="statement not covered" >        address potion = getPotion(hedgedAsset);</span>
+<span class="cstat-no" title="statement not covered" >        if (potion == address(0)) {</span>
+<span class="cstat-no" title="statement not covered" >            return (false, type(uint256).max);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);</span>
+<span class="cstat-no" title="statement not covered" >        if (amount != buyInfo.totalSizeInPotions) {</span>
+<span class="cstat-no" title="statement not covered" >            return (false, type(uint256).max);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        isValid = true</span>;
+<span class="cstat-no" title="statement not covered" >        maxPremiumInUSDC = buyInfo.expectedPremiumInUSDC.addPercentage(slippage)</span>;
+    }
+&nbsp;
+    /**
+        @notice Buys potions from the Potion Protocol to insure the specific amount of assets
+     */
+<span class="fstat-no" title="function not covered" >    function _buyPotions(</span>
+        address hedgedAsset,
+        uint256 amount,
+        uint256 slippage
+    ) internal returns (uint256 actualPremium) {
+<span class="cstat-no" title="statement not covered" >        address potion = getPotion(hedgedAsset);</span>
+<span class="cstat-no" title="statement not covered" >        require(potion != address(0), "Potion not found for the given asset")</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        require(amount == buyInfo.totalSizeInPotions, "Insured amount greater than expected amount")</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        actualPremium = _potionLiquidityPoolManager.buyPotion(</span>
+            potion,
+            buyInfo.sellers,
+            buyInfo.expectedPremiumInUSDC,
+            slippage,
+            getUSDC()
+        );
+    }
+&nbsp;
+    /**
+        @notice Buys potions from the Potion Protocol to insure the specific amount of assets
+     */
+<span class="fstat-no" title="function not covered" >    function _redeemPotions(address hedgedAsset) internal returns (uint256 settledAmount) {</span>
+<span class="cstat-no" title="statement not covered" >        address potion = getPotion(hedgedAsset);</span>
+<span class="cstat-no" title="statement not covered" >        uint256 prevUSDCBalance = getUSDCBalance(address(this));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _potionLiquidityPoolManager.redeemPotion(potion)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        settledAmount = getUSDCBalance(address(this)) - prevUSDCBalance</span>;
+    }
+&nbsp;
+    /**
+        @notice Checks if the potion for the given asset can be redeemed already
+&nbsp;
+        @param hedgedAsset The address of the hedged asset related to the potion to be redeemed
+&nbsp;
+        @return Whether the potion can be redeemed or not
+     */
+<span class="fstat-no" title="function not covered" >    function _isPotionRedeemable(address hedgedAsset) internal view returns (bool) {</span>
+<span class="cstat-no" title="statement not covered" >        address potion = getPotion(hedgedAsset);</span>
+<span class="cstat-no" title="statement not covered" >        return _opynController.isPotionRedeemable(potion);</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the USDC address configured in the contract
+&nbsp;
+        @return The address of the USDC contract
+     */
+<span class="fstat-no" title="function not covered" >    function getUSDC() public view returns (IERC20) {</span>
+<span class="cstat-no" title="statement not covered" >        return _USDC;</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the current balance of USDC for the given account
+&nbsp;
+        @param account The address of the account to get the USDC balance for
+&nbsp;
+        @return The current balance of USDC for the given account
+     */
+<span class="fstat-no" title="function not covered" >    function getUSDCBalance(address account) public view returns (uint256) {</span>
+<span class="cstat-no" title="statement not covered" >        return _USDC.balanceOf(account);</span>
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -98,9 +98,9 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         address strategistAddress,
         address operatorAddress
     ) internal onlyInitializing {
-        _adminAddress = adminAddress;
-        _strategistAddress = strategistAddress;
-        _operatorAddress = operatorAddress;
+        __changeAdmin(adminAddress);
+        __changeStrategist(strategistAddress);
+        __changeOperator(operatorAddress);
     }
 
     /// FUNCTIONS
@@ -111,13 +111,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         @dev Only the previous Admin can change the address to a new one
      */
     function changeAdmin(address newAdminAddress) external onlyAdmin {
-        require(newAdminAddress != address(0), "New Admin address cannot be the null address");
-
-        address prevAdminAddress = _adminAddress;
-
-        _adminAddress = newAdminAddress;
-
-        emit AdminChanged(prevAdminAddress, newAdminAddress);
+        __changeAdmin(newAdminAddress);
     }
 
     /**
@@ -126,13 +120,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         @dev Only the Admin can change the address to a new one
      */
     function changeStrategist(address newStrategistAddress) external onlyAdmin {
-        require(newStrategistAddress != address(0), "New Strategist address cannot be the null address");
-
-        address prevStrategistAddress = _strategistAddress;
-
-        _strategistAddress = newStrategistAddress;
-
-        emit StrategistChanged(prevStrategistAddress, newStrategistAddress);
+        __changeStrategist(newStrategistAddress);
     }
 
     /**
@@ -141,13 +129,7 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         @dev Only the Admin can change the address to a new one
      */
     function changeOperator(address newOperatorAddress) external onlyAdmin {
-        require(newOperatorAddress != address(0), "New Strategist address cannot be the null address");
-
-        address prevOperatorAddress = _operatorAddress;
-
-        _operatorAddress = newOperatorAddress;
-
-        emit StrategistChanged(prevOperatorAddress, newOperatorAddress);
+        __changeOperator(newOperatorAddress);
     }
 
     /**
@@ -169,6 +151,47 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
      */
     function getOperator() public view returns (address) {
         return _operatorAddress;
+    }
+
+    /// INTERNALS
+
+    /**
+        @notice See { changeAdmin }
+     */
+    function __changeAdmin(address newAdminAddress) private {
+        require(newAdminAddress != address(0), "New Admin address cannot be the null address");
+
+        address prevAdminAddress = _adminAddress;
+
+        _adminAddress = newAdminAddress;
+
+        emit AdminChanged(prevAdminAddress, newAdminAddress);
+    }
+
+    /**
+        @notice See { changeStrategist }
+     */
+    function __changeStrategist(address newStrategistAddress) private {
+        require(newStrategistAddress != address(0), "New Strategist address cannot be the null address");
+
+        address prevStrategistAddress = _strategistAddress;
+
+        _strategistAddress = newStrategistAddress;
+
+        emit StrategistChanged(prevStrategistAddress, newStrategistAddress);
+    }
+
+    /**
+        @notice See { changeOperator }
+     */
+    function __changeOperator(address newOperatorAddress) private {
+        require(newOperatorAddress != address(0), "New Operator address cannot be the null address");
+
+        address prevOperatorAddress = _operatorAddress;
+
+        _operatorAddress = newOperatorAddress;
+
+        emit OperatorChanged(prevOperatorAddress, newOperatorAddress);
     }
 
     /**

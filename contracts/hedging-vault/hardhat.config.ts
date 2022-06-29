@@ -63,6 +63,11 @@ const config: HardhatUserConfig = {
                     optimizer: {
                         enabled: true,
                     },
+                    outputSelection: {
+                        "*": {
+                            "*": ["storageLayout"],
+                        },
+                    },
                 },
             },
         ],

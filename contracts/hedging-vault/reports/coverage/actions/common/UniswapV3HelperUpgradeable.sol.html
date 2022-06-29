@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for actions/common/UniswapV3HelperUpgradeable.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">actions/common/</a> UniswapV3HelperUpgradeable.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/15</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/6</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/15</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import "./UniswapV3OracleUpgradeable.sol";
+import "../../library/UniswapV3SwapLib.sol";
+import "../../library/PriceUtils.sol";
+&nbsp;
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+&nbsp;
+/**
+    @title UniswapV3HelperUpgradeable
+&nbsp;
+    @notice Helper contract that handles the configuration to perform Uniswap V3 multi-hop swaps. It
+    uses the `UniswapV3SwapLib` to perform the swaps.
+&nbsp;
+    @dev It inherits from the RolesManagerUpgradeable contract to scope the the parameters setting
+    functions for only the Keeper role.
+&nbsp;
+    @dev It does not initialize the RolesManagerUpgradeable as that is a contract that is shared
+    among several other contracts of the Action. The initialization will happen in the Action contract
+&nbsp;
+ */
+contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
+    using UniswapV3SwapLib for ISwapRouter;
+&nbsp;
+    /**
+        @notice The address of the Uniswap V3 Router contract
+     */
+    ISwapRouter private _swapRouter;
+&nbsp;
+    /// UPGRADEABLE INITIALIZERS
+&nbsp;
+    /**
+        @notice It does chain the initialization to the parent contract because both contracts
+        are quite coupled and `UniswapV3OracleUpgradeable` MUST not be used anywhere else in
+        the inheritance chain.
+     */
+    // solhint-disable-next-line func-name-mixedcase
+<span class="fstat-no" title="function not covered" >    function __UniswapV3Helper_init_unchained(address swapRouter) internal onlyInitializing {</span>
+<span class="cstat-no" title="statement not covered" >        __UniswapV3Oracle_init_unchained()</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _swapRouter = ISwapRouter(swapRouter)</span>;
+    }
+&nbsp;
+    /// FUNCTIONS
+&nbsp;
+    /**
+        @notice Swaps the exact given amount of input asset for some amount of output asset
+&nbsp;
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountIn The exact amount of input token to be swapped
+        @param slippage How much slippage is allowed on the output amount to be received, as a
+        percentage with `UniswapV3SwapLib.SLIPPAGE_DECIMALS` decimals
+        @param maxDuration The maximum duration of the swap, in seconds, used to calculate
+        the deadline from `now`
+&nbsp;
+        @dev It uses the information provided by the `UniswapV3OracleUpgradeable` contract to
+        determine the path to use for the swap and the expected price for the swap.
+&nbsp;
+        @dev This contract assumes that the input token is already owned by the contract itself
+     */
+<span class="fstat-no" title="function not covered" >    function _swapInput(</span>
+        address inputToken,
+        address outputToken,
+        uint256 amountIn,
+        uint256 slippage,
+        uint256 maxDuration
+    ) internal returns (uint256 actualAmountOut) {
+<span class="cstat-no" title="statement not covered" >        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);</span>
+<span class="cstat-no" title="statement not covered" >        uint256 expectedAmountOut = PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        UniswapV3SwapLib.SwapInputParameters memory swapParameters = UniswapV3SwapLib.SwapInputParameters({</span>
+            inputToken: inputToken,
+            exactAmountIn: amountIn,
+            expectedAmountOut: expectedAmountOut,
+            slippage: slippage,
+            maxDuration: maxDuration,
+            swapPath: swapInfo.swapPath
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        actualAmountOut = _swapRouter.swapInput(swapParameters)</span>;
+    }
+&nbsp;
+    /**
+        @notice Swaps some amount of input asset to obtain an exact amount of output asset
+&nbsp;
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountOut The exact amount of output token to be received
+        @param slippage How much slippage is allowed on the input amount to be swapped, as a
+        percentage with `UniswapV3SwapLib.SLIPPAGE_DECIMALS` decimals
+        @param maxDuration The maximum duration of the swap, in seconds, used to calculate
+        the deadline from `now`
+&nbsp;
+        @dev It uses the information provided by the `UniswapV3OracleUpgradeable` contract to
+        determine the path to use for the swap and the expected price for the swap.
+&nbsp;
+        @dev This contract assumes that the input token is already owned by the contract itself
+        */
+<span class="fstat-no" title="function not covered" >    function _swapOutput(</span>
+        address inputToken,
+        address outputToken,
+        uint256 amountOut,
+        uint256 slippage,
+        uint256 maxDuration
+    ) internal returns (uint256 actualAmountIn) {
+<span class="cstat-no" title="statement not covered" >        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);</span>
+<span class="cstat-no" title="statement not covered" >        uint256 expectedAmountIn = PriceUtils.toInputAmount(swapInfo.expectedPriceRate, amountOut);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        UniswapV3SwapLib.SwapOutputParameters memory swapParameters = UniswapV3SwapLib.SwapOutputParameters({</span>
+            inputToken: inputToken,
+            exactAmountOut: amountOut,
+            expectedAmountIn: expectedAmountIn,
+            slippage: slippage,
+            maxDuration: maxDuration,
+            swapPath: swapInfo.swapPath
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        actualAmountIn = _swapRouter.swapOutput(swapParameters)</span>;
+    }
+&nbsp;
+    /**
+        @notice Returns the current swap router address
+     */
+<span class="fstat-no" title="function not covered" >    function getSwapRouter() public view returns (ISwapRouter) {</span>
+<span class="cstat-no" title="statement not covered" >        return _swapRouter;</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the output amount that can be received from the given input amount,
+        when swapping from the input token to the output token
+&nbsp;
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountIn The exact amount of input token to be swapped
+     */
+<span class="fstat-no" title="function not covered" >    function getSwapOutputAmount(</span>
+        address inputToken,
+        address outputToken,
+        uint256 amountIn
+    ) public view returns (uint256) {
+<span class="cstat-no" title="statement not covered" >        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);</span>
+<span class="cstat-no" title="statement not covered" >        return PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);</span>
+    }
+&nbsp;
+    /**
+        @notice Returns the input amount needed to receive the exact given output amount,
+        when swapping from the input token to the output token
+&nbsp;
+        @param inputToken The address of the input token to be swapped
+        @param outputToken The address of the output token to be received
+        @param amountOut The exact amount of output token to be received
+     */
+<span class="fstat-no" title="function not covered" >    function getSwapInputAmount(</span>
+        address inputToken,
+        address outputToken,
+        uint256 amountOut
+    ) public view returns (uint256) {
+<span class="cstat-no" title="statement not covered" >        SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);</span>
+<span class="cstat-no" title="statement not covered" >        return PriceUtils.toInputAmount(swapInfo.expectedPriceRate, amountOut);</span>
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for library/UniswapV3SwapLib.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">library/</a> UniswapV3SwapLib.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">90% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>9/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>1/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>2/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">90% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>9/10</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+&nbsp;
+import "./PercentageUtils.sol";
+&nbsp;
+/**
+    @title UniswapV3SwapLib
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+&nbsp;
+    @notice Helper library to perform Uniswap V3 multi-hop swaps
+ */
+library UniswapV3SwapLib {
+    using PercentageUtils for uint256;
+&nbsp;
+    /// STRUCTS
+&nbsp;
+    /**
+        @notice The parameters necessary for an input swap
+&nbsp;
+        @custom:member inputToken The token in which `amountIn` is denominated
+        @custom:member exactAmountIn The exact amount of `inputToken` that will be used for the swap
+        @custom:member expectedAmountOut The expected amount of output tokens to be received without taking into account slippage
+        @custom:member slippage The allowed slippage for the amount of output tokens, as a percentage with 6 decimal places
+        @custom:member maxDuration The maximum duration of the swap in seconds, used to calculate the deadline from `now`
+        @custom:member swapPath The abi-encoded path for the swap, coming from the Router helper
+    */
+    struct SwapInputParameters {
+        address inputToken;
+        uint256 exactAmountIn;
+        uint256 expectedAmountOut;
+        uint256 slippage;
+        uint256 maxDuration;
+        bytes swapPath;
+    }
+&nbsp;
+    /**
+        @notice The parameters necessary for an output swap
+&nbsp;
+        @custom:member inputToken The token in which `amountIn` is denominated
+        @custom:member swapPath The abi-encoded path for the swap, coming from the Router helper
+        @custom:member exactAmountOut The exact amount of the output token that will be obtained after the swap
+        @custom:member expectedAmountIn The expected amount of input tokens to be used in the swap without taking into account slippage
+        @custom:member slippage The allowed slippage for the amount of input tokens that will be used for the swap,
+        as a percentage with 6 decimal places
+        @custom:member maxDuration The maximum duration of the swap in seconds, used to calculate the deadline from `now`
+    */
+    struct SwapOutputParameters {
+        address inputToken;
+        uint256 exactAmountOut;
+        uint256 expectedAmountIn;
+        uint256 slippage;
+        uint256 maxDuration;
+        bytes swapPath;
+    }
+&nbsp;
+    /// CONSTANTS
+    /**
+        @notice Performs a multi-hop swap with an exact amount of input tokens and a variable amount
+        of output tokens
+&nbsp;
+        @param swapRouter The Uniswap V3 Router contract
+        @param parameters The parameters necessary for the swap
+&nbsp;
+        @dev The `swapPath` is a sequence of tokenAddress Fee tokenAddress, encoded in reverse order, which are the variables
+        needed to compute each pool contract address in our sequence of swaps. The multihop swap router code will automatically
+        find the correct pool with these variables, and execute the swap needed within each pool in our sequence. More
+        information on [Multi-hop Swaps](https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps)
+        
+&nbsp;
+        @dev The slippage parameter is applied to the `expectedAmountOut` in order to account for slippage during the swap.
+        In particular when swapping with `swapInput` the input amount of tokens is exact, and it is the output that can suffer from
+        slippage. In such case the slippage is applied as the percentage that can be substracted from the ideal 100% that
+         could be obtained at the output.
+&nbsp;
+        @dev The `maxDuration` parameter is used to calculate the deadline from the current block timestamp
+     */
+    function swapInput(ISwapRouter swapRouter, SwapInputParameters memory parameters)
+        internal
+        returns (uint256 amountOut)
+    {
+        uint256 amountOutMinimum = parameters.expectedAmountOut.substractPercentage(parameters.slippage);
+&nbsp;
+        TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), parameters.exactAmountIn);
+&nbsp;
+        ISwapRouter.ExactInputParams memory uniswapParams = ISwapRouter.ExactInputParams({
+            path: parameters.swapPath,
+            recipient: address(this),
+            deadline: block.timestamp + parameters.maxDuration,
+            amountIn: parameters.exactAmountIn,
+            amountOutMinimum: amountOutMinimum
+        });
+&nbsp;
+        amountOut = swapRouter.exactInput(uniswapParams);
+    }
+&nbsp;
+    /**
+        @notice Performs a multi-hop swap for an exact amount of output tokens and a variable amount
+        of input tokens
+&nbsp;
+        @param swapRouter The Uniswap V3 Router contract
+        @param parameters The parameters necessary for the swap
+&nbsp;
+        @dev The `swapPath` is a sequence of tokenAddress Fee tokenAddress, encoded in reverse order, which are the variables
+        needed to compute each pool contract address in our sequence of swaps. The multihop swap router code will automatically
+        find the correct pool with these variables, and execute the swap needed within each pool in our sequence. More
+        information on [Multi-hop Swaps](https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps)
+&nbsp;
+        @dev The slippage parameter is applied to the `expectedAmountIn` in order to account for slippage during the swap.
+        In particular when swapping with `swapOutput` the output amount of tokens is exact, and it is the input that can
+        suffer from slippage. In such case the slippage is applied as the percentage that can be added from the ideal 100% that
+        could have been used for the input
+&nbsp;
+        @dev The `maxDuration` parameter is used to calculate the deadline from the current block timestamp
+     */
+    function swapOutput(ISwapRouter swapRouter, SwapOutputParameters memory parameters)
+        internal
+        returns (uint256 amountIn)
+    {
+        uint256 amountInMaximum = parameters.expectedAmountIn.addPercentage(parameters.slippage);
+&nbsp;
+        TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), amountInMaximum);
+&nbsp;
+        // The parameter path is encoded as (tokenOut, fee, tokenIn/tokenOut, fee, tokenIn)
+        // The tokenIn/tokenOut field is the shared token between the two pools used in the multiple pool swap. In this case USDC is the "shared" token.
+        // For an exactOutput swap, the first swap that occurs is the swap which returns the eventual desired token.
+        // In this case, our desired output token is WETH9 so that swap happpens first, and is encoded in the path accordingly.
+        ISwapRouter.ExactOutputParams memory params = ISwapRouter.ExactOutputParams({
+            path: parameters.swapPath,
+            recipient: address(this),
+            deadline: block.timestamp + parameters.maxDuration,
+            amountOut: parameters.exactAmountOut,
+            amountInMaximum: amountInMaximum
+        });
+&nbsp;
+        // Executes the swap, returning the amountIn actually spent.
+        amountIn = swapRouter.exactOutput(params);
+&nbsp;
+        // If the input amount used was less than the expected maximum, approve the router for 0 tokens
+        // to avoid allowing the router to transfer the remaining tokens
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (amountIn &lt; amountInMaximum) {
+<span class="cstat-no" title="statement not covered" >            TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), 0)</span>;
+        }
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

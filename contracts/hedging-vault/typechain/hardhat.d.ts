@@ -41,13 +41,61 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContextUpgradeable__factory>;
     getContractFactory(
+      name: "AccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControl__factory>;
+    getContractFactory(
+      name: "AccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControlEnumerable__factory>;
+    getContractFactory(
+      name: "IAccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControl__factory>;
+    getContractFactory(
+      name: "IAccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControlEnumerable__factory>;
+    getContractFactory(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
+    getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "ERC20Burnable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Burnable__factory>;
+    getContractFactory(
+      name: "ERC20Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Pausable__factory>;
+    getContractFactory(
+      name: "IERC20Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Metadata__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "ERC20PresetMinterPauser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20PresetMinterPauser__factory>;
+    getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
       name: "IUniswapV3SwapCallback",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -109,9 +157,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
-      name: "IActionsManager",
+      name: "IActionsContainer",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IActionsManager__factory>;
+    ): Promise<Contracts.IActionsContainer__factory>;
     getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -181,9 +229,57 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC4626Upgradeable__factory>;
     getContractFactory(
-      name: "ActionsManagerUpgradeable",
+      name: "TestWrapperActionsContainer",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ActionsManagerUpgradeable__factory>;
+    ): Promise<Contracts.TestWrapperActionsContainer__factory>;
+    getContractFactory(
+      name: "TestWrapperEmergencyLock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperEmergencyLock__factory>;
+    getContractFactory(
+      name: "TestWrapperERC20PresetMinterPauser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperERC20PresetMinterPauser__factory>;
+    getContractFactory(
+      name: "TestWrapperFeeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperFeeManager__factory>;
+    getContractFactory(
+      name: "TestWrapperLifecycleStates",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperLifecycleStates__factory>;
+    getContractFactory(
+      name: "TestWrapperOpynProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperOpynProtocolLib__factory>;
+    getContractFactory(
+      name: "TestWrapperPercentageUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPercentageUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperPotionProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPotionProtocolLib__factory>;
+    getContractFactory(
+      name: "TestWrapperPriceUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPriceUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperRefundsHelper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperRefundsHelper__factory>;
+    getContractFactory(
+      name: "TestWrapperRolesManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperRolesManager__factory>;
+    getContractFactory(
+      name: "TestWrapperUniswapV3SwapLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
+    getContractFactory(
+      name: "ActionsContainerUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ActionsContainerUpgradeable__factory>;
     getContractFactory(
       name: "BaseVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -241,15 +337,75 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ContextUpgradeable>;
     getContractAt(
+      name: "AccessControl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControl>;
+    getContractAt(
+      name: "AccessControlEnumerable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControlEnumerable>;
+    getContractAt(
+      name: "IAccessControl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControl>;
+    getContractAt(
+      name: "IAccessControlEnumerable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControlEnumerable>;
+    getContractAt(
       name: "Ownable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
     getContractAt(
+      name: "Pausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
+    getContractAt(
+      name: "ERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "ERC20Burnable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Burnable>;
+    getContractAt(
+      name: "ERC20Pausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Pausable>;
+    getContractAt(
+      name: "IERC20Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Metadata>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "ERC20PresetMinterPauser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20PresetMinterPauser>;
+    getContractAt(
+      name: "ERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
+      name: "IERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
     getContractAt(
       name: "IUniswapV3SwapCallback",
       address: string,
@@ -326,10 +482,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
-      name: "IActionsManager",
+      name: "IActionsContainer",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IActionsManager>;
+    ): Promise<Contracts.IActionsContainer>;
     getContractAt(
       name: "IEmergencyLock",
       address: string,
@@ -416,10 +572,70 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC4626Upgradeable>;
     getContractAt(
-      name: "ActionsManagerUpgradeable",
+      name: "TestWrapperActionsContainer",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ActionsManagerUpgradeable>;
+    ): Promise<Contracts.TestWrapperActionsContainer>;
+    getContractAt(
+      name: "TestWrapperEmergencyLock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperEmergencyLock>;
+    getContractAt(
+      name: "TestWrapperERC20PresetMinterPauser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperERC20PresetMinterPauser>;
+    getContractAt(
+      name: "TestWrapperFeeManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperFeeManager>;
+    getContractAt(
+      name: "TestWrapperLifecycleStates",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperLifecycleStates>;
+    getContractAt(
+      name: "TestWrapperOpynProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperOpynProtocolLib>;
+    getContractAt(
+      name: "TestWrapperPercentageUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPercentageUtils>;
+    getContractAt(
+      name: "TestWrapperPotionProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPotionProtocolLib>;
+    getContractAt(
+      name: "TestWrapperPriceUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPriceUtils>;
+    getContractAt(
+      name: "TestWrapperRefundsHelper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperRefundsHelper>;
+    getContractAt(
+      name: "TestWrapperRolesManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperRolesManager>;
+    getContractAt(
+      name: "TestWrapperUniswapV3SwapLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
+    getContractAt(
+      name: "ActionsContainerUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ActionsContainerUpgradeable>;
     getContractAt(
       name: "BaseVaultUpgradeable",
       address: string,
