@@ -3,18 +3,24 @@
 import MinusPlusInput from "./MinusPlusInput.vue";
 
 describe("MinusPlusInput", () => {
-  beforeEach(() => {
+  const mountComponent = (value: number) => {
+    const onUpdateSpy = cy.spy().as("onUpdateSpy");
     const props = {
       label: "component test",
-      modelValue: 0,
+      modelValue: value,
       min: 0,
       max: 100,
       step: 1,
+      "onUpdate:modelValue": onUpdateSpy,
     };
     cy.mount(MinusPlusInput, { props });
-  });
+  };
 
   context("it renders correctly", () => {
+    beforeEach(() => {
+      mountComponent(0);
+    });
+
     it("has the label", () => {
       cy.get("[test-unit='label']")
         .should("be.visible")
@@ -31,49 +37,49 @@ describe("MinusPlusInput", () => {
     it("has the minus button", () => {
       cy.get("[test-unit='decrease-button']").should("be.visible");
     });
+    it("can write in the input field", () => {
+      cy.get("[test-unit='input']").clear().type("11");
+      cy.get("@onUpdateSpy").should("have.been.calledWith", 11);
+    });
   });
 
-  context.skip("it handles the increase button correctly", () => {
+  context("it handles the increase button correctly", () => {
     it("disables the button if value = max", () => {
-      cy.get("[test-unit='input']").clear().type("100");
+      mountComponent(100);
       cy.get("[test-unit='increase-button']")
         .should("be.visible")
         .and("be.disabled");
     });
     it("enables the button if value < max", () => {
-      cy.get("[test-unit='input']").clear().type("77");
+      mountComponent(77);
       cy.get("[test-unit='increase-button']")
         .should("be.visible")
         .and("not.be.disabled");
     });
     it("increase the value when pressed", () => {
-      cy.get("[test-unit='input']").clear().type("77");
+      mountComponent(77);
       cy.get("[test-unit='increase-button']").click();
-      cy.get("[test-unit='input']")
-        .should("be.visible")
-        .and("contain.value", 78);
+      cy.get("@onUpdateSpy").should("have.been.calledWith", 78);
     });
   });
 
-  context.skip("it handles the decrease button correctly", () => {
+  context("it handles the decrease button correctly", () => {
     it("disables the button if value = min", () => {
-      cy.get("[test-unit='input']").clear().type("0");
+      mountComponent(0);
       cy.get("[test-unit='decrease-button']")
         .should("be.visible")
         .and("be.disabled");
     });
     it("enables the button if value > min", () => {
-      cy.get("[test-unit='input']").clear().type("1");
+      mountComponent(1);
       cy.get("[test-unit='decrease-button']")
         .should("be.visible")
         .and("not.be.disabled");
     });
     it("decrease the value when pressed", () => {
-      cy.get("[test-unit='input']").clear().type("77");
+      mountComponent(77);
       cy.get("[test-unit='decrease-button']").click();
-      cy.get("[test-unit='input']")
-        .should("be.visible")
-        .and("contain.value", 76);
+      cy.get("@onUpdateSpy").should("have.been.calledWith", 76);
     });
   });
 });
