@@ -1,8 +1,7 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["./integration/**/*", "./support/**/*"],
+  "include": ["./integration/**/*", "./support/**/*", "../cypress.d.ts"],
   "compilerOptions": {
-    "rootDir": "../../../",
     "isolatedModules": false,
     "target": "es5",
     "lib": ["es5", "dom"],

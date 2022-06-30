@@ -21,7 +21,13 @@
       "@testing-library/cypress"
     ]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "vite.config.ts",
+    "cypress.d.ts"
+  ],
   "exclude": [
     "src/stories/**/*",
     "src/**/*.stories.ts",
