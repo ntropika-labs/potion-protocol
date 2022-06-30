@@ -19,9 +19,13 @@ import "./commands";
 import "@unocss/reset/tailwind.css";
 import "potion-unocss/src/variables.css";
 import "uno.css";
+import "cypress-fail-fast";
 
 import { mount } from "cypress/vue";
-import "cypress-fail-fast";
+import { h } from "vue";
+import { createI18n } from "vue-i18n";
+
+import type { CyMountOptions } from "cypress/vue";
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -36,7 +40,29 @@ declare global {
   }
 }
 
-Cypress.Commands.add("mount", mount);
+const i18n = createI18n({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: {},
+});
+
+Cypress.Commands.add(
+  "mount",
+  <C extends Parameters<typeof mount>[0]>(
+    comp: C,
+    options: CyMountOptions<C> = {}
+  ) => {
+    options.global = options.global || {};
+    options.global.stubs = options.global.stubs || {};
+    options.global.stubs.transition = false;
+    options.global.plugins = options.global.plugins || [];
+    options.global.plugins.push(i18n);
+    return mount(() => {
+      return h(comp, options.props, []);
+    }, options);
+  }
+);
 
 // Example use:
 // cy.mount(MyComponent)

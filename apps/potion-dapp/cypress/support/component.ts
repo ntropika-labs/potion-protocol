@@ -26,9 +26,8 @@ import { h } from "vue";
 import { createI18n } from "vue-i18n";
 
 import { vAutoAnimate } from "@formkit/auto-animate";
-//@ts-expect-error shims error
-import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
+//@ts-expect-error shims error
 import EmptyLayout from "../../src/layouts/EmptyLayout.vue";
 
 import type { CyMountOptions } from "cypress/vue";
@@ -37,7 +36,7 @@ const i18n = createI18n({
   legacy: false,
   locale: "en",
   fallbackLocale: "en",
-  messages,
+  messages: {},
 });
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
