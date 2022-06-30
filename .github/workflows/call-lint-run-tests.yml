@@ -54,6 +54,7 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
           DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          CHAIN_TIME: ${{ secrets.CREATE_CHAIN_TIME }}
           VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
           VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
@@ -77,6 +78,7 @@ jobs:
         uses: cypress-io/github-action@v4
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+          CHAIN_TIME: ${{ secrets.CHAIN_TIME }}
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
         with:
           install: false
