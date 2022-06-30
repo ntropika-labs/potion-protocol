@@ -17,6 +17,7 @@ import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/op
 interface Props {
   otokens: PoolRecordOtokenInfoFragment[];
   payoutMap: Map<string, number>;
+  claimedOtokens: string[];
 }
 
 const props = defineProps<Props>();
@@ -34,35 +35,56 @@ const calcProfitAndLoss = (
 
 const dataset = computed<OtokenDataset>(() => {
   return props.otokens.map((item) => {
+    const id = item?.otoken.id ?? "";
     const address = item?.otoken.underlyingAsset.address ?? "";
     const { symbol } = useTokenList(address);
 
-    const payout = props.payoutMap.get(item?.otoken.id) ?? 0;
+    const payout = props.payoutMap.get(id) ?? 0;
     const isReclaimable = payout > 0;
 
     const returned = parseFloat(item?.returned ?? "0");
     const premium = parseFloat(item.premiumReceived);
     const strikePrice = parseFloat(item.otoken.strikePrice);
     const collateral = parseFloat(item.collateral);
-    const reclaimable = payout > 0 ? payout : returned;
 
-    const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
+    if (props.claimedOtokens.includes(id)) {
+      const pnl = calcProfitAndLoss(premium, collateral, payout) * 100;
 
-    return [
-      { value: symbol },
-      { value: dateFormatter(item.otoken.expiry, true) },
-      { value: shortCurrencyFormatter(premium, currency) },
-      { value: shortCurrencyFormatter(strikePrice, currency) },
-      { value: shortCurrencyFormatter(payout, currency) },
-      { value: shortCurrencyFormatter(returned, currency) },
-      { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
-      {
-        button: true,
-        claimable: isReclaimable,
-        value: isReclaimable ? t("claim") : t("claimed"),
-        color: isReclaimable ? "secondary-o" : "secondary",
-      },
-    ];
+      return [
+        { value: symbol },
+        { value: dateFormatter(item.otoken.expiry, true) },
+        { value: shortCurrencyFormatter(premium, currency) },
+        { value: shortCurrencyFormatter(strikePrice, currency) },
+        { value: shortCurrencyFormatter(0, currency) },
+        { value: shortCurrencyFormatter(payout, currency) },
+        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+        {
+          button: true,
+          claimable: false,
+          value: t("claimed"),
+          color: "secondary",
+        },
+      ];
+    } else {
+      const reclaimable = payout > 0 ? payout : returned;
+      const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
+
+      return [
+        { value: symbol },
+        { value: dateFormatter(item.otoken.expiry, true) },
+        { value: shortCurrencyFormatter(premium, currency) },
+        { value: shortCurrencyFormatter(strikePrice, currency) },
+        { value: shortCurrencyFormatter(payout, currency) },
+        { value: shortCurrencyFormatter(returned, currency) },
+        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+        {
+          button: true,
+          claimable: isReclaimable,
+          value: isReclaimable ? t("claim") : t("claimed"),
+          color: isReclaimable ? "secondary-o" : "secondary",
+        },
+      ];
+    }
   });
 });
 

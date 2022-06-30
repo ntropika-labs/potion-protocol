@@ -21,6 +21,7 @@ interface Props {
   underlyings: Array<Token>;
   priceMap: Map<string, string>;
   payoutMap: Map<string, number>;
+  claimedOtokens: string[];
 }
 
 const props = defineProps<Props>();
@@ -145,6 +146,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :otokens="filteredExpiredOtokens"
           :underlyings="underlyings"
           :payout-map="props.payoutMap"
+          :claimed-otokens="props.claimedOtokens"
           @claim-otoken="claimOtoken"
         >
         </PoolExpiredOTokens>
