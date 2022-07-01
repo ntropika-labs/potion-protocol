@@ -32,11 +32,13 @@
           value-type="currency"
           symbol="USDC"
           class="sm:justify-self-end md:justify-self-stretch"
+          test-potion-strike-price
         />
         <LabelValue
           :title="t('expiration')"
           :value="otokenData.otoken.expiry"
           value-type="timestamp"
+          test-potion-expiration
           @click="handleBuyPotions()"
         />
         <BaseButton
@@ -44,6 +46,7 @@
           :disabled="buyPotionButtonState.disabled"
           palette="secondary"
           class="sm:justify-self-end md:col-span-1 md:justify-self-stretch"
+          test-potion-buy-button
           @click="handleBuyPotions()"
         />
       </div>
@@ -51,12 +54,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
       <BaseCard class="w-full justify-between">
         <div class="flex justify-between p-4 items-start text-sm">
-          <div class="flex gap-2 items-center">
-            <p class="capitalize">{{ t("market_size") }}</p>
-          </div>
-          <div>
-            <p>{{ formattedMarketSize }}</p>
-          </div>
+          <p class="capitalize">{{ t("market_size") }}</p>
+          <p test-potion-market-size>{{ formattedMarketSize }}</p>
         </div>
         <InputNumber
           v-model.number="potionQuantity"
@@ -69,6 +68,7 @@
           :max-decimals="8"
           :footer-description="t('max_number_of_potions')"
           :use-unit="false"
+          test-potion-number-of-potions-input
           @valid-input="isPotionQuantityValid = $event"
         />
       </BaseCard>
@@ -76,19 +76,19 @@
         <div class="flex justify-between px-4 items-start text-sm">
           <div class="flex gap-2 items-center justify-between w-full">
             <p class="capitalize">{{ t("price_per_potion") }}</p>
-            <p>{{ formattedPremium }}</p>
+            <p test-potion-price-per-potion>{{ formattedPremium }}</p>
           </div>
         </div>
         <div class="flex justify-between px-4 items-start text-sm">
           <div class="flex gap-2 items-center justify-between w-full">
             <p class="capitalize">{{ t("number_of_potions") }}</p>
-            <p>{{ potionQuantity }}</p>
+            <p test-potion-number-of-potions>{{ potionQuantity }}</p>
           </div>
         </div>
         <div class="flex justify-between px-4 items-start text-sm">
           <div class="flex gap-2 items-center justify-between w-full">
             <p class="capitalize">{{ t("number_of_transactions") }}</p>
-            <p>{{ numberOfTransactions }}</p>
+            <p test-potion-number-of-transactions>{{ numberOfTransactions }}</p>
           </div>
         </div>
         <div
@@ -97,7 +97,7 @@
           <div class="flex gap-2 items-center justify-between w-full">
             <p class="capitalize">{{ t("total") }}</p>
             <div class="text-right">
-              <p>{{ formattedPremiumSlippage }}</p>
+              <p test-potion-total-price>{{ formattedPremiumSlippage }}</p>
               <p class="text-xs capitalize text-dwhite-300/30">
                 {{ t("balance") }}: {{ userCollateralBalanceFormatted }}
               </p>
@@ -115,9 +115,11 @@
               class="outline-none focus:outline-none"
               @click="handleSlippageSelection(index)"
             >
-              <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{
-                s.label
-              }}</BaseTag>
+              <BaseTag
+                :color="s.selected === true ? 'primary' : 'base'"
+                test-potion-slippage-button
+                >{{ s.label }}</BaseTag
+              >
             </button>
           </div>
         </BaseCard>
