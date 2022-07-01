@@ -23,7 +23,6 @@ const emits = defineEmits<{
 }>();
 
 const isNotEmpty = computed(() => props.dataset.length > 0);
-const isEmpty = !isNotEmpty.value;
 
 const onButtonPressed = (index: number, cellIndex: number) =>
   emits("button-pressed", index, cellIndex);
@@ -31,7 +30,10 @@ const onButtonPressed = (index: number, cellIndex: number) =>
 
 <template>
   <div class="overflow-x-auto">
-    <table class="table-fixed w-full font-medium text-dwhite-400">
+    <table
+      v-if="isNotEmpty"
+      class="table-fixed w-full font-medium text-dwhite-400"
+    >
       <thead
         class="text-sm"
         :class="isNotEmpty ? 'border-b-2 border-white border-opacity-10' : ''"
@@ -71,7 +73,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
       </tbody>
     </table>
     <div
-      v-if="isEmpty"
+      v-else
       class="border-t-2 border-white border-opacity-10 min-h-[100px] flex items-center justify-center w-full text-white text-opacity-20 text-xl"
     >
       <span>{{ t("no_options") }}</span>
