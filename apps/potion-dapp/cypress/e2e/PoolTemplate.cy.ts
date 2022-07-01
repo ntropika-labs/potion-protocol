@@ -1,6 +1,10 @@
 /// <reference types="cypress" />
+import { resetApproval } from "../support/utilities";
 
 describe("Pool template cloning Flow", () => {
+  before(async () => {
+    await resetApproval();
+  });
   it("Can visit the template page", () => {
     cy.viewport(1920, 1080);
     cy.visit(
@@ -28,7 +32,13 @@ describe("Pool template cloning Flow", () => {
   it("Can input the liquidity", () => {
     cy.get(".selection\\:bg-accent-500").clear().type("100.123456");
   });
-
+  it("Can set the approval", () => {
+    cy.get(".gap-3 > .whitespace-nowrap").click();
+    cy.wait(2000);
+    cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
+      "approved"
+    );
+  });
   it("Can clone the pool", () => {
     cy.get("[test-clone-button]").click();
   });

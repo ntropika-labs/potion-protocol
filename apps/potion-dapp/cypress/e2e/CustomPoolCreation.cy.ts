@@ -1,6 +1,11 @@
 /// <reference types="cypress" />
+// import localDeploymentAddresses from "../../../../contracts/core/deployments/localhost.json";
+import { resetApproval } from "../support/utilities";
 
 describe("Custom Pool Creation Flow", () => {
+  before(async () => {
+    await resetApproval();
+  });
   let assetText = "";
 
   it("Can visit custom-pool-creation", () => {
@@ -103,7 +108,16 @@ describe("Custom Pool Creation Flow", () => {
     cy.get(":nth-child(4) > .w-full").should("have.value", "1");
     cy.get(":nth-child(5) > .w-full").should("have.value", "1");
   });
+  it("Can set the approval", () => {
+    cy.get(".p-4 > .before\\:content-none").click();
+    cy.wait(2000);
+    cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
+      "approved"
+    );
+  });
   it("Can create the pool", () => {
     cy.get(".p-4 > .before\\:content-none").click();
+
+    cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
   });
 });
