@@ -4,16 +4,13 @@ import { aliasQuery } from "../support/utilities";
 
 describe("Show Potions Flow", () => {
   context("environment setup", () => {
-    it("relods the blockchain with the correct database and date", () => {
+    it("reloads the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-view-potions", "2022-01-01 09:00:00+00:00");
     });
   });
 
-  context("test", () => {
+  context("test ViewPotions", () => {
     beforeEach(() => {
-      cy.viewport(1920, 1080);
-      cy.visit("/buyer/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266");
-
       cy.intercept(
         "POST",
         "http://localhost:8000/subgraphs/name/potion-subgraph",
@@ -25,8 +22,13 @@ describe("Show Potions Flow", () => {
       ).as("getDataFromSubgraph");
     });
 
-    context("renders correctly", () => {
-      it("Can visit the buyer page and load initial data", () => {
+    context("renders", () => {
+      it("Can visit the buyer page", () => {
+        cy.viewport(1920, 1080);
+        cy.visit("/buyer/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266");
+      });
+
+      it("Can load initial data", () => {
         cy.wait(["@getUserPotions"], {
           timeout: 20000,
         }).then((interceptor) => {
@@ -47,56 +49,53 @@ describe("Show Potions Flow", () => {
           cy.get("[test-potions-total-expired]").contains(responseTotalExpired);
         });
       });
-      it("Renders the active potions correctly", () => {
-        cy.wait(["@getUserPotions"]).then(() => {
-          cy.get("[test-active-potions-grid] [test-my-potion-card]").should(
-            "have.length",
-            1
-          );
-          cy.get("[test-active-potions-grid] [test-my-potion-card]")
-            .first()
-            .as("card");
 
-          cy.get("@card")
-            .find("[test-strike-price]")
-            .should("contain.text", "USDC1.05K");
-          cy.get("@card")
-            .find("[test-expiration]")
-            .should("contain.text", "Jan 2, 2022");
-          cy.get("@card").find("[test-quantity]").should("contain.text", "1");
-          cy.get("@card")
-            .find("[test-current-payout]")
-            .should("contain.text", "USDC1.05K");
-          cy.get("@card").find("[test-withdraw-button]").should("not.exist");
-        });
+      it("Renders the active potions", () => {
+        cy.get("[test-active-potions-grid] [test-my-potion-card]").should(
+          "have.length",
+          1
+        );
+        cy.get("[test-active-potions-grid] [test-my-potion-card]")
+          .first()
+          .as("card");
+
+        cy.get("@card")
+          .find("[test-strike-price]")
+          .should("contain.text", "USDC1.05K");
+        cy.get("@card")
+          .find("[test-expiration]")
+          .should("contain.text", "Jan 2, 2022");
+        cy.get("@card").find("[test-quantity]").should("contain.text", "1");
+        cy.get("@card")
+          .find("[test-current-payout]")
+          .should("contain.text", "USDC1.05K");
+        cy.get("@card").find("[test-withdraw-button]").should("not.exist");
       });
-      it("Renders the expired potions correctly", () => {
-        cy.wait(["@getUserPotions"]).then(() => {
-          cy.get("[test-expired-potions-grid] [test-my-potion-card]").should(
-            "have.length",
-            1
-          );
-          cy.get("[test-expired-potions-grid] [test-my-potion-card]")
-            .first()
-            .as("card");
+      it("Renders the expired potions", () => {
+        cy.get("[test-expired-potions-grid] [test-my-potion-card]").should(
+          "have.length",
+          1
+        );
+        cy.get("[test-expired-potions-grid] [test-my-potion-card]")
+          .first()
+          .as("card");
 
-          cy.get("@card")
-            .find("[test-strike-price]")
-            .should("contain.text", "USDC1K");
-          cy.get("@card")
-            .find("[test-expiration]")
-            .should("contain.text", "Jan 2, 2021");
-          cy.get("@card").find("[test-quantity]").should("contain.text", "1");
-          cy.get("@card")
-            .find("[test-current-payout]")
-            .should("contain.text", "USDC500");
-          cy.get("@card").find("[test-withdraw-button]").should("be.visible");
-        });
+        cy.get("@card")
+          .find("[test-strike-price]")
+          .should("contain.text", "USDC1K");
+        cy.get("@card")
+          .find("[test-expiration]")
+          .should("contain.text", "Jan 2, 2021");
+        cy.get("@card").find("[test-quantity]").should("contain.text", "1");
+        cy.get("@card")
+          .find("[test-current-payout]")
+          .should("contain.text", "USDC500");
+        cy.get("@card").find("[test-withdraw-button]").should("be.visible");
       });
     });
 
-    context("Handles load more", () => {
-      it("Can load more active potions when allowed to", () => {
+    context("Can load more when allowed to", () => {
+      it("Can load more active potions", () => {
         const hasLoadMore = cy.$$("[test-potions-load-more-active]").length > 0;
         if (hasLoadMore) {
           cy.get("[test-potions-load-more-active]").first().click();
@@ -114,7 +113,7 @@ describe("Show Potions Flow", () => {
         }
       });
 
-      it("Can load more expired potions when allowed to", () => {
+      it("Can load more expired potions", () => {
         const hasLoadMore =
           cy.$$("[test-potions-load-more-expired]").length > 0;
         if (hasLoadMore) {
@@ -136,17 +135,15 @@ describe("Show Potions Flow", () => {
 
     context("Handles user actions", () => {
       it("Can withdraw expired potions", () => {
-        cy.wait(["@getUserPotions"]).then(() => {
-          cy.get("[test-expired-potions-grid] [test-my-potion-card]")
-            .first()
-            .as("card");
-          cy.get("@card").find("[test-withdraw-button]").should("be.visible");
-          cy.get("@card").find("[test-withdraw-button]").click();
-          cy.get("@card")
-            .find("[test-current-payout]")
-            .should("contain.text", "USDC0");
-          cy.get("@card").find("[test-withdraw-button]").should("not.exist");
-        });
+        cy.get("[test-expired-potions-grid] [test-my-potion-card]")
+          .first()
+          .as("card");
+        cy.get("@card").find("[test-withdraw-button]").should("be.visible");
+        cy.get("@card").find("[test-withdraw-button]").click();
+        cy.get("@card")
+          .find("[test-current-payout]")
+          .should("contain.text", "USDC0");
+        cy.get("@card").find("[test-withdraw-button]").should("not.exist");
       });
     });
   });
