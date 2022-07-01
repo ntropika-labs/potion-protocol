@@ -40,19 +40,27 @@ describe("PutOptionsTable.cy.ts", () => {
   });
   it("emit events", () => {
     const onClickSpy = cy.spy().as("onClickSpy");
+    const onButtonPressedSpy = cy.spy().as("onButtonPressedSpy");
+
     cy.mount(PutOptionsTable, {
       props: {
         headings,
         dataset,
         onClick: onClickSpy,
+        onButtonPressed: onButtonPressedSpy,
       },
     });
-    cy.get("[test-table-claim-button]").each(($el) => {
+    cy.get("[test-table-claim-button]").each(($el, index) => {
       if ($el.is(":disabled")) {
         return;
       } else {
         cy.wrap($el).should("be.enabled").click();
         cy.get("@onClickSpy").should("have.been.called");
+        cy.get("@onButtonPressedSpy").should(
+          "have.been.calledWith",
+          index,
+          dataset.length - 1
+        );
       }
     });
   });
