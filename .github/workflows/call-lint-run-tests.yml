@@ -29,8 +29,8 @@ on:
         type: string
 
 jobs:
-  run-tests:
-    name: Run tests
+  run-e2e-tests:
+    name: Run e2e tests
     runs-on: ubuntu-latest
     env:
       PREVIEW_URL: "http://127.0.0.1:5050"
@@ -73,31 +73,6 @@ jobs:
           VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
           VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
           VITE_COINGECKO_API_ENDPOINT: ${{ inputs.VITE_COINGECKO_API_ENDPOINT }}
-      
-      - name: Cypress run (potion-ui components)
-        uses: cypress-io/github-action@v4
-        with:
-          install: false
-          browser: chrome
-          record: false
-          component: true
-          working-directory: libs/potion-ui
-
-      - name: Archive screenshots code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: potion-ui-components-cypress-screenshots
-          path: libs/potion-ui/cypress/screenshots
-          retention-days: 25
-
-      - name: Archive videos code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: potion-ui-components-cypress-videos
-          path: libs/potion-ui/cypress/videos
-          retention-days: 25
 
       - name: Cypress run (potion-dapp e2e)
         uses: cypress-io/github-action@v4
@@ -140,6 +115,41 @@ jobs:
       - name: Stop containers
         if: always()
         run: docker-compose -f "docker-compose.yml" down
+
+  run-component-tests:
+    name: Run component tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment 
+
+      - name: Cypress run (potion-ui components)
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          browser: chrome
+          record: false
+          component: true
+          working-directory: libs/potion-ui
+
+      - name: Archive screenshots code coverage results (potion-ui components)
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: potion-ui-components-cypress-screenshots
+          path: libs/potion-ui/cypress/screenshots
+          retention-days: 25
+
+      - name: Archive videos code coverage results (potion-ui components)
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: potion-ui-components-cypress-videos
+          path: libs/potion-ui/cypress/videos
+          retention-days: 25
 
   lint:
     name: Run linting
