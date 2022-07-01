@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 import PoolTemplateCard from "./PoolTemplateCard.vue";
 
 describe("PoolTemplateCard.cy.ts", () => {
@@ -30,21 +31,24 @@ describe("PoolTemplateCard.cy.ts", () => {
     totalPnl: "60",
     pnlTrend: "up",
     templateId: "1337",
-    onClick: {},
+    onNavigateTemplate: {},
   };
   it("renders correctly", () => {
     cy.mount(PoolTemplateCard, { props: defProps });
   });
 
   it("emits an event when clicked", () => {
-    const onClickSpy = cy.spy().as("onClickSpy");
-    defProps.onClick = onClickSpy;
+    const onNavigateSpy = cy.spy().as("onNavigateSpy");
+    defProps.onNavigateTemplate = onNavigateSpy;
 
     cy.mount(PoolTemplateCard, {
       props: defProps,
     });
 
     cy.get("[test-card-navigate-button]").click();
-    cy.get("@onClickSpy");
+    cy.get("@onNavigateSpy").should(
+      "have.been.calledWith",
+      defProps.templateId
+    );
   });
 });
