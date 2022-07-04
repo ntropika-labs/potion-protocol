@@ -5,9 +5,8 @@ pragma solidity 0.8.14;
 
 import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
 import { ERC4626Upgradeable } from "../openzeppelin/ERC4626Upgradeable.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
+import { MathUpgradeable as Math } from "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**
     @title ERC4626CapUpgradeable

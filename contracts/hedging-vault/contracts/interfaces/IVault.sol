@@ -8,7 +8,6 @@ import { ILifecycleStates } from "../interfaces/ILifecycleStates.sol";
 import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
 import { IRefundsHelper } from "../interfaces/IRefundsHelper.sol";
 import { IFeeManager } from "../interfaces/IFeeManager.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**  
     @title IVault

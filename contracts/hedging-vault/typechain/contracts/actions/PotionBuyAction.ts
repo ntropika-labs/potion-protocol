@@ -160,7 +160,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
-    "initialize(address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "initialize(address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "nextCycleStartTimestamp()": FunctionFragment;
@@ -305,6 +305,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
+      string,
       string,
       string,
       string,
@@ -818,6 +819,7 @@ export interface PotionBuyAction extends BaseContract {
       operatorAddress: string,
       investmentAsset: string,
       USDC: string,
+      uniswapV3SwapRouter: string,
       potionLiquidityPoolManager: string,
       maxPremiumPercentage_: BigNumberish,
       premiumSlippage_: BigNumberish,
@@ -990,6 +992,7 @@ export interface PotionBuyAction extends BaseContract {
     operatorAddress: string,
     investmentAsset: string,
     USDC: string,
+    uniswapV3SwapRouter: string,
     potionLiquidityPoolManager: string,
     maxPremiumPercentage_: BigNumberish,
     premiumSlippage_: BigNumberish,
@@ -1162,6 +1165,7 @@ export interface PotionBuyAction extends BaseContract {
       operatorAddress: string,
       investmentAsset: string,
       USDC: string,
+      uniswapV3SwapRouter: string,
       potionLiquidityPoolManager: string,
       maxPremiumPercentage_: BigNumberish,
       premiumSlippage_: BigNumberish,
@@ -1432,6 +1436,7 @@ export interface PotionBuyAction extends BaseContract {
       operatorAddress: string,
       investmentAsset: string,
       USDC: string,
+      uniswapV3SwapRouter: string,
       potionLiquidityPoolManager: string,
       maxPremiumPercentage_: BigNumberish,
       premiumSlippage_: BigNumberish,
@@ -1613,6 +1618,7 @@ export interface PotionBuyAction extends BaseContract {
       operatorAddress: string,
       investmentAsset: string,
       USDC: string,
+      uniswapV3SwapRouter: string,
       potionLiquidityPoolManager: string,
       maxPremiumPercentage_: BigNumberish,
       premiumSlippage_: BigNumberish,
