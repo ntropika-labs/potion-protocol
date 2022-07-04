@@ -4,9 +4,9 @@ name: Development branch actions
 on:
   workflow_dispatch:
   push:
-    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop]
   pull_request:
-    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop]
 
 permissions:
   contents: read
