@@ -39,19 +39,25 @@ describe("InputSplider.cy.ts", () => {
     });
   });
 
-  context.skip("Handles user inputs correctly", () => {
+  context("Handles user inputs correctly", () => {
     it("returns the value", () => {
-      cy.get("[test-slider-input]").invoke("val", 88).trigger("input");
+      cy.get("[test-slider-input]")
+        .invoke("val", 88)
+        .trigger("input", { force: true });
       cy.get("@onUpdateSpy").should("have.been.calledWith", 88);
     });
 
     it("returns max if a value > max has been selected", () => {
-      cy.get("[test-slider-input]").invoke("val", 101).trigger("input");
+      cy.get("[test-slider-input]")
+        .invoke("val", 101)
+        .trigger("input", { force: true });
       cy.get("@onUpdateSpy").should("have.been.calledWith", 100);
     });
 
     it("returns min if a value < min has been selected", () => {
-      cy.get("[test-slider-input]").invoke("val", -1).trigger("input");
+      cy.get("[test-slider-input]")
+        .invoke("val", -1)
+        .trigger("input", { force: true });
       cy.get("@onUpdateSpy").should("have.been.calledWith", 1);
     });
   });
