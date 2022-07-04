@@ -1,8 +1,7 @@
 import { network, ethers } from "hardhat";
-import { Contract } from "ethers";
 import { FakeContract } from "@defi-wonderland/smock";
 
-import { IERC20, IPotionLiquidityPool, ISwapRouter } from "../../typechain";
+import { IERC20, IPotionLiquidityPool, ISwapRouter, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { fakeERC20, fakePotionLiquidityPoolManager, fakeUniswapV3SwapRouter } from "../smock/fakesLibrary";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../../scripts/hedging-vault/deployHedgingVault";
 import { HedgingVaultDeploymentConfigs, HedgingVaultConfigParams } from "../../scripts/config/deployConfig";
@@ -15,8 +14,8 @@ export interface MockOptions {
 }
 
 export interface TestingEnvironmentDeployment {
-    investmentVault: Contract;
-    potionBuyAction: Contract;
+    investmentVault: InvestmentVault;
+    potionBuyAction: PotionBuyAction;
     fakeUSDC?: FakeContract<IERC20>;
     fakeUnderlyingAsset?: FakeContract<IERC20>;
     fakePotionProtocol?: FakeContract<IPotionLiquidityPool>;
@@ -30,52 +29,53 @@ async function mockContractsIfNeeded(
     const testingEnvironmentDeployment: Partial<TestingEnvironmentDeployment> = {};
 
     // Check if need to mock USDC
-    if (!deploymentConfig.USDC && mockOptions.mockUSDC) {
+    if (mockOptions.mockUSDC) {
         testingEnvironmentDeployment.fakeUSDC = await fakeERC20();
         deploymentConfig.USDC = testingEnvironmentDeployment.fakeUSDC.address;
     }
 
     // Check if need to mock underlying asset
-    if (!deploymentConfig.underlyingAsset && mockOptions.mockUnderlyingAsset) {
+    if (mockOptions.mockUnderlyingAsset) {
         testingEnvironmentDeployment.fakeUnderlyingAsset = await fakeERC20();
         deploymentConfig.underlyingAsset = testingEnvironmentDeployment.fakeUnderlyingAsset.address;
     }
 
     // Check if need to mock PotionProtocol
-    if (!deploymentConfig.potionLiquidityPoolManager && mockOptions.mockPotionLiquidityPoolManager) {
+    if (mockOptions.mockPotionLiquidityPoolManager) {
         testingEnvironmentDeployment.fakePotionProtocol = await fakePotionLiquidityPoolManager();
         deploymentConfig.potionLiquidityPoolManager = testingEnvironmentDeployment.fakePotionProtocol.address;
     }
 
     // Check if need to mock UniswapV3SwapRouter
-    if (!deploymentConfig.uniswapV3SwapRouter && mockOptions.mockUniswapV3SwapRouter) {
+    if (mockOptions.mockUniswapV3SwapRouter) {
         testingEnvironmentDeployment.fakeUniswapV3 = await fakeUniswapV3SwapRouter();
         deploymentConfig.uniswapV3SwapRouter = testingEnvironmentDeployment.fakeUniswapV3.address;
     }
 
     return testingEnvironmentDeployment;
 }
-export async function deployTestingEnv(mockOptions: MockOptions = {}) {
-    const deployer = (await ethers.getSigners())[0];
-    const networkName = network.name;
 
-    const deploymentConfig = HedgingVaultDeploymentConfigs[networkName];
+export function getDeploymentConfig(networkName: string): HedgingVaultConfigParams {
+    return HedgingVaultDeploymentConfigs[networkName];
+}
+
+export async function deployTestingEnv(deploymentConfig: HedgingVaultConfigParams, mockOptions: MockOptions = {}) {
+    const deployer = (await ethers.getSigners())[0];
 
     // Deployment config is modified here if contracts are mocked
     const testingEnvironmentDeployment = await mockContractsIfNeeded(deploymentConfig, mockOptions);
+
     if (!deploymentConfig.USDC) {
-        throw new Error(`No USDC address provided for network '${networkName}' and no mocking enabled`);
+        throw new Error(`No USDC address provided and no mocking enabled`);
     }
     if (!deploymentConfig.underlyingAsset) {
-        throw new Error(`No underlying asset address provided for network '${networkName}' and no mocking enabled`);
+        throw new Error(`No underlying asset address provided and no mocking enabled`);
     }
     if (!deploymentConfig.potionLiquidityPoolManager) {
-        throw new Error(
-            `No potionLiquidityPoolManager address provided for network '${networkName}' and no mocking enabled`,
-        );
+        throw new Error(`No potionLiquidityPoolManager address provided and no mocking enabled`);
     }
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        throw new Error(`No uniswapV3SwapRouter address provided for network '${networkName}' and no mocking enabled`);
+        throw new Error(`No uniswapV3SwapRouter address provided and no mocking enabled`);
     }
 
     const deploymentParams: HedgingVaultDeployParams = {

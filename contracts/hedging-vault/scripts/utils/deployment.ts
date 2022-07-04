@@ -15,7 +15,8 @@ const DEPLOYMENTS_INDEX_FILE = "index.ts";
 
 export enum DeploymentFlags {
     Deploy = 1 << 0,
-    DeployAndVerify = 1 << 1,
+    Verify = 1 << 1,
+    Export = 1 << 2,
 }
 
 export interface DeploymentOptions extends FactoryOptions {
@@ -129,13 +130,15 @@ export async function deploy(
         alias = options.alias;
     }
 
-    if (alias) {
-        await exportContract(alias, contract.address, transactionReceipt.blockNumber);
-    } else {
-        await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+    if (flags && flags & DeploymentFlags.Export) {
+        if (alias) {
+            await exportContract(alias, contract.address, transactionReceipt.blockNumber);
+        } else {
+            await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+        }
     }
 
-    if (flags && (flags & DeploymentFlags.DeployAndVerify) === DeploymentFlags.DeployAndVerify) {
+    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
         await verify(contract.address, args);
     }
@@ -159,13 +162,15 @@ export async function deployUpgrade(
         alias = options.alias;
     }
 
-    if (alias) {
-        await exportContract(alias, contract.address, transactionReceipt.blockNumber);
-    } else {
-        await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+    if (flags && flags & DeploymentFlags.Export) {
+        if (alias) {
+            await exportContract(alias, contract.address, transactionReceipt.blockNumber);
+        } else {
+            await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+        }
     }
 
-    if (flags && (flags & DeploymentFlags.DeployAndVerify) === DeploymentFlags.DeployAndVerify) {
+    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
         await verify(contract.address, args);
     }

@@ -23,6 +23,7 @@ export async function deployPotionBuyAction(parameters: PotionBuyActionDeployPar
         parameters.operatorAddress,
         parameters.investmentAsset,
         parameters.USDC,
+        parameters.uniswapV3SwapRouter,
         parameters.potionLiquidityPoolManager,
         parameters.maxPremiumPercentage,
         parameters.premiumSlippage,

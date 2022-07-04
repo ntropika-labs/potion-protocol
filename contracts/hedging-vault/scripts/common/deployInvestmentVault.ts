@@ -13,7 +13,7 @@ export interface InvestmentVaultDeployParams {
 }
 
 export async function deployInvestmentVault(parameters: InvestmentVaultDeployParams): Promise<InvestmentVault> {
-    return (await deployUpgrade("PotionBuyAction", [
+    return (await deployUpgrade("InvestmentVault", [
         parameters.adminAddress,
         parameters.strategistAddress,
         parameters.operatorAddress,
