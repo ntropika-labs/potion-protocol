@@ -24,7 +24,7 @@
     "storybook": "BROWSER=none start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "cypress": "cypress open",
-    "test-component-ci": "cypress run --component --browser chrome",
+    "test-component-ci": "cypress run --component",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-watch": "vitest watch --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
