@@ -39,7 +39,7 @@ describe("InputSplider.cy.ts", () => {
     });
   });
 
-  context("Handles user inputs correctly", () => {
+  context.skip("Handles user inputs correctly", () => {
     it("returns the value", () => {
       cy.get("[test-slider-input]").invoke("val", 88).trigger("input");
       cy.get("@onUpdateSpy").should("have.been.calledWith", 88);
