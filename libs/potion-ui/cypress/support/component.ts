@@ -18,26 +18,15 @@
 import "./commands";
 import "@unocss/reset/tailwind.css";
 import "potion-unocss/src/variables.css";
-import "../../src/assets/base.css";
 import "uno.css";
+import "cypress-fail-fast";
 
 import { mount } from "cypress/vue";
 import { h } from "vue";
 import { createI18n } from "vue-i18n";
 
-import { vAutoAnimate } from "@formkit/auto-animate";
-
-//@ts-expect-error shims error
-import EmptyLayout from "../../src/layouts/EmptyLayout.vue";
-
 import type { CyMountOptions } from "cypress/vue";
 
-const i18n = createI18n({
-  legacy: false,
-  locale: "en",
-  fallbackLocale: "en",
-  messages: {},
-});
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
@@ -51,6 +40,13 @@ declare global {
   }
 }
 
+const i18n = createI18n({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: {},
+});
+
 Cypress.Commands.add(
   "mount",
   <C extends Parameters<typeof mount>[0]>(
@@ -62,10 +58,8 @@ Cypress.Commands.add(
     options.global.stubs.transition = false;
     options.global.plugins = options.global.plugins || [];
     options.global.plugins.push(i18n);
-    options.global.directives = options.global.directives || [];
-    options.global.directives = { "auto-animate": vAutoAnimate };
     return mount(() => {
-      return h(EmptyLayout, () => h(comp, options.props, []));
+      return h(comp, options.props, []);
     }, options);
   }
 );

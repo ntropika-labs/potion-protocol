@@ -75,7 +75,7 @@ defineExpose({
 });
 </script>
 <template>
-  <div class="relative w-full h-[4px] bg-dark/20">
+  <div class="relative w-full h-[4px] bg-dark/20" test-slider-wrapper>
     <input
       ref="inputElement"
       test-slider-input

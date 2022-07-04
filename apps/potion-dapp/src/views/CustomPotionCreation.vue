@@ -289,7 +289,7 @@ const formattedPremiumSlippage = computed(() => {
   return currencyFormatter(premiumSlippage.value, "USDC");
 });
 const criteriasParam = ref<Criteria[]>([]);
-watch(tokenSelected, () => {
+watch([tokenSelected, strikeSelectedRelative, durationSelected], () => {
   if (tokenSelected.value) {
     const t = unref(tokenSelected) ?? { name: "", symbol: "", address: "" };
     criteriasParam.value = [
@@ -443,8 +443,9 @@ watch(approveReceipt, (receipt) => {
 watch(buyPotionTx, (transaction) => {
   createTransactionNotification(transaction, t("buying_potion"));
 });
-watch(buyPotionReceipt, (transaction) => {
-  createTransactionNotification(transaction, t("potion_bought"));
+
+watch(buyPotionReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 
 //Similar Potions

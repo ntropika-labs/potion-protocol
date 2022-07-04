@@ -453,7 +453,7 @@ watch(approveReceipt, (receipt) => {
 watch(buyPotionTx, (transaction) => {
   createTransactionNotification(transaction, t("buying_potion"));
 });
-watch(buyPotionReceipt, (transaction) => {
-  createTransactionNotification(transaction, t("potion_bought"));
+watch(buyPotionReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
