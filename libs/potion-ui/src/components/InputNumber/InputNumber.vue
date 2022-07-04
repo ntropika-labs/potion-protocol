@@ -1,5 +1,6 @@
 <template>
   <BaseCard
+    test-input-number
     :color="props.color"
     :full-height="false"
     :class="{

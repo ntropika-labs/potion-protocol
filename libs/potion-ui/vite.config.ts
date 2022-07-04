@@ -1,6 +1,6 @@
 import path from "path";
 import Unocss from "unocss/vite";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 
 import vue from "@vitejs/plugin-vue";
 
@@ -39,6 +39,11 @@ export default defineConfig({
        *   to resolve to vitest which, critically, exports { expect } as well.
        */
       "@storybook/jest": "vitest",
+    },
+  },
+  server: {
+    fs: {
+      allow: [searchForWorkspaceRoot(process.cwd()), "../../libs"],
     },
   },
 });

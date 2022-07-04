@@ -33,13 +33,16 @@ const emit = defineEmits<{
     <h3
       v-if="subtitle"
       class="inline-block bg-gradient-to-r from-secondary-600 to-secondary-400 text-transparent bg-clip-text uppercase text-sm font-semibold"
+      test-jumbo-header-subtitle
     >
       {{ props.subtitle }}
     </h3>
-    <h2 class="my-3 w-3/4 font-extrabold text-3xl">
+    <h2 class="my-3 w-3/4 font-extrabold text-3xl" test-jumbo-header-title>
       {{ props.title }}
     </h2>
-    <slot></slot>
+    <div test-jumbo-header-slot>
+      <slot></slot>
+    </div>
     <div>
       <BaseButton
         v-if="props.ctaLabel"
@@ -56,6 +59,7 @@ const emit = defineEmits<{
         v-if="props.iconSrcset"
         class="h-full w-full flex justify-end"
         :srcset-map="props.iconSrcset"
+        test-jumbo-header-icon
       ></PictureSet>
     </div>
   </BaseCard>
