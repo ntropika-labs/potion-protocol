@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
-import { FakeContract } from "@defi-wonderland/smock";
+import { FakeContract, MockContract } from "@defi-wonderland/smock";
 
 import {
     IERC20,
@@ -9,12 +9,13 @@ import {
     InvestmentVault,
     PotionBuyAction,
     IOpynController,
+    ERC20PresetMinterPauser,
 } from "../../typechain";
 import {
-    fakeERC20,
-    fakePotionLiquidityPoolManager,
-    fakeUniswapV3SwapRouter,
-    fakeOpynController,
+    mockERC20,
+    mockPotionLiquidityPoolManager,
+    mockUniswapV3SwapRouter,
+    mockOpynController,
 } from "../smock/fakesLibrary";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../../scripts/hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
@@ -53,8 +54,8 @@ export interface TestingEnvironmentDeployment {
     opynController: string;
 
     // Mocks
-    fakeUSDC?: FakeContract<IERC20>;
-    fakeUnderlyingAsset?: FakeContract<IERC20>;
+    mockUSDC?: MockContract<ERC20PresetMinterPauser>;
+    mockUnderlyingAsset?: MockContract<ERC20PresetMinterPauser>;
     fakePotionProtocol?: FakeContract<IPotionLiquidityPool>;
     fakeOpynController?: FakeContract<IOpynController>;
     fakeUniswapV3?: FakeContract<ISwapRouter>;
@@ -65,32 +66,32 @@ async function mockContractsIfNeeded(mockOptions: MockOptions): Promise<Partial<
 
     // Check if need to mock USDC
     if (mockOptions.mockUSDC) {
-        testingEnvironmentDeployment.fakeUSDC = await fakeERC20();
-        testingEnvironmentDeployment.USDC = testingEnvironmentDeployment.fakeUSDC.address;
+        testingEnvironmentDeployment.mockUSDC = await mockERC20();
+        testingEnvironmentDeployment.USDC = testingEnvironmentDeployment.mockUSDC.address;
     }
 
     // Check if need to mock underlying asset
     if (mockOptions.mockUnderlyingAsset) {
-        testingEnvironmentDeployment.fakeUnderlyingAsset = await fakeERC20();
-        testingEnvironmentDeployment.underlyingAsset = testingEnvironmentDeployment.fakeUnderlyingAsset.address;
+        testingEnvironmentDeployment.mockUnderlyingAsset = await mockERC20();
+        testingEnvironmentDeployment.underlyingAsset = testingEnvironmentDeployment.mockUnderlyingAsset.address;
     }
 
     // Check if need to mock PotionProtocol
     if (mockOptions.mockPotionLiquidityPoolManager) {
-        testingEnvironmentDeployment.fakePotionProtocol = await fakePotionLiquidityPoolManager();
+        testingEnvironmentDeployment.fakePotionProtocol = await mockPotionLiquidityPoolManager();
         testingEnvironmentDeployment.potionLiquidityPoolManager =
             testingEnvironmentDeployment.fakePotionProtocol.address;
     }
 
     // Check if need to mock OpynController
     if (mockOptions.mockOpynController) {
-        testingEnvironmentDeployment.fakeOpynController = await fakeOpynController();
+        testingEnvironmentDeployment.fakeOpynController = await mockOpynController();
         testingEnvironmentDeployment.opynController = testingEnvironmentDeployment.fakeOpynController.address;
     }
 
     // Check if need to mock UniswapV3SwapRouter
     if (mockOptions.mockUniswapV3SwapRouter) {
-        testingEnvironmentDeployment.fakeUniswapV3 = await fakeUniswapV3SwapRouter();
+        testingEnvironmentDeployment.fakeUniswapV3 = await mockUniswapV3SwapRouter();
         testingEnvironmentDeployment.uniswapV3SwapRouter = testingEnvironmentDeployment.fakeUniswapV3.address;
     }
 

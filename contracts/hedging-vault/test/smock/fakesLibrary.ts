@@ -1,7 +1,6 @@
 import { smock } from "@defi-wonderland/smock";
 import {
-    IERC20,
-    IERC20__factory,
+    TestWrapperERC20PresetMinterPauser__factory,
     IPotionLiquidityPool,
     IPotionLiquidityPool__factory,
     IOpynController,
@@ -10,18 +9,21 @@ import {
     ISwapRouter__factory,
 } from "../../typechain";
 
-export async function fakeERC20() {
-    return smock.fake<IERC20>(IERC20__factory.abi);
+export async function mockERC20() {
+    const ERC20Factory = await smock.mock<TestWrapperERC20PresetMinterPauser__factory>(
+        "TestWrapperERC20PresetMinterPauser",
+    );
+    return ERC20Factory.deploy();
 }
 
-export async function fakePotionLiquidityPoolManager() {
+export async function mockPotionLiquidityPoolManager() {
     return smock.fake<IPotionLiquidityPool>(IPotionLiquidityPool__factory.abi);
 }
 
-export async function fakeOpynController() {
+export async function mockOpynController() {
     return smock.fake<IOpynController>(IOpynController__factory.abi);
 }
 
-export async function fakeUniswapV3SwapRouter() {
+export async function mockUniswapV3SwapRouter() {
     return smock.fake<ISwapRouter>(ISwapRouter__factory.abi);
 }

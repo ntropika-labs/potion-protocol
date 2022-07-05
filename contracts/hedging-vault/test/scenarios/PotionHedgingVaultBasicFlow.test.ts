@@ -9,8 +9,9 @@ import {
 } from "../utils/deployTestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { InvestmentVault, PotionBuyAction } from "../../typechain";
+import { ERC20PresetMinterPauser, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { LifecycleStates } from "../utils/LifecycleStates";
+import { MockContract } from "@defi-wonderland/smock";
 /**
     @notice Hedging Vault basic flow unit tests    
     
@@ -18,16 +19,17 @@ import { LifecycleStates } from "../utils/LifecycleStates";
  */
 describe.only("HedgingVault", function () {
     let ownerAccount: SignerWithAddress;
-    let unpriviledgedAccount: SignerWithAddress;
+    let investorAccount: SignerWithAddress;
 
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
+    let underlyingAsset: MockContract<ERC20PresetMinterPauser>;
     let tEnv: TestingEnvironmentDeployment;
 
     before(async function () {
         ownerAccount = (await ethers.getSigners())[0];
-        unpriviledgedAccount = (await ethers.getSigners())[1];
+        investorAccount = (await ethers.getSigners())[1];
 
         deploymentConfig = getDeploymentConfig(network.name);
 
@@ -42,6 +44,11 @@ describe.only("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
+
+        if (!tEnv.mockUnderlyingAsset) {
+            throw new Error("Underlying asset not mocked");
+        }
+        underlyingAsset = tEnv.mockUnderlyingAsset;
     });
 
     it("Vault Deployment Values", async function () {
@@ -104,5 +111,30 @@ describe.only("HedgingVault", function () {
         expect(await action.swapSlippage()).to.equal(tEnv.swapSlippage);
         expect(await action.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
+    });
+
+    it("Basic Deposit/Withdrawal", async function () {
+        // Mint and approve
+        await underlyingAsset.mint(investorAccount.address, 20000);
+        expect(await underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
+
+        await underlyingAsset.connect(investorAccount).approve(vault.address, 20000);
+        expect(
+            await underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
+        ).to.equal(20000);
+
+        // Deposit and check received shares
+        await vault.connect(investorAccount).deposit(20000, investorAccount.address);
+        expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
+        expect(await underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
+
+        // Withdraw and check received assets
+        await vault.connect(investorAccount).withdraw(20000, investorAccount.address, investorAccount.address);
+        expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
+        expect(await underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
+    });
+    it("Deposit and execute investment cycle", async function () {
+        // Enable Uniswap swap
+        // Enable Potion Buy on Pool Manager
     });
 });
