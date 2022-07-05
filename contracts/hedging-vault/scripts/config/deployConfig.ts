@@ -1,12 +1,13 @@
+import { BigNumber } from "ethers";
 import { NetworksType } from "../../hardhat.helpers";
 
 /**
- * @title HedgingVaultConfigParams
+ * @title PotionHedgingVaultConfigParams
  *
  * @notice Configuration parameters for the hedging vaults. It defines the configuration for a specific network.
  * These are used to populate the { HedgingVaultDeploymentConfig } object in order to deploy the contracts
  */
-export interface HedgingVaultConfigParams {
+export interface PotionHedgingVaultConfigParams {
     // Roles
     //
     // - Admin address is the deployer itself
@@ -25,39 +26,43 @@ export interface HedgingVaultConfigParams {
     // Investment configuration
     //
     // All fields are mandatory
-    maxPremiumPercentage: number;
-    premiumSlippage: number;
-    swapSlippage: number;
-    maxSwapDurationSecs: number;
-    cycleDurationSecs: number;
+    underlyingAssetCap?: BigNumber;
+    maxPremiumPercentage: BigNumber;
+    premiumSlippage: BigNumber;
+    swapSlippage: BigNumber;
+    maxSwapDurationSecs: BigNumber;
+    cycleDurationSecs: BigNumber;
 
     // Fees configuration
     //
     // - If feesRecipient is not provided, then the admin address is used as the fees recipient
     // - The other values are mandatory
-    managementFee: number;
-    performanceFee: number;
+    managementFee: BigNumber;
+    performanceFee: BigNumber;
     feesRecipient?: string;
 
     // Third-party dependencies
     //
     // If uniswapV3SwapRouter is not provided, then a fake uniswapV3SwapRouter is deployed and used
     // If potionLiquidityPoolManager is not provided, then a fake potionLiquidityPoolManager is deployed and used
+    // If opynController is not provided, then a fake opynController is deployed and used
     uniswapV3SwapRouter?: string;
     potionLiquidityPoolManager?: string;
+    opynController?: string;
 }
 
-export const HedgingVaultDeploymentConfigs: { [key in NetworksType as string]: HedgingVaultConfigParams } = {
-    hardhat: {
-        // Investment configuration
-        maxPremiumPercentage: 2000000, // 2%
-        premiumSlippage: 2000000, // 2%
-        swapSlippage: 2000000, // 2%
-        maxSwapDurationSecs: 60, // 1 minute
-        cycleDurationSecs: 86400, // 1 day
+export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as string]: PotionHedgingVaultConfigParams } =
+    {
+        hardhat: {
+            // Investment configuration
+            maxPremiumPercentage: BigNumber.from(2000000), // 2%
+            premiumSlippage: BigNumber.from(2000000), // 2%
+            swapSlippage: BigNumber.from(2000000), // 2%
+            maxSwapDurationSecs: BigNumber.from(60), // 1 minute
+            cycleDurationSecs: BigNumber.from(86400), // 1 day
 
-        // Fees configuration
-        managementFee: 3000000, // 3%
-        performanceFee: 3000000, // 3%
-    },
-};
+            // Fees configuration
+            managementFee: BigNumber.from(3000000), // 3%
+            performanceFee: BigNumber.from(3000000), // 3%
+        },
+    };

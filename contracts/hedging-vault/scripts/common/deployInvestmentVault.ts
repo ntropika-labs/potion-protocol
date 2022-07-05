@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers";
 import { InvestmentVault } from "../../typechain";
 import { deployUpgrade } from "../utils/deployment";
 
@@ -6,8 +7,9 @@ export interface InvestmentVaultDeployParams {
     strategistAddress: string;
     operatorAddress: string;
     underlyingAsset: string;
-    managementFee: number;
-    performanceFee: number;
+    underlyingAssetCap: BigNumber;
+    managementFee: BigNumber;
+    performanceFee: BigNumber;
     feesRecipient: string;
     actions: string[];
 }
@@ -18,6 +20,7 @@ export async function deployInvestmentVault(parameters: InvestmentVaultDeployPar
         parameters.strategistAddress,
         parameters.operatorAddress,
         parameters.underlyingAsset,
+        parameters.underlyingAssetCap,
         parameters.managementFee,
         parameters.performanceFee,
         parameters.feesRecipient,

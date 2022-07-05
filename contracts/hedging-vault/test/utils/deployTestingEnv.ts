@@ -1,114 +1,193 @@
-import { network, ethers } from "hardhat";
+import { ethers } from "hardhat";
+import { BigNumber } from "ethers";
 import { FakeContract } from "@defi-wonderland/smock";
 
-import { IERC20, IPotionLiquidityPool, ISwapRouter, InvestmentVault, PotionBuyAction } from "../../typechain";
-import { fakeERC20, fakePotionLiquidityPoolManager, fakeUniswapV3SwapRouter } from "../smock/fakesLibrary";
-import { deployHedgingVault, HedgingVaultDeployParams } from "../../scripts/hedging-vault/deployHedgingVault";
-import { HedgingVaultDeploymentConfigs, HedgingVaultConfigParams } from "../../scripts/config/deployConfig";
+import {
+    IERC20,
+    IPotionLiquidityPool,
+    ISwapRouter,
+    InvestmentVault,
+    PotionBuyAction,
+    IOpynController,
+} from "../../typechain";
+import {
+    fakeERC20,
+    fakePotionLiquidityPoolManager,
+    fakeUniswapV3SwapRouter,
+    fakeOpynController,
+} from "../smock/fakesLibrary";
+import { deployHedgingVault, HedgingVaultDeployParams } from "../../scripts/hedging-vault/deployPotionHedgingVault";
+import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 export interface MockOptions {
     mockUSDC?: boolean;
     mockUnderlyingAsset?: boolean;
     mockUniswapV3SwapRouter?: boolean;
     mockPotionLiquidityPoolManager?: boolean;
+    mockOpynController?: boolean;
 }
 
 export interface TestingEnvironmentDeployment {
+    // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
+
+    // Config
+    adminAddress: string;
+    strategistAddress: string;
+    operatorAddress: string;
+    USDC: string;
+    underlyingAsset: string;
+    underlyingAssetCap: BigNumber;
+    maxPremiumPercentage: BigNumber;
+    premiumSlippage: BigNumber;
+    swapSlippage: BigNumber;
+    maxSwapDurationSecs: BigNumber;
+    cycleDurationSecs: BigNumber;
+    managementFee: BigNumber;
+    performanceFee: BigNumber;
+    feesRecipient: string;
+    uniswapV3SwapRouter: string;
+    potionLiquidityPoolManager: string;
+    opynController: string;
+
+    // Mocks
     fakeUSDC?: FakeContract<IERC20>;
     fakeUnderlyingAsset?: FakeContract<IERC20>;
     fakePotionProtocol?: FakeContract<IPotionLiquidityPool>;
+    fakeOpynController?: FakeContract<IOpynController>;
     fakeUniswapV3?: FakeContract<ISwapRouter>;
 }
 
-async function mockContractsIfNeeded(
-    deploymentConfig: HedgingVaultConfigParams,
-    mockOptions: MockOptions,
-): Promise<Partial<TestingEnvironmentDeployment>> {
+async function mockContractsIfNeeded(mockOptions: MockOptions): Promise<Partial<TestingEnvironmentDeployment>> {
     const testingEnvironmentDeployment: Partial<TestingEnvironmentDeployment> = {};
 
     // Check if need to mock USDC
     if (mockOptions.mockUSDC) {
         testingEnvironmentDeployment.fakeUSDC = await fakeERC20();
-        deploymentConfig.USDC = testingEnvironmentDeployment.fakeUSDC.address;
+        testingEnvironmentDeployment.USDC = testingEnvironmentDeployment.fakeUSDC.address;
     }
 
     // Check if need to mock underlying asset
     if (mockOptions.mockUnderlyingAsset) {
         testingEnvironmentDeployment.fakeUnderlyingAsset = await fakeERC20();
-        deploymentConfig.underlyingAsset = testingEnvironmentDeployment.fakeUnderlyingAsset.address;
+        testingEnvironmentDeployment.underlyingAsset = testingEnvironmentDeployment.fakeUnderlyingAsset.address;
     }
 
     // Check if need to mock PotionProtocol
     if (mockOptions.mockPotionLiquidityPoolManager) {
         testingEnvironmentDeployment.fakePotionProtocol = await fakePotionLiquidityPoolManager();
-        deploymentConfig.potionLiquidityPoolManager = testingEnvironmentDeployment.fakePotionProtocol.address;
+        testingEnvironmentDeployment.potionLiquidityPoolManager =
+            testingEnvironmentDeployment.fakePotionProtocol.address;
+    }
+
+    // Check if need to mock OpynController
+    if (mockOptions.mockOpynController) {
+        testingEnvironmentDeployment.fakeOpynController = await fakeOpynController();
+        testingEnvironmentDeployment.opynController = testingEnvironmentDeployment.fakeOpynController.address;
     }
 
     // Check if need to mock UniswapV3SwapRouter
     if (mockOptions.mockUniswapV3SwapRouter) {
         testingEnvironmentDeployment.fakeUniswapV3 = await fakeUniswapV3SwapRouter();
-        deploymentConfig.uniswapV3SwapRouter = testingEnvironmentDeployment.fakeUniswapV3.address;
+        testingEnvironmentDeployment.uniswapV3SwapRouter = testingEnvironmentDeployment.fakeUniswapV3.address;
     }
 
     return testingEnvironmentDeployment;
 }
 
-export function getDeploymentConfig(networkName: string): HedgingVaultConfigParams {
-    return HedgingVaultDeploymentConfigs[networkName];
-}
+async function prepareDeploymentValues(
+    deployer: SignerWithAddress,
+    deploymentConfig: PotionHedgingVaultConfigParams,
+    mockOptions: MockOptions,
+): Promise<TestingEnvironmentDeployment> {
+    const testingEnvironmentDeployment = await mockContractsIfNeeded(mockOptions);
 
-export async function deployTestingEnv(deploymentConfig: HedgingVaultConfigParams, mockOptions: MockOptions = {}) {
-    const deployer = (await ethers.getSigners())[0];
+    testingEnvironmentDeployment.adminAddress = deployer.address;
+    testingEnvironmentDeployment.strategistAddress = deploymentConfig.strategistAddress || deployer.address;
+    testingEnvironmentDeployment.operatorAddress = deploymentConfig.operatorAddress || deployer.address;
+    testingEnvironmentDeployment.underlyingAssetCap =
+        deploymentConfig.underlyingAssetCap || ethers.constants.MaxUint256;
 
-    // Deployment config is modified here if contracts are mocked
-    const testingEnvironmentDeployment = await mockContractsIfNeeded(deploymentConfig, mockOptions);
+    testingEnvironmentDeployment.maxPremiumPercentage = deploymentConfig.maxPremiumPercentage;
+    testingEnvironmentDeployment.premiumSlippage = deploymentConfig.premiumSlippage;
+    testingEnvironmentDeployment.swapSlippage = deploymentConfig.swapSlippage;
+    testingEnvironmentDeployment.maxSwapDurationSecs = deploymentConfig.maxSwapDurationSecs;
+    testingEnvironmentDeployment.cycleDurationSecs = deploymentConfig.cycleDurationSecs;
+    testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
+    testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
+    testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
 
-    if (!deploymentConfig.USDC) {
+    // Check if the deployment is valid
+    if (!testingEnvironmentDeployment.USDC) {
         throw new Error(`No USDC address provided and no mocking enabled`);
     }
-    if (!deploymentConfig.underlyingAsset) {
+    if (!testingEnvironmentDeployment.underlyingAsset) {
         throw new Error(`No underlying asset address provided and no mocking enabled`);
     }
-    if (!deploymentConfig.potionLiquidityPoolManager) {
+    if (!testingEnvironmentDeployment.potionLiquidityPoolManager) {
         throw new Error(`No potionLiquidityPoolManager address provided and no mocking enabled`);
     }
-    if (!deploymentConfig.uniswapV3SwapRouter) {
+    if (!testingEnvironmentDeployment.opynController) {
+        throw new Error(`No opynController address provided and no mocking enabled`);
+    }
+    if (!testingEnvironmentDeployment.uniswapV3SwapRouter) {
         throw new Error(`No uniswapV3SwapRouter address provided and no mocking enabled`);
     }
+
+    return testingEnvironmentDeployment as TestingEnvironmentDeployment;
+}
+
+export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
+    return PotionHedgingVaultDeploymentConfigs[networkName];
+}
+
+export async function deployTestingEnv(
+    deploymentConfig: PotionHedgingVaultConfigParams,
+    mockOptions: MockOptions = {},
+) {
+    const deployer = (await ethers.getSigners())[0];
+
+    const testEnvDeployment: TestingEnvironmentDeployment = await prepareDeploymentValues(
+        deployer,
+        deploymentConfig,
+        mockOptions,
+    );
 
     const deploymentParams: HedgingVaultDeployParams = {
         // Roles
         adminAddress: deployer.address,
-        strategistAddress: deploymentConfig.strategistAddress || deployer.address,
-        operatorAddress: deploymentConfig.operatorAddress || deployer.address,
+        strategistAddress: testEnvDeployment.strategistAddress,
+        operatorAddress: testEnvDeployment.operatorAddress,
 
         // Assets addresses
-        USDC: deploymentConfig.USDC,
-        underlyingAsset: deploymentConfig.underlyingAsset,
+        USDC: testEnvDeployment.USDC,
+        underlyingAsset: testEnvDeployment.underlyingAsset,
 
         // Investment configuration
-        maxPremiumPercentage: deploymentConfig.maxPremiumPercentage,
-        premiumSlippage: deploymentConfig.premiumSlippage,
-        swapSlippage: deploymentConfig.swapSlippage,
-        maxSwapDurationSecs: deploymentConfig.maxSwapDurationSecs,
-        cycleDurationSecs: deploymentConfig.cycleDurationSecs,
+        underlyingAssetCap: testEnvDeployment.underlyingAssetCap,
+        maxPremiumPercentage: testEnvDeployment.maxPremiumPercentage,
+        premiumSlippage: testEnvDeployment.premiumSlippage,
+        swapSlippage: testEnvDeployment.swapSlippage,
+        maxSwapDurationSecs: testEnvDeployment.maxSwapDurationSecs,
+        cycleDurationSecs: testEnvDeployment.cycleDurationSecs,
 
         // Fees configuration
-        managementFee: deploymentConfig.managementFee,
-        performanceFee: deploymentConfig.performanceFee,
-        feesRecipient: deploymentConfig.feesRecipient || deployer.address,
+        managementFee: testEnvDeployment.managementFee,
+        performanceFee: testEnvDeployment.performanceFee,
+        feesRecipient: testEnvDeployment.feesRecipient,
 
         // Third-party dependencies
-        uniswapV3SwapRouter: deploymentConfig.uniswapV3SwapRouter,
-        potionLiquidityPoolManager: deploymentConfig.potionLiquidityPoolManager,
+        uniswapV3SwapRouter: testEnvDeployment.uniswapV3SwapRouter,
+        potionLiquidityPoolManager: testEnvDeployment.potionLiquidityPoolManager,
+        opynController: testEnvDeployment.opynController,
     };
 
     const [investmentVault, potionBuyAction] = await deployHedgingVault(deploymentParams);
 
-    testingEnvironmentDeployment.investmentVault = investmentVault;
-    testingEnvironmentDeployment.potionBuyAction = potionBuyAction;
+    testEnvDeployment.investmentVault = investmentVault;
+    testEnvDeployment.potionBuyAction = potionBuyAction;
 
-    return testingEnvironmentDeployment as TestingEnvironmentDeployment;
+    return testEnvDeployment;
 }

@@ -1,6 +1,7 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
 import { InvestmentVault, PotionBuyAction } from "../../typechain";
+import { BigNumber } from "ethers";
 
 export interface HedgingVaultDeployParams {
     // Roles
@@ -13,20 +14,22 @@ export interface HedgingVaultDeployParams {
     underlyingAsset: string;
 
     // Investment configuration
-    maxPremiumPercentage: number;
-    premiumSlippage: number;
-    swapSlippage: number;
-    maxSwapDurationSecs: number;
-    cycleDurationSecs: number;
+    underlyingAssetCap: BigNumber;
+    maxPremiumPercentage: BigNumber;
+    premiumSlippage: BigNumber;
+    swapSlippage: BigNumber;
+    maxSwapDurationSecs: BigNumber;
+    cycleDurationSecs: BigNumber;
 
     // Fees configuration
-    managementFee: number;
-    performanceFee: number;
+    managementFee: BigNumber;
+    performanceFee: BigNumber;
     feesRecipient: string;
 
     // Third-party dependencies
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
+    opynController: string;
 }
 
 export async function deployHedgingVault(
@@ -39,6 +42,7 @@ export async function deployHedgingVault(
         investmentAsset: parameters.underlyingAsset,
         USDC: parameters.USDC,
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
+        opynController: parameters.opynController,
         potionLiquidityPoolManager: parameters.potionLiquidityPoolManager,
         maxPremiumPercentage: parameters.maxPremiumPercentage,
         premiumSlippage: parameters.premiumSlippage,
@@ -54,6 +58,7 @@ export async function deployHedgingVault(
         strategistAddress: parameters.strategistAddress,
         operatorAddress: parameters.operatorAddress,
         underlyingAsset: parameters.underlyingAsset,
+        underlyingAssetCap: parameters.underlyingAssetCap,
         managementFee: parameters.managementFee,
         performanceFee: parameters.performanceFee,
         feesRecipient: parameters.feesRecipient,

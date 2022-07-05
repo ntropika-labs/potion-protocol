@@ -2,28 +2,16 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { TestWrapperLifecycleStates } from "../../typechain";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-
+import { LifecycleStates } from "../utils/LifecycleStates";
 /**
     @notice LifecycleStates unit tests    
     
     @author Roberto Cano <robercano>
  */
 describe("LifecycleStates", function () {
-    enum LifecycleStates {
-        Unlocked = 0,
-        Committed = 1,
-        Locked = 2,
-    }
-
-    let ownerAccount: SignerWithAddress;
-    let unpriviledgedAccount: SignerWithAddress;
     let lifecycleStates: TestWrapperLifecycleStates;
 
     before(async function () {
-        ownerAccount = (await ethers.getSigners())[0];
-        unpriviledgedAccount = (await ethers.getSigners())[1];
-
         const LifecycleStatesFactory = await ethers.getContractFactory("TestWrapperLifecycleStates");
         lifecycleStates = (await LifecycleStatesFactory.deploy()) as TestWrapperLifecycleStates;
 
