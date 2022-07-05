@@ -61,6 +61,7 @@ abstract contract BaseVaultUpgradeable is
         @param strategistAddress The address of the strategist of the Vault
         @param operatorAddress The address of the operator of the Vault
         @param underlyingAsset The address of the asset managed by this vault
+        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
         @param managementFee The fee percentage charged for the management of the Vault
         @param performanceFee The fee percentage charged for the performance of the Vault
         @param feesRecipient The address of the account that will receive the fees
@@ -71,6 +72,7 @@ abstract contract BaseVaultUpgradeable is
         address strategistAddress,
         address operatorAddress,
         address underlyingAsset,
+        uint256 underlyingAssetCap,
         uint256 managementFee,
         uint256 performanceFee,
         address payable feesRecipient,
@@ -83,7 +85,7 @@ abstract contract BaseVaultUpgradeable is
         cannotRefundToken[0] = underlyingAsset;
 
         __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
-        __ERC4626Cap_init_unchained(underlyingAsset);
+        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundToken, false);

@@ -62,15 +62,21 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @notice It does chain the initialization to the parent contract because both contracts
         are quite coupled and `UniswapV3OracleUpgradeable` MUST not be used anywhere else in
         the inheritance chain.
+
+        @param potionLiquidityPoolManager The address of the Potion Protocol liquidity pool manager
+        @param opynController The address of the Opyn Protocol controller
+        @param USDC The address of the USDC contract
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __PotionProtocolHelper_init_unchained(address potionLiquidityPoolManager, address USDC)
-        internal
-        onlyInitializing
-    {
+    function __PotionProtocolHelper_init_unchained(
+        address potionLiquidityPoolManager,
+        address opynController,
+        address USDC
+    ) internal onlyInitializing {
         __PotionProtocolOracle_init_unchained();
 
         _potionLiquidityPoolManager = IPotionLiquidityPool(potionLiquidityPoolManager);
+        _opynController = IOpynController(opynController);
 
         _USDC = IERC20(USDC);
     }
@@ -194,5 +200,23 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function getUSDCBalance(address account) public view returns (uint256) {
         return _USDC.balanceOf(account);
+    }
+
+    /**
+        @notice Returns the Potion Protocol liquidity manager address
+
+        @return The address of the Potion Protocol liquidity manager
+    */
+    function getPotionLiquidityManager() external view returns (IPotionLiquidityPool) {
+        return _potionLiquidityPoolManager;
+    }
+
+    /**
+        @notice Returns the Opyn Controller address
+
+        @return The address of the Opyn Controller
+     */
+    function getOpynController() external view returns (IOpynController) {
+        return _opynController;
     }
 }

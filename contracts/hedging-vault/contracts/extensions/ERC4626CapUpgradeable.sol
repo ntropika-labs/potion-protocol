@@ -52,8 +52,10 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
         it shared among other helper contracts
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __ERC4626Cap_init_unchained(address asset_) internal onlyInitializing {
+    function __ERC4626Cap_init_unchained(uint256 cap_, address asset_) internal onlyInitializing {
         __ERC4626_init_unchained(IERC20MetadataUpgradeable(asset_));
+
+        _setVaultCap(cap_);
     }
 
     // FUNCTIONS
@@ -66,11 +68,7 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
         @dev Can only be called by the Admin
      */
     function setVaultCap(uint256 newCap) external onlyAdmin {
-        uint256 prevCap = _cap;
-
-        prevCap = newCap;
-
-        emit VaultCapChanged(prevCap, newCap);
+        _setVaultCap(newCap);
     }
 
     /**
@@ -130,5 +128,18 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
         uint256 maxAssetsAmount = Math.min(super.maxMint(receiver), _cap - totalAssets());
 
         return _convertToShares(maxAssetsAmount);
+    }
+
+    /// INTERNALS
+
+    /**
+        @notice See { setVaultCap }
+     */
+    function _setVaultCap(uint256 newCap) internal {
+        uint256 prevCap = _cap;
+
+        _cap = newCap;
+
+        emit VaultCapChanged(prevCap, newCap);
     }
 }

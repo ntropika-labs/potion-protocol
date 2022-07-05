@@ -42,9 +42,7 @@ contract PotionBuyAction is
     using OpynProtocolLib for IOpynController;
 
     /**
-        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
-        to the hierarchy will require to review this function to make sure that no initializer
-        is called twice, and most importantly, that all initializers are called here
+        @notice Structure with all initialization parameters for the Potion Buy action
 
         @param adminAddress The address of the admin of the Action
         @param strategistAddress The address of the strategist of the Action
@@ -53,43 +51,65 @@ contract PotionBuyAction is
         @param USDC The address of the USDC token
         @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
-        @param maxPremiumPercentage_ The maximum percentage of the received investment that can be used as premium
-        @param premiumSlippage_ The slippage percentage allowed on the premium when buying potions
-        @param swapSlippage_ The slippage percentage allowed on the swap operation
-        @param maxSwapDurationSecs_ The maximum duration of the swap operation in seconds
-        @param cycleDurationSecs_ The duration of the investment cycle in seconds
+        @param opynController The address of the Opyn Protocol controller contract
+        @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
+        @param premiumSlippage The slippage percentage allowed on the premium when buying potions
+        @param swapSlippage The slippage percentage allowed on the swap operation
+        @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
+        @param cycleDurationSecs The duration of the investment cycle in seconds
+     */
+    struct PotionBuyInitParams {
+        address adminAddress;
+        address strategistAddress;
+        address operatorAddress;
+        address investmentAsset;
+        address USDC;
+        address uniswapV3SwapRouter;
+        address potionLiquidityPoolManager;
+        address opynController;
+        uint256 maxPremiumPercentage;
+        uint256 premiumSlippage;
+        uint256 swapSlippage;
+        uint256 maxSwapDurationSecs;
+        uint256 cycleDurationSecs;
+    }
+
+    /**
+        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+        to the hierarchy will require to review this function to make sure that no initializer
+        is called twice, and most importantly, that all initializers are called here
+
+        @param initParams Initialization parameters for the Potion Buy action
+
+        @dev See { PotionBuyInitParams }
 
      */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress,
-        address investmentAsset,
-        address USDC,
-        address uniswapV3SwapRouter,
-        address potionLiquidityPoolManager,
-        uint256 maxPremiumPercentage_,
-        uint256 premiumSlippage_,
-        uint256 swapSlippage_,
-        uint256 maxSwapDurationSecs_,
-        uint256 cycleDurationSecs_
-    ) external initializer {
+    function initialize(PotionBuyInitParams calldata initParams) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the loaned
         // asset is not allowed to be refunded and also USDC because the action will hold some of it
         // at some times. This prevents the admin to accidentally refund those assets
         address[] memory cannotRefundTokens = new address[](2);
-        cannotRefundTokens[0] = investmentAsset;
-        cannotRefundTokens[1] = USDC;
+        cannotRefundTokens[0] = initParams.investmentAsset;
+        cannotRefundTokens[1] = initParams.USDC;
 
-        __BaseAction_init_chained(adminAddress, strategistAddress, operatorAddress, cannotRefundTokens);
-        __UniswapV3Helper_init_unchained(uniswapV3SwapRouter);
-        __PotionProtocolHelper_init_unchained(potionLiquidityPoolManager, USDC);
+        __BaseAction_init_chained(
+            initParams.adminAddress,
+            initParams.strategistAddress,
+            initParams.operatorAddress,
+            cannotRefundTokens
+        );
+        __UniswapV3Helper_init_unchained(initParams.uniswapV3SwapRouter);
+        __PotionProtocolHelper_init_unchained(
+            initParams.potionLiquidityPoolManager,
+            initParams.opynController,
+            initParams.USDC
+        );
 
-        _setMaxPremiumPercentage(maxPremiumPercentage_);
-        _setPremiumSlippage(premiumSlippage_);
-        _setSwapSlippage(swapSlippage_);
-        _setMaxSwapDuration(maxSwapDurationSecs_);
-        _setCycleDuration(cycleDurationSecs_);
+        _setMaxPremiumPercentage(initParams.maxPremiumPercentage);
+        _setPremiumSlippage(initParams.premiumSlippage);
+        _setSwapSlippage(initParams.swapSlippage);
+        _setMaxSwapDuration(initParams.maxSwapDurationSecs);
+        _setCycleDuration(initParams.cycleDurationSecs);
     }
 
     /**

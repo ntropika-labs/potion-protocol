@@ -900,6 +900,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
+        name: "underlyingAssetCap",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "managementFee",
         type: "uint256",
       },

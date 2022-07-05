@@ -127,8 +127,10 @@ export interface PotionProtocolHelperUpgradeableInterface
     "changeStrategist(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
+    "getOpynController()": FunctionFragment;
     "getPotion(address)": FunctionFragment;
     "getPotionBuyInfo(address)": FunctionFragment;
+    "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
@@ -142,8 +144,10 @@ export interface PotionProtocolHelperUpgradeableInterface
       | "changeStrategist"
       | "getAdmin"
       | "getOperator"
+      | "getOpynController"
       | "getPotion"
       | "getPotionBuyInfo"
+      | "getPotionLiquidityManager"
       | "getStrategist"
       | "getUSDC"
       | "getUSDCBalance"
@@ -164,10 +168,18 @@ export interface PotionProtocolHelperUpgradeableInterface
     functionFragment: "getOperator",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getOpynController",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getPotion", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPotionLiquidityManager",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getStrategist",
@@ -200,9 +212,17 @@ export interface PotionProtocolHelperUpgradeableInterface
     functionFragment: "getOperator",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOpynController",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getPotion", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPotionBuyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPotionLiquidityManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -319,6 +339,8 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
+    getOpynController(overrides?: CallOverrides): Promise<[string]>;
+
     getPotion(
       hedgedAsset: string,
       overrides?: CallOverrides
@@ -328,6 +350,8 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
       potion: string,
       overrides?: CallOverrides
     ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
+
+    getPotionLiquidityManager(overrides?: CallOverrides): Promise<[string]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
@@ -363,12 +387,16 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
   getOperator(overrides?: CallOverrides): Promise<string>;
 
+  getOpynController(overrides?: CallOverrides): Promise<string>;
+
   getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
     potion: string,
     overrides?: CallOverrides
   ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+
+  getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -404,12 +432,16 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<string>;
 
+    getOpynController(overrides?: CallOverrides): Promise<string>;
+
     getPotion(hedgedAsset: string, overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
       potion: string,
       overrides?: CallOverrides
     ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+
+    getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
@@ -478,6 +510,8 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOpynController(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPotion(
       hedgedAsset: string,
       overrides?: CallOverrides
@@ -487,6 +521,8 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
       potion: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getPotionLiquidityManager(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -523,6 +559,8 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getOpynController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPotion(
       hedgedAsset: string,
       overrides?: CallOverrides
@@ -530,6 +568,10 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       potion: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPotionLiquidityManager(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

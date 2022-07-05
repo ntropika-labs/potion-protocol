@@ -57,7 +57,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "getStrategist()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address,address,address,uint256,uint256,address,address[])": FunctionFragment;
+    "initialize(address,address,address,address,uint256,uint256,uint256,address,address[])": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -257,6 +257,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       string,
       string,
       string,
+      BigNumberish,
       BigNumberish,
       BigNumberish,
       string,
@@ -934,6 +935,7 @@ export interface InvestmentVault extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
@@ -1171,6 +1173,7 @@ export interface InvestmentVault extends BaseContract {
     strategistAddress: string,
     operatorAddress: string,
     underlyingAsset: string,
+    underlyingAssetCap: BigNumberish,
     managementFee: BigNumberish,
     performanceFee: BigNumberish,
     feesRecipient: string,
@@ -1401,6 +1404,7 @@ export interface InvestmentVault extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
@@ -1815,6 +1819,7 @@ export interface InvestmentVault extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
@@ -2063,6 +2068,7 @@ export interface InvestmentVault extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
