@@ -11,7 +11,7 @@ runs:
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+      run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
       shell: bash
 
     - name: Cache yarn
