@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+
 import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Show Potion Flow", () => {
@@ -32,9 +33,7 @@ describe("Show Potion Flow", () => {
         cy.wait("@getPotionById", {
           timeout: 20000,
         }).then((interceptor) => {
-          const response = Array.isArray(interceptor)
-            ? interceptor[0]?.response?.body
-            : (interceptor as any)?.response.body;
+          const response = interceptor?.response.body;
 
           expect(response).to.haveOwnProperty("data");
           expect(response.data).to.haveOwnProperty("otoken");
@@ -47,9 +46,7 @@ describe("Show Potion Flow", () => {
       it("Loads the order book", () => {
         cy.wait("@getOrderBookEntries", { timeout: 20000 }).then(
           (interceptor) => {
-            const response = Array.isArray(interceptor)
-              ? interceptor[0]?.response?.body
-              : (interceptor as any)?.response.body;
+            const response = interceptor?.response.body;
 
             expect(response).to.haveOwnProperty("data");
             expect(response.data).to.haveOwnProperty("orderBookEntries");

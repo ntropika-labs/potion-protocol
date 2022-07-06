@@ -1,4 +1,6 @@
 /// <reference types="cypress" />
+/// <reference types="../support" />
+
 import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Show Pool Flow", () => {
@@ -30,9 +32,7 @@ describe("Show Pool Flow", () => {
       cy.wait("@getPoolById", {
         timeout: 20000,
       }).then((interceptor) => {
-        const response = Array.isArray(interceptor)
-          ? interceptor[0]?.response?.body
-          : (interceptor as any)?.response.body;
+        const response = interceptor?.response.body;
 
         // assert that the subgraph send us the correct pool data
         expect(response).to.haveOwnProperty("data");
@@ -78,7 +78,10 @@ describe("Show Pool Flow", () => {
         cy.wait(200);
 
         cy.get("[test-liquidity-card-footer-deposit]>button").click();
-        cy.wait(200);
+        //cy.wait(200);
+        cy.get("[test-liquidity-card-footer-deposit]>button", {
+          timeout: 10000,
+        }).should("not.be.disabled");
 
         cy.get(":nth-child(2) > .grid");
       });

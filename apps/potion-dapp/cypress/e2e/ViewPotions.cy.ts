@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+/// <reference types="../support" />
 
 import { aliasQuery } from "../support/utilities";
 
@@ -29,12 +30,12 @@ describe("Show Potions Flow", () => {
       });
 
       it("Can load initial data", () => {
-        cy.wait(["@getUserPotions"], {
+        cy.wait("@getUserPotions", {
           timeout: 20000,
         }).then((interceptor) => {
           const response = Array.isArray(interceptor)
             ? interceptor[0]?.response?.body
-            : (interceptor as any)?.response.body;
+            : interceptor?.response.body;
 
           // assert that the subgraph send us the correct sets of buyer potions
           expect(response).to.haveOwnProperty("data");
@@ -99,12 +100,10 @@ describe("Show Potions Flow", () => {
         const hasLoadMore = cy.$$("[test-potions-load-more-active]").length > 0;
         if (hasLoadMore) {
           cy.get("[test-potions-load-more-active]").first().click();
-          cy.wait(["@getActivePotions"], {
+          cy.wait("@getActivePotions", {
             timeout: 20000,
           }).then((interceptor) => {
-            const response = Array.isArray(interceptor)
-              ? interceptor[0]?.response?.body
-              : (interceptor as any)?.response.body;
+            const response = interceptor?.response.body;
             // assert that the subgraph send us the correct set of active potions
             expect(response).to.haveOwnProperty("data");
             const activePotionsData = response.data;
@@ -118,12 +117,10 @@ describe("Show Potions Flow", () => {
           cy.$$("[test-potions-load-more-expired]").length > 0;
         if (hasLoadMore) {
           cy.get("[test-potions-load-more-expired]").first().click();
-          cy.wait(["@getExpiredPotions"], {
+          cy.wait("@getExpiredPotions", {
             timeout: 20000,
           }).then((interceptor) => {
-            const response = Array.isArray(interceptor)
-              ? interceptor[0]?.response?.body
-              : (interceptor as any)?.response.body;
+            const response = interceptor?.response.body;
             // assert that the subgraph send us the correct set of expired potions
             expect(response).to.haveOwnProperty("data");
             const expiredPotionsData = response.data;
