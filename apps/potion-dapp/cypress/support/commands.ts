@@ -24,13 +24,39 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../support/index.d.ts" />
+/// <reference path="./index.d.ts" />
 
 import "@testing-library/cypress/add-commands";
 
-Cypress.Commands.add("seed", (databasePath, chainTime) => {
-  cy.exec("cd ../../ && bin/start-local-env", {
-    env: { DATABASE_PATH: databasePath, CHAIN_TIME: chainTime },
+Cypress.Commands.add("seed", (databasePath, chainTime, persistData = false) => {
+  let testSeedPath = databasePath;
+  if (!persistData) {
+    testSeedPath = databasePath.replace("/opt", "/opt/tests");
+
+    cy.exec(`docker compose exec -T ganache rm -rf ${testSeedPath}`)
+      .its("code")
+      .should("eq", 0);
+    cy.exec(
+      `docker compose exec -T ganache cp -R ${databasePath} ${testSeedPath}`
+    )
+      .its("code")
+      .should("eq", 0);
+  }
+
+  // cy.exec(
+  //   `cd ../../ && ./bin/switch-database-seed ${databasePath} ${persistData}`,
+  //   {
+  //     env: { CHAIN_TIME: chainTime },
+  //     failOnNonZeroExit: false,
+  //     timeout: 180000,
+  //   }
+  // ).then((result) => {
+  //   expect(result.code).to.eq(0);
+  //   expect(result.stdout).to.contain("stack is ready");
+  // });
+
+  cy.exec("cd ../../ && ./bin/start-local-env", {
+    env: { DATABASE_PATH: testSeedPath, CHAIN_TIME: chainTime },
     failOnNonZeroExit: false,
     timeout: 180000,
   }).then((result) => {
