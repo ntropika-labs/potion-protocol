@@ -8,16 +8,14 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 usage() {
   cat << EOF # remove the space between << and EOF, this is due to web plugin issue
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] [-n] [-r]
-
 Handle the docker compose environment
-
 Available options:
-
 -h, --help                    Print this help and exit
 -v, --verbose                 Print script debug info
 -f, --force                   Force deploy containers [default: true]
 -n, --no-redeploy             Do not deploy containers if already available [default: false]
 -r, --redeploy boolean        When true containers are recreated, when false use existing environment if any
+-v, --verbose boolean         When true Print script debug info
 EOF
   exit
 }
@@ -77,6 +75,9 @@ parse_params() {
           no_redeploy=1
         fi
         ;;
+      -v=*|--verbose=*) # verbose param
+        set -x
+        ;;
       -?*)
         die "Unknown option: $1"
         ;;
@@ -121,6 +122,23 @@ check_environment_running() {
   return
 }
 
+check_db_seed() {
+  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  # strip only '/opt/' from the string
+  local ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+  local ganache_db_file="${ganache_volume_folder}/${ganache_db_name}/LOG"
+
+  if [[ -s "$ganache_db_file" ]]; then
+    msg "${GREEN}- - Ganache database already seeded${NOFORMAT}"
+    is_db_seeded=1
+    return
+  fi
+
+  msg "${ORANGE}- - Ganache database not seeded${NOFORMAT}"
+  is_db_seeded=0
+  return
+}
+
 spin_up_environment() {
   msg "${GREEN}Starting local environment...${NOFORMAT}"
 
@@ -133,19 +151,24 @@ spin_up_environment() {
   docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
-  ./bin/wait-for-it localhost:8545
+  ./bin/wait-for-tcp localhost:8545
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
+  sleep 2
 
-  yarn nx run potion-contracts:deploy-local
-  msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
+  if [[ $is_db_seeded -eq 0 ]]; then
+    msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
-  yarn nx run potion-subgraph:prepare-local
-  msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
+    yarn nx run potion-contracts:deploy-local
+    msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
 
-  yarn nx run potion-subgraph:codegen
-  msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"
+    yarn nx run potion-subgraph:prepare-local
+    msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
 
-  ./bin/wait-for-it localhost:8020
+    yarn nx run potion-subgraph:codegen
+    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
+  fi
+
+  sleep 10
   msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
 
   yarn nx run potion-subgraph:create-local
@@ -154,8 +177,11 @@ spin_up_environment() {
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
   msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
 
-  yarn nx run subgraph-queries:codegen
-  msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
+  if [[ $is_db_seeded -eq 0 ]]; then
+
+    yarn nx run subgraph-queries:codegen
+    msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
+  fi
 
   return 0
 }
@@ -172,6 +198,7 @@ msg "- no_redeploy: ${no_redeploy}"
 cd "${script_dir}/.."
 msg "${YELLOW} - Moved to root folder: $PWD"
 check_environment_running
+check_db_seed
 
 if [[ $is_environment_running -eq 0 || $force -eq 1 ]]; then
   spin_up_environment
