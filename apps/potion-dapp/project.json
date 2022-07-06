@@ -35,7 +35,7 @@
         "parallel": false
       }
     },
-    "local-dev-test-e2e": {
+    "nx-internal-test-e2e": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
@@ -56,11 +56,15 @@
       "options": {
         "commands": [
           {
-            "command": "./bin/create-local-env-headless",
+            "command": "./bin/create-local-env-headless --redeploy=false",
             "forwardAllArgs": true
           },
           {
-            "command": "yarn nx run potion-dapp:local-dev-test-e2e",
+            "command": "./bin/setup-database-seed --all",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:nx-internal-test-e2e",
             "forwardAllArgs": false
           }
         ],
@@ -68,6 +72,22 @@
       }
     },
     "ci-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:build-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-ci",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
+    },
+    "ci-test-e2e-dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
