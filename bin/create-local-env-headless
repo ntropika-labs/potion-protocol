@@ -155,6 +155,7 @@ spin_up_environment() {
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
 
+
   if [[ $is_db_seeded -eq 0 ]]; then
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
