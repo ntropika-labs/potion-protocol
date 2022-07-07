@@ -32,6 +32,13 @@ runs:
         restore-keys: |
           ${{ runner.os }}-node-modules-cache-
 
+    - name: Cache Cypress Binary
+      id: cache-cypress-binary
+      uses: actions/cache@v3
+      with:
+        path: cypress/cache
+        key: cypress-binary-${{ hashFiles('yarn.lock') }}
+
     - name: Install dependencies
       if: |
         steps.yarn-cache.outputs.cache-hit != 'true' ||

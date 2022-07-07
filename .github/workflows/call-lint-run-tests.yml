@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Copy seeds in the Ganache volume
-        run: bin/setup-database-seed -a
+        run: bin/prepare-seeds-headless
         shell: bash
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
@@ -85,7 +85,7 @@ jobs:
           CHAIN_TIME: ${{ secrets.CHAIN_TIME }}
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
         with:
-          install: true
+          install: false
           start: yarn preview
           wait-on: ${{ env.PREVIEW_URL }}
           browser: chrome
