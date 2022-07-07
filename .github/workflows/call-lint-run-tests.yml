@@ -85,7 +85,7 @@ jobs:
           CHAIN_TIME: ${{ secrets.CHAIN_TIME }}
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
         with:
-          install: false
+          install: true
           start: yarn preview
           wait-on: ${{ env.PREVIEW_URL }}
           browser: chrome
