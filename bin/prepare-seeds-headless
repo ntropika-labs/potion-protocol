@@ -9,6 +9,5 @@ else
   mkdir -p $GANACHE_VOLUME
   echo "Copying the default ganache seeds to your custom folder..."
   cp -r "$SEEDS_FOLDER"/* $GANACHE_VOLUME && echo "Seeds copied successfully"
-
-  docker compose exec ganache mkdir -p /opt/tests
+  cp -r "$SEEDS_FOLDER"/* "$GANACHE_VOLUME"/tests && echo "Seeds copied successfully"
 fi
