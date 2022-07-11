@@ -21,6 +21,7 @@ describe("Show Potion Flow", () => {
         (req) => {
           aliasQuery(req, "getPotionById");
           aliasQuery(req, "getOrderBookEntries");
+          aliasQuery(req, "getPoolsFromCriteria");
         }
       ).as("getDataFromSubgraph");
     });
@@ -30,12 +31,14 @@ describe("Show Potion Flow", () => {
 
       cy.visit("/potions/0x128e3a22ac64263406d41f8941828b5597fe5879");
 
-      cy.wait(["@getPotionById", "@getOrderBookEntries"], {
-        timeout: 20000,
-      }).then((interceptor) => {
+      cy.wait(
+        ["@getPotionById", "@getOrderBookEntries", "@getPoolsFromCriteria"],
+        {
+          timeout: 20000,
+        }
+      ).then((interceptor) => {
         // Loads potion data correctly
         const potionResponse = interceptor[0].response?.body;
-
         expect(potionResponse).to.haveOwnProperty("data");
         expect(potionResponse.data).to.haveOwnProperty("otoken");
         expect(potionResponse.data.otoken.id).to.equal(
@@ -49,6 +52,12 @@ describe("Show Potion Flow", () => {
         expect(
           orderBookResponse.data.orderBookEntries.length
         ).to.be.greaterThan(0);
+
+        // loads criterias to calculate the market-size correctly
+        const marketSizeResponse = interceptor[2].response?.body;
+        expect(marketSizeResponse).to.haveOwnProperty("data");
+        expect(marketSizeResponse.data).to.haveOwnProperty("criterias");
+        expect(marketSizeResponse.data.criterias.length).to.be.greaterThan(0);
       });
     });
 
@@ -83,15 +92,16 @@ describe("Show Potion Flow", () => {
           "0.5%"
         );
       });
+
+      it("Shows the correct market size", () => {
+        cy.get("[test-potion-market-size]")
+          .should("be.visible")
+          .and("contain.text", "USDC 2.05M");
+      });
       // TODO: this context needs data calculated by the depth router
       // because there isn't a reliable way to detect if the calculation has been done
       // they are skipped to avoid breaking the CI but they can probably be tested in headed mode
       context.skip("depth router based data", () => {
-        it("Shows the correct market size", () => {
-          cy.get("[test-potion-market-size]")
-            .should("be.visible")
-            .and("contain.text", "USDC 2.05M");
-        });
         it("Shows the correct price per potion", () => {
           cy.get("[test-potion-price-per-potion]")
             .should("be.visible")
