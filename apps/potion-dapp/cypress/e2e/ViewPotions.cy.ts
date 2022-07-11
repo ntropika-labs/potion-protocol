@@ -137,6 +137,10 @@ describe("Show Potions Flow", () => {
           .as("card");
         cy.get("@card").find("[test-withdraw-button]").should("be.visible");
         cy.get("@card").find("[test-withdraw-button]").click();
+
+        cy.get("#toast-wrap :nth-child(1) > .grid > .col-span-3 > .text-sm", {
+          timeout: 10000,
+        });
         cy.get("@card")
           .find("[test-current-payout]")
           .should("contain.text", "USDC0");
