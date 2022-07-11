@@ -6,7 +6,7 @@ import { resetApproval } from "../support/utilities";
 describe("Pool template cloning Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
-      cy.seed("/opt/base", "2021-01-01 09:00:00+00:00");
+      cy.seed("/opt/base", "2021-01-01 09:00:00+00:00", false);
     });
     it("can reset the approval", async () => {
       await resetApproval();
