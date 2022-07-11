@@ -239,6 +239,16 @@ const handleCloneTemplate = async () => {
   }
 };
 
+const addLiquidityButtonLabel = computed(() => {
+  if (!connectedWallet.value) {
+    return `${t("connect_wallet")}`;
+  }
+  if (amountNeededToApprove.value > 0) {
+    return `${t("approve")} USDC`;
+  }
+  return `${t("add_liquidity")}`;
+});
+
 const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
 
 watch(criterias, loadEmergingCurves);
@@ -342,7 +352,7 @@ watch(approveReceipt, (receipt) => {
               test-clone-button
               palette="secondary"
               :inline="true"
-              :label="t('add_liquidity')"
+              :label="addLiquidityButtonLabel"
               :disabled="
                 isNotConnected ||
                 depositAndCreateCurveAndCriteriaLoading ||
