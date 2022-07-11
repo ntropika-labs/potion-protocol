@@ -170,7 +170,8 @@ describe("Show Potion Flow", () => {
           cy.get(":nth-child(2) > .grid");
         });
 
-        it("Can buy more potions in multiple transactions", () => {
+        // TODO: This test depends on the depth router, look at the comment above for more details
+        it.skip("Can buy more potions in multiple transactions", () => {
           cy.get("[test-potion-number-of-potions-input] input")
             .clear()
             .type("1");
