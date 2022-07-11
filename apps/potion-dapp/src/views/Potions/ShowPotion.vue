@@ -361,9 +361,11 @@ const fetchUserData = async () => {
     await fetchUserCollateralAllowance();
   }
 };
+
 onMounted(async () => {
   await fetchUserData();
 });
+
 const buyPotionButtonState = computed(() => {
   if (routerRunning.value || fetching.value) {
     return {
@@ -371,47 +373,32 @@ const buyPotionButtonState = computed(() => {
       disabled: true,
     };
   }
-  if (
-    connectedWallet.value &&
-    userCollateralBalance.value >= premiumSlippage.value
-  ) {
-    if (userAllowance.value >= premiumSlippage.value) {
+  if (connectedWallet.value) {
+    if (userCollateralBalance.value < premiumSlippage.value) {
       return {
-        label: t("buy_potion"),
-        disabled: false,
-      };
-    } else {
-      return {
-        label: t("approve"),
-        disabled: false,
+        label: t("not_enough_usdc"),
+        disabled: true,
       };
     }
-  }
-  if (
-    connectedWallet.value &&
-    userCollateralBalance.value < premiumSlippage.value
-  ) {
-    return {
-      label: t("not_enough_usdc"),
-      disabled: true,
-    };
-  }
 
-  if (!connectedWallet.value) {
+    const label =
+      userAllowance.value >= premiumSlippage.value
+        ? t("buy_potion")
+        : t("approve");
+
     return {
-      label: t("connect_wallet"),
-      disabled: true,
+      label,
+      disabled: false,
     };
   }
   return {
-    label: t("buy_potion"),
+    label: t("connect_wallet"),
     disabled: true,
   };
 });
 const { buyPotions, buyPotionTx, buyPotionReceipt, maxCounterparties } =
   usePotionLiquidityPoolContract();
 const handleBuyPotions = async () => {
-  console.log("here");
   if (
     routerResult.value &&
     routerResult.value.counterparties &&
