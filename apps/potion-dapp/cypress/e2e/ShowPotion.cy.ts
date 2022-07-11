@@ -1,11 +1,12 @@
 /// <reference types="cypress" />
+/// <reference types="../support" />
 
 import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Show Potion Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
-      cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00");
+      cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00", false);
     });
     it("can reset the approval", async () => {
       await resetApproval();
@@ -24,40 +25,46 @@ describe("Show Potion Flow", () => {
       ).as("getDataFromSubgraph");
     });
 
-    context("Can visit the potion page", () => {
-      beforeEach(() => {
-        cy.viewport(1920, 1080);
-        cy.visit("/potions/0x128e3a22ac64263406d41f8941828b5597fe5879");
-      });
-      it("Loads the potion data", () => {
-        cy.wait("@getPotionById", {
-          timeout: 20000,
-        }).then((interceptor) => {
-          const response = interceptor?.response.body;
+    it("Can visit the potion page and load required data", () => {
+      cy.viewport(1920, 1080);
 
-          expect(response).to.haveOwnProperty("data");
-          expect(response.data).to.haveOwnProperty("otoken");
-          expect(response.data.otoken.id).to.equal(
-            "0x128e3a22ac64263406d41f8941828b5597fe5879"
-          );
-        });
-      });
+      cy.visit("/potions/0x128e3a22ac64263406d41f8941828b5597fe5879");
 
-      it("Loads the order book", () => {
-        cy.wait("@getOrderBookEntries", { timeout: 20000 }).then(
-          (interceptor) => {
-            const response = interceptor?.response.body;
+      cy.wait(["@getPotionById", "@getOrderBookEntries"], {
+        timeout: 20000,
+      }).then((interceptor) => {
+        const potionResponse = interceptor[0].response?.body;
 
-            expect(response).to.haveOwnProperty("data");
-            expect(response.data).to.haveOwnProperty("orderBookEntries");
-            expect(response.data.orderBookEntries.length).to.be.greaterThan(0);
-          }
+        expect(potionResponse).to.haveOwnProperty("data");
+        expect(potionResponse.data).to.haveOwnProperty("otoken");
+        expect(potionResponse.data.otoken.id).to.equal(
+          "0x128e3a22ac64263406d41f8941828b5597fe5879"
         );
+
+        const orderBookResponse = interceptor[1].response?.body;
+        expect(orderBookResponse).to.haveOwnProperty("data");
+        expect(orderBookResponse.data).to.haveOwnProperty("orderBookEntries");
+        expect(
+          orderBookResponse.data.orderBookEntries.length
+        ).to.be.greaterThan(0);
       });
+
+      // it("Loads the order book", () => {
+      //   cy.wait("@getOrderBookEntries", { timeout: 20000 }).then(
+      //     (interceptor) => {
+      //       const response = interceptor?.response.body;
+
+      //       expect(response).to.haveOwnProperty("data");
+      //       expect(response.data).to.haveOwnProperty("orderBookEntries");
+      //       expect(response.data.orderBookEntries.length).to.be.greaterThan(0);
+      //     }
+      //   );
+      // });
     });
 
     context("Renders correctly", () => {
       it("Shows the correct strike price", () => {
+        cy.wait(15000);
         cy.get("[test-potion-strike-price]")
           .should("be.visible")
           .and("contain.text", "USDC1K");
