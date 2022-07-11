@@ -4,6 +4,18 @@
 import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Show Potion Flow", () => {
+  beforeEach(() => {
+    cy.intercept(
+      "POST",
+      "http://localhost:8000/subgraphs/name/potion-subgraph",
+      (req) => {
+        aliasQuery(req, "getPotionById");
+        aliasQuery(req, "getOrderBookEntries");
+        aliasQuery(req, "getPoolsFromCriteria");
+      }
+    ).as("getDataFromSubgraph");
+  });
+
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00", false);
@@ -14,18 +26,6 @@ describe("Show Potion Flow", () => {
   });
 
   context("showPotion test", () => {
-    beforeEach(() => {
-      cy.intercept(
-        "POST",
-        "http://localhost:8000/subgraphs/name/potion-subgraph",
-        (req) => {
-          aliasQuery(req, "getPotionById");
-          aliasQuery(req, "getOrderBookEntries");
-          aliasQuery(req, "getPoolsFromCriteria");
-        }
-      ).as("getDataFromSubgraph");
-    });
-
     it("Can visit the potion page and load required data", () => {
       cy.viewport(1920, 1080);
 
