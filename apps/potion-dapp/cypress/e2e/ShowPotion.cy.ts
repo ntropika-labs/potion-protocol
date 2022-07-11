@@ -79,16 +79,6 @@ describe("Show Potion Flow", () => {
           .should("be.visible")
           .and("contain.text", "0.001");
       });
-      it("Shows the correct number of transactions", () => {
-        cy.get("[test-potion-number-of-transactions]")
-          .should("be.visible")
-          .and("contain.text", "1");
-      });
-      it("Shows the correct total", () => {
-        cy.get("[test-potion-total-price]")
-          .should("be.visible")
-          .and("contain.text", "USDC 12.14");
-      });
       it("Shows the buy/approval button", () => {
         cy.get("[test-potion-buy-button]")
           .should("be.visible")
@@ -116,6 +106,16 @@ describe("Show Potion Flow", () => {
           cy.get("[test-potion-price-per-potion]")
             .should("be.visible")
             .and("contain.text", "USDC 12.08");
+        });
+        it("Shows the correct number of transactions", () => {
+          cy.get("[test-potion-number-of-transactions]")
+            .should("be.visible")
+            .and("contain.text", "1");
+        });
+        it("Shows the correct total", () => {
+          cy.get("[test-potion-total-price]")
+            .should("be.visible")
+            .and("contain.text", "USDC 12.14");
         });
       });
     });
