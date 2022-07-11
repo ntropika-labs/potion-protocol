@@ -28,39 +28,56 @@
 
 import "@testing-library/cypress/add-commands";
 
-Cypress.Commands.add("seed", (databasePath, chainTime, persistData = false) => {
-  let testSeedPath = databasePath;
-  if (!persistData) {
-    testSeedPath = databasePath.replace("/opt", "/opt/tests");
+Cypress.Commands.add(
+  "seed",
+  (databasePath, chainTime, startFresh = true, persistData = false) => {
+    const testSeedPath = persistData
+      ? databasePath
+      : databasePath.replace("/opt", "/opt/tests");
+    let currentDbPath = "";
+    let isDabataseInUse = false;
 
-    cy.exec(`docker compose exec -T ganache rm -rf ${testSeedPath}`)
-      .its("code")
-      .should("eq", 0);
     cy.exec(
-      `docker compose exec -T ganache cp -R ${databasePath} ${testSeedPath}`
+      "docker inspect -f '{{range .Config.Cmd}}{{printf \"%s\\n\" .}}{{end}}'  potion_ganache  | sed -e 's/^--database\\.dbPath=\\(.*\\)$/\\1/;t;d'"
     )
-      .its("code")
-      .should("eq", 0);
+      .then((result) => {
+        currentDbPath = result.stdout;
+        isDabataseInUse = currentDbPath === testSeedPath;
+        expect(result.code).to.eq(0);
+      })
+      .then(() => {
+        console.log(
+          "is db in use",
+          isDabataseInUse,
+          currentDbPath,
+          testSeedPath
+        );
+
+        if (startFresh || !isDabataseInUse) {
+          if (!persistData) {
+            cy.exec(`docker compose exec -T ganache rm -rf ${testSeedPath}`)
+              .its("code")
+              .should("eq", 0);
+            cy.exec(
+              `docker compose exec -T ganache cp -R ${databasePath} ${testSeedPath}`
+            )
+              .its("code")
+              .should("eq", 0);
+          }
+
+          const version = isDabataseInUse
+            ? (Math.random() + 1).toString(36).substring(7)
+            : "0.0.1";
+
+          cy.exec(`cd ../../ && ./bin/start-local-env ${version}`, {
+            env: { DATABASE_PATH: testSeedPath, CHAIN_TIME: chainTime },
+            failOnNonZeroExit: false,
+            timeout: 180000,
+          }).then((result) => {
+            expect(result.code).to.eq(0);
+            expect(result.stdout).to.contain("stack is ready");
+          });
+        }
+      });
   }
-
-  // cy.exec(
-  //   `cd ../../ && ./bin/switch-database-seed ${databasePath} ${persistData}`,
-  //   {
-  //     env: { CHAIN_TIME: chainTime },
-  //     failOnNonZeroExit: false,
-  //     timeout: 180000,
-  //   }
-  // ).then((result) => {
-  //   expect(result.code).to.eq(0);
-  //   expect(result.stdout).to.contain("stack is ready");
-  // });
-
-  cy.exec("cd ../../ && ./bin/start-local-env", {
-    env: { DATABASE_PATH: testSeedPath, CHAIN_TIME: chainTime },
-    failOnNonZeroExit: false,
-    timeout: 180000,
-  }).then((result) => {
-    expect(result.code).to.eq(0);
-    expect(result.stdout).to.contain("stack is ready");
-  });
-});
+);
