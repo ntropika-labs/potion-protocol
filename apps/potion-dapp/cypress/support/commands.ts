@@ -28,9 +28,9 @@
 
 import "@testing-library/cypress/add-commands";
 
-Cypress.Commands.add("seed", (databasePath) => {
+Cypress.Commands.add("seed", (databasePath, chainTime) => {
   cy.exec("cd ../../ && bin/start-local-env", {
-    env: { DATABASE_PATH: databasePath },
+    env: { DATABASE_PATH: databasePath, CHAIN_TIME: chainTime },
     failOnNonZeroExit: false,
     timeout: 180000,
   }).then((result) => {

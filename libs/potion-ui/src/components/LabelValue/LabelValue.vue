@@ -86,14 +86,19 @@ const formattedValue = computed(() => {
 const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
 </script>
 <template>
-  <div class="text-dwhite-300">
+  <div class="text-dwhite-300" test-label-value>
     <h6
       class="capitalize font-medium mb-2"
       :class="[labelAlignment, labelSize]"
+      test-label-value-title
     >
       {{ props.title }}
     </h6>
-    <div class="flex flex-wrap items-center space-x-1" :class="valueAlignment">
+    <div
+      class="flex flex-wrap items-center space-x-1"
+      :class="valueAlignment"
+      test-label-value-value
+    >
       <div
         v-if="props.valueType === 'currency'"
         class="font-bold font-serif"

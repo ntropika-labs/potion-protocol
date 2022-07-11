@@ -98,6 +98,7 @@ const summaryText = computed(() =>
 const handleWithdrawPotion = async (otokenId: string, amount: string) => {
   if (connectedWalletAddress.value && isSameUserConnected.value) {
     await redeem(otokenId, amount, connectedWalletAddress.value);
+    redeemableBalancesMap.value.set(otokenId, "0");
   }
 };
 
