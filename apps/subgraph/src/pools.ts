@@ -53,20 +53,18 @@ function createPoolSnapshotId(
   lp: Bytes,
   poolId: BigInt,
   templateId: string,
-  actionType: Actions,
   timestamp: BigInt,
   blockNumber: BigInt
 ): string {
   // log.info(
-  //   "PoolSnapshotIdParams: lp {}, poolId {}, templateId {}, actionType {}, timestamp {}, blockNumber {}",
-  //   [lp.toString(), poolId.toString(), templateId, actionType.toString(), timestamp.toString(), blockNumber.toString()]
+  //   "PoolSnapshotIdParams: lp {}, poolId {}, templateId {}, timestamp {}, blockNumber {}",
+  //   [lp.toString(), poolId.toString(), templateId, timestamp.toString(), blockNumber.toString()]
   // )
   return (
     lp.toHexString() +
     poolId.toHexString() +
     timestamp.toHexString() +
     blockNumber.toHexString() +
-    actionType.toString() +
     templateId
   );
 }
@@ -243,7 +241,6 @@ export function createPoolSnapshot(
     pool.lp,
     pool.poolId,
     templateId,
-    actionType,
     timestamp,
     blockNumber
   );
