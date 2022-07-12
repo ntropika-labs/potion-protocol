@@ -50,7 +50,7 @@ const payoutLabel = computed(() => {
 });
 </script>
 <template>
-  <BaseCard class="text-dwhite-400" :full-height="false">
+  <BaseCard class="text-dwhite-400" :full-height="false" test-my-potion-card>
     <div
       class="grid grid-flow-row grid-cols-2 justify-between items-center gap-8 py-4 px-6"
     >
@@ -76,17 +76,20 @@ const payoutLabel = computed(() => {
         :value="props.strikePrice"
         value-type="currency"
         :symbol="props.currency"
+        test-strike-price
       />
       <LabelValue
         size="md"
         :title="t('expiration')"
         :value="props.expiry"
         value-type="timestamp"
+        test-expiration
       />
       <LabelValue
         size="md"
         :title="t('quantity')"
         :value="props.quantity.toString()"
+        test-quantity
       />
       <LabelValue
         size="md"
@@ -95,6 +98,7 @@ const payoutLabel = computed(() => {
         value-type="currency"
         value-color-class="text-secondary-500"
         :symbol="props.currency"
+        test-current-payout
       />
     </div>
     <CardFooter v-if="props.withdrawable" class="flex justify-center gap-3">
@@ -102,6 +106,7 @@ const payoutLabel = computed(() => {
         palette="secondary"
         :label="withdrawLabel"
         :disabled="!(props.isExpired && props.isWithdrawEnabled)"
+        test-withdraw-button
         @click="emits('withdraw')"
       ></BaseButton>
     </CardFooter>

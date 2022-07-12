@@ -1,8 +1,10 @@
 #!/bin/bash
+
+version=${1-"0.0.1"}
 echo "Run and deploy the subgraph on local ganache" &&
 docker compose down && echo "Containers destroyed..." &&
 docker compose up -d && echo "Containers started..." &&
 sleep 10 && echo "graph-node is ready" &&
 yarn nx run potion-subgraph:create-local && echo "Potion subgraph created" &&
-yarn nx run potion-subgraph:deploy-local --version-label 0.0.1 && echo "Potion subgraph deployed" &&
+yarn nx run potion-subgraph:deploy-local --version-label $version && echo "Potion subgraph deployed" &&
 echo "stack is ready"

@@ -299,9 +299,11 @@ const handleWithdraw = async () => {
   }
 };
 
+const claimedOtokens = ref<string[]>([]);
 const claimOtoken = async (otokenId: string) => {
   if (poolId.value !== null) {
-    claimCollateral(otokenId, [{ lp: lpId, poolId: poolId.value }]);
+    await claimCollateral(otokenId, [{ lp: lpId, poolId: poolId.value }]);
+    claimedOtokens.value.push(otokenId);
   }
 };
 
@@ -430,6 +432,7 @@ watch(claimCollateralReceipt, (receipt) =>
           :underlyings="assetsFlat"
           :price-map="tokenPricesMap"
           :payout-map="payoutMap"
+          :claimed-otokens="claimedOtokens"
           @otoken-claimed="claimOtoken"
         ></OtokenClaimTable>
       </div>
