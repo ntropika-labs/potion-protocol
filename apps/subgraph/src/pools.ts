@@ -53,12 +53,20 @@ function createPoolSnapshotId(
   lp: Bytes,
   poolId: BigInt,
   templateId: string,
-  timestamp: BigInt
+  actionType: Actions,
+  timestamp: BigInt,
+  blockNumber: BigInt
 ): string {
+  // log.info(
+  //   "PoolSnapshotIdParams: lp {}, poolId {}, templateId {}, actionType {}, timestamp {}, blockNumber {}",
+  //   [lp.toString(), poolId.toString(), templateId, actionType.toString(), timestamp.toString(), blockNumber.toString()]
+  // )
   return (
     lp.toHexString() +
     poolId.toHexString() +
     timestamp.toHexString() +
+    blockNumber.toHexString() +
+    actionType.toString() +
     templateId
   );
 }
@@ -124,7 +132,8 @@ function updateConfigPoolTemplate(
   pastTemplate: Template | null,
   curveHash: string,
   criteriaSetHash: string,
-  timestamp: BigInt
+  timestamp: BigInt,
+  blockNumber: BigInt
 ): void {
   // Case where the old template was null or different from the current settings
   log.info("Updating the pool {} with the following curve {} and criteria {}", [
@@ -201,6 +210,7 @@ function updateConfigPoolTemplate(
       createPoolSnapshot(
         pool,
         timestamp,
+        blockNumber,
         ZERO_BIGDECIMAL,
         Actions.POOL_LEFT_TEMPLATE,
         pastTemplate.id,
@@ -223,6 +233,7 @@ function updateConfigPoolTemplate(
 export function createPoolSnapshot(
   pool: Pool,
   timestamp: BigInt,
+  blockNumber: BigInt,
   actionAmount: BigDecimal,
   actionType: Actions,
   templateId: string,
@@ -232,7 +243,9 @@ export function createPoolSnapshot(
     pool.lp,
     pool.poolId,
     templateId,
-    timestamp
+    actionType,
+    timestamp,
+    blockNumber
   );
   const poolSnapshot = new PoolSnapshot(poolSnapshotId);
   log.info("Creating Snapshot {} for Pool {}", [
@@ -353,6 +366,7 @@ export function handleDeposited(event: Deposited): void {
       createPoolSnapshot(
         pool as Pool,
         event.block.timestamp,
+        event.block.number,
         tokenAmount,
         Actions.DEPOSIT,
         pool.template as string,
@@ -424,6 +438,7 @@ export function handleWithdrawn(event: Withdrawn): void {
         createPoolSnapshot(
           pool as Pool,
           event.block.timestamp,
+          event.block.number,
           withdrawalAmount,
           Actions.WITHDRAW,
           pool.template as string,
@@ -464,7 +479,8 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
       null,
       "",
       criteriaSetHashId,
-      event.block.timestamp
+      event.block.timestamp,
+      event.block.number
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
@@ -478,7 +494,8 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
       pastTemplate as Template,
       pastTemplate.curve as string,
       criteriaSetHashId,
-      event.block.timestamp
+      event.block.timestamp,
+      event.block.number
     );
   }
 
@@ -486,6 +503,7 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
   createPoolSnapshot(
     pool as Pool,
     event.block.timestamp,
+    event.block.number,
     BigDecimal.fromString("0"),
     Actions.CRITERIASET_CHANGE,
     pool.template as string,
@@ -514,7 +532,8 @@ export function handleCurveSelected(event: CurveSelected): void {
       null,
       curveId,
       "",
-      event.block.timestamp
+      event.block.timestamp,
+      event.block.number
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
@@ -528,7 +547,8 @@ export function handleCurveSelected(event: CurveSelected): void {
       pastTemplate as Template,
       curveId,
       pastTemplate.criteriaSet as string,
-      event.block.timestamp
+      event.block.timestamp,
+      event.block.number
     );
   }
 
@@ -543,6 +563,7 @@ export function handleCurveSelected(event: CurveSelected): void {
   createPoolSnapshot(
     pool as Pool,
     event.block.timestamp,
+    event.block.number,
     BigDecimal.fromString("0"),
     Actions.CURVE_CHANGE,
     pool.template as string,
@@ -643,6 +664,7 @@ export function handleOptionsSold(event: OptionsSold): void {
     createPoolSnapshot(
       pool as Pool,
       event.block.timestamp,
+      event.block.number,
       premiumAmount,
       Actions.PREMIUM_RECEIVED,
       pool.template as string,
@@ -776,6 +798,7 @@ export function handleOptionSettlementDistributed(
     createPoolSnapshot(
       pool as Pool,
       event.block.timestamp,
+      event.block.number,
       deltaCollateralizedAndReturned,
       Actions.CAPITAL_EXERCISED,
       pool.template as string,
