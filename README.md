@@ -159,6 +159,10 @@ Tests are located within each component subfolder and are named as `{component}.
 
 ### Mocked `web3-onboard`
 
+In order to test actions involving interaction with a Wallet, a mocked version of `web3-onboard` is injected at compilation time, based on an environment variable. This is also the difference between the commands `yarn nx run potion-dapp:build` and `yarn nx run potion-dapp:build-test`.  
+This mocked instance implements all the methods available in the original library that are used within `potion-dapp`, exposing the same interface and also offering the same degree of reactivity. All methods are supposed to be called in an headless environment, thus eliminating the requirement for user interaction.
+To achieve the statefulness required by the app, this instance uses a local state to store information and its methods refer to this single source of truth to interact with current state.
+
 ## Monorepo overview
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
