@@ -9,6 +9,59 @@
     },
     "types": [
       {
+        "kind": "ENUM",
+        "name": "ActionType",
+        "description": "All the possible operations that can produce a PoolSnapshot\n",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "CAPITAL_EXERCISED",
+            "description": "A pool received capital after an otoken expired and the owner claimed it",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CRITERIASET_CHANGE",
+            "description": "A pool had a change in their CriteriaSet",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CURVE_CHANGE",
+            "description": "A pool had a change in their Curve",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "DEPOSIT",
+            "description": "A pool had a deposit of funds",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "POOL_LEFT_TEMPLATE",
+            "description": "A pool had a change in their Curve or CriteriaSet making them leave the template to join another one",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PREMIUM_RECEIVED",
+            "description": "A pool received premium after the purchase of some otokens",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "WITHDRAW",
+            "description": "A pool had a withdrawal of funds",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "BigDecimal",
         "description": null,
@@ -11354,8 +11407,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "BigInt",
+                "kind": "ENUM",
+                "name": "ActionType",
                 "ofType": null
               }
             },
@@ -11766,32 +11819,8 @@
             "name": "actionType",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "actionType_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "actionType_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
+              "kind": "ENUM",
+              "name": "ActionType",
               "ofType": null
             },
             "defaultValue": null,
@@ -11808,8 +11837,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
+                  "kind": "ENUM",
+                  "name": "ActionType",
                   "ofType": null
                 }
               }
@@ -11819,35 +11848,11 @@
             "deprecationReason": null
           },
           {
-            "name": "actionType_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "actionType_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "actionType_not",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
+              "kind": "ENUM",
+              "name": "ActionType",
               "ofType": null
             },
             "defaultValue": null,
@@ -11864,8 +11869,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
+                  "kind": "ENUM",
+                  "name": "ActionType",
                   "ofType": null
                 }
               }
