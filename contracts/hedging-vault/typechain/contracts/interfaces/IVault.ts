@@ -35,6 +35,7 @@ export interface IVaultInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "enterPosition()": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getAdmin()": FunctionFragment;
@@ -44,6 +45,7 @@ export interface IVaultInterface extends utils.Interface {
     "getOperator()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
     "getStrategist()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "pause()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
@@ -62,6 +64,7 @@ export interface IVaultInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "enterPosition"
       | "exitPosition"
       | "getAdmin"
@@ -71,6 +74,7 @@ export interface IVaultInterface extends utils.Interface {
       | "getOperator"
       | "getPerformanceFee"
       | "getStrategist"
+      | "getVault"
       | "pause"
       | "refund"
       | "refundETH"
@@ -102,6 +106,7 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
@@ -135,6 +140,7 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "getStrategist",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refund",
@@ -184,6 +190,10 @@ export interface IVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "enterPosition",
     data: BytesLike
   ): Result;
@@ -216,6 +226,7 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
@@ -243,6 +254,7 @@ export interface IVaultInterface extends utils.Interface {
     "OperatorChanged(address,address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
     "VaultPositionEntered(uint256,uint256)": EventFragment;
     "VaultPositionExited(uint256)": EventFragment;
   };
@@ -256,6 +268,7 @@ export interface IVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionExited"): EventFragment;
 }
@@ -367,6 +380,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
@@ -444,6 +468,11 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     enterPosition(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -465,6 +494,8 @@ export interface IVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -526,6 +557,11 @@ export interface IVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   enterPosition(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -547,6 +583,8 @@ export interface IVault extends BaseContract {
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -608,6 +646,11 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     enterPosition(overrides?: CallOverrides): Promise<void>;
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
@@ -625,6 +668,8 @@ export interface IVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -747,6 +792,15 @@ export interface IVault extends BaseContract {
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
 
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+
     "VaultPositionEntered(uint256,uint256)"(
       totalPrincipalAmount?: null,
       principalAmountInvested?: null
@@ -788,6 +842,11 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     enterPosition(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -809,6 +868,8 @@ export interface IVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -878,6 +939,11 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     enterPosition(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -899,6 +965,8 @@ export interface IVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }

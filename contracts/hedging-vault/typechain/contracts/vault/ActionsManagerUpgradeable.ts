@@ -31,6 +31,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
     "getAdmin()": FunctionFragment;
@@ -39,6 +40,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     "getPrincipalPercentages()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getTotalPrincipalPercentages()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "setPrincipalPercentages(uint256[])": FunctionFragment;
   };
 
@@ -47,6 +49,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "getAction"
       | "getActionsLength"
       | "getAdmin"
@@ -55,6 +58,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
       | "getPrincipalPercentages"
       | "getStrategist"
       | "getTotalPrincipalPercentages"
+      | "getVault"
       | "setPrincipalPercentages"
   ): FunctionFragment;
 
@@ -67,6 +71,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getAction",
     values: [BigNumberish]
@@ -96,6 +101,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setPrincipalPercentages",
     values: [BigNumberish[]]
@@ -111,6 +117,10 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAction", data: BytesLike): Result;
@@ -139,6 +149,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPrincipalPercentages",
     data: BytesLike
@@ -151,6 +162,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     "OperatorChanged(address,address)": EventFragment;
     "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionsAdded"): EventFragment;
@@ -161,6 +173,7 @@ export interface ActionsManagerUpgradeableInterface extends utils.Interface {
     nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionsAddedEventObject {
@@ -222,6 +235,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface ActionsManagerUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -264,6 +288,11 @@ export interface ActionsManagerUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAction(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -288,6 +317,8 @@ export interface ActionsManagerUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getVault(overrides?: CallOverrides): Promise<[string]>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -306,6 +337,11 @@ export interface ActionsManagerUpgradeable extends BaseContract {
 
   changeStrategist(
     newStrategistAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeVault(
+    newVaultAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -328,6 +364,8 @@ export interface ActionsManagerUpgradeable extends BaseContract {
 
   getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getVault(overrides?: CallOverrides): Promise<string>;
+
   setPrincipalPercentages(
     newPrincipalPercentages: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -349,6 +387,11 @@ export interface ActionsManagerUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
@@ -367,6 +410,8 @@ export interface ActionsManagerUpgradeable extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     setPrincipalPercentages(
       newPrincipalPercentages: BigNumberish[],
@@ -414,6 +459,15 @@ export interface ActionsManagerUpgradeable extends BaseContract {
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -429,6 +483,11 @@ export interface ActionsManagerUpgradeable extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -454,6 +513,8 @@ export interface ActionsManagerUpgradeable extends BaseContract {
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -473,6 +534,11 @@ export interface ActionsManagerUpgradeable extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -501,6 +567,8 @@ export interface ActionsManagerUpgradeable extends BaseContract {
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setPrincipalPercentages(
       newPrincipalPercentages: BigNumberish[],

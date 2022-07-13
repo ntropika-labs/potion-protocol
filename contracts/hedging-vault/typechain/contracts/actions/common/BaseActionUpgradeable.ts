@@ -35,12 +35,14 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getStrategist()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
@@ -57,12 +59,14 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "enterPosition"
       | "exitPosition"
       | "getAdmin"
       | "getLifecycleState"
       | "getOperator"
       | "getStrategist"
+      | "getVault"
       | "pause"
       | "paused"
       | "refund"
@@ -92,6 +96,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
     values: [string, BigNumberish]
@@ -113,6 +118,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "getStrategist",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -151,6 +157,10 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "enterPosition",
     data: BytesLike
   ): Result;
@@ -171,6 +181,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
@@ -187,6 +198,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     "Paused(address)": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
@@ -198,6 +210,7 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
@@ -291,6 +304,17 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface BaseActionUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -347,6 +371,11 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     enterPosition(
       investmentAsset: string,
       amountToInvest: BigNumberish,
@@ -365,6 +394,8 @@ export interface BaseActionUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -419,6 +450,11 @@ export interface BaseActionUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   enterPosition(
     investmentAsset: string,
     amountToInvest: BigNumberish,
@@ -437,6 +473,8 @@ export interface BaseActionUpgradeable extends BaseContract {
   getOperator(overrides?: CallOverrides): Promise<string>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -491,6 +529,11 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     enterPosition(
       investmentAsset: string,
       amountToInvest: BigNumberish,
@@ -509,6 +552,8 @@ export interface BaseActionUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<string>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -593,6 +638,15 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -625,6 +679,11 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     enterPosition(
       investmentAsset: string,
       amountToInvest: BigNumberish,
@@ -643,6 +702,8 @@ export interface BaseActionUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -701,6 +762,11 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     enterPosition(
       investmentAsset: string,
       amountToInvest: BigNumberish,
@@ -719,6 +785,8 @@ export interface BaseActionUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }

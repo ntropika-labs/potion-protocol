@@ -31,6 +31,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
     "getAdmin()": FunctionFragment;
@@ -39,6 +40,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     "getPrincipalPercentages()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getTotalPrincipalPercentages()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "initialize(address[],uint256[])": FunctionFragment;
     "setPrincipalPercentages(uint256[])": FunctionFragment;
   };
@@ -48,6 +50,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "getAction"
       | "getActionsLength"
       | "getAdmin"
@@ -56,6 +59,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
       | "getPrincipalPercentages"
       | "getStrategist"
       | "getTotalPrincipalPercentages"
+      | "getVault"
       | "initialize"
       | "setPrincipalPercentages"
   ): FunctionFragment;
@@ -69,6 +73,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getAction",
     values: [BigNumberish]
@@ -98,6 +103,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string[], BigNumberish[]]
@@ -117,6 +123,10 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAction", data: BytesLike): Result;
@@ -145,6 +155,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPrincipalPercentages",
@@ -158,6 +169,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     "OperatorChanged(address,address)": EventFragment;
     "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionsAdded"): EventFragment;
@@ -168,6 +180,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionsAddedEventObject {
@@ -229,6 +242,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface TestWrapperActionsManager extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -271,6 +295,11 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAction(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -294,6 +323,8 @@ export interface TestWrapperActionsManager extends BaseContract {
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
       actions: string[],
@@ -322,6 +353,11 @@ export interface TestWrapperActionsManager extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
@@ -340,6 +376,8 @@ export interface TestWrapperActionsManager extends BaseContract {
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
   getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   initialize(
     actions: string[],
@@ -368,6 +406,11 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
@@ -386,6 +429,8 @@ export interface TestWrapperActionsManager extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     initialize(
       actions: string[],
@@ -439,6 +484,15 @@ export interface TestWrapperActionsManager extends BaseContract {
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -454,6 +508,11 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -478,6 +537,8 @@ export interface TestWrapperActionsManager extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
       actions: string[],
@@ -507,6 +568,11 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getAction(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -532,6 +598,8 @@ export interface TestWrapperActionsManager extends BaseContract {
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
       actions: string[],

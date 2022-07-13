@@ -411,6 +411,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "prevVaultAddress",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newVaultAddress",
+        type: "address",
+      },
+    ],
+    name: "VaultChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "uint256",
         name: "totalPrincipalAmount",
@@ -649,6 +668,19 @@ const _abi = [
       },
     ],
     name: "changeStrategist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newVaultAddress",
+        type: "address",
+      },
+    ],
+    name: "changeVault",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -935,6 +967,19 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getVault",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",

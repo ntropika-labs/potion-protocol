@@ -47,10 +47,12 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
+    "getVault()": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
 
@@ -59,10 +61,12 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "getAdmin"
       | "getOperator"
       | "getStrategist"
       | "getSwapInfo"
+      | "getVault"
       | "setSwapInfo"
   ): FunctionFragment;
 
@@ -75,6 +79,7 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getOperator",
@@ -88,6 +93,7 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     functionFragment: "getSwapInfo",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
     values: [IUniswapV3Oracle.SwapInfoStruct]
@@ -105,6 +111,10 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getOperator",
@@ -118,6 +128,7 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     functionFragment: "getSwapInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setSwapInfo",
     data: BytesLike
@@ -128,12 +139,14 @@ export interface UniswapV3OracleUpgradeableInterface extends utils.Interface {
     "Initialized(uint8)": EventFragment;
     "OperatorChanged(address,address)": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -177,6 +190,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface UniswapV3OracleUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -219,6 +243,11 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
@@ -230,6 +259,8 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
@@ -252,6 +283,11 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
   getOperator(overrides?: CallOverrides): Promise<string>;
@@ -263,6 +299,8 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
     outputToken: string,
     overrides?: CallOverrides
   ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   setSwapInfo(
     info: IUniswapV3Oracle.SwapInfoStruct,
@@ -285,6 +323,11 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
     getOperator(overrides?: CallOverrides): Promise<string>;
@@ -296,6 +339,8 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
@@ -333,6 +378,15 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -351,6 +405,11 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
@@ -362,6 +421,8 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
@@ -385,6 +446,11 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -396,6 +462,8 @@ export interface UniswapV3OracleUpgradeable extends BaseContract {
       outputToken: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,

@@ -39,6 +39,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -58,6 +59,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "getPrincipalPercentages()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getTotalPrincipalPercentages()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "initialize(address,address,address,address,uint256,uint256,uint256,address,address[],uint256[])": FunctionFragment;
@@ -103,6 +105,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
@@ -122,6 +125,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "getPrincipalPercentages"
       | "getStrategist"
       | "getTotalPrincipalPercentages"
+      | "getVault"
       | "getVaultCap"
       | "increaseAllowance"
       | "initialize"
@@ -186,6 +190,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
     values: [BigNumberish]
@@ -256,6 +261,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getVaultCap",
     values?: undefined
@@ -391,6 +397,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
   ): Result;
@@ -454,6 +464,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     functionFragment: "getTotalPrincipalPercentages",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVaultCap",
     data: BytesLike
@@ -549,6 +560,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
     "VaultPositionEntered(uint256,uint256)": EventFragment;
     "VaultPositionExited(uint256)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
@@ -574,6 +586,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultCapChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
@@ -773,6 +786,17 @@ export type VaultCapChangedEvent = TypedEvent<
 
 export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
@@ -880,6 +904,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -943,6 +972,8 @@ export interface InvestmentVault extends BaseContract {
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1126,6 +1157,11 @@ export interface InvestmentVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   convertToAssets(
     shares: BigNumberish,
     overrides?: CallOverrides
@@ -1184,6 +1220,8 @@ export interface InvestmentVault extends BaseContract {
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
   getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1364,6 +1402,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1418,6 +1461,8 @@ export interface InvestmentVault extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1703,6 +1748,15 @@ export interface InvestmentVault extends BaseContract {
       newCap?: BigNumberish | null
     ): VaultCapChangedEventFilter;
 
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+
     "VaultPositionEntered(uint256,uint256)"(
       totalPrincipalAmount?: null,
       principalAmountInvested?: null
@@ -1775,6 +1829,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1836,6 +1895,8 @@ export interface InvestmentVault extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2027,6 +2088,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -2092,6 +2158,8 @@ export interface InvestmentVault extends BaseContract {
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

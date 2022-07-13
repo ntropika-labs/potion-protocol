@@ -135,7 +135,7 @@ contract PotionBuyAction is
      */
     function enterPosition(address investmentAsset, uint256 amountToInvest)
         external
-        onlyOperator
+        onlyVault
         onlyUnlocked
         onlyAfterCycleStart
         nonReentrant
@@ -178,7 +178,7 @@ contract PotionBuyAction is
      */
     function exitPosition(address investmentAsset)
         external
-        onlyOperator
+        onlyVault
         onlyLocked
         nonReentrant
         returns (uint256 amountReturned)

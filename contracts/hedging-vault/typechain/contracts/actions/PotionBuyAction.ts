@@ -206,6 +206,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "cycleDurationSecs()": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
@@ -222,6 +223,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
+    "getVault()": FunctionFragment;
     "initialize((address,address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
@@ -254,6 +256,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "cycleDurationSecs"
       | "enterPosition"
       | "exitPosition"
@@ -270,6 +273,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getSwapRouter"
       | "getUSDC"
       | "getUSDCBalance"
+      | "getVault"
       | "initialize"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
@@ -318,6 +322,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "cycleDurationSecs",
     values?: undefined
@@ -376,6 +381,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "getUSDCBalance",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PotionBuyAction.PotionBuyInitParamsStruct]
@@ -478,6 +484,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "cycleDurationSecs",
     data: BytesLike
   ): Result;
@@ -535,6 +545,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "getUSDCBalance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
@@ -614,6 +625,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "StrikePriceChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
@@ -633,6 +645,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "StrikePriceChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
@@ -792,6 +805,17 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface PotionBuyAction extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -847,6 +871,11 @@ export interface PotionBuyAction extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -910,6 +939,8 @@ export interface PotionBuyAction extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1023,6 +1054,11 @@ export interface PotionBuyAction extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   enterPosition(
@@ -1083,6 +1119,8 @@ export interface PotionBuyAction extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   initialize(
     initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1196,6 +1234,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
@@ -1256,6 +1299,8 @@ export interface PotionBuyAction extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1435,6 +1480,15 @@ export interface PotionBuyAction extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -1466,6 +1520,11 @@ export interface PotionBuyAction extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1529,6 +1588,8 @@ export interface PotionBuyAction extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1648,6 +1709,11 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     enterPosition(
@@ -1710,6 +1776,8 @@ export interface PotionBuyAction extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,

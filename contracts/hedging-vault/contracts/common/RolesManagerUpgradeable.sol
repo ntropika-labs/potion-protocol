@@ -60,6 +60,13 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
      */
     address private _operatorAddress;
 
+    /**
+        @notice The address of the vault
+
+        @dev The vault address is used in the actions to only allow the vault to call enterPosition and exitPosition
+     */
+    address private _vaultAddress;
+
     /// MODIFIERS
 
     /**
@@ -86,11 +93,22 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
         _;
     }
 
+    /**
+      @notice Modifier to scope functions to only be accessible by the Vault
+     */
+    modifier onlyVault() {
+        require(_msgSender() == _vaultAddress, "Only the Vault can call this function");
+        _;
+    }
+
     /// UPGRADEABLE INITIALIZERS
 
     /**
         @notice This does not chain the initialization to the parent contract.
         Also this contract does not need to initialize anything itself.
+
+        @dev The Vault role is not initialized here. Instead, the admin must call
+             `changeVault` to set the vault role address
      */
     // solhint-disable-next-line func-name-mixedcase
     function __RolesManager_init_unchained(
@@ -134,6 +152,15 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
 
     /**
         @inheritdoc IRolesManager
+
+        @dev Only the Admin can change the address to a new one
+     */
+    function changeVault(address newVaultAddress) external onlyAdmin {
+        __changeVault(newVaultAddress);
+    }
+
+    /**
+        @inheritdoc IRolesManager
      */
     function getAdmin() public view returns (address) {
         return _adminAddress;
@@ -151,6 +178,13 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
      */
     function getOperator() public view returns (address) {
         return _operatorAddress;
+    }
+
+    /**
+        @inheritdoc IRolesManager
+     */
+    function getVault() public view returns (address) {
+        return _vaultAddress;
     }
 
     /// INTERNALS
@@ -195,6 +229,19 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
     }
 
     /**
+        @notice See { changeVault }
+     */
+    function __changeVault(address newVaultAddress) private {
+        require(newVaultAddress != address(0), "New Vault address cannot be the null address");
+
+        address prevVaultAddress = _vaultAddress;
+
+        _vaultAddress = newVaultAddress;
+
+        emit VaultChanged(prevVaultAddress, newVaultAddress);
+    }
+
+    /**
        @dev This empty reserved space is put in place to allow future versions to add new
        variables without shifting down storage in the inheritance chain.
        See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
@@ -202,5 +249,5 @@ contract RolesManagerUpgradeable is Initializable, ContextUpgradeable, IRolesMan
        @dev The size of the gap plus the size of the storage variables defined
        above must equal 50 storage slots
      */
-    uint256[47] private __gap;
+    uint256[46] private __gap;
 }

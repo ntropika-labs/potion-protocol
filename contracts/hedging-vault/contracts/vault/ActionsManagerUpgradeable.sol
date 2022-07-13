@@ -66,7 +66,7 @@ contract ActionsManagerUpgradeable is RolesManagerUpgradeable, IActionsManager {
             _actions[i] = actions[i];
         }
 
-        _setPrincipalPercentages(principalPercentages);
+        __setPrincipalPercentages(principalPercentages);
 
         emit ActionsAdded(_actions);
     }
@@ -77,7 +77,7 @@ contract ActionsManagerUpgradeable is RolesManagerUpgradeable, IActionsManager {
         @inheritdoc IActionsManager
      */
     function setPrincipalPercentages(uint256[] calldata newPrincipalPercentages) external override onlyStrategist {
-        _setPrincipalPercentages(newPrincipalPercentages);
+        __setPrincipalPercentages(newPrincipalPercentages);
     }
 
     /// GETTERS
@@ -124,7 +124,7 @@ contract ActionsManagerUpgradeable is RolesManagerUpgradeable, IActionsManager {
     /**
         @notice See { setPrincipalPercentages }
      */
-    function _setPrincipalPercentages(uint256[] calldata newPrincipalPercentages) private {
+    function __setPrincipalPercentages(uint256[] calldata newPrincipalPercentages) private {
         uint256 numActions = getActionsLength();
 
         if (newPrincipalPercentages.length != numActions) {

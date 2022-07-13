@@ -138,6 +138,7 @@
     "ethereum-blockies-base64": "^1.0.2",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.4",
+    "evm-bn": "^1.1.1",
     "from-exponential": "^1.1.1",
     "fs-extra": "^10.1.0",
     "ganache": "^7.0.5",
