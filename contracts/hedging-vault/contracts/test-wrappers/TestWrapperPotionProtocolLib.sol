@@ -21,14 +21,12 @@ contract TestWrapperPotionProtocolLib {
      */
     function buyPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
-        address potion,
-        IPotionLiquidityPool.CounterpartyDetails[] memory sellers,
-        uint256 expectedPremium,
+        IOpynFactory opynFactory,
+        PotionBuyInfo calldata buyInfo,
         uint256 slippage,
         IERC20 USDC
     ) external returns (uint256 actualPremium) {
-        return
-            PotionProtocolLib.buyPotion(potionLiquidityPoolManager, potion, sellers, expectedPremium, slippage, USDC);
+        return PotionProtocolLib.buyPotion(potionLiquidityPoolManager, opynFactory, buyInfo, slippage, USDC);
     }
 
     /**

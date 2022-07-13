@@ -9,9 +9,15 @@ import {
 } from "../utils/deployTestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ERC20PresetMinterPauser, InvestmentVault, PotionBuyAction } from "../../typechain";
+import {
+    ERC20PresetMinterPauser,
+    InvestmentVault,
+    PotionBuyAction,
+    IPotionLiquidityPool,
+    ISwapRouter,
+} from "../../typechain";
 import { LifecycleStates } from "../utils/LifecycleStates";
-import { MockContract } from "@defi-wonderland/smock";
+import { MockContract, FakeContract } from "@defi-wonderland/smock";
 /**
     @notice Hedging Vault basic flow unit tests    
     
@@ -26,6 +32,8 @@ describe.only("HedgingVault", function () {
     let action: PotionBuyAction;
     let underlyingAsset: MockContract<ERC20PresetMinterPauser>;
     let tEnv: TestingEnvironmentDeployment;
+    let fakePotionProtocol: FakeContract<IPotionLiquidityPool>;
+    let fakeUniswapRouter: FakeContract<ISwapRouter>;
 
     before(async function () {
         ownerAccount = (await ethers.getSigners())[0];
@@ -39,11 +47,21 @@ describe.only("HedgingVault", function () {
             mockUniswapV3SwapRouter: true,
             mockPotionLiquidityPoolManager: true,
             mockOpynController: true,
+            mockOpynFactory: true,
         };
         tEnv = await deployTestingEnv(deploymentConfig, mockOptions);
 
+        if (!tEnv.fakePotionProtocol) {
+            throw new Error("Fake Potion protocol not found");
+        }
+        if (!tEnv.fakeUniswapV3) {
+            throw new Error("Fake Uniswap protocol not found");
+        }
+
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
+        fakePotionProtocol = tEnv.fakePotionProtocol;
+        fakeUniswapRouter = tEnv.fakeUniswapV3;
 
         if (!tEnv.mockUnderlyingAsset) {
             throw new Error("Underlying asset not mocked");
@@ -132,9 +150,9 @@ describe.only("HedgingVault", function () {
         await vault.connect(investorAccount).withdraw(20000, investorAccount.address, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
-    });
-    it("Deposit and execute investment cycle", async function () {
-        // Enable Uniswap swap
-        // Enable Potion Buy on Pool Manager
+
+        // Burn it
+        await underlyingAsset.connect(investorAccount).burn(20000);
+        expect(await underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
     });
 });

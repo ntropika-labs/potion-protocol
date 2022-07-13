@@ -52,11 +52,13 @@ contract PotionBuyAction is
         @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
         @param opynController The address of the Opyn Protocol controller contract
+        @param opynFactory The address of the Opyn Protocol factory contract
         @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
         @param premiumSlippage The slippage percentage allowed on the premium when buying potions
         @param swapSlippage The slippage percentage allowed on the swap operation
         @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
         @param cycleDurationSecs The duration of the investment cycle in seconds
+        @param strikePriceInUSDC The strike price of the investment asset in USDC with 8 decimals
      */
     struct PotionBuyInitParams {
         address adminAddress;
@@ -67,11 +69,13 @@ contract PotionBuyAction is
         address uniswapV3SwapRouter;
         address potionLiquidityPoolManager;
         address opynController;
+        address opynFactory;
         uint256 maxPremiumPercentage;
         uint256 premiumSlippage;
         uint256 swapSlippage;
         uint256 maxSwapDurationSecs;
         uint256 cycleDurationSecs;
+        uint256 strikePriceInUSDC;
     }
 
     /**
@@ -102,6 +106,7 @@ contract PotionBuyAction is
         __PotionProtocolHelper_init_unchained(
             initParams.potionLiquidityPoolManager,
             initParams.opynController,
+            initParams.opynFactory,
             initParams.USDC
         );
 
@@ -110,6 +115,7 @@ contract PotionBuyAction is
         _setSwapSlippage(initParams.swapSlippage);
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
         _setCycleDuration(initParams.cycleDurationSecs);
+        _setStrikePrice(initParams.strikePriceInUSDC);
     }
 
     /**
@@ -142,7 +148,9 @@ contract PotionBuyAction is
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
         (bool isValid, uint256 maxPremiumNeededInUSDC) = _calculateMaxPremium(
-            address(investmentAsset),
+            investmentAsset,
+            strikePriceInUSDC,
+            nextCycleStartTimestamp,
             amountToInvest,
             premiumSlippage
         );
@@ -158,7 +166,7 @@ contract PotionBuyAction is
         require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 
         _swapOutput(investmentAsset, address(getUSDC()), maxPremiumNeededInUSDC, swapSlippage, maxSwapDurationSecs);
-        _buyPotions(investmentAsset, amountToInvest, premiumSlippage);
+        _buyPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -175,7 +183,7 @@ contract PotionBuyAction is
     {
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
 
-        _redeemPotions(investmentAsset);
+        _redeemPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp);
         uint256 amountToConvertToAssset = getUSDCBalance(address(this));
 
         _swapInput(address(getUSDC()), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
@@ -204,7 +212,7 @@ contract PotionBuyAction is
     function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
         canExit =
             _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset) &&
+            _isPotionRedeemable(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp) &&
             getLifecycleState() == LifecycleState.Locked;
     }
 
@@ -241,6 +249,13 @@ contract PotionBuyAction is
      */
     function setCycleDuration(uint256 durationSeconds) external override onlyStrategist {
         _setCycleDuration(durationSeconds);
+    }
+
+    /**
+        @inheritdoc IPotionBuyActionV0
+     */
+    function setStrikePrice(uint256 strikePriceInUSDC_) external override onlyStrategist {
+        _setStrikePrice(strikePriceInUSDC_);
     }
 
     /// INTERNAL FUNCTIONS
@@ -304,6 +319,19 @@ contract PotionBuyAction is
         cycleDurationSecs = durationSeconds;
 
         emit CycleDurationChanged(durationSeconds);
+    }
+
+    /**
+        @dev See { setStrikePrice }
+     */
+    function _setStrikePrice(uint256 strikePriceInUSDC_) internal {
+        if (strikePriceInUSDC_ == 0) {
+            revert StrikePriceIsZero();
+        }
+
+        strikePriceInUSDC = strikePriceInUSDC_;
+
+        emit StrikePriceChanged(strikePriceInUSDC_);
     }
 
     /**

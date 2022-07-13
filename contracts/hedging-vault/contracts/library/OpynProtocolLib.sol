@@ -4,6 +4,7 @@
 pragma solidity 0.8.14;
 
 import { IOpynController } from "../interfaces/IOpynController.sol";
+import { IOpynFactory } from "../interfaces/IOpynFactory.sol";
 
 /**
     @title OpynProtocolLib
@@ -24,5 +25,45 @@ library OpynProtocolLib {
      */
     function isPotionRedeemable(IOpynController opynController, address potion) internal view returns (bool) {
         return opynController.isSettlementAllowed(potion);
+    }
+
+    /**
+        @notice get the address at which a new oToken with these parameters would be deployed
+        
+        @param underlyingAsset asset that the option references
+        @param USDC Address of the USDC token
+        @param strikePrice strike price with decimals = 18
+        @param expiry expiration timestamp as a unix timestamp
+        
+        @return the address of target otoken.
+     */
+    function getExistingOtoken(
+        IOpynFactory opynFactory,
+        address underlyingAsset,
+        address USDC,
+        uint256 strikePrice,
+        uint256 expiry
+    ) internal view returns (address) {
+        return opynFactory.getOtoken(underlyingAsset, USDC, USDC, strikePrice, expiry, true);
+    }
+
+    /**
+        @notice get the address at which a new oToken with these parameters would be deployed
+     
+        @param underlyingAsset asset that the option references
+        @param USDC Address of the USDC token
+        @param strikePrice strike price with decimals = 18
+        @param expiry expiration timestamp as a unix timestamp
+
+     @return targetAddress the address this oToken would be deployed at
+     */
+    function getTargetOtoken(
+        IOpynFactory opynFactory,
+        address underlyingAsset,
+        address USDC,
+        uint256 strikePrice,
+        uint256 expiry
+    ) internal view returns (address) {
+        return opynFactory.getTargetOtokenAddress(underlyingAsset, USDC, USDC, strikePrice, expiry, true);
     }
 }

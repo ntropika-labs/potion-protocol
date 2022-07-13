@@ -92,6 +92,8 @@ export type { ILifecycleStates } from "./contracts/interfaces/ILifecycleStates";
 export { ILifecycleStates__factory } from "./factories/contracts/interfaces/ILifecycleStates__factory";
 export type { IOpynController } from "./contracts/interfaces/IOpynController";
 export { IOpynController__factory } from "./factories/contracts/interfaces/IOpynController__factory";
+export type { IOpynFactory } from "./contracts/interfaces/IOpynFactory";
+export { IOpynFactory__factory } from "./factories/contracts/interfaces/IOpynFactory__factory";
 export type { IOtoken } from "./contracts/interfaces/IOtoken";
 export { IOtoken__factory } from "./factories/contracts/interfaces/IOtoken__factory";
 export type { IPotionBuyAction } from "./contracts/interfaces/IPotionBuyAction";

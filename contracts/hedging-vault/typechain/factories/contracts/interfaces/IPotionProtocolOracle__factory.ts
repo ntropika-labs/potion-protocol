@@ -14,8 +14,18 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "potion",
+        name: "underlyingAsset",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "strikePrice",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expirationTimestamp",
+        type: "uint256",
       },
     ],
     name: "getPotionBuyInfo",
@@ -24,8 +34,23 @@ const _abi = [
         components: [
           {
             internalType: "address",
-            name: "potion",
+            name: "targetPotionAddress",
             type: "address",
+          },
+          {
+            internalType: "address",
+            name: "underlyingAsset",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "strikePriceInUSDC",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expirationTimestamp",
+            type: "uint256",
           },
           {
             components: [
@@ -124,7 +149,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct IPotionProtocolOracle.PotionBuyInfo",
+        internalType: "struct PotionBuyInfo",
         name: "",
         type: "tuple",
       },
@@ -138,8 +163,23 @@ const _abi = [
         components: [
           {
             internalType: "address",
-            name: "potion",
+            name: "targetPotionAddress",
             type: "address",
+          },
+          {
+            internalType: "address",
+            name: "underlyingAsset",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "strikePriceInUSDC",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expirationTimestamp",
+            type: "uint256",
           },
           {
             components: [
@@ -238,7 +278,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct IPotionProtocolOracle.PotionBuyInfo",
+        internalType: "struct PotionBuyInfo",
         name: "info",
         type: "tuple",
       },

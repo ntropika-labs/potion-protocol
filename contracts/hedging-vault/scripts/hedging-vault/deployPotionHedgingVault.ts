@@ -20,6 +20,7 @@ export interface HedgingVaultDeployParams {
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
+    strikePriceInUSDC: BigNumber; // 8 decimals
 
     // Fees configuration
     managementFee: BigNumber;
@@ -30,6 +31,7 @@ export interface HedgingVaultDeployParams {
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
     opynController: string;
+    opynFactory: string;
 }
 
 export async function deployHedgingVault(
@@ -43,12 +45,14 @@ export async function deployHedgingVault(
         USDC: parameters.USDC,
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
         opynController: parameters.opynController,
+        opynFactory: parameters.opynFactory,
         potionLiquidityPoolManager: parameters.potionLiquidityPoolManager,
         maxPremiumPercentage: parameters.maxPremiumPercentage,
         premiumSlippage: parameters.premiumSlippage,
         swapSlippage: parameters.swapSlippage,
         maxSwapDurationSecs: parameters.maxSwapDurationSecs,
         cycleDurationSecs: parameters.cycleDurationSecs,
+        strikePriceInUSDC: parameters.strikePriceInUSDC,
     };
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);

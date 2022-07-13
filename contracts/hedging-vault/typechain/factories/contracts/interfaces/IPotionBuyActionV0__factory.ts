@@ -49,6 +49,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "StrikePriceIsZero",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -117,6 +122,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "strikePrice",
+        type: "uint256",
+      },
+    ],
+    name: "StrikePriceChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "swapSlippage",
         type: "uint256",
       },
@@ -172,6 +190,19 @@ const _abi = [
       },
     ],
     name: "setPremiumSlippage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "strikePriceInUSDC",
+        type: "uint256",
+      },
+    ],
+    name: "setStrikePrice",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

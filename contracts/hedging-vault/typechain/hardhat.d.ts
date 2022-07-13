@@ -181,6 +181,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOpynController__factory>;
     getContractFactory(
+      name: "IOpynFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpynFactory__factory>;
+    getContractFactory(
       name: "IOtoken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOtoken__factory>;
@@ -511,6 +515,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IOpynController>;
+    getContractAt(
+      name: "IOpynFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpynFactory>;
     getContractAt(
       name: "IOtoken",
       address: string,

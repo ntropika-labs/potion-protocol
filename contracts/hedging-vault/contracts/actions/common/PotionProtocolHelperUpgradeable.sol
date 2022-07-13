@@ -9,6 +9,7 @@ import "../../library/PercentageUtils.sol";
 import "../../library/OpynProtocolLib.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
 import { IOpynController } from "../../interfaces/IOpynController.sol";
+import { IOpynFactory } from "../../interfaces/IOpynFactory.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
@@ -40,11 +41,18 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     IOpynController private _opynController;
 
     /**
+        @notice The address of the Opyn Protocol factory
+
+        @dev Used to get the address of the otoken contract
+     */
+    IOpynFactory private _opynFactory;
+
+    /**
         @notice Maps the address of an asset with the address of the potion that will be used to hedge it
 
         @dev token address => potion address
      */
-    mapping(address => address) private _potionAssetpotion;
+    mapping(address => address) private _assetToPotion;
 
     /**
         @notice Address of the USDC contract. Used to calculate the settled amounts for
@@ -65,18 +73,21 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity pool manager
         @param opynController The address of the Opyn Protocol controller
+        @param opynFactory The address of the Opyn Protocol factory
         @param USDC The address of the USDC contract
      */
     // solhint-disable-next-line func-name-mixedcase
     function __PotionProtocolHelper_init_unchained(
         address potionLiquidityPoolManager,
         address opynController,
+        address opynFactory,
         address USDC
     ) internal onlyInitializing {
         __PotionProtocolOracle_init_unchained();
 
         _potionLiquidityPoolManager = IPotionLiquidityPool(potionLiquidityPoolManager);
         _opynController = IOpynController(opynController);
+        _opynFactory = IOpynFactory(opynFactory);
 
         _USDC = IERC20(USDC);
     }
@@ -84,31 +95,12 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Sets the potion associated with a hedged asset
-
-        @param hedgedAsset The address of the asset to be hedged
-        @param potion The address of the potion that will be used to hedge the asset
-     */
-    function _setPotion(address hedgedAsset, address potion) internal {
-        _potionAssetpotion[hedgedAsset] = potion;
-    }
-
-    /**
-        @notice Returns the potion associated with a hedged asset
-
-        @param hedgedAsset The address of the asset to be hedged
-
-        @return The address of the potion that will be used to hedge the asset
-     */
-    function getPotion(address hedgedAsset) public view returns (address) {
-        return _potionAssetpotion[hedgedAsset];
-    }
-
-    /**
         @notice Calculates the premium required to buy potions for the indicated amount of
         assets and the intended slippage
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param strikePrice The strike price of the potion with 8 decimals
+        @param expirationTimestamp The timestamp when the potion expires
         @param amount The amount of assets to be hedged
         @param slippage The slippage percentage to be used to calculate the premium
 
@@ -117,16 +109,13 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function _calculateMaxPremium(
         address hedgedAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
     ) internal view returns (bool isValid, uint256 maxPremiumInUSDC) {
-        address potion = getPotion(hedgedAsset);
-        if (potion == address(0)) {
-            return (false, type(uint256).max);
-        }
-
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);
-        if (amount != buyInfo.totalSizeInPotions) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+        if (buyInfo.targetPotionAddress == address(0) || amount != buyInfo.totalSizeInPotions) {
             return (false, type(uint256).max);
         }
 
@@ -136,36 +125,50 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
     /**
         @notice Buys potions from the Potion Protocol to insure the specific amount of assets
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param strikePrice The strike price of the potion with 8 decimals
+        @param expirationTimestamp The timestamp when the potion expires
+        @param amount The amount of assets to be hedged
+        @param slippage The slippage percentage to be used to calculate the premium
+
+        @return actualPremium The actual premium used to buy the potions
+
      */
     function _buyPotions(
         address hedgedAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
     ) internal returns (uint256 actualPremium) {
-        address potion = getPotion(hedgedAsset);
-        require(potion != address(0), "Potion not found for the given asset");
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
 
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(potion);
-
+        require(buyInfo.targetPotionAddress != address(0), "Potion buy info not found for the given asset");
         require(amount == buyInfo.totalSizeInPotions, "Insured amount greater than expected amount");
 
-        actualPremium = _potionLiquidityPoolManager.buyPotion(
-            potion,
-            buyInfo.sellers,
-            buyInfo.expectedPremiumInUSDC,
-            slippage,
-            getUSDC()
-        );
+        actualPremium = _potionLiquidityPoolManager.buyPotion(_opynFactory, buyInfo, slippage, getUSDC());
     }
 
     /**
-        @notice Buys potions from the Potion Protocol to insure the specific amount of assets
+        @notice Redeems the potions bought once the expiration timestamp is reached
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param strikePrice The strike price of the potion with 8 decimals
+        @param expirationTimestamp The timestamp when the potion expires
+
+        @return settledAmount The amount of USDC settled after the redemption
      */
-    function _redeemPotions(address hedgedAsset) internal returns (uint256 settledAmount) {
-        address potion = getPotion(hedgedAsset);
+    function _redeemPotions(
+        address hedgedAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp
+    ) internal returns (uint256 settledAmount) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+
         uint256 prevUSDCBalance = getUSDCBalance(address(this));
 
-        _potionLiquidityPoolManager.redeemPotion(potion);
+        _potionLiquidityPoolManager.redeemPotion(buyInfo.targetPotionAddress);
 
         settledAmount = getUSDCBalance(address(this)) - prevUSDCBalance;
     }
@@ -177,9 +180,13 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
         @return Whether the potion can be redeemed or not
      */
-    function _isPotionRedeemable(address hedgedAsset) internal view returns (bool) {
-        address potion = getPotion(hedgedAsset);
-        return _opynController.isPotionRedeemable(potion);
+    function _isPotionRedeemable(
+        address hedgedAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp
+    ) internal view returns (bool) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+        return _opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
     }
 
     /**

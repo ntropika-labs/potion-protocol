@@ -8,6 +8,7 @@ export type { IFeeManager } from "./IFeeManager";
 export type { IInvestmentVaultV0 } from "./IInvestmentVaultV0";
 export type { ILifecycleStates } from "./ILifecycleStates";
 export type { IOpynController } from "./IOpynController";
+export type { IOpynFactory } from "./IOpynFactory";
 export type { IOtoken } from "./IOtoken";
 export type { IPotionBuyAction } from "./IPotionBuyAction";
 export type { IPotionBuyActionV0 } from "./IPotionBuyActionV0";

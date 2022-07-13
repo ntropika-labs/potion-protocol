@@ -3,19 +3,20 @@ import { BigNumber } from "ethers";
 import { FakeContract, MockContract } from "@defi-wonderland/smock";
 
 import {
-    IERC20,
     IPotionLiquidityPool,
     ISwapRouter,
     InvestmentVault,
     PotionBuyAction,
     IOpynController,
     ERC20PresetMinterPauser,
+    IOpynFactory,
 } from "../../typechain";
 import {
     mockERC20,
     mockPotionLiquidityPoolManager,
     mockUniswapV3SwapRouter,
     mockOpynController,
+    mockOpynFactory,
 } from "../smock/fakesLibrary";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../../scripts/hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
@@ -27,6 +28,7 @@ export interface MockOptions {
     mockUniswapV3SwapRouter?: boolean;
     mockPotionLiquidityPoolManager?: boolean;
     mockOpynController?: boolean;
+    mockOpynFactory?: boolean;
 }
 
 export interface TestingEnvironmentDeployment {
@@ -46,18 +48,21 @@ export interface TestingEnvironmentDeployment {
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
+    strikePriceInUSDC: BigNumber;
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
     opynController: string;
+    opynFactory: string;
 
     // Mocks
     mockUSDC?: MockContract<ERC20PresetMinterPauser>;
     mockUnderlyingAsset?: MockContract<ERC20PresetMinterPauser>;
     fakePotionProtocol?: FakeContract<IPotionLiquidityPool>;
     fakeOpynController?: FakeContract<IOpynController>;
+    fakeOpynFactory?: FakeContract<IOpynFactory>;
     fakeUniswapV3?: FakeContract<ISwapRouter>;
 }
 
@@ -89,6 +94,12 @@ async function mockContractsIfNeeded(mockOptions: MockOptions): Promise<Partial<
         testingEnvironmentDeployment.opynController = testingEnvironmentDeployment.fakeOpynController.address;
     }
 
+    // Check if need to mock OpynFactory
+    if (mockOptions.mockOpynFactory) {
+        testingEnvironmentDeployment.fakeOpynFactory = await mockOpynFactory();
+        testingEnvironmentDeployment.opynFactory = testingEnvironmentDeployment.fakeOpynFactory.address;
+    }
+
     // Check if need to mock UniswapV3SwapRouter
     if (mockOptions.mockUniswapV3SwapRouter) {
         testingEnvironmentDeployment.fakeUniswapV3 = await mockUniswapV3SwapRouter();
@@ -116,6 +127,7 @@ async function prepareDeploymentValues(
     testingEnvironmentDeployment.swapSlippage = deploymentConfig.swapSlippage;
     testingEnvironmentDeployment.maxSwapDurationSecs = deploymentConfig.maxSwapDurationSecs;
     testingEnvironmentDeployment.cycleDurationSecs = deploymentConfig.cycleDurationSecs;
+    testingEnvironmentDeployment.strikePriceInUSDC = deploymentConfig.strikePriceInUSDC;
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
@@ -132,6 +144,9 @@ async function prepareDeploymentValues(
     }
     if (!testingEnvironmentDeployment.opynController) {
         throw new Error(`No opynController address provided and no mocking enabled`);
+    }
+    if (!testingEnvironmentDeployment.opynFactory) {
+        throw new Error(`No opynFactory address provided and no mocking enabled`);
     }
     if (!testingEnvironmentDeployment.uniswapV3SwapRouter) {
         throw new Error(`No uniswapV3SwapRouter address provided and no mocking enabled`);
@@ -173,6 +188,7 @@ export async function deployTestingEnv(
         swapSlippage: testEnvDeployment.swapSlippage,
         maxSwapDurationSecs: testEnvDeployment.maxSwapDurationSecs,
         cycleDurationSecs: testEnvDeployment.cycleDurationSecs,
+        strikePriceInUSDC: testEnvDeployment.strikePriceInUSDC,
 
         // Fees configuration
         managementFee: testEnvDeployment.managementFee,
@@ -183,6 +199,7 @@ export async function deployTestingEnv(
         uniswapV3SwapRouter: testEnvDeployment.uniswapV3SwapRouter,
         potionLiquidityPoolManager: testEnvDeployment.potionLiquidityPoolManager,
         opynController: testEnvDeployment.opynController,
+        opynFactory: testEnvDeployment.opynFactory,
     };
 
     const [investmentVault, potionBuyAction] = await deployHedgingVault(deploymentParams);

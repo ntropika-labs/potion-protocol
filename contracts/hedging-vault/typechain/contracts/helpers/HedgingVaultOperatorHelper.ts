@@ -26,6 +26,34 @@ import type {
   OnEvent,
 } from "../../common";
 
+export type PotionBuyInfoStruct = {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumberish;
+  expirationTimestamp: BigNumberish;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  expectedPremiumInUSDC: BigNumberish;
+  totalSizeInPotions: BigNumberish;
+};
+
+export type PotionBuyInfoStructOutput = [
+  string,
+  string,
+  BigNumber,
+  BigNumber,
+  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  BigNumber,
+  BigNumber
+] & {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumber;
+  expirationTimestamp: BigNumber;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+  expectedPremiumInUSDC: BigNumber;
+  totalSizeInPotions: BigNumber;
+};
+
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
     inputToken: string;
@@ -114,32 +142,11 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export declare namespace IPotionProtocolOracle {
-  export type PotionBuyInfoStruct = {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-    expectedPremiumInUSDC: BigNumberish;
-    totalSizeInPotions: BigNumberish;
-  };
-
-  export type PotionBuyInfoStructOutput = [
-    string,
-    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-    BigNumber,
-    BigNumber
-  ] & {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-    expectedPremiumInUSDC: BigNumber;
-    totalSizeInPotions: BigNumber;
-  };
-}
-
 export interface HedgingVaultOperatorHelperInterface extends utils.Interface {
   functions: {
     "canPositionBeEntered()": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
-    "enterPosition((address,address,uint256,bytes),(address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "enterPosition((address,address,uint256,bytes),(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
     "exitPosition((address,address,uint256,bytes))": FunctionFragment;
     "hedgingVault()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -171,10 +178,7 @@ export interface HedgingVaultOperatorHelperInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
-    values: [
-      IUniswapV3Oracle.SwapInfoStruct,
-      IPotionProtocolOracle.PotionBuyInfoStruct
-    ]
+    values: [IUniswapV3Oracle.SwapInfoStruct, PotionBuyInfoStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
@@ -284,7 +288,7 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
 
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      potionBuyInfo: IPotionProtocolOracle.PotionBuyInfoStruct,
+      potionBuyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -315,7 +319,7 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
 
   enterPosition(
     swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-    potionBuyInfo: IPotionProtocolOracle.PotionBuyInfoStruct,
+    potionBuyInfo: PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -346,7 +350,7 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
 
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      potionBuyInfo: IPotionProtocolOracle.PotionBuyInfoStruct,
+      potionBuyInfo: PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -387,7 +391,7 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
 
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      potionBuyInfo: IPotionProtocolOracle.PotionBuyInfoStruct,
+      potionBuyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -423,7 +427,7 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
 
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      potionBuyInfo: IPotionProtocolOracle.PotionBuyInfoStruct,
+      potionBuyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

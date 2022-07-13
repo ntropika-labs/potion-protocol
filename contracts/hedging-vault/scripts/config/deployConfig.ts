@@ -32,6 +32,7 @@ export interface PotionHedgingVaultConfigParams {
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
+    strikePriceInUSDC: BigNumber; // 8 decimals precision
 
     // Fees configuration
     //
@@ -60,6 +61,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             swapSlippage: BigNumber.from(2000000), // 2%
             maxSwapDurationSecs: BigNumber.from(60), // 1 minute
             cycleDurationSecs: BigNumber.from(86400), // 1 day
+            strikePriceInUSDC: BigNumber.from(100000000000), // 1000.0 USDC/asset
 
             // Fees configuration
             managementFee: BigNumber.from(3000000), // 3%

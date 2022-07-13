@@ -38,7 +38,9 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
+    "setStrikePrice(uint256)": FunctionFragment;
     "setSwapSlippage(uint256)": FunctionFragment;
+    "strikePriceInUSDC()": FunctionFragment;
     "swapSlippage()": FunctionFragment;
   };
 
@@ -54,7 +56,9 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
+      | "setStrikePrice"
       | "setSwapSlippage"
+      | "strikePriceInUSDC"
       | "swapSlippage"
   ): FunctionFragment;
 
@@ -99,8 +103,16 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setStrikePrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSwapSlippage",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "strikePriceInUSDC",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "swapSlippage",
@@ -148,7 +160,15 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setStrikePrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setSwapSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "strikePriceInUSDC",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -161,6 +181,7 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
+    "StrikePriceChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
   };
 
@@ -170,6 +191,7 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrikePriceChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
 }
 
@@ -216,6 +238,17 @@ export type PremiumSlippageChangedEvent = TypedEvent<
 
 export type PremiumSlippageChangedEventFilter =
   TypedEventFilter<PremiumSlippageChangedEvent>;
+
+export interface StrikePriceChangedEventObject {
+  strikePrice: BigNumber;
+}
+export type StrikePriceChangedEvent = TypedEvent<
+  [BigNumber],
+  StrikePriceChangedEventObject
+>;
+
+export type StrikePriceChangedEventFilter =
+  TypedEventFilter<StrikePriceChangedEvent>;
 
 export interface SwapSlippageChangedEventObject {
   swapSlippage: BigNumber;
@@ -287,10 +320,17 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    strikePriceInUSDC(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
@@ -327,10 +367,17 @@ export interface PotionBuyActionV0 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setStrikePrice(
+    strikePriceInUSDC: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setSwapSlippage(
     swapSlippage_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  strikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
   swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -367,10 +414,17 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    strikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -403,6 +457,11 @@ export interface PotionBuyActionV0 extends BaseContract {
     PremiumSlippageChanged(
       premiumSlippage?: null
     ): PremiumSlippageChangedEventFilter;
+
+    "StrikePriceChanged(uint256)"(
+      strikePrice?: null
+    ): StrikePriceChangedEventFilter;
+    StrikePriceChanged(strikePrice?: null): StrikePriceChangedEventFilter;
 
     "SwapSlippageChanged(uint256)"(
       swapSlippage?: null
@@ -443,10 +502,17 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    strikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -492,10 +558,17 @@ export interface PotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    strikePriceInUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

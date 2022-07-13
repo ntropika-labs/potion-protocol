@@ -7,6 +7,8 @@ import {
     IOpynController__factory,
     ISwapRouter,
     ISwapRouter__factory,
+    IOpynFactory,
+    IOpynFactory__factory,
 } from "../../typechain";
 
 export async function mockERC20() {
@@ -22,6 +24,10 @@ export async function mockPotionLiquidityPoolManager() {
 
 export async function mockOpynController() {
     return smock.fake<IOpynController>(IOpynController__factory.abi);
+}
+
+export async function mockOpynFactory() {
+    return smock.fake<IOpynFactory>(IOpynFactory__factory.abi);
 }
 
 export async function mockUniswapV3SwapRouter() {
