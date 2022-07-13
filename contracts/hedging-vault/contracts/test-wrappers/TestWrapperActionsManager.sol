@@ -2,10 +2,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 pragma solidity 0.8.14;
-import "../vault/ActionsContainerUpgradeable.sol";
+import "../vault/ActionsManagerUpgradeable.sol";
 
 /**
-    @title TestWrapperActionsContainer
+    @title TestWrapperActionsManager
 
     @author Roberto Cano <robercano>
 
@@ -13,11 +13,11 @@ import "../vault/ActionsContainerUpgradeable.sol";
     an external `initialize` function that calls the internal initializers. This allows
     to unit test the contract in isolation.
  */
-contract TestWrapperActionsContainer is ActionsContainerUpgradeable {
+contract TestWrapperActionsManager is ActionsManagerUpgradeable {
     /**
         @notice Initializes the contract
      */
-    function initialize(IAction[] calldata actions) external initializer {
-        __ActionsContainer_init_unchained(actions);
+    function initialize(IAction[] calldata actions, uint256[] calldata principalPercentages) external initializer {
+        __ActionsManager_init_unchained(actions, principalPercentages);
     }
 }

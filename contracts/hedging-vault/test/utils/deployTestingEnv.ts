@@ -49,6 +49,7 @@ export interface TestingEnvironmentDeployment {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePriceInUSDC: BigNumber;
+    hedgingPercentage: BigNumber;
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
@@ -128,6 +129,7 @@ async function prepareDeploymentValues(
     testingEnvironmentDeployment.maxSwapDurationSecs = deploymentConfig.maxSwapDurationSecs;
     testingEnvironmentDeployment.cycleDurationSecs = deploymentConfig.cycleDurationSecs;
     testingEnvironmentDeployment.strikePriceInUSDC = deploymentConfig.strikePriceInUSDC;
+    testingEnvironmentDeployment.hedgingPercentage = deploymentConfig.hedgingPercentage;
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
@@ -189,6 +191,7 @@ export async function deployTestingEnv(
         maxSwapDurationSecs: testEnvDeployment.maxSwapDurationSecs,
         cycleDurationSecs: testEnvDeployment.cycleDurationSecs,
         strikePriceInUSDC: testEnvDeployment.strikePriceInUSDC,
+        hedgingPercentage: testEnvDeployment.hedgingPercentage,
 
         // Fees configuration
         managementFee: testEnvDeployment.managementFee,

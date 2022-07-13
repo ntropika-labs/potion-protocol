@@ -116,6 +116,8 @@ contract PotionBuyAction is
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
         _setCycleDuration(initParams.cycleDurationSecs);
         _setStrikePrice(initParams.strikePriceInUSDC);
+
+        _updateNextCycleStart();
     }
 
     /**

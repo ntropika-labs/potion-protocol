@@ -33,6 +33,7 @@ export interface PotionHedgingVaultConfigParams {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePriceInUSDC: BigNumber; // 8 decimals precision
+    hedgingPercentage: BigNumber;
 
     // Fees configuration
     //
@@ -62,6 +63,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             maxSwapDurationSecs: BigNumber.from(60), // 1 minute
             cycleDurationSecs: BigNumber.from(86400), // 1 day
             strikePriceInUSDC: BigNumber.from(100000000000), // 1000.0 USDC/asset
+            hedgingPercentage: BigNumber.from(100000000), // 100%
 
             // Fees configuration
             managementFee: BigNumber.from(3000000), // 3%

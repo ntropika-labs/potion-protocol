@@ -3,7 +3,7 @@
 /* eslint-disable */
 import type * as testWrapperErc20MinterPauserSol from "./TestWrapperERC20MinterPauser.sol";
 export type { testWrapperErc20MinterPauserSol };
-export type { TestWrapperActionsContainer } from "./TestWrapperActionsContainer";
+export type { TestWrapperActionsManager } from "./TestWrapperActionsManager";
 export type { TestWrapperEmergencyLock } from "./TestWrapperEmergencyLock";
 export type { TestWrapperFeeManager } from "./TestWrapperFeeManager";
 export type { TestWrapperLifecycleStates } from "./TestWrapperLifecycleStates";

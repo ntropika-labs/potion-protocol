@@ -11,6 +11,49 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_principalPercentagesLength",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_principalPercentagesLengthExpected",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentagesMismatch",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "totalSumOfPercentages",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentagesSumMoreThan100",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -273,6 +316,19 @@ const _abi = [
       },
     ],
     name: "PerformanceFeeChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "_principalPercentages",
+        type: "uint256[]",
+      },
+    ],
+    name: "PrincipalPercentagesUpdated",
     type: "event",
   },
   {
@@ -827,6 +883,38 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actionIndex",
+        type: "uint256",
+      },
+    ],
+    name: "getPrincipalPercentage",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "percentage",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPrincipalPercentages",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getStrategist",
     outputs: [
@@ -834,6 +922,19 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTotalPrincipalPercentages",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -922,6 +1023,11 @@ const _abi = [
         internalType: "contract IAction[]",
         name: "actions",
         type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "principalPercentages",
+        type: "uint256[]",
       },
     ],
     name: "initialize",
@@ -1243,6 +1349,19 @@ const _abi = [
       },
     ],
     name: "setPerformanceFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256[]",
+        name: "newPrincipalPercentages",
+        type: "uint256[]",
+      },
+    ],
+    name: "setPrincipalPercentages",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

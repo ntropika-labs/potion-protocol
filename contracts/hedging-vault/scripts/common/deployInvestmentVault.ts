@@ -12,6 +12,7 @@ export interface InvestmentVaultDeployParams {
     performanceFee: BigNumber;
     feesRecipient: string;
     actions: string[];
+    principalPercentages: BigNumber[];
 }
 
 export async function deployInvestmentVault(parameters: InvestmentVaultDeployParams): Promise<InvestmentVault> {
@@ -25,5 +26,6 @@ export async function deployInvestmentVault(parameters: InvestmentVaultDeployPar
         parameters.performanceFee,
         parameters.feesRecipient,
         parameters.actions,
+        parameters.principalPercentages,
     ])) as InvestmentVault;
 }

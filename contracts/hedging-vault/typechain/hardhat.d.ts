@@ -157,9 +157,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAction__factory>;
     getContractFactory(
-      name: "IActionsContainer",
+      name: "IActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IActionsContainer__factory>;
+    ): Promise<Contracts.IActionsManager__factory>;
     getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -233,9 +233,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC4626Upgradeable__factory>;
     getContractFactory(
-      name: "TestWrapperActionsContainer",
+      name: "TestWrapperActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TestWrapperActionsContainer__factory>;
+    ): Promise<Contracts.TestWrapperActionsManager__factory>;
     getContractFactory(
       name: "TestWrapperEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -281,9 +281,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
     getContractFactory(
-      name: "ActionsContainerUpgradeable",
+      name: "ActionsManagerUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ActionsContainerUpgradeable__factory>;
+    ): Promise<Contracts.ActionsManagerUpgradeable__factory>;
     getContractFactory(
       name: "BaseVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -296,10 +296,6 @@ declare module "hardhat/types/runtime" {
       name: "InvestmentVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.InvestmentVault__factory>;
-    getContractFactory(
-      name: "InvestmentVaultV0",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.InvestmentVaultV0__factory>;
     getContractFactory(
       name: "PotionBuyActionV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -486,10 +482,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAction>;
     getContractAt(
-      name: "IActionsContainer",
+      name: "IActionsManager",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IActionsContainer>;
+    ): Promise<Contracts.IActionsManager>;
     getContractAt(
       name: "IEmergencyLock",
       address: string,
@@ -581,10 +577,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC4626Upgradeable>;
     getContractAt(
-      name: "TestWrapperActionsContainer",
+      name: "TestWrapperActionsManager",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TestWrapperActionsContainer>;
+    ): Promise<Contracts.TestWrapperActionsManager>;
     getContractAt(
       name: "TestWrapperEmergencyLock",
       address: string,
@@ -641,10 +637,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
     getContractAt(
-      name: "ActionsContainerUpgradeable",
+      name: "ActionsManagerUpgradeable",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ActionsContainerUpgradeable>;
+    ): Promise<Contracts.ActionsManagerUpgradeable>;
     getContractAt(
       name: "BaseVaultUpgradeable",
       address: string,
@@ -660,11 +656,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.InvestmentVault>;
-    getContractAt(
-      name: "InvestmentVaultV0",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.InvestmentVaultV0>;
     getContractAt(
       name: "PotionBuyActionV0",
       address: string,

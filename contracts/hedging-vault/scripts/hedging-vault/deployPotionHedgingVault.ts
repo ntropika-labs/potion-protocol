@@ -21,6 +21,7 @@ export interface HedgingVaultDeployParams {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePriceInUSDC: BigNumber; // 8 decimals
+    hedgingPercentage: BigNumber;
 
     // Fees configuration
     managementFee: BigNumber;
@@ -67,6 +68,7 @@ export async function deployHedgingVault(
         performanceFee: parameters.performanceFee,
         feesRecipient: parameters.feesRecipient,
         actions: [potionBuyContract.address],
+        principalPercentages: [parameters.hedgingPercentage],
     };
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);

@@ -5,27 +5,11 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  InvestmentVaultV0,
-  InvestmentVaultV0Interface,
-} from "../../../contracts/versioning/InvestmentVaultV0";
+  IActionsManager,
+  IActionsManagerInterface,
+} from "../../../contracts/interfaces/IActionsManager";
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "totalInvestment",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expectedMaxInvestment",
-        type: "uint256",
-      },
-    ],
-    name: "InvestmentTotalTooHigh",
-    type: "error",
-  },
   {
     inputs: [
       {
@@ -74,8 +58,21 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "contract IAction[]",
+        name: "actions",
+        type: "address[]",
+      },
+    ],
+    name: "ActionsAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint256[]",
-        name: "principalPercentages",
+        name: "_principalPercentages",
         type: "uint256[]",
       },
     ],
@@ -86,11 +83,69 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "getAction",
+    outputs: [
+      {
+        internalType: "contract IAction",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getActionsLength",
+    outputs: [
+      {
+        internalType: "uint256",
         name: "",
         type: "uint256",
       },
     ],
-    name: "principalPercentages",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actionIndex",
+        type: "uint256",
+      },
+    ],
+    name: "getPrincipalPercentage",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPrincipalPercentages",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTotalPrincipalPercentages",
     outputs: [
       {
         internalType: "uint256",
@@ -105,7 +160,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256[]",
-        name: "principalPercentages_",
+        name: "newPrincipalPercentages",
         type: "uint256[]",
       },
     ],
@@ -114,30 +169,17 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "totalPrincipalPercentages",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
 ];
 
-export class InvestmentVaultV0__factory {
+export class IActionsManager__factory {
   static readonly abi = _abi;
-  static createInterface(): InvestmentVaultV0Interface {
-    return new utils.Interface(_abi) as InvestmentVaultV0Interface;
+  static createInterface(): IActionsManagerInterface {
+    return new utils.Interface(_abi) as IActionsManagerInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): InvestmentVaultV0 {
-    return new Contract(address, _abi, signerOrProvider) as InvestmentVaultV0;
+  ): IActionsManager {
+    return new Contract(address, _abi, signerOrProvider) as IActionsManager;
   }
 }
