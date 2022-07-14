@@ -29,21 +29,11 @@ import {
   oTokenSettled,
 } from "./otoken";
 import { collateralFixedtoDecimals } from "./token";
+import { Actions } from "./enums";
 
 const ZERO_BIGDECIMAL = BigDecimal.fromString("0");
 const HUNDRED_BIGDECIMAL = BigDecimal.fromString("100");
 const ONE_BIGINT = BigInt.fromI32(1);
-
-// Have to manually define this Enum since codegen schema does not contain Enums
-export enum Actions {
-  POOL_LEFT_TEMPLATE = -3,
-  CURVE_CHANGE = -2,
-  CRITERIASET_CHANGE = -1,
-  DEPOSIT = 0,
-  WITHDRAW = 1,
-  PREMIUM_RECEIVED = 2,
-  CAPITAL_EXERCISED = 3,
-}
 
 export function createPoolId(lp: Bytes, poolId: BigInt): string {
   return lp.toHexString() + poolId.toHexString();
@@ -261,9 +251,6 @@ export function createPoolSnapshot(
     actionAmount.toString(),
     actionType.toString(),
   ]);
-  // log.info("This is the template you're passing, is it null??", [
-  //   template.toString(),
-  // ]);
   poolSnapshot.poolId = pool.poolId;
   poolSnapshot.lp = pool.lp;
   poolSnapshot.size = pool.size;
@@ -273,7 +260,7 @@ export function createPoolSnapshot(
   poolSnapshot.template = templateId;
   poolSnapshot.timestamp = timestamp;
   poolSnapshot.actionAmount = actionAmount;
-  poolSnapshot.actionType = BigInt.fromI32(actionType);
+  poolSnapshot.actionType = actionType;
   poolSnapshot.currentPool = pool.id;
   poolSnapshot.pnlTotal = pool.pnlTotal;
   poolSnapshot.pnlPercentage = pool.pnlPercentage;
