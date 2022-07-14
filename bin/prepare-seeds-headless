@@ -6,7 +6,9 @@ if [[ -z $GANACHE_VOLUME ]]; then
   exit 1
 else
   echo "Creating the ganache custom folder if it doesn't exist..."
-  mkdir -p $GANACHE_VOLUME
+
+  mkdir -p "$GANACHE_VOLUME"/tests
   echo "Copying the default ganache seeds to your custom folder..."
+  
   cp -r "$SEEDS_FOLDER"/* $GANACHE_VOLUME && echo "Seeds copied successfully"
 fi

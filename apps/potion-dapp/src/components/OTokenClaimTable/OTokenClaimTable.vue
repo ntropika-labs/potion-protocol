@@ -21,6 +21,7 @@ interface Props {
   underlyings: Array<Token>;
   priceMap: Map<string, string>;
   payoutMap: Map<string, number>;
+  claimedOtokens: string[];
 }
 
 const props = defineProps<Props>();
@@ -121,6 +122,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
             label="All"
             size="xs"
             class="!capitalize"
+            test-claim-table-toggle-all-button
             :palette="getButtonColor(totalSelectedUnderlyings === 0)"
             @click="toggleAllUnderlyings"
           />
@@ -131,6 +133,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
             :label="underlying.symbol"
             size="xs"
             class="!capitalize"
+            test-claim-table-toggle-asset-button
             @click="toggleUnderlying(underlying.address)"
           />
         </div>
@@ -139,12 +142,15 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :otokens="filteredActiveOtokens"
           :underlyings="underlyings"
           :price-map="priceMap"
+          test-claim-table-active-options
         ></PoolActiveOTokens>
         <PoolExpiredOTokens
           v-else
           :otokens="filteredExpiredOtokens"
           :underlyings="underlyings"
           :payout-map="props.payoutMap"
+          :claimed-otokens="props.claimedOtokens"
+          test-claim-table-expired-options
           @claim-otoken="claimOtoken"
         >
         </PoolExpiredOTokens>

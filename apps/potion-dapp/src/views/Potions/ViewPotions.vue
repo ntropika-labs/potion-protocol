@@ -226,7 +226,10 @@ watch(redeemReceipt, (receipt) =>
           </h2>
         </div>
         <template v-if="activePotions.length > 0">
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            test-active-potions-grid
+          >
             <!-- Get price from oracle composable -->
             <MyPotionCard
               v-for="(potion, index) in activePotions"
@@ -275,7 +278,10 @@ watch(redeemReceipt, (receipt) =>
           </h2>
         </div>
         <template v-if="expiredPotions.length > 0">
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            test-expired-potions-grid
+          >
             <MyPotionCard
               v-for="(potion, index) in expiredPotions"
               :key="`${potion.id}${index}`"

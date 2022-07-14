@@ -4,9 +4,9 @@ name: Development branch actions
 on:
   workflow_dispatch:
   push:
-    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop]
   pull_request:
-    branches: [develop, feat-ci-cd-implementation-CU-2er6b37]
+    branches: [develop]
 
 permissions:
   contents: read
@@ -28,6 +28,7 @@ jobs:
       VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
       VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
       VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+      VITE_BLOCKNATIVE_API_KEY: ${{ inputs.VITE_BLOCKNATIVE_API_KEY }}
       DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
       GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
       DATABASE_PATH: ${{ secrets.DATABASE_PATH }}

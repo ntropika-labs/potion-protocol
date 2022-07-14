@@ -8,33 +8,15 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
+        cache: yarn
 
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-      shell: bash
-
-    - name: Cache yarn
-      uses: actions/cache@v3
-      id: yarn-cache # (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-cache-
-
-    - name: Cache node modules
-      id: node-modules-cache
+    - name: Cache Cypress Binary
+      id: cache-cypress-binary
       uses: actions/cache@v3
       with:
-        path: "**/node_modules"
-        key: ${{ runner.os }}-node-modules-cache-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-node-modules-cache-
+        path: "~/.cache"
+        key: cypress-binary-${{ hashFiles('yarn.lock') }}
 
     - name: Install dependencies
-      if: |
-        steps.yarn-cache.outputs.cache-hit != 'true' ||
-        steps.node-modules-cache.outputs.cache-hit != 'true'
       run: yarn install --immutable --immutable-cache
       shell: bash
