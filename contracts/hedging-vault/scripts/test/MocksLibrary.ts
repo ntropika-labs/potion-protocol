@@ -45,11 +45,15 @@ export async function mockPotionLiquidityPoolManager(deploymentConfig: PotionHed
     let address: string;
 
     if (deploymentConfig.networkName === "hardhat") {
-        softMock = await deployMock<MockPotionLiquidityPool>("MockPotionLiquidityPool");
+        softMock = await deployMock<MockPotionLiquidityPool>("MockPotionLiquidityPool", [], {
+            alias: "PotionLiquidityPool",
+        });
         hardMock = softMock as unknown as MockPotionLiquidityPool;
         address = softMock.address;
     } else {
-        hardMock = (await deploy("MockPotionLiquidityPool")) as MockPotionLiquidityPool;
+        hardMock = (await deploy("MockPotionLiquidityPool", [], {
+            alias: "PotionLiquidityPool",
+        })) as MockPotionLiquidityPool;
         address = hardMock.address;
     }
 
@@ -66,11 +70,15 @@ export async function mockOpynController(deploymentConfig: PotionHedgingVaultCon
     let address: string;
 
     if (deploymentConfig.networkName === "hardhat") {
-        softMock = await deployMock<MockOpynController>("MockOpynController");
+        softMock = await deployMock<MockOpynController>("MockOpynController", [], {
+            alias: "OpynController",
+        });
         hardMock = softMock as unknown as MockOpynController;
         address = softMock.address;
     } else {
-        hardMock = (await deploy("MockOpynController")) as MockOpynController;
+        hardMock = (await deploy("MockOpynController", [], {
+            alias: "OpynController",
+        })) as MockOpynController;
         address = hardMock.address;
     }
 
@@ -87,11 +95,15 @@ export async function mockOpynFactory(deploymentConfig: PotionHedgingVaultConfig
     let address: string;
 
     if (deploymentConfig.networkName === "hardhat") {
-        softMock = await deployMock<MockOpynFactory>("MockOpynFactory");
+        softMock = await deployMock<MockOpynFactory>("MockOpynFactory", [], {
+            alias: "OpynFactory",
+        });
         hardMock = softMock as unknown as MockOpynFactory;
         address = softMock.address;
     } else {
-        hardMock = (await deploy("MockOpynFactory")) as MockOpynFactory;
+        hardMock = (await deploy("MockOpynFactory", [], {
+            alias: "OpynFactory",
+        })) as MockOpynFactory;
         address = hardMock.address;
     }
 
@@ -108,11 +120,15 @@ export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVau
     let address: string;
 
     if (deploymentConfig.networkName === "hardhat") {
-        softMock = await deployMock<MockUniswapV3Router>("MockUniswapV3Router");
+        softMock = await deployMock<MockUniswapV3Router>("MockUniswapV3Router", [], {
+            alias: "UniswapV3Router",
+        });
         hardMock = softMock as unknown as MockUniswapV3Router;
         address = softMock.address;
     } else {
-        hardMock = (await deploy("MockUniswapV3Router")) as MockUniswapV3Router;
+        hardMock = (await deploy("MockUniswapV3Router", [], {
+            alias: "UniswapV3Router",
+        })) as MockUniswapV3Router;
         address = hardMock.address;
     }
 

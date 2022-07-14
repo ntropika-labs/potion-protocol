@@ -7,40 +7,40 @@ export const Deployments = {
         contracts: {},
     },
     localhost: {
-        timestamp: 1657815415,
+        timestamp: 1657815711,
         network: "localhost",
         contracts: {
             USDC: {
-                address: "0x59b670e9fA9D0A427751Af201D676719a970857b",
-                blockNumber: 22,
+                address: "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+                blockNumber: 31,
             },
             UnderlyingAsset: {
-                address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
-                blockNumber: 23,
+                address: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
+                blockNumber: 32,
             },
-            MockPotionLiquidityPool: {
-                address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
-                blockNumber: 24,
+            PotionLiquidityPool: {
+                address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+                blockNumber: 33,
             },
-            MockOpynController: {
-                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-                blockNumber: 25,
+            OpynController: {
+                address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
+                blockNumber: 34,
             },
-            MockOpynFactory: {
-                address: "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
-                blockNumber: 26,
+            OpynFactory: {
+                address: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
+                blockNumber: 35,
             },
-            MockUniswapV3Router: {
-                address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
-                blockNumber: 27,
+            UniswapV3Router: {
+                address: "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8",
+                blockNumber: 36,
             },
             PotionBuyAction: {
-                address: "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
-                blockNumber: 28,
+                address: "0x851356ae760d987E095750cCeb3bC6014560891C",
+                blockNumber: 37,
             },
             InvestmentVault: {
-                address: "0xc5a5C42992dECbae36851359345FE25997F5C42d",
-                blockNumber: 29,
+                address: "0xf5059a5D33d5853360D16C683c16e67980206f36",
+                blockNumber: 38,
             },
         },
     },
