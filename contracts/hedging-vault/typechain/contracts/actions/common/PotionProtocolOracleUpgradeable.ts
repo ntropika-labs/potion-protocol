@@ -26,6 +26,34 @@ import type {
   OnEvent,
 } from "../../../common";
 
+export type PotionBuyInfoStruct = {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumberish;
+  expirationTimestamp: BigNumberish;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  expectedPremiumInUSDC: BigNumberish;
+  totalSizeInPotions: BigNumberish;
+};
+
+export type PotionBuyInfoStructOutput = [
+  string,
+  string,
+  BigNumber,
+  BigNumber,
+  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  BigNumber,
+  BigNumber
+] & {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumber;
+  expirationTimestamp: BigNumber;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+  expectedPremiumInUSDC: BigNumber;
+  totalSizeInPotions: BigNumber;
+};
+
 export declare namespace ICurveManager {
   export type CurveStruct = {
     a_59x18: BigNumberish;
@@ -98,38 +126,19 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export declare namespace IPotionProtocolOracle {
-  export type PotionBuyInfoStruct = {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-    expectedPremiumInUSDC: BigNumberish;
-    totalSizeInPotions: BigNumberish;
-  };
-
-  export type PotionBuyInfoStructOutput = [
-    string,
-    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-    BigNumber,
-    BigNumber
-  ] & {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-    expectedPremiumInUSDC: BigNumber;
-    totalSizeInPotions: BigNumber;
-  };
-}
-
 export interface PotionProtocolOracleUpgradeableInterface
   extends utils.Interface {
   functions: {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
-    "getPotionBuyInfo(address)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
     "getStrategist()": FunctionFragment;
-    "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "getVault()": FunctionFragment;
+    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
   getFunction(
@@ -137,10 +146,12 @@ export interface PotionProtocolOracleUpgradeableInterface
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "getAdmin"
       | "getOperator"
       | "getPotionBuyInfo"
       | "getStrategist"
+      | "getVault"
       | "setPotionBuyInfo"
   ): FunctionFragment;
 
@@ -153,6 +164,7 @@ export interface PotionProtocolOracleUpgradeableInterface
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getOperator",
@@ -160,15 +172,16 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string]
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getStrategist",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
-    values: [IPotionProtocolOracle.PotionBuyInfoStruct]
+    values: [PotionBuyInfoStruct]
   ): string;
 
   decodeFunctionResult(
@@ -181,6 +194,10 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
@@ -196,6 +213,7 @@ export interface PotionProtocolOracleUpgradeableInterface
     functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPotionBuyInfo",
     data: BytesLike
@@ -206,12 +224,14 @@ export interface PotionProtocolOracleUpgradeableInterface
     "Initialized(uint8)": EventFragment;
     "OperatorChanged(address,address)": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -255,6 +275,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface PotionProtocolOracleUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -297,19 +328,28 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
+    ): Promise<[PotionBuyInfoStructOutput]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
 
+    getVault(overrides?: CallOverrides): Promise<[string]>;
+
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -329,19 +369,28 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getAdmin(overrides?: CallOverrides): Promise<string>;
 
   getOperator(overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
-    potion: string,
+    underlyingAsset: string,
+    strikePrice: BigNumberish,
+    expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+  ): Promise<PotionBuyInfoStructOutput>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
 
+  getVault(overrides?: CallOverrides): Promise<string>;
+
   setPotionBuyInfo(
-    info: IPotionProtocolOracle.PotionBuyInfoStruct,
+    info: PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -361,19 +410,28 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getAdmin(overrides?: CallOverrides): Promise<string>;
 
     getOperator(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+    ): Promise<PotionBuyInfoStructOutput>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
+    getVault(overrides?: CallOverrides): Promise<string>;
+
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -408,6 +466,15 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -426,19 +493,28 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -459,19 +535,28 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

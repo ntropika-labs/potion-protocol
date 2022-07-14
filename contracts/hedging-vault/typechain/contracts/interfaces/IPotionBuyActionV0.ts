@@ -32,6 +32,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
+    "setStrikePrice(uint256)": FunctionFragment;
     "setSwapSlippage(uint256)": FunctionFragment;
   };
 
@@ -41,6 +42,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
+      | "setStrikePrice"
       | "setSwapSlippage"
   ): FunctionFragment;
 
@@ -61,6 +63,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setStrikePrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSwapSlippage",
     values: [BigNumberish]
   ): string;
@@ -82,6 +88,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setStrikePrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setSwapSlippage",
     data: BytesLike
   ): Result;
@@ -91,6 +101,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
+    "StrikePriceChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
   };
 
@@ -100,6 +111,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StrikePriceChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
 }
 
@@ -146,6 +158,17 @@ export type PremiumSlippageChangedEvent = TypedEvent<
 
 export type PremiumSlippageChangedEventFilter =
   TypedEventFilter<PremiumSlippageChangedEvent>;
+
+export interface StrikePriceChangedEventObject {
+  strikePrice: BigNumber;
+}
+export type StrikePriceChangedEvent = TypedEvent<
+  [BigNumber],
+  StrikePriceChangedEventObject
+>;
+
+export type StrikePriceChangedEventFilter =
+  TypedEventFilter<StrikePriceChangedEvent>;
 
 export interface SwapSlippageChangedEventObject {
   swapSlippage: BigNumber;
@@ -205,6 +228,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -231,6 +259,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setStrikePrice(
+    strikePriceInUSDC: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setSwapSlippage(
     swapSlippage_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -254,6 +287,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
 
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -292,6 +330,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
       premiumSlippage?: null
     ): PremiumSlippageChangedEventFilter;
 
+    "StrikePriceChanged(uint256)"(
+      strikePrice?: null
+    ): StrikePriceChangedEventFilter;
+    StrikePriceChanged(strikePrice?: null): StrikePriceChangedEventFilter;
+
     "SwapSlippageChanged(uint256)"(
       swapSlippage?: null
     ): SwapSlippageChangedEventFilter;
@@ -319,6 +362,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setSwapSlippage(
       swapSlippage_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -343,6 +391,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
 
     setPremiumSlippage(
       premiumSlippage_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setStrikePrice(
+      strikePriceInUSDC: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

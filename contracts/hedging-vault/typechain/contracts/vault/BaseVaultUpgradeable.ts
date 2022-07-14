@@ -39,6 +39,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -54,10 +55,14 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "getManagementFee()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
+    "getPrincipalPercentage(uint256)": FunctionFragment;
+    "getPrincipalPercentages()": FunctionFragment;
     "getStrategist()": FunctionFragment;
+    "getTotalPrincipalPercentages()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address,address,address,uint256,uint256,address,address[])": FunctionFragment;
+    "initialize(address,address,address,address,uint256,uint256,uint256,address,address[],uint256[])": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -76,6 +81,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "setFeesRecipient(address)": FunctionFragment;
     "setManagementFee(uint256)": FunctionFragment;
     "setPerformanceFee(uint256)": FunctionFragment;
+    "setPrincipalPercentages(uint256[])": FunctionFragment;
     "setVaultCap(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalAssets()": FunctionFragment;
@@ -99,6 +105,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
@@ -114,7 +121,11 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "getManagementFee"
       | "getOperator"
       | "getPerformanceFee"
+      | "getPrincipalPercentage"
+      | "getPrincipalPercentages"
       | "getStrategist"
+      | "getTotalPrincipalPercentages"
+      | "getVault"
       | "getVaultCap"
       | "increaseAllowance"
       | "initialize"
@@ -136,6 +147,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "setFeesRecipient"
       | "setManagementFee"
       | "setPerformanceFee"
+      | "setPrincipalPercentages"
       | "setVaultCap"
       | "symbol"
       | "totalAssets"
@@ -178,6 +190,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
     values: [BigNumberish]
@@ -233,9 +246,22 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getPrincipalPercentage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPrincipalPercentages",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getStrategist",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalPrincipalPercentages",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getVaultCap",
     values?: undefined
@@ -253,8 +279,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       string,
       BigNumberish,
       BigNumberish,
+      BigNumberish,
       string,
-      string[]
+      string[],
+      BigNumberish[]
     ]
   ): string;
   encodeFunctionData(functionFragment: "maxDeposit", values: [string]): string;
@@ -307,6 +335,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setPerformanceFee",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPrincipalPercentages",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setVaultCap",
@@ -365,6 +397,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
   ): Result;
@@ -413,9 +449,22 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPrincipalPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPrincipalPercentages",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalPrincipalPercentages",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVaultCap",
     data: BytesLike
@@ -468,6 +517,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPrincipalPercentages",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setVaultCap",
     data: BytesLike
   ): Result;
@@ -502,10 +555,12 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
+    "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
     "VaultPositionEntered(uint256,uint256)": EventFragment;
     "VaultPositionExited(uint256)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
@@ -524,10 +579,14 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultCapChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
@@ -674,6 +733,17 @@ export type PerformanceFeeChangedEvent = TypedEvent<
 export type PerformanceFeeChangedEventFilter =
   TypedEventFilter<PerformanceFeeChangedEvent>;
 
+export interface PrincipalPercentagesUpdatedEventObject {
+  _principalPercentages: BigNumber[];
+}
+export type PrincipalPercentagesUpdatedEvent = TypedEvent<
+  [BigNumber[]],
+  PrincipalPercentagesUpdatedEventObject
+>;
+
+export type PrincipalPercentagesUpdatedEventFilter =
+  TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
+
 export interface StrategistChangedEventObject {
   prevStrategistAddress: string;
   newStrategistAddress: string;
@@ -715,6 +785,17 @@ export type VaultCapChangedEvent = TypedEvent<
 >;
 
 export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
+
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
 
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
@@ -823,6 +904,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -874,7 +960,20 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getPrincipalPercentage(
+      actionIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { percentage: BigNumber }>;
+
+    getPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
+
+    getTotalPrincipalPercentages(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -889,10 +988,12 @@ export interface BaseVaultUpgradeable extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
       actions: string[],
+      principalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -976,6 +1077,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setVaultCap(
       newCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1051,6 +1157,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   convertToAssets(
     shares: BigNumberish,
     overrides?: CallOverrides
@@ -1099,7 +1210,18 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getPrincipalPercentage(
+    actionIndex: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getStrategist(overrides?: CallOverrides): Promise<string>;
+
+  getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1114,10 +1236,12 @@ export interface BaseVaultUpgradeable extends BaseContract {
     strategistAddress: string,
     operatorAddress: string,
     underlyingAsset: string,
+    underlyingAssetCap: BigNumberish,
     managementFee: BigNumberish,
     performanceFee: BigNumberish,
     feesRecipient: string,
     actions: string[],
+    principalPercentages: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1198,6 +1322,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setPrincipalPercentages(
+    newPrincipalPercentages: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setVaultCap(
     newCap: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1273,6 +1402,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1317,7 +1451,18 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPrincipalPercentage(
+      actionIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getStrategist(overrides?: CallOverrides): Promise<string>;
+
+    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1332,10 +1477,12 @@ export interface BaseVaultUpgradeable extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
       actions: string[],
+      principalPercentages: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1411,6 +1558,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     setPerformanceFee(
       newPerformanceFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1557,6 +1709,13 @@ export interface BaseVaultUpgradeable extends BaseContract {
       newPerformanceFee?: null
     ): PerformanceFeeChangedEventFilter;
 
+    "PrincipalPercentagesUpdated(uint256[])"(
+      _principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+    PrincipalPercentagesUpdated(
+      _principalPercentages?: null
+    ): PrincipalPercentagesUpdatedEventFilter;
+
     "StrategistChanged(address,address)"(
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
@@ -1588,6 +1747,15 @@ export interface BaseVaultUpgradeable extends BaseContract {
       prevCap?: BigNumberish | null,
       newCap?: BigNumberish | null
     ): VaultCapChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
 
     "VaultPositionEntered(uint256,uint256)"(
       totalPrincipalAmount?: null,
@@ -1661,6 +1829,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1712,7 +1885,18 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPrincipalPercentage(
+      actionIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1727,10 +1911,12 @@ export interface BaseVaultUpgradeable extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
       actions: string[],
+      principalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1808,6 +1994,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     setPerformanceFee(
       newPerformanceFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1897,6 +2088,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1948,7 +2144,22 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getPrincipalPercentage(
+      actionIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPrincipalPercentages(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTotalPrincipalPercentages(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1963,10 +2174,12 @@ export interface BaseVaultUpgradeable extends BaseContract {
       strategistAddress: string,
       operatorAddress: string,
       underlyingAsset: string,
+      underlyingAssetCap: BigNumberish,
       managementFee: BigNumberish,
       performanceFee: BigNumberish,
       feesRecipient: string,
       actions: string[],
+      principalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2056,6 +2269,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     setPerformanceFee(
       newPerformanceFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPrincipalPercentages(
+      newPrincipalPercentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

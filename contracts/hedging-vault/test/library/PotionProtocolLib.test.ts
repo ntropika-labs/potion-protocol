@@ -6,11 +6,16 @@ import {
     TestWrapperPotionProtocolLib,
     IPotionLiquidityPool,
     IPotionLiquidityPool__factory,
+    IOpynFactory,
+    IOpynFactory__factory,
     IERC20,
     IERC20__factory,
 } from "../../typechain";
 
+import { PotionBuyInfoStruct } from "../../typechain/contracts/test-wrappers/TestWrapperPotionProtocolLib";
+
 import { PercentageUtils } from "../utils/PercentageUtils";
+import { BigNumber } from "ethers";
 
 chai.use(smock.matchers);
 
@@ -26,6 +31,7 @@ describe("PotionProtocolLib", function () {
     let strikeAsset: string;
     let potionProtocolLib: TestWrapperPotionProtocolLib;
     let fakePotionLiquidityPool: FakeContract<IPotionLiquidityPool>;
+    let fakeOpynFactory: FakeContract<IOpynFactory>;
     let fakeUSDC: FakeContract<IERC20>;
 
     // Using `beforeEach` here because smock does not reset the call count for a function after each test
@@ -34,6 +40,7 @@ describe("PotionProtocolLib", function () {
         potionProtocolLib = (await PotionProtocolLibFactory.deploy()) as TestWrapperPotionProtocolLib;
 
         fakePotionLiquidityPool = await smock.fake<IPotionLiquidityPool>(IPotionLiquidityPool__factory.abi);
+        fakeOpynFactory = await smock.fake<IOpynFactory>(IOpynFactory__factory.abi);
         fakeUSDC = await smock.fake<IERC20>(IERC20__factory.abi);
 
         potionAddress = (await ethers.getSigners())[5].address;
@@ -46,6 +53,7 @@ describe("PotionProtocolLib", function () {
         // The valut returned by `buyOtokens` must be less than the maximum premium so the ERC20 approve
         // function is called twice
         fakePotionLiquidityPool.buyOtokens.returns(1594);
+        fakeOpynFactory.getOtoken.returns(potionAddress);
         fakeUSDC.approve.returns(true);
 
         const slippage = PercentageUtils.toSolidityPercentage(2.0);
@@ -74,12 +82,21 @@ describe("PotionProtocolLib", function () {
 
         const expectedPremium = 2567;
 
+        const buyInfo: PotionBuyInfoStruct = {
+            targetPotionAddress: potionAddress,
+            underlyingAsset: underlyingAsset,
+            strikePriceInUSDC: BigNumber.from("100000000000"),
+            expirationTimestamp: BigNumber.from("100000000000"), // Not important
+            sellers: counterparties,
+            expectedPremiumInUSDC: expectedPremium,
+            totalSizeInPotions: 3001,
+        };
+
         expect(
             await potionProtocolLib.callStatic.buyPotion(
                 fakePotionLiquidityPool.address,
-                potionAddress,
-                counterparties,
-                expectedPremium,
+                fakeOpynFactory.address,
+                buyInfo,
                 slippage,
                 fakeUSDC.address,
             ),
@@ -120,6 +137,7 @@ describe("PotionProtocolLib", function () {
         // The value returned by `buyOtokens` must be exactly the maximum premium so the ERC20 approve
         // function is called only once
         fakePotionLiquidityPool.buyOtokens.returns(2618);
+        fakeOpynFactory.getOtoken.returns(potionAddress);
         fakeUSDC.approve.returns(true);
 
         const slippage = PercentageUtils.toSolidityPercentage(2.0);
@@ -148,12 +166,21 @@ describe("PotionProtocolLib", function () {
 
         const expectedPremium = 2567;
 
+        const buyInfo: PotionBuyInfoStruct = {
+            targetPotionAddress: potionAddress,
+            underlyingAsset: underlyingAsset,
+            strikePriceInUSDC: BigNumber.from("100000000000"),
+            expirationTimestamp: BigNumber.from("100000000000"), // Not important
+            sellers: counterparties,
+            expectedPremiumInUSDC: expectedPremium,
+            totalSizeInPotions: 3001,
+        };
+
         expect(
             await potionProtocolLib.callStatic.buyPotion(
                 fakePotionLiquidityPool.address,
-                potionAddress,
-                counterparties,
-                expectedPremium,
+                fakeOpynFactory.address,
+                buyInfo,
                 slippage,
                 fakeUSDC.address,
             ),

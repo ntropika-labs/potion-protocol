@@ -2,12 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export { IAction__factory } from "./IAction__factory";
-export { IActionsContainer__factory } from "./IActionsContainer__factory";
+export { IActionsManager__factory } from "./IActionsManager__factory";
 export { IEmergencyLock__factory } from "./IEmergencyLock__factory";
 export { IFeeManager__factory } from "./IFeeManager__factory";
 export { IInvestmentVaultV0__factory } from "./IInvestmentVaultV0__factory";
 export { ILifecycleStates__factory } from "./ILifecycleStates__factory";
 export { IOpynController__factory } from "./IOpynController__factory";
+export { IOpynFactory__factory } from "./IOpynFactory__factory";
 export { IOtoken__factory } from "./IOtoken__factory";
 export { IPotionBuyAction__factory } from "./IPotionBuyAction__factory";
 export { IPotionBuyActionV0__factory } from "./IPotionBuyActionV0__factory";

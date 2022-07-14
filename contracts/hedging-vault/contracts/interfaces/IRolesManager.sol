@@ -28,6 +28,7 @@ interface IRolesManager {
     event AdminChanged(address indexed prevAdminAddress, address indexed newAdminAddress);
     event StrategistChanged(address indexed prevStrategistAddress, address indexed newStrategistAddress);
     event OperatorChanged(address indexed prevOperatorAddress, address indexed newOperatorAddress);
+    event VaultChanged(address indexed prevVaultAddress, address indexed newVaultAddress);
 
     /// FUNCTIONS
 
@@ -53,6 +54,13 @@ interface IRolesManager {
     function changeOperator(address newOperatorAddress) external;
 
     /**
+        @notice Changes the existing Vault address to a new one
+
+        @dev Only the Admin can change the address to a new one
+     */
+    function changeVault(address newVaultAddress) external;
+
+    /**
         @notice Returns the current Admin address
      */
     function getAdmin() external view returns (address);
@@ -66,4 +74,9 @@ interface IRolesManager {
         @notice Returns the current Operator address
      */
     function getOperator() external view returns (address);
+
+    /**
+        @notice Returns the current Vault address
+     */
+    function getVault() external view returns (address);
 }

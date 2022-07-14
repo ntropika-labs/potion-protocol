@@ -35,6 +35,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -43,6 +44,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getStrategist()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
@@ -74,6 +76,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
@@ -82,6 +85,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
       | "getAdmin"
       | "getOperator"
       | "getStrategist"
+      | "getVault"
       | "getVaultCap"
       | "increaseAllowance"
       | "maxDeposit"
@@ -123,6 +127,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
     values: [BigNumberish]
@@ -149,6 +154,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     functionFragment: "getStrategist",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getVaultCap",
     values?: undefined
@@ -229,6 +235,10 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "changeVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
   ): Result;
@@ -251,6 +261,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     functionFragment: "getStrategist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVaultCap",
     data: BytesLike
@@ -314,6 +325,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     "StrategistChanged(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
   };
 
@@ -325,6 +337,7 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultCapChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
@@ -417,6 +430,17 @@ export type VaultCapChangedEvent = TypedEvent<
 
 export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface WithdrawEventObject {
   caller: string;
   receiver: string;
@@ -489,6 +513,11 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -518,6 +547,8 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getStrategist(overrides?: CallOverrides): Promise<[string]>;
+
+    getVault(overrides?: CallOverrides): Promise<[string]>;
 
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -636,6 +667,11 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  changeVault(
+    newVaultAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   convertToAssets(
     shares: BigNumberish,
     overrides?: CallOverrides
@@ -665,6 +701,8 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   getOperator(overrides?: CallOverrides): Promise<string>;
 
   getStrategist(overrides?: CallOverrides): Promise<string>;
+
+  getVault(overrides?: CallOverrides): Promise<string>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -780,6 +818,11 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -809,6 +852,8 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<string>;
 
     getStrategist(overrides?: CallOverrides): Promise<string>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -965,6 +1010,15 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       newCap?: BigNumberish | null
     ): VaultCapChangedEventFilter;
 
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+
     "Withdraw(address,address,address,uint256,uint256)"(
       caller?: string | null,
       receiver?: string | null,
@@ -1013,6 +1067,11 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1042,6 +1101,8 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1161,6 +1222,11 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1190,6 +1256,8 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

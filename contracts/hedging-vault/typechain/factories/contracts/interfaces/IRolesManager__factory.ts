@@ -68,6 +68,25 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "prevVaultAddress",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newVaultAddress",
+        type: "address",
+      },
+    ],
+    name: "VaultChanged",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -107,6 +126,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newVaultAddress",
+        type: "address",
+      },
+    ],
+    name: "changeVault",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getAdmin",
     outputs: [
@@ -135,6 +167,19 @@ const _abi = [
   {
     inputs: [],
     name: "getStrategist",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getVault",
     outputs: [
       {
         internalType: "address",

@@ -54,7 +54,7 @@ describe("RefundsHelper", function () {
         it("Check initialization", async function () {
             expect(await refundsHelper.canRefundETH()).to.be.false;
 
-            for (let tokenAddress of cannotRefundTokens) {
+            for (const tokenAddress of cannotRefundTokens) {
                 expect(await refundsHelper.canRefund(tokenAddress)).to.be.false;
             }
         });
@@ -62,7 +62,7 @@ describe("RefundsHelper", function () {
             expect(await refundsHelper.canRefund(erc20D.address)).to.be.true;
         });
         it("Transfer forbidden tokens", async function () {
-            for (let tokenAddress of cannotRefundTokens) {
+            for (const tokenAddress of cannotRefundTokens) {
                 await expect(
                     refundsHelper.refund(tokenAddress, ethers.utils.parseEther("1"), unpriviledgedAccount.address),
                 ).to.be.revertedWith("Token cannot be refunded");
@@ -128,7 +128,7 @@ describe("RefundsHelper", function () {
         it("Check initialization", async function () {
             expect(await refundsHelper.canRefundETH()).to.be.true;
 
-            for (let tokenAddress of cannotRefundTokens) {
+            for (const tokenAddress of cannotRefundTokens) {
                 expect(await refundsHelper.canRefund(tokenAddress)).to.be.false;
             }
         });

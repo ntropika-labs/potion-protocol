@@ -26,6 +26,34 @@ import type {
   OnEvent,
 } from "../../common";
 
+export type PotionBuyInfoStruct = {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumberish;
+  expirationTimestamp: BigNumberish;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  expectedPremiumInUSDC: BigNumberish;
+  totalSizeInPotions: BigNumberish;
+};
+
+export type PotionBuyInfoStructOutput = [
+  string,
+  string,
+  BigNumber,
+  BigNumber,
+  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  BigNumber,
+  BigNumber
+] & {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumber;
+  expirationTimestamp: BigNumber;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+  expectedPremiumInUSDC: BigNumber;
+  totalSizeInPotions: BigNumber;
+};
+
 export declare namespace ICurveManager {
   export type CurveStruct = {
     a_59x18: BigNumberish;
@@ -98,27 +126,6 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export declare namespace IPotionProtocolOracle {
-  export type PotionBuyInfoStruct = {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-    expectedPremiumInUSDC: BigNumberish;
-    totalSizeInPotions: BigNumberish;
-  };
-
-  export type PotionBuyInfoStructOutput = [
-    string,
-    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-    BigNumber,
-    BigNumber
-  ] & {
-    potion: string;
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-    expectedPremiumInUSDC: BigNumber;
-    totalSizeInPotions: BigNumber;
-  };
-}
-
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
     inputToken: string;
@@ -141,9 +148,9 @@ export interface IPotionBuyActionInterface extends utils.Interface {
     "canPositionBeExited(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
-    "getPotionBuyInfo(address)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
-    "setPotionBuyInfo((address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
 
@@ -177,7 +184,7 @@ export interface IPotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string]
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapInfo",
@@ -185,7 +192,7 @@ export interface IPotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
-    values: [IPotionProtocolOracle.PotionBuyInfoStruct]
+    values: [PotionBuyInfoStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
@@ -307,9 +314,11 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[IPotionProtocolOracle.PotionBuyInfoStructOutput]>;
+    ): Promise<[PotionBuyInfoStructOutput]>;
 
     getSwapInfo(
       inputToken: string,
@@ -318,7 +327,7 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -350,9 +359,11 @@ export interface IPotionBuyAction extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getPotionBuyInfo(
-    potion: string,
+    underlyingAsset: string,
+    strikePrice: BigNumberish,
+    expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+  ): Promise<PotionBuyInfoStructOutput>;
 
   getSwapInfo(
     inputToken: string,
@@ -361,7 +372,7 @@ export interface IPotionBuyAction extends BaseContract {
   ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   setPotionBuyInfo(
-    info: IPotionProtocolOracle.PotionBuyInfoStruct,
+    info: PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -393,9 +404,11 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<IPotionProtocolOracle.PotionBuyInfoStructOutput>;
+    ): Promise<PotionBuyInfoStructOutput>;
 
     getSwapInfo(
       inputToken: string,
@@ -404,7 +417,7 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -457,7 +470,9 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -468,7 +483,7 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -501,7 +516,9 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
-      potion: string,
+      underlyingAsset: string,
+      strikePrice: BigNumberish,
+      expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -512,7 +529,7 @@ export interface IPotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
-      info: IPotionProtocolOracle.PotionBuyInfoStruct,
+      info: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

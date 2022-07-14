@@ -4,6 +4,8 @@
 pragma solidity 0.8.14;
 
 import "../../interfaces/IPotionProtocolOracle.sol";
+import "../../interfaces/IOtoken.sol";
+import { PotionBuyInfo } from "../../interfaces/IPotionBuyInfo.sol";
 import "../../common/RolesManagerUpgradeable.sol";
 
 /**
@@ -29,7 +31,7 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
 
         @dev potion => PotionBuyInfo
     */
-    mapping(address => PotionBuyInfo) private _potionBuyInfo;
+    mapping(bytes32 => PotionBuyInfo) private _potionBuyInfo;
 
     /// UPGRADEABLE INITIALIZERS
 
@@ -48,13 +50,36 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
         @inheritdoc IPotionProtocolOracle
      */
     function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyOperator {
-        _potionBuyInfo[info.potion] = info;
+        bytes32 id = _getPotionId(info.underlyingAsset, info.strikePriceInUSDC, info.expirationTimestamp);
+        _potionBuyInfo[id] = info;
     }
 
     /**
         @inheritdoc IPotionProtocolOracle
      */
-    function getPotionBuyInfo(address potion) public view returns (PotionBuyInfo memory) {
-        return _potionBuyInfo[potion];
+    function getPotionBuyInfo(
+        address underlyingAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp
+    ) public view returns (PotionBuyInfo memory) {
+        bytes32 id = _getPotionId(underlyingAsset, strikePrice, expirationTimestamp);
+        return _potionBuyInfo[id];
+    }
+
+    /**
+        @notice Calculates the unique ID for a potion
+
+        @param underlyingAsset The address of the underlying token of the potion
+        @param strikePrice The strike price of the potion with 8 decimals
+        @param expirationTimestamp The timestamp when the potion expires
+
+        @return The unique ID for the potion
+     */
+    function _getPotionId(
+        address underlyingAsset,
+        uint256 strikePrice,
+        uint256 expirationTimestamp
+    ) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(underlyingAsset, strikePrice, expirationTimestamp));
     }
 }

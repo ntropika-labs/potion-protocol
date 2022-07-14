@@ -60,6 +60,11 @@ abstract contract PotionBuyActionV0 is IPotionBuyActionV0 {
      */
     uint256 public cycleDurationSecs;
 
+    /**
+        @notice Strike price for the hedged asset
+     */
+    uint256 public strikePriceInUSDC;
+
     /// MODIFIERS
     modifier onlyAfterCycleStart() {
         require(block.timestamp >= nextCycleStartTimestamp, "Next cycle has not started yet");

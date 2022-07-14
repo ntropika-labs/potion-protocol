@@ -5,9 +5,13 @@ pragma solidity 0.8.14;
 
 import { IPotionLiquidityPool } from "../interfaces/IPotionLiquidityPool.sol";
 import { IOtoken } from "../interfaces/IOtoken.sol";
+import { IOpynFactory } from "../interfaces/IOpynFactory.sol";
+import { PotionBuyInfo } from "../interfaces/IPotionBuyInfo.sol";
 
 import "./PercentageUtils.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "./OpynProtocolLib.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol";
 
 /**
     @title PotionProtocolLib
@@ -16,8 +20,10 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
     @notice Helper library to buy potions from the Potion Protocol
  */
+
 library PotionProtocolLib {
     using PercentageUtils for uint256;
+    using OpynProtocolLib for IOpynFactory;
 
     /// FUNCTIONS
 
@@ -25,9 +31,7 @@ library PotionProtocolLib {
         @notice Buys the specified amount of potions with the given parameters
 
         @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
-        @param potion Potion (otoken) to buy
-        @param sellers List of sellers to buy from
-        @param expectedPremium Expected premium to pay for the amount of otokens to buy
+        @param buyInfo The information required to buy a specific potion with a specific maximum premium requirement
         @param slippage Slippage to apply to the premium to calculate the maximum premium allowed
 
         @return actualPremium The actual premium paid for the purchase of potions
@@ -38,17 +42,49 @@ library PotionProtocolLib {
 
     function buyPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
-        address potion,
-        IPotionLiquidityPool.CounterpartyDetails[] memory sellers,
-        uint256 expectedPremium,
+        IOpynFactory opynFactory,
+        PotionBuyInfo memory buyInfo,
         uint256 slippage,
         IERC20 USDC
     ) internal returns (uint256 actualPremium) {
-        uint256 maxPremium = expectedPremium.addPercentage(slippage);
+        uint256 maxPremium = buyInfo.expectedPremiumInUSDC.addPercentage(slippage);
 
         SafeERC20.safeApprove(USDC, address(potionLiquidityPoolManager), maxPremium);
 
-        actualPremium = potionLiquidityPoolManager.buyOtokens(IOtoken(potion), sellers, maxPremium);
+        address oToken = opynFactory.getExistingOtoken(
+            buyInfo.underlyingAsset,
+            address(USDC),
+            buyInfo.strikePriceInUSDC,
+            buyInfo.expirationTimestamp
+        );
+
+        if (oToken == address(0)) {
+            address targetOToken = opynFactory.getTargetOtoken(
+                buyInfo.underlyingAsset,
+                address(USDC),
+                buyInfo.strikePriceInUSDC,
+                buyInfo.expirationTimestamp
+            );
+            require(
+                targetOToken == buyInfo.targetPotionAddress,
+                "Otoken does not exist and target address does not match"
+            );
+
+            actualPremium = potionLiquidityPoolManager.createAndBuyOtokens(
+                buyInfo.underlyingAsset,
+                address(USDC),
+                address(USDC),
+                buyInfo.strikePriceInUSDC,
+                buyInfo.expirationTimestamp,
+                true,
+                buyInfo.sellers,
+                maxPremium
+            );
+        } else {
+            require(oToken == buyInfo.targetPotionAddress, "Otoken does exist but target address does not match");
+
+            actualPremium = potionLiquidityPoolManager.buyOtokens(IOtoken(oToken), buyInfo.sellers, maxPremium);
+        }
 
         if (actualPremium < maxPremium) {
             SafeERC20.safeApprove(USDC, address(potionLiquidityPoolManager), 0);

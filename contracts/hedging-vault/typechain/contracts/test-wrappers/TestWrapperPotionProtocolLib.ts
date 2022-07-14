@@ -22,6 +22,34 @@ import type {
   OnEvent,
 } from "../../common";
 
+export type PotionBuyInfoStruct = {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumberish;
+  expirationTimestamp: BigNumberish;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  expectedPremiumInUSDC: BigNumberish;
+  totalSizeInPotions: BigNumberish;
+};
+
+export type PotionBuyInfoStructOutput = [
+  string,
+  string,
+  BigNumber,
+  BigNumber,
+  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  BigNumber,
+  BigNumber
+] & {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: BigNumber;
+  expirationTimestamp: BigNumber;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+  expectedPremiumInUSDC: BigNumber;
+  totalSizeInPotions: BigNumber;
+};
+
 export declare namespace ICurveManager {
   export type CurveStruct = {
     a_59x18: BigNumberish;
@@ -96,7 +124,7 @@ export declare namespace IPotionLiquidityPool {
 
 export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
   functions: {
-    "buyPotion(address,address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256,address)": FunctionFragment;
+    "buyPotion(address,address,(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256),uint256,address)": FunctionFragment;
     "redeemPotion(address,address)": FunctionFragment;
   };
 
@@ -106,14 +134,7 @@ export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "buyPotion",
-    values: [
-      string,
-      string,
-      IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      BigNumberish,
-      BigNumberish,
-      string
-    ]
+    values: [string, string, PotionBuyInfoStruct, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemPotion",
@@ -158,9 +179,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
   functions: {
     buyPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
-      sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      expectedPremium: BigNumberish,
+      opynFactory: string,
+      buyInfo: PotionBuyInfoStruct,
       slippage: BigNumberish,
       USDC: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -175,9 +195,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
   buyPotion(
     potionLiquidityPoolManager: string,
-    potion: string,
-    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-    expectedPremium: BigNumberish,
+    opynFactory: string,
+    buyInfo: PotionBuyInfoStruct,
     slippage: BigNumberish,
     USDC: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -192,9 +211,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
   callStatic: {
     buyPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
-      sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      expectedPremium: BigNumberish,
+      opynFactory: string,
+      buyInfo: PotionBuyInfoStruct,
       slippage: BigNumberish,
       USDC: string,
       overrides?: CallOverrides
@@ -212,9 +230,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
   estimateGas: {
     buyPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
-      sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      expectedPremium: BigNumberish,
+      opynFactory: string,
+      buyInfo: PotionBuyInfoStruct,
       slippage: BigNumberish,
       USDC: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -230,9 +247,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
   populateTransaction: {
     buyPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
-      sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      expectedPremium: BigNumberish,
+      opynFactory: string,
+      buyInfo: PotionBuyInfoStruct,
       slippage: BigNumberish,
       USDC: string,
       overrides?: Overrides & { from?: string | Promise<string> }

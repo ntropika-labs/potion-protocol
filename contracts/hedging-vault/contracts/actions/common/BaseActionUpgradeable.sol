@@ -54,7 +54,6 @@ abstract contract BaseActionUpgradeable is
     ) internal onlyInitializing {
         __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
         __EmergencyLock_init_unchained();
-        __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundTokens, false);
         __ReentrancyGuard_init_unchained();

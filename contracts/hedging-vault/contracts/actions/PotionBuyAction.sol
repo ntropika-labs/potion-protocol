@@ -9,7 +9,7 @@ import { UniswapV3HelperUpgradeable } from "./common/UniswapV3HelperUpgradeable.
 import "../versioning/PotionBuyActionV0.sol";
 import "../library/PercentageUtils.sol";
 import "../library/OpynProtocolLib.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 /**
     @title PotionBuyAction
@@ -42,51 +42,82 @@ contract PotionBuyAction is
     using OpynProtocolLib for IOpynController;
 
     /**
-        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
-        to the hierarchy will require to review this function to make sure that no initializer
-        is called twice, and most importantly, that all initializers are called here
+        @notice Structure with all initialization parameters for the Potion Buy action
 
         @param adminAddress The address of the admin of the Action
         @param strategistAddress The address of the strategist of the Action
         @param operatorAddress The address of the operator of the Action
         @param investmentAsset The address of the asset managed by this Action
         @param USDC The address of the USDC token
+        @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
-        @param maxPremiumPercentage_ The maximum percentage of the received investment that can be used as premium
-        @param premiumSlippage_ The slippage percentage allowed on the premium when buying potions
-        @param swapSlippage_ The slippage percentage allowed on the swap operation
-        @param maxSwapDurationSecs_ The maximum duration of the swap operation in seconds
-        @param cycleDurationSecs_ The duration of the investment cycle in seconds
+        @param opynController The address of the Opyn Protocol controller contract
+        @param opynFactory The address of the Opyn Protocol factory contract
+        @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
+        @param premiumSlippage The slippage percentage allowed on the premium when buying potions
+        @param swapSlippage The slippage percentage allowed on the swap operation
+        @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
+        @param cycleDurationSecs The duration of the investment cycle in seconds
+        @param strikePriceInUSDC The strike price of the investment asset in USDC with 8 decimals
+     */
+    struct PotionBuyInitParams {
+        address adminAddress;
+        address strategistAddress;
+        address operatorAddress;
+        address investmentAsset;
+        address USDC;
+        address uniswapV3SwapRouter;
+        address potionLiquidityPoolManager;
+        address opynController;
+        address opynFactory;
+        uint256 maxPremiumPercentage;
+        uint256 premiumSlippage;
+        uint256 swapSlippage;
+        uint256 maxSwapDurationSecs;
+        uint256 cycleDurationSecs;
+        uint256 strikePriceInUSDC;
+    }
+
+    /**
+        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+        to the hierarchy will require to review this function to make sure that no initializer
+        is called twice, and most importantly, that all initializers are called here
+
+        @param initParams Initialization parameters for the Potion Buy action
+
+        @dev See { PotionBuyInitParams }
 
      */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress,
-        address investmentAsset,
-        address USDC,
-        address potionLiquidityPoolManager,
-        uint256 maxPremiumPercentage_,
-        uint256 premiumSlippage_,
-        uint256 swapSlippage_,
-        uint256 maxSwapDurationSecs_,
-        uint256 cycleDurationSecs_
-    ) external initializer {
+    function initialize(PotionBuyInitParams calldata initParams) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the loaned
         // asset is not allowed to be refunded and also USDC because the action will hold some of it
         // at some times. This prevents the admin to accidentally refund those assets
         address[] memory cannotRefundTokens = new address[](2);
-        cannotRefundTokens[0] = investmentAsset;
-        cannotRefundTokens[1] = USDC;
+        cannotRefundTokens[0] = initParams.investmentAsset;
+        cannotRefundTokens[1] = initParams.USDC;
 
-        __BaseAction_init_chained(adminAddress, strategistAddress, operatorAddress, cannotRefundTokens);
-        __PotionProtocolHelper_init_unchained(potionLiquidityPoolManager, USDC);
+        __BaseAction_init_chained(
+            initParams.adminAddress,
+            initParams.strategistAddress,
+            initParams.operatorAddress,
+            cannotRefundTokens
+        );
+        __UniswapV3Helper_init_unchained(initParams.uniswapV3SwapRouter);
+        __PotionProtocolHelper_init_unchained(
+            initParams.potionLiquidityPoolManager,
+            initParams.opynController,
+            initParams.opynFactory,
+            initParams.USDC
+        );
 
-        _setMaxPremiumPercentage(maxPremiumPercentage_);
-        _setPremiumSlippage(premiumSlippage_);
-        _setSwapSlippage(swapSlippage_);
-        _setMaxSwapDuration(maxSwapDurationSecs_);
-        _setCycleDuration(cycleDurationSecs_);
+        _setMaxPremiumPercentage(initParams.maxPremiumPercentage);
+        _setPremiumSlippage(initParams.premiumSlippage);
+        _setSwapSlippage(initParams.swapSlippage);
+        _setMaxSwapDuration(initParams.maxSwapDurationSecs);
+        _setCycleDuration(initParams.cycleDurationSecs);
+        _setStrikePrice(initParams.strikePriceInUSDC);
+
+        _updateNextCycleStart();
     }
 
     /**
@@ -104,7 +135,7 @@ contract PotionBuyAction is
      */
     function enterPosition(address investmentAsset, uint256 amountToInvest)
         external
-        onlyOperator
+        onlyVault
         onlyUnlocked
         onlyAfterCycleStart
         nonReentrant
@@ -119,7 +150,9 @@ contract PotionBuyAction is
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
         (bool isValid, uint256 maxPremiumNeededInUSDC) = _calculateMaxPremium(
-            address(investmentAsset),
+            investmentAsset,
+            strikePriceInUSDC,
+            nextCycleStartTimestamp,
             amountToInvest,
             premiumSlippage
         );
@@ -135,7 +168,7 @@ contract PotionBuyAction is
         require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 
         _swapOutput(investmentAsset, address(getUSDC()), maxPremiumNeededInUSDC, swapSlippage, maxSwapDurationSecs);
-        _buyPotions(investmentAsset, amountToInvest, premiumSlippage);
+        _buyPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -145,14 +178,14 @@ contract PotionBuyAction is
      */
     function exitPosition(address investmentAsset)
         external
-        onlyOperator
+        onlyVault
         onlyLocked
         nonReentrant
         returns (uint256 amountReturned)
     {
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
 
-        _redeemPotions(investmentAsset);
+        _redeemPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp);
         uint256 amountToConvertToAssset = getUSDCBalance(address(this));
 
         _swapInput(address(getUSDC()), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
@@ -181,7 +214,7 @@ contract PotionBuyAction is
     function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
         canExit =
             _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset) &&
+            _isPotionRedeemable(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp) &&
             getLifecycleState() == LifecycleState.Locked;
     }
 
@@ -218,6 +251,13 @@ contract PotionBuyAction is
      */
     function setCycleDuration(uint256 durationSeconds) external override onlyStrategist {
         _setCycleDuration(durationSeconds);
+    }
+
+    /**
+        @inheritdoc IPotionBuyActionV0
+     */
+    function setStrikePrice(uint256 strikePriceInUSDC_) external override onlyStrategist {
+        _setStrikePrice(strikePriceInUSDC_);
     }
 
     /// INTERNAL FUNCTIONS
@@ -281,6 +321,19 @@ contract PotionBuyAction is
         cycleDurationSecs = durationSeconds;
 
         emit CycleDurationChanged(durationSeconds);
+    }
+
+    /**
+        @dev See { setStrikePrice }
+     */
+    function _setStrikePrice(uint256 strikePriceInUSDC_) internal {
+        if (strikePriceInUSDC_ == 0) {
+            revert StrikePriceIsZero();
+        }
+
+        strikePriceInUSDC = strikePriceInUSDC_;
+
+        emit StrikePriceChanged(strikePriceInUSDC_);
     }
 
     /**

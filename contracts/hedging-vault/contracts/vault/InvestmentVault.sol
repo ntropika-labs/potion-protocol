@@ -4,7 +4,6 @@
 pragma solidity 0.8.14;
 
 import "./BaseVaultUpgradeable.sol";
-import "../versioning/InvestmentVaultV0.sol";
 import "../library/PercentageUtils.sol";
 
 /**
@@ -24,9 +23,12 @@ import "../library/PercentageUtils.sol";
     @dev See {BaseVaultUpgradeable}
  */
 
-contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
+contract InvestmentVault is BaseVaultUpgradeable {
     using PercentageUtils for uint256;
     using SafeERC20 for IERC20;
+
+    /// ERRORS
+    error InvestmentTotalTooHigh(uint256 actualAmountInvested, uint256 maxAmountToInvest);
 
     /**
         @inheritdoc IVault
@@ -36,7 +38,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
         uint256 totalPrincipalAmount = totalAssets();
 
-        uint256 maxAmountToInvest = totalPrincipalPercentages.applyPercentage(totalPrincipalAmount);
+        uint256 maxAmountToInvest = getTotalPrincipalPercentages().applyPercentage(totalPrincipalAmount);
         uint256 actualAmountInvested = 0;
         address investmentAsset = asset();
 
@@ -45,7 +47,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
         for (uint256 i = 0; i < numActions; i++) {
             IAction action = getAction(i);
 
-            uint256 amountToInvest = principalPercentages[i].applyPercentage(totalPrincipalAmount);
+            uint256 amountToInvest = getPrincipalPercentage(i).applyPercentage(totalPrincipalAmount);
 
             IERC20(investmentAsset).safeApprove(address(action), amountToInvest);
 
@@ -122,35 +124,6 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
         assert(getLifecycleState() == LifecycleState.Unlocked);
 
         return true;
-    }
-
-    /**
-        @inheritdoc IInvestmentVaultV0
-     */
-    function setPrincipalPercentages(uint256[] calldata newPrincipalPercentages) external override onlyStrategist {
-        uint256 numActions = getActionsLength();
-
-        if (newPrincipalPercentages.length != numActions) {
-            revert PrincipalPercentagesMismatch(newPrincipalPercentages.length, numActions);
-        }
-
-        principalPercentages = new uint256[](newPrincipalPercentages.length);
-        totalPrincipalPercentages = 0;
-
-        for (uint256 i = 0; i < newPrincipalPercentages.length; i++) {
-            if (newPrincipalPercentages[i] == 0 || newPrincipalPercentages[i] > 100) {
-                revert PrincipalPercentageOutOfRange(i, newPrincipalPercentages[i]);
-            }
-
-            principalPercentages[i] = newPrincipalPercentages[i];
-            totalPrincipalPercentages += newPrincipalPercentages[i];
-        }
-
-        if (totalPrincipalPercentages > PercentageUtils.PERCENTAGE_100) {
-            revert PrincipalPercentagesSumMoreThan100(totalPrincipalPercentages);
-        }
-
-        emit PrincipalPercentagesUpdated(newPrincipalPercentages);
     }
 
     /**

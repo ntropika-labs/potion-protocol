@@ -5,6 +5,7 @@ pragma solidity 0.8.14;
 
 import "../interfaces/IPotionBuyAction.sol";
 import "../interfaces/IVault.sol";
+import { PotionBuyInfo } from "../interfaces/IPotionBuyInfo.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IUniswapV3Oracle.sol";
 import "../interfaces/IPotionProtocolOracle.sol";
@@ -44,10 +45,10 @@ contract HedgingVaultOperatorHelper is Ownable {
 
         @dev Only the owner of the contract (i.e. the Operator) can call this function
      */
-    function enterPosition(
-        IUniswapV3Oracle.SwapInfo calldata swapInfo,
-        IPotionProtocolOracle.PotionBuyInfo calldata potionBuyInfo
-    ) external onlyOwner {
+    function enterPosition(IUniswapV3Oracle.SwapInfo calldata swapInfo, PotionBuyInfo calldata potionBuyInfo)
+        external
+        onlyOwner
+    {
         potionBuyAction.setPotionBuyInfo(potionBuyInfo);
         potionBuyAction.setSwapInfo(swapInfo);
         hedgingVault.enterPosition();

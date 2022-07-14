@@ -9,7 +9,7 @@ import "../common/RefundsHelperUpgreadable.sol";
 import "../common/RolesManagerUpgradeable.sol";
 import "../extensions/ERC4626CapUpgradeable.sol";
 import "./FeeManagerUpgradeable.sol";
-import "./ActionsContainerUpgradeable.sol";
+import "./ActionsManagerUpgradeable.sol";
 import "../interfaces/IVault.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
@@ -46,7 +46,7 @@ abstract contract BaseVaultUpgradeable is
     LifecycleStatesUpgradeable,
     RefundsHelperUpgreadable,
     FeeManagerUpgradeable,
-    ActionsContainerUpgradeable,
+    ActionsManagerUpgradeable,
     ReentrancyGuardUpgradeable,
     IVault
 {
@@ -61,6 +61,7 @@ abstract contract BaseVaultUpgradeable is
         @param strategistAddress The address of the strategist of the Vault
         @param operatorAddress The address of the operator of the Vault
         @param underlyingAsset The address of the asset managed by this vault
+        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
         @param managementFee The fee percentage charged for the management of the Vault
         @param performanceFee The fee percentage charged for the performance of the Vault
         @param feesRecipient The address of the account that will receive the fees
@@ -71,10 +72,12 @@ abstract contract BaseVaultUpgradeable is
         address strategistAddress,
         address operatorAddress,
         address underlyingAsset,
+        uint256 underlyingAssetCap,
         uint256 managementFee,
         uint256 performanceFee,
         address payable feesRecipient,
-        IAction[] calldata actions
+        IAction[] calldata actions,
+        uint256[] calldata principalPercentages
     ) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
         // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
@@ -83,12 +86,12 @@ abstract contract BaseVaultUpgradeable is
         cannotRefundToken[0] = underlyingAsset;
 
         __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
-        __ERC4626Cap_init_unchained(underlyingAsset);
+        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundToken, false);
         __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsContainer_init_unchained(actions);
+        __ActionsManager_init_unchained(actions, principalPercentages);
         __ReentrancyGuard_init_unchained();
     }
 }

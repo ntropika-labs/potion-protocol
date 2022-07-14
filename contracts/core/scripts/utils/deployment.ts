@@ -146,7 +146,7 @@ export async function deploy(
 export async function deployUpgrade(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | FactoryOptions | undefined = undefined,
+    options: Signer | DeploymentOptions | undefined = undefined,
     flags: DeploymentFlags = DeploymentFlags.Deploy,
 ): Promise<Contract> {
     const contractFactory = await ethers.getContractFactory(contractName, options);

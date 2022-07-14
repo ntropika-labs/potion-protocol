@@ -25,6 +25,9 @@
       "path": "contracts/core"
     },
     {
+      "path": "contracts/hedging-vault"
+    },
+    {
       "path": "libs/potion-ui"
     },
     {

@@ -47,6 +47,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     "changeAdmin(address)": FunctionFragment;
     "changeOperator(address)": FunctionFragment;
     "changeStrategist(address)": FunctionFragment;
+    "changeVault(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getStrategist()": FunctionFragment;
@@ -54,6 +55,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     "getSwapInputAmount(address,address,uint256)": FunctionFragment;
     "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
     "getSwapRouter()": FunctionFragment;
+    "getVault()": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
 
@@ -62,6 +64,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
       | "changeAdmin"
       | "changeOperator"
       | "changeStrategist"
+      | "changeVault"
       | "getAdmin"
       | "getOperator"
       | "getStrategist"
@@ -69,6 +72,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
       | "getSwapInputAmount"
       | "getSwapOutputAmount"
       | "getSwapRouter"
+      | "getVault"
       | "setSwapInfo"
   ): FunctionFragment;
 
@@ -81,6 +85,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     functionFragment: "changeStrategist",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getOperator",
@@ -106,6 +111,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     functionFragment: "getSwapRouter",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
     values: [IUniswapV3Oracle.SwapInfoStruct]
@@ -121,6 +127,10 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeStrategist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
@@ -148,6 +158,7 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     functionFragment: "getSwapRouter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setSwapInfo",
     data: BytesLike
@@ -158,12 +169,14 @@ export interface UniswapV3HelperUpgradeableInterface extends utils.Interface {
     "Initialized(uint8)": EventFragment;
     "OperatorChanged(address,address)": EventFragment;
     "StrategistChanged(address,address)": EventFragment;
+    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -207,6 +220,17 @@ export type StrategistChangedEvent = TypedEvent<
 export type StrategistChangedEventFilter =
   TypedEventFilter<StrategistChangedEvent>;
 
+export interface VaultChangedEventObject {
+  prevVaultAddress: string;
+  newVaultAddress: string;
+}
+export type VaultChangedEvent = TypedEvent<
+  [string, string],
+  VaultChangedEventObject
+>;
+
+export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+
 export interface UniswapV3HelperUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -249,6 +273,11 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    changeVault(
+      newVaultAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
@@ -277,6 +306,8 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
     getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
 
+    getVault(overrides?: CallOverrides): Promise<[string]>;
+
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -295,6 +326,11 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
   changeStrategist(
     newStrategistAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  changeVault(
+    newVaultAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -326,6 +362,8 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
   getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
+  getVault(overrides?: CallOverrides): Promise<string>;
+
   setSwapInfo(
     info: IUniswapV3Oracle.SwapInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -344,6 +382,11 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -374,6 +417,8 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     getSwapRouter(overrides?: CallOverrides): Promise<string>;
+
+    getVault(overrides?: CallOverrides): Promise<string>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
@@ -411,6 +456,15 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
       prevStrategistAddress?: string | null,
       newStrategistAddress?: string | null
     ): StrategistChangedEventFilter;
+
+    "VaultChanged(address,address)"(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
+    VaultChanged(
+      prevVaultAddress?: string | null,
+      newVaultAddress?: string | null
+    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
@@ -426,6 +480,11 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -457,6 +516,8 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
     getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -476,6 +537,11 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
 
     changeStrategist(
       newStrategistAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeVault(
+      newVaultAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -506,6 +572,8 @@ export interface UniswapV3HelperUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
