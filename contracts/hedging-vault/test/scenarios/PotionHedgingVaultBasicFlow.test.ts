@@ -33,7 +33,7 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
     
     @author Roberto Cano <robercano>
  */
-describe.only("HedgingVault", function () {
+describe("HedgingVault", function () {
     let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
@@ -188,7 +188,7 @@ describe.only("HedgingVault", function () {
         await mockUnderlyingAsset.connect(investorAccount).burn(20000);
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
     });
-    it.only("Deposit and execute investment cycle", async function () {
+    it("Deposit and enter position", async function () {
         const potionOtokenAddress = (await ethers.getSigners())[5].address;
         const lpAddress = (await ethers.getSigners())[6].address;
 
@@ -293,11 +293,15 @@ describe.only("HedgingVault", function () {
             .to.emit(vault.address, "InvestmentTotalTooHigh")
             .withArgs(20000, 20000);
 
-        // Check the state
+        // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
         expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
 
-        // TODO
+        // These balances will not be valid if the real Uniswap and Potion protocol are used.
+        // As of now, the asset is not really swapped, so the only movement in balances is from
+        // the vault to the action
+        expect(await mockUnderlyingAsset.balanceOf(vault.address)).to.equal(0);
+        expect(await mockUnderlyingAsset.balanceOf(action.address)).to.equal(20000);
 
         // Check approve calls: the first call was directly done above in the test code, so
         // check the second and the third call.
