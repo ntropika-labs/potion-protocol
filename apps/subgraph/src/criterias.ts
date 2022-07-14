@@ -8,7 +8,6 @@ import {
   CriteriaSet,
   CriteriaJoinedCriteriaSet,
 } from "../generated/schema";
-import { createTokenId } from "./token";
 
 export function createCriteriaId(criteriaHash: Bytes): string {
   return criteriaHash.toHexString();
@@ -34,10 +33,8 @@ export function handleCriteriaAdded(event: CriteriaAdded): void {
   let criteria = Criteria.load(criteriaId);
   if (criteria == null) {
     criteria = new Criteria(criteriaId);
-    criteria.underlyingAsset = createTokenId(
-      event.params.criteria.underlyingAsset
-    );
-    criteria.strikeAsset = createTokenId(event.params.criteria.strikeAsset);
+    criteria.underlyingAsset = event.params.criteria.underlyingAsset;
+    criteria.strikeAsset = event.params.criteria.strikeAsset;
     criteria.isPut = event.params.criteria.isPut;
     criteria.maxStrikePercent = BigDecimal.fromString(
       event.params.criteria.maxStrikePercent.toString()

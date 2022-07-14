@@ -3,7 +3,7 @@ import { BigInt, BigDecimal, Bytes } from "@graphprotocol/graph-ts";
 import { OtokenCreated } from "../generated/OtokenFactoryContract/OtokenFactoryContract";
 import { OToken } from "../generated/schema";
 import { Otoken } from "../generated/OtokenFactoryContract/Otoken";
-import { createTokenId, collateralToDecimals } from "./token";
+import { collateralToDecimals } from "./token";
 import { bigIntToDecimal } from "./helpers";
 
 export function getOTokenIdFromEvent(event: OtokenCreated): string {
@@ -48,9 +48,9 @@ export function handleOtokenCreate(event: OtokenCreated): void {
   }
   otoken.tokenAddress = event.params.tokenAddress;
   otoken.creator = event.params.creator;
-  otoken.underlyingAsset = createTokenId(event.params.underlying);
-  otoken.strikeAsset = createTokenId(event.params.strike);
-  otoken.collateralAsset = createTokenId(event.params.collateral);
+  otoken.underlyingAsset = event.params.underlying;
+  otoken.strikeAsset = event.params.strike;
+  otoken.collateralAsset = event.params.collateral;
   otoken.strikePrice = bigIntToDecimal(event.params.strikePrice, 8 as i32);
   otoken.expiry = event.params.expiry;
   otoken.isPut = event.params.isPut;

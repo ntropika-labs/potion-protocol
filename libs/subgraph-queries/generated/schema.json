@@ -83,13 +83,40 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "BlockChangedFilter",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "number_gte",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "Block_height",
-        "description": "The block at which the query should be executed.",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "hash",
-            "description": "Value containing a block hash",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Bytes",
@@ -101,7 +128,7 @@
           },
           {
             "name": "number",
-            "description": "Value containing a block number",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Int",
@@ -113,7 +140,7 @@
           },
           {
             "name": "number_gte",
-            "description": "Value containing the minimum block number. \nIn the case of `number_gte`, the query will be executed on the latest block only if\nthe subgraph has progressed to or past the minimum block number.\nDefaults to the latest block when omitted.\n",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Int",
@@ -184,7 +211,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Bytes",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -251,6 +278,18 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "buyer",
             "description": null,
@@ -456,7 +495,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Bytes",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,
@@ -464,11 +503,23 @@
             "deprecationReason": null
           },
           {
-            "name": "id_contains",
+            "name": "id_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Bytes",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,
@@ -486,10 +537,34 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Bytes",
+                  "name": "ID",
                   "ofType": null
                 }
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -500,19 +575,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id_not_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,
@@ -530,7 +593,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Bytes",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -657,6 +720,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "otoken_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "OToken_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -1335,6 +1410,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "criteria",
             "description": null,
             "type": {
@@ -1352,6 +1439,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "criteriaSet_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CriteriaSet_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -1596,6 +1695,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "criteria_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Criteria_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -2192,6 +2303,30 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "criterias_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CriteriaJoinedCriteriaSet_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -2302,6 +2437,18 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "templates_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Template_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -2343,6 +2490,30 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "criteriaSets_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CriteriaJoinedCriteriaSet_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "id",
             "description": null,
@@ -2756,6 +2927,18 @@
             "deprecationReason": null
           },
           {
+            "name": "strikeAsset_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "strikeAsset_contains",
             "description": null,
             "type": {
@@ -3005,6 +3188,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingAsset_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -3507,6 +3702,18 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "a",
             "description": null,
@@ -4178,6 +4385,18 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "templates_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Template_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -4271,7 +4490,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Bytes",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -4452,11 +4671,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
             "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -4464,11 +4683,35 @@
             "deprecationReason": null
           },
           {
-            "name": "id_contains",
+            "name": "id",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Bytes",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,
@@ -4486,10 +4729,34 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Bytes",
+                  "name": "ID",
                   "ofType": null
                 }
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4500,19 +4767,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id_not_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,
@@ -4530,7 +4785,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Bytes",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -4864,6 +5119,18 @@
             "deprecationReason": null
           },
           {
+            "name": "otoken_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "OToken_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "otoken_contains",
             "description": null,
             "type": {
@@ -5101,6 +5368,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "poolRecords_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "PoolRecord_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -5794,11 +6073,47 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "buyerRecords_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BuyerRecord_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "collateralAsset",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "collateralAsset_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -6762,6 +7077,18 @@
             "deprecationReason": null
           },
           {
+            "name": "lpRecords_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "LPRecord_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "numberOfOTokens",
             "description": null,
             "type": {
@@ -6868,6 +7195,18 @@
                   "ofType": null
                 }
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "orderBook_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "OrderBookEntry_filter",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -7167,6 +7506,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strikeAsset_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -7623,6 +7974,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingAsset_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -8117,6 +8480,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "buyer",
             "description": null,
             "type": {
@@ -8434,6 +8809,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "otoken_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "OToken_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -9494,6 +9881,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "collateral",
             "description": null,
             "type": {
@@ -9723,6 +10122,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lpRecord_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "LPRecord_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -10098,6 +10509,18 @@
             "deprecationReason": null
           },
           {
+            "name": "otoken_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "OToken_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "otoken_contains",
             "description": null,
             "type": {
@@ -10347,6 +10770,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pool_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Pool_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -11211,6 +11646,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "actionAmount",
             "description": null,
             "type": {
@@ -11392,6 +11839,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currentPool_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Pool_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -13199,6 +13658,18 @@
             "deprecationReason": null
           },
           {
+            "name": "template_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Template_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "template_contains",
             "description": null,
             "type": {
@@ -13926,6 +14397,18 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "averageCost",
             "description": null,
@@ -14911,6 +15394,18 @@
             "deprecationReason": null
           },
           {
+            "name": "poolRecords_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "PoolRecord_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "size",
             "description": null,
             "type": {
@@ -15023,11 +15518,35 @@
             "deprecationReason": null
           },
           {
+            "name": "snapshots_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "PoolSnapshot_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "template",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "template_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Template_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -15722,11 +16241,35 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "collateral",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "collateral_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -16230,6 +16773,18 @@
             "deprecationReason": null
           },
           {
+            "name": "strike_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "strike_contains",
             "description": null,
             "type": {
@@ -16479,6 +17034,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -21890,6 +22457,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "creator",
             "description": null,
             "type": {
@@ -21983,6 +22562,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "criteriaSet_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CriteriaSet_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -22239,6 +22830,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "curve_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Curve_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -23162,6 +23765,18 @@
             "deprecationReason": null
           },
           {
+            "name": "pools_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Pool_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "size",
             "description": null,
             "type": {
@@ -23609,6 +24224,18 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_change_block",
+            "description": "Filter for the block changed event.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BlockChangedFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "address",
             "description": null,
@@ -24578,6 +25205,18 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "timestamp",
+            "description": "Integer representation of the timestamp stored in blocks for the chain",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

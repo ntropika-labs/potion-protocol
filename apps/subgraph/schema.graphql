@@ -240,7 +240,7 @@ enum TokenType @entity {
 }
 
 type Token @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   address: Bytes!
   decimals: BigInt!
   symbol: String!
@@ -249,7 +249,7 @@ type Token @entity(immutable: true) {
 }
 
 type Product @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   underlying: Token!
   strike: Token!
   collateral: Token!

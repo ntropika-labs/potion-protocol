@@ -106,8 +106,8 @@ export function createNewCriteria(
   maxDurationInDays: BigInt
 ): void {
   const criteria = new Criteria(id);
-  criteria.underlyingAsset = underlyingAsset;
-  criteria.strikeAsset = strikeAsset;
+  criteria.underlyingAsset = Bytes.fromHexString(underlyingAsset);
+  criteria.strikeAsset = Bytes.fromHexString(strikeAsset);
   criteria.isPut = isPut;
   criteria.maxStrikePercent = maxStrikePercent;
   criteria.maxDurationInDays = maxDurationInDays;
@@ -155,9 +155,9 @@ export function createNewOtoken(
   const otoken = new OToken(id);
   otoken.tokenAddress = Bytes.fromHexString(tokenAddress);
   otoken.creator = Bytes.fromHexString(creator);
-  otoken.underlyingAsset = underlyingAsset;
-  otoken.strikeAsset = strikeAsset;
-  otoken.collateralAsset = collateralAsset;
+  otoken.underlyingAsset = Bytes.fromHexString(underlyingAsset);
+  otoken.strikeAsset = Bytes.fromHexString(strikeAsset);
+  otoken.collateralAsset = Bytes.fromHexString(collateralAsset);
   otoken.strikePrice = strikePrice;
   otoken.expiry = expiry;
   otoken.isPut = isPut;
