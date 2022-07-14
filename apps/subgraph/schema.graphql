@@ -152,7 +152,7 @@ and oToken. It tracks the amount of oTokens purchased (for this specific oToken)
 and the amount of premium paid to the LPs.
 """
 type BuyerRecord @entity {
-  id: ID! # transaction hash
+  id: Bytes! # transaction hash
   buyer: Bytes!
   expiry: BigInt!
   otoken: OToken!
@@ -172,7 +172,7 @@ It also contains the field poolRecords, for every pool by the same LP that has b
 the same oToken, there exists an entry that describes the collateral of each pool.
 """
 type LPRecord @entity {
-  id: ID!
+  id: Bytes!
   lp: Bytes!
   otoken: OToken!
   numberOfOTokens: BigDecimal!

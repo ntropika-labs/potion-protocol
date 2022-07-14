@@ -155,7 +155,7 @@ query getSimilarPotionByDuration(
 query getExpiredPotions(
   $buyerAddress: Bytes!
   $expiry: BigInt!
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $first: Int = 8
   $direction: OrderDirection = desc
 ) {
@@ -176,7 +176,7 @@ query getExpiredPotions(
 query getActivePotions(
   $buyerAddress: Bytes!
   $expiry: BigInt!
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $first: Int = 8
   $direction: OrderDirection = desc
 ) {
@@ -197,7 +197,7 @@ query getActivePotions(
 query getUserPotions(
   $buyerAddress: Bytes!
   $expiry: BigInt!
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $first: Int = 8
   $direction: OrderDirection = desc
 ) {

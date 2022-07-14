@@ -95,8 +95,8 @@ export function createTemplate(
   return template;
 }
 
-function createLPRecordID(lp: Bytes, otoken: Bytes): string {
-  return lp.toHexString() + otoken.toHexString();
+function createLPRecordID(lp: Bytes, otoken: Bytes): Bytes {
+  return lp.concat(otoken);
 }
 
 function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): string {
@@ -563,6 +563,10 @@ export function handleCurveSelected(event: CurveSelected): void {
   );
 }
 
+function createBuyerRecordID(buyer: Bytes, otoken: Bytes): Bytes {
+  return buyer.concat(otoken);
+}
+
 /**
  * Called when a buyer purchases oTokens from at least one LP.
  * Updates the BuyerRecord based on the order.
@@ -571,8 +575,7 @@ export function handleCurveSelected(event: CurveSelected): void {
  * @return {void}
  */
 export function handleOptionsBought(event: OptionsBought): void {
-  const recordID =
-    event.params.buyer.toHexString() + event.params.otoken.toHexString();
+  const recordID = createBuyerRecordID(event.params.buyer, event.params.otoken);
   let record = BuyerRecord.load(recordID);
   const tokenAmount = oTokenFixedtoDecimals(
     event.params.otoken,
