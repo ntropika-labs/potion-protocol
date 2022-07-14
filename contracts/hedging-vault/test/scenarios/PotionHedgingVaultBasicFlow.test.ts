@@ -26,7 +26,7 @@ import { MockContract, FakeContract } from "@defi-wonderland/smock";
 import { BigNumber } from "ethers";
 import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS } from "../utils/BlockchainUtils";
+import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 /**
     @notice Hedging Vault basic flow unit tests    
@@ -48,7 +48,7 @@ describe.only("HedgingVault", function () {
     let fakeOpynFactory: FakeContract<IOpynFactory>;
     let mockUSDC: MockContract<IERC20>;
 
-    before(async function () {
+    beforeEach(async function () {
         ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
@@ -194,14 +194,22 @@ describe.only("HedgingVault", function () {
 
         // Configure mock and fake contracts
         fakePotionProtocol.buyOtokens.returns((args: any) => {
+            // This causes the potion library to not do an extra safeApprove on USDC
+            // as all the allowane has been consumed
             return args._maxPremium;
         });
-        fakeUniswapRouter.exactInput.returns((swapParams: any) => {
-            return swapParams.amountOutMinimum;
+        fakeUniswapRouter.exactOutput.returns((args: any) => {
+            // This causes the uniswap library to not do an extra safeApprove on the
+            // underlying asset as all the allowance has been consumed
+            return args.params.amountInMaximum;
+        });
+        fakeUniswapRouter.exactInput.returns((args: any) => {
+            return args.params.amountOutMinimum;
         });
         fakeOpynController.isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(false);
         fakeOpynFactory.getOtoken.returns(potionOtokenAddress);
         mockUSDC.approve.returns(true);
+        mockUnderlyingAsset.approve.returns(true);
 
         // Mint and approve
         await mockUnderlyingAsset.mint(investorAccount.address, 20000);
@@ -278,10 +286,42 @@ describe.only("HedgingVault", function () {
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
-        await vault.connect(ownerAccount).enterPosition();
+
+        const nextBlockTimestamp = await getNextTimestamp();
+
+        expect(await vault.connect(ownerAccount).enterPosition())
+            .to.emit(vault.address, "InvestmentTotalTooHigh")
+            .withArgs(20000, 20000);
 
         // Check the state
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
         expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
+
+        // TODO
+
+        // Check approve calls: the first call was directly done above in the test code, so
+        // check the second and the third call.
+        expect(mockUnderlyingAsset.approve).to.have.callCount(3);
+        expect(mockUnderlyingAsset.approve.atCall(1)).to.have.been.calledWith(action.address, 20000);
+        expect(mockUnderlyingAsset.approve.atCall(2)).to.have.been.calledWith(fakeUniswapRouter.address, 208);
+
+        expect(mockUSDC.approve).to.have.been.calledOnce;
+        expect(mockUSDC.approve.atCall(0)).to.have.been.calledWith(fakePotionProtocol.address, 1020);
+
+        // Check the Uniswap Calls
+        expect(fakeUniswapRouter.exactOutput).to.have.been.calledOnce;
+        expect(fakeUniswapRouter.exactOutput.getCall(0).args[0]).to.be.deep.equal([
+            swapInfo.swapPath,
+            action.address,
+            tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
+            BigNumber.from(1020),
+            BigNumber.from(208),
+        ]);
+
+        // Check the Potion calls
+        expect(fakePotionProtocol.buyOtokens).to.have.been.calledOnce;
+        expect(fakePotionProtocol.buyOtokens.getCall(0).args[0]).to.be.equal(potionOtokenAddress);
+        expectSolidityDeepCompare(counterparties, fakePotionProtocol.buyOtokens.getCall(0).args[1]);
+        expect(fakePotionProtocol.buyOtokens.getCall(0).args[2]).to.be.equal(1020);
     });
 });

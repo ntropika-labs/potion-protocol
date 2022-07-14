@@ -3,7 +3,10 @@ import { BigNumber } from "ethers";
 
 export function expectSolidityDeepCompare(tsObject: any, solidityReturnObject: any) {
     for (const key of Object.keys(tsObject)) {
-        expect(Object.keys(solidityReturnObject).includes(key)).to.be.true;
+        expect(
+            Object.keys(solidityReturnObject).includes(key),
+            `Key '${key}' not found in solidity object: ${JSON.stringify(solidityReturnObject)}`,
+        ).to.be.true;
 
         const tsValue = tsObject[key];
 
