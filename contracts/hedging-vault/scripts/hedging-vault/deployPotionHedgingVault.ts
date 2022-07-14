@@ -2,7 +2,6 @@ import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/de
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
 import { InvestmentVault, PotionBuyAction } from "../../typechain";
 import { BigNumber } from "ethers";
-import { actions } from "../../typechain/contracts";
 
 export interface HedgingVaultDeployParams {
     // Roles

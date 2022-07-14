@@ -1,12 +1,7 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
-import {
-    getDeploymentConfig,
-    deployTestingEnv,
-    MockOptions,
-    TestingEnvironmentDeployment,
-} from "../utils/deployTestingEnv";
+import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import {
@@ -28,6 +23,7 @@ import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import { NetworksType } from "../../hardhat.helpers";
 /**
     @notice Hedging Vault basic flow unit tests    
     
@@ -52,28 +48,20 @@ describe("HedgingVault", function () {
         ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
-        deploymentConfig = getDeploymentConfig(network.name);
+        deploymentConfig = getDeploymentConfig(network.name as NetworksType);
 
-        const mockOptions: MockOptions = {
-            mockUSDC: true,
-            mockUnderlyingAsset: true,
-            mockUniswapV3SwapRouter: true,
-            mockPotionLiquidityPoolManager: true,
-            mockOpynController: true,
-            mockOpynFactory: true,
-        };
-        tEnv = await deployTestingEnv(deploymentConfig, mockOptions);
+        tEnv = await deployTestingEnv(deploymentConfig);
 
-        if (!tEnv.fakePotionProtocol) {
+        if (!tEnv.mockPotionProtocol) {
             throw new Error("Fake Potion protocol not found");
         }
-        if (!tEnv.fakeUniswapV3) {
+        if (!tEnv.mockUniswapV3) {
             throw new Error("Fake Uniswap protocol not found");
         }
-        if (!tEnv.fakeOpynController) {
+        if (!tEnv.mockOpynController) {
             throw new Error("Fake Opyn Controller protocol not found");
         }
-        if (!tEnv.fakeOpynFactory) {
+        if (!tEnv.mockOpynFactory) {
             throw new Error("Fake Opyn Factory protocol not found");
         }
         if (!tEnv.mockUnderlyingAsset) {
@@ -86,10 +74,10 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
-        fakePotionProtocol = tEnv.fakePotionProtocol;
-        fakeUniswapRouter = tEnv.fakeUniswapV3;
-        fakeOpynController = tEnv.fakeOpynController;
-        fakeOpynFactory = tEnv.fakeOpynFactory;
+        fakePotionProtocol = tEnv.mockPotionProtocol;
+        fakeUniswapRouter = tEnv.mockUniswapV3;
+        fakeOpynController = tEnv.mockOpynController;
+        fakeOpynFactory = tEnv.mockOpynFactory;
 
         mockUSDC = tEnv.mockUSDC;
         mockUnderlyingAsset = tEnv.mockUnderlyingAsset;

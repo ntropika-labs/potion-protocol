@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { TestWrapperRefundsHelper, TestWrapperERC20PresetMinterPauser } from "../../typechain";
+import { TestWrapperRefundsHelper, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 /**
@@ -16,7 +16,7 @@ describe("RefundsHelper", function () {
     let tokenAddressB: string;
     let tokenAddressC: string;
     let refundsHelper: TestWrapperRefundsHelper;
-    let erc20D: TestWrapperERC20PresetMinterPauser;
+    let erc20D: MockERC20PresetMinterPauser;
     let cannotRefundTokens: string[];
     let cannotRefundETH: boolean;
 
@@ -33,7 +33,7 @@ describe("RefundsHelper", function () {
             tokenAddressC = (await ethers.getSigners())[4].address;
 
             // Deploy ERC20s
-            const ERC20Factory = await ethers.getContractFactory("TestWrapperERC20PresetMinterPauser");
+            const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
             erc20D = await ERC20Factory.deploy();
 
             const RefundsHelperFactory = await ethers.getContractFactory("TestWrapperRefundsHelper");
@@ -107,7 +107,7 @@ describe("RefundsHelper", function () {
             tokenAddressC = (await ethers.getSigners())[4].address;
 
             // Deploy ERC20s
-            const ERC20Factory = await ethers.getContractFactory("TestWrapperERC20PresetMinterPauser");
+            const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
             erc20D = await ERC20Factory.deploy();
 
             const RefundsHelperFactory = await ethers.getContractFactory("TestWrapperRefundsHelper");

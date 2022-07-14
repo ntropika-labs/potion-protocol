@@ -1,9 +1,12 @@
 import { network, ethers } from "hardhat";
 import { Deployments as PotionProtocolDeployments } from "@potion-protocol/core";
+import { PotionHedgingVaultConfigParams } from "./config/deployConfig";
+import { getDeploymentConfig, deployTestingEnv } from "./test/TestingEnv";
 
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { initDeployment, exportDeployments } from "./utils/deployment";
+import { NetworksType } from "../hardhat.helpers";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -13,16 +16,22 @@ if (!potionProtocolDeployment) {
 }
 
 async function main() {
-    await initDeployment();
+    await initDeployment(true);
 
     const deployer = (await ethers.provider.listAccounts())[0];
 
     console.log(`Using network ${network.name}`);
     console.log(`Deploying from ${deployer}`);
 
-    // TODO
+    const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(network.name as NetworksType);
+    if (!deploymentConfig) {
+        throw new Error(`No deploy config found for network '${network.name}'`);
+    }
 
+    await deployTestingEnv(deploymentConfig);
     await exportDeployments();
+
+    console.log("Deployment complete");
 }
 
 main()

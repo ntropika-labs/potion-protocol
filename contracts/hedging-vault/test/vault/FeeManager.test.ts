@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { TestWrapperFeeManager, TestWrapperERC20PresetMinterPauser } from "../../typechain";
+import { TestWrapperFeeManager, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 describe("FeeManager", function () {
@@ -11,7 +11,7 @@ describe("FeeManager", function () {
     let feesRecipientAccount3: SignerWithAddress;
     let unpriviledgedAccount: SignerWithAddress;
     let feeManager: TestWrapperFeeManager;
-    let erc20: TestWrapperERC20PresetMinterPauser;
+    let erc20: MockERC20PresetMinterPauser;
 
     const PercentageFactor = 10 ** 6;
 
@@ -22,8 +22,8 @@ describe("FeeManager", function () {
         feesRecipientAccount3 = (await ethers.getSigners())[3];
         unpriviledgedAccount = (await ethers.getSigners())[4];
 
-        const ERC20Factory = await ethers.getContractFactory("TestWrapperERC20PresetMinterPauser");
-        erc20 = (await ERC20Factory.deploy()) as TestWrapperERC20PresetMinterPauser;
+        const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
+        erc20 = (await ERC20Factory.deploy()) as MockERC20PresetMinterPauser;
 
         const FeeManagerFactory = await ethers.getContractFactory("TestWrapperFeeManager");
         feeManager = (await FeeManagerFactory.deploy()) as TestWrapperFeeManager;

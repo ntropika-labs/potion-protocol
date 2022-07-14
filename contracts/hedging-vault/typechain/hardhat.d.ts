@@ -233,6 +233,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC4626Upgradeable__factory>;
     getContractFactory(
+      name: "MockERC20PresetMinterPauser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockERC20PresetMinterPauser__factory>;
+    getContractFactory(
+      name: "MockOpynController",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynController__factory>;
+    getContractFactory(
+      name: "MockOpynFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynFactory__factory>;
+    getContractFactory(
+      name: "MockPotionLiquidityPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockPotionLiquidityPool__factory>;
+    getContractFactory(
+      name: "MockUniswapV3Router",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockUniswapV3Router__factory>;
+    getContractFactory(
       name: "TestWrapperActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperActionsManager__factory>;
@@ -241,9 +261,69 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperEmergencyLock__factory>;
     getContractFactory(
-      name: "TestWrapperERC20PresetMinterPauser",
+      name: "TestWrapperFeeManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TestWrapperERC20PresetMinterPauser__factory>;
+    ): Promise<Contracts.TestWrapperFeeManager__factory>;
+    getContractFactory(
+      name: "TestWrapperLifecycleStates",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperLifecycleStates__factory>;
+    getContractFactory(
+      name: "TestWrapperOpynProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperOpynProtocolLib__factory>;
+    getContractFactory(
+      name: "TestWrapperPercentageUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPercentageUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperPotionProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPotionProtocolLib__factory>;
+    getContractFactory(
+      name: "TestWrapperPriceUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperPriceUtils__factory>;
+    getContractFactory(
+      name: "TestWrapperRefundsHelper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperRefundsHelper__factory>;
+    getContractFactory(
+      name: "TestWrapperRolesManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperRolesManager__factory>;
+    getContractFactory(
+      name: "TestWrapperUniswapV3SwapLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
+    getContractFactory(
+      name: "MockERC20PresetMinterPauser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockERC20PresetMinterPauser__factory>;
+    getContractFactory(
+      name: "MockOpynController",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynController__factory>;
+    getContractFactory(
+      name: "MockOpynFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynFactory__factory>;
+    getContractFactory(
+      name: "MockPotionLiquidityPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockPotionLiquidityPool__factory>;
+    getContractFactory(
+      name: "MockUniswapV3Router",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockUniswapV3Router__factory>;
+    getContractFactory(
+      name: "TestWrapperActionsManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperActionsManager__factory>;
+    getContractFactory(
+      name: "TestWrapperEmergencyLock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperEmergencyLock__factory>;
     getContractFactory(
       name: "TestWrapperFeeManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -577,6 +657,31 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC4626Upgradeable>;
     getContractAt(
+      name: "MockERC20PresetMinterPauser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockERC20PresetMinterPauser>;
+    getContractAt(
+      name: "MockOpynController",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynController>;
+    getContractAt(
+      name: "MockOpynFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynFactory>;
+    getContractAt(
+      name: "MockPotionLiquidityPool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockPotionLiquidityPool>;
+    getContractAt(
+      name: "MockUniswapV3Router",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockUniswapV3Router>;
+    getContractAt(
       name: "TestWrapperActionsManager",
       address: string,
       signer?: ethers.Signer
@@ -587,10 +692,85 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperEmergencyLock>;
     getContractAt(
-      name: "TestWrapperERC20PresetMinterPauser",
+      name: "TestWrapperFeeManager",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TestWrapperERC20PresetMinterPauser>;
+    ): Promise<Contracts.TestWrapperFeeManager>;
+    getContractAt(
+      name: "TestWrapperLifecycleStates",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperLifecycleStates>;
+    getContractAt(
+      name: "TestWrapperOpynProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperOpynProtocolLib>;
+    getContractAt(
+      name: "TestWrapperPercentageUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPercentageUtils>;
+    getContractAt(
+      name: "TestWrapperPotionProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPotionProtocolLib>;
+    getContractAt(
+      name: "TestWrapperPriceUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperPriceUtils>;
+    getContractAt(
+      name: "TestWrapperRefundsHelper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperRefundsHelper>;
+    getContractAt(
+      name: "TestWrapperRolesManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperRolesManager>;
+    getContractAt(
+      name: "TestWrapperUniswapV3SwapLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
+    getContractAt(
+      name: "MockERC20PresetMinterPauser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockERC20PresetMinterPauser>;
+    getContractAt(
+      name: "MockOpynController",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynController>;
+    getContractAt(
+      name: "MockOpynFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynFactory>;
+    getContractAt(
+      name: "MockPotionLiquidityPool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockPotionLiquidityPool>;
+    getContractAt(
+      name: "MockUniswapV3Router",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockUniswapV3Router>;
+    getContractAt(
+      name: "TestWrapperActionsManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperActionsManager>;
+    getContractAt(
+      name: "TestWrapperEmergencyLock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperEmergencyLock>;
     getContractAt(
       name: "TestWrapperFeeManager",
       address: string,

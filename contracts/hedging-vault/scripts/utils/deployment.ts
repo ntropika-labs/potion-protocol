@@ -1,9 +1,10 @@
 import { config as dotenvConfig } from "dotenv";
-import { Contract, Signer } from "ethers";
+import { Contract, Signer, BaseContract } from "ethers";
 import fs from "fs";
 import hre, { ethers, network, upgrades } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
+import { smock, MockContract } from "@defi-wonderland/smock";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -13,10 +14,12 @@ const indexDir = resolve(__dirname, "../../src");
 
 const DEPLOYMENTS_INDEX_FILE = "index.ts";
 
+let GlobalEnableExportContracts = false;
+
 export enum DeploymentFlags {
-    Deploy = 1 << 0,
-    Verify = 1 << 1,
-    Export = 1 << 2,
+    None = 0,
+    Verify = 1 << 0,
+    Export = 1 << 1,
 }
 
 export interface DeploymentOptions extends FactoryOptions {
@@ -31,7 +34,7 @@ export function isDeploymentOptions(options: Signer | DeploymentOptions | undefi
     );
 }
 
-export async function initDeployment() {
+export async function initDeployment(contractExportEnabled: boolean = false) {
     // Initialize deployment info
     const latestDeploymentFilename = network.name + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
@@ -53,6 +56,8 @@ export async function initDeployment() {
     };
 
     fs.writeFileSync(latestDeploymentPath, JSON.stringify(deploymentsObject, null, 2));
+
+    setContractExport(contractExportEnabled);
 }
 
 export async function exportDeployments() {
@@ -86,7 +91,7 @@ export async function exportDeployments() {
     );
 }
 
-export async function exportContract(name: string, address: string, blockNumber: number) {
+export async function exportContract(name: string, address: string, blockNumber: number = 0) {
     // Export deployment info
     const latestDeploymentFilename = network.name + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
@@ -130,7 +135,7 @@ export async function deploy(
         alias = options.alias;
     }
 
-    if (flags && flags & DeploymentFlags.Export) {
+    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
         if (alias) {
             await exportContract(alias, contract.address, transactionReceipt.blockNumber);
         } else {
@@ -162,7 +167,7 @@ export async function deployUpgrade(
         alias = options.alias;
     }
 
-    if (flags && flags & DeploymentFlags.Export) {
+    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
         if (alias) {
             await exportContract(alias, contract.address, transactionReceipt.blockNumber);
         } else {
@@ -176,4 +181,44 @@ export async function deployUpgrade(
     }
 
     return contract.deployed();
+}
+
+export async function deployMock<T extends BaseContract>(
+    contractName: string,
+    args: unknown[] = [],
+    options: Signer | DeploymentOptions | undefined = undefined,
+): Promise<MockContract<T>> {
+    const contractFactory = await smock.mock(contractName);
+    const contract = await contractFactory.deploy(...args);
+    const transactionReceipt = await contract.deployTransaction.wait();
+
+    let flags = undefined,
+        alias = undefined;
+    if (isDeploymentOptions(options)) {
+        flags = options.flags;
+        alias = options.alias;
+    }
+
+    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+        if (alias) {
+            await exportContract(alias, contract.address, transactionReceipt.blockNumber);
+        } else {
+            await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+        }
+    }
+
+    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
+        await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
+        await verify(contract.address, args);
+    }
+
+    return contract as unknown as MockContract<T>;
+}
+
+export function setContractExport(enabled: boolean) {
+    GlobalEnableExportContracts = enabled;
+}
+
+export function isContractExportEnabled() {
+    return GlobalEnableExportContracts;
 }

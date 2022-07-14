@@ -8,6 +8,8 @@ import { NetworksType } from "../../hardhat.helpers";
  * These are used to populate the { HedgingVaultDeploymentConfig } object in order to deploy the contracts
  */
 export interface PotionHedgingVaultConfigParams {
+    networkName: NetworksType | "localhost";
+
     // Roles
     //
     // - Admin address is the deployer itself
@@ -48,14 +50,34 @@ export interface PotionHedgingVaultConfigParams {
     // If uniswapV3SwapRouter is not provided, then a fake uniswapV3SwapRouter is deployed and used
     // If potionLiquidityPoolManager is not provided, then a fake potionLiquidityPoolManager is deployed and used
     // If opynController is not provided, then a fake opynController is deployed and used
+    // If opynFactory is not provided, then a fake opynFactory is deployed and used
     uniswapV3SwapRouter?: string;
     potionLiquidityPoolManager?: string;
     opynController?: string;
+    opynFactory?: string;
 }
 
 export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as string]: PotionHedgingVaultConfigParams } =
     {
         hardhat: {
+            networkName: "hardhat",
+
+            // Investment configuration
+            maxPremiumPercentage: BigNumber.from(2000000), // 2%
+            premiumSlippage: BigNumber.from(2000000), // 2%
+            swapSlippage: BigNumber.from(2000000), // 2%
+            maxSwapDurationSecs: BigNumber.from(60), // 1 minute
+            cycleDurationSecs: BigNumber.from(86400), // 1 day
+            strikePriceInUSDC: BigNumber.from(100000000000), // 1000.0 USDC/asset
+            hedgingPercentage: BigNumber.from(100000000), // 100%
+
+            // Fees configuration
+            managementFee: BigNumber.from(3000000), // 3%
+            performanceFee: BigNumber.from(3000000), // 3%
+        },
+        localhost: {
+            networkName: "localhost",
+
             // Investment configuration
             maxPremiumPercentage: BigNumber.from(2000000), // 2%
             premiumSlippage: BigNumber.from(2000000), // 2%
