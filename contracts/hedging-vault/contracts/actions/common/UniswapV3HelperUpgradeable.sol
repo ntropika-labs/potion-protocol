@@ -70,6 +70,12 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
         uint256 maxDuration
     ) internal returns (uint256 actualAmountOut) {
         SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
+
+        require(
+            swapInfo.inputToken == inputToken && swapInfo.outputToken == outputToken,
+            "Swap info not found for the given token pair"
+        );
+
         uint256 expectedAmountOut = PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);
 
         UniswapV3SwapLib.SwapInputParameters memory swapParameters = UniswapV3SwapLib.SwapInputParameters({
@@ -108,6 +114,12 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
         uint256 maxDuration
     ) internal returns (uint256 actualAmountIn) {
         SwapInfo memory swapInfo = getSwapInfo(inputToken, outputToken);
+
+        require(
+            swapInfo.inputToken == inputToken && swapInfo.outputToken == outputToken,
+            "Swap info not found for the given token pair"
+        );
+
         uint256 expectedAmountIn = PriceUtils.toInputAmount(swapInfo.expectedPriceRate, amountOut);
 
         UniswapV3SwapLib.SwapOutputParameters memory swapParameters = UniswapV3SwapLib.SwapOutputParameters({

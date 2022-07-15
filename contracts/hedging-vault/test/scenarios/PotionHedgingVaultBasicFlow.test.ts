@@ -152,7 +152,7 @@ describe("HedgingVault", function () {
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
     });
 
-    it("Basic Deposit/Withdrawal", async function () {
+    it("Basic Deposit/Redemption", async function () {
         // Mint and approve
         await mockUnderlyingAsset.mint(investorAccount.address, 20000);
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
@@ -168,7 +168,7 @@ describe("HedgingVault", function () {
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
 
         // Withdraw and check received assets
-        await vault.connect(investorAccount).withdraw(20000, investorAccount.address, investorAccount.address);
+        await vault.connect(investorAccount).redeem(20000, investorAccount.address, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
 
@@ -176,7 +176,7 @@ describe("HedgingVault", function () {
         await mockUnderlyingAsset.connect(investorAccount).burn(20000);
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
     });
-    it("Deposit and enter position", async function () {
+    it.only("Full cycle (deposit, enter, exit, redeem)", async function () {
         const potionOtokenAddress = (await ethers.getSigners())[5].address;
         const lpAddress = (await ethers.getSigners())[6].address;
 
@@ -207,7 +207,9 @@ describe("HedgingVault", function () {
             await mockUnderlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
         ).to.equal(20000);
 
-        // Deposit and check received shares
+        /*
+            DEPOSIT
+        */
         await vault.connect(investorAccount).deposit(20000, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
         expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
@@ -258,8 +260,11 @@ describe("HedgingVault", function () {
 
         expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
 
+        /*
+            ENTER POSITION
+        */
         // Set the Uniswap route info
-        const swapInfo: IUniswapV3Oracle.SwapInfoStruct = {
+        let swapInfo: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset,
             outputToken: tEnv.USDC,
             expectedPriceRate: toPRBMath("5.0"),
@@ -268,18 +273,16 @@ describe("HedgingVault", function () {
 
         await action.setSwapInfo(swapInfo);
 
-        const currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset, tEnv.USDC);
+        let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset, tEnv.USDC);
 
         expectSolidityDeepCompare(swapInfo, currentSwapInfo);
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
 
-        const nextBlockTimestamp = await getNextTimestamp();
+        let nextBlockTimestamp = await getNextTimestamp();
 
-        expect(await vault.connect(ownerAccount).enterPosition())
-            .to.emit(vault.address, "InvestmentTotalTooHigh")
-            .withArgs(20000, 20000);
+        await vault.connect(ownerAccount).enterPosition();
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
@@ -315,5 +318,62 @@ describe("HedgingVault", function () {
         expect(fakePotionProtocol.buyOtokens.getCall(0).args[0]).to.be.equal(potionOtokenAddress);
         expectSolidityDeepCompare(counterparties, fakePotionProtocol.buyOtokens.getCall(0).args[1]);
         expect(fakePotionProtocol.buyOtokens.getCall(0).args[2]).to.be.equal(1020);
+
+        /*
+            EXIT POSITION
+        */
+
+        // Set the Uniswap route info
+        swapInfo = {
+            inputToken: tEnv.USDC,
+            outputToken: tEnv.underlyingAsset,
+            expectedPriceRate: toPRBMath("0.2"),
+            swapPath: getEncodedSwapPath([tEnv.USDC, tEnv.underlyingAsset]),
+        };
+
+        await action.setSwapInfo(swapInfo);
+
+        currentSwapInfo = await action.getSwapInfo(tEnv.USDC, tEnv.underlyingAsset);
+
+        expectSolidityDeepCompare(swapInfo, currentSwapInfo);
+
+        // Exit the position
+        await fastForwardChain(DAY_IN_SECONDS);
+
+        nextBlockTimestamp = await getNextTimestamp();
+
+        await vault.connect(ownerAccount).exitPosition();
+
+        // Check the new state of the system
+        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
+        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
+
+        // These balances will not be valid if the real Uniswap and Potion protocol are used.
+        // As of now, the asset is not really swapped, so the only movement in balances is from
+        // the action to the vault
+        expect(await mockUnderlyingAsset.balanceOf(vault.address)).to.equal(20000);
+        expect(await mockUnderlyingAsset.balanceOf(action.address)).to.equal(0);
+
+        // Check approve calls: the first call was directly done above in the test code, so
+        // check the second and the third call.
+        expect(mockUSDC.approve).to.have.callCount(2);
+        expect(mockUSDC.approve.atCall(1)).to.have.been.calledWith(fakeUniswapRouter.address, 0);
+
+        expect(mockUnderlyingAsset.approve).to.have.callCount(4);
+        expect(mockUnderlyingAsset.approve.atCall(3)).to.have.been.calledWith(action.address, 0);
+
+        // Check the Uniswap Calls
+        expect(fakeUniswapRouter.exactInput).to.have.been.calledOnce;
+        expect(fakeUniswapRouter.exactInput.getCall(0).args[0]).to.be.deep.equal([
+            swapInfo.swapPath,
+            action.address,
+            tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
+            BigNumber.from(0),
+            BigNumber.from(0),
+        ]);
+
+        // Check the Potion calls
+        expect(fakePotionProtocol.settleAfterExpiry).to.have.been.calledOnce;
+        expect(fakePotionProtocol.settleAfterExpiry.getCall(0).args[0]).to.be.equal(potionOtokenAddress);
     });
 });

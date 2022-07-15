@@ -51,7 +51,7 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @notice Modifier to scope functions to only be accessible when the state is Unlocked
      */
     modifier onlyUnlocked() {
-        require(_state == LifecycleState.Unlocked, "Vault is not unlocked");
+        require(_state == LifecycleState.Unlocked, "State is not Unlocked");
         _;
     }
 
@@ -59,7 +59,7 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @notice Modifier to scope functions to only be accessible when the state is Committed
      */
     modifier onlyCommitted() {
-        require(_state == LifecycleState.Committed, "Vault is not commited");
+        require(_state == LifecycleState.Committed, "State is not Commited");
         _;
     }
 
@@ -67,7 +67,7 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @notice Modifier to scope functions to only be accessible when the state is Locked
      */
     modifier onlyLocked() {
-        require(_state == LifecycleState.Locked, "Vault is not locked");
+        require(_state == LifecycleState.Locked, "State is not Locked");
         _;
     }
 
