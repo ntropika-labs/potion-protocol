@@ -10,6 +10,7 @@ import {
 } from "../../typechain";
 
 import { deploy, deployMock } from "../utils/deployment";
+import { BaseContract } from "ethers";
 
 export async function mockERC20(
     deploymentConfig: PotionHedgingVaultConfigParams,
@@ -133,4 +134,14 @@ export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVau
     }
 
     return { softMock, hardMock, address };
+}
+
+export declare type MockOrContract<T extends BaseContract> = T | MockContract<T>;
+
+export function isMock<T extends BaseContract>(contract: MockOrContract<T>): contract is MockContract<T> {
+    return (contract as MockContract<T>).wallet !== undefined && (contract as MockContract<T>).fallback !== undefined;
+}
+
+export function asMock<T extends BaseContract>(contract: MockOrContract<T>): MockContract<T> | undefined {
+    return isMock(contract) ? (contract as MockContract<T>) : undefined;
 }

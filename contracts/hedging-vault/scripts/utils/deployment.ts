@@ -215,6 +215,31 @@ export async function deployMock<T extends BaseContract>(
     return contract as unknown as MockContract<T>;
 }
 
+export async function connectContract<T extends Contract>(
+    contractName: string,
+    contractAddress: string,
+    options: Signer | DeploymentOptions | undefined = undefined,
+) {
+    const contractFactory = await ethers.getContractFactory(contractName, options);
+
+    let flags = undefined,
+        alias = undefined;
+    if (isDeploymentOptions(options)) {
+        flags = options.flags;
+        alias = options.alias;
+    }
+
+    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+        if (alias) {
+            await exportContract(alias, contractAddress);
+        } else {
+            await exportContract(contractName, contractAddress);
+        }
+    }
+
+    return contractFactory.attach(contractAddress) as T;
+}
+
 export function setContractExport(enabled: boolean) {
     GlobalEnableExportContracts = enabled;
 }

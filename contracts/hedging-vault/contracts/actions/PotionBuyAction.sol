@@ -184,6 +184,11 @@ contract PotionBuyAction is
         nonReentrant
         returns (uint256 amountReturned)
     {
+        require(
+            _isPotionRedeemable(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp),
+            "The Potion is not redeemable yet"
+        );
+
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
 
         _redeemPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp);

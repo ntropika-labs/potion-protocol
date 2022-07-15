@@ -140,12 +140,11 @@ describe("RefundsHelper", function () {
 
             expect(await ethers.provider.getBalance(refundsHelper.address)).to.be.equal(ethers.utils.parseEther("1"));
 
-            expect(await ethers.provider.getBalance(unpriviledgedAccount.address)).to.be.equal(
-                ethers.utils.parseEther("10000"),
-            );
+            const prevBalance = await ethers.provider.getBalance(unpriviledgedAccount.address);
+
             await refundsHelper.refundETH(ethers.utils.parseEther("1"), unpriviledgedAccount.address);
             expect(await ethers.provider.getBalance(unpriviledgedAccount.address)).to.be.equal(
-                ethers.utils.parseEther("10001"),
+                prevBalance.add(ethers.utils.parseEther("1")),
             );
         });
     });

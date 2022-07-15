@@ -226,4 +226,13 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     function getOpynController() external view returns (IOpynController) {
         return _opynController;
     }
+
+    /**
+        @notice Returns the Opyn Factory address
+
+        @return The address of the Opyn Factory
+     */
+    function getOpynFactory() external view returns (IOpynFactory) {
+        return _opynFactory;
+    }
 }

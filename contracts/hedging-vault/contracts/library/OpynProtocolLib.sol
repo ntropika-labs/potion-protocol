@@ -6,6 +6,8 @@ pragma solidity 0.8.14;
 import { IOpynController } from "../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../interfaces/IOpynFactory.sol";
 
+import "hardhat/console.sol";
+
 /**
     @title OpynProtocolLib
 
@@ -24,7 +26,9 @@ library OpynProtocolLib {
         more accesible
      */
     function isPotionRedeemable(IOpynController opynController, address potion) internal view returns (bool) {
-        return opynController.isSettlementAllowed(potion);
+        bool ret = opynController.isSettlementAllowed(potion);
+        console.log("isPotionRedeemable", ret);
+        return ret;
     }
 
     /**

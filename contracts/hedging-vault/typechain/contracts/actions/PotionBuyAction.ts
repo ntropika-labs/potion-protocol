@@ -214,6 +214,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getLifecycleState()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getOpynController()": FunctionFragment;
+    "getOpynFactory()": FunctionFragment;
     "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
@@ -264,6 +265,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getLifecycleState"
       | "getOperator"
       | "getOpynController"
+      | "getOpynFactory"
       | "getPotionBuyInfo"
       | "getPotionLiquidityManager"
       | "getStrategist"
@@ -346,6 +348,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getOpynController",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOpynFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -510,6 +516,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getOpynController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOpynFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -900,6 +910,8 @@ export interface PotionBuyAction extends BaseContract {
 
     getOpynController(overrides?: CallOverrides): Promise<[string]>;
 
+    getOpynFactory(overrides?: CallOverrides): Promise<[string]>;
+
     getPotionBuyInfo(
       underlyingAsset: string,
       strikePrice: BigNumberish,
@@ -1080,6 +1092,8 @@ export interface PotionBuyAction extends BaseContract {
 
   getOpynController(overrides?: CallOverrides): Promise<string>;
 
+  getOpynFactory(overrides?: CallOverrides): Promise<string>;
+
   getPotionBuyInfo(
     underlyingAsset: string,
     strikePrice: BigNumberish,
@@ -1259,6 +1273,8 @@ export interface PotionBuyAction extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<string>;
 
     getOpynController(overrides?: CallOverrides): Promise<string>;
+
+    getOpynFactory(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -1549,6 +1565,8 @@ export interface PotionBuyAction extends BaseContract {
 
     getOpynController(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOpynFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPotionBuyInfo(
       underlyingAsset: string,
       strikePrice: BigNumberish,
@@ -1734,6 +1752,8 @@ export interface PotionBuyAction extends BaseContract {
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOpynController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getOpynFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
