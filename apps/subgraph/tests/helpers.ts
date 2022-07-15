@@ -142,7 +142,7 @@ export function createNewCriteriaJoinedCriteriaSet(
 }
 
 export function createNewOtoken(
-  id: string,
+  id: Bytes,
   tokenAddress: string,
   creator: string,
   underlyingAsset: string,

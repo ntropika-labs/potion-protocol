@@ -9,7 +9,12 @@ import {
   MOCKED_LP,
   COLLATERAL_PRECISION_DECIMALS,
 } from "../constants";
-import { assertEntity, createNewOtoken, formatStrike } from "../helpers";
+import {
+  assertBytesEntity,
+  assertEntity,
+  createNewOtoken,
+  formatStrike,
+} from "../helpers";
 import { createOtokenCreated } from "../events";
 import { mockDecimals } from "../mocks";
 import { handleOtokenCreate } from "../../src/otoken";
@@ -34,7 +39,7 @@ test("It can create an otoken", () => {
     BigDecimal.fromString("5"),
     BigInt.fromString("12")
   );
-  assertEntity("OToken", MOCKED_OTOKEN_ID, [
+  assertBytesEntity("OToken", MOCKED_OTOKEN_ID, [
     ["collateralAsset", MOCKED_TOKEN_C_ID],
     ["collateralized", "100"],
     ["creator", MOCKED_LP.toHexString()],

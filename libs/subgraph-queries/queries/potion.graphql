@@ -230,7 +230,7 @@ query getUserPotions(
 query getMostPurchasedPotions(
   $expiry: BigInt!
   $addresses: [String!]
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $limit: Int = 8
   $direction: OrderDirection = desc
 ) {
@@ -252,7 +252,7 @@ query getMostPurchasedPotions(
 query getMostCollateralizedPotions(
   $expiry: BigInt!
   $addresses: [String!]
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $limit: Int = 8
   $direction: OrderDirection = desc
 ) {
@@ -274,7 +274,7 @@ query getMostCollateralizedPotions(
 query getMostPopularPotions(
   $expiry: BigInt!
   $addresses: [String!]
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $limit: Int = 8
   $direction: OrderDirection = desc
 ) {

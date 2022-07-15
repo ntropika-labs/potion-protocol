@@ -1,9 +1,9 @@
 import { createMockedFunction } from "matchstick-as/assembly/index";
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { Address, Bytes, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
-export function mockDecimals(address: string, decimals: string): void {
+export function mockDecimals(address: Bytes, decimals: string): void {
   createMockedFunction(
-    Address.fromString(address),
+    Address.fromBytes(address),
     "decimals",
     "decimals():(uint8)"
   ).returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(decimals))]);

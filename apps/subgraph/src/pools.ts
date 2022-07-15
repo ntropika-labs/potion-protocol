@@ -22,7 +22,6 @@ import {
 } from "../generated/schema";
 import { calculateAverageCost } from "./curves";
 import {
-  getOTokenIdFromAddress,
   oTokenFixedtoDecimals,
   oTokenIncrementLiquidity,
   oTokenIncrementPurchasesCount,
@@ -321,8 +320,7 @@ function createOrderBookEntry(
   const entry = new OrderBookEntry(entryId);
 
   entry.buyer = buyer;
-  // to set field to an entity, set to the string of the entity's ID.
-  entry.otoken = getOTokenIdFromAddress(otoken);
+  entry.otoken = otoken;
   entry.premium = premium;
   entry.numberOfOTokens = tokens;
   entry.timestamp = timestamp;
@@ -594,7 +592,7 @@ export function handleOptionsBought(event: OptionsBought): void {
   const premiumPaid = collateralToDecimals(event.params.totalPremiumPaid);
 
   if (record == null) {
-    const otokenAddress = getOTokenIdFromAddress(event.params.otoken);
+    const otokenAddress = event.params.otoken;
     const otoken = OToken.load(otokenAddress)!;
     record = new BuyerRecord(recordID);
     record.buyer = event.params.buyer;
@@ -679,7 +677,7 @@ export function handleOptionsSold(event: OptionsSold): void {
     if (record == null) {
       record = new LPRecord(recordID);
       record.lp = event.params.lp;
-      record.otoken = getOTokenIdFromAddress(event.params.otoken);
+      record.otoken = event.params.otoken;
       record.numberOfOTokens = BigDecimal.fromString("0");
       record.liquidityCollateralized = BigDecimal.fromString("0");
       record.premiumReceived = BigDecimal.fromString("0");
@@ -702,7 +700,7 @@ export function handleOptionsSold(event: OptionsSold): void {
       poolRecord = new PoolRecord(poolRecordID);
       poolRecord.pool = poolId;
       poolRecord.lpRecord = record.id;
-      poolRecord.otoken = getOTokenIdFromAddress(event.params.otoken);
+      poolRecord.otoken = event.params.otoken;
       poolRecord.collateral = liquidityCollateralized;
       poolRecord.premiumReceived = premiumAmount;
       poolRecord.numberOfOTokens = tokenAmount;

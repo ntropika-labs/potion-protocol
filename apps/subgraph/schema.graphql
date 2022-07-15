@@ -204,7 +204,7 @@ Tracks the oTokens created via the OtokenFactoryContract. This tracks all inform
 related to the oToken.
 """
 type OToken @entity {
-  id: ID!
+  id: Bytes!
   tokenAddress: Bytes!
   creator: Bytes!
   underlyingAsset: Token!
