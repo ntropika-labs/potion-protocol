@@ -66,8 +66,22 @@ abstract contract PotionBuyActionV0 is IPotionBuyActionV0 {
     uint256 public strikePriceInUSDC;
 
     /// MODIFIERS
+
+    /**
+        @notice Checks if the current cycle start time has been reached
+     */
     modifier onlyAfterCycleStart() {
         require(block.timestamp >= nextCycleStartTimestamp, "Next cycle has not started yet");
+        _;
+    }
+
+    /**
+        @notice Checks if the current cycle end time has been reached
+
+        @dev The end of the current cycle is exactly the same as the start of the next
+     */
+    modifier onlyAfterCycleEnd() {
+        require(block.timestamp >= nextCycleStartTimestamp, "Current cycle has not ended yet");
         _;
     }
 }

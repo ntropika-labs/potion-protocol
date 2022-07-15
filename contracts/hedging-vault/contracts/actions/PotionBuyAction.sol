@@ -180,6 +180,7 @@ contract PotionBuyAction is
         external
         onlyVault
         onlyLocked
+        onlyAfterCycleEnd
         nonReentrant
         returns (uint256 amountReturned)
     {
