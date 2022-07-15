@@ -14,21 +14,6 @@ type Curve @entity(immutable: true) {
 }
 
 """
-All Criteria's in the registry of criterias.
-"""
-type Criteria @entity(immutable: true) {
-  id: ID!
-  underlyingAsset: Token!
-  strikeAsset: Token!
-  isPut: Boolean!
-  # describes maximum strike percent as a percent (eg xx%)
-  maxStrikePercent: BigDecimal!
-  maxDurationInDays: BigInt!
-  # links this criteria to all criteriaSets that have it as one of the criterias
-  criteriaSets: [CriteriaJoinedCriteriaSet!] @derivedFrom(field: "criteria")
-}
-
-"""
 Describes a unique combination of a Curve and CriteriaSet. For every unique combination
 of curveHash and criteriaSetHash, there is a Template that describes the number of pools
 that have these settings, the aggregated size of all pools, and absolute Profit and Loss.
@@ -53,8 +38,23 @@ type Template @entity {
   pools: [Pool!] @derivedFrom(field: "template")
 }
 
+"""
+All Criteria's in the registry of criterias.
+"""
+type Criteria @entity(immutable: true) {
+  id: ID!
+  underlyingAsset: Token!
+  strikeAsset: Token!
+  isPut: Boolean!
+  # describes maximum strike percent as a percent (eg xx%)
+  maxStrikePercent: BigDecimal!
+  maxDurationInDays: BigInt!
+  # links this criteria to all criteriaSets that have it as one of the criterias
+  criteriaSets: [CriteriaJoinedCriteriaSet!] @derivedFrom(field: "criteria")
+}
+
 # describes a criteria set
-type CriteriaSet @entity {
+type CriteriaSet @entity(immutable: true) {
   id: ID! # hash of the CriteriaSet
   criterias: [CriteriaJoinedCriteriaSet!]! @derivedFrom(field: "criteriaSet")
   templates: [Template!] @derivedFrom(field: "criteriaSet")
@@ -65,7 +65,7 @@ Each CriteriaJoinedCriteriaSet entity describes one Criteria that belongs
 to a CriteriaSet. This entity allows for searches from Criterias to CriteriaSets
 to be completed.
 """
-type CriteriaJoinedCriteriaSet @entity {
+type CriteriaJoinedCriteriaSet @entity(immutable: true) {
   id: ID!
   criteriaSet: CriteriaSet!
   criteria: Criteria!
