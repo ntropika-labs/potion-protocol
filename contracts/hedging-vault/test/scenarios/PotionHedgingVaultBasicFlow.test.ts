@@ -183,7 +183,7 @@ describe("HedgingVault", function () {
         // Configure mock and fake contracts
         fakePotionProtocol.buyOtokens.returns((args: any) => {
             // This causes the potion library to not do an extra safeApprove on USDC
-            // as all the allowane has been consumed
+            // as all the allowance has been consumed
             return args._maxPremium;
         });
         fakeUniswapRouter.exactOutput.returns((args: any) => {
