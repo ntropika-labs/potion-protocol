@@ -1,4 +1,4 @@
-import { Bytes, BigDecimal, log } from "@graphprotocol/graph-ts";
+import { Bytes, log } from "@graphprotocol/graph-ts";
 import {
   CriteriaAdded,
   CriteriaSetAdded,
@@ -11,10 +11,6 @@ import {
 
 export function createCriteriaId(criteriaHash: Bytes): string {
   return criteriaHash.toHexString();
-}
-
-export function createCriteriaSetId(criteriaSetHash: Bytes): string {
-  return criteriaSetHash.toHexString();
 }
 
 export function createCriteriaJoinedCriteriaSetId(
@@ -36,9 +32,8 @@ export function handleCriteriaAdded(event: CriteriaAdded): void {
     criteria.underlyingAsset = event.params.criteria.underlyingAsset;
     criteria.strikeAsset = event.params.criteria.strikeAsset;
     criteria.isPut = event.params.criteria.isPut;
-    criteria.maxStrikePercent = BigDecimal.fromString(
-      event.params.criteria.maxStrikePercent.toString()
-    );
+    criteria.maxStrikePercent =
+      event.params.criteria.maxStrikePercent.toBigDecimal();
     criteria.maxDurationInDays = event.params.criteria.maxDurationInDays;
     criteria.save();
   } else {
@@ -54,14 +49,13 @@ export function handleCriteriaAdded(event: CriteriaAdded): void {
  * @param {CriteriaSetAdded} event Descriptor of the event emitted.
  */
 export function handleCriteriaSetAdded(event: CriteriaSetAdded): void {
-  const criteriaSetId = event.params.criteriaSetHash;
-  const criteriaSet = new CriteriaSet(criteriaSetId.toHexString());
+  const criteriaSetId = event.params.criteriaSetHash.toHexString();
+  const criteriaSet = new CriteriaSet(criteriaSetId);
   const criteriaHashArray = event.params.criteriaSet;
 
   for (let i = 0; i < criteriaHashArray.length; i++) {
     const criteriaHash: Bytes = criteriaHashArray[i];
     const criteriaId = createCriteriaId(criteriaHash as Bytes);
-    const criteria = new Criteria(criteriaId);
 
     const criteriaJoinedCriteriaSetId = createCriteriaJoinedCriteriaSetId(
       criteriaHash as Bytes,
@@ -71,8 +65,8 @@ export function handleCriteriaSetAdded(event: CriteriaSetAdded): void {
       criteriaJoinedCriteriaSetId
     );
 
-    criteriaJoinedCriteriaSet.criteria = criteria.id;
-    criteriaJoinedCriteriaSet.criteriaSet = criteriaSet.id;
+    criteriaJoinedCriteriaSet.criteria = criteriaId;
+    criteriaJoinedCriteriaSet.criteriaSet = criteriaSetId;
     criteriaJoinedCriteriaSet.save();
   }
 
