@@ -17,14 +17,14 @@ interface IPotionBuyActionV0 {
     event SwapSlippageChanged(uint256 swapSlippage);
     event MaxSwapDurationChanged(uint256 maxSwapDurationSecs);
     event CycleDurationChanged(uint256 cycleDurationSecs);
-    event StrikePriceChanged(uint256 strikePrice);
+    event StrikePercentageChanged(uint256 strikePercentage);
 
     /// ERRORS
     error MaxPremiumPercentageOutOfRange(uint256 maxPremiumPercentage);
     error PremiumSlippageOutOfRange(uint256 premiumSlippage);
     error SwapSlippageOutOfRange(uint256 swapSlippage);
     error CycleDurationTooShort(uint256 cycleDurationSecs, uint256 minCycleDurationSecs);
-    error StrikePriceIsZero();
+    error StrikePercentageIsZero();
 
     /// FUNCTIONS
 
@@ -61,7 +61,7 @@ interface IPotionBuyActionV0 {
     function setCycleDuration(uint256 durationSeconds) external;
 
     /**
-        @notice Sets strike price denominated in USDC
+        @notice Sets strike percentage as a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
-    function setStrikePrice(uint256 strikePriceInUSDC) external;
+    function setStrikePercentage(uint256 strikePercentage) external;
 }

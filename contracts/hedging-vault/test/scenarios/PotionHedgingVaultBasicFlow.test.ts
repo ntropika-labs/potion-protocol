@@ -12,6 +12,7 @@ import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 import { NetworksType } from "../../hardhat.helpers";
 import { asMock } from "../../scripts/test/MocksLibrary";
 /**
@@ -198,10 +199,12 @@ describe("HedgingVault", function () {
             },
         ];
 
+        const strikePriceInUSDC = PercentageUtils.applyPercentage(1000, tEnv.strikePercentage);
+
         const potionBuyInfo: PotionBuyInfoStruct = {
             targetPotionAddress: potionOtokenAddress,
             underlyingAsset: tEnv.underlyingAsset.address,
-            strikePriceInUSDC: tEnv.strikePriceInUSDC,
+            strikePriceInUSDC: strikePriceInUSDC,
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
             expectedPremiumInUSDC: BigNumber.from("1000"),
@@ -212,7 +215,7 @@ describe("HedgingVault", function () {
 
         const currentPotionBuyInfo = await action.getPotionBuyInfo(
             tEnv.underlyingAsset.address,
-            tEnv.strikePriceInUSDC,
+            strikePriceInUSDC,
             expirationTimestamp,
         );
 

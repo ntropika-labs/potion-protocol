@@ -4,7 +4,7 @@ import { ethers, network } from "hardhat";
 
 import { TestWrapperUniswapV3SwapLib, ISwapRouter, ISwapRouter__factory } from "../../typechain";
 
-import { PercentageUtils } from "../utils/PercentageUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 
 chai.use(smock.matchers);
 

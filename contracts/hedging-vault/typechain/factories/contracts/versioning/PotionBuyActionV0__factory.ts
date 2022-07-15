@@ -50,7 +50,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "StrikePriceIsZero",
+    name: "StrikePercentageIsZero",
     type: "error",
   },
   {
@@ -122,11 +122,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "strikePrice",
+        name: "strikePercentage",
         type: "uint256",
       },
     ],
-    name: "StrikePriceChanged",
+    name: "StrikePercentageChanged",
     type: "event",
   },
   {
@@ -158,6 +158,19 @@ const _abi = [
   {
     inputs: [],
     name: "cycleDurationSecs",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastStrikePriceInUSDC",
     outputs: [
       {
         internalType: "uint256",
@@ -276,11 +289,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "strikePriceInUSDC",
+        name: "strikePercentage",
         type: "uint256",
       },
     ],
-    name: "setStrikePrice",
+    name: "setStrikePercentage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -300,7 +313,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "strikePriceInUSDC",
+    name: "strikePercentage",
     outputs: [
       {
         internalType: "uint256",

@@ -58,7 +58,8 @@ contract PotionBuyAction is
         @param swapSlippage The slippage percentage allowed on the swap operation
         @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
         @param cycleDurationSecs The duration of the investment cycle in seconds
-        @param strikePriceInUSDC The strike price of the investment asset in USDC with 8 decimals
+        @param strikePercentage The strike percentage on the price of the hedged asset, as a uint256
+               with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
     struct PotionBuyInitParams {
         address adminAddress;
@@ -75,7 +76,7 @@ contract PotionBuyAction is
         uint256 swapSlippage;
         uint256 maxSwapDurationSecs;
         uint256 cycleDurationSecs;
-        uint256 strikePriceInUSDC;
+        uint256 strikePercentage;
     }
 
     /**
@@ -115,7 +116,7 @@ contract PotionBuyAction is
         _setSwapSlippage(initParams.swapSlippage);
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
         _setCycleDuration(initParams.cycleDurationSecs);
-        _setStrikePrice(initParams.strikePriceInUSDC);
+        _setStrikePercentage(initParams.strikePercentage);
 
         _updateNextCycleStart();
     }
@@ -149,9 +150,12 @@ contract PotionBuyAction is
         // The caller is the operator, so we can trust doing this external call first
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        (bool isValid, uint256 maxPremiumNeededInUSDC) = _calculateMaxPremium(
+        bool isValid;
+        uint256 maxPremiumNeededInUSDC;
+
+        (isValid, maxPremiumNeededInUSDC, lastStrikePriceInUSDC) = _calculatePotionParameters(
             investmentAsset,
-            strikePriceInUSDC,
+            strikePercentage,
             nextCycleStartTimestamp,
             amountToInvest,
             premiumSlippage
@@ -168,7 +172,7 @@ contract PotionBuyAction is
         require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 
         _swapOutput(investmentAsset, address(getUSDC()), maxPremiumNeededInUSDC, swapSlippage, maxSwapDurationSecs);
-        _buyPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
+        _buyPotions(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -185,13 +189,13 @@ contract PotionBuyAction is
         returns (uint256 amountReturned)
     {
         require(
-            _isPotionRedeemable(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp),
+            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp),
             "The Potion is not redeemable yet"
         );
 
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
 
-        _redeemPotions(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp);
+        _redeemPotions(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp);
         uint256 amountToConvertToAssset = getUSDCBalance(address(this));
 
         _swapInput(address(getUSDC()), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
@@ -220,7 +224,7 @@ contract PotionBuyAction is
     function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
         canExit =
             _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset, strikePriceInUSDC, nextCycleStartTimestamp) &&
+            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp) &&
             getLifecycleState() == LifecycleState.Locked;
     }
 
@@ -262,8 +266,8 @@ contract PotionBuyAction is
     /**
         @inheritdoc IPotionBuyActionV0
      */
-    function setStrikePrice(uint256 strikePriceInUSDC_) external override onlyStrategist {
-        _setStrikePrice(strikePriceInUSDC_);
+    function setStrikePercentage(uint256 strikePercentage_) external override onlyStrategist {
+        _setStrikePercentage(strikePercentage_);
     }
 
     /// INTERNAL FUNCTIONS
@@ -330,16 +334,16 @@ contract PotionBuyAction is
     }
 
     /**
-        @dev See { setStrikePrice }
+        @dev See { setStrikePercentage }
      */
-    function _setStrikePrice(uint256 strikePriceInUSDC_) internal {
-        if (strikePriceInUSDC_ == 0) {
-            revert StrikePriceIsZero();
+    function _setStrikePercentage(uint256 strikePercentage_) internal {
+        if (strikePercentage_ == 0) {
+            revert StrikePercentageIsZero();
         }
 
-        strikePriceInUSDC = strikePriceInUSDC_;
+        strikePercentage = strikePercentage_;
 
-        emit StrikePriceChanged(strikePriceInUSDC_);
+        emit StrikePercentageChanged(strikePercentage_);
     }
 
     /**

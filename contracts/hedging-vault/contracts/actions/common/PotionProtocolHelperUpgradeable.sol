@@ -95,11 +95,12 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     /// FUNCTIONS
 
     /**
-        @notice Calculates the premium required to buy potions for the indicated amount of
-        assets and the intended slippage
+        @notice Calculates the premium required to buy potions and the strike price denominated in USDC
+        for the indicated amount of assets, the intended strike percentage and the intended slippage
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePrice The strike price of the potion with 8 decimals
+        @param strikePercentage The strike percentage of the asset price as a uint256 with 
+               `PercentageUtils.PERCENTAGE_DECIMALS` decimals
         @param expirationTimestamp The timestamp when the potion expires
         @param amount The amount of assets to be hedged
         @param slippage The slippage percentage to be used to calculate the premium
@@ -107,16 +108,26 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @return isValid Whether the maximum premium could be calculated or not
         @return maxPremiumInUSDC The maximum premium needed to buy the potions
      */
-    function _calculateMaxPremium(
+    function _calculatePotionParameters(
         address hedgedAsset,
-        uint256 strikePrice,
+        uint256 strikePercentage,
         uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
-    ) internal view returns (bool isValid, uint256 maxPremiumInUSDC) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+    )
+        internal
+        view
+        returns (
+            bool isValid,
+            uint256 maxPremiumInUSDC,
+            uint256 strikePriceInUSDC
+        )
+    {
+        strikePriceInUSDC = _calculateStrikePrice(hedgedAsset, strikePercentage);
+
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
         if (buyInfo.targetPotionAddress == address(0) || amount != buyInfo.totalSizeInPotions) {
-            return (false, type(uint256).max);
+            return (false, type(uint256).max, type(uint256).max);
         }
 
         isValid = true;
@@ -187,6 +198,20 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     ) internal view returns (bool) {
         PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
         return _opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
+    }
+
+    /**
+        @notice Calculates the strike price of the potion given the hedged asset and the strike percentage
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the price from the Opyn Oracle
+        @param strikePercentage The strike percentage of the asset price as a uint256 with 
+               `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+
+        @dev This function calls the Opyn Oracle to understand the price of the asset, so its value might
+             change if called in different blocks.
+     */
+    function _calculateStrikePrice(address hedgedAsset, uint256 strikePercentage) internal pure returns (uint256) {
+        return uint256(1000).applyPercentage(strikePercentage); // TODO
     }
 
     /**

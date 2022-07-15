@@ -45,7 +45,7 @@ export interface TestingEnvironmentDeployment {
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
-    strikePriceInUSDC: BigNumber;
+    strikePercentage: BigNumber;
     hedgingPercentage: BigNumber;
     managementFee: BigNumber;
     performanceFee: BigNumber;
@@ -171,7 +171,7 @@ async function prepareTestEnvironment(
     testingEnvironmentDeployment.swapSlippage = deploymentConfig.swapSlippage;
     testingEnvironmentDeployment.maxSwapDurationSecs = deploymentConfig.maxSwapDurationSecs;
     testingEnvironmentDeployment.cycleDurationSecs = deploymentConfig.cycleDurationSecs;
-    testingEnvironmentDeployment.strikePriceInUSDC = deploymentConfig.strikePriceInUSDC;
+    testingEnvironmentDeployment.strikePercentage = deploymentConfig.strikePercentage;
     testingEnvironmentDeployment.hedgingPercentage = deploymentConfig.hedgingPercentage;
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
@@ -228,7 +228,7 @@ export async function deployTestingEnv(
         swapSlippage: testEnvDeployment.swapSlippage,
         maxSwapDurationSecs: testEnvDeployment.maxSwapDurationSecs,
         cycleDurationSecs: testEnvDeployment.cycleDurationSecs,
-        strikePriceInUSDC: testEnvDeployment.strikePriceInUSDC,
+        strikePercentage: testEnvDeployment.strikePercentage,
         hedgingPercentage: testEnvDeployment.hedgingPercentage,
 
         // Fees configuration
