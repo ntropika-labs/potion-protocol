@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
     TestWrapperPotionProtocolLib,
@@ -36,6 +36,10 @@ describe("PotionProtocolLib", function () {
 
     // Using `beforeEach` here because smock does not reset the call count for a function after each test
     beforeEach(async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         const PotionProtocolLibFactory = await ethers.getContractFactory("TestWrapperPotionProtocolLib");
         potionProtocolLib = (await PotionProtocolLibFactory.deploy()) as TestWrapperPotionProtocolLib;
 
@@ -50,6 +54,10 @@ describe("PotionProtocolLib", function () {
     });
 
     it("Buy Potion", async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         // The valut returned by `buyOtokens` must be less than the maximum premium so the ERC20 approve
         // function is called twice
         fakePotionLiquidityPool.buyOtokens.returns(1594);
@@ -134,6 +142,9 @@ describe("PotionProtocolLib", function () {
         expect(fakeUSDC.approve.atCall(1)).to.have.been.calledWith(fakePotionLiquidityPool.address, 0);
     });
     it("Buy Potion Exact Premium", async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
         // The value returned by `buyOtokens` must be exactly the maximum premium so the ERC20 approve
         // function is called only once
         fakePotionLiquidityPool.buyOtokens.returns(2618);
@@ -217,6 +228,9 @@ describe("PotionProtocolLib", function () {
         expect(fakeUSDC.approve.atCall(0)).to.have.been.calledWith(fakePotionLiquidityPool.address, maxPremium);
     });
     it("Redeem Potion", async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
         fakePotionLiquidityPool.settleAfterExpiry.returns(true);
 
         await potionProtocolLib.callStatic.redeemPotion(fakePotionLiquidityPool.address, potionAddress);

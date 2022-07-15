@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { TestWrapperUniswapV3SwapLib, ISwapRouter, ISwapRouter__factory } from "../../typechain";
 
@@ -20,6 +20,10 @@ describe("UniswapV3SwapLib", function () {
     let fakeUniswapRouter: FakeContract<ISwapRouter>;
 
     before(async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         const UniswapV3SwapLibFactory = await ethers.getContractFactory("TestWrapperUniswapV3SwapLib");
         uniswapV3SwapLib = (await UniswapV3SwapLibFactory.deploy()) as TestWrapperUniswapV3SwapLib;
 
@@ -30,6 +34,10 @@ describe("UniswapV3SwapLib", function () {
     });
 
     it("Swap input", async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         fakeUniswapRouter.exactInput.returns(1987);
 
         const poolFee = 3000000;

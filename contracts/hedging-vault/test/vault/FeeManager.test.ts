@@ -97,16 +97,13 @@ describe("FeeManager", function () {
         await feeManager.setPerformanceFee(2 * PercentageFactor);
         await feeManager.setFeesRecipient(feesRecipientAccount2.address);
 
-        expect(await ethers.provider.getBalance(feesRecipientAccount2.address)).to.be.equal(
-            ethers.utils.parseEther("10000"),
-        );
+        const prevBalance = await ethers.provider.getBalance(feesRecipientAccount2.address);
+
         expect(await ethers.provider.getBalance(feeManager.address)).to.be.equal(ethers.utils.parseEther("1"));
 
         await feeManager.payFeesETH(888, 999);
 
-        expect(await ethers.provider.getBalance(feesRecipientAccount2.address)).to.be.equal(
-            ethers.utils.parseEther("10000").add(71 + 19),
-        );
+        expect(await ethers.provider.getBalance(feesRecipientAccount2.address)).to.be.equal(prevBalance.add(71 + 19));
         expect(await ethers.provider.getBalance(feeManager.address)).to.be.equal(
             ethers.utils.parseEther("1").sub(71 + 19),
         );

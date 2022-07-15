@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { TestWrapperOpynProtocolLib, IOpynController, IOpynController__factory } from "../../typechain";
 
@@ -17,6 +17,10 @@ describe("OpynProtocolLib", function () {
     let fakeOpynController: FakeContract<IOpynController>;
 
     before(async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         const OpynProtocolLibFactory = await ethers.getContractFactory("TestWrapperOpynProtocolLib");
         opynProtocolLib = (await OpynProtocolLibFactory.deploy()) as TestWrapperOpynProtocolLib;
 
@@ -26,6 +30,10 @@ describe("OpynProtocolLib", function () {
     });
 
     it("Should call Opyn controller", async function () {
+        if (network.name !== "hardhat") {
+            this.skip();
+        }
+
         fakeOpynController.isSettlementAllowed.returns(false);
         fakeOpynController.isSettlementAllowed.whenCalledWith(randomAddress).returns(true);
 
