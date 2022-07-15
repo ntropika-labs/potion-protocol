@@ -16,8 +16,8 @@ export function createCriteriaId(criteriaHash: Bytes): string {
 export function createCriteriaJoinedCriteriaSetId(
   criteriaHash: Bytes,
   criteriaSetHash: Bytes
-): string {
-  return criteriaHash.toHexString() + criteriaSetHash.toHexString();
+): Bytes {
+  return criteriaHash.concat(criteriaSetHash);
 }
 
 /**
@@ -54,11 +54,11 @@ export function handleCriteriaSetAdded(event: CriteriaSetAdded): void {
   const criteriaHashArray = event.params.criteriaSet;
 
   for (let i = 0; i < criteriaHashArray.length; i++) {
-    const criteriaHash: Bytes = criteriaHashArray[i];
-    const criteriaId = createCriteriaId(criteriaHash as Bytes);
+    const criteriaHash = criteriaHashArray[i];
+    const criteriaId = createCriteriaId(criteriaHash);
 
     const criteriaJoinedCriteriaSetId = createCriteriaJoinedCriteriaSetId(
-      criteriaHash as Bytes,
+      criteriaHash,
       event.params.criteriaSetHash
     );
     const criteriaJoinedCriteriaSet = new CriteriaJoinedCriteriaSet(

@@ -66,7 +66,7 @@ to a CriteriaSet. This entity allows for searches from Criterias to CriteriaSets
 to be completed.
 """
 type CriteriaJoinedCriteriaSet @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   criteriaSet: CriteriaSet!
   criteria: Criteria!
 }
