@@ -18,11 +18,8 @@ import {
   MOCKED_CRITERIA_SET_ID,
 } from "../constants";
 
-function getTemplateId(curveHash: string, criteriaSetHash: string): string {
-  return createTemplateId(
-    Bytes.fromHexString(curveHash),
-    Bytes.fromHexString(criteriaSetHash)
-  );
+function getTemplateId(curveHash: Bytes, criteriaSetHash: string): string {
+  return createTemplateId(curveHash, Bytes.fromHexString(criteriaSetHash));
 }
 
 // template creation

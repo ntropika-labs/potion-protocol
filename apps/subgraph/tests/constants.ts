@@ -1,4 +1,4 @@
-import { BigInt, Address } from "@graphprotocol/graph-ts";
+import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts";
 
 export const COLLATERAL_PRECISION_DECIMALS: i32 = 6;
 export const COLLATERAL_PRECISION_BIG_INT = BigInt.fromI32(10).pow(
@@ -21,7 +21,9 @@ export const BIGINT_ONE_HUNDRED_AS_COLLATERAL = BIGINT_ONE_HUNDRED.times(
 export const MOCKED_LP = Address.fromString(
   "0x0000000000000000000000000000000000000001"
 );
-export const MOCKED_CURVE_ID = "0x0000000000000000000000000000000000000010";
+export const MOCKED_CURVE_ID = Bytes.fromHexString(
+  "0x0000000000000000000000000000000000000010"
+);
 export const MOCKED_CRITERIA_ID = "0x0000000000000000000000000000000000000100";
 export const MOCKED_CRITERIA_A_ID =
   "0x0000000000000000000000000000000000000200";

@@ -3,7 +3,7 @@ Describes a curve evaluated at 0 <= x <= maxUtil:
   a * x * cosh(b*x^c) + d
 """
 type Curve @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   a: BigDecimal!
   b: BigDecimal!
   c: BigDecimal!

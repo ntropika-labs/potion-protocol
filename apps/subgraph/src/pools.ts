@@ -77,7 +77,7 @@ export function createTemplateId(
 
 export function createTemplate(
   templateId: string,
-  curveHash: string,
+  curveHash: Bytes,
   criteriaSetHash: string,
   creator: Bytes
 ): Template {
@@ -127,7 +127,7 @@ and count of pools.
 function updateConfigPoolTemplate(
   pool: Pool,
   pastTemplate: Template | null,
-  curveHash: string,
+  curveHash: Bytes,
   criteriaSetHash: string,
   blockHash: Bytes,
   timestamp: BigInt
@@ -135,7 +135,7 @@ function updateConfigPoolTemplate(
   // Case where the old template was null or different from the current settings
   log.info("Updating the pool {} with the following curve {} and criteria {}", [
     pool.id,
-    curveHash,
+    curveHash.toHexString(),
     criteriaSetHash,
   ]);
   if (pastTemplate != null) {
@@ -163,7 +163,7 @@ function updateConfigPoolTemplate(
       }
     }
     const templateId = createTemplateId(
-      Bytes.fromHexString(curveHash) as Bytes,
+      curveHash,
       Bytes.fromHexString(criteriaSetHash) as Bytes
     );
     let template = Template.load(templateId);
@@ -354,7 +354,7 @@ export function handleDeposited(event: Deposited): void {
       template.save();
       if (template.curve) {
         pool.averageCost = calculateAverageCost(
-          template.curve as string,
+          template.curve as Bytes,
           pool.utilization,
           pool.locked,
           pool.size
@@ -426,7 +426,7 @@ export function handleWithdrawn(event: Withdrawn): void {
         template.save();
         if (template.curve) {
           pool.averageCost = calculateAverageCost(
-            template.curve as string,
+            template.curve as Bytes,
             pool.utilization,
             pool.locked,
             pool.size
@@ -476,7 +476,7 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       null,
-      "",
+      Bytes.fromHexString(""),
       criteriaSetHashId,
       event.block.hash,
       event.block.timestamp
@@ -491,7 +491,7 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       pastTemplate as Template,
-      pastTemplate.curve as string,
+      pastTemplate.curve as Bytes,
       criteriaSetHashId,
       event.block.hash,
       event.block.timestamp
@@ -521,8 +521,11 @@ export function handleCurveSelected(event: CurveSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const curveId = event.params.curveHash.toHexString();
-  log.info("Setting a curve for {}, curve id is {}", [poolId, curveId]);
+  const curveId = event.params.curveHash;
+  log.info("Setting a curve for {}, curve id is {}", [
+    poolId,
+    curveId.toHexString(),
+  ]);
 
   if (pool.template == null) {
     log.info("pool.template is null, creating a new template", []);
@@ -536,7 +539,7 @@ export function handleCurveSelected(event: CurveSelected): void {
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.curve == null) {
+    if (!pastTemplate.curve) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -653,7 +656,7 @@ export function handleOptionsSold(event: OptionsSold): void {
 
     if (template && template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size
@@ -786,7 +789,7 @@ export function handleOptionSettlementDistributed(
 
     if (template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size

@@ -1,9 +1,9 @@
-import { BigDecimal, Bytes } from "@graphprotocol/graph-ts";
+import { BigDecimal } from "@graphprotocol/graph-ts";
 import { test, clearStore } from "matchstick-as/assembly/index";
 import { log } from "matchstick-as/assembly/log";
 import { handleCurveAdded } from "../../src/curves";
 import { createCurveAdded } from "../events";
-import { assertEntity, createNewCurve, toCurveParam } from "../helpers";
+import { assertBytesEntity, createNewCurve, toCurveParam } from "../helpers";
 import { MOCKED_CURVE_ID } from "../constants";
 
 // template creation
@@ -20,7 +20,7 @@ test("It can create a curve", () => {
     "Created curve with parameters { a: 1, b: 2, c: 3, d: 4, maxUtil: 1 }",
     []
   );
-  assertEntity("Curve", MOCKED_CURVE_ID, [
+  assertBytesEntity("Curve", MOCKED_CURVE_ID, [
     ["a", "1"],
     ["b", "2"],
     ["c", "3"],
@@ -33,7 +33,7 @@ test("It can create a curve", () => {
 // curveAdded
 test("It can handle the curveAdded event when the curve doesn't exist", () => {
   const mockedEvent = createCurveAdded(
-    Bytes.fromHexString(MOCKED_CURVE_ID),
+    MOCKED_CURVE_ID,
     toCurveParam("1"),
     toCurveParam("2"),
     toCurveParam("3"),
@@ -45,7 +45,7 @@ test("It can handle the curveAdded event when the curve doesn't exist", () => {
     []
   );
   handleCurveAdded(mockedEvent);
-  assertEntity("Curve", MOCKED_CURVE_ID, [
+  assertBytesEntity("Curve", MOCKED_CURVE_ID, [
     ["a", "1"],
     ["b", "2"],
     ["c", "3"],
@@ -69,7 +69,7 @@ test("It can handle the curveAdded event when the curve is already present", () 
     []
   );
   const mockedEvent = createCurveAdded(
-    Bytes.fromHexString(MOCKED_CURVE_ID),
+    MOCKED_CURVE_ID,
     toCurveParam("2"),
     toCurveParam("3"),
     toCurveParam("4"),
@@ -81,7 +81,7 @@ test("It can handle the curveAdded event when the curve is already present", () 
     []
   );
   handleCurveAdded(mockedEvent);
-  assertEntity("Curve", MOCKED_CURVE_ID, [
+  assertBytesEntity("Curve", MOCKED_CURVE_ID, [
     ["a", "1"],
     ["b", "2"],
     ["c", "3"],

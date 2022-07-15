@@ -35,6 +35,16 @@ export function assertEntity(
   }
 }
 
+export function assertBytesEntity(
+  entity: string,
+  id: Bytes,
+  values: string[][]
+): void {
+  for (let i = 0; i < values.length; i += 1) {
+    assert.fieldEquals(entity, id.toHexString(), values[i][0], values[i][1]);
+  }
+}
+
 export function createNewPool(
   lp: Address,
   poolId: BigInt,
@@ -52,16 +62,13 @@ export function createNewPool(
 }
 
 export function createNewTemplate(
-  curveHash: string,
+  curveHash: Bytes,
   criteriaSetHash: string,
   size: string,
   locked: string,
   lp: Bytes
 ): void {
-  const id = createTemplateId(
-    Bytes.fromHexString(curveHash),
-    Bytes.fromHexString(criteriaSetHash)
-  );
+  const id = createTemplateId(curveHash, Bytes.fromHexString(criteriaSetHash));
   const template = createTemplate(id, curveHash, criteriaSetHash, lp);
   template.size = BigDecimal.fromString(size);
   template.locked = BigDecimal.fromString(locked);
@@ -69,7 +76,7 @@ export function createNewTemplate(
 }
 
 export function createNewCurve(
-  id: string,
+  id: Bytes,
   a: BigDecimal,
   b: BigDecimal,
   c: BigDecimal,

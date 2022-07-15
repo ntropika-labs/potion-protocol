@@ -151,7 +151,7 @@ test("It can assign a new curve to a new pool", () => {
   const mockedEvent = createCurveSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CURVE_ID)
+    MOCKED_CURVE_ID
   );
   log.info(
     "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
@@ -183,7 +183,7 @@ test("It can assign an existing curve to a new pool", () => {
   const mockedEvent = createCurveSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CURVE_ID)
+    MOCKED_CURVE_ID
   );
   log.info(
     "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
@@ -208,7 +208,7 @@ test("It can assign a new curve to an existing pool", () => {
   const mockedEvent = createCurveSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CURVE_ID)
+    MOCKED_CURVE_ID
   );
   log.info(
     "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
@@ -245,7 +245,7 @@ test("It can assign an existing curve to an exististing pool", () => {
   const mockedEvent = createCurveSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CURVE_ID)
+    MOCKED_CURVE_ID
   );
   log.info(
     "Calling handleCurveSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and curveId '0x00000000000000000000000000000000000000100'",
