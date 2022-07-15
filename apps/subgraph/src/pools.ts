@@ -99,8 +99,8 @@ function createLPRecordID(lp: Bytes, otoken: Bytes): Bytes {
   return lp.concat(otoken);
 }
 
-function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): string {
-  return lp.toHexString() + poolId.toHexString() + otoken.toHexString();
+function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): Bytes {
+  return lp.concatI32(poolId.toI32()).concat(otoken);
 }
 
 function getUtilization(size: BigDecimal, locked: BigDecimal): BigDecimal {
@@ -292,6 +292,14 @@ export function createPool(poolUUID: string, lp: Bytes, poolId: BigInt): Pool {
   return pool;
 }
 
+function createOrderBookEntryID(
+  buyer: Bytes,
+  otoken: Bytes,
+  timestamp: BigInt
+): Bytes {
+  return buyer.concat(otoken).concatI32(timestamp.toI32());
+}
+
 /**
  * Creates an OrderBookEntry from the buyer address, oToken address, and timestamp.
    Modifies Entities: OrderBookEntry
@@ -309,8 +317,7 @@ function createOrderBookEntry(
   tokens: BigDecimal,
   timestamp: BigInt
 ): void {
-  const entryId =
-    buyer.toHexString() + otoken.toHexString() + timestamp.toString();
+  const entryId = createOrderBookEntryID(buyer, otoken, timestamp);
   const entry = new OrderBookEntry(entryId);
 
   entry.buyer = buyer;

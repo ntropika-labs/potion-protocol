@@ -189,7 +189,7 @@ and the amount returned to the pool after settlement.
 The lpRecord field is used to join with LPRecord.
 """
 type PoolRecord @entity {
-  id: ID!
+  id: Bytes!
   pool: Pool!
   lpRecord: LPRecord!
   otoken: OToken!
@@ -226,7 +226,7 @@ type OToken @entity {
 }
 
 type OrderBookEntry @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   otoken: OToken!
   timestamp: BigInt!
   buyer: Bytes!
