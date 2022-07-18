@@ -21,6 +21,9 @@ import {
 import { createCriteriaJoinedCriteriaSetId } from "../src/criterias";
 
 import { assert } from "matchstick-as/assembly/index";
+import { log } from "matchstick-as/assembly/log";
+
+import { mockDecimals, mockSymbol, mockName } from "./mocks";
 
 export function assertEntity(
   entity: string,
@@ -167,4 +170,25 @@ export function createNewOtoken(
   otoken.purchasesCount = purchasesCount;
 
   otoken.save();
+}
+
+export function mockTokenCalls(
+  address: string,
+  decimals: string,
+  tokenName: string,
+  symbol: string
+): void {
+  log.info("Preparing mocked functions for '{}'", [address]);
+  log.info("Preparing the mocked decimals function, it will return '{}'", [
+    decimals,
+  ]);
+  mockDecimals(address, decimals);
+  log.info("Preparing the mocked tokenName function, it will return '{}'", [
+    tokenName,
+  ]);
+  mockName(address, tokenName);
+  log.info("Preparing the mocked symbol function, it will return '{}'", [
+    symbol,
+  ]);
+  mockSymbol(address, symbol);
 }

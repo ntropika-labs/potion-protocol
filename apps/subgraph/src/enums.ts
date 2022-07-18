@@ -13,3 +13,11 @@ export namespace Actions {
   export const CAPITAL_EXERCISED = "CAPITAL_EXERCISED";
 }
 export type Actions = string;
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace TokenType {
+  export const COLLATERAL = "COLLATERAL";
+  export const UNDERLYING = "UNDERLYING";
+}
+
+export type TokenType = string;
