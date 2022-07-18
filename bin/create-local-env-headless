@@ -8,11 +8,8 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 usage() {
   cat << EOF # remove the space between << and EOF, this is due to web plugin issue
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] [-n] [-r]
-
 Handle the docker compose environment
-
 Available options:
-
 -h, --help                    Print this help and exit
 -v, --verbose                 Print script debug info
 -f, --force                   Force deploy containers [default: true]
@@ -157,6 +154,7 @@ spin_up_environment() {
   ./bin/wait-for-tcp localhost:8545
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
+
 
   if [[ $is_db_seeded -eq 0 ]]; then
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"

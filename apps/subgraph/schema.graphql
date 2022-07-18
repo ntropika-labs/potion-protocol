@@ -2,7 +2,7 @@
 Describes a curve evaluated at 0 <= x <= maxUtil:
   a * x * cosh(b*x^c) + d
 """
-type Curve @entity {
+type Curve @entity(immutable: true) {
   id: ID!
   a: BigDecimal!
   b: BigDecimal!
@@ -16,7 +16,7 @@ type Curve @entity {
 """
 All Criteria's in the registry of criterias.
 """
-type Criteria @entity {
+type Criteria @entity(immutable: true) {
   id: ID!
   underlyingAsset: Token!
   strikeAsset: Token!
@@ -102,7 +102,7 @@ This entity is produced anytime a field in a pool is updated.
 The type of change is denoted by actionType, which comes from the
 ActionType enum.
 """
-type PoolSnapshot @entity {
+type PoolSnapshot @entity(immutable: true) {
   id: ID! # Unique id, contract address
   poolId: BigInt!
   lp: Bytes
@@ -117,13 +117,33 @@ type PoolSnapshot @entity {
   templatePnlTotal: BigDecimal
   templateLiquidityAtTrades: BigDecimal
   actionAmount: BigDecimal!
-  actionType: BigInt!
+  actionType: ActionType!
   timestamp: BigInt!
   currentPool: Pool!
   pnlTotal: BigDecimal!
   pnlPercentage: BigDecimal!
   liquidityAtTrades: BigDecimal!
   initialBalance: BigDecimal
+}
+
+"""
+All the possible operations that can produce a PoolSnapshot
+"""
+enum ActionType @entity {
+  "A pool had a change in their Curve or CriteriaSet making them leave the template to join another one"
+  POOL_LEFT_TEMPLATE
+  "A pool had a change in their Curve"
+  CURVE_CHANGE
+  "A pool had a change in their CriteriaSet"
+  CRITERIASET_CHANGE 
+  "A pool had a deposit of funds"
+  DEPOSIT 
+  "A pool had a withdrawal of funds"
+  WITHDRAW 
+  "A pool received premium after the purchase of some otokens"
+  PREMIUM_RECEIVED
+  "A pool received capital after an otoken expired and the owner claimed it"
+  CAPITAL_EXERCISED 
 }
 
 """
@@ -205,7 +225,7 @@ type OToken @entity {
   orderBook: [OrderBookEntry!] @derivedFrom(field: "otoken")
 }
 
-type OrderBookEntry @entity {
+type OrderBookEntry @entity(immutable: true) {
   id: ID!
   otoken: OToken!
   timestamp: BigInt!
@@ -214,7 +234,7 @@ type OrderBookEntry @entity {
   premium: BigDecimal!
 }
 
-type Token @entity {
+type Token @entity(immutable: true) {
   id: ID!
   address: Bytes!
   decimals: BigInt!
@@ -232,7 +252,7 @@ type Collateral @entity {
   token: Token!
 }
 
-type Product @entity {
+type Product @entity(immutable: true) {
   id: ID!
   underlying: Token!
   strike: Token!
