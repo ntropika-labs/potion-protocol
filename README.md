@@ -10,12 +10,15 @@ Before getting started please be sure to have installed the [Requirements](#requ
 The following binaries are required to run the project
 
 - [NodeJS](https://nodejs.org/en/download/) (v16)
+  - To install and manage Node we suggest to use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm)
 
 - [Yarn](https://yarnpkg.com/getting-started/install)
 
 - [Docker](https://docs.docker.com/engine/install/)
 
 - [Docker Compose](https://docs.docker.com/compose/install/)
+
+You can run the `bin/check-dependencies` script to check if everything is installed correctly
 
 ## Quick Start
 
