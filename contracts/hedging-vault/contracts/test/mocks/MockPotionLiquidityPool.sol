@@ -19,6 +19,9 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
     // because then Typechain generates an interface that does not match that of IPotionLiquidityPool
     uint256 private __silenceCompilerWarning;
 
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
     function buyOtokens(
         IOtoken, /*_otoken*/
         IPotionLiquidityPool.CounterpartyDetails[] memory, /*_sellers*/
@@ -28,6 +31,9 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
         return _maxPremium;
     }
 
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
     function createAndBuyOtokens(
         address, /*underlyingAsset*/
         address, /*strikeAsset*/
@@ -42,10 +48,22 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
         return maxPremium;
     }
 
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
     function settleAfterExpiry(
         IOtoken /*_otoken*/
     ) external {
         // do nothing
         __silenceCompilerWarning = 1;
+    }
+
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
+    function getVaultId(
+        IOtoken /*_otoken*/
+    ) external pure returns (uint256) {
+        return 1;
     }
 }

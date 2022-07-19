@@ -196,6 +196,7 @@ export declare namespace PotionBuyAction {
 export interface PotionBuyActionInterface extends utils.Interface {
   functions: {
     "MIN_CYCLE_DURATION()": FunctionFragment;
+    "calculateCurrentPayout(address)": FunctionFragment;
     "canPositionBeEntered(address)": FunctionFragment;
     "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
@@ -219,7 +220,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
     "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
-    "getUSDCBalance(address)": FunctionFragment;
     "getVault()": FunctionFragment;
     "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "lastStrikePriceInUSDC()": FunctionFragment;
@@ -247,6 +247,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MIN_CYCLE_DURATION"
+      | "calculateCurrentPayout"
       | "canPositionBeEntered"
       | "canPositionBeExited"
       | "canRefund"
@@ -270,7 +271,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getSwapOutputAmount"
       | "getSwapRouter"
       | "getUSDC"
-      | "getUSDCBalance"
       | "getVault"
       | "initialize"
       | "lastStrikePriceInUSDC"
@@ -298,6 +298,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "MIN_CYCLE_DURATION",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateCurrentPayout",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
@@ -376,10 +380,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getUSDCBalance",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -459,6 +459,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "MIN_CYCLE_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateCurrentPayout",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -544,10 +548,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getUSDCBalance",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
@@ -852,6 +852,11 @@ export interface PotionBuyAction extends BaseContract {
   functions: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+
     canPositionBeEntered(
       arg0: string,
       overrides?: CallOverrides
@@ -942,11 +947,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<[string]>;
 
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
@@ -1033,6 +1033,11 @@ export interface PotionBuyAction extends BaseContract {
   };
 
   MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  calculateCurrentPayout(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
   canPositionBeEntered(
     arg0: string,
@@ -1124,11 +1129,6 @@ export interface PotionBuyAction extends BaseContract {
 
   getUSDC(overrides?: CallOverrides): Promise<string>;
 
-  getUSDCBalance(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getVault(overrides?: CallOverrides): Promise<string>;
 
   initialize(
@@ -1215,6 +1215,11 @@ export interface PotionBuyAction extends BaseContract {
 
   callStatic: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
     canPositionBeEntered(
       arg0: string,
@@ -1305,11 +1310,6 @@ export interface PotionBuyAction extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
     getUSDC(overrides?: CallOverrides): Promise<string>;
-
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -1509,6 +1509,11 @@ export interface PotionBuyAction extends BaseContract {
   estimateGas: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeEntered(
       arg0: string,
       overrides?: CallOverrides
@@ -1599,11 +1604,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
@@ -1691,6 +1691,11 @@ export interface PotionBuyAction extends BaseContract {
 
   populateTransaction: {
     MIN_CYCLE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateCurrentPayout(
+      investmentAsset: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1790,11 +1795,6 @@ export interface PotionBuyAction extends BaseContract {
     getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

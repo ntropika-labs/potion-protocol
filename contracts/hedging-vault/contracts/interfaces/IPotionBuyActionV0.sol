@@ -26,7 +26,7 @@ interface IPotionBuyActionV0 {
     error CycleDurationTooShort(uint256 cycleDurationSecs, uint256 minCycleDurationSecs);
     error StrikePercentageIsZero();
 
-    /// FUNCTIONS
+    /// SETTERS
 
     /**
         @notice Sets the new maximum percentage of the received loan that can be used as
@@ -64,4 +64,16 @@ interface IPotionBuyActionV0 {
         @notice Sets strike percentage as a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
     function setStrikePercentage(uint256 strikePercentage) external;
+
+    /// GETTERS
+
+    /**
+        @notice Returns the calculated payout for the current block, and whether that payout is final or not
+
+        @param investmentAsset The asset available to the action contract for the investment 
+        
+        @return isFinal Whether the payout is final or not. If the payout is final it won't change anymore. If it
+                is not final it means that the potion has not expired yet and the payout may change in the future.
+    */
+    function calculateCurrentPayout(address investmentAsset) external view returns (bool isFinal, uint256 payout);
 }

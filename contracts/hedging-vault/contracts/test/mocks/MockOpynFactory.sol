@@ -13,6 +13,9 @@ import "../../interfaces/IOpynFactory.sol";
     @notice Mock contract for the Opyn contoller
 */
 contract MockOpynFactory is IOpynFactory {
+    /**
+        @inheritdoc IOpynFactory
+    */
     function getOtoken(
         address, /*_underlyingAsset*/
         address, /*_strikeAsset*/
@@ -25,6 +28,9 @@ contract MockOpynFactory is IOpynFactory {
         return address(0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc);
     }
 
+    /**
+        @inheritdoc IOpynFactory
+    */
     function getTargetOtokenAddress(
         address, /*_underlyingAsset*/
         address, /*_strikeAsset*/

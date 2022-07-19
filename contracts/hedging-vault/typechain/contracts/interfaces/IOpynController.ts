@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   PopulatedTransaction,
@@ -21,16 +22,24 @@ import type {
 
 export interface IOpynControllerInterface extends utils.Interface {
   functions: {
+    "getProceed(address,uint256)": FunctionFragment;
     "isSettlementAllowed(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "isSettlementAllowed"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getProceed" | "isSettlementAllowed"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getProceed",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
     values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getProceed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isSettlementAllowed",
     data: BytesLike
@@ -66,11 +75,23 @@ export interface IOpynController extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getProceed(
+      _owner: string,
+      _vaultId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     isSettlementAllowed(
       _otoken: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  getProceed(
+    _owner: string,
+    _vaultId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   isSettlementAllowed(
     _otoken: string,
@@ -78,6 +99,12 @@ export interface IOpynController extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    getProceed(
+      _owner: string,
+      _vaultId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isSettlementAllowed(
       _otoken: string,
       overrides?: CallOverrides
@@ -87,6 +114,12 @@ export interface IOpynController extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getProceed(
+      _owner: string,
+      _vaultId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isSettlementAllowed(
       _otoken: string,
       overrides?: CallOverrides
@@ -94,6 +127,12 @@ export interface IOpynController extends BaseContract {
   };
 
   populateTransaction: {
+    getProceed(
+      _owner: string,
+      _vaultId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isSettlementAllowed(
       _otoken: string,
       overrides?: CallOverrides

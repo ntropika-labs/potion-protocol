@@ -140,7 +140,6 @@ export interface PotionProtocolHelperUpgradeableInterface
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getUSDC()": FunctionFragment;
-    "getUSDCBalance(address)": FunctionFragment;
     "getVault()": FunctionFragment;
     "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
@@ -158,7 +157,6 @@ export interface PotionProtocolHelperUpgradeableInterface
       | "getPotionLiquidityManager"
       | "getStrategist"
       | "getUSDC"
-      | "getUSDCBalance"
       | "getVault"
       | "setPotionBuyInfo"
   ): FunctionFragment;
@@ -195,10 +193,6 @@ export interface PotionProtocolHelperUpgradeableInterface
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getUSDCBalance",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
@@ -243,10 +237,6 @@ export interface PotionProtocolHelperUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getUSDCBalance",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPotionBuyInfo",
@@ -386,11 +376,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<[string]>;
 
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     setPotionBuyInfo(
@@ -438,11 +423,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
   getUSDC(overrides?: CallOverrides): Promise<string>;
 
-  getUSDCBalance(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getVault(overrides?: CallOverrides): Promise<string>;
 
   setPotionBuyInfo(
@@ -489,11 +469,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<string>;
 
     getUSDC(overrides?: CallOverrides): Promise<string>;
-
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -584,11 +559,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     setPotionBuyInfo(
@@ -640,11 +610,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
     getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getUSDCBalance(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

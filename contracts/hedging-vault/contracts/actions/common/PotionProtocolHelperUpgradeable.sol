@@ -175,11 +175,12 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     ) internal returns (uint256 settledAmount) {
         PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
 
-        uint256 prevUSDCBalance = getUSDCBalance(address(this));
+        bool isPayoutFinal;
+        (isPayoutFinal, settledAmount) = _calculateCurrentPayout(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+
+        require(isPayoutFinal, "Potion cannot be redeemed yet");
 
         _potionLiquidityPoolManager.redeemPotion(buyInfo.targetPotionAddress);
-
-        settledAmount = getUSDCBalance(address(this)) - prevUSDCBalance;
     }
 
     /**
@@ -219,6 +220,31 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         return priceInUSDC.applyPercentage(strikePercentage);
     }
 
+    /**
+        @notice Returns the calculated payout for the current block, and whether that payout is final or not
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
+        @param strikePriceInUSDC The strike price of the potion with 8 decimals
+        @param expirationTimestamp The timestamp when the potion expires
+
+        @return isFinal Whether the payout is final or not. If the payout is final it won't change anymore. If it
+                is not final it means that the potion has not expired yet and the payout may change in the future.
+    */
+    function _calculateCurrentPayout(
+        address hedgedAsset,
+        uint256 strikePriceInUSDC,
+        uint256 expirationTimestamp
+    ) internal view returns (bool isFinal, uint256 payout) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+
+        isFinal = _isPotionRedeemable(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+
+        IOpynController opynController = IOpynController(_opynAddressBook.getController());
+
+        uint256 potionVaultId = _potionLiquidityPoolManager.getVaultId(IOtoken(buyInfo.targetPotionAddress));
+        payout = opynController.getProceed(address(_potionLiquidityPoolManager), potionVaultId);
+    }
+
     /// GETTERS
 
     /**
@@ -228,17 +254,6 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function getUSDC() public view returns (IERC20) {
         return _USDC;
-    }
-
-    /**
-        @notice Returns the current balance of USDC for the given account
-
-        @param account The address of the account to get the USDC balance for
-
-        @return The current balance of USDC for the given account
-     */
-    function getUSDCBalance(address account) public view returns (uint256) {
-        return _USDC.balanceOf(account);
     }
 
     /**

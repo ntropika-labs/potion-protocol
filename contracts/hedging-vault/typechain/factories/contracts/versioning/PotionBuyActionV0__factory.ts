@@ -156,6 +156,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
+    name: "calculateCurrentPayout",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isFinal",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "payout",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "cycleDurationSecs",
     outputs: [

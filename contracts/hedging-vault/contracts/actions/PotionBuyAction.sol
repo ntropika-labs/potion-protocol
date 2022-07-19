@@ -77,6 +77,8 @@ contract PotionBuyAction is
         uint256 strikePercentage;
     }
 
+    /// INITIALIZERS
+
     /**
         @notice Takes care of the initialization of all the contracts hierarchy. Any changes
         to the hierarchy will require to review this function to make sure that no initializer
@@ -117,6 +119,8 @@ contract PotionBuyAction is
 
         _updateNextCycleStart();
     }
+
+    /// STATE CHANGERS
 
     /**
         @inheritdoc IAction
@@ -191,11 +195,12 @@ contract PotionBuyAction is
         );
 
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
+        IERC20 USDC = getUSDC();
 
         _redeemPotions(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp);
-        uint256 amountToConvertToAssset = getUSDCBalance(address(this));
+        uint256 amountToConvertToAssset = USDC.balanceOf(address(this));
 
-        _swapInput(address(getUSDC()), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
+        _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
 
         amountReturned = investmentAssetERC20.balanceOf(address(this));
 
@@ -204,25 +209,6 @@ contract PotionBuyAction is
         _setLifecycleState(LifecycleState.Unlocked);
 
         emit ActionPositionExited(investmentAsset, amountReturned);
-    }
-
-    /**
-        @inheritdoc IAction
-     */
-    function canPositionBeEntered(
-        address /*investmentAsset*/
-    ) public view returns (bool canEnter) {
-        canEnter = _isNextCycleStarted() && getLifecycleState() == LifecycleState.Unlocked;
-    }
-
-    /**
-        @inheritdoc IAction
-     */
-    function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
-        canExit =
-            _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp) &&
-            getLifecycleState() == LifecycleState.Locked;
     }
 
     /**
@@ -265,6 +251,34 @@ contract PotionBuyAction is
      */
     function setStrikePercentage(uint256 strikePercentage_) external override onlyStrategist {
         _setStrikePercentage(strikePercentage_);
+    }
+
+    // GETTERS
+
+    /**
+        @inheritdoc IAction
+     */
+    function canPositionBeEntered(
+        address /*investmentAsset*/
+    ) public view returns (bool canEnter) {
+        canEnter = _isNextCycleStarted() && getLifecycleState() == LifecycleState.Unlocked;
+    }
+
+    /**
+        @inheritdoc IAction
+     */
+    function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
+        canExit =
+            _isNextCycleStarted() &&
+            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp) &&
+            getLifecycleState() == LifecycleState.Locked;
+    }
+
+    /**
+        @inheritdoc IPotionBuyActionV0
+    */
+    function calculateCurrentPayout(address investmentAsset) external view returns (bool isFinal, uint256 payout) {
+        return _calculateCurrentPayout(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp);
     }
 
     /// INTERNAL FUNCTIONS
