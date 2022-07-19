@@ -63,6 +63,7 @@
 import { useI18n } from "vue-i18n";
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { watchDebounced } from "@vueuse/core";
 
 import { currencyFormatter, BaseButton } from "potion-ui";
 
@@ -145,12 +146,18 @@ watch([availableTokens, template], () => {
       );
       if (token) {
         toggleTokenSelection(token.address);
+        updateCriteria(
+          token.address,
+          parseInt(criteria.maxStrikePercent),
+          parseInt(criteria.maxDurationInDays)
+        );
       }
     });
-    // Run the router to retrieve the emergingCurves
-    loadEmergingCurves();
   }
 });
+
+// Run the router to retrieve the emergingCurves
+watchDebounced(criterias, loadEmergingCurves);
 
 /*
  * Pool deployment data and functions
