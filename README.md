@@ -10,6 +10,7 @@ Before getting started please be sure to have installed the [Requirements](#requ
 The following binaries are required to run the project
 
 - [NodeJS](https://nodejs.org/en/download/) (v16)
+
   - To install and manage Node we suggest to use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm)
 
 - [Yarn](https://yarnpkg.com/getting-started/install)
@@ -37,37 +38,19 @@ To bootstrap your development environment you can run one of the following comma
 
 - `yarn nx run potion-dapp:local-dev-test` spins up docker environment and starts Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
 
-## Inner works of test scripts
-
-This is what happens locally behind the scenes to start and seed the environment:
-
-1. Spin up the Docker environment with `docker compose up -d -V`, starting the following services:
-
-   - `potion_postgres`: [PostgreSql](https://github.com/postgres/postgres) database to store indexed data
-
-   - `potion_ipfs`: local [IPFS](https://github.com/ipfs/go-ipfs) instance on which to upload the subgraph
-
-   - `potion_ganache`: [Ganache](https://github.com/trufflesuite/ganache) instance for a local blockchain
-
-   - `potion_graph_node`: [Graph Node](https://github.com/graphprotocol/graph-node) to index the data from the blockchain and expose it using GraphQL
-
-2. Once containers are up and ready to accept new connections:
-
-   - If this is the first time running this environment, seeds the database by running the template and deploying both the contracts and the subgraph
-
-   - If the database is already available, only runs the template for the subgraph and deploys it
-
 ## Using ganache databases
 
-The ganache container is configured to use databases from a volume, this is used to store our previous interactions and/or restore known states for tests/debugging.
+The ganache container is configured to use databases from a volume, this is used to store our previous interactions and/or restore known states for tests/debugging.  
+To make prototyping and testing easier to handle, we have prepared a set of database seeds that can be found in the `ganache_seeds` folder.
 
 ### Setting up ganache databases
 
-1. Create a folder that will be used as a named volume (it is higly recommended to set up it outside the monorepo to avoid permissions issues with tools)
+1. Create a folder that will be used as a named volume (it is higly recommended to set up it outside the monorepo to avoid permissions issues with tools). See [example](#directory-tree).
 
-2. Put the path (relative or absolute will both work) inside the `.env` file into the `GANACHE_VOLUME` variable. This folder will be mounted to the `/opt` path within the container. See [example](#ganache-example-config).
+2. Put the path (relative or absolute will both work) inside the `.env` file into the `GANACHE_VOLUME` variable. This folder will be mounted to the `/opt` path within the container. See [example](#content-of-env).
 
-3. Put into the `DATABASE_PATH` variable the path (from inside the container) to the database that you want to use. See [example](#ganache-example-config).
+3. Put into the `DATABASE_PATH` variable the path (from inside the container) to the database that you want to use. See [example](#ganache-example-config).  
+   You can pick one of the [available ganache seeds](#available-ganache-seeds) (eg. by adding `DATABASE_PATH="/opt/base"` to your `.env` ) or create a new one, simply using a different name from the folders already available in `ganache_seeds` (eg. by adding `DATABASE_PATH="/opt/my-new-custom-database"` to your `.env` ).
 
 ### Creating/restoring databases
 
@@ -79,24 +62,34 @@ If you want to generate a new database from scratch instead, run the `create-loc
 
 ### Ganache example config
 
+- #### Directory tree
+
+  ```bash
+  root_folder
+  |____ potion-protocol
+  |____ docker-data
+  | |____ potion-protocol
+  | | |____ ganache
+  ```
+
 - #### Content of `.env`
 
-```sh
-... other variables
+  ```sh
+  ... other variables
 
-GANACHE_VOLUME="../docker-data/potion-protocol/ganache" # path to a folder on your system, used as source for the ganache volume.
-DATABASE_PATH="/opt/base" # path within the ganache container ( '/opt' is required )
-CHAIN_TIME="2021-01-01 09:00:00+00:00"
+  GANACHE_VOLUME="../docker-data/potion-protocol/ganache" # path to a folder on your system, used as source for the ganache volume.
+  DATABASE_PATH="/opt/base" # path within the ganache container ( '/opt' is required )
+  CHAIN_TIME="2021-01-01 09:00:00+00:00"
 
-... other variables
-```
+  ... other variables
+  ```
 
 - #### Content of local folder
 
   `../docker-data/potion-protocol/ganache`
 
   > base  
-  > develop  
+  > develop # custom database
   > e2e-create-pool  
   > e2e-show-pool  
   > ... other databases
@@ -106,11 +99,24 @@ CHAIN_TIME="2021-01-01 09:00:00+00:00"
   `/opt`
 
   > base  
-  > develop  
+  > develop # this is a custom database
   > e2e-create-pool  
   > e2e-show-pool  
   > tests # this folder is used internally to store db files from e2e-testing  
   > ... other databases
+
+### Available Ganache seeds
+
+You can use any of the pre-made databases by setting `DATABASE_PATH="/opt/{database name}"` in your `.env` file, where `{database name}` is any of the following:
+
+- `base` - Generic seed used as a basic test for: `CustomPoolCreation`, `CustomPotionCreation`, `PoolTemplate`, `EditPool` pages.  
+  Sharing the same database instance speeds up testing, as we can avoid reloading the environment and importing a new seed.
+
+- `e2e-show-pool` - Seed specific to `ShowPool` page, to allow testing page features in completed isolation
+
+- `e2e-show-potion` - Seed specific to `ShowPotion` page, to allow testing page features in completed isolation
+
+- `e2e-show-potions` - Seed specific to `ViewPotions` page, to allow testing page features in completed isolation
 
 ## Ganache and block time
 
@@ -168,7 +174,60 @@ In order to test actions involving interaction with a Wallet, a mocked version o
 This mocked instance implements all the methods available in the original library that are used within `potion-dapp`, exposing the same interface and also offering the same degree of reactivity. All methods are supposed to be called in an headless environment, thus eliminating the requirement for user interaction.
 To achieve the statefulness required by the app, this instance uses a local state to store information and its methods refer to this single source of truth to interact with current state.
 
+## Inner works of test scripts
+
+This is what happens locally behind the scenes to start and seed the environment:
+
+1. Spin up the Docker environment with `docker compose up -d -V`, starting the following services:
+
+   - `potion_postgres`: [PostgreSql](https://github.com/postgres/postgres) database to store indexed data
+
+   - `potion_ipfs`: local [IPFS](https://github.com/ipfs/go-ipfs) instance on which to upload the subgraph
+
+   - `potion_ganache`: [Ganache](https://github.com/trufflesuite/ganache) instance for a local blockchain
+
+   - `potion_graph_node`: [Graph Node](https://github.com/graphprotocol/graph-node) to index the data from the blockchain and expose it using GraphQL
+
+2. Once containers are up and ready to accept new connections:
+
+   - If this is the first time running this environment, seeds the database by running the template and deploying both the contracts and the subgraph
+
+   - If the database is already available, only runs the template for the subgraph and deploys it
+
 ## Monorepo overview
+
+```mermaid
+    graph TD;
+      A[potion-dapp]
+      A --> C;
+      A --> D;
+      A --> E;
+      A --> F;
+      A --> G;
+      A --> H;
+      A --> I;
+      A --> J;
+      B[potion-subgraph];
+      C[potion-ui];
+      C --> E;
+      C --> F;
+      C --> G;
+      C --> J;
+      D[potion-router];
+      D --> E;
+      D --> H;
+      D --> I;
+      D --> J;
+      E[dapp-types];
+      F[potion-tokenlist];
+      G[potion-unocss];
+      H[subgraph-queries];
+      I[potion-contracts];
+      I --> J;
+      I --> K;
+      J[contracts-math];
+      K[gamma-protocol];
+```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
 
@@ -238,7 +297,7 @@ Different seeds are useful for testing different features of the DApp.
 
 ### libs/contracts-math
 
-[Read more](./libs/contracts-math/README.md)
+This library provides convenient wrappers and type helpers for working with 59x18 bit fixed-point decimals.
 
 ### libs/dapp-types
 
@@ -271,6 +330,8 @@ It's contained in it's own library to share config between apps and libraries.
 ### libs/subgraph-queries
 
 [Read more](./libs/subgraph-queries/README.md)
+
+This library is used to generate useful javascript/typescript bindings to interact with a graphql endpoint.
 
 ## Customization
 
