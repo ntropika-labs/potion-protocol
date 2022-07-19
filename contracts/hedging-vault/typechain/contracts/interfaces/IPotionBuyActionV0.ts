@@ -28,6 +28,7 @@ import type {
 
 export interface IPotionBuyActionV0Interface extends utils.Interface {
   functions: {
+    "calculateCurrentPayout(address)": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
@@ -38,6 +39,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "calculateCurrentPayout"
       | "setCycleDuration"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
@@ -46,6 +48,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
       | "setSwapSlippage"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "calculateCurrentPayout",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
     values: [BigNumberish]
@@ -71,6 +77,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "calculateCurrentPayout",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setCycleDuration",
     data: BytesLike
@@ -208,6 +218,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+
     setCycleDuration(
       durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -238,6 +253,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  calculateCurrentPayout(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
   setCycleDuration(
     durationSeconds: BigNumberish,
@@ -270,6 +290,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+
     setCycleDuration(
       durationSeconds: BigNumberish,
       overrides?: CallOverrides
@@ -344,6 +369,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
   };
 
   estimateGas: {
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setCycleDuration(
       durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -376,6 +406,11 @@ export interface IPotionBuyActionV0 extends BaseContract {
   };
 
   populateTransaction: {
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setCycleDuration(
       durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

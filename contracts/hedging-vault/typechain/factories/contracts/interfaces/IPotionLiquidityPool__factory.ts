@@ -263,6 +263,25 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "getVaultId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IOtoken",
+        name: "_otoken",
+        type: "address",
+      },
+    ],
     name: "settleAfterExpiry",
     outputs: [],
     stateMutability: "nonpayable",

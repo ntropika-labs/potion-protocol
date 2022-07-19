@@ -98,6 +98,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
   functions: {
     "buyOtokens(address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
     "createAndBuyOtokens(address,address,address,uint256,uint256,bool,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
+    "getVaultId(address)": FunctionFragment;
     "settleAfterExpiry(address)": FunctionFragment;
   };
 
@@ -105,6 +106,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "buyOtokens"
       | "createAndBuyOtokens"
+      | "getVaultId"
       | "settleAfterExpiry"
   ): FunctionFragment;
 
@@ -129,6 +131,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(functionFragment: "getVaultId", values: [string]): string;
   encodeFunctionData(
     functionFragment: "settleAfterExpiry",
     values: [string]
@@ -139,6 +142,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     functionFragment: "createAndBuyOtokens",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVaultId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "settleAfterExpiry",
     data: BytesLike
@@ -193,6 +197,11 @@ export interface IPotionLiquidityPool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getVaultId(
+      _otoken: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     settleAfterExpiry(
       _otoken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -218,6 +227,8 @@ export interface IPotionLiquidityPool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
   settleAfterExpiry(
     _otoken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -242,6 +253,8 @@ export interface IPotionLiquidityPool extends BaseContract {
       maxPremium: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     settleAfterExpiry(
       _otoken: string,
@@ -271,6 +284,8 @@ export interface IPotionLiquidityPool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     settleAfterExpiry(
       _otoken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -295,6 +310,11 @@ export interface IPotionLiquidityPool extends BaseContract {
       sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[],
       maxPremium: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getVaultId(
+      _otoken: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     settleAfterExpiry(

@@ -27,14 +27,23 @@ contract MockOpynAddressBook is IOpynAddressBook {
         opynOracle = opynOracle_;
     }
 
+    /**
+        @inheritdoc IOpynAddressBook
+    */
     function getOtokenFactory() external view returns (address) {
         return opynFactory;
     }
 
+    /**
+        @inheritdoc IOpynAddressBook
+    */
     function getController() external view returns (address) {
         return opynController;
     }
 
+    /**
+        @inheritdoc IOpynAddressBook
+    */
     function getOracle() external view returns (address) {
         return opynOracle;
     }

@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   PopulatedTransaction,
@@ -21,16 +22,24 @@ import type {
 
 export interface MockOpynControllerInterface extends utils.Interface {
   functions: {
+    "getProceed(address,uint256)": FunctionFragment;
     "isSettlementAllowed(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "isSettlementAllowed"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getProceed" | "isSettlementAllowed"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getProceed",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
     values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getProceed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isSettlementAllowed",
     data: BytesLike
@@ -66,11 +75,23 @@ export interface MockOpynController extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getProceed(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     isSettlementAllowed(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  getProceed(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   isSettlementAllowed(
     arg0: string,
@@ -78,6 +99,12 @@ export interface MockOpynController extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    getProceed(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isSettlementAllowed(
       arg0: string,
       overrides?: CallOverrides
@@ -87,6 +114,12 @@ export interface MockOpynController extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getProceed(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isSettlementAllowed(
       arg0: string,
       overrides?: CallOverrides
@@ -94,6 +127,12 @@ export interface MockOpynController extends BaseContract {
   };
 
   populateTransaction: {
+    getProceed(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isSettlementAllowed(
       arg0: string,
       overrides?: CallOverrides

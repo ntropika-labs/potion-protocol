@@ -29,6 +29,7 @@ import type {
 export interface PotionBuyActionV0Interface extends utils.Interface {
   functions: {
     "MIN_CYCLE_DURATION()": FunctionFragment;
+    "calculateCurrentPayout(address)": FunctionFragment;
     "cycleDurationSecs()": FunctionFragment;
     "lastStrikePriceInUSDC()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
@@ -48,6 +49,7 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MIN_CYCLE_DURATION"
+      | "calculateCurrentPayout"
       | "cycleDurationSecs"
       | "lastStrikePriceInUSDC"
       | "maxPremiumPercentage"
@@ -67,6 +69,10 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "MIN_CYCLE_DURATION",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateCurrentPayout",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "cycleDurationSecs",
@@ -127,6 +133,10 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "MIN_CYCLE_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateCurrentPayout",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -300,6 +310,11 @@ export interface PotionBuyActionV0 extends BaseContract {
   functions: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+
     cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -349,6 +364,11 @@ export interface PotionBuyActionV0 extends BaseContract {
 
   MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+  calculateCurrentPayout(
+    investmentAsset: string,
+    overrides?: CallOverrides
+  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+
   cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
@@ -397,6 +417,11 @@ export interface PotionBuyActionV0 extends BaseContract {
 
   callStatic: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -490,6 +515,11 @@ export interface PotionBuyActionV0 extends BaseContract {
   estimateGas: {
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    calculateCurrentPayout(
+      investmentAsset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
@@ -539,6 +569,11 @@ export interface PotionBuyActionV0 extends BaseContract {
 
   populateTransaction: {
     MIN_CYCLE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateCurrentPayout(
+      investmentAsset: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
