@@ -8,8 +8,10 @@ import "../../library/PotionProtocolLib.sol";
 import "../../library/PercentageUtils.sol";
 import "../../library/OpynProtocolLib.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
+import { IOpynAddressBook } from "../../interfaces/IOpynAddressBook.sol";
 import { IOpynController } from "../../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../../interfaces/IOpynFactory.sol";
+import { IOpynOracle } from "../../interfaces/IOpynOracle.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
@@ -34,18 +36,11 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     IPotionLiquidityPool private _potionLiquidityPoolManager;
 
     /**
-        @notice The address of the Opyn Protocol controller
+        @notice The address of the Opyn address book
 
-        @dev Used to determine if a potion can be redeemed or not
+        @dev This is used to get the addresses of the other Opyn contracts
      */
-    IOpynController private _opynController;
-
-    /**
-        @notice The address of the Opyn Protocol factory
-
-        @dev Used to get the address of the otoken contract
-     */
-    IOpynFactory private _opynFactory;
+    IOpynAddressBook private _opynAddressBook;
 
     /**
         @notice Maps the address of an asset with the address of the potion that will be used to hedge it
@@ -72,27 +67,25 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         the inheritance chain.
 
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity pool manager
-        @param opynController The address of the Opyn Protocol controller
-        @param opynFactory The address of the Opyn Protocol factory
+        @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
         @param USDC The address of the USDC contract
      */
     // solhint-disable-next-line func-name-mixedcase
     function __PotionProtocolHelper_init_unchained(
         address potionLiquidityPoolManager,
-        address opynController,
-        address opynFactory,
+        address opynAddressBook,
         address USDC
     ) internal onlyInitializing {
         __PotionProtocolOracle_init_unchained();
 
         _potionLiquidityPoolManager = IPotionLiquidityPool(potionLiquidityPoolManager);
-        _opynController = IOpynController(opynController);
-        _opynFactory = IOpynFactory(opynFactory);
+
+        _opynAddressBook = IOpynAddressBook(opynAddressBook);
 
         _USDC = IERC20(USDC);
     }
 
-    /// FUNCTIONS
+    /// INTERNALS
 
     /**
         @notice Calculates the premium required to buy potions and the strike price denominated in USDC
@@ -138,7 +131,7 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @notice Buys potions from the Potion Protocol to insure the specific amount of assets
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePrice The strike price of the potion with 8 decimals
+        @param strikePriceInUSDC The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
         @param amount The amount of assets to be hedged
         @param slippage The slippage percentage to be used to calculate the premium
@@ -148,34 +141,39 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function _buyPotions(
         address hedgedAsset,
-        uint256 strikePrice,
+        uint256 strikePriceInUSDC,
         uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
     ) internal returns (uint256 actualPremium) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
 
         require(buyInfo.targetPotionAddress != address(0), "Potion buy info not found for the given asset");
         require(amount == buyInfo.totalSizeInPotions, "Insured amount greater than expected amount");
 
-        actualPremium = _potionLiquidityPoolManager.buyPotion(_opynFactory, buyInfo, slippage, getUSDC());
+        actualPremium = _potionLiquidityPoolManager.buyPotion(
+            IOpynFactory(_opynAddressBook.getOtokenFactory()),
+            buyInfo,
+            slippage,
+            getUSDC()
+        );
     }
 
     /**
         @notice Redeems the potions bought once the expiration timestamp is reached
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePrice The strike price of the potion with 8 decimals
+        @param strikePriceInUSDC The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
 
         @return settledAmount The amount of USDC settled after the redemption
      */
     function _redeemPotions(
         address hedgedAsset,
-        uint256 strikePrice,
+        uint256 strikePriceInUSDC,
         uint256 expirationTimestamp
     ) internal returns (uint256 settledAmount) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
 
         uint256 prevUSDCBalance = getUSDCBalance(address(this));
 
@@ -193,11 +191,12 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function _isPotionRedeemable(
         address hedgedAsset,
-        uint256 strikePrice,
+        uint256 strikePriceInUSDC,
         uint256 expirationTimestamp
     ) internal view returns (bool) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePrice, expirationTimestamp);
-        return _opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+        IOpynController opynController = IOpynController(_opynAddressBook.getController());
+        return opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
     }
 
     /**
@@ -207,12 +206,20 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @param strikePercentage The strike percentage of the asset price as a uint256 with 
                `PercentageUtils.PERCENTAGE_DECIMALS` decimals
 
-        @dev This function calls the Opyn Oracle to understand the price of the asset, so its value might
+        @return The strike price of the potion in USDC with 8 decimals
+
+        @dev This function calls the Opyn Oracle to get the price of the asset, so its value might
              change if called in different blocks.
      */
-    function _calculateStrikePrice(address hedgedAsset, uint256 strikePercentage) internal pure returns (uint256) {
-        return uint256(1000).applyPercentage(strikePercentage); // TODO
+    function _calculateStrikePrice(address hedgedAsset, uint256 strikePercentage) internal view returns (uint256) {
+        IOpynOracle opynOracle = IOpynOracle(_opynAddressBook.getOracle());
+
+        uint256 priceInUSDC = opynOracle.getPrice(hedgedAsset);
+
+        return priceInUSDC.applyPercentage(strikePercentage);
     }
+
+    /// GETTERS
 
     /**
         @notice Returns the USDC address configured in the contract
@@ -244,20 +251,11 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     }
 
     /**
-        @notice Returns the Opyn Controller address
+        @notice Returns the Opyn Address Book address
 
-        @return The address of the Opyn Controller
+        @return The address of the Opyn Address Book
      */
-    function getOpynController() external view returns (IOpynController) {
-        return _opynController;
-    }
-
-    /**
-        @notice Returns the Opyn Factory address
-
-        @return The address of the Opyn Factory
-     */
-    function getOpynFactory() external view returns (IOpynFactory) {
-        return _opynFactory;
+    function getOpynAddressBook() external view returns (IOpynAddressBook) {
+        return _opynAddressBook;
     }
 }

@@ -47,14 +47,18 @@ export interface PotionHedgingVaultConfigParams {
 
     // Third-party dependencies
     //
-    // If uniswapV3SwapRouter is not provided, then a fake uniswapV3SwapRouter is deployed and used
-    // If potionLiquidityPoolManager is not provided, then a fake potionLiquidityPoolManager is deployed and used
-    // If opynController is not provided, then a fake opynController is deployed and used
-    // If opynFactory is not provided, then a fake opynFactory is deployed and used
+    // If uniswapV3SwapRouter is not provided, then a mock uniswapV3SwapRouter is deployed and used
+    // If potionLiquidityPoolManager is not provided, then a mock potionLiquidityPoolManager is deployed and used
+    // If opynController is not provided, then a mock opynController is deployed and used
+    // If opynFactory is not provided, then a mock opynFactory is deployed and used
+    // If opynOracle is not provided, then a mock opynOracle is deployed and used
+    // If opynAddressBook is not provided, then a mock opynAddressBook is deployed and used
     uniswapV3SwapRouter?: string;
     potionLiquidityPoolManager?: string;
     opynController?: string;
     opynFactory?: string;
+    opynOracle?: string;
+    opynAddressBook?: string;
 }
 
 export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as string]: PotionHedgingVaultConfigParams } =

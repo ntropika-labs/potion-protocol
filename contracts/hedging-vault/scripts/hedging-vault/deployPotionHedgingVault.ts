@@ -31,8 +31,7 @@ export interface HedgingVaultDeployParams {
     // Third-party dependencies
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
+    opynAddressBook: string;
 }
 
 export async function deployHedgingVault(
@@ -45,8 +44,7 @@ export async function deployHedgingVault(
         investmentAsset: parameters.underlyingAsset,
         USDC: parameters.USDC,
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
-        opynController: parameters.opynController,
-        opynFactory: parameters.opynFactory,
+        opynAddressBook: parameters.opynAddressBook,
         potionLiquidityPoolManager: parameters.potionLiquidityPoolManager,
         maxPremiumPercentage: parameters.maxPremiumPercentage,
         premiumSlippage: parameters.premiumSlippage,

@@ -22,7 +22,7 @@ export const PERCENTAGE_FACTOR = 10 ** PERCENTAGE_DECIMALS;
 /**
     @notice Percentage of 100% with the given `PERCENTAGE_DECIMALS`
 */
-export const PERCENTAGE_100 = 100 * PERCENTAGE_FACTOR;
+export const PERCENTAGE_100_BN = toSolidityPercentage(100.0);
 
 /**
      @notice Adds the percentage to the given amount and returns the result
@@ -34,9 +34,9 @@ export const PERCENTAGE_100 = 100 * PERCENTAGE_FACTOR;
 */
 export function addPercentage(amount: number, percentage: number | BigNumber): number {
     if (typeof percentage === "number") {
-        return applyPercentage(amount, PERCENTAGE_100 + percentage);
+        return applyPercentage(amount, 100.0 + percentage);
     } else {
-        return applyPercentage(amount, toSolidityPercentage(PERCENTAGE_100).add(percentage));
+        return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
     }
 }
 
@@ -50,9 +50,9 @@ export function addPercentage(amount: number, percentage: number | BigNumber): n
 */
 export function substractPercentage(amount: number, percentage: number | BigNumber): number {
     if (typeof percentage === "number") {
-        return applyPercentage(amount, PERCENTAGE_100 - percentage);
+        return applyPercentage(amount, 100.0 - percentage);
     } else {
-        return applyPercentage(amount, toSolidityPercentage(PERCENTAGE_100).sub(percentage));
+        return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
     }
 }
 
@@ -66,9 +66,9 @@ export function substractPercentage(amount: number, percentage: number | BigNumb
 */
 export function applyPercentage(amount: number, percentage: number | BigNumber): number {
     if (typeof percentage === "number") {
-        return Math.floor((amount * percentage) / PERCENTAGE_100);
+        return Math.floor((amount * percentage) / 100.0);
     } else {
-        return percentage.mul(amount).div(PERCENTAGE_100).toNumber();
+        return percentage.mul(amount).div(PERCENTAGE_100_BN).toNumber();
     }
 }
 
@@ -79,8 +79,12 @@ export function applyPercentage(amount: number, percentage: number | BigNumber):
 
     @return True if the percentage is in range, false otherwise
 */
-export function isPercentageInRange(percentage: number) {
-    return percentage <= PERCENTAGE_100;
+export function isPercentageInRange(percentage: number | BigNumber): boolean {
+    if (typeof percentage === "number") {
+        return percentage >= 0 && percentage <= 100;
+    } else {
+        return percentage.lte(PERCENTAGE_100_BN);
+    }
 }
 
 /**

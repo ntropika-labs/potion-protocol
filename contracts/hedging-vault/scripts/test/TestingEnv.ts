@@ -10,6 +10,8 @@ import {
     IOpynController,
     ERC20PresetMinterPauser,
     IOpynFactory,
+    IOpynAddressBook,
+    IOpynOracle,
 } from "../../typechain";
 import {
     mockERC20,
@@ -17,6 +19,8 @@ import {
     mockUniswapV3SwapRouter,
     mockOpynController,
     mockOpynFactory,
+    mockOpynOracle,
+    mockOpynAddressBook,
 } from "./MocksLibrary";
 import { connectContract } from "../utils/deployment";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../hedging-vault/deployPotionHedgingVault";
@@ -31,8 +35,10 @@ export interface TestingEnvironmentDeployment {
     USDC: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     underlyingAsset: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     potionLiquidityPoolManager: IPotionLiquidityPool | MockContract<IPotionLiquidityPool>;
+    opynAddressBook: IOpynAddressBook | MockContract<IOpynAddressBook>;
     opynController: IOpynController | MockContract<IOpynController>;
     opynFactory: IOpynFactory | MockContract<IOpynFactory>;
+    opynOracle: IOpynOracle | MockContract<IOpynOracle>;
     uniswapV3SwapRouter: ISwapRouter | MockContract<ISwapRouter>;
 
     // Config
@@ -131,6 +137,52 @@ async function mockContractsIfNeeded(
             deploymentConfig.opynFactory,
             {
                 alias: "OpynFactory",
+            },
+        );
+    }
+
+    // Check if need to mock OpynFactory
+    if (!deploymentConfig.opynOracle) {
+        const mockingResult = await mockOpynFactory(deploymentConfig);
+        testingEnvironmentDeployment.opynFactory = mockingResult.softMock
+            ? mockingResult.softMock
+            : mockingResult.hardMock;
+    } else {
+        testingEnvironmentDeployment.opynFactory = await connectContract<IOpynFactory>(
+            "IOpynFactory",
+            deploymentConfig.opynOracle,
+            {
+                alias: "OpynFactory",
+            },
+        );
+    }
+
+    if (!deploymentConfig.opynAddressBook) {
+        const opynController = await mockOpynController(deploymentConfig);
+        const opynFactory = await mockOpynFactory(deploymentConfig);
+        const opynOracle = await mockOpynOracle(deploymentConfig);
+
+        testingEnvironmentDeployment.opynController = opynController.softMock
+            ? opynController.softMock
+            : opynController.hardMock;
+        testingEnvironmentDeployment.opynFactory = opynFactory.softMock ? opynFactory.softMock : opynFactory.hardMock;
+        testingEnvironmentDeployment.opynOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
+
+        const mockingResult = await mockOpynAddressBook(
+            deploymentConfig,
+            testingEnvironmentDeployment.opynController.address,
+            testingEnvironmentDeployment.opynFactory.address,
+            testingEnvironmentDeployment.opynOracle.address,
+        );
+        testingEnvironmentDeployment.opynAddressBook = mockingResult.softMock
+            ? mockingResult.softMock
+            : mockingResult.hardMock;
+    } else {
+        testingEnvironmentDeployment.opynFactory = await connectContract<IOpynFactory>(
+            "IOpynFactory",
+            deploymentConfig.opynAddressBook,
+            {
+                alias: "OpynAddressBook",
             },
         );
     }
@@ -239,8 +291,7 @@ export async function deployTestingEnv(
         // Third-party dependencies
         uniswapV3SwapRouter: testEnvDeployment.uniswapV3SwapRouter.address,
         potionLiquidityPoolManager: testEnvDeployment.potionLiquidityPoolManager.address,
-        opynController: testEnvDeployment.opynController.address,
-        opynFactory: testEnvDeployment.opynFactory.address,
+        opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
     const [investmentVault, potionBuyAction] = await deployHedgingVault(deploymentParams);

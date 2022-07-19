@@ -135,8 +135,7 @@ export interface PotionProtocolHelperUpgradeableInterface
     "changeVault(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
-    "getOpynController()": FunctionFragment;
-    "getOpynFactory()": FunctionFragment;
+    "getOpynAddressBook()": FunctionFragment;
     "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
@@ -154,8 +153,7 @@ export interface PotionProtocolHelperUpgradeableInterface
       | "changeVault"
       | "getAdmin"
       | "getOperator"
-      | "getOpynController"
-      | "getOpynFactory"
+      | "getOpynAddressBook"
       | "getPotionBuyInfo"
       | "getPotionLiquidityManager"
       | "getStrategist"
@@ -181,11 +179,7 @@ export interface PotionProtocolHelperUpgradeableInterface
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getOpynController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOpynFactory",
+    functionFragment: "getOpynAddressBook",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -233,11 +227,7 @@ export interface PotionProtocolHelperUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getOpynController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOpynFactory",
+    functionFragment: "getOpynAddressBook",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -381,9 +371,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
-    getOpynController(overrides?: CallOverrides): Promise<[string]>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<[string]>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<[string]>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -435,9 +423,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
   getOperator(overrides?: CallOverrides): Promise<string>;
 
-  getOpynController(overrides?: CallOverrides): Promise<string>;
-
-  getOpynFactory(overrides?: CallOverrides): Promise<string>;
+  getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
     underlyingAsset: string,
@@ -489,9 +475,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<string>;
 
-    getOpynController(overrides?: CallOverrides): Promise<string>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<string>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -585,9 +569,7 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOpynController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<BigNumber>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -640,9 +622,9 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getOpynController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getOpynAddressBook(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
       underlyingAsset: string,

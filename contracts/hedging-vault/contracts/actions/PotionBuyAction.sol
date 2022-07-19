@@ -51,8 +51,7 @@ contract PotionBuyAction is
         @param USDC The address of the USDC token
         @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
-        @param opynController The address of the Opyn Protocol controller contract
-        @param opynFactory The address of the Opyn Protocol factory contract
+        @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
         @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
         @param premiumSlippage The slippage percentage allowed on the premium when buying potions
         @param swapSlippage The slippage percentage allowed on the swap operation
@@ -69,8 +68,7 @@ contract PotionBuyAction is
         address USDC;
         address uniswapV3SwapRouter;
         address potionLiquidityPoolManager;
-        address opynController;
-        address opynFactory;
+        address opynAddressBook;
         uint256 maxPremiumPercentage;
         uint256 premiumSlippage;
         uint256 swapSlippage;
@@ -106,8 +104,7 @@ contract PotionBuyAction is
         __UniswapV3Helper_init_unchained(initParams.uniswapV3SwapRouter);
         __PotionProtocolHelper_init_unchained(
             initParams.potionLiquidityPoolManager,
-            initParams.opynController,
-            initParams.opynFactory,
+            initParams.opynAddressBook,
             initParams.USDC
         );
 

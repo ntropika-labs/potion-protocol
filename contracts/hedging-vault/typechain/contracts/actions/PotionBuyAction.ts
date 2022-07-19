@@ -151,8 +151,7 @@ export declare namespace PotionBuyAction {
     USDC: string;
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
+    opynAddressBook: string;
     maxPremiumPercentage: BigNumberish;
     premiumSlippage: BigNumberish;
     swapSlippage: BigNumberish;
@@ -162,7 +161,6 @@ export declare namespace PotionBuyAction {
   };
 
   export type PotionBuyInitParamsStructOutput = [
-    string,
     string,
     string,
     string,
@@ -185,8 +183,7 @@ export declare namespace PotionBuyAction {
     USDC: string;
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
+    opynAddressBook: string;
     maxPremiumPercentage: BigNumber;
     premiumSlippage: BigNumber;
     swapSlippage: BigNumber;
@@ -213,8 +210,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getAdmin()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
     "getOperator()": FunctionFragment;
-    "getOpynController()": FunctionFragment;
-    "getOpynFactory()": FunctionFragment;
+    "getOpynAddressBook()": FunctionFragment;
     "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
@@ -225,7 +221,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getUSDC()": FunctionFragment;
     "getUSDCBalance(address)": FunctionFragment;
     "getVault()": FunctionFragment;
-    "initialize((address,address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "lastStrikePriceInUSDC()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
@@ -265,8 +261,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getAdmin"
       | "getLifecycleState"
       | "getOperator"
-      | "getOpynController"
-      | "getOpynFactory"
+      | "getOpynAddressBook"
       | "getPotionBuyInfo"
       | "getPotionLiquidityManager"
       | "getStrategist"
@@ -349,11 +344,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getOpynController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOpynFactory",
+    functionFragment: "getOpynAddressBook",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -521,11 +512,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getOpynController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOpynFactory",
+    functionFragment: "getOpynAddressBook",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -918,9 +905,7 @@ export interface PotionBuyAction extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<[string]>;
 
-    getOpynController(overrides?: CallOverrides): Promise<[string]>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<[string]>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<[string]>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -1102,9 +1087,7 @@ export interface PotionBuyAction extends BaseContract {
 
   getOperator(overrides?: CallOverrides): Promise<string>;
 
-  getOpynController(overrides?: CallOverrides): Promise<string>;
-
-  getOpynFactory(overrides?: CallOverrides): Promise<string>;
+  getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
   getPotionBuyInfo(
     underlyingAsset: string,
@@ -1286,9 +1269,7 @@ export interface PotionBuyAction extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<string>;
 
-    getOpynController(overrides?: CallOverrides): Promise<string>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<string>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -1581,9 +1562,7 @@ export interface PotionBuyAction extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOpynController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<BigNumber>;
+    getOpynAddressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPotionBuyInfo(
       underlyingAsset: string,
@@ -1771,9 +1750,9 @@ export interface PotionBuyAction extends BaseContract {
 
     getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getOpynController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOpynFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getOpynAddressBook(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
       underlyingAsset: string,

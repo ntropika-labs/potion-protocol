@@ -10,8 +10,7 @@ export interface PotionBuyActionDeployParams {
     USDC: string;
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
+    opynAddressBook: string;
     maxPremiumPercentage: BigNumber; // 6 decimals
     premiumSlippage: BigNumber; // 6 decimals
     swapSlippage: BigNumber;
