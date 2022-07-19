@@ -9,6 +9,7 @@ import { UniswapV3HelperUpgradeable } from "./common/UniswapV3HelperUpgradeable.
 import "../versioning/PotionBuyActionV0.sol";
 import "../library/PercentageUtils.sol";
 import "../library/OpynProtocolLib.sol";
+import "../library/TimeUtils.sol";
 import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 /**
@@ -117,7 +118,10 @@ contract PotionBuyAction is
         _setCycleDuration(initParams.cycleDurationSecs);
         _setStrikePercentage(initParams.strikePercentage);
 
-        _updateNextCycleStart();
+        // Get the next time
+        nextCycleStartTimestamp =
+            TimeUtils.calculateTodayWithOffset(block.timestamp, TimeUtils.SECONDS_TO_0800_UTC) +
+            initParams.cycleDurationSecs;
     }
 
     /// STATE CHANGERS

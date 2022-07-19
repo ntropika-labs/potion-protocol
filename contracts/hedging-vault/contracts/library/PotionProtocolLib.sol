@@ -65,6 +65,7 @@ library PotionProtocolLib {
                 buyInfo.strikePriceInUSDC,
                 buyInfo.expirationTimestamp
             );
+
             require(
                 targetOToken == buyInfo.targetPotionAddress,
                 "Otoken does not exist and target address does not match"

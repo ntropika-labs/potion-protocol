@@ -23,12 +23,13 @@ import {
     mockOpynOracle,
     mockOpynAddressBook,
 } from "./MocksLibrary";
-import { connectContract } from "../utils/deployment";
+import { attachContract } from "../utils/deployment";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { NetworksType } from "../../hardhat.helpers";
 
+import { Deployments } from "@potion-protocol/core";
 export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
@@ -70,7 +71,7 @@ async function mockContractsIfNeeded(
         const mockingResult = await mockERC20(deploymentConfig, "USDC");
         testingEnvironmentDeployment.USDC = mockingResult.softMock ? mockingResult.softMock : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.USDC = await connectContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.USDC = await attachContract<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.USDC,
             {
@@ -86,7 +87,7 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.underlyingAsset = await connectContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.underlyingAsset = await attachContract<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.underlyingAsset,
             {
@@ -102,7 +103,7 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.potionLiquidityPoolManager = await connectContract<IPotionLiquidityPool>(
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await attachContract<IPotionLiquidityPool>(
             "IPotionLiquidityPool",
             deploymentConfig.potionLiquidityPoolManager,
             {
@@ -118,7 +119,7 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynController = await connectContract<IOpynController>(
+        testingEnvironmentDeployment.opynController = await attachContract<IOpynController>(
             "IOpynController",
             deploymentConfig.opynController,
             {
@@ -134,7 +135,7 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynFactory = await connectContract<IOpynFactory>(
+        testingEnvironmentDeployment.opynFactory = await attachContract<IOpynFactory>(
             "IOpynFactory",
             deploymentConfig.opynFactory,
             {
@@ -150,11 +151,11 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynFactory = await connectContract<IOpynFactory>(
-            "IOpynFactory",
+        testingEnvironmentDeployment.opynOracle = await attachContract<IOpynOracle>(
+            "IOpynOracle",
             deploymentConfig.opynOracle,
             {
-                alias: "OpynFactory",
+                alias: "OpynOracle",
             },
         );
     }
@@ -180,8 +181,8 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynFactory = await connectContract<IOpynFactory>(
-            "IOpynFactory",
+        testingEnvironmentDeployment.opynAddressBook = await attachContract<IOpynAddressBook>(
+            "IOpynAddressBook",
             deploymentConfig.opynAddressBook,
             {
                 alias: "OpynAddressBook",
@@ -196,7 +197,7 @@ async function mockContractsIfNeeded(
             ? mockingResult.softMock
             : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.uniswapV3SwapRouter = await connectContract<ISwapRouter>(
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await attachContract<ISwapRouter>(
             "ISwapRouter",
             deploymentConfig.uniswapV3SwapRouter,
             {
@@ -247,6 +248,12 @@ async function prepareTestEnvironment(
     if (!testingEnvironmentDeployment.opynFactory) {
         throw new Error(`No opynFactory address provided and no mocking enabled`);
     }
+    if (!testingEnvironmentDeployment.opynOracle) {
+        throw new Error(`No opynOracle address provided and no mocking enabled`);
+    }
+    if (!testingEnvironmentDeployment.opynAddressBook) {
+        throw new Error(`No opynAddressBook address provided and no mocking enabled`);
+    }
     if (!testingEnvironmentDeployment.uniswapV3SwapRouter) {
         throw new Error(`No uniswapV3SwapRouter address provided and no mocking enabled`);
     }
@@ -254,8 +261,47 @@ async function prepareTestEnvironment(
     return testingEnvironmentDeployment as TestingEnvironmentDeployment;
 }
 
+//function applyPotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams, potionDeployments: any) {}
+function getPotionProtocolDeployments(networkName: NetworksType): any {
+    //@ts-expect-error iterator is not defined
+    return Deployments[networkName].contracts;
+}
+
+function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams, potionProtocolDeployments: any) {
+    if (!hedgingVaultConfig.USDC) {
+        hedgingVaultConfig.USDC = potionProtocolDeployments.USDC?.address;
+    }
+    if (!hedgingVaultConfig.underlyingAsset) {
+        hedgingVaultConfig.underlyingAsset = potionProtocolDeployments.SampleUnderlyingToken?.address;
+    }
+    if (!hedgingVaultConfig.potionLiquidityPoolManager) {
+        hedgingVaultConfig.potionLiquidityPoolManager = potionProtocolDeployments.PotionLiquidityPool?.address;
+    }
+    if (!hedgingVaultConfig.opynController) {
+        hedgingVaultConfig.opynController = potionProtocolDeployments.Controller?.address;
+    }
+    if (!hedgingVaultConfig.opynFactory) {
+        hedgingVaultConfig.opynFactory = potionProtocolDeployments.OtokenFactory?.address;
+    }
+    if (!hedgingVaultConfig.opynOracle) {
+        hedgingVaultConfig.opynOracle = potionProtocolDeployments.Oracle?.address;
+    }
+    if (!hedgingVaultConfig.opynAddressBook) {
+        hedgingVaultConfig.opynAddressBook = potionProtocolDeployments.AddressBook?.address;
+    }
+}
+
 export function getDeploymentConfig(networkName: NetworksType): PotionHedgingVaultConfigParams {
-    return PotionHedgingVaultDeploymentConfigs[networkName];
+    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
+
+    if (networkName !== "hardhat") {
+        const potionProtocolDeployments = getPotionProtocolDeployments(networkName);
+        if (potionProtocolDeployments !== undefined) {
+            usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
+        }
+    }
+
+    return hedgingVaultConfig;
 }
 
 export async function deployTestingEnv(

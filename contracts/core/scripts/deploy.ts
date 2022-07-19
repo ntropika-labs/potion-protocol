@@ -137,6 +137,7 @@ async function deployOpynContracts(deployConfig: NetworkDeployConfig): Promise<s
 
         console.log("Deploying pricers...");
         for (const pricerConfig of deployConfig.pricerConfigs) {
+            console.log(" - " + JSON.stringify(pricerConfig));
             const pricer = await deploy(
                 CHAINLINK_PRICER_CONTRACT_NAME,
                 [

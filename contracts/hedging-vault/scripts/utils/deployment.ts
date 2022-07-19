@@ -215,13 +215,11 @@ export async function deployMock<T extends BaseContract>(
     return contract as unknown as MockContract<T>;
 }
 
-export async function connectContract<T extends Contract>(
+export async function attachContract<T extends Contract>(
     contractName: string,
     contractAddress: string,
     options: Signer | DeploymentOptions | undefined = undefined,
-) {
-    const contractFactory = await ethers.getContractFactory(contractName, options);
-
+): Promise<T> {
     let flags = undefined,
         alias = undefined;
     if (isDeploymentOptions(options)) {
@@ -237,7 +235,7 @@ export async function connectContract<T extends Contract>(
         }
     }
 
-    return contractFactory.attach(contractAddress) as T;
+    return ethers.getContractAt(contractName, contractAddress) as Promise<T>;
 }
 
 export function setContractExport(enabled: boolean) {

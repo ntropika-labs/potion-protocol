@@ -66,7 +66,7 @@ async function allocateCollateralTokensFromFaucet(
             address = r.account;
         }
         try {
-            const trx = await token.allocateTo(address, r.value);
+            const trx = await token.mint(address, r.value);
             await trx.wait();
         } catch (err) {
             // If allocate fails, we might be using a mintable token with an unguarded mint function

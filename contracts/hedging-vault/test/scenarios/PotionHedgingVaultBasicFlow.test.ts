@@ -129,13 +129,22 @@ describe("HedgingVault", function () {
         await vault.connect(investorAccount).redeem(20000, investorAccount.address, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
-
-        // Burn it
-        await tEnv.underlyingAsset.connect(investorAccount).burn(20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
     });
-    it("Full cycle (deposit, enter, exit, redeem)", async function () {
-        const potionOtokenAddress = (await ethers.getSigners())[5].address;
+    it.only("Full cycle (deposit, enter, exit, redeem)", async function () {
+        // Srtike price always has 8 decimals
+        const strikePriceInUSDC = PercentageUtils.applyPercentage(100000000000, tEnv.strikePercentage);
+        const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
+        const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
+
+        const potionOtokenAddress = await tEnv.opynFactory.getTargetOtokenAddress(
+            tEnv.underlyingAsset.address,
+            tEnv.USDC.address,
+            tEnv.USDC.address,
+            strikePriceInUSDC,
+            expirationTimestamp,
+            true,
+        );
+
         const lpAddress = (await ethers.getSigners())[6].address;
 
         // Configure mock and fake contracts
@@ -158,8 +167,9 @@ describe("HedgingVault", function () {
         asMock(tEnv.underlyingAsset)?.approve.returns(true);
 
         // Mint and approve
+        let prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
         await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.add(20000));
         await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, 20000);
         expect(
             await tEnv.underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
@@ -168,14 +178,12 @@ describe("HedgingVault", function () {
         /*
             DEPOSIT
         */
+        prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
         await vault.connect(investorAccount).deposit(20000, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.sub(20000));
 
         // Set the potion buy info
-        const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
-        const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
-
         const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
             {
                 lp: lpAddress,
@@ -197,9 +205,6 @@ describe("HedgingVault", function () {
                 orderSizeInOtokens: 3001,
             },
         ];
-
-        // Srtike price always has 8 decimals
-        const strikePriceInUSDC = PercentageUtils.applyPercentage(100000000000, tEnv.strikePercentage);
 
         const potionBuyInfo: PotionBuyInfoStruct = {
             targetPotionAddress: potionOtokenAddress,
