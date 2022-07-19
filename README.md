@@ -207,26 +207,26 @@ This is what happens locally behind the scenes to start and seed the environment
       A --> H;
       A --> I;
       A --> J;
-      B[potion-subgraph];
-      C[potion-ui];
+      B[(potion-subgraph)];
+      C([potion-ui]);
       C --> E;
       C --> F;
       C --> G;
       C --> J;
-      D[potion-router];
+      D([potion-router]);
       D --> E;
       D --> H;
       D --> I;
       D --> J;
-      E[dapp-types];
-      F[potion-tokenlist];
-      G[potion-unocss];
-      H[subgraph-queries];
+      E([dapp-types]);
+      F([potion-tokenlist]);
+      G([potion-unocss]);
+      H([subgraph-queries]);
       I[potion-contracts];
       I --> J;
       I --> K;
-      J[contracts-math];
-      K[gamma-protocol];
+      J([contracts-math]);
+      K([gamma-protocol]);
 ```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
