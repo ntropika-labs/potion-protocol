@@ -200,6 +200,8 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         return opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
     }
 
+    /// GETTERS
+
     /**
         @notice Calculates the strike price of the potion given the hedged asset and the strike percentage
 
