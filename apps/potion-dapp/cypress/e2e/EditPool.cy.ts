@@ -68,11 +68,6 @@ describe("Edit Pool Flow", () => {
         "contain",
         "Please, enter a valid value"
       );
-      cy.get(".selection\\:bg-accent-500").clear().type("0");
-      cy.get(".py-3 > .flex-col > .p-4").should(
-        "contain",
-        "Please, enter a valid value"
-      );
       cy.get(".selection\\:bg-accent-500").clear().type("1.1234567");
       cy.get(".py-3 > .flex-col > .p-4").should(
         "contain",

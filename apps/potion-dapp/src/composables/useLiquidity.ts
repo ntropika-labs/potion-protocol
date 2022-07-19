@@ -3,14 +3,15 @@ import type { Ref, ComputedRef } from "vue";
 
 export function useLiquidity(
   initialLiquidity: number,
-  userBalance: Ref<number> | ComputedRef<number>
+  userBalance: Ref<number> | ComputedRef<number>,
+  minLiquidity = 0
 ) {
   const liquidity = ref(initialLiquidity);
   const validInput = ref(false);
   const validLiquidity = computed(
     () =>
       validInput.value &&
-      liquidity.value > 0 &&
+      liquidity.value > minLiquidity &&
       liquidity.value < userBalance.value
   );
 

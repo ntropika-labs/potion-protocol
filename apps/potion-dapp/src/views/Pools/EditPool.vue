@@ -11,6 +11,7 @@
       :token-prices="tokenPricesMap"
       :pool-id="poolId ?? 0"
       :disable-navigation="false"
+      :min="0"
       @token-selected="toggleTokenSelection"
       @token-remove="toggleTokenSelection"
       @update:criteria="updateCriteria"
@@ -94,8 +95,9 @@ const { userCollateralBalance } = useUserData();
 const { poolId, id, validPoolId } = useRoutePoolId(route.params);
 const { pool, template, fetching, error } = usePool(id);
 const { liquidity, validInput, validLiquidity } = useLiquidity(
-  100,
-  userCollateralBalance
+  0,
+  userCollateralBalance,
+  -1
 );
 
 const formattedSize = computed(() =>
