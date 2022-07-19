@@ -170,7 +170,7 @@ describe("HedgingVault", function () {
         */
         await vault.connect(investorAccount).deposit(20000, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
-        //expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
 
         // Set the potion buy info
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
