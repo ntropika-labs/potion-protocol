@@ -25,7 +25,7 @@ You can run the `bin/check-dependencies` script to check if everything is instal
 Some configuration is required before spinning up the environment.  
 Run `cp .env.example .env` to copy the environment example file and customize the following variables:
 
-- `VITE_ENDPOINT_PROVIDER` - choose one between `infura` and `alchemy`
+- `VITE_ENDPOINT_PROVIDER` - choose one between [`infura`](https://docs.infura.io/infura/getting-started) and [`alchemy`](https://docs.alchemy.com/alchemy/introduction/getting-started)
 - `VITE_ALCHEMY_KEY` or `VITE_INFURA_KEY` (depending on what you chose for the endpoint provider) and insert your API key
 - Setup [Ganache volume](#using-ganache-databases)
 
@@ -37,7 +37,9 @@ To bootstrap your development environment you can run one of the following comma
 
 - `yarn nx run potion-dapp:local-dev-test` spins up docker environment and starts Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
 
-The last two scripts, which run via Nx, share the same logic (except for the mocked Onboard instance) and behined the scene run `bin/create-local-env-headless` to start and seed the environment:
+## Inner works of test scripts
+
+This is what happens locally behind the scenes to start and seed the environment:
 
 1. Spin up the Docker environment with `docker compose up -d -V`, starting the following services:
 
@@ -176,7 +178,7 @@ This repository hosts all of the code for the Potion Protocol and as such compri
 
 For ease of maintenance we have a single `package.json` file in the root of the monorepo, which lists all dependencies for all projects.  
 Each project then has it's own `package.json` listing all scripts that can be run against that particular project.  
-To enanche the development experience we are making use of Yarn workspaces togheter with Nx to simplify and coordinate issuing commands for different projects.  
+To enchance the development experience we are making use of Yarn workspaces togheter with Nx to simplify and coordinate issuing commands for different projects.  
 For example:
 
 ```bash
@@ -227,7 +229,7 @@ files are:
 
 [Read more](./contracts/gamma-protocol/README.md)
 
-This workspace provides the required files for the core contracts of the Potion Protocol
+This workspace provides the Opyn Gamma protocol contracts, required for the core contracts of the Potion Protocol
 
 ### ganache_seeds
 
@@ -248,6 +250,8 @@ This library contains all locales and their data available within the app.
 For ease of use and to also allow for import within tests those data have been extracted to its own library.
 
 ### libs/potion-router
+
+This library contains the Potion Router + an helper library to load the required data from the Potion Subgraph
 
 ### libs/potion-tokenlist
 
