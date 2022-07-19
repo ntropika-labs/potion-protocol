@@ -6,6 +6,20 @@ export function useBondingCurves(
 ) {
   const bondingCurve = ref<BondingCurveParams>(params);
 
+  const setBondingCurve = (
+    a: string,
+    b: string,
+    c: string,
+    d: string,
+    maxUtil: string
+  ) => {
+    bondingCurve.value.a = parseFloat(a);
+    bondingCurve.value.b = parseFloat(b);
+    bondingCurve.value.c = parseFloat(c);
+    bondingCurve.value.d = parseFloat(d);
+    bondingCurve.value.maxUtil = parseFloat(maxUtil);
+  };
+
   const validCurve = computed(
     () =>
       bondingCurve.value.a > 0 &&
@@ -19,5 +33,6 @@ export function useBondingCurves(
   return {
     bondingCurve,
     validCurve,
+    setBondingCurve,
   };
 }

@@ -37,6 +37,7 @@ export function useCriterias(availableTokens: Ref<SelectableToken[]>) {
     criteriaMap.value.delete(tokenAddress);
 
   return {
+    criteriaMap,
     criterias,
     validCriterias,
     updateCriteria,
