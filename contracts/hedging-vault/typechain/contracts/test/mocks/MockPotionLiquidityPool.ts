@@ -98,6 +98,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
   functions: {
     "buyOtokens(address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
     "createAndBuyOtokens(address,address,address,uint256,uint256,bool,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
+    "getVaultId(address)": FunctionFragment;
     "settleAfterExpiry(address)": FunctionFragment;
   };
 
@@ -105,6 +106,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "buyOtokens"
       | "createAndBuyOtokens"
+      | "getVaultId"
       | "settleAfterExpiry"
   ): FunctionFragment;
 
@@ -129,6 +131,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(functionFragment: "getVaultId", values: [string]): string;
   encodeFunctionData(
     functionFragment: "settleAfterExpiry",
     values: [string]
@@ -139,6 +142,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
     functionFragment: "createAndBuyOtokens",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVaultId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "settleAfterExpiry",
     data: BytesLike
@@ -193,6 +197,8 @@ export interface MockPotionLiquidityPool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getVaultId(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
     settleAfterExpiry(
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -217,6 +223,8 @@ export interface MockPotionLiquidityPool extends BaseContract {
     maxPremium: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   settleAfterExpiry(
     arg0: string,
@@ -243,6 +251,8 @@ export interface MockPotionLiquidityPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     settleAfterExpiry(arg0: string, overrides?: CallOverrides): Promise<void>;
   };
 
@@ -268,6 +278,8 @@ export interface MockPotionLiquidityPool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     settleAfterExpiry(
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -292,6 +304,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
       arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
       maxPremium: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getVaultId(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     settleAfterExpiry(

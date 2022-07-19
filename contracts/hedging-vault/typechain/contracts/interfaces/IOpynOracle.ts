@@ -19,32 +19,26 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface TestWrapperOpynProtocolLibInterface extends utils.Interface {
+export interface IOpynOracleInterface extends utils.Interface {
   functions: {
-    "isPotionRedeemable(address,address)": FunctionFragment;
+    "getPrice(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "isPotionRedeemable"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "getPrice"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "isPotionRedeemable",
-    values: [string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
 
-  decodeFunctionResult(
-    functionFragment: "isPotionRedeemable",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface TestWrapperOpynProtocolLib extends BaseContract {
+export interface IOpynOracle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TestWrapperOpynProtocolLibInterface;
+  interface: IOpynOracleInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -66,41 +60,24 @@ export interface TestWrapperOpynProtocolLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    isPotionRedeemable(
-      opynController: string,
-      potion: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  isPotionRedeemable(
-    opynController: string,
-    potion: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    isPotionRedeemable(
-      opynController: string,
-      potion: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    isPotionRedeemable(
-      opynController: string,
-      potion: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    isPotionRedeemable(
-      opynController: string,
-      potion: string,
+    getPrice(
+      _asset: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

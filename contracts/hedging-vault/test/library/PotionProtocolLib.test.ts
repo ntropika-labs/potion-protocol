@@ -12,9 +12,9 @@ import {
     IERC20__factory,
 } from "../../typechain";
 
-import { PotionBuyInfoStruct } from "../../typechain/contracts/test-wrappers/TestWrapperPotionProtocolLib";
+import { PotionBuyInfoStruct } from "../../typechain/contracts/test/wrappers/TestWrapperPotionProtocolLib";
 
-import { PercentageUtils } from "../utils/PercentageUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 import { BigNumber } from "ethers";
 
 chai.use(smock.matchers);

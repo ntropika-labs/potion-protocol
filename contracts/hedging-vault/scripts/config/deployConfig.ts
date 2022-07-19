@@ -30,12 +30,12 @@ export interface PotionHedgingVaultConfigParams {
     // All fields are mandatory
     underlyingAssetCap?: BigNumber;
     maxPremiumPercentage: BigNumber;
-    premiumSlippage: BigNumber;
-    swapSlippage: BigNumber;
+    premiumSlippage: BigNumber; // 6 decimals
+    swapSlippage: BigNumber; // 6 decimals
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
-    strikePriceInUSDC: BigNumber; // 8 decimals precision
-    hedgingPercentage: BigNumber;
+    strikePercentage: BigNumber; // 6 decimals
+    hedgingPercentage: BigNumber; // 6 decimals
 
     // Fees configuration
     //
@@ -47,14 +47,18 @@ export interface PotionHedgingVaultConfigParams {
 
     // Third-party dependencies
     //
-    // If uniswapV3SwapRouter is not provided, then a fake uniswapV3SwapRouter is deployed and used
-    // If potionLiquidityPoolManager is not provided, then a fake potionLiquidityPoolManager is deployed and used
-    // If opynController is not provided, then a fake opynController is deployed and used
-    // If opynFactory is not provided, then a fake opynFactory is deployed and used
+    // If uniswapV3SwapRouter is not provided, then a mock uniswapV3SwapRouter is deployed and used
+    // If potionLiquidityPoolManager is not provided, then a mock potionLiquidityPoolManager is deployed and used
+    // If opynController is not provided, then a mock opynController is deployed and used
+    // If opynFactory is not provided, then a mock opynFactory is deployed and used
+    // If opynOracle is not provided, then a mock opynOracle is deployed and used
+    // If opynAddressBook is not provided, then a mock opynAddressBook is deployed and used
     uniswapV3SwapRouter?: string;
     potionLiquidityPoolManager?: string;
     opynController?: string;
     opynFactory?: string;
+    opynOracle?: string;
+    opynAddressBook?: string;
 }
 
 export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as string]: PotionHedgingVaultConfigParams } =
@@ -64,12 +68,12 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
 
             // Investment configuration
             maxPremiumPercentage: BigNumber.from(2000000), // 2%
-            premiumSlippage: BigNumber.from(2000000), // 2%
-            swapSlippage: BigNumber.from(2000000), // 2%
-            maxSwapDurationSecs: BigNumber.from(60), // 1 minute
-            cycleDurationSecs: BigNumber.from(86400), // 1 day
-            strikePriceInUSDC: BigNumber.from(100000000000), // 1000.0 USDC/asset
-            hedgingPercentage: BigNumber.from(100000000), // 100%
+            premiumSlippage: BigNumber.from(2000000), //      2%
+            swapSlippage: BigNumber.from(2000000), //         2%
+            maxSwapDurationSecs: BigNumber.from(60), //       1 minute
+            cycleDurationSecs: BigNumber.from(86400), //      1 day
+            strikePercentage: BigNumber.from(80000000), //    80%
+            hedgingPercentage: BigNumber.from(100000000), //  100%
 
             // Fees configuration
             managementFee: BigNumber.from(3000000), // 3%
@@ -80,15 +84,15 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
 
             // Investment configuration
             maxPremiumPercentage: BigNumber.from(2000000), // 2%
-            premiumSlippage: BigNumber.from(2000000), // 2%
-            swapSlippage: BigNumber.from(2000000), // 2%
-            maxSwapDurationSecs: BigNumber.from(60), // 1 minute
-            cycleDurationSecs: BigNumber.from(86400), // 1 day
-            strikePriceInUSDC: BigNumber.from(100000000000), // 1000.0 USDC/asset
-            hedgingPercentage: BigNumber.from(100000000), // 100%
+            premiumSlippage: BigNumber.from(2000000), //      2%
+            swapSlippage: BigNumber.from(2000000), //         2%
+            maxSwapDurationSecs: BigNumber.from(60), //       1 minute
+            cycleDurationSecs: BigNumber.from(86400), //      1 day
+            strikePercentage: BigNumber.from(80000000), //    80 %
+            hedgingPercentage: BigNumber.from(100000000), //  100%
 
             // Fees configuration
-            managementFee: BigNumber.from(3000000), // 3%
+            managementFee: BigNumber.from(3000000), //  3%
             performanceFee: BigNumber.from(3000000), // 3%
         },
     };

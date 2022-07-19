@@ -74,4 +74,13 @@ interface IPotionLiquidityPool {
        @param _otoken The identifier (address) of the expired OToken for which unused collateral should be retrieved.
      */
     function settleAfterExpiry(IOtoken _otoken) external;
+
+    /**
+        @notice Get the ID of the existing Opyn vault that Potion uses to collateralize a given OToken.
+        
+        @param _otoken The identifier (token contract address) of the OToken. Not checked for validity in this view function.
+        
+        @return The unique ID of the vault, > 0. If no vault exists, the returned value will be 0
+     */
+    function getVaultId(IOtoken _otoken) external view returns (uint256);
 }

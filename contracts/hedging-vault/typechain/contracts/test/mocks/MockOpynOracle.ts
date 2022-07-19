@@ -17,34 +17,28 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../../common";
+} from "../../../common";
 
-export interface MockOpynControllerInterface extends utils.Interface {
+export interface MockOpynOracleInterface extends utils.Interface {
   functions: {
-    "isSettlementAllowed(address)": FunctionFragment;
+    "getPrice(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "isSettlementAllowed"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "getPrice"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "isSettlementAllowed",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
 
-  decodeFunctionResult(
-    functionFragment: "isSettlementAllowed",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface MockOpynController extends BaseContract {
+export interface MockOpynOracle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MockOpynControllerInterface;
+  interface: MockOpynOracleInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -66,35 +60,23 @@ export interface MockOpynController extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    isSettlementAllowed(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  isSettlementAllowed(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    isSettlementAllowed(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    isSettlementAllowed(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    isSettlementAllowed(
+    getPrice(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

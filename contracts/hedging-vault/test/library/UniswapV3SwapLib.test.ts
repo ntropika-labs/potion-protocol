@@ -1,10 +1,9 @@
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import { ethers, network } from "hardhat";
-
 import { TestWrapperUniswapV3SwapLib, ISwapRouter, ISwapRouter__factory } from "../../typechain";
 
-import { PercentageUtils } from "../utils/PercentageUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 
 chai.use(smock.matchers);
 
@@ -45,7 +44,7 @@ describe("UniswapV3SwapLib", function () {
             inputToken: "0x0000000000000000000000000000000000000000",
             exactAmountIn: 356,
             expectedAmountOut: 1984,
-            slippage: 2000000,
+            slippage: PercentageUtils.toSolidityPercentage(2.0),
             maxDuration: 1000000,
             swapPath: ethers.utils.solidityPack(["address", "uint256", "address"], [tokenA, poolFee, tokenB]),
         };
@@ -81,7 +80,7 @@ describe("UniswapV3SwapLib", function () {
             inputToken: "0x0000000000000000000000000000000000000000",
             exactAmountOut: 1984,
             expectedAmountIn: 356,
-            slippage: 2000000,
+            slippage: PercentageUtils.toSolidityPercentage(2.0),
             maxDuration: 1000000,
             swapPath: ethers.utils.solidityPack(["address", "uint256", "address"], [tokenA, poolFee, tokenB]),
         };

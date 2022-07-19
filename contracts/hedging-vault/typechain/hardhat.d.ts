@@ -177,6 +177,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ILifecycleStates__factory>;
     getContractFactory(
+      name: "IOpynAddressBook",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpynAddressBook__factory>;
+    getContractFactory(
       name: "IOpynController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOpynController__factory>;
@@ -184,6 +188,10 @@ declare module "hardhat/types/runtime" {
       name: "IOpynFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOpynFactory__factory>;
+    getContractFactory(
+      name: "IOpynOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpynOracle__factory>;
     getContractFactory(
       name: "IOtoken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -237,6 +245,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20PresetMinterPauser__factory>;
     getContractFactory(
+      name: "MockOpynAddressBook",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynAddressBook__factory>;
+    getContractFactory(
       name: "MockOpynController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockOpynController__factory>;
@@ -244,6 +256,10 @@ declare module "hardhat/types/runtime" {
       name: "MockOpynFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockOpynFactory__factory>;
+    getContractFactory(
+      name: "MockOpynOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOpynOracle__factory>;
     getContractFactory(
       name: "MockPotionLiquidityPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -523,6 +539,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ILifecycleStates>;
     getContractAt(
+      name: "IOpynAddressBook",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpynAddressBook>;
+    getContractAt(
       name: "IOpynController",
       address: string,
       signer?: ethers.Signer
@@ -532,6 +553,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IOpynFactory>;
+    getContractAt(
+      name: "IOpynOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpynOracle>;
     getContractAt(
       name: "IOtoken",
       address: string,
@@ -598,6 +624,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockERC20PresetMinterPauser>;
     getContractAt(
+      name: "MockOpynAddressBook",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynAddressBook>;
+    getContractAt(
       name: "MockOpynController",
       address: string,
       signer?: ethers.Signer
@@ -607,6 +638,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MockOpynFactory>;
+    getContractAt(
+      name: "MockOpynOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOpynOracle>;
     getContractAt(
       name: "MockPotionLiquidityPool",
       address: string,

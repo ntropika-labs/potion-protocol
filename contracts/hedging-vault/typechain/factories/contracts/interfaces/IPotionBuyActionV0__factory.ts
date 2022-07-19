@@ -50,7 +50,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "StrikePriceIsZero",
+    name: "StrikePercentageIsZero",
     type: "error",
   },
   {
@@ -122,11 +122,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "strikePrice",
+        name: "strikePercentage",
         type: "uint256",
       },
     ],
-    name: "StrikePriceChanged",
+    name: "StrikePercentageChanged",
     type: "event",
   },
   {
@@ -141,6 +141,30 @@ const _abi = [
     ],
     name: "SwapSlippageChanged",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "investmentAsset",
+        type: "address",
+      },
+    ],
+    name: "calculateCurrentPayout",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isFinal",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "payout",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
@@ -198,11 +222,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "strikePriceInUSDC",
+        name: "strikePercentage",
         type: "uint256",
       },
     ],
-    name: "setStrikePrice",
+    name: "setStrikePercentage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

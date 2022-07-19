@@ -10,14 +10,13 @@ export interface PotionBuyActionDeployParams {
     USDC: string;
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
-    maxPremiumPercentage: BigNumber;
-    premiumSlippage: BigNumber;
+    opynAddressBook: string;
+    maxPremiumPercentage: BigNumber; // 6 decimals
+    premiumSlippage: BigNumber; // 6 decimals
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
-    strikePriceInUSDC: BigNumber; // 8 decimals
+    strikePercentage: BigNumber; // 6 decimals
 }
 
 export async function deployPotionBuyAction(parameters: PotionBuyActionDeployParams): Promise<PotionBuyAction> {
