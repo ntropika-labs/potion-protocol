@@ -15,13 +15,13 @@ export interface HedgingVaultDeployParams {
 
     // Investment configuration
     underlyingAssetCap: BigNumber;
-    maxPremiumPercentage: BigNumber;
-    premiumSlippage: BigNumber;
-    swapSlippage: BigNumber;
+    maxPremiumPercentage: BigNumber; // 6 decimals
+    premiumSlippage: BigNumber; // 6 decimals
+    swapSlippage: BigNumber; // 6 decimals
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
-    strikePriceInUSDC: BigNumber; // 8 decimals
-    hedgingPercentage: BigNumber;
+    strikePercentage: BigNumber; // 6 decimals
+    hedgingPercentage: BigNumber; // 6 decimals
 
     // Fees configuration
     managementFee: BigNumber;
@@ -31,8 +31,7 @@ export interface HedgingVaultDeployParams {
     // Third-party dependencies
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
-    opynController: string;
-    opynFactory: string;
+    opynAddressBook: string;
 }
 
 export async function deployHedgingVault(
@@ -45,15 +44,14 @@ export async function deployHedgingVault(
         investmentAsset: parameters.underlyingAsset,
         USDC: parameters.USDC,
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
-        opynController: parameters.opynController,
-        opynFactory: parameters.opynFactory,
+        opynAddressBook: parameters.opynAddressBook,
         potionLiquidityPoolManager: parameters.potionLiquidityPoolManager,
         maxPremiumPercentage: parameters.maxPremiumPercentage,
         premiumSlippage: parameters.premiumSlippage,
         swapSlippage: parameters.swapSlippage,
         maxSwapDurationSecs: parameters.maxSwapDurationSecs,
         cycleDurationSecs: parameters.cycleDurationSecs,
-        strikePriceInUSDC: parameters.strikePriceInUSDC,
+        strikePercentage: parameters.strikePercentage,
     };
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);

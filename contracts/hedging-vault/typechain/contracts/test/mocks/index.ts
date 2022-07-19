@@ -3,7 +3,9 @@
 /* eslint-disable */
 import type * as mockErc20MinterPauserSol from "./MockERC20MinterPauser.sol";
 export type { mockErc20MinterPauserSol };
+export type { MockOpynAddressBook } from "./MockOpynAddressBook";
 export type { MockOpynController } from "./MockOpynController";
 export type { MockOpynFactory } from "./MockOpynFactory";
+export type { MockOpynOracle } from "./MockOpynOracle";
 export type { MockPotionLiquidityPool } from "./MockPotionLiquidityPool";
 export type { MockUniswapV3Router } from "./MockUniswapV3Router";

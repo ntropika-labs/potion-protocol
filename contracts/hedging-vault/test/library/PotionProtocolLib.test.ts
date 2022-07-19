@@ -14,7 +14,7 @@ import {
 
 import { PotionBuyInfoStruct } from "../../typechain/contracts/test-wrappers/TestWrapperPotionProtocolLib";
 
-import { PercentageUtils } from "../utils/PercentageUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 import { BigNumber } from "ethers";
 
 chai.use(smock.matchers);

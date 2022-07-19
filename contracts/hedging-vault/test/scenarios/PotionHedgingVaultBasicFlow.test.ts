@@ -12,6 +12,7 @@ import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import * as PercentageUtils from "../utils/PercentageUtils";
 import { NetworksType } from "../../hardhat.helpers";
 import { asMock } from "../../scripts/test/MocksLibrary";
 /**
@@ -98,8 +99,7 @@ describe("HedgingVault", function () {
 
         // Potion Protocol helper
         expect(await action.getPotionLiquidityManager()).to.equal(tEnv.potionLiquidityPoolManager.address);
-        expect(await action.getOpynController()).to.equal(tEnv.opynController.address);
-        expect(await action.getOpynFactory()).to.equal(tEnv.opynFactory.address);
+        expect(await action.getOpynAddressBook()).to.equal(tEnv.opynAddressBook.address);
         expect(await action.getUSDC()).to.equal(tEnv.USDC.address);
 
         // Action Values
@@ -170,7 +170,7 @@ describe("HedgingVault", function () {
         */
         await vault.connect(investorAccount).deposit(20000, investorAccount.address);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
-        //expect(await mockUnderlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
 
         // Set the potion buy info
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
@@ -198,10 +198,13 @@ describe("HedgingVault", function () {
             },
         ];
 
+        // Srtike price always has 8 decimals
+        const strikePriceInUSDC = PercentageUtils.applyPercentage(100000000000, tEnv.strikePercentage);
+
         const potionBuyInfo: PotionBuyInfoStruct = {
             targetPotionAddress: potionOtokenAddress,
             underlyingAsset: tEnv.underlyingAsset.address,
-            strikePriceInUSDC: tEnv.strikePriceInUSDC,
+            strikePriceInUSDC: strikePriceInUSDC,
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
             expectedPremiumInUSDC: BigNumber.from("1000"),
@@ -212,7 +215,7 @@ describe("HedgingVault", function () {
 
         const currentPotionBuyInfo = await action.getPotionBuyInfo(
             tEnv.underlyingAsset.address,
-            tEnv.strikePriceInUSDC,
+            strikePriceInUSDC,
             expirationTimestamp,
         );
 

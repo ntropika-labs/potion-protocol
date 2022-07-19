@@ -2,7 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as mockErc20MinterPauserSol from "./MockERC20MinterPauser.sol";
+export { MockOpynAddressBook__factory } from "./MockOpynAddressBook__factory";
 export { MockOpynController__factory } from "./MockOpynController__factory";
 export { MockOpynFactory__factory } from "./MockOpynFactory__factory";
+export { MockOpynOracle__factory } from "./MockOpynOracle__factory";
 export { MockPotionLiquidityPool__factory } from "./MockPotionLiquidityPool__factory";
 export { MockUniswapV3Router__factory } from "./MockUniswapV3Router__factory";
