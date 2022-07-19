@@ -12,6 +12,7 @@ import {
     IOpynFactory,
     IOpynAddressBook,
     IOpynOracle,
+    HedgingVaultOperatorHelper,
 } from "../../typechain";
 import {
     mockERC20,
@@ -32,6 +33,7 @@ export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
+    hedgingVaultOperatorHelper: HedgingVaultOperatorHelper;
     USDC: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     underlyingAsset: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     potionLiquidityPoolManager: IPotionLiquidityPool | MockContract<IPotionLiquidityPool>;
@@ -294,10 +296,11 @@ export async function deployTestingEnv(
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
-    const [investmentVault, potionBuyAction] = await deployHedgingVault(deploymentParams);
+    const [investmentVault, potionBuyAction, hedgingVaultOperatorHelper] = await deployHedgingVault(deploymentParams);
 
     testEnvDeployment.investmentVault = investmentVault;
     testEnvDeployment.potionBuyAction = potionBuyAction;
+    testEnvDeployment.hedgingVaultOperatorHelper = hedgingVaultOperatorHelper;
 
     return testEnvDeployment;
 }

@@ -1,6 +1,7 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
-import { InvestmentVault, PotionBuyAction } from "../../typechain";
+import { HedgingVaultOperatorHelperDeployParams, deployHedgingVaultHelper } from "../common/deployHedgingVaultHelper";
+import { HedgingVaultOperatorHelper, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { BigNumber } from "ethers";
 
 export interface HedgingVaultDeployParams {
@@ -36,7 +37,7 @@ export interface HedgingVaultDeployParams {
 
 export async function deployHedgingVault(
     parameters: HedgingVaultDeployParams,
-): Promise<[InvestmentVault, PotionBuyAction]> {
+): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOperatorHelper]> {
     const potionBuyParams: PotionBuyActionDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
@@ -74,5 +75,12 @@ export async function deployHedgingVault(
     // Set the vault as the operator for the action
     await potionBuyContract.changeVault(investmentVaultContract.address);
 
-    return [investmentVaultContract, potionBuyContract];
+    const hedgingVaultOperatorHelperParams: HedgingVaultOperatorHelperDeployParams = {
+        vaultAddress: investmentVaultContract.address,
+        potionBuyActionAddress: potionBuyContract.address,
+    };
+
+    const hedgingVaultOperatorHelper = await deployHedgingVaultHelper(hedgingVaultOperatorHelperParams);
+
+    return [investmentVaultContract, potionBuyContract, hedgingVaultOperatorHelper];
 }
