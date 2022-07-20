@@ -4,8 +4,11 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -22,13 +25,33 @@ import type {
 export interface MockOpynOracleInterface extends utils.Interface {
   functions: {
     "getPrice(address)": FunctionFragment;
+    "pricePerAsset(address)": FunctionFragment;
+    "setStablePrice(address,uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getPrice"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getPrice" | "pricePerAsset" | "setStablePrice"
+  ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "pricePerAsset",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStablePrice",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pricePerAsset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStablePrice",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -60,25 +83,71 @@ export interface MockOpynOracle extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getPrice(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPrice(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    pricePerAsset(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    setStablePrice(
+      asset: string,
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  setStablePrice(
+    asset: string,
+    price: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setStablePrice(
+      asset: string,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setStablePrice(
+      asset: string,
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPrice(
+      asset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pricePerAsset(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setStablePrice(
+      asset: string,
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

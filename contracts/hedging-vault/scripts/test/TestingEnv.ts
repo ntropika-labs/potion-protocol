@@ -284,7 +284,9 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
         hedgingVaultConfig.opynFactory = potionProtocolDeployments.OtokenFactory?.address;
     }
     if (!hedgingVaultConfig.opynOracle) {
-        hedgingVaultConfig.opynOracle = potionProtocolDeployments.Oracle?.address;
+        hedgingVaultConfig.opynOracle = potionProtocolDeployments.MockOracle
+            ? potionProtocolDeployments.MockOracle.address
+            : potionProtocolDeployments.Oracle?.address;
     }
     if (!hedgingVaultConfig.opynAddressBook) {
         hedgingVaultConfig.opynAddressBook = potionProtocolDeployments.AddressBook?.address;

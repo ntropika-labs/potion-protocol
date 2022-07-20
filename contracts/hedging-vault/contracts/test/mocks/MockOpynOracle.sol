@@ -13,12 +13,16 @@ import "../../interfaces/IOpynOracle.sol";
     @notice Mock contract for the Opyn contoller
 */
 contract MockOpynOracle is IOpynOracle {
+    mapping(address => uint256) public pricePerAsset;
+
     /**
         @inheritdoc IOpynOracle
      */
-    function getPrice(
-        address /*_asset*/
-    ) external pure returns (uint256) {
-        return 100000000000; // 1000.0 with 1e8 decimals
+    function getPrice(address asset) external view returns (uint256) {
+        return pricePerAsset[asset];
+    }
+
+    function setStablePrice(address asset, uint256 price) external {
+        pricePerAsset[asset] = price;
     }
 }

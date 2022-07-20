@@ -67,13 +67,13 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             networkName: "hardhat",
 
             // Investment configuration
-            maxPremiumPercentage: BigNumber.from(2000000), // 2%
-            premiumSlippage: BigNumber.from(2000000), //      2%
-            swapSlippage: BigNumber.from(2000000), //         2%
-            maxSwapDurationSecs: BigNumber.from(60), //       1 minute
-            cycleDurationSecs: BigNumber.from(86400), //      1 day
-            strikePercentage: BigNumber.from(80000000), //    80%
-            hedgingPercentage: BigNumber.from(100000000), //  100%
+            maxPremiumPercentage: BigNumber.from(10000000), // 10%
+            premiumSlippage: BigNumber.from(2000000), //       2%
+            swapSlippage: BigNumber.from(2000000), //          2%
+            maxSwapDurationSecs: BigNumber.from(60), //        1 minute
+            cycleDurationSecs: BigNumber.from(86400), //       1 day
+            strikePercentage: BigNumber.from(80000000), //     80%
+            hedgingPercentage: BigNumber.from(100000000), //   100%
 
             // Fees configuration
             managementFee: BigNumber.from(3000000), // 3%
@@ -83,13 +83,13 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             networkName: "localhost",
 
             // Investment configuration
-            maxPremiumPercentage: BigNumber.from(2000000), // 2%
-            premiumSlippage: BigNumber.from(2000000), //      2%
-            swapSlippage: BigNumber.from(2000000), //         2%
-            maxSwapDurationSecs: BigNumber.from(60), //       1 minute
-            cycleDurationSecs: BigNumber.from(86400), //      1 day
-            strikePercentage: BigNumber.from(80000000), //    80 %
-            hedgingPercentage: BigNumber.from(100000000), //  100%
+            maxPremiumPercentage: BigNumber.from(10000000), // 10%
+            premiumSlippage: BigNumber.from(2000000), //       2%
+            swapSlippage: BigNumber.from(2000000), //          2%
+            maxSwapDurationSecs: BigNumber.from(60), //        1 minute
+            cycleDurationSecs: BigNumber.from(86400), //       1 day
+            strikePercentage: BigNumber.from(80000000), //     80 %
+            hedgingPercentage: BigNumber.from(100000000), //   100%
 
             // Fees configuration
             managementFee: BigNumber.from(3000000), //  3%

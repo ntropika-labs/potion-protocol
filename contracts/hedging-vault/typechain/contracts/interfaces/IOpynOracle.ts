@@ -4,8 +4,11 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -22,13 +25,24 @@ import type {
 export interface IOpynOracleInterface extends utils.Interface {
   functions: {
     "getPrice(address)": FunctionFragment;
+    "setStablePrice(address,uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getPrice"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getPrice" | "setStablePrice"
+  ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setStablePrice",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setStablePrice",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -61,24 +75,54 @@ export interface IOpynOracle extends BaseContract {
 
   functions: {
     getPrice(_asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    setStablePrice(
+      _asset: string,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  setStablePrice(
+    _asset: string,
+    _price: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setStablePrice(
+      _asset: string,
+      _price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setStablePrice(
+      _asset: string,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPrice(
       _asset: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setStablePrice(
+      _asset: string,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

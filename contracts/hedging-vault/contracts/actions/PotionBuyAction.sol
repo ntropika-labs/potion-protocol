@@ -168,11 +168,7 @@ contract PotionBuyAction is
         require(isValid, "Cannot calculate the required premium");
 
         uint256 maxPremiumAllowedInAsset = amountToInvest.applyPercentage(maxPremiumPercentage);
-        uint256 maxPremiumAllowedInUSDC = getSwapOutputAmount(
-            investmentAsset,
-            address(getUSDC()),
-            maxPremiumAllowedInAsset
-        );
+        uint256 maxPremiumAllowedInUSDC = _calculateAssetValueInUSDC(investmentAsset, maxPremiumAllowedInAsset);
 
         require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 

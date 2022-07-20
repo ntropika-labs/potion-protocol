@@ -2,52 +2,52 @@
 export * as Typechain from "../typechain";
 export const Deployments = {
     localhost: {
-        timestamp: 1658246713,
+        timestamp: 1658310175,
         network: "localhost",
         contracts: {
             USDC: {
-                address: "0xd3FFD73C53F139cEBB80b6A524bE280955b3f4db",
+                address: "0xfA898de6CcE1715a14F579c316C6cfd7F869655B",
                 blockNumber: 0,
             },
             UnderlyingAsset: {
-                address: "0x8ac87219a0F5639BC01b470F87BA2b26356CB2B9",
+                address: "0x0fC6E11087EaAC6c564856aBfA901CDAd69eF5a9",
                 blockNumber: 0,
             },
             PotionLiquidityPool: {
-                address: "0xCBBe2A5c3A22BE749D5DDF24e9534f98951983e2",
+                address: "0xe3314d15fc547d36b0E28530d7dAA4190Caa204F",
                 blockNumber: 0,
             },
             OpynController: {
-                address: "0x7C8BaafA542c57fF9B2B90612bf8aB9E86e22C09",
+                address: "0x06d649F55a82738A7B0ECa43be3ACEFbD9956880",
                 blockNumber: 0,
             },
             OpynFactory: {
-                address: "0xd753c12650c280383Ce873Cc3a898F6f53973d16",
-                blockNumber: 405,
+                address: "0x8AAFC28174bb6c3BDc7BE92f18c2F134E876c05E",
+                blockNumber: 0,
             },
             OpynOracle: {
-                address: "0x193521C8934bCF3473453AF4321911E7A89E0E12",
+                address: "0xEb2cF97CB2616f4c4a5C66ce4406B34955e57397",
                 blockNumber: 0,
             },
             OpynAddressBook: {
-                address: "0xb185E9f6531BA9877741022C92CE858cDCc5760E",
+                address: "0xEe170eFF1BCeA1f7a46F46634fa40d590AAa5200",
                 blockNumber: 0,
             },
             UniswapV3Router: {
-                address: "0xd710a67624Ad831683C86a48291c597adE30F787",
-                blockNumber: 406,
+                address: "0x3179588E9774bC6ee1B4AF8Db55Fb8e1500649C1",
+                blockNumber: 1520,
             },
             PotionBuyAction: {
-                address: "0xd30bF3219A0416602bE8D482E0396eF332b0494E",
-                blockNumber: 407,
+                address: "0xC1C9c9a09B314cfEFC39BF4EE9460c4c33aCD070",
+                blockNumber: 1521,
             },
             InvestmentVault: {
-                address: "0x06b3244b086cecC40F1e5A826f736Ded68068a0F",
-                blockNumber: 408,
+                address: "0x4de030b5f6b86a2b875953D919238e9AA3C2F506",
+                blockNumber: 1522,
             },
             HedgingVaultOperatorHelper: {
-                address: "0x00CAC06Dd0BB4103f8b62D280fE9BCEE8f26fD59",
-                blockNumber: 410,
+                address: "0x29e07cEFDAABDaCA2AD956adbC3110eB2268C0E8",
+                blockNumber: 1524,
             },
         },
     },

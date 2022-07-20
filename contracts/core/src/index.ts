@@ -90,7 +90,7 @@ export const Deployments = {
         network: "kovan",
     },
     localhost: {
-        timestamp: 1658247614,
+        timestamp: 1658325911,
         network: "localhost",
         contracts: {
             AddressBook: {
@@ -150,8 +150,8 @@ export const Deployments = {
                 blockNumber: 23,
             },
             SampleUnderlyingToken: {
-                address: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
-                blockNumber: 35,
+                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+                blockNumber: 25,
             },
             MockOracle: {
                 address: "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",

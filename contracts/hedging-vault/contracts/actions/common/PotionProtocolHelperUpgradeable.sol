@@ -7,11 +7,13 @@ import { PotionProtocolOracleUpgradeable } from "./PotionProtocolOracleUpgradeab
 import "../../library/PotionProtocolLib.sol";
 import "../../library/PercentageUtils.sol";
 import "../../library/OpynProtocolLib.sol";
+import "../../library/PriceUtils.sol";
 import { IPotionLiquidityPool } from "../../interfaces/IPotionLiquidityPool.sol";
 import { IOpynAddressBook } from "../../interfaces/IOpynAddressBook.sol";
 import { IOpynController } from "../../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../../interfaces/IOpynFactory.sol";
 import { IOpynOracle } from "../../interfaces/IOpynOracle.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
@@ -248,6 +250,29 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     }
 
     /// GETTERS
+
+    /**
+        @notice Retrieves the given asset price in USDC from the Opyn Oracle
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the price from the Opyn Oracle
+        @param amount The amount of asset to be converted to USDC
+
+        @return The amount of USDC equivalent to the given amount of assets, with 8 decimals
+
+        @dev This function calls the Opyn Oracle to get the price of the asset, so its value might
+             change if called in different blocks.
+     */
+    function _calculateAssetValueInUSDC(address hedgedAsset, uint256 amount) internal view returns (uint256) {
+        IOpynOracle opynOracle = IOpynOracle(_opynAddressBook.getOracle());
+
+        uint256 assetPriceInUSD = opynOracle.getPrice(address(hedgedAsset));
+        uint256 USDCPriceInUSD = opynOracle.getPrice(address(_USDC));
+
+        uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
+        uint256 USDCDecimals = IERC20Metadata(address(_USDC)).decimals();
+
+        return PriceUtils.convertAmount(hedgedAssetDecimals, USDCDecimals, amount, assetPriceInUSD, USDCPriceInUSD);
+    }
 
     /**
         @notice Returns the USDC address configured in the contract

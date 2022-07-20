@@ -1,13 +1,16 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { BigNumber } from "ethers";
+
+import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
 import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "../utils/LifecycleStates";
-import { BigNumber } from "ethers";
 import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
@@ -15,6 +18,7 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as PercentageUtils from "../utils/PercentageUtils";
 import { NetworksType } from "../../hardhat.helpers";
 import { asMock } from "../../scripts/test/MocksLibrary";
+
 /**
     @notice Hedging Vault basic flow unit tests    
     
@@ -145,8 +149,6 @@ describe("HedgingVault", function () {
             true,
         );
 
-        const lpAddress = (await ethers.getSigners())[6].address;
-
         // Configure mock and fake contracts
         asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.returns((args: any) => {
             // This causes the potion library to not do an extra safeApprove on USDC
@@ -167,41 +169,46 @@ describe("HedgingVault", function () {
         asMock(tEnv.underlyingAsset)?.approve.returns(true);
 
         // Mint and approve
+        const investedAmount = ethers.utils.parseEther("20000");
+
         let prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.add(20000));
-        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, 20000);
+        await tEnv.underlyingAsset.mint(investorAccount.address, investedAmount);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.add(investedAmount));
+        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, investedAmount);
         expect(
             await tEnv.underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
-        ).to.equal(20000);
+        ).to.equal(investedAmount);
 
         /*
             DEPOSIT
         */
         prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await vault.connect(investorAccount).deposit(20000, investorAccount.address);
-        expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.sub(20000));
+        await vault.connect(investorAccount).deposit(investedAmount, investorAccount.address);
+        expect(await vault.balanceOf(investorAccount.address)).to.equal(investedAmount);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.sub(investedAmount));
 
-        // Set the potion buy info
+        /*
+            SET POTION BUY INFO
+        */
+
+        // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
+        // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
+        // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
+        const lpAddress = (await ethers.getSigners())[0].address;
+        const curve = new HyperbolicCurve(8.03456817, 1.29961294, 4.71657739, 16.62165255);
+        const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
+
+        const underlyingAssetPriceInUSD = 100000000000; // 1000 USDC with 8 decimals
+        const USDCPriceInUSD = 100000000; // 1 USDC with 8 decimals
+        const expectedPremiumInUSDC = 399052000000;
+        const maxPremiumWithSlippage = PercentageUtils.applyPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
+
         const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
             {
                 lp: lpAddress,
-                poolId: 55,
-                curve: {
-                    a_59x18: 1,
-                    b_59x18: 2,
-                    c_59x18: 3,
-                    d_59x18: 4,
-                    max_util_59x18: 5,
-                },
-                criteria: {
-                    underlyingAsset: tEnv.underlyingAsset.address,
-                    strikeAsset: tEnv.USDC.address,
-                    isPut: true,
-                    maxStrikePercent: 99,
-                    maxDurationInDays: 59,
-                },
+                poolId: 0,
+                curve: curve.asSolidityStruct(),
+                criteria: criteria,
                 orderSizeInOtokens: 3001,
             },
         ];
@@ -212,8 +219,8 @@ describe("HedgingVault", function () {
             strikePriceInUSDC: strikePriceInUSDC,
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
-            expectedPremiumInUSDC: BigNumber.from("1000"),
-            totalSizeInPotions: BigNumber.from("20000"),
+            expectedPremiumInUSDC: BigNumber.from(expectedPremiumInUSDC),
+            totalSizeInPotions: BigNumber.from(investedAmount),
         };
 
         await action.setPotionBuyInfo(potionBuyInfo);
@@ -229,11 +236,16 @@ describe("HedgingVault", function () {
         /*
             ENTER POSITION
         */
+
+        // Set the Opyn oracle asset price for the underlying asset
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, BigNumber.from(underlyingAssetPriceInUSD));
+        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, BigNumber.from(USDCPriceInUSD));
+
         // Set the Uniswap route info
         let swapInfo: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
-            expectedPriceRate: toPRBMath("5.0"),
+            expectedPriceRate: toPRBMath("1000.0"),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
@@ -242,6 +254,11 @@ describe("HedgingVault", function () {
         let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
         expectSolidityDeepCompare(swapInfo, currentSwapInfo);
+
+        // Mint some USDC
+        //
+        // TODO: This must disappear when we properly implement the Uniswap V3 mock
+        await tEnv.USDC.mint(tEnv.potionBuyAction.address, maxPremiumWithSlippage);
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
@@ -258,22 +275,26 @@ describe("HedgingVault", function () {
         // As of now, the asset is not really swapped, so the only movement in balances is from
         // the vault to the action
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(20000);
+        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(investedAmount);
 
         // Check approve calls: the first call was directly done above in the test code, so
         // check the second and the third call.
         if (network.name === "hardhat") {
             expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(3);
-            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(1)).to.have.been.calledWith(action.address, 20000);
+            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(1)).to.have.been.calledWith(
+                action.address,
+                investedAmount,
+            );
+
             expect(asMock(tEnv.underlyingAsset)?.approve.atCall(2)).to.have.been.calledWith(
                 tEnv.uniswapV3SwapRouter.address,
-                208,
+                415173700,
             );
 
             expect(asMock(tEnv.USDC)?.approve).to.have.been.calledOnce;
             expect(asMock(tEnv.USDC)?.approve.atCall(0)).to.have.been.calledWith(
                 tEnv.potionLiquidityPoolManager.address,
-                1020,
+                407033040000,
             );
         }
 
@@ -284,8 +305,8 @@ describe("HedgingVault", function () {
                 swapInfo.swapPath,
                 action.address,
                 tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
-                BigNumber.from(1020),
-                BigNumber.from(208),
+                BigNumber.from(407033040000),
+                BigNumber.from(415173700),
             ]);
         }
 
@@ -299,7 +320,7 @@ describe("HedgingVault", function () {
                 counterparties,
                 asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[1],
             );
-            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(1020);
+            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(407033040000);
         }
 
         /*
