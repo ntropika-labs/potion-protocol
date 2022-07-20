@@ -117,7 +117,7 @@ export function useInvestmentVault(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    Promise.all([
+    await Promise.all([
       getOperator(),
       getAdmin(),
       getStrategist(),

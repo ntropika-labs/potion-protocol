@@ -86,12 +86,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    Promise.all([getAssetAddress(), getTotalAssets()]);
+    await Promise.all([getAssetAddress(), getTotalAssets()]);
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      Promise.all([getAssetAddress(), getTotalAssets()]);
+      await Promise.all([getAssetAddress(), getTotalAssets()]);
     });
   }
   const {
