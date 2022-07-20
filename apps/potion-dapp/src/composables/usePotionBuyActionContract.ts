@@ -1,10 +1,13 @@
-import { computed, ref, type Ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
-import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
+import { formatUnits } from "@ethersproject/units";
 import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
+import type { Ref } from "vue";
+
+import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
 // ActionsManager allows for querying the address of the action
 export function usePotionBuyActionContract(contractAddress: string) {
   const { initContract } = useEthersContract();
@@ -25,12 +28,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
    **/
 
   //Next cycle timestamp
+  const nextCycleTimestamp = ref(0);
   const nextCycleTimestampLoading = ref(false);
   const nextCycleTimestampError = ref<string | null>(null);
   const getNextCycleTimestamp = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.nextCycleStartTimestamp();
+      nextCycleTimestamp.value = parseInt(
+        formatUnits(await provider.nextCycleStartTimestamp())
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -46,12 +52,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
   errorRegistry["nextCycleTimestamp"] = nextCycleTimestampError;
 
   //Cycle duration
+  const cycleDurationSecs = ref(0);
   const cycleDurationSecsLoading = ref(false);
   const cycleDurationSecsError = ref<string | null>(null);
   const getCycleDurationSecs = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.cycleDurationSecs();
+      cycleDurationSecs.value = parseFloat(
+        formatUnits(await provider.cycleDurationSecs())
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -67,12 +76,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
   errorRegistry["cycleDurationSecs"] = cycleDurationSecsError;
 
   //Max premium percentage
+  const maxPremiumPercentage = ref(0);
   const maxPremiumPercentageLoading = ref(false);
   const maxPremiumPercentageError = ref<string | null>(null);
   const getMaxPremiumPercentage = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.maxPremiumPercentage();
+      maxPremiumPercentage.value = parseFloat(
+        formatUnits(await provider.maxPremiumPercentage(), 6)
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -88,12 +100,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
   errorRegistry["maxPremiumPercentage"] = maxPremiumPercentageError;
 
   //Premium slippage
+  const premiumSlippage = ref(0);
   const premiumSlippageLoading = ref(false);
   const premiumSlippageError = ref<string | null>(null);
   const getPremiumSlippage = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.premiumSlippage();
+      premiumSlippage.value = parseFloat(
+        formatUnits(await provider.premiumSlippage(), 6)
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -109,12 +124,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
   errorRegistry["premiumSlippage"] = premiumSlippageError;
 
   //Swap slippage
+  const swapSlippage = ref(0);
   const swapSlippageLoading = ref(false);
   const swapSlippageError = ref<string | null>(null);
   const getSwapSlippage = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.swapSlippage();
+      swapSlippage.value = parseFloat(
+        formatUnits(await provider.swapSlippage(), 6)
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -135,7 +153,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const getMaxSwapDurationSecs = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.maxSwapDurationSecs();
+      // return await provider.maxSwapDurationSecs();
+      return parseFloat(formatUnits(await provider.maxSwapDurationSecs()));
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -150,29 +169,47 @@ export function usePotionBuyActionContract(contractAddress: string) {
   };
   errorRegistry["maxSwapDurationSecs"] = maxSwapDurationSecsError;
 
-  //Strike price
-  const strikePriceLoading = ref(false);
-  const strikePriceError = ref<string | null>(null);
-  const getStrikePrice = async () => {
+  //Strike Percentage
+  const strikePercentage = ref(0);
+  const strikePercentageLoading = ref(false);
+  const strikePercentageError = ref<string | null>(null);
+  const getStrikePercentage = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.strikePriceInUSDC(); // TODO: replace with getter for strike percentage
+      strikePercentage.value = parseFloat(
+        formatUnits(await provider.strikePercentage(), 6)
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? `Cannot get strike price: ${error.message}`
           : "Cannot get strike price";
-      strikePriceError.value = errorMessage;
+      strikePercentageError.value = errorMessage;
 
       throw new Error(errorMessage);
     } finally {
-      strikePriceLoading.value = false;
+      strikePercentageLoading.value = false;
     }
   };
-  errorRegistry["strikePrice"] = strikePriceError;
+  errorRegistry["strikePrice"] = strikePercentageError;
 
   // Get strategy info
+
   const strategyLoading = ref(false);
+
+  onMounted(async () => {
+    strategyLoading.value = true;
+    await Promise.all([
+      getNextCycleTimestamp(),
+      getCycleDurationSecs(),
+      getMaxPremiumPercentage(),
+      getMaxSwapDurationSecs(),
+      getPremiumSlippage(),
+      getSwapSlippage(),
+      getStrikePercentage(),
+    ]);
+    strategyLoading.value = false;
+  });
   const strategyError = computed(() => {
     const errors = Object.values(errorRegistry);
     let strategyError: string | null = null;
@@ -198,7 +235,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
         getMaxSwapDurationSecs(),
         getPremiumSlippage(),
         getSwapSlippage(),
-        getStrikePrice(),
+        getStrikePercentage(),
       ]).then(
         ([
           nextCycleTimestamp,
@@ -253,8 +290,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
     maxSwapDurationSecsLoading,
     maxSwapDurationSecsError,
     getMaxSwapDurationSecs,
-    strikePriceLoading,
-    strikePriceError,
-    getStrikePrice,
+    strikePercentageLoading,
+    strikePercentageError,
+    getStrikePercentage,
   };
 }
