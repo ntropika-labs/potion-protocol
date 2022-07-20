@@ -23,38 +23,50 @@ You can run the `bin/check-dependencies` script to check if everything is instal
 
 ## Quick Start
 
+[Setup instructions](./setup_instructions.md)
+
 Some configuration is required before spinning up the environment.  
 Run `cp .env.example .env` to copy the environment example file and customize the following variables:
 
-- `VITE_ENDPOINT_PROVIDER` - choose one between [`infura`](https://docs.infura.io/infura/getting-started) and [`alchemy`](https://docs.alchemy.com/alchemy/introduction/getting-started)
-- `VITE_ALCHEMY_KEY` or `VITE_INFURA_KEY` (depending on what you chose for the endpoint provider) and insert your API key
+- `VITE_ENDPOINT_PROVIDER` - The provider API is used to read on-chain activity.  
+  Choose one between [`infura`](https://docs.infura.io/infura/getting-started) and [`alchemy`](https://docs.alchemy.com/alchemy/introduction/getting-started).  
+  (eg: `VITE_ENDPOINT_PROVIDER="alchemy"`)
+- `VITE_ALCHEMY_KEY` or `VITE_INFURA_KEY` - Configure one of the two variables using the API key of the provider chosen in the previous step.  
+  Eg:
+  ```bash
+    VITE_ENDPOINT_PROVIDER="alchemy"
+    VITE_ALCHEMY_KEY="your api key"
+  ```
+- `VITE_BLOCKNATIVE_API_KEY` - BlockNative API key to query the [Gas Platform API](https://docs.blocknative.com/gas-platform).  
+  A default API key is generated when you sign up and is available in the Dashboard.
 - Setup [Ganache volume](#using-ganache-databases)
 
-To bootstrap your development environment you can run one of the following commands from the project root folder:
+- Run `sudo ./bin/prepare-seeds` to automatically copy all database seeds to your `GANACHE_VOLUME` folder
 
-- `yarn dev potion-dapp` starts Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`
+- Run `./bin/create-local-env-headless -f` to bootstrap your development environment
 
-- `yarn nx run potion-dapp:local-dev` spins up docker environment and starts Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`
-
-- `yarn nx run potion-dapp:local-dev-test` spins up docker environment and starts Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
+- Run `yarn dev potion-dapp` to start Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`  
+  or  
+  `yarn nx run potion-dapp:local-dev-test` to spin up docker environment and start Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
 
 ## Using ganache databases
 
-The ganache container is configured to use databases from a volume, this is used to store our previous interactions and/or restore known states for tests/debugging.  
-To make prototyping and testing easier to handle, we have prepared a set of database seeds that can be found in the `ganache_seeds` folder.
+The ganache container is configured to use databases from a [bind mount](https://docs.docker.com/storage/bind-mounts/), this is used to store our previous interactions and/or restore known states for tests/debugging.  
+To make prototyping and testing easier to handle, we have prepared a set of [database seeds](#available-ganache-seeds) that can be found in the `ganache_seeds` folder.
 
 ### Setting up ganache databases
 
-1. Create a folder that will be used as a named volume (it is higly recommended to set up it outside the monorepo to avoid permissions issues with tools). See [example](#directory-tree).
+1. Create a folder that will be used as a bind mount on the host machine (it is higly recommended to set up it outside the monorepo to avoid permissions issues with tools). See [example](#directory-tree).
 
 2. Put the path (relative or absolute will both work) inside the `.env` file into the `GANACHE_VOLUME` variable. This folder will be mounted to the `/opt` path within the container. See [example](#content-of-env).
 
 3. Put into the `DATABASE_PATH` variable the path (from inside the container) to the database that you want to use. See [example](#ganache-example-config).  
-   You can pick one of the [available ganache seeds](#available-ganache-seeds) (eg. by adding `DATABASE_PATH="/opt/base"` to your `.env` ) or create a new one, simply using a different name from the folders already available in `ganache_seeds` (eg. by adding `DATABASE_PATH="/opt/my-new-custom-database"` to your `.env` ).
+   An absolute path **inside the ganache container** starting with `/opt`. You can choose any name except those that match a seed name from `ganache_seeds` as the bootstrapping process needs a fresh copy of the database to initialize properly.  
+    If you already initialized your environment you can also use a path to any of the [available ganache seeds](#available-ganache-seeds) (eg `/opt/base`) and the test data will be loaded.
 
 ### Creating/restoring databases
 
-1. Copy the databases in the `ganache_seeds` to the volume folder (there is a `prepare-seeds` script into the `bin` folder that will copy the databases in the correct place using your `.env` file).
+1. Copy the databases in the `ganache_seeds` to the bind mount folder (there is a `prepare-seeds` script into the `bin` folder that will copy the databases in the correct place using your `.env` file).
    It is possible to copy entire folders to "create" a new database (eg, copy the `base` database to `develop`).
 2. If you are using the `base` database ensure that `CHAIN_TIME` is set to **2021-01-01 09:00:00+00:00**
 
@@ -77,7 +89,7 @@ If you want to generate a new database from scratch instead, run the `create-loc
   ```sh
   ... other variables
 
-  GANACHE_VOLUME="../docker-data/potion-protocol/ganache" # path to a folder on your system, used as source for the ganache volume.
+  GANACHE_VOLUME="../docker-data/potion-protocol/ganache" # path to a folder on your system, used as source for the ganache bind mount.
   DATABASE_PATH="/opt/base" # path within the ganache container ( '/opt' is required )
   CHAIN_TIME="2021-01-01 09:00:00+00:00"
 
@@ -112,11 +124,11 @@ You can use any of the pre-made databases by setting `DATABASE_PATH="/opt/{datab
 - `base` - Generic seed used as a basic test for: `CustomPoolCreation`, `CustomPotionCreation`, `PoolTemplate`, `EditPool` pages.  
   Sharing the same database instance speeds up testing, as we can avoid reloading the environment and importing a new seed.
 
-- `e2e-show-pool` - Seed specific to `ShowPool` page, to allow testing page features in completed isolation
+- `e2e-show-pool` - Seed specific to `ShowPool` page, to allow testing page features in complete isolation
 
-- `e2e-show-potion` - Seed specific to `ShowPotion` page, to allow testing page features in completed isolation
+- `e2e-show-potion` - Seed specific to `ShowPotion` page, to allow testing page features in complete isolation
 
-- `e2e-show-potions` - Seed specific to `ViewPotions` page, to allow testing page features in completed isolation
+- `e2e-show-potions` - Seed specific to `ViewPotions` page, to allow testing page features in complete isolation
 
 ## Ganache and block time
 
@@ -335,8 +347,41 @@ This library is used to generate useful javascript/typescript bindings to intera
 
 ## Customization
 
-All these different projects allow or require for some sort of configuration.  
-Much of these are exposed as environment variables configurable from the `.env` file within the project root folder.
+The project allows for customizing various aspects of it also affecting different workspaces. Listed here are all the required variables (marked as such) and some of the main ones if you want to further customize your setup:
+
+```bash
+VITE_SUBGRAPH_ADDRESS="http://localhost:8000/subgraphs/name/potion-subgraph"
+VITE_DEVELOPMENT_MNEMONIC="test test test test test test test test test test test junk"
+DEPLOYER_MNEMONIC="test test test test test test test test test test test junk"
+VITE_BLOCKNATIVE_API_KEY="your BlockNative API key"
+VITE_ENDPOINT_PROVIDER="alchemy"
+VITE_ALCHEMY_KEY="your Alchemy API key"
+VITE_INFURA_KEY=""
+GANACHE_VOLUME="../data/ganache"
+DATABASE_PATH="/opt/base"
+CHAIN_TIME="2021-01-01 08:00:00+00:00"
+```
+
+- `VITE_BLOCKNATIVE_API_KEY` - **REQUIRED** This API key is required to fetch gas prices. A default key is generated on sign up and is available in your dashboard.
+
+- `VITE_ENDPOINT_PROVIDER` - **REQUIRED** Choose one of `infura` or `alchemy`. This variable informs the DApp on what provider to use to fetch on-chain activity
+
+- `VITE_ALCHEMY_KEY` or `VITE_INFURA_KEY` - **REQUIRED** What variable to customize depends on what you chose for the provider.
+
+  - In case you have `VITE_ENDPOINT_PROVIDER="alchemy"` you want to customize the `VITE_ALCHEMY_KEY` variable
+  - In case you have `VITE_ENDPOINT_PROVIDER="infura"` you want to customize the `VITE_INFURA_KEY` variable
+
+- `GANACHE_VOLUME` - A relative or absolute path on the host machine to mount into the `ganache` container using [bind mounts](https://docs.docker.com/storage/bind-mounts/). The folder will be managed by Docker and should be reserved for this purpose.  
+  The content of the `GANACHE_VOLUME` folder is mounted into the container at the `/opt` path. Any database will be available from inside the container at `/opt/{folder name}`
+- `DATABASE_PATH` - An absolute path **inside the ganache container** pointing to a folder containing the database files. SIf you specify a folder that does not exist, a new database will be created, on the other hand if you use a path to any of the seeds (eg `/opt/base`), test data will be loaded.
+- `CHAIN_TIME` - This environment variable maps to the [Ganache startup option](https://github.com/trufflesuite/ganache#startup-options) `--chain.time` and represents the date that the first block should start
+- `VITE_SUBGRAPH_ADDRESS` - Absolute url pointing to a running [Graph Node](https://github.com/graphprotocol/graph-node) deployment.  
+  Changes to the value must also be reflected in:
+
+  - [apps/subgraph/package.json](./apps/subgraph/package.json) - Setup and deploy scripts are referencing the subgraph by its name `potion-subgraph`
+  - [docker-compose.yml](./docker-compose.yml) - Changing the default port number requires to update the list of exposed ports for the `graph-node` service
+
+- `VITE_DEVELOPMENT_MNEMONIC` and `DEPLOYER_MNEMONIC` - A passphrase of 12 or 24 words. these two must always match
 
 ### Environment variables
 
