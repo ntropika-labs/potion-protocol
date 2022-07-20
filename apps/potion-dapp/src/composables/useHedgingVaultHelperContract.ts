@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
@@ -51,6 +51,18 @@ export function useHedgingVaultHelperContract() {
     ) as HedgingVaultOperatorHelper;
   };
 
+  /**
+   * Contract Vars
+   */
+
+  const hedgingVaultAddress = ref("");
+  const actionsAddress = ref("");
+
+  onMounted(async () => {
+    const provider = initContractProvider();
+    hedgingVaultAddress.value = await provider.hedgingVault();
+    actionsAddress.value = await provider.potionBuyAction();
+  });
   //
 
   /**
@@ -186,5 +198,7 @@ export function useHedgingVaultHelperContract() {
     canPositionBeExitedLoading,
     canPositionBeExitedError,
     fetchCanPositionBeExited,
+    hedgingVaultAddress,
+    actionsAddress,
   };
 }
