@@ -13,7 +13,7 @@ export function useSelectableTokens() {
       .map((token) => token.symbol)
   );
 
-  const toggleToken = (address: string) => {
+  const toggleToken = async (address: string) => {
     const token = availableTokens.value.find((u) => u.address === address);
     if (token) {
       const tokenHasPrice = tokenPricesMap.value.get(token.address)?.success;
