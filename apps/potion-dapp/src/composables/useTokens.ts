@@ -1,9 +1,9 @@
 import { useAllCollateralizedProductsUnderlyingQuery } from "subgraph-queries/generated/urql";
 import { useTokenList } from "@/composables/useTokenList";
-import { useCoinGecko } from "@/composables/useCoinGecko";
-import { ref, computed, watch } from "vue";
+import { watch } from "vue";
+import { useSelectableTokens } from "@/composables/useSelectableTokens";
 
-import type { ApiTokenPrice, SelectableToken, Token } from "dapp-types";
+import type { SelectableToken } from "dapp-types";
 
 export function useTokens(collateral: string) {
   /*
@@ -11,21 +11,14 @@ export function useTokens(collateral: string) {
    * Prices are loaded from an API
    */
 
-  const availableTokens = ref<SelectableToken[]>([]);
-  const tokenPricesMap = ref(new Map<string, ApiTokenPrice>());
+  const { availableTokens, unselectedTokens, tokenPricesMap, toggleToken } =
+    useSelectableTokens();
 
-  const unselectedTokens = computed(() =>
-    availableTokens.value
-      .filter((token) => !token.selected)
-      .map((token) => token.symbol)
-  );
+  const variables = { collateral };
 
-  const { data: availableProducts } =
-    useAllCollateralizedProductsUnderlyingQuery({
-      variables: { collateral },
-    });
+  const { data } = useAllCollateralizedProductsUnderlyingQuery({ variables });
 
-  const tokenToSelectableToken = (
+  const getSelectableToken = (
     address: string,
     decimals = 18,
     selected = false
@@ -41,47 +34,10 @@ export function useTokens(collateral: string) {
     };
   };
 
-  const toggleToken = (address: string) => {
-    const token = availableTokens.value.find((u) => u.address === address);
-    if (token) {
-      const tokenHasPrice = tokenPricesMap.value.get(token.address)?.success;
-
-      token.selected = !token.selected;
-
-      if (token.selected && !tokenHasPrice) {
-        updateTokenPrice(token);
-      }
-    }
-  };
-
-  const updateTokenPrice = async (token: Token) => {
-    const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko(
-      undefined,
-      token.address
-    );
-    try {
-      await fetchTokenPrice();
-    } catch (error) {
-      console.error(
-        "Error while fetching token price. Affected token: " + token.name
-      );
-    } finally {
-      tokenPricesMap.value.set(token.address, {
-        loading: false,
-        price: price.value,
-        formattedPrice: formattedPrice.value,
-        success: success.value,
-      });
-    }
-  };
-
-  watch(availableProducts, () => {
+  watch(data, () => {
     availableTokens.value =
-      availableProducts?.value?.products?.map((product) =>
-        tokenToSelectableToken(
-          product.underlying.address,
-          parseInt(product.underlying.decimals)
-        )
+      data?.value?.products?.map(({ underlying }) =>
+        getSelectableToken(underlying.address, parseInt(underlying.decimals))
       ) ?? [];
   });
 
