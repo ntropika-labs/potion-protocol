@@ -35,7 +35,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
     try {
       const provider = initContractProvider();
       nextCycleTimestamp.value = parseInt(
-        formatUnits(await provider.nextCycleStartTimestamp())
+        formatUnits(await provider.nextCycleStartTimestamp(), 0)
       );
     } catch (error) {
       const errorMessage =
@@ -59,7 +59,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
     try {
       const provider = initContractProvider();
       cycleDurationSecs.value = parseFloat(
-        formatUnits(await provider.cycleDurationSecs())
+        formatUnits(await provider.cycleDurationSecs(), 0)
       );
     } catch (error) {
       const errorMessage =
@@ -154,7 +154,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
     try {
       const provider = initContractProvider();
       // return await provider.maxSwapDurationSecs();
-      return parseFloat(formatUnits(await provider.maxSwapDurationSecs()));
+      return parseFloat(formatUnits(await provider.maxSwapDurationSecs(), 0));
     } catch (error) {
       const errorMessage =
         error instanceof Error
