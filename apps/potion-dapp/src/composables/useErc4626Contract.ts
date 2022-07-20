@@ -88,7 +88,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       Promise.all([getAssetAddress(), getTotalAssets(), getVaultDecimals()]);
     });
   }
-  const { decimals } = useErc20Contract(assetAddress);
+  const {
+    name: assetName,
+    symbol: assetSymbol,
+    image: assetImage,
+    decimals: assetDecimals,
+  } = useErc20Contract(assetAddress);
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -100,11 +105,15 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const response = await contractProvider.maxDeposit(
           connectedWallet.value.accounts[0].address
         );
-        maxDeposit.value = parseFloat(formatUnits(response, decimals.value));
+        maxDeposit.value = parseFloat(
+          formatUnits(response, assetDecimals.value)
+        );
         maxDepositLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxDeposit(address);
-        maxDeposit.value = parseFloat(formatUnits(response, decimals.value));
+        maxDeposit.value = parseFloat(
+          formatUnits(response, assetDecimals.value)
+        );
         maxDepositLoading.value = false;
       } else {
         maxDepositLoading.value = false;
@@ -126,7 +135,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       previewDepositLoading.value = true;
       const contractProvider = initContractProvider();
       const response = await contractProvider.previewDeposit(
-        parseUnits(amount.toString(), decimals.value)
+        parseUnits(amount.toString(), assetDecimals.value)
       );
       return formatUnits(response, vaultDecimals.value);
     } catch (error) {
@@ -145,7 +154,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   const deposit = async (amount: number, self = true, receiver?: string) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString(), decimals.value);
+      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       try {
         depositLoading.value = true;
         if (self === true) {
@@ -216,7 +225,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const response = await contractProvider.previewMint(
         parseUnits(amount.toString(), vaultDecimals.value)
       );
-      return formatUnits(response, decimals.value);
+      return formatUnits(response, assetDecimals.value);
     } catch (error) {
       previewMintLoading.value = false;
       if (error instanceof Error) {
@@ -273,11 +282,15 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const response = await contractProvider.maxWithdraw(
           connectedWallet.value.accounts[0].address
         );
-        maxWithdraw.value = parseFloat(formatUnits(response, decimals.value));
+        maxWithdraw.value = parseFloat(
+          formatUnits(response, assetDecimals.value)
+        );
         maxWithdrawLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxWithdraw(address);
-        maxWithdraw.value = parseFloat(formatUnits(response, decimals.value));
+        maxWithdraw.value = parseFloat(
+          formatUnits(response, assetDecimals.value)
+        );
         maxWithdrawLoading.value = false;
       } else {
         maxWithdrawLoading.value = false;
@@ -299,9 +312,9 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       previewWithdrawLoading.value = true;
       const contractProvider = initContractProvider();
       const response = await contractProvider.previewWithdraw(
-        parseUnits(amount.toString(), decimals.value)
+        parseUnits(amount.toString(), assetDecimals.value)
       );
-      return formatUnits(response, decimals.value);
+      return formatUnits(response, assetDecimals.value);
     } catch (error) {
       previewWithdrawLoading.value = false;
       if (error instanceof Error) {
@@ -323,7 +336,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString(), decimals.value);
+      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       try {
         withdrawLoading.value = true;
         if (self === true) {
@@ -400,7 +413,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const response = await contractProvider.previewRedeem(
         parseUnits(amount.toString(), vaultDecimals.value)
       );
-      return formatUnits(response, decimals.value);
+      return formatUnits(response, assetDecimals.value);
     } catch (error) {
       previewRedeemLoading.value = false;
       if (error instanceof Error) {
@@ -463,7 +476,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   const convertToShares = async (amount: number) => {
     try {
       const contractProvider = initContractProvider();
-      const parsedAmount = parseUnits(amount.toString(), decimals.value);
+      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       const result = await contractProvider.convertToShares(parsedAmount);
       return formatUnits(result, vaultDecimals.value);
     } catch (error) {
@@ -478,7 +491,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   const convertToAssets = async (amount: BigNumber, digits: number) => {
     try {
       const contractProvider = initContractProvider();
-      const parsedAmount = parseUnits(amount.toString(), decimals.value);
+      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       const result = await contractProvider.convertToAssets(parsedAmount);
       return formatUnits(result, digits);
     } catch (error) {
@@ -577,6 +590,10 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
   return {
+    assetName,
+    assetSymbol,
+    assetDecimals,
+    assetImage,
     allowance,
     allowanceLoading,
     getAllowance,
