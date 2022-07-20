@@ -19,7 +19,6 @@ import type { BigNumber } from "@ethersproject/bignumber";
 export function useERC4626Upgradable(address: string | Ref<string>) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const vaultDecimals = 18;
   const initContractSigner = () => {
     return initContract(
       true,
@@ -38,6 +37,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     ) as ERC4626Upgradeable;
   };
 
+  const vaultDecimals = ref(0);
+
+  const getVaultDecimals = async () => {
+    const provider = initContractProvider();
+    vaultDecimals.value = await provider.decimals();
+  };
   const assetAddress = ref<string>("");
   const assetAddressLoading = ref(false);
   const getAssetAddress = async () => {
@@ -75,12 +80,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    Promise.all([getAssetAddress(), getTotalAssets()]);
+    Promise.all([getAssetAddress(), getTotalAssets(), getVaultDecimals()]);
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      Promise.all([getAssetAddress(), getTotalAssets()]);
+      Promise.all([getAssetAddress(), getTotalAssets(), getVaultDecimals()]);
     });
   }
   const { decimals } = useErc20Contract(assetAddress);
@@ -123,7 +128,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const response = await contractProvider.previewDeposit(
         parseUnits(amount.toString(), decimals.value)
       );
-      return formatUnits(response, vaultDecimals);
+      return formatUnits(response, vaultDecimals.value);
     } catch (error) {
       previewDepositLoading.value = false;
       if (error instanceof Error) {
@@ -183,11 +188,11 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const response = await contractProvider.maxMint(
           connectedWallet.value.accounts[0].address
         );
-        maxMint.value = parseFloat(formatUnits(response, vaultDecimals));
+        maxMint.value = parseFloat(formatUnits(response, vaultDecimals.value));
         maxMintLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxMint(address);
-        maxMint.value = parseFloat(formatUnits(response, vaultDecimals));
+        maxMint.value = parseFloat(formatUnits(response, vaultDecimals.value));
         maxMintLoading.value = false;
       } else {
         maxMintLoading.value = false;
@@ -209,7 +214,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       previewMintLoading.value = true;
       const contractProvider = initContractProvider();
       const response = await contractProvider.previewMint(
-        parseUnits(amount.toString(), vaultDecimals)
+        parseUnits(amount.toString(), vaultDecimals.value)
       );
       return formatUnits(response, decimals.value);
     } catch (error) {
@@ -228,7 +233,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   const mint = async (amount: number, self = true, receiver: string) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString(), vaultDecimals);
+      const parsedAmount = parseUnits(amount.toString(), vaultDecimals.value);
       try {
         mintLoading.value = true;
         if (self === true) {
@@ -363,11 +368,15 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const response = await contractProvider.maxRedeem(
           connectedWallet.value.accounts[0].address
         );
-        maxRedeem.value = parseFloat(formatUnits(response, vaultDecimals));
+        maxRedeem.value = parseFloat(
+          formatUnits(response, vaultDecimals.value)
+        );
         maxRedeemLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxRedeem(address);
-        maxRedeem.value = parseFloat(formatUnits(response, vaultDecimals));
+        maxRedeem.value = parseFloat(
+          formatUnits(response, vaultDecimals.value)
+        );
         maxRedeemLoading.value = false;
       } else {
         maxRedeemLoading.value = false;
@@ -389,7 +398,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       previewRedeemLoading.value = true;
       const contractProvider = initContractProvider();
       const response = await contractProvider.previewRedeem(
-        parseUnits(amount.toString(), vaultDecimals)
+        parseUnits(amount.toString(), vaultDecimals.value)
       );
       return formatUnits(response, decimals.value);
     } catch (error) {
@@ -415,7 +424,10 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const contractSigner = initContractSigner();
       try {
         redeemLoading.value = true;
-        const sharesBigNumbers = parseUnits(shares.toString(), vaultDecimals);
+        const sharesBigNumbers = parseUnits(
+          shares.toString(),
+          vaultDecimals.value
+        );
         if (self === true) {
           redeemTx.value = await contractSigner.redeem(
             sharesBigNumbers,
@@ -453,7 +465,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const contractProvider = initContractProvider();
       const parsedAmount = parseUnits(amount.toString(), decimals.value);
       const result = await contractProvider.convertToShares(parsedAmount);
-      return formatUnits(result, vaultDecimals);
+      return formatUnits(result, vaultDecimals.value);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot convert to shares: ${error.message}`);
@@ -486,7 +498,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
         );
-        return formatUnits(result, vaultDecimals);
+        return formatUnits(result, vaultDecimals.value);
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(`Cannot get balance: ${error.message}`);
@@ -509,7 +521,9 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         const contractSigner = initContractSigner();
         approveTx.value = await contractSigner.approve(
           unref(address),
-          infinite ? MaxUint256 : parseUnits(amount.toString(), vaultDecimals)
+          infinite
+            ? MaxUint256
+            : parseUnits(amount.toString(), vaultDecimals.value)
         );
         approveReceipt.value = await approveTx.value.wait();
         approveLoading.value = false;
