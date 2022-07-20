@@ -1,4 +1,11 @@
 import { ref } from "vue";
+
+import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { useOnboard } from "@onboard-composable";
+import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
+
+import { useEthersContract } from "./useEthersContract";
+
 import type {
   ContractTransaction,
   ContractReceipt,
@@ -8,12 +15,6 @@ import type {
   HedgingVaultOperatorHelper,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
-import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
-
-import { useOnboard } from "@onboard-composable";
-import { useEthersContract } from "./useEthersContract";
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
-
 // TODO: fix types
 // export interface UniSwapInfo {
 //   inputToken: Token;
