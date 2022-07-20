@@ -37,12 +37,18 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     ) as ERC4626Upgradeable;
   };
 
-  const vaultDecimals = ref(0);
-
   const getVaultDecimals = async () => {
     const provider = initContractProvider();
     vaultDecimals.value = await provider.decimals();
   };
+
+  const {
+    name: vaultName,
+    symbol: vaultSymbol,
+    image: vaultImage,
+    decimals: vaultDecimals,
+  } = useErc20Contract(address);
+
   const assetAddress = ref<string>("");
   const assetAddressLoading = ref(false);
   const getAssetAddress = async () => {
@@ -80,12 +86,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    Promise.all([getAssetAddress(), getTotalAssets(), getVaultDecimals()]);
+    Promise.all([getAssetAddress(), getTotalAssets()]);
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      Promise.all([getAssetAddress(), getTotalAssets(), getVaultDecimals()]);
+      Promise.all([getAssetAddress(), getTotalAssets()]);
     });
   }
   const {
@@ -590,6 +596,10 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
   return {
+    vaultName,
+    vaultDecimals,
+    vaultSymbol,
+    vaultImage,
     assetName,
     assetSymbol,
     assetDecimals,
@@ -597,6 +607,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     allowance,
     allowanceLoading,
     getAllowance,
+    getVaultDecimals,
     approveLoading,
     approveReceipt,
     approveSpending,
