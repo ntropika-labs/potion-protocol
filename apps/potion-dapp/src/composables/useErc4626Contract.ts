@@ -511,6 +511,41 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
 
+  const allowance = ref(0);
+  const allowanceLoading = ref(false);
+  const getAllowance = async (self = true, spender: string, owner?: string) => {
+    try {
+      allowanceLoading.value = true;
+      const contractProvider = initContractProvider();
+      if (connectedWallet.value && self === true && spender) {
+        const response = await contractProvider.allowance(
+          connectedWallet.value.accounts[0].address,
+          spender
+        );
+        allowance.value = parseFloat(
+          formatUnits(response, vaultDecimals.value)
+        );
+        allowanceLoading.value = false;
+      } else if (self === false && owner && spender) {
+        const response = await contractProvider.allowance(owner, spender);
+        allowance.value = parseFloat(
+          formatUnits(response, vaultDecimals.value)
+        );
+        allowanceLoading.value = false;
+      } else {
+        allowanceLoading.value = false;
+        throw new Error("No address provided");
+      }
+    } catch (error) {
+      allowanceLoading.value = false;
+      if (error instanceof Error) {
+        throw new Error(`Cannot get allowance: ${error.message}`);
+      } else {
+        throw new Error("Cannot get allowance");
+      }
+    }
+  };
+
   const approveLoading = ref(false);
   const approveTx = ref<ContractTransaction | null>(null);
   const approveReceipt = ref<ContractReceipt | null>(null);
@@ -542,6 +577,9 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
   return {
+    allowance,
+    allowanceLoading,
+    getAllowance,
     approveLoading,
     approveReceipt,
     approveSpending,
