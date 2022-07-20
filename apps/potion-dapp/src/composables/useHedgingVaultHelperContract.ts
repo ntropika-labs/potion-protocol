@@ -58,11 +58,6 @@ export function useHedgingVaultHelperContract() {
   const hedgingVaultAddress = ref("");
   const actionsAddress = ref("");
 
-  onMounted(async () => {
-    const provider = initContractProvider();
-    hedgingVaultAddress.value = await provider.hedgingVault();
-    actionsAddress.value = await provider.potionBuyAction();
-  });
   //
 
   /**
@@ -176,8 +171,15 @@ export function useHedgingVaultHelperContract() {
   };
 
   // Automatically fetch current position on composable init
-  fetchCanPositionBeEntered();
-  fetchCanPositionBeExited();
+  onMounted(async () => {
+    const provider = initContractProvider();
+    hedgingVaultAddress.value = await provider.hedgingVault();
+    actionsAddress.value = await provider.potionBuyAction();
+    await Promise.all([
+      fetchCanPositionBeEntered(),
+      fetchCanPositionBeExited(),
+    ]);
+  });
 
   return {
     enterPositionTx,
