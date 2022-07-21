@@ -37,7 +37,7 @@ export function useInvestmentVault(address: string | Ref<string>) {
   const operatorLoading = ref(false);
   const getOperator = async () => {
     operatorLoading.value = true;
-    const contract = await initContractProvider();
+    const contract = initContractProvider();
 
     try {
       operator.value = await contract.getOperator();
@@ -57,7 +57,7 @@ export function useInvestmentVault(address: string | Ref<string>) {
   const adminLoading = ref(false);
   const getAdmin = async () => {
     adminLoading.value = true;
-    const contract = await initContractProvider();
+    const contract = initContractProvider();
     try {
       admin.value = await contract.getAdmin();
       adminLoading.value = false;
@@ -76,7 +76,7 @@ export function useInvestmentVault(address: string | Ref<string>) {
   const strategistLoading = ref(false);
   const getStrategist = async () => {
     strategistLoading.value = true;
-    const contract = await initContractProvider();
+    const contract = initContractProvider();
     try {
       strategist.value = await contract.getStrategist();
       strategistLoading.value = false;
@@ -95,17 +95,13 @@ export function useInvestmentVault(address: string | Ref<string>) {
   const principalPercentagesLoading = ref(false);
   const getPrincipalPercentages = async () => {
     principalPercentagesLoading.value = true;
-    principalPercentages.value = [];
-    const contract = await initContractProvider();
+    const contract = initContractProvider();
     try {
       const response = await contract.getPrincipalPercentages();
-      response.forEach((x) => {
-        principalPercentages.value.push(parseFloat(formatUnits(x, 6)));
+      principalPercentages.value = response.map((x) => {
+        return parseFloat(formatUnits(x, 6));
       });
-      principalPercentagesLoading.value = false;
     } catch (error) {
-      principalPercentagesLoading.value = false;
-
       if (error instanceof Error) {
         throw new Error(
           `cannot get the principal percentages: ${error.message}`
@@ -113,6 +109,8 @@ export function useInvestmentVault(address: string | Ref<string>) {
       } else {
         throw new Error(`cannot get the principal percentages: ${error}`);
       }
+    } finally {
+      principalPercentagesLoading.value = false;
     }
   };
 

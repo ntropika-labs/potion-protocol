@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, unref } from "vue";
 
 import { formatUnits } from "@ethersproject/units";
 import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
@@ -8,6 +8,12 @@ import { useEthersContract } from "./useEthersContract";
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
+
+export interface ActionPayout {
+  currentPayout: number;
+  isFinal: boolean;
+}
+
 // ActionsManager allows for querying the address of the action
 export function usePotionBuyActionContract(contractAddress: string) {
   const { initContract } = useEthersContract();
@@ -148,13 +154,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
   errorRegistry["swapSlippage"] = swapSlippageError;
 
   //Max swap duration
+  const maxSwapDurationSecs = ref(0);
   const maxSwapDurationSecsLoading = ref(false);
   const maxSwapDurationSecsError = ref<string | null>(null);
   const getMaxSwapDurationSecs = async () => {
     try {
       const provider = initContractProvider();
-      // return await provider.maxSwapDurationSecs();
-      return parseFloat(formatUnits(await provider.maxSwapDurationSecs(), 0));
+      maxSwapDurationSecs.value = parseFloat(
+        formatUnits(await provider.maxSwapDurationSecs(), 0)
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -193,23 +201,60 @@ export function usePotionBuyActionContract(contractAddress: string) {
   };
   errorRegistry["strikePrice"] = strikePercentageError;
 
+  //Current Payout
+  const currentPayout = ref<ActionPayout>();
+  const currentPayoutLoading = ref(false);
+  const currentPayoutError = ref<string | null>(null);
+  const getCurrentPayout = async (investmentAsset: string | Ref<string>) => {
+    try {
+      const provider = initContractProvider();
+      const payout = await provider.calculateCurrentPayout(
+        unref(investmentAsset).toLowerCase()
+      );
+      currentPayout.value = {
+        isFinal: payout[0],
+        currentPayout: parseFloat(formatUnits(payout[1], 6)),
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot get current payout: ${error.message}`
+          : "Cannot get current payout";
+      currentPayoutError.value = errorMessage;
+
+      throw new Error(errorMessage);
+    } finally {
+      currentPayoutLoading.value = false;
+    }
+  };
+  errorRegistry["currentPayout"] = currentPayoutError;
+
   // Get strategy info
 
   const strategyLoading = ref(false);
+  const getStrategyInfo = async () => {
+    try {
+      strategyLoading.value = true;
+      await Promise.all([
+        getNextCycleTimestamp(),
+        getCycleDurationSecs(),
+        getMaxPremiumPercentage(),
+        getMaxSwapDurationSecs(),
+        getPremiumSlippage(),
+        getSwapSlippage(),
+        getStrikePercentage(),
+      ]);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot get strategy info: ${error.message}`
+          : "Cannot get strategy info";
 
-  onMounted(async () => {
-    strategyLoading.value = true;
-    await Promise.all([
-      getNextCycleTimestamp(),
-      getCycleDurationSecs(),
-      getMaxPremiumPercentage(),
-      getMaxSwapDurationSecs(),
-      getPremiumSlippage(),
-      getSwapSlippage(),
-      getStrikePercentage(),
-    ]);
-    strategyLoading.value = false;
-  });
+      throw new Error(errorMessage);
+    } finally {
+      strategyLoading.value = false;
+    }
+  };
   const strategyError = computed(() => {
     const errors = Object.values(errorRegistry);
     let strategyError: string | null = null;
@@ -225,48 +270,10 @@ export function usePotionBuyActionContract(contractAddress: string) {
     }
     return strategyError;
   });
-  const getStrategyInfo = async () => {
-    try {
-      strategyLoading.value = true;
-      return await Promise.all([
-        getNextCycleTimestamp(),
-        getCycleDurationSecs(),
-        getMaxPremiumPercentage(),
-        getMaxSwapDurationSecs(),
-        getPremiumSlippage(),
-        getSwapSlippage(),
-        getStrikePercentage(),
-      ]).then(
-        ([
-          nextCycleTimestamp,
-          cycleDurationSecs,
-          maxPremiumPercentage,
-          maxSwapDurationSecs,
-          premiumSlippage,
-          swapSlippage,
-          strikePrice,
-        ]) => {
-          return {
-            nextCycleTimestamp,
-            cycleDurationSecs,
-            maxPremiumPercentage,
-            maxSwapDurationSecs,
-            premiumSlippage,
-            swapSlippage,
-            strikePrice,
-          };
-        }
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Cannot fetch strategy info: ${error.message}`);
-      } else {
-        throw new Error("Cannot fetch strategy info");
-      }
-    } finally {
-      strategyLoading.value = false;
-    }
-  };
+
+  onMounted(async () => {
+    await getStrategyInfo();
+  });
 
   return {
     strategyLoading,
@@ -274,24 +281,35 @@ export function usePotionBuyActionContract(contractAddress: string) {
     getStrategyInfo,
     nextCycleTimestampLoading,
     nextCycleTimestampError,
+    nextCycleTimestamp,
     getNextCycleTimestamp,
     cycleDurationSecsLoading,
     cycleDurationSecsError,
+    cycleDurationSecs,
     getCycleDurationSecs,
     maxPremiumPercentageLoading,
     maxPremiumPercentageError,
+    maxPremiumPercentage,
     getMaxPremiumPercentage,
     premiumSlippageLoading,
     premiumSlippageError,
+    premiumSlippage,
     getPremiumSlippage,
     swapSlippageLoading,
     swapSlippageError,
+    swapSlippage,
     getSwapSlippage,
     maxSwapDurationSecsLoading,
     maxSwapDurationSecsError,
+    maxSwapDurationSecs,
     getMaxSwapDurationSecs,
     strikePercentageLoading,
     strikePercentageError,
+    strikePercentage,
     getStrikePercentage,
+    currentPayoutLoading,
+    currentPayoutError,
+    currentPayout,
+    getCurrentPayout,
   };
 }
