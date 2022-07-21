@@ -28,7 +28,7 @@ import {
   oTokenIncrementPurchasesCount,
   oTokenSettled,
 } from "./otoken";
-import { collateralFixedtoDecimals } from "./token";
+import { collateralToDecimals } from "./token";
 import { Actions } from "./enums";
 
 const ZERO_BIGDECIMAL = BigDecimal.fromString("0");
@@ -331,7 +331,7 @@ export function handleDeposited(event: Deposited): void {
   //Deposited(address indexed lp, uint256 indexed poolId, uint256 amount);
   const poolId = createPoolId(event.params.lp, event.params.poolId);
   const pool = Pool.load(poolId);
-  const tokenAmount = collateralFixedtoDecimals(event.params.amount);
+  const tokenAmount = collateralToDecimals(event.params.amount);
   if (pool) {
     pool.size = pool.size.plus(tokenAmount);
     pool.unlocked = pool.unlocked.plus(tokenAmount);
@@ -387,7 +387,7 @@ export function handleDeposited(event: Deposited): void {
 export function handleWithdrawn(event: Withdrawn): void {
   const poolId = createPoolId(event.params.lp, event.params.poolId);
   const pool = Pool.load(poolId);
-  const withdrawalAmount = collateralFixedtoDecimals(event.params.amount);
+  const withdrawalAmount = collateralToDecimals(event.params.amount);
 
   if (pool == null) {
     log.error(
@@ -578,7 +578,7 @@ export function handleOptionsBought(event: OptionsBought): void {
     event.params.otoken,
     event.params.numberOfOtokens
   );
-  const premiumPaid = collateralFixedtoDecimals(event.params.totalPremiumPaid);
+  const premiumPaid = collateralToDecimals(event.params.totalPremiumPaid);
 
   if (record == null) {
     const otokenAddress = getOTokenIdFromAddress(event.params.otoken);
@@ -617,10 +617,8 @@ export function handleOptionsSold(event: OptionsSold): void {
       event.params.otoken,
       event.params.numberOfOtokens
     );
-    const premiumAmount = collateralFixedtoDecimals(
-      event.params.premiumReceived
-    );
-    const liquidityCollateralized = collateralFixedtoDecimals(
+    const premiumAmount = collateralToDecimals(event.params.premiumReceived);
+    const liquidityCollateralized = collateralToDecimals(
       event.params.liquidityCollateralized
     );
 
@@ -729,7 +727,7 @@ export function handleOptionSettlementDistributed(
   const record = LPRecord.load(recordID);
 
   if (record) {
-    const collateralReturned = collateralFixedtoDecimals(
+    const collateralReturned = collateralToDecimals(
       event.params.collateralReturned
     );
     record.liquidityCollateralized =
