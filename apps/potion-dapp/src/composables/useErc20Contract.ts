@@ -3,6 +3,7 @@ import type {
   ContractTransaction,
   ContractReceipt,
 } from "@ethersproject/contracts";
+import { isArray } from "lodash";
 import { isRef, onMounted, ref, unref, watch } from "vue";
 
 import { useTokenList } from "@/composables/useTokenList";
@@ -80,23 +81,35 @@ export function useErc20Contract(address: string | Ref<string>) {
     }
   };
 
-  onMounted(async () => {
+  const fetchErc20Info = async () => {
     await Promise.all([getName(), getSymbol(), getDecimals()]);
     const { image: tokenImage } = useTokenList(unref(address));
     image.value = tokenImage;
+  };
+
+  onMounted(async () => {
+    await fetchErc20Info();
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      await Promise.all([getName(), getSymbol(), getDecimals()]);
-      const { image: tokenImage } = useTokenList(unref(address));
-      image.value = tokenImage;
+      await fetchErc20Info();
     });
   }
 
   const userBalance = ref(0);
   const balance = ref(0);
-  const getTokenBalance = async (self = true, walletAddress?: string) => {
+  const balances = ref<number[]>([]);
+  /**
+   *
+   * @param self if true, the balance is the balance of the user connected, otherwise the balance of the walletAddress
+   * @param walletAddresses can be an array of addresses or a single address
+   * @return The return is added for convenience - it returns a number or an array of numbers
+   */
+  const getTokenBalance = async (
+    self = true,
+    walletAddresses?: string | string[]
+  ) => {
     try {
       const contractProvider = initContractProvider();
 
@@ -104,10 +117,29 @@ export function useErc20Contract(address: string | Ref<string>) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
         );
-        userBalance.value = parseFloat(formatUnits(result, 8));
-      } else if (self === false && walletAddress) {
-        const result = await contractProvider.balanceOf(walletAddress);
-        balance.value = parseFloat(formatUnits(result, 8));
+        userBalance.value = parseFloat(formatUnits(result, decimals.value));
+        return userBalance.value;
+      } else if (
+        self === false &&
+        walletAddresses &&
+        !isArray(walletAddresses)
+      ) {
+        const result = await contractProvider.balanceOf(walletAddresses);
+        balance.value = parseFloat(formatUnits(result, decimals.value));
+        return balance.value;
+      } else if (
+        self === false &&
+        walletAddresses &&
+        isArray(walletAddresses)
+      ) {
+        const result = await Promise.all(
+          walletAddresses.map(async (address) => {
+            const result = await contractProvider.balanceOf(address);
+            return parseFloat(formatUnits(result, decimals.value));
+          })
+        );
+        balances.value = result;
+        return balances.value;
       } else {
         throw new Error("Cannot fetch the balance");
       }
@@ -134,20 +166,23 @@ export function useErc20Contract(address: string | Ref<string>) {
           spender
         );
         console.info(
-          `Address allowance for ${spender} is ${formatUnits(response, 6)}`
+          `Address allowance for ${spender} is ${formatUnits(
+            response,
+            decimals.value
+          )}`
         );
-        userAllowance.value = parseFloat(formatUnits(response, 6));
-        fetchUserAllowanceLoading.value = false;
+        userAllowance.value = parseFloat(formatUnits(response, decimals.value));
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      fetchUserAllowanceLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot retrieve the user allowance: ${error.message}`);
       } else {
         throw new Error("Cannot retrieve the user allowance");
       }
+    } finally {
+      fetchUserAllowanceLoading.value = false;
     }
   };
 
@@ -168,12 +203,10 @@ export function useErc20Contract(address: string | Ref<string>) {
           infinite ? MaxUint256 : parseUnits(amount.toString(), 6)
         );
         approveReceipt.value = await approveTx.value.wait();
-        approveLoading.value = false;
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      approveLoading.value = false;
       if (error instanceof Error) {
         throw new Error(
           `Cannot approve for the liquidity pool: ${error.message}`
@@ -181,6 +214,8 @@ export function useErc20Contract(address: string | Ref<string>) {
       } else {
         throw new Error("Cannot approve for the liquidity pool");
       }
+    } finally {
+      approveLoading.value = false;
     }
   };
   return {
