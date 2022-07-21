@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useOnboard } from "@onboard-composable";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
+import { useOnboard } from "@onboard-composable";
 
 const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
@@ -15,12 +15,13 @@ const ViewPools = () => import("@/views/Pools/ViewPools.vue");
 const PoolTemplate = () => import("@/views/PoolTemplate.vue");
 const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
 const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
+const HedgingVault = () => import("@/views/HedgingVault.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/:pathMatch(.*)*",
+      path: "/:pathMatch(.)",
       name: "NotFound",
       component: NotFound,
       meta: { layout: EmptyLayout },
@@ -34,6 +35,12 @@ const router = createRouter({
       path: "/templates",
       name: "discover-templates",
       component: DiscoverTemplates,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/hedging-vault",
+      name: "hedging-vault",
+      component: HedgingVault,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
