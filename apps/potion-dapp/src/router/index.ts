@@ -38,7 +38,7 @@ const router = createRouter({
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
-      path: "/hedging-vault",
+      path: "/hedging-vault/:id",
       name: "hedging-vault",
       component: HedgingVault,
       meta: { requireWallet: false, layout: BaseLayout },
