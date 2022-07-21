@@ -37,17 +37,17 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     ) as ERC4626Upgradeable;
   };
 
-  const getVaultDecimals = async () => {
-    const provider = initContractProvider();
-    vaultDecimals.value = await provider.decimals();
-  };
-
   const {
     name: vaultName,
     symbol: vaultSymbol,
     image: vaultImage,
     decimals: vaultDecimals,
   } = useErc20Contract(address);
+
+  const getVaultDecimals = async () => {
+    const provider = initContractProvider();
+    vaultDecimals.value = await provider.decimals();
+  };
 
   const assetAddress = ref<string>("");
   const assetAddressLoading = ref(false);
@@ -56,14 +56,14 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       assetAddressLoading.value = true;
       const contractProvider = initContractProvider();
       assetAddress.value = await contractProvider.asset();
-      assetAddressLoading.value = false;
     } catch (error) {
-      assetAddressLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the asset address: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the asset address`);
       }
+    } finally {
+      assetAddressLoading.value = false;
     }
   };
 
@@ -74,24 +74,27 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       totalAssetsLoading.value = true;
       const contractProvider = initContractProvider();
       totalAssets.value = await contractProvider.totalAssets();
-      totalAssetsLoading.value = false;
     } catch (error) {
-      totalAssetsLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the total assets: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the total assets`);
       }
+    } finally {
+      totalAssetsLoading.value = false;
     }
   };
 
-  onMounted(async () => {
+  const getVaultAssetInfo = async () => {
     await Promise.all([getAssetAddress(), getTotalAssets()]);
+  };
+  onMounted(async () => {
+    await getVaultAssetInfo();
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      await Promise.all([getAssetAddress(), getTotalAssets()]);
+      await getVaultAssetInfo();
     });
   }
   const {
@@ -114,24 +117,22 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         maxDeposit.value = parseFloat(
           formatUnits(response, assetDecimals.value)
         );
-        maxDepositLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxDeposit(address);
         maxDeposit.value = parseFloat(
           formatUnits(response, assetDecimals.value)
         );
-        maxDepositLoading.value = false;
       } else {
-        maxDepositLoading.value = false;
         throw new Error("No address provided");
       }
     } catch (error) {
-      maxDepositLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the max deposit: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the max deposit`);
       }
+    } finally {
+      maxDepositLoading.value = false;
     }
   };
 
@@ -145,12 +146,13 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       );
       return formatUnits(response, vaultDecimals.value);
     } catch (error) {
-      previewDepositLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot preview the deposit: ${error.message}`);
       } else {
         throw new Error(`Cannot preview the deposit`);
       }
+    } finally {
+      previewDepositLoading.value = true;
     }
   };
 
@@ -174,19 +176,18 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
             receiver
           );
         } else {
-          depositLoading.value = false;
           throw new Error("Invalid deposit parameters");
         }
         const receipt = await depositTx.value.wait();
         depositReceipt.value = receipt;
-        depositLoading.value = false;
       } catch (error) {
-        depositLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot deposit: ${error.message}`);
         } else {
           throw new Error("Cannot deposit");
         }
+      } finally {
+        depositLoading.value = false;
       }
     } else {
       throw new Error("Connect your wallet first");
@@ -204,22 +205,20 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
           connectedWallet.value.accounts[0].address
         );
         maxMint.value = parseFloat(formatUnits(response, vaultDecimals.value));
-        maxMintLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxMint(address);
         maxMint.value = parseFloat(formatUnits(response, vaultDecimals.value));
-        maxMintLoading.value = false;
       } else {
-        maxMintLoading.value = false;
         throw new Error("No address provided");
       }
     } catch (error) {
-      maxMintLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the max mint: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the max mint`);
       }
+    } finally {
+      maxMintLoading.value = false;
     }
   };
 
@@ -233,12 +232,13 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       );
       return formatUnits(response, assetDecimals.value);
     } catch (error) {
-      previewMintLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot preview the mint: ${error.message}`);
       } else {
         throw new Error(`Cannot preview the mint`);
       }
+    } finally {
+      previewMintLoading.value = false;
     }
   };
 
@@ -259,19 +259,18 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         } else if (self === false && receiver) {
           mintTx.value = await contractSigner.mint(parsedAmount, receiver);
         } else {
-          mintLoading.value = false;
           throw new Error("Invalid mint parameters");
         }
         const receipt = await mintTx.value.wait();
         mintReceipt.value = receipt;
-        mintLoading.value = false;
       } catch (error) {
-        mintLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot mint: ${error.message}`);
         } else {
           throw new Error("Cannot mint");
         }
+      } finally {
+        mintLoading.value = false;
       }
     } else {
       throw new Error("Connect your wallet first");
@@ -291,24 +290,22 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         maxWithdraw.value = parseFloat(
           formatUnits(response, assetDecimals.value)
         );
-        maxWithdrawLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxWithdraw(address);
         maxWithdraw.value = parseFloat(
           formatUnits(response, assetDecimals.value)
         );
-        maxWithdrawLoading.value = false;
       } else {
-        maxWithdrawLoading.value = false;
         throw new Error("No address provided");
       }
     } catch (error) {
-      maxWithdrawLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the max withdraw: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the max withdraw`);
       }
+    } finally {
+      maxWithdrawLoading.value = false;
     }
   };
 
@@ -322,12 +319,13 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       );
       return formatUnits(response, assetDecimals.value);
     } catch (error) {
-      previewWithdrawLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot preview the withdraw: ${error.message}`);
       } else {
         throw new Error(`Cannot preview the withdraw`);
       }
+    } finally {
+      previewWithdrawLoading.value = false;
     }
   };
 
@@ -358,19 +356,18 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
             owner
           );
         } else {
-          withdrawLoading.value = false;
           throw new Error("Invalid withdraw parameters");
         }
         const receipt = await withdrawTx.value.wait();
         withdrawReceipt.value = receipt;
-        withdrawLoading.value = false;
       } catch (error) {
-        withdrawLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot withdraw: ${error.message}`);
         } else {
           throw new Error("Cannot withdraw");
         }
+      } finally {
+        withdrawLoading.value = false;
       }
     } else {
       throw new Error("Connect your wallet first");
@@ -390,24 +387,22 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         maxRedeem.value = parseFloat(
           formatUnits(response, vaultDecimals.value)
         );
-        maxRedeemLoading.value = false;
       } else if (self === false && address) {
         const response = await contractProvider.maxRedeem(address);
         maxRedeem.value = parseFloat(
           formatUnits(response, vaultDecimals.value)
         );
-        maxRedeemLoading.value = false;
       } else {
-        maxRedeemLoading.value = false;
         throw new Error("No address provided");
       }
     } catch (error) {
-      maxRedeemLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the max redeem: ${error.message}`);
       } else {
         throw new Error(`Cannot fetch the max redeem`);
       }
+    } finally {
+      maxRedeemLoading.value = false;
     }
   };
 
@@ -421,12 +416,13 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       );
       return formatUnits(response, assetDecimals.value);
     } catch (error) {
-      previewRedeemLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot preview the redeem: ${error.message}`);
       } else {
         throw new Error(`Cannot preview the redeem`);
       }
+    } finally {
+      previewRedeemLoading.value = false;
     }
   };
 
@@ -460,19 +456,18 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
             owner
           );
         } else {
-          redeemLoading.value = false;
           throw new Error("Invalid redeem parameters");
         }
         const receipt = await redeemTx.value.wait();
         redeemReceipt.value = receipt;
-        redeemLoading.value = false;
       } catch (error) {
-        redeemLoading.value = false;
         if (error instanceof Error) {
           throw new Error(`Cannot redeem: ${error.message}`);
         } else {
           throw new Error("Cannot redeem");
         }
+      } finally {
+        redeemLoading.value = false;
       }
     } else {
       throw new Error("Connect your wallet first");
@@ -544,24 +539,22 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         allowance.value = parseFloat(
           formatUnits(response, vaultDecimals.value)
         );
-        allowanceLoading.value = false;
       } else if (self === false && owner && spender) {
         const response = await contractProvider.allowance(owner, spender);
         allowance.value = parseFloat(
           formatUnits(response, vaultDecimals.value)
         );
-        allowanceLoading.value = false;
       } else {
-        allowanceLoading.value = false;
         throw new Error("No address provided");
       }
     } catch (error) {
-      allowanceLoading.value = false;
       if (error instanceof Error) {
         throw new Error(`Cannot get allowance: ${error.message}`);
       } else {
         throw new Error("Cannot get allowance");
       }
+    } finally {
+      allowanceLoading.value = false;
     }
   };
 
@@ -580,12 +573,10 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
             : parseUnits(amount.toString(), vaultDecimals.value)
         );
         approveReceipt.value = await approveTx.value.wait();
-        approveLoading.value = false;
       } else {
         throw new Error("Connect your wallet first");
       }
     } catch (error) {
-      approveLoading.value = false;
       if (error instanceof Error) {
         throw new Error(
           `Cannot approve for the liquidity pool: ${error.message}`
@@ -593,6 +584,8 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       } else {
         throw new Error("Cannot approve for the liquidity pool");
       }
+    } finally {
+      approveLoading.value = false;
     }
   };
   return {
