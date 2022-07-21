@@ -94,9 +94,9 @@ export function useErc20Contract(address: string | Ref<string>) {
     });
   }
 
-  const useBalance = ref(0);
+  const userBalance = ref(0);
   const balance = ref(0);
-  const getTokenBalance = async (self = true, address?: string) => {
+  const getTokenBalance = async (self = true, walletAddress?: string) => {
     try {
       const contractProvider = initContractProvider();
 
@@ -104,9 +104,9 @@ export function useErc20Contract(address: string | Ref<string>) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
         );
-        useBalance.value = parseFloat(formatUnits(result, 8));
-      } else if (self === false && address) {
-        const result = await contractProvider.balanceOf(address);
+        userBalance.value = parseFloat(formatUnits(result, 8));
+      } else if (self === false && walletAddress) {
+        const result = await contractProvider.balanceOf(walletAddress);
         balance.value = parseFloat(formatUnits(result, 8));
       } else {
         throw new Error("Cannot fetch the balance");
