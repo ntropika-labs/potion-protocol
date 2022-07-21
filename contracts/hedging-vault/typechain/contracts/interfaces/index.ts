@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IAction } from "./IAction";
+export type { IActionsContainer } from "./IActionsContainer";
 export type { IActionsManager } from "./IActionsManager";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";

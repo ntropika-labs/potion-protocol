@@ -4,14 +4,13 @@ import type {
 } from "@ethersproject/contracts";
 
 import type { ERC20Upgradeable } from "@potion-protocol/core/typechain";
-import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
-
 import { ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
+import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 

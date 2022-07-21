@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 
-import { rpcUrl, webSocketUrl } from "@/helpers";
+import { ethereumNetwork, rpcUrl, webSocketUrl } from "@/helpers";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
 
 import type { Block } from "@ethersproject/providers";
@@ -39,8 +39,26 @@ export function useEthersProvider() {
       loading.value = false;
     }
   };
+  const lookupAddress = async (address: string) => {
+    try {
+      loading.value = true;
+      const provider = initProvider(false);
+      if (ethereumNetwork === "mainnet") {
+        const ens = await provider.lookupAddress(address);
+        return ens ?? address;
+      }
+      return address;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("cannot get the ens for this address");
+      }
+    }
+  };
 
   return {
+    lookupAddress,
     initProvider,
     getBlock,
     block,
