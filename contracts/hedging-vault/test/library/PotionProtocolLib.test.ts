@@ -88,7 +88,7 @@ describe("PotionProtocolLib", function () {
             },
         ];
 
-        const expectedPremium = 2567;
+        const expectedPremium = BigNumber.from(2567);
 
         const buyInfo: PotionBuyInfoStruct = {
             targetPotionAddress: potionAddress,
@@ -175,7 +175,7 @@ describe("PotionProtocolLib", function () {
             },
         ];
 
-        const expectedPremium = 2567;
+        const expectedPremium = BigNumber.from(2567);
 
         const buyInfo: PotionBuyInfoStruct = {
             targetPotionAddress: potionAddress,

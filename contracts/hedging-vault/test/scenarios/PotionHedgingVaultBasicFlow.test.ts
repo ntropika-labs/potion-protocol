@@ -18,6 +18,7 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as PercentageUtils from "../utils/PercentageUtils";
 import { NetworksType } from "../../hardhat.helpers";
 import { asMock } from "../../scripts/test/MocksLibrary";
+import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 
 /**
     @notice Hedging Vault basic flow unit tests    
@@ -134,9 +135,33 @@ describe("HedgingVault", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it.only("Full cycle (deposit, enter, exit, redeem)", async function () {
-        // Srtike price always has 8 decimals
-        const strikePriceInUSDC = PercentageUtils.applyPercentage(100000000000, tEnv.strikePercentage);
+    it("Full cycle (deposit, enter, exit, redeem)", async function () {
+        // Test Settings
+        const underlyingAssetPriceInUSD = BigNumber.from(100000000000); // 1000 USDC with 8 decimals
+        const USDCPriceInUSD = BigNumber.from(100000000); // 1 USDC with 8 decimals
+
+        const amountToBeInvested = ethers.utils.parseEther("20");
+        const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
+
+        /*
+            COLLATERAL
+        */
+        const amountProtected = PercentageUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
+        const amountProtectedInUSDC = amountProtected
+            .mul(underlyingAssetPriceInUSD)
+            .div(USDCPriceInUSD)
+            .div(BigNumber.from(1000000000000)); // USDC only uses 8 decimals
+        const collateralRequiredInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, tEnv.strikePercentage);
+
+        const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
+        const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
+
+        const lpAddress = (await ethers.getSigners())[0].address;
+        const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
+        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
+
+        const maxPremiumWithSlippage = PercentageUtils.addPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
+        const strikePriceInUSDC = PercentageUtils.applyPercentage(underlyingAssetPriceInUSD, tEnv.strikePercentage);
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
         const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
@@ -169,23 +194,25 @@ describe("HedgingVault", function () {
         asMock(tEnv.underlyingAsset)?.approve.returns(true);
 
         // Mint and approve
-        const investedAmount = ethers.utils.parseEther("20000");
-
         let prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await tEnv.underlyingAsset.mint(investorAccount.address, investedAmount);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.add(investedAmount));
-        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, investedAmount);
+        await tEnv.underlyingAsset.mint(investorAccount.address, amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(
+            prevBalance.add(amountToBeInvested),
+        );
+        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, amountToBeInvested);
         expect(
             await tEnv.underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
-        ).to.equal(investedAmount);
+        ).to.equal(amountToBeInvested);
 
         /*
             DEPOSIT
         */
         prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await vault.connect(investorAccount).deposit(investedAmount, investorAccount.address);
-        expect(await vault.balanceOf(investorAccount.address)).to.equal(investedAmount);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(prevBalance.sub(investedAmount));
+        await vault.connect(investorAccount).deposit(amountToBeInvested, investorAccount.address);
+        expect(await vault.balanceOf(investorAccount.address)).to.equal(amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(
+            prevBalance.sub(amountToBeInvested),
+        );
 
         /*
             SET POTION BUY INFO
@@ -194,22 +221,13 @@ describe("HedgingVault", function () {
         // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
         // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
         // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
-        const lpAddress = (await ethers.getSigners())[0].address;
-        const curve = new HyperbolicCurve(8.03456817, 1.29961294, 4.71657739, 16.62165255);
-        const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
-
-        const underlyingAssetPriceInUSD = 100000000000; // 1000 USDC with 8 decimals
-        const USDCPriceInUSD = 100000000; // 1 USDC with 8 decimals
-        const expectedPremiumInUSDC = 399052000000;
-        const maxPremiumWithSlippage = PercentageUtils.applyPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
-
         const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
             {
                 lp: lpAddress,
                 poolId: 0,
                 curve: curve.asSolidityStruct(),
                 criteria: criteria,
-                orderSizeInOtokens: 3001,
+                orderSizeInOtokens: otokensAmount,
             },
         ];
 
@@ -219,8 +237,8 @@ describe("HedgingVault", function () {
             strikePriceInUSDC: strikePriceInUSDC,
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
-            expectedPremiumInUSDC: BigNumber.from(expectedPremiumInUSDC),
-            totalSizeInPotions: BigNumber.from(investedAmount),
+            expectedPremiumInUSDC: expectedPremiumInUSDC,
+            totalSizeInPotions: amountToBeInvested,
         };
 
         await action.setPotionBuyInfo(potionBuyInfo);
@@ -275,7 +293,7 @@ describe("HedgingVault", function () {
         // As of now, the asset is not really swapped, so the only movement in balances is from
         // the vault to the action
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(investedAmount);
+        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(amountToBeInvested);
 
         // Check approve calls: the first call was directly done above in the test code, so
         // check the second and the third call.
@@ -283,18 +301,18 @@ describe("HedgingVault", function () {
             expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(3);
             expect(asMock(tEnv.underlyingAsset)?.approve.atCall(1)).to.have.been.calledWith(
                 action.address,
-                investedAmount,
+                amountToBeInvested,
             );
 
             expect(asMock(tEnv.underlyingAsset)?.approve.atCall(2)).to.have.been.calledWith(
                 tEnv.uniswapV3SwapRouter.address,
-                415173700,
+                1693739,
             );
 
             expect(asMock(tEnv.USDC)?.approve).to.have.been.calledOnce;
             expect(asMock(tEnv.USDC)?.approve.atCall(0)).to.have.been.calledWith(
                 tEnv.potionLiquidityPoolManager.address,
-                407033040000,
+                1660529517,
             );
         }
 
@@ -305,8 +323,8 @@ describe("HedgingVault", function () {
                 swapInfo.swapPath,
                 action.address,
                 tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
-                BigNumber.from(407033040000),
-                BigNumber.from(415173700),
+                BigNumber.from(1660529517),
+                BigNumber.from(1693739),
             ]);
         }
 
@@ -320,7 +338,7 @@ describe("HedgingVault", function () {
                 counterparties,
                 asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[1],
             );
-            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(407033040000);
+            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(1660529517);
         }
 
         /*

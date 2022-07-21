@@ -277,6 +277,52 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "lpAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "poolId",
+        type: "uint256",
+      },
+    ],
+    name: "lpPools",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "total",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "locked",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "curveHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "criteriaSetHash",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct IPotionLiquidityPool.PoolOfCapital",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "contract IOtoken",
         name: "_otoken",
         type: "address",

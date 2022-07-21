@@ -67,7 +67,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             networkName: "hardhat",
 
             // Investment configuration
-            maxPremiumPercentage: BigNumber.from(10000000), // 10%
+            maxPremiumPercentage: BigNumber.from(15000000), // 15%
             premiumSlippage: BigNumber.from(2000000), //       2%
             swapSlippage: BigNumber.from(2000000), //          2%
             maxSwapDurationSecs: BigNumber.from(60), //        1 minute
@@ -83,7 +83,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as stri
             networkName: "localhost",
 
             // Investment configuration
-            maxPremiumPercentage: BigNumber.from(10000000), // 10%
+            maxPremiumPercentage: BigNumber.from(15000000), // 15%
             premiumSlippage: BigNumber.from(2000000), //       2%
             swapSlippage: BigNumber.from(2000000), //          2%
             maxSwapDurationSecs: BigNumber.from(60), //        1 minute

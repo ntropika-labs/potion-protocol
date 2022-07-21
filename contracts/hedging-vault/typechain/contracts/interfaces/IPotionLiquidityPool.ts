@@ -92,6 +92,25 @@ export declare namespace IPotionLiquidityPool {
     criteria: ICriteriaManager.CriteriaStructOutput;
     orderSizeInOtokens: BigNumber;
   };
+
+  export type PoolOfCapitalStruct = {
+    total: BigNumberish;
+    locked: BigNumberish;
+    curveHash: BytesLike;
+    criteriaSetHash: BytesLike;
+  };
+
+  export type PoolOfCapitalStructOutput = [
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ] & {
+    total: BigNumber;
+    locked: BigNumber;
+    curveHash: string;
+    criteriaSetHash: string;
+  };
 }
 
 export interface IPotionLiquidityPoolInterface extends utils.Interface {
@@ -99,6 +118,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     "buyOtokens(address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
     "createAndBuyOtokens(address,address,address,uint256,uint256,bool,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
     "getVaultId(address)": FunctionFragment;
+    "lpPools(address,uint256)": FunctionFragment;
     "settleAfterExpiry(address)": FunctionFragment;
   };
 
@@ -107,6 +127,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
       | "buyOtokens"
       | "createAndBuyOtokens"
       | "getVaultId"
+      | "lpPools"
       | "settleAfterExpiry"
   ): FunctionFragment;
 
@@ -133,6 +154,10 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getVaultId", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "lpPools",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "settleAfterExpiry",
     values: [string]
   ): string;
@@ -143,6 +168,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVaultId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lpPools", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "settleAfterExpiry",
     data: BytesLike
@@ -202,6 +228,12 @@ export interface IPotionLiquidityPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    lpPools(
+      lpAddress: string,
+      poolId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[IPotionLiquidityPool.PoolOfCapitalStructOutput]>;
+
     settleAfterExpiry(
       _otoken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -229,6 +261,12 @@ export interface IPotionLiquidityPool extends BaseContract {
 
   getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  lpPools(
+    lpAddress: string,
+    poolId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
+
   settleAfterExpiry(
     _otoken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -255,6 +293,12 @@ export interface IPotionLiquidityPool extends BaseContract {
     ): Promise<BigNumber>;
 
     getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    lpPools(
+      lpAddress: string,
+      poolId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
 
     settleAfterExpiry(
       _otoken: string,
@@ -286,6 +330,12 @@ export interface IPotionLiquidityPool extends BaseContract {
 
     getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    lpPools(
+      lpAddress: string,
+      poolId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     settleAfterExpiry(
       _otoken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -314,6 +364,12 @@ export interface IPotionLiquidityPool extends BaseContract {
 
     getVaultId(
       _otoken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lpPools(
+      lpAddress: string,
+      poolId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -22,7 +22,7 @@ export async function getLps(count?: number): Promise<SignerWithAddress[]> {
     return signers.slice(0, count);
 }
 
-const generateDefaultDeposits: DepositGenerator = async dataAlreadyDeployed => {
+export const generateDefaultDeposits: DepositGenerator = async dataAlreadyDeployed => {
     // TODO: refactor? consider using curve and criteria registries instead of params
     const lps = await getLps();
     const deposits: DepositParams[] = [];
@@ -40,6 +40,17 @@ const generateDefaultDeposits: DepositGenerator = async dataAlreadyDeployed => {
         );
     }
     return deposits;
+};
+
+export const generateHedgingVaultDeposits: DepositGenerator = async dataAlreadyDeployed => {
+    const lps = await getLps();
+    const deposits: DepositParams[] = [];
+    const curves = dataAlreadyDeployed.allDataOfType(HyperbolicCurve);
+    const criteriaSets = dataAlreadyDeployed.allDataOfType(CriteriaSet);
+
+    return [
+        new DepositParams(lps[0], parseUsdcAmount(200000), 0, curves[0].toKeccak256(), criteriaSets[0].toKeccak256()),
+    ];
 };
 
 // Iterates over  all curves & criteria from the stack, creating pools of capital corresponding to each one

@@ -11,8 +11,8 @@ import { deploy, deployUpgrade, initDeployment, exportDeployments, exportContrac
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 let networkName = network.name;
-if (process.env.INDEPENDENT_DEPLOYMENT) {
-    networkName = networkName + ".independent";
+if (process.env.NETWORK_SUFFIX) {
+    networkName = networkName + "." + process.env.NETWORK_SUFFIX;
 }
 
 const deployConfig = deployConfiguration[networkName];
