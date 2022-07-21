@@ -5,10 +5,10 @@
         <p class="capitalize">{{ t("protectiveputvault") }}</p>
         <a
           class="text-xs flex items-center font-normal text-white/50 hover:text-white transition"
-          :href="etherscanUrl + '/address/' + vaultAddress"
+          :href="etherscanUrl + '/address/' + validId"
         >
           <i class="i-ph-arrow-square-in mr-1 text-xs"></i>
-          <span class="truncate max-w-[15ch]">{{ vaultAddress }}</span>
+          <span class="truncate max-w-[15ch]">{{ validId }}</span>
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
@@ -119,6 +119,21 @@
         </BaseCard>
       </div>
     </div>
+    <pre>
+      {{ operator }}
+      {{ admin }}
+      {{ validId }}
+      {{ status }}
+     {{ strategist }}
+     {{ vaultName }}
+     {{ vaultDecimals }}
+     {{ vaultSymbol }}
+     {{ assetName }}
+     {{ assetDecimals }}
+     {{ assetAddress }}
+      {{ assetSymbol }}
+     {{ assetImage }}
+    </pre>
   </div>
 </template>
 <script lang="ts" setup>
@@ -133,18 +148,43 @@ import {
 import { useI18n } from "vue-i18n";
 import { etherscanUrl } from "@/helpers";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { onMounted, ref } from "vue";
-
+import { onMounted, ref, computed } from "vue";
+import { useRoute } from "vue-router";
+import { useErc4626Contract } from "@/composables/useErc4626Contract";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
+// import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
+import { isArray } from "lodash";
 const { t } = useI18n();
 const status = ref(true);
-const vaultAddress = ref("0xc0ffee254729296a45a3885639AC7E10F9d54979");
+const vaultEns = ref("");
 const adminAddress = ref("0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E");
 const operatorAddress = ref("0x57B9f79515fED84d2f67e9Bf0fF3A17B9e60aD9E");
 const { lookupAddress } = useEthersProvider();
 
+const route = useRoute();
+const { id } = route.params;
+const validId = computed(() => {
+  if (isArray(id)) {
+    return id[0].toLowerCase();
+  }
+  return id.toLowerCase();
+});
+
+//@eslint-disable-next-line no-unused-vars
+const { operator, admin, strategist } = useInvestmentVaultContract(validId);
+const {
+  vaultName,
+  vaultDecimals,
+  vaultSymbol,
+  assetName,
+  assetSymbol,
+  assetAddress,
+  assetDecimals,
+  assetImage,
+} = useErc4626Contract(validId);
 onMounted(async () => {
   adminAddress.value = await lookupAddress(adminAddress.value);
   operatorAddress.value = await lookupAddress(operatorAddress.value);
-  vaultAddress.value = await lookupAddress(vaultAddress.value);
+  vaultEns.value = await lookupAddress(validId.value);
 });
 </script>

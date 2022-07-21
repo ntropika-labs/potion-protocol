@@ -88,12 +88,16 @@ export function useErc20Contract(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    await fetchErc20Info();
+    if (unref(address).length === 42) {
+      await fetchErc20Info();
+    }
   });
 
-  if (isRef(address)) {
+  if (isRef(address) && unref(address).length === 42) {
     watch(address, async () => {
-      await fetchErc20Info();
+      if (unref(address).length === 42) {
+        await fetchErc20Info();
+      }
     });
   }
 

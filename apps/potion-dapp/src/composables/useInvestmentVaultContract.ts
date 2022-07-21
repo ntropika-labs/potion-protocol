@@ -12,7 +12,7 @@ import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 // } from "@ethersproject/contracts";
 import type { Ref } from "vue";
 
-export function useInvestmentVault(address: string | Ref<string>) {
+export function useInvestmentVaultContract(address: string | Ref<string>) {
   const { initContract } = useEthersContract();
   // const { connectedWallet } = useOnboard();
   // const initContractSigner = () => {

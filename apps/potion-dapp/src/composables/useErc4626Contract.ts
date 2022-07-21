@@ -16,7 +16,7 @@ import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
 import type { BigNumber } from "@ethersproject/bignumber";
 
-export function useERC4626Upgradable(address: string | Ref<string>) {
+export function useErc4626Contract(address: string | Ref<string>) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
   const initContractSigner = () => {
@@ -88,11 +88,14 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
   const getVaultAssetInfo = async () => {
     await Promise.all([getAssetAddress(), getTotalAssets()]);
   };
+
   onMounted(async () => {
-    await getVaultAssetInfo();
+    if (unref(address).length === 42) {
+      await getVaultAssetInfo();
+    }
   });
 
-  if (isRef(address)) {
+  if (isRef(address) && unref(address).length === 42) {
     watch(address, async () => {
       await getVaultAssetInfo();
     });
