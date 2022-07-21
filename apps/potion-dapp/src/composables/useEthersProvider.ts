@@ -39,7 +39,7 @@ export function useEthersProvider() {
       loading.value = false;
     }
   };
-  const getEnsOrAddress = async (address: string) => {
+  const lookupAddress = async (address: string) => {
     try {
       loading.value = true;
       const provider = initProvider(false);
@@ -58,7 +58,7 @@ export function useEthersProvider() {
   };
 
   return {
-    getEnsOrAddress,
+    lookupAddress,
     initProvider,
     getBlock,
     block,
