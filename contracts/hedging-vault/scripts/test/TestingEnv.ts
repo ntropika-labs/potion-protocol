@@ -22,6 +22,7 @@ import {
     mockOpynFactory,
     mockOpynOracle,
     mockOpynAddressBook,
+    asMock,
 } from "./MocksLibrary";
 import { attachContract } from "../utils/deployment";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../hedging-vault/deployPotionHedgingVault";
@@ -59,6 +60,64 @@ export interface TestingEnvironmentDeployment {
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
+}
+
+function getTokensFromUniswapPath(uniswapPath: string) {
+    const pathArray = ethers.utils.arrayify(uniswapPath);
+
+    const firstToken = ethers.utils.hexlify(pathArray.subarray(0, 20));
+    const secondToken = ethers.utils.hexlify(pathArray.subarray(23, 43));
+
+    return { firstToken, secondToken };
+}
+
+function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
+    asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns(async (args: any) => {
+        const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
+
+        const tokenIn = paramsTokenIn === tEnv.underlyingAsset.address.toLowerCase() ? tEnv.underlyingAsset : tEnv.USDC;
+        const tokenOut =
+            paramsTokenOut === tEnv.underlyingAsset.address.toLowerCase() ? tEnv.underlyingAsset : tEnv.USDC;
+
+        await tokenIn.transferFrom(
+            tEnv.potionBuyAction.address,
+            tEnv.uniswapV3SwapRouter.address,
+            args.params.amountIn,
+        );
+        await tokenOut.transferFrom(
+            tEnv.uniswapV3SwapRouter.address,
+            tEnv.potionBuyAction.address,
+            args.params.amountOutMinimum,
+        );
+    });
+    asMock(tEnv.uniswapV3SwapRouter)?.exactOutput.returns(async (args: any) => {
+        const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
+
+        console.log(paramsTokenIn);
+        console.log(paramsTokenOut);
+
+        console.log(tEnv.underlyingAsset.address);
+
+        const tokenIn = paramsTokenIn === tEnv.underlyingAsset.address.toLowerCase() ? tEnv.underlyingAsset : tEnv.USDC;
+        const tokenOut =
+            paramsTokenOut === tEnv.underlyingAsset.address.toLowerCase() ? tEnv.underlyingAsset : tEnv.USDC;
+
+        console.log("tokenIn", tokenIn.address);
+        console.log("tokenOut", tokenOut.address);
+
+        await tokenIn.transferFrom(
+            tEnv.potionBuyAction.address,
+            tEnv.uniswapV3SwapRouter.address,
+            args.params.amountInMaximum,
+        );
+        await tokenOut.transferFrom(
+            tEnv.uniswapV3SwapRouter.address,
+            tEnv.potionBuyAction.address,
+            args.params.amountOut,
+        );
+
+        return args.params.amountInMaximum;
+    });
 }
 
 async function mockContractsIfNeeded(
@@ -112,54 +171,6 @@ async function mockContractsIfNeeded(
         );
     }
 
-    // Check if need to mock OpynController
-    if (!deploymentConfig.opynController) {
-        const mockingResult = await mockOpynController(deploymentConfig);
-        testingEnvironmentDeployment.opynController = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
-    } else {
-        testingEnvironmentDeployment.opynController = await attachContract<IOpynController>(
-            "IOpynController",
-            deploymentConfig.opynController,
-            {
-                alias: "OpynController",
-            },
-        );
-    }
-
-    // Check if need to mock OpynFactory
-    if (!deploymentConfig.opynFactory) {
-        const mockingResult = await mockOpynFactory(deploymentConfig);
-        testingEnvironmentDeployment.opynFactory = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
-    } else {
-        testingEnvironmentDeployment.opynFactory = await attachContract<IOpynFactory>(
-            "IOpynFactory",
-            deploymentConfig.opynFactory,
-            {
-                alias: "OpynFactory",
-            },
-        );
-    }
-
-    // Check if need to mock OpynFactory
-    if (!deploymentConfig.opynOracle) {
-        const mockingResult = await mockOpynFactory(deploymentConfig);
-        testingEnvironmentDeployment.opynFactory = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
-    } else {
-        testingEnvironmentDeployment.opynOracle = await attachContract<IOpynOracle>(
-            "IOpynOracle",
-            deploymentConfig.opynOracle,
-            {
-                alias: "OpynOracle",
-            },
-        );
-    }
-
     if (!deploymentConfig.opynAddressBook) {
         const opynController = await mockOpynController(deploymentConfig);
         const opynFactory = await mockOpynFactory(deploymentConfig);
@@ -188,14 +199,52 @@ async function mockContractsIfNeeded(
                 alias: "OpynAddressBook",
             },
         );
+
+        testingEnvironmentDeployment.opynController = await attachContract<IOpynController>(
+            "IOpynController",
+            await testingEnvironmentDeployment.opynAddressBook.getController(),
+            {
+                alias: "OpynController",
+            },
+        );
+
+        testingEnvironmentDeployment.opynFactory = await attachContract<IOpynFactory>(
+            "IOpynFactory",
+            await testingEnvironmentDeployment.opynAddressBook.getOtokenFactory(),
+            {
+                alias: "OpynFactory",
+            },
+        );
+
+        testingEnvironmentDeployment.opynOracle = await attachContract<IOpynOracle>(
+            "IOpynOracle",
+            await testingEnvironmentDeployment.opynAddressBook.getOracle(),
+            {
+                alias: "OpynOracle",
+            },
+        );
     }
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig);
+        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig, [
+            testingEnvironmentDeployment.USDC.address,
+            testingEnvironmentDeployment.underlyingAsset.address,
+        ]);
+
         testingEnvironmentDeployment.uniswapV3SwapRouter = mockingResult.softMock
             ? mockingResult.softMock
             : mockingResult.hardMock;
+
+        // Mint some tokens to the Uniswap Router
+        testingEnvironmentDeployment.USDC.mint(
+            testingEnvironmentDeployment.uniswapV3SwapRouter.address,
+            ethers.utils.parseEther("10000000"),
+        );
+        testingEnvironmentDeployment.underlyingAsset.mint(
+            testingEnvironmentDeployment.uniswapV3SwapRouter.address,
+            ethers.utils.parseEther("10000000"),
+        );
     } else {
         testingEnvironmentDeployment.uniswapV3SwapRouter = await attachContract<ISwapRouter>(
             "ISwapRouter",
@@ -277,17 +326,7 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     if (!hedgingVaultConfig.potionLiquidityPoolManager) {
         hedgingVaultConfig.potionLiquidityPoolManager = potionProtocolDeployments.PotionLiquidityPool?.address;
     }
-    if (!hedgingVaultConfig.opynController) {
-        hedgingVaultConfig.opynController = potionProtocolDeployments.Controller?.address;
-    }
-    if (!hedgingVaultConfig.opynFactory) {
-        hedgingVaultConfig.opynFactory = potionProtocolDeployments.OtokenFactory?.address;
-    }
-    if (!hedgingVaultConfig.opynOracle) {
-        hedgingVaultConfig.opynOracle = potionProtocolDeployments.MockOracle
-            ? potionProtocolDeployments.MockOracle.address
-            : potionProtocolDeployments.Oracle?.address;
-    }
+
     if (!hedgingVaultConfig.opynAddressBook) {
         hedgingVaultConfig.opynAddressBook = potionProtocolDeployments.AddressBook?.address;
     }
@@ -351,4 +390,40 @@ export async function deployTestingEnv(
     testEnvDeployment.hedgingVaultOperatorHelper = hedgingVaultOperatorHelper;
 
     return testEnvDeployment;
+}
+
+export async function printTestingEnv(testEnvDeployment: TestingEnvironmentDeployment) {
+    console.log(`------------------------------------------------------`);
+    console.log(`                 TESTING ENVIRONMENT`);
+    console.log(`------------------------------------------------------`);
+    console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
+    console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
+    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOperatorHelper.address}`);
+    console.log(`------------------------------------------------------`);
+    console.log(`  - Underlying Asset: ${testEnvDeployment.underlyingAsset.address}`);
+    console.log(`  - USDC: ${testEnvDeployment.USDC.address}`);
+    console.log(`------------------------------------------------------`);
+    console.log(`  - Potion Liquidity Pool Manager: ${testEnvDeployment.potionLiquidityPoolManager.address}`);
+    console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
+    console.log(`  - Opyn Address Book: ${testEnvDeployment.opynAddressBook.address}`);
+    console.log(`  - Opyn Controller: ${testEnvDeployment.opynController.address}`);
+    console.log(`  - Opyn Factory: ${testEnvDeployment.opynFactory.address}`);
+    console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
+    console.log(`  - Opyn Swap Router: ${testEnvDeployment.uniswapV3SwapRouter.address}`);
+    console.log(`------------------------------------------------------`);
+    console.log(`  - Admin address: ${testEnvDeployment.adminAddress.toString()}`);
+    console.log(`  - Strategist address: ${testEnvDeployment.strategistAddress.toString()}`);
+    console.log(`  - Operator address: ${testEnvDeployment.operatorAddress.toString()}`);
+    console.log(`  - Underlying Asset cap: ${testEnvDeployment.underlyingAssetCap.toString()}`);
+    console.log(`  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()}`);
+    console.log(`  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()}`);
+    console.log(`  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()}`);
+    console.log(`  - Max Swap Duration (secs): ${testEnvDeployment.maxSwapDurationSecs.toString()}`);
+    console.log(`  - Cycle Duration (secs): ${testEnvDeployment.cycleDurationSecs.toString()}`);
+    console.log(`  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()}`);
+    console.log(`  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()}`);
+    console.log(`  - Management Fee: ${testEnvDeployment.managementFee.toString()}`);
+    console.log(`  - Performance Fee: ${testEnvDeployment.performanceFee.toString()}`);
+    console.log(`  - Fees Recipient: ${testEnvDeployment.feesRecipient}`);
+    console.log(`------------------------------------------------------`);
 }

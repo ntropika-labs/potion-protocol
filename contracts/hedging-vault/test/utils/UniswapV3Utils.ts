@@ -9,10 +9,10 @@ export function getEncodedSwapPath(tokensPath: string[], fee: number = 3000): st
         values.push(tokensPath[i]);
 
         if (i !== tokensPath.length - 1) {
-            types.push("uint256");
+            types.push("uint24");
             values.push(fee);
         }
     }
 
-    return ethers.utils.solidityKeccak256(types, values);
+    return ethers.utils.solidityPack(types, values);
 }

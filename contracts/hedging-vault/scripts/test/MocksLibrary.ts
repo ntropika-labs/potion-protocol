@@ -59,7 +59,10 @@ export async function mockOpynFactory(deploymentConfig: PotionHedgingVaultConfig
     return mockContract<MockOpynFactory>(deploymentConfig.networkName, "MockOpynFactory", [], "OpynFactory");
 }
 
-export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVaultConfigParams): Promise<{
+export async function mockUniswapV3SwapRouter(
+    deploymentConfig: PotionHedgingVaultConfigParams,
+    tokens: string[] = [],
+): Promise<{
     softMock?: MockContract<MockUniswapV3Router>;
     hardMock: MockUniswapV3Router;
     address: string;
@@ -67,7 +70,7 @@ export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVau
     return mockContract<MockUniswapV3Router>(
         deploymentConfig.networkName,
         "MockUniswapV3Router",
-        [],
+        [tokens],
         "UniswapV3Router",
     );
 }
