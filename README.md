@@ -41,9 +41,9 @@ Run `cp .env.example .env` to copy the environment example file and customize th
   A default API key is generated when you sign up and is available in the Dashboard.
 - Setup [Ganache volume](#using-ganache-databases)
 
-- Run `sudo ./bin/prepare-seeds` to automatically copy all database seeds to your `GANACHE_VOLUME` folder
+- Run `sudo ./bin/prepare-seeds` to automatically copy all database seeds to your `GANACHE_VOLUME` folder using the [prepare-seeds](./bin/prepare-seeds) script
 
-- Run `./bin/create-local-env-headless -f` to bootstrap your development environment
+- Run `./bin/create-local-env` to bootstrap your development environment
 
 - Run `yarn dev potion-dapp` to start Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`  
   or  
