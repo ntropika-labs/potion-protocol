@@ -9,8 +9,9 @@ import { bigIntToDecimal } from "./helpers";
 import { TokenType } from "./enums";
 
 export function collateralToDecimals(value: BigInt): BigDecimal {
-  // WORKAROUND: we use as collateral stable coins that always have 6 decimals
-  // if in the future we will ever need to support collaterals with a different number of decimals
+  // WORKAROUND: the current version of the potion protocol always use USDC as a collateral that has decimals
+  //   if in the future a new version of the protocol will allow to use different collaterals with different decimals
+  //   we will ever need to support collaterals with a different number of decimals
   //   we will also need as a param the token address to load the correct number of digits
   const decimals = 6;
   return bigIntToDecimal(value, decimals as i32);
