@@ -11,7 +11,6 @@ import {
   DurationActiveIcon,
   DurationDefaultIcon,
   InputNumber,
-  PotionCard,
   ReviewActiveIcon,
   ReviewDefaultIcon,
   SidebarLink,
@@ -22,6 +21,7 @@ import {
 } from "potion-ui";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import SimilarPotions from "@/components/CustomPotion/SimilarPotions.vue";
 
 import { useOnboard } from "@onboard-composable";
 import { useBuyPotions } from "@/composables/useBuyPotions";
@@ -33,20 +33,14 @@ import { useNotifications } from "@/composables/useNotifications";
 import { usePotionQuantity } from "@/composables/usePotionQuantity";
 import { usePotionTokens } from "@/composables/usePotionTokens";
 import { useRouterCriterias } from "@/composables/useRouterCriterias";
-import { useSimilarPotions } from "@/composables/useSimilarPotions";
 import { useSlippage } from "@/composables/useSlippage";
 import { useStrikeSelection } from "@/composables/useStrikeSelection";
 import { useUserData } from "@/composables/useUserData";
 
-enum CurrentIndex {
-  ASSET,
-  STRIKE,
-  EXPIRATION,
-  REVIEW,
-}
+import { CustomPotionStep } from "dapp-types";
 
 const { t } = useI18n();
-const currentIndex = ref<CurrentIndex>(CurrentIndex.ASSET);
+const currentStep = ref<CustomPotionStep>(CustomPotionStep.ASSET);
 const { connectedWallet } = useOnboard();
 
 const { userAllowance, userCollateralBalance } = useUserData();
@@ -189,88 +183,63 @@ watch(buyPotionReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 
-//Similar Potions
-const {
-  computedSimilarByAsset,
-  computedSimilarByStrike,
-  computedSimilarByDuration,
-} = useSimilarPotions(
-  tokenSelectedAddress,
-  strikeSelected,
-  durationSelected,
-  price
-);
-
-const similarPotionShown = computed(() => {
-  if (currentIndex.value === CurrentIndex.ASSET) {
-    return computedSimilarByAsset.value;
-  } else if (currentIndex.value === CurrentIndex.STRIKE) {
-    return computedSimilarByStrike.value;
-  } else if (currentIndex.value === CurrentIndex.EXPIRATION) {
-    return computedSimilarByDuration.value;
-  } else if (currentIndex.value === CurrentIndex.REVIEW) {
-    return computedSimilarByDuration.value;
-  }
-  return [];
-});
-
 const sidebarItems = computed(() => {
   return [
     {
       title: t("asset"),
       iconSrcset:
-        currentIndex.value === CurrentIndex.ASSET
+        currentStep.value === CustomPotionStep.ASSET
           ? AssetActiveIcon
           : AssetDefaultIcon,
-      selected: currentIndex.value === CurrentIndex.ASSET,
+      selected: currentStep.value === CustomPotionStep.ASSET,
       disabled: false,
       onClick: () => {
-        currentIndex.value = CurrentIndex.ASSET;
+        currentStep.value = CustomPotionStep.ASSET;
       },
     },
     {
       title: t("strike_price"),
       iconSrcset:
-        currentIndex.value === CurrentIndex.STRIKE
+        currentStep.value === CustomPotionStep.STRIKE
           ? StrikeActiveIcon
           : StrikeDefaultIcon,
-      selected: currentIndex.value === CurrentIndex.STRIKE,
+      selected: currentStep.value === CustomPotionStep.STRIKE,
       disabled: !isTokenSelected.value,
       onClick: () => {
         if (strikeSelected.value === 0) {
           strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
         }
-        currentIndex.value = CurrentIndex.STRIKE;
+        currentStep.value = CustomPotionStep.STRIKE;
       },
     },
     {
       title: t("expiration"),
       iconSrcset:
-        currentIndex.value === CurrentIndex.EXPIRATION
+        currentStep.value === CustomPotionStep.EXPIRATION
           ? DurationActiveIcon
           : DurationDefaultIcon,
-      selected: currentIndex.value === CurrentIndex.EXPIRATION,
+      selected: currentStep.value === CustomPotionStep.EXPIRATION,
       disabled: !isTokenSelected.value || !isStrikeValid.value,
       onClick: () => {
         if (durationSelected.value === 0) {
           durationSelected.value = 1;
         }
-        currentIndex.value = CurrentIndex.EXPIRATION;
+        currentStep.value = CustomPotionStep.EXPIRATION;
       },
     },
     {
       title: t("review_and_create"),
       iconSrcset:
-        currentIndex.value === CurrentIndex.REVIEW
+        currentStep.value === CustomPotionStep.REVIEW
           ? ReviewActiveIcon
           : ReviewDefaultIcon,
-      selected: currentIndex.value === CurrentIndex.REVIEW,
+      selected: currentStep.value === CustomPotionStep.REVIEW,
       disabled:
         !isTokenSelected.value ||
         !isStrikeValid.value ||
         !isDurationValid.value,
       onClick: () => {
-        currentIndex.value = CurrentIndex.REVIEW;
+        currentStep.value = CustomPotionStep.REVIEW;
       },
     },
   ];
@@ -300,7 +269,7 @@ const sidebarItems = computed(() => {
           @click="item.onClick"
         >
           <div
-            v-if="index === CurrentIndex.ASSET && tokenSelected"
+            v-if="index === CustomPotionStep.ASSET && tokenSelected"
             class="flex gap-2 items-center"
           >
             <img
@@ -310,16 +279,16 @@ const sidebarItems = computed(() => {
             />
             <p class="text-xs">{{ tokenSelected?.symbol }}</p>
           </div>
-          <div v-if="index === CurrentIndex.STRIKE && strikeSelected">
+          <div v-if="index === CustomPotionStep.STRIKE && strikeSelected">
             <p class="text-xs">USDC {{ strikeSelected }}</p>
           </div>
-          <div v-if="index === CurrentIndex.EXPIRATION && durationSelected">
+          <div v-if="index === CustomPotionStep.EXPIRATION && durationSelected">
             <p class="text-xs">{{ durationSelectedDate }}</p>
           </div>
         </SidebarLink>
       </ul>
       <div
-        v-if="currentIndex === CurrentIndex.ASSET"
+        v-if="currentStep === CustomPotionStep.ASSET"
         class="w-full xl:col-span-2"
       >
         <TokenSelection
@@ -334,7 +303,7 @@ const sidebarItems = computed(() => {
         </div>
       </div>
       <div
-        v-if="currentIndex === CurrentIndex.STRIKE"
+        v-if="currentStep === CustomPotionStep.STRIKE"
         class="xl:col-span-2 flex justify-center"
       >
         <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
@@ -363,7 +332,7 @@ const sidebarItems = computed(() => {
         </BaseCard>
       </div>
       <div
-        v-if="currentIndex === CurrentIndex.EXPIRATION"
+        v-if="currentStep === CustomPotionStep.EXPIRATION"
         class="xl:col-span-2 flex justify-center"
       >
         <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
@@ -392,7 +361,7 @@ const sidebarItems = computed(() => {
         </BaseCard>
       </div>
       <div
-        v-if="currentIndex === CurrentIndex.REVIEW"
+        v-if="currentStep === CustomPotionStep.REVIEW"
         class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
       >
         <BaseCard color="no-bg" class="w-full justify-between">
@@ -472,34 +441,34 @@ const sidebarItems = computed(() => {
     </div>
     <div class="flex w-full justify-end items-center gap-3 p-4">
       <BaseButton
-        v-if="currentIndex !== CurrentIndex.ASSET"
+        v-if="currentStep !== CustomPotionStep.ASSET"
         class="uppercase"
         test-back
         palette="flat"
         :inline="true"
         :label="t('back')"
         :disabled="false"
-        @click="currentIndex--"
+        @click="currentStep--"
       >
         <template #pre-icon>
           <i class="i-ph-caret-left"></i>
         </template>
       </BaseButton>
       <BaseButton
-        v-if="currentIndex !== sidebarItems.length - 1"
+        v-if="currentStep !== sidebarItems.length - 1"
         test-next
         palette="secondary"
         :inline="true"
         :label="t('next')"
-        :disabled="sidebarItems[currentIndex + 1].disabled"
-        @click="sidebarItems[currentIndex + 1].onClick()"
+        :disabled="sidebarItems[currentStep + 1].disabled"
+        @click="sidebarItems[currentStep + 1].onClick()"
       >
         <template #post-icon>
           <i class="i-ph-caret-right"></i>
         </template>
       </BaseButton>
       <BaseButton
-        v-if="currentIndex === sidebarItems.length - 1"
+        v-if="currentStep === sidebarItems.length - 1"
         palette="secondary"
         :label="buyPotionButtonState.label"
         :disabled="buyPotionButtonState.disabled"
@@ -507,39 +476,16 @@ const sidebarItems = computed(() => {
       />
     </div>
   </BaseCard>
-  <div class="mt-10">
-    <h2 class="uppercase text-secondary-500 text-sm">
-      {{ t("similar_potions") }}
-    </h2>
-    <p class="text-sm">
-      {{ t("similar_potion_message", { dollars: formattedGasSaving }) }}
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
-      <PotionCard
-        v-for="(potion, index) in similarPotionShown"
-        :key="`${index}-similar-potion`"
-        :token="
-          tokenSelected ?? {
-            name: '',
-            symbol: '',
-            address: '',
-            decimals: 18,
-            image: '',
-          }
-        "
-        :otoken-address="potion.tokenAddress"
-        :strike-price="potion.strikePrice"
-        :expiration="potion.expiry"
-      >
-        <router-link
-          :to="`/potions/${potion.tokenAddress}`"
-          class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
-        >
-          {{ t("show") }}</router-link
-        >
-      </PotionCard>
-    </div>
-  </div>
+  <SimilarPotions
+    :token="tokenSelected"
+    :token-address="tokenSelectedAddress"
+    :strike="strikeSelected"
+    :duration="durationSelected"
+    :price="price"
+    :current-step="currentStep"
+    :gas-saving="formattedGasSaving"
+  >
+  </SimilarPotions>
   <NotificationDisplay
     :toasts="notifications"
     @hide-toast="(index) => removeToast(index)"
