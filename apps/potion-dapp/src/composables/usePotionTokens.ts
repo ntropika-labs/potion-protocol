@@ -13,7 +13,9 @@ export function usePotionTokens() {
   const tokenSelectedAddress = computed(
     () => tokenSelected?.value?.address ?? ""
   );
-  const isTokenSelected = computed(() => tokenSelected.value);
+  const isTokenSelected = computed(
+    () => tokenSelected?.value?.selected ?? false
+  );
   const tokenSelectedApiPrice = computed(() =>
     tokenPricesMap.value.get(tokenSelectedAddress.value)
   );
