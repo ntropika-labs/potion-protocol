@@ -17,7 +17,7 @@ import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/Blo
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as PercentageUtils from "../utils/PercentageUtils";
 import { NetworksType } from "../../hardhat.helpers";
-import { asMock } from "../../scripts/test/MocksLibrary";
+import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 
 /**
@@ -47,8 +47,6 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
-
-        //asMock(tEnv.underlyingAsset)?.approve.reset();
     });
 
     it("Vault Deployment Values", async function () {
@@ -199,7 +197,9 @@ describe("HedgingVault", function () {
         });
         asMock(tEnv.opynController)?.isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(false);
         asMock(tEnv.opynFactory)?.getOtoken.returns(potionOtokenAddress);
+        asMock(tEnv.USDC)?.approve.reset();
         asMock(tEnv.USDC)?.approve.returns(true);
+        asMock(tEnv.underlyingAsset)?.approve.reset();
         asMock(tEnv.underlyingAsset)?.approve.returns(true);
 
         // Mint and approve
@@ -269,23 +269,23 @@ describe("HedgingVault", function () {
         await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSDbn);
 
         // Set the Uniswap route info
-        let swapInfo: IUniswapV3Oracle.SwapInfoStruct = {
+        const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
             expectedPriceRate: toPRBMath(underlyingAssetPriceInUSD / USDCPriceInUSD, 18, 6),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
-        await action.setSwapInfo(swapInfo);
+        await action.setSwapInfo(swapInfoEnterPosition);
 
         let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
-        expectSolidityDeepCompare(swapInfo, currentSwapInfo);
+        expectSolidityDeepCompare(swapInfoEnterPosition, currentSwapInfo);
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
 
-        let nextBlockTimestamp = await getNextTimestamp();
+        const cycleStartTimestamp = await getNextTimestamp();
 
         await vault.connect(ownerAccount).enterPosition();
 
@@ -301,79 +301,9 @@ describe("HedgingVault", function () {
             amountToBeInvested.sub(uniswapEnterPositionInputAmount),
         );
 
-        // Check approve calls: the first call was directly done above in the test code, so
-        // check the second and the third call.
-        if (network.name === "hardhat") {
-            // It should have a call count of 4 and not 6, however it seems the Smock is
-            // doing something funny with the call count when the call happens inside the constructor
-            expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(6);
-            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(4)).to.have.been.calledWith(
-                action.address,
-                amountToBeInvested,
-            );
-
-            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(5)).to.have.been.calledWith(
-                tEnv.uniswapV3SwapRouter.address,
-                uniswapEnterPositionInputAmount,
-            );
-
-            // It should have a call count of 1 and not 4, however it seems the Smock is
-            // doing something funny with the call count when the call happens inside the constructor
-            expect(asMock(tEnv.USDC)?.approve).to.have.callCount(4);
-            expect(asMock(tEnv.USDC)?.approve.atCall(3)).to.have.been.calledWith(
-                tEnv.potionLiquidityPoolManager.address,
-                maxPremiumWithSlippageInUSDC,
-            );
-        }
-
-        // Check the Uniswap Calls
-        if (network.name === "hardhat") {
-            expect(asMock(tEnv.uniswapV3SwapRouter)?.exactOutput).to.have.been.calledOnce;
-            expect(asMock(tEnv.uniswapV3SwapRouter)?.exactOutput.getCall(0).args[0]).to.be.deep.equal([
-                swapInfo.swapPath,
-                action.address,
-                tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
-                BigNumber.from(maxPremiumWithSlippageInUSDC),
-                BigNumber.from(uniswapEnterPositionInputAmount),
-            ]);
-        }
-
-        // Check the Potion calls
-        if (network.name === "hardhat") {
-            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[0]).to.be.equal(
-                potionOtokenAddress,
-            );
-            expectSolidityDeepCompare(
-                counterparties,
-                asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[1],
-            );
-            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(
-                maxPremiumWithSlippageInUSDC,
-            );
-        }
-
         /*
             EXIT POSITION
         */
-
-        // Setup the mocks
-        asMock(tEnv.opynController)?.isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(true);
-
-        // Set the Uniswap route info
-        swapInfo = {
-            inputToken: tEnv.USDC.address,
-            outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
-            swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
-        };
-
-        await action.setSwapInfo(swapInfo);
-
-        currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
-
-        expectSolidityDeepCompare(swapInfo, currentSwapInfo);
-
         // Use the strike percent and reduce it by 10% to get the exit price
         const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
         const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
@@ -383,9 +313,18 @@ describe("HedgingVault", function () {
         );
         const payoutInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
 
-        const totalUSDCInVaultAfterPayout = payoutInUSDC.add(maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC));
+        // TODO: When using the mocked version of the Potion Liquidity manager the premium is not transferred from the
+        // TODO: action contract to the Potion Liquidity Manager contract. In the same way, the Opyn Controller mock is
+        // TODO: not transferring the payout to the action contract when exiting the position. In the lines below we
+        // TODO: account for this to know how much USDC will be in the action after the payout
+        let totalUSDCInActionAfterPayout: BigNumber;
+        if (network.name === "hardhat") {
+            totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC;
+        } else {
+            totalUSDCInActionAfterPayout = payoutInUSDC.add(maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC));
+        }
 
-        const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInVaultAfterPayout
+        const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout
             .mul(BigNumber.from(1000000000000))
             .mul(USDCPriceInUSDbn)
             .div(underlyingAssetPriceInUSDbn);
@@ -394,6 +333,26 @@ describe("HedgingVault", function () {
             extraUnderlyingAssetInVaultAfterPayout,
             tEnv.swapSlippage,
         );
+
+        // Setup the mocks
+        asMock(tEnv.opynController)?.isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(true);
+        asMock(tEnv.opynController)?.getPayout.returns(() => {
+            return payoutInUSDC;
+        });
+
+        // Set the Uniswap route info
+        const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
+            inputToken: tEnv.USDC.address,
+            outputToken: tEnv.underlyingAsset.address,
+            expectedPriceRate: toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
+            swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
+        };
+
+        await action.setSwapInfo(swapInfoExitPosition);
+
+        currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
+
+        expectSolidityDeepCompare(swapInfoExitPosition, currentSwapInfo);
 
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSDbn);
@@ -405,7 +364,7 @@ describe("HedgingVault", function () {
         // Exit the position
         await fastForwardChain(DAY_IN_SECONDS);
 
-        nextBlockTimestamp = await getNextTimestamp();
+        const cycleEndTimestamp = await getNextTimestamp();
 
         await vault.connect(ownerAccount).exitPosition();
 
@@ -413,44 +372,74 @@ describe("HedgingVault", function () {
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
         expect(await action.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
 
-        // These balances will not be valid if the real Uniswap and Potion protocol are used.
-        // As of now, the asset is not really swapped, so the only movement in balances is from
-        // the action to the vault
-
+        // Assets balances
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(
             amountToBeInvested.sub(uniswapEnterPositionInputAmount).add(uniswapExitPositionOutputAmount),
         );
         expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(0);
         expect(await tEnv.USDC.balanceOf(action.address)).to.equal(0);
 
-        // Check approve calls: the first call was directly done above in the test code, so
-        // check the second and the third call.
-        if (network.name === "hardhat") {
-            expect(asMock(tEnv.USDC)?.approve).to.have.callCount(5);
-            expect(asMock(tEnv.USDC)?.approve.atCall(4)).to.have.been.calledWith(tEnv.uniswapV3SwapRouter.address, 0);
+        /**
+         * MOCKS CHECKS
+         */
+        ifMocksEnabled(() => {
+            // USDC calls
+            expect(asMock(tEnv.USDC)?.approve).to.have.callCount(2);
+            expect(asMock(tEnv.USDC)?.approve.atCall(0)).to.have.been.calledWith(
+                tEnv.potionLiquidityPoolManager.address,
+                maxPremiumWithSlippageInUSDC,
+            );
+            expect(asMock(tEnv.USDC)?.approve.atCall(1)).to.have.been.calledWith(
+                tEnv.uniswapV3SwapRouter.address,
+                totalUSDCInActionAfterPayout,
+            );
 
-            expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(7);
-            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(6)).to.have.been.calledWith(action.address, 0);
-        }
+            // Underlying Asset calls
+            expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(4);
+            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(1)).to.have.been.calledWith(
+                action.address,
+                amountToBeInvested,
+            );
+            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(2)).to.have.been.calledWith(
+                tEnv.uniswapV3SwapRouter.address,
+                uniswapEnterPositionInputAmount,
+            );
+            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(3)).to.have.been.calledWith(action.address, 0);
 
-        // Check the Uniswap Calls
-        if (network.name === "hardhat") {
+            // Uniswap V3 Router calls
+            expect(asMock(tEnv.uniswapV3SwapRouter)?.exactOutput).to.have.been.calledOnce;
+            expect(asMock(tEnv.uniswapV3SwapRouter)?.exactOutput.getCall(0).args[0]).to.be.deep.equal([
+                swapInfoEnterPosition.swapPath,
+                action.address,
+                tEnv.maxSwapDurationSecs.add(cycleStartTimestamp),
+                BigNumber.from(maxPremiumWithSlippageInUSDC),
+                BigNumber.from(uniswapEnterPositionInputAmount),
+            ]);
             expect(asMock(tEnv.uniswapV3SwapRouter)?.exactInput).to.have.been.calledOnce;
             expect(asMock(tEnv.uniswapV3SwapRouter)?.exactInput.getCall(0).args[0]).to.be.deep.equal([
-                swapInfo.swapPath,
+                swapInfoExitPosition.swapPath,
                 action.address,
-                tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
-                BigNumber.from(0),
-                BigNumber.from(0),
+                tEnv.maxSwapDurationSecs.add(cycleEndTimestamp),
+                totalUSDCInActionAfterPayout,
+                uniswapExitPositionOutputAmount,
             ]);
-        }
 
-        // Check the Potion calls
-        if (network.name === "hardhat") {
+            // Potion Liquidity Manager calls
+            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens).to.have.been.calledOnce;
+            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[0]).to.be.equal(
+                potionOtokenAddress,
+            );
+            expectSolidityDeepCompare(
+                counterparties,
+                asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[1],
+            );
+            expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(
+                maxPremiumWithSlippageInUSDC,
+            );
             expect(asMock(tEnv.potionLiquidityPoolManager)?.settleAfterExpiry).to.have.been.calledOnce;
             expect(asMock(tEnv.potionLiquidityPoolManager)?.settleAfterExpiry.getCall(0).args[0]).to.be.equal(
                 potionOtokenAddress,
             );
-        }
+        });
     });
 });

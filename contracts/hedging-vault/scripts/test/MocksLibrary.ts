@@ -1,5 +1,6 @@
 import { MockContract } from "@defi-wonderland/smock";
 import { PotionHedgingVaultConfigParams } from "../config/deployConfig";
+import { network } from "hardhat";
 
 import {
     MockERC20PresetMinterPauser,
@@ -134,4 +135,10 @@ export function isMock<T extends BaseContract>(contract: MockOrContract<T>): con
 
 export function asMock<T extends BaseContract>(contract: MockOrContract<T>): MockContract<T> | undefined {
     return isMock(contract) ? (contract as MockContract<T>) : undefined;
+}
+
+export function ifMocksEnabled(fn: () => void): void {
+    if (network.name === "hardhat") {
+        fn();
+    }
 }
