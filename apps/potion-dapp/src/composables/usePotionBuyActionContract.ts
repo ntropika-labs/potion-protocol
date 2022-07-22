@@ -25,7 +25,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
       false,
       false,
       PotionBuyAction__factory,
-      contractAddress
+      contractAddress.toLowerCase()
     ) as PotionBuyAction;
   };
 
@@ -38,6 +38,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const nextCycleTimestampLoading = ref(false);
   const nextCycleTimestampError = ref<string | null>(null);
   const getNextCycleTimestamp = async () => {
+    nextCycleTimestampLoading.value = true;
+    nextCycleTimestampError.value = null;
     try {
       const provider = initContractProvider();
       nextCycleTimestamp.value = parseInt(
@@ -62,6 +64,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const cycleDurationSecsLoading = ref(false);
   const cycleDurationSecsError = ref<string | null>(null);
   const getCycleDurationSecs = async () => {
+    cycleDurationSecsLoading.value = true;
+    cycleDurationSecsError.value = null;
     try {
       const provider = initContractProvider();
       cycleDurationSecs.value = parseFloat(
@@ -86,6 +90,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const maxPremiumPercentageLoading = ref(false);
   const maxPremiumPercentageError = ref<string | null>(null);
   const getMaxPremiumPercentage = async () => {
+    maxPremiumPercentageLoading.value = true;
+    maxPremiumPercentageError.value = null;
     try {
       const provider = initContractProvider();
       maxPremiumPercentage.value = parseFloat(
@@ -110,6 +116,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const premiumSlippageLoading = ref(false);
   const premiumSlippageError = ref<string | null>(null);
   const getPremiumSlippage = async () => {
+    premiumSlippageLoading.value = true;
+    premiumSlippageError.value = null;
     try {
       const provider = initContractProvider();
       premiumSlippage.value = parseFloat(
@@ -134,6 +142,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const swapSlippageLoading = ref(false);
   const swapSlippageError = ref<string | null>(null);
   const getSwapSlippage = async () => {
+    swapSlippageLoading.value = true;
+    swapSlippageError.value = null;
     try {
       const provider = initContractProvider();
       swapSlippage.value = parseFloat(
@@ -158,6 +168,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const maxSwapDurationSecsLoading = ref(false);
   const maxSwapDurationSecsError = ref<string | null>(null);
   const getMaxSwapDurationSecs = async () => {
+    maxSwapDurationSecsLoading.value = true;
+    maxSwapDurationSecsError.value = null;
     try {
       const provider = initContractProvider();
       maxSwapDurationSecs.value = parseFloat(
@@ -182,6 +194,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const strikePercentageLoading = ref(false);
   const strikePercentageError = ref<string | null>(null);
   const getStrikePercentage = async () => {
+    strikePercentageLoading.value = true;
+    strikePercentageError.value = null;
     try {
       const provider = initContractProvider();
       strikePercentage.value = parseFloat(
@@ -206,6 +220,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const currentPayoutLoading = ref(false);
   const currentPayoutError = ref<string | null>(null);
   const getCurrentPayout = async (investmentAsset: string | Ref<string>) => {
+    currentPayoutLoading.value = true;
+    currentPayoutError.value = null;
     try {
       const provider = initContractProvider();
       const payout = await provider.calculateCurrentPayout(
