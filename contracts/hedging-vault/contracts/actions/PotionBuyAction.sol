@@ -119,9 +119,10 @@ contract PotionBuyAction is
         _setStrikePercentage(initParams.strikePercentage);
 
         // Get the next time
-        nextCycleStartTimestamp =
-            TimeUtils.calculateTodayWithOffset(block.timestamp, TimeUtils.SECONDS_TO_0800_UTC) +
-            initParams.cycleDurationSecs;
+        uint256 todayAt8UTC = TimeUtils.calculateTodayWithOffset(block.timestamp, TimeUtils.SECONDS_TO_0800_UTC);
+        nextCycleStartTimestamp = todayAt8UTC > block.timestamp
+            ? todayAt8UTC
+            : todayAt8UTC + initParams.cycleDurationSecs;
     }
 
     /// STATE CHANGERS

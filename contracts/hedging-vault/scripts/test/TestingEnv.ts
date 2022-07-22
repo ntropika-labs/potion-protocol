@@ -13,6 +13,7 @@ import {
     IOpynAddressBook,
     IOpynOracle,
     HedgingVaultOperatorHelper,
+    MockOpynOracle,
 } from "../../typechain";
 import {
     mockERC20,
@@ -43,6 +44,7 @@ export interface TestingEnvironmentDeployment {
     opynController: IOpynController | MockContract<IOpynController>;
     opynFactory: IOpynFactory | MockContract<IOpynFactory>;
     opynOracle: IOpynOracle | MockContract<IOpynOracle>;
+    opynMockOracle: MockOpynOracle | MockContract<MockOpynOracle>;
     uniswapV3SwapRouter: ISwapRouter | MockContract<ISwapRouter>;
 
     // Config
@@ -181,6 +183,7 @@ async function mockContractsIfNeeded(
             : opynController.hardMock;
         testingEnvironmentDeployment.opynFactory = opynFactory.softMock ? opynFactory.softMock : opynFactory.hardMock;
         testingEnvironmentDeployment.opynOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
+        testingEnvironmentDeployment.opynMockOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
 
         const mockingResult = await mockOpynAddressBook(
             deploymentConfig,
@@ -223,6 +226,16 @@ async function mockContractsIfNeeded(
                 alias: "OpynOracle",
             },
         );
+
+        if (deploymentConfig.opynMockOracle) {
+            testingEnvironmentDeployment.opynMockOracle = await attachContract<MockOpynOracle>(
+                "MockOpynOracle",
+                deploymentConfig.opynMockOracle,
+                {
+                    alias: "MockOpynOracle",
+                },
+            );
+        }
     }
 
     // Check if need to mock UniswapV3SwapRouter
@@ -237,11 +250,11 @@ async function mockContractsIfNeeded(
             : mockingResult.hardMock;
 
         // Mint some tokens to the Uniswap Router
-        testingEnvironmentDeployment.USDC.mint(
+        await testingEnvironmentDeployment.USDC.mint(
             testingEnvironmentDeployment.uniswapV3SwapRouter.address,
-            ethers.utils.parseEther("10000000"),
+            ethers.utils.parseUnits("10000000", 6),
         );
-        testingEnvironmentDeployment.underlyingAsset.mint(
+        await testingEnvironmentDeployment.underlyingAsset.mint(
             testingEnvironmentDeployment.uniswapV3SwapRouter.address,
             ethers.utils.parseEther("10000000"),
         );
@@ -329,6 +342,10 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
 
     if (!hedgingVaultConfig.opynAddressBook) {
         hedgingVaultConfig.opynAddressBook = potionProtocolDeployments.AddressBook?.address;
+    }
+
+    if (!hedgingVaultConfig.opynMockOracle) {
+        hedgingVaultConfig.opynMockOracle = potionProtocolDeployments.MockOracle?.address;
     }
 }
 

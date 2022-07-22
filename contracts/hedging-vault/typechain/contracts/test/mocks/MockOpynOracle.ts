@@ -25,18 +25,33 @@ import type {
 export interface MockOpynOracleInterface extends utils.Interface {
   functions: {
     "getPrice(address)": FunctionFragment;
+    "isDisputePeriodOver(address,uint256)": FunctionFragment;
     "pricePerAsset(address)": FunctionFragment;
+    "setIsDisputePeriodOver(address,uint256,bool)": FunctionFragment;
     "setStablePrice(address,uint256)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getPrice" | "pricePerAsset" | "setStablePrice"
+    nameOrSignatureOrTopic:
+      | "getPrice"
+      | "isDisputePeriodOver"
+      | "pricePerAsset"
+      | "setIsDisputePeriodOver"
+      | "setStablePrice"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "isDisputePeriodOver",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "pricePerAsset",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setIsDisputePeriodOver",
+    values: [string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setStablePrice",
@@ -45,7 +60,15 @@ export interface MockOpynOracleInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isDisputePeriodOver",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "pricePerAsset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setIsDisputePeriodOver",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -85,10 +108,23 @@ export interface MockOpynOracle extends BaseContract {
   functions: {
     getPrice(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    isDisputePeriodOver(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     pricePerAsset(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    setIsDisputePeriodOver(
+      _asset: string,
+      _expiryTimestamp: BigNumberish,
+      _result: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setStablePrice(
       asset: string,
@@ -99,7 +135,20 @@ export interface MockOpynOracle extends BaseContract {
 
   getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  isDisputePeriodOver(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  setIsDisputePeriodOver(
+    _asset: string,
+    _expiryTimestamp: BigNumberish,
+    _result: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setStablePrice(
     asset: string,
@@ -110,7 +159,20 @@ export interface MockOpynOracle extends BaseContract {
   callStatic: {
     getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    isDisputePeriodOver(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setIsDisputePeriodOver(
+      _asset: string,
+      _expiryTimestamp: BigNumberish,
+      _result: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setStablePrice(
       asset: string,
@@ -124,7 +186,20 @@ export interface MockOpynOracle extends BaseContract {
   estimateGas: {
     getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    isDisputePeriodOver(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setIsDisputePeriodOver(
+      _asset: string,
+      _expiryTimestamp: BigNumberish,
+      _result: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setStablePrice(
       asset: string,
@@ -139,9 +214,22 @@ export interface MockOpynOracle extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isDisputePeriodOver(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pricePerAsset(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setIsDisputePeriodOver(
+      _asset: string,
+      _expiryTimestamp: BigNumberish,
+      _result: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setStablePrice(

@@ -5,12 +5,7 @@ import { BigNumber } from "ethers";
 
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
-import {
-    getDeploymentConfig,
-    deployTestingEnv,
-    printTestingEnv,
-    TestingEnvironmentDeployment,
-} from "../../scripts/test/TestingEnv";
+import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
@@ -52,6 +47,8 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
+
+        //asMock(tEnv.underlyingAsset)?.approve.reset();
     });
 
     it("Vault Deployment Values", async function () {
@@ -143,10 +140,13 @@ describe("HedgingVault", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it.only("Full cycle (deposit, enter, exit, redeem)", async function () {
+    it("Full cycle (deposit, enter, exit, redeem)", async function () {
         // Test Settings
-        const underlyingAssetPriceInUSD = BigNumber.from(100000000000); // 1000 USDC with 8 decimals
-        const USDCPriceInUSD = BigNumber.from(100000000); // 1 USDC with 8 decimals
+        const underlyingAssetPriceInUSD = 1000.0;
+        const USDCPriceInUSD = 1.0;
+
+        const underlyingAssetPriceInUSDbn = ethers.utils.parseUnits(String(underlyingAssetPriceInUSD), 8); // 1000 USDC with 8 decimals
+        const USDCPriceInUSDbn = ethers.utils.parseUnits(String(USDCPriceInUSD), 8); // 1 USDC with 8 decimals
 
         const amountToBeInvested = ethers.utils.parseEther("20");
         const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
@@ -156,9 +156,10 @@ describe("HedgingVault", function () {
         */
         const amountProtected = PercentageUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
         const amountProtectedInUSDC = amountProtected
-            .mul(underlyingAssetPriceInUSD)
-            .div(USDCPriceInUSD)
-            .div(BigNumber.from(1000000000000)); // USDC only uses 8 decimals
+            .mul(underlyingAssetPriceInUSDbn)
+            .div(USDCPriceInUSDbn)
+            .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
+
         const collateralRequiredInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, tEnv.strikePercentage);
 
         const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
@@ -168,13 +169,16 @@ describe("HedgingVault", function () {
         const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
         const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
 
-        const maxPremiumWithSlippage = PercentageUtils.addPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
-        const strikePriceInUSDC = PercentageUtils.applyPercentage(underlyingAssetPriceInUSD, tEnv.strikePercentage);
+        const maxPremiumWithSlippageInUSDC = PercentageUtils.addPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
+        const strikePriceInUSDC = PercentageUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
         const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
         const uniswapEnterPositionInputAmount = PercentageUtils.addPercentage(
-            maxPremiumWithSlippage.mul(USDCPriceInUSD).div(underlyingAssetPriceInUSD),
+            maxPremiumWithSlippageInUSDC
+                .mul(BigNumber.from(1000000000000))
+                .mul(USDCPriceInUSDbn)
+                .div(underlyingAssetPriceInUSDbn),
             tEnv.swapSlippage,
         );
 
@@ -192,14 +196,6 @@ describe("HedgingVault", function () {
             // This causes the potion library to not do an extra safeApprove on USDC
             // as all the allowance has been consumed
             return args._maxPremium;
-        });
-        asMock(tEnv.uniswapV3SwapRouter)?.exactOutput((args: any) => {
-            // This causes the uniswap library to not do an extra safeApprove on the
-            // underlying asset as all the allowance has been consumed
-            return args.params.amountInMaximum;
-        });
-        asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns((args: any) => {
-            return args.params.amountOutMinimum;
         });
         asMock(tEnv.opynController)?.isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(false);
         asMock(tEnv.opynFactory)?.getOtoken.returns(potionOtokenAddress);
@@ -251,7 +247,7 @@ describe("HedgingVault", function () {
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
             expectedPremiumInUSDC: expectedPremiumInUSDC,
-            totalSizeInPotions: amountToBeInvested,
+            totalSizeInPotions: otokensAmount,
         };
 
         await action.setPotionBuyInfo(potionBuyInfo);
@@ -269,14 +265,14 @@ describe("HedgingVault", function () {
         */
 
         // Set the Opyn oracle asset price for the underlying asset
-        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, BigNumber.from(underlyingAssetPriceInUSD));
-        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, BigNumber.from(USDCPriceInUSD));
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSDbn);
+        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSDbn);
 
         // Set the Uniswap route info
         let swapInfo: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
-            expectedPriceRate: toPRBMath("1000.0"),
+            expectedPriceRate: toPRBMath(underlyingAssetPriceInUSD / USDCPriceInUSD, 18, 6),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
@@ -285,11 +281,6 @@ describe("HedgingVault", function () {
         let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
         expectSolidityDeepCompare(swapInfo, currentSwapInfo);
-
-        // Mint some USDC
-        //
-        // TODO: This must disappear when we properly implement the Uniswap V3 mock
-        await tEnv.USDC.mint(tEnv.potionBuyAction.address, maxPremiumWithSlippage);
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
@@ -331,7 +322,7 @@ describe("HedgingVault", function () {
             expect(asMock(tEnv.USDC)?.approve).to.have.callCount(4);
             expect(asMock(tEnv.USDC)?.approve.atCall(3)).to.have.been.calledWith(
                 tEnv.potionLiquidityPoolManager.address,
-                maxPremiumWithSlippage,
+                maxPremiumWithSlippageInUSDC,
             );
         }
 
@@ -342,7 +333,7 @@ describe("HedgingVault", function () {
                 swapInfo.swapPath,
                 action.address,
                 tEnv.maxSwapDurationSecs.add(nextBlockTimestamp),
-                BigNumber.from(maxPremiumWithSlippage),
+                BigNumber.from(maxPremiumWithSlippageInUSDC),
                 BigNumber.from(uniswapEnterPositionInputAmount),
             ]);
         }
@@ -358,10 +349,10 @@ describe("HedgingVault", function () {
                 asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[1],
             );
             expect(asMock(tEnv.potionLiquidityPoolManager)?.buyOtokens.getCall(0).args[2]).to.be.equal(
-                maxPremiumWithSlippage,
+                maxPremiumWithSlippageInUSDC,
             );
         }
-        return;
+
         /*
             EXIT POSITION
         */
@@ -373,7 +364,7 @@ describe("HedgingVault", function () {
         swapInfo = {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: toPRBMath("0.2"),
+            expectedPriceRate: toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
             swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
@@ -382,6 +373,34 @@ describe("HedgingVault", function () {
         currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
 
         expectSolidityDeepCompare(swapInfo, currentSwapInfo);
+
+        // Use the strike percent and reduce it by 10% to get the exit price
+        const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
+        const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
+        const underlyingAssetExitPriceInUSDbn = PercentageUtils.applyPercentage(
+            underlyingAssetPriceInUSDbn,
+            underlyingAssetPricePercentage,
+        );
+        const payoutInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
+
+        const totalUSDCInVaultAfterPayout = payoutInUSDC.add(maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC));
+
+        const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInVaultAfterPayout
+            .mul(BigNumber.from(1000000000000))
+            .mul(USDCPriceInUSDbn)
+            .div(underlyingAssetPriceInUSDbn);
+
+        const uniswapExitPositionOutputAmount = PercentageUtils.substractPercentage(
+            extraUnderlyingAssetInVaultAfterPayout,
+            tEnv.swapSlippage,
+        );
+
+        // Set the Opyn oracle asset price for the underlying asset
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSDbn);
+
+        // Set the dispute period as over, this only works with the mock contract
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, expirationTimestamp, true);
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.USDC.address, expirationTimestamp, true);
 
         // Exit the position
         await fastForwardChain(DAY_IN_SECONDS);
@@ -397,17 +416,21 @@ describe("HedgingVault", function () {
         // These balances will not be valid if the real Uniswap and Potion protocol are used.
         // As of now, the asset is not really swapped, so the only movement in balances is from
         // the action to the vault
-        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(20000);
+
+        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(
+            amountToBeInvested.sub(uniswapEnterPositionInputAmount).add(uniswapExitPositionOutputAmount),
+        );
         expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(0);
+        expect(await tEnv.USDC.balanceOf(action.address)).to.equal(0);
 
         // Check approve calls: the first call was directly done above in the test code, so
         // check the second and the third call.
         if (network.name === "hardhat") {
-            expect(asMock(tEnv.USDC)?.approve).to.have.callCount(2);
-            expect(asMock(tEnv.USDC)?.approve.atCall(1)).to.have.been.calledWith(tEnv.uniswapV3SwapRouter.address, 0);
+            expect(asMock(tEnv.USDC)?.approve).to.have.callCount(5);
+            expect(asMock(tEnv.USDC)?.approve.atCall(4)).to.have.been.calledWith(tEnv.uniswapV3SwapRouter.address, 0);
 
-            expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(4);
-            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(3)).to.have.been.calledWith(action.address, 0);
+            expect(asMock(tEnv.underlyingAsset)?.approve).to.have.callCount(7);
+            expect(asMock(tEnv.underlyingAsset)?.approve.atCall(6)).to.have.been.calledWith(action.address, 0);
         }
 
         // Check the Uniswap Calls

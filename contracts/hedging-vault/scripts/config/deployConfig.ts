@@ -50,9 +50,11 @@ export interface PotionHedgingVaultConfigParams {
     // If uniswapV3SwapRouter is not provided, then a mock uniswapV3SwapRouter is deployed and used
     // If potionLiquidityPoolManager is not provided, then a mock potionLiquidityPoolManager is deployed and used
     // If opynAddressBook is not provided, then a mock opynAddressBook is deployed and used
+    // If opynOracle is not provided then it is not used
     uniswapV3SwapRouter?: string;
     potionLiquidityPoolManager?: string;
     opynAddressBook?: string;
+    opynMockOracle?: string;
 }
 
 export const PotionHedgingVaultDeploymentConfigs: { [key in NetworksType as string]: PotionHedgingVaultConfigParams } =

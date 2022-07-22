@@ -7,6 +7,8 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,30 +22,69 @@ import type {
   OnEvent,
 } from "../../../common";
 
+export declare namespace IOpynController {
+  export type ActionArgsStruct = {
+    actionType: BigNumberish;
+    owner: string;
+    secondAddress: string;
+    asset: string;
+    vaultId: BigNumberish;
+    amount: BigNumberish;
+    index: BigNumberish;
+    data: BytesLike;
+  };
+
+  export type ActionArgsStructOutput = [
+    number,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ] & {
+    actionType: number;
+    owner: string;
+    secondAddress: string;
+    asset: string;
+    vaultId: BigNumber;
+    amount: BigNumber;
+    index: BigNumber;
+    data: string;
+  };
+}
+
 export interface MockOpynControllerInterface extends utils.Interface {
   functions: {
-    "getProceed(address,uint256)": FunctionFragment;
+    "getPayout(address,uint256)": FunctionFragment;
     "isSettlementAllowed(address)": FunctionFragment;
+    "operate((uint8,address,address,address,uint256,uint256,uint256,bytes)[])": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getProceed" | "isSettlementAllowed"
+    nameOrSignatureOrTopic: "getPayout" | "isSettlementAllowed" | "operate"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getProceed",
+    functionFragment: "getPayout",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "operate",
+    values: [IOpynController.ActionArgsStruct[]]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "getProceed", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPayout", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isSettlementAllowed",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "operate", data: BytesLike): Result;
 
   events: {};
 }
@@ -75,7 +116,7 @@ export interface MockOpynController extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getProceed(
+    getPayout(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -85,9 +126,14 @@ export interface MockOpynController extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    operate(
+      arg0: IOpynController.ActionArgsStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  getProceed(
+  getPayout(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
@@ -98,8 +144,13 @@ export interface MockOpynController extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  operate(
+    arg0: IOpynController.ActionArgsStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    getProceed(
+    getPayout(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -109,12 +160,17 @@ export interface MockOpynController extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    operate(
+      arg0: IOpynController.ActionArgsStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    getProceed(
+    getPayout(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -124,10 +180,15 @@ export interface MockOpynController extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    operate(
+      arg0: IOpynController.ActionArgsStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getProceed(
+    getPayout(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -136,6 +197,11 @@ export interface MockOpynController extends BaseContract {
     isSettlementAllowed(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    operate(
+      arg0: IOpynController.ActionArgsStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

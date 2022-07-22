@@ -14,6 +14,7 @@ import "../../interfaces/IOpynOracle.sol";
 */
 contract MockOpynOracle is IOpynOracle {
     mapping(address => uint256) public pricePerAsset;
+    mapping(address => mapping(uint256 => bool)) public isDisputePeriodOver;
 
     /**
         @inheritdoc IOpynOracle
@@ -22,7 +23,21 @@ contract MockOpynOracle is IOpynOracle {
         return pricePerAsset[asset];
     }
 
+    /**
+        @inheritdoc IOpynOracle
+     */
     function setStablePrice(address asset, uint256 price) external {
         pricePerAsset[asset] = price;
+    }
+
+    /**
+        Specific Mock function to set the dispute period as over
+     */
+    function setIsDisputePeriodOver(
+        address _asset,
+        uint256 _expiryTimestamp,
+        bool _result
+    ) external {
+        isDisputePeriodOver[_asset][_expiryTimestamp] = _result;
     }
 }

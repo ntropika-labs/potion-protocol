@@ -6,12 +6,15 @@ pragma solidity 0.8.14;
 import { IPotionLiquidityPool } from "../interfaces/IPotionLiquidityPool.sol";
 import { IOtoken } from "../interfaces/IOtoken.sol";
 import { IOpynFactory } from "../interfaces/IOpynFactory.sol";
+import { IOpynController } from "../interfaces/IOpynController.sol";
 import { PotionBuyInfo } from "../interfaces/IPotionBuyInfo.sol";
 
 import "./PercentageUtils.sol";
+import "./PriceUtils.sol";
 import "./OpynProtocolLib.sol";
 import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 
 /**
     @title PotionProtocolLib
@@ -24,6 +27,9 @@ import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable
 library PotionProtocolLib {
     using PercentageUtils for uint256;
     using OpynProtocolLib for IOpynFactory;
+
+    /// CONSTANTS
+    uint256 private constant OTOKEN_DECIMALS = 8;
 
     /// FUNCTIONS
 
@@ -96,15 +102,96 @@ library PotionProtocolLib {
         @notice Settles the specified potion after it has expired
 
         @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
-        @param potion Potion (otoken) to settle
-
+        @param opynController Address of the Opyn controller to claim the payout
+        @param buyInfo The information used to previously purchase the potions
+        
         @dev The settlement will send back the proceeds of the expired potion to this contract
 
         @dev The settled amount is not available in the contract. Check the below TODO for more info
      */
-    function redeemPotion(IPotionLiquidityPool potionLiquidityPoolManager, address potion) internal {
+    function redeemPotion(
+        IPotionLiquidityPool potionLiquidityPoolManager,
+        IOpynController opynController,
+        PotionBuyInfo memory buyInfo
+    ) internal {
+        IOtoken potion = IOtoken(buyInfo.targetPotionAddress);
+
         // TODO: There is no way to get the amount of proceeds returned by the protocol. We may
         // TODO: need to retrieve manually the USDC balance before and after in order to get it
-        potionLiquidityPoolManager.settleAfterExpiry(IOtoken(potion));
+        potionLiquidityPoolManager.settleAfterExpiry(potion);
+
+        uint256 potionVaultId = potionLiquidityPoolManager.getVaultId(potion);
+
+        IOpynController.ActionArgs[] memory redeemArgs = _getRedeemPotionAction(
+            address(this),
+            address(potion),
+            potionVaultId,
+            buyInfo.totalSizeInPotions
+        );
+
+        opynController.operate(redeemArgs);
+    }
+
+    /**
+        @notice Retrieves the payout amount for an expired potion
+
+        @param opynController Address of the Opyn controller to retrieve the payout amount
+        @param potion Potion (otoken) to retrieve the payout amount for
+        @param amount The amount of potions to retrieve the payout amount for
+
+        @return payout The amount of USDC that will be returned to the buyer
+     */
+    function getPayout(
+        IOpynController opynController,
+        address potion,
+        uint256 amount
+    ) internal view returns (uint256 payout) {
+        payout = opynController.getPayout(potion, amount);
+    }
+
+    /**
+        @notice Gets the amount of potions required to cover the specified amount of the hedged asset
+
+        @param hedgedAsset The asset being hedged by the potions
+        @param amount The amount of the hedged asset to be covered by the potions
+
+        @return The amount of potions required to cover the specified amount of the hedged asset
+     */
+    function getPotionsAmount(address hedgedAsset, uint256 amount) internal view returns (uint256) {
+        uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
+
+        // Convert with a 1:1 ratio, just adjust the decimals
+        return PriceUtils.convertAmount(hedgedAssetDecimals, OTOKEN_DECIMALS, amount, 1, 1);
+    }
+
+    /**
+        @notice Retrieves the redeem action arguments for an expired potion
+
+        @param owner Address of the buyer of the potion
+        @param potion Potion (otoken) to settle
+        @param vaultId The vault id of the potion to redeem
+        @param amount The amount of USDC that will be returned to the buyer
+
+        @return The redeem action arguments
+    */
+    function _getRedeemPotionAction(
+        address owner,
+        address potion,
+        uint256 vaultId,
+        uint256 amount
+    ) private pure returns (IOpynController.ActionArgs[] memory) {
+        IOpynController.ActionArgs[] memory redeemArgs = new IOpynController.ActionArgs[](1);
+        redeemArgs[0] = IOpynController.ActionArgs({
+            actionType: IOpynController.ActionType.Redeem,
+            owner: owner,
+            secondAddress: owner,
+            asset: potion,
+            vaultId: vaultId,
+            amount: amount,
+            index: 0,
+            data: ""
+        });
+
+        return redeemArgs;
     }
 }

@@ -8,6 +8,8 @@ import {
     IPotionLiquidityPool__factory,
     IOpynFactory,
     IOpynFactory__factory,
+    IOpynController,
+    IOpynController__factory,
     IERC20,
     IERC20__factory,
 } from "../../typechain";
@@ -32,6 +34,7 @@ describe("PotionProtocolLib", function () {
     let potionProtocolLib: TestWrapperPotionProtocolLib;
     let fakePotionLiquidityPool: FakeContract<IPotionLiquidityPool>;
     let fakeOpynFactory: FakeContract<IOpynFactory>;
+    let fakeOpynController: FakeContract<IOpynController>;
     let fakeUSDC: FakeContract<IERC20>;
 
     // Using `beforeEach` here because smock does not reset the call count for a function after each test
@@ -45,6 +48,7 @@ describe("PotionProtocolLib", function () {
 
         fakePotionLiquidityPool = await smock.fake<IPotionLiquidityPool>(IPotionLiquidityPool__factory.abi);
         fakeOpynFactory = await smock.fake<IOpynFactory>(IOpynFactory__factory.abi);
+        fakeOpynController = await smock.fake<IOpynController>(IOpynController__factory.abi);
         fakeUSDC = await smock.fake<IERC20>(IERC20__factory.abi);
 
         potionAddress = (await ethers.getSigners())[5].address;
@@ -233,7 +237,45 @@ describe("PotionProtocolLib", function () {
         }
         fakePotionLiquidityPool.settleAfterExpiry.returns(true);
 
-        await potionProtocolLib.callStatic.redeemPotion(fakePotionLiquidityPool.address, potionAddress);
+        const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
+            {
+                lp: randomAddress,
+                poolId: 55,
+                curve: {
+                    a_59x18: 1,
+                    b_59x18: 2,
+                    c_59x18: 3,
+                    d_59x18: 4,
+                    max_util_59x18: 5,
+                },
+                criteria: {
+                    underlyingAsset: underlyingAsset,
+                    strikeAsset: strikeAsset,
+                    isPut: true,
+                    maxStrikePercent: 99,
+                    maxDurationInDays: 59,
+                },
+                orderSizeInOtokens: 3001,
+            },
+        ];
+
+        const expectedPremium = BigNumber.from(2567);
+
+        const buyInfo: PotionBuyInfoStruct = {
+            targetPotionAddress: potionAddress,
+            underlyingAsset: underlyingAsset,
+            strikePriceInUSDC: BigNumber.from("100000000000"),
+            expirationTimestamp: BigNumber.from("100000000000"), // Not important
+            sellers: counterparties,
+            expectedPremiumInUSDC: expectedPremium,
+            totalSizeInPotions: 3001,
+        };
+
+        await potionProtocolLib.callStatic.redeemPotion(
+            fakePotionLiquidityPool.address,
+            fakeOpynController.address,
+            buyInfo,
+        );
 
         expect(fakePotionLiquidityPool.settleAfterExpiry).to.have.been.calledOnce;
         expect(fakePotionLiquidityPool.settleAfterExpiry).to.have.been.calledWith(potionAddress);
