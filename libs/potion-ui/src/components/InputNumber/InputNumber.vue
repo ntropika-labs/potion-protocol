@@ -57,8 +57,8 @@ import CardFooter from "../CardFooter/CardFooter.vue";
 export interface Props {
   color?: CardColor;
   title?: string;
-  unit: string;
-  step: number;
+  unit?: string;
+  step?: number;
   min: number;
   max: number;
   disabled?: boolean;

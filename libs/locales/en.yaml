@@ -145,3 +145,19 @@ most_purchased_description: Potions that have been purchased the most times.
 most_collateralized: most collateralized
 most_collateralized_description: Top Potions by Locked Collateral
 number_of_transactions: number of transactions
+protective_put_vault: protective put vault
+unlocked: unlocked
+locked: locked
+admin: admin
+operator: operator
+share_price: share price
+vault_size: vault size
+your_shares: your shares
+hedging_level: hedging level
+strike: strike
+cycle_duration: cycle duration
+max_premium: max premium
+max_premium_slippage: max premium slippage
+max_swap_slippage: max swap slippage
+time_left_until_next_cycle: time left until next cycle
+deposit: deposit

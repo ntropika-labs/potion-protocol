@@ -67,13 +67,22 @@ export function useErc4626Contract(address: string | Ref<string>) {
     }
   };
 
-  const totalAssets = ref<BigNumber>();
+  const {
+    name: assetName,
+    symbol: assetSymbol,
+    image: assetImage,
+    decimals: assetDecimals,
+  } = useErc20Contract(assetAddress);
+
+  const totalAssets = ref(0);
   const totalAssetsLoading = ref(false);
   const getTotalAssets = async () => {
     try {
       totalAssetsLoading.value = true;
       const contractProvider = initContractProvider();
-      totalAssets.value = await contractProvider.totalAssets();
+      totalAssets.value = parseFloat(
+        formatUnits(await contractProvider.totalAssets(), assetDecimals.value)
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the total assets: ${error.message}`);
@@ -100,12 +109,6 @@ export function useErc4626Contract(address: string | Ref<string>) {
       await getVaultAssetInfo();
     });
   }
-  const {
-    name: assetName,
-    symbol: assetSymbol,
-    image: assetImage,
-    decimals: assetDecimals,
-  } = useErc20Contract(assetAddress);
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -482,7 +485,7 @@ export function useErc4626Contract(address: string | Ref<string>) {
       const contractProvider = initContractProvider();
       const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       const result = await contractProvider.convertToShares(parsedAmount);
-      return formatUnits(result, vaultDecimals.value);
+      return parseFloat(formatUnits(result, vaultDecimals.value));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot convert to shares: ${error.message}`);
@@ -491,6 +494,12 @@ export function useErc4626Contract(address: string | Ref<string>) {
       }
     }
   };
+
+  const assetToShare = ref(0);
+  onMounted(async () => {
+    const response = await convertToShares(1);
+    assetToShare.value = response;
+  });
 
   const convertToAssets = async (amount: BigNumber, digits: number) => {
     try {
@@ -507,7 +516,8 @@ export function useErc4626Contract(address: string | Ref<string>) {
     }
   };
 
-  const balanceOfUser = async () => {
+  const userBalance = ref(0);
+  const getUserBalance = async () => {
     if (connectedWallet.value) {
       try {
         maxDepositLoading;
@@ -524,9 +534,22 @@ export function useErc4626Contract(address: string | Ref<string>) {
         }
       }
     } else {
-      throw new Error("Connect your wallet first");
+      // throw new Error("Connect your wallet first");
+      userBalance.value = 0;
     }
   };
+
+  const userAssets = ref(0);
+
+  onMounted(async () => {
+    await getUserBalance();
+    userAssets.value = parseFloat(
+      await convertToAssets(
+        parseUnits(userBalance.value.toString(), assetDecimals.value),
+        assetDecimals.value
+      )
+    );
+  });
 
   const allowance = ref(0);
   const allowanceLoading = ref(false);
@@ -592,37 +615,33 @@ export function useErc4626Contract(address: string | Ref<string>) {
     }
   };
   return {
-    vaultName,
-    vaultDecimals,
-    vaultSymbol,
-    vaultImage,
-    assetName,
-    assetSymbol,
-    assetDecimals,
-    assetImage,
     allowance,
     allowanceLoading,
-    getAllowance,
-    getVaultDecimals,
     approveLoading,
     approveReceipt,
     approveSpending,
     approveTx,
     assetAddress,
     assetAddressLoading,
-    balanceOfUser,
+    assetDecimals,
+    assetImage,
+    assetName,
+    assetSymbol,
+    assetToShare,
     convertToAssets,
     convertToShares,
     deposit,
     depositLoading,
     depositReceipt,
     depositTx,
+    getAllowance,
     getAssetAddress,
     getMaxDeposit,
     getMaxMint,
     getMaxRedeem,
     getMaxWithdraw,
     getTotalAssets,
+    getVaultDecimals,
     maxDeposit,
     maxDepositLoading,
     maxMint,
@@ -649,6 +668,12 @@ export function useErc4626Contract(address: string | Ref<string>) {
     redeemTx,
     totalAssets,
     totalAssetsLoading,
+    userAssets,
+    userBalance,
+    vaultDecimals,
+    vaultImage,
+    vaultName,
+    vaultSymbol,
     withdraw,
     withdrawLoading,
     withdrawReceipt,

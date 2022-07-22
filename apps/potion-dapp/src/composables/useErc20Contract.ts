@@ -88,14 +88,16 @@ export function useErc20Contract(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    if (unref(address).length === 42) {
-      await fetchErc20Info();
+    if (unref(address)) {
+      if (unref(address)) {
+        await fetchErc20Info();
+      }
     }
   });
 
   if (isRef(address) && unref(address).length === 42) {
     watch(address, async () => {
-      if (unref(address).length === 42) {
+      if (unref(address)) {
         await fetchErc20Info();
       }
     });
@@ -231,6 +233,7 @@ export function useErc20Contract(address: string | Ref<string>) {
     getName,
     getSymbol,
     getTokenBalance,
+    userBalance,
     image,
     name,
     symbol,
