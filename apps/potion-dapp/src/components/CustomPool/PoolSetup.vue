@@ -5,6 +5,7 @@
       :title="liquidityCardTitle"
       :size="props.size"
       :user-balance="userCollateralBalance"
+      :min="props.min"
       class="md:col-span-4 xl:col-span-3 self-start"
       @update:model-value="emits('update:liquidity', $event)"
       @valid-input="emits('validInput', $event)"
@@ -55,10 +56,12 @@ interface Props {
   criteriaMap?: Map<string, { maxStrike: number; maxDuration: number }>;
   tokenPrices: Map<string, ApiTokenPrice>;
   poolId: number;
+  min?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   criteriaMap: () => new Map(),
   size: "",
+  min: 1,
 });
 
 const emits = defineEmits<{

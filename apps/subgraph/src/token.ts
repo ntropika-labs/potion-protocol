@@ -3,57 +3,54 @@ import {
   ProductWhitelisted,
 } from "../generated/Whitelist/Whitelist";
 import { BigInt, Address, BigDecimal, log } from "@graphprotocol/graph-ts";
-import { Token, Underlying, Collateral, Product } from "../generated/schema";
+import { Token, Product } from "../generated/schema";
 import { getTokenDecimals, getTokenName, getTokenSymbol } from "./tokenHelpers";
 import { bigIntToDecimal } from "./helpers";
+import { TokenType } from "./enums";
 
-export const COLLATERAL_ID = "0";
-
-export function getCollateralDecimals(): BigInt {
-  const collateral = Collateral.load(COLLATERAL_ID)!;
-  const token = Token.load(collateral.token)!;
-  return token.decimals;
-}
-
-export function collateralFixedtoDecimals(value: BigInt): BigDecimal {
-  // TEMPORARY WORKAROUND: We only use stable coins as collateral that always have 6 decimals
-  // For a proper solution we probably need more data (eg, the address of the token that we are using as collateral and not only the amount)
-  // const decimals = getCollateralDecimals();
+export function collateralToDecimals(value: BigInt): BigDecimal {
+  // WORKAROUND: the current version of the potion protocol always use USDC as a collateral that has decimals
+  //   if in the future a new version of the protocol will allow to use different collaterals with different decimals
+  //   we will ever need to support collaterals with a different number of decimals
+  //   we will also need as a param the token address to load the correct number of digits
   const decimals = 6;
-  const decimalsInt = parseInt(decimals.toString());
-  return bigIntToDecimal(value, decimalsInt as i32);
+  return bigIntToDecimal(value, decimals as i32);
 }
 
 export function createTokenId(address: Address): string {
   return address.toHexString();
 }
 
-function createToken(address: Address): void {
+function createToken(address: Address, tokenType: TokenType): void {
   const tokenId = createTokenId(address);
   let token = Token.load(tokenId);
 
   if (token == null) {
+    log.info("Creating new {} token for address {}", [
+      tokenType,
+      address.toHexString(),
+    ]);
     token = new Token(tokenId);
     token.address = address;
     token.decimals = getTokenDecimals(address);
     token.name = getTokenName(address);
     token.symbol = getTokenSymbol(address);
+    token.tokenType = tokenType;
     token.save();
   }
 }
 
-// Create an entity for the underlying of the product (if it does not exist already).
 export function handleProductWhitelist(event: ProductWhitelisted): void {
-  const underlyingAddress = event.params.underlying;
-  createToken(underlyingAddress as Address);
-  const tokenId = createTokenId(underlyingAddress as Address);
-  let underlying = Underlying.load(tokenId);
-
-  if (underlying == null) {
-    underlying = new Underlying(tokenId);
-    underlying.token = tokenId;
-    underlying.save();
-  }
+  log.info(
+    "Creating new product for underlying {} with collateral {} and strike {}",
+    [
+      event.params.underlying.toHexString(),
+      event.params.collateral.toHexString(),
+      event.params.strike.toHexString(),
+    ]
+  );
+  // Create an entity for the underlying of the product (if it does not exist already).
+  createToken(event.params.underlying, TokenType.UNDERLYING);
 
   const productID =
     event.params.underlying.toHexString() +
@@ -68,23 +65,7 @@ export function handleProductWhitelist(event: ProductWhitelisted): void {
   product.save();
 }
 
-export function createCollateral(collateralAddress: Address): void {
-  log.info("Creating collateral {}", [collateralAddress.toHexString()]);
-  createToken(collateralAddress);
-  const tokenId = createTokenId(collateralAddress);
-  // Since we can only have one collateral token in the current
-  // smart contracts architecture, fix the id to 0.
-  let collateral = Collateral.load(COLLATERAL_ID);
-
-  if (collateral == null) {
-    collateral = new Collateral(COLLATERAL_ID);
-    collateral.token = tokenId;
-    collateral.save();
-  }
-}
-
-// Create an entity for a collateral that is whitelisted.
 export function handleCollateralWhitelist(event: CollateralWhitelisted): void {
-  const collateralAddress = event.params.collateral;
-  createCollateral(collateralAddress as Address);
+  // Create an entity for a collateral that is whitelisted (if it does not exist already).
+  createToken(event.params.collateral, TokenType.COLLATERAL);
 }

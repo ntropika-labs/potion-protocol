@@ -18,7 +18,7 @@
       <InputNumber
         class="mt-3"
         :title="props.title"
-        :min="1"
+        :min="props.min"
         :max="props.userBalance"
         :step="0.1"
         unit="USDC"
@@ -47,6 +47,7 @@ interface Props {
   userBalance: number;
   modelValue: number;
   size?: string;
+  min?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   hint: undefined,
@@ -54,5 +55,6 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: 100,
   size: "",
   title: "",
+  min: 1,
 });
 </script>
