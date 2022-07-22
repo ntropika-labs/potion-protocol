@@ -3,7 +3,6 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import {
-  BaseButton,
   BaseCard,
   BaseTag,
   InputNumber,
@@ -11,11 +10,11 @@ import {
   currencyFormatter,
 } from "potion-ui";
 
+import NavButtons from "@/components/CustomPotion/NavButtons.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import SimilarPotions from "@/components/CustomPotion/SimilarPotions.vue";
 import SidebarMenu from "@/components/CustomPotion/SidebarMenu.vue";
 
-import { useOnboard } from "@onboard-composable";
 import { useBuyPotions } from "@/composables/useBuyPotions";
 import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useDurationSelection } from "@/composables/useDurationSelection";
@@ -33,7 +32,6 @@ import { CustomPotionStep } from "dapp-types";
 
 const { t } = useI18n();
 const currentStep = ref<CustomPotionStep>(CustomPotionStep.ASSET);
-const { connectedWallet } = useOnboard();
 
 const { userAllowance, userCollateralBalance } = useUserData();
 const userCollateralBalanceFormatted = computed(() =>
@@ -98,18 +96,6 @@ const {
 } = useSlippage(routerResult);
 
 // Steps
-const nextStepEnabled = computed(() => {
-  switch (currentStep.value) {
-    case CustomPotionStep.ASSET:
-      return isTokenSelected.value;
-    case CustomPotionStep.STRIKE:
-      return isStrikeValid.value;
-    case CustomPotionStep.EXPIRATION:
-      return isDurationValid.value;
-    default:
-      return false;
-  }
-});
 
 const handleChangeStep = (step: CustomPotionStep) => {
   if (step === CustomPotionStep.STRIKE && strikeSelected.value === 0) {
@@ -120,14 +106,6 @@ const handleChangeStep = (step: CustomPotionStep) => {
   }
   currentStep.value = step;
 };
-
-const areStepsValid = computed(
-  () =>
-    isTokenSelected.value &&
-    isStrikeValid.value &&
-    isDurationValid.value &&
-    isPotionQuantityValid.value
-);
 
 // Buy logic
 const {
@@ -142,37 +120,6 @@ const {
   durationSelected,
   routerResult
 );
-
-const buyPotionButtonState = computed(() => {
-  if (connectedWallet.value) {
-    if (!areStepsValid.value) {
-      return {
-        label: t("invalid_potion"),
-        disabled: true,
-      };
-    }
-    if (userCollateralBalance.value < premiumSlippage.value) {
-      return {
-        label: t("not_enough_usdc"),
-        disabled: true,
-      };
-    }
-
-    const label =
-      userAllowance.value >= premiumSlippage.value
-        ? t("buy_potion")
-        : t("approve");
-    return {
-      label,
-      disabled: false,
-    };
-  }
-
-  return {
-    label: t("connect_wallet"),
-    disabled: true,
-  };
-});
 
 // Notifications
 const {
@@ -372,42 +319,19 @@ watch(buyPotionReceipt, (receipt) => {
         </BaseCard>
       </div>
     </div>
-    <div class="flex w-full justify-end items-center gap-3 p-4">
-      <BaseButton
-        v-if="currentStep !== CustomPotionStep.ASSET"
-        class="uppercase"
-        test-back
-        palette="flat"
-        :inline="true"
-        :label="t('back')"
-        :disabled="false"
-        @click="handleChangeStep(currentStep - 1)"
-      >
-        <template #pre-icon>
-          <i class="i-ph-caret-left"></i>
-        </template>
-      </BaseButton>
-      <BaseButton
-        v-if="currentStep !== CustomPotionStep.REVIEW"
-        test-next
-        palette="secondary"
-        :inline="true"
-        :label="t('next')"
-        :disabled="!nextStepEnabled"
-        @click="handleChangeStep(currentStep + 1)"
-      >
-        <template #post-icon>
-          <i class="i-ph-caret-right"></i>
-        </template>
-      </BaseButton>
-      <BaseButton
-        v-if="currentStep === CustomPotionStep.REVIEW"
-        palette="secondary"
-        :label="buyPotionButtonState.label"
-        :disabled="buyPotionButtonState.disabled"
-        @click="handleBuyPotions"
-      />
-    </div>
+    <NavButtons
+      :current-step="currentStep"
+      :is-token-selected="isTokenSelected"
+      :is-strike-valid="isStrikeValid"
+      :is-duration-valid="isDurationValid"
+      :is-potion-quantity-valid="isPotionQuantityValid"
+      :slippage="premiumSlippage"
+      :balance="userCollateralBalance"
+      :allowance="userAllowance"
+      @update:current-step="handleChangeStep"
+      @buy-potions="handleBuyPotions"
+    >
+    </NavButtons>
   </BaseCard>
   <SimilarPotions
     :token="tokenSelected"
