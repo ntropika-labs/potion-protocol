@@ -115,3 +115,9 @@ export enum CustomPotionStep {
   EXPIRATION,
   REVIEW,
 }
+
+export interface Slippage {
+  value: number;
+  label: string;
+  selected: boolean;
+}

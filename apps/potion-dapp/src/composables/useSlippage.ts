@@ -2,9 +2,10 @@ import { computed, ref } from "vue";
 import { currencyFormatter } from "potion-ui";
 import type { Ref } from "vue";
 import type { DepthRouterReturn } from "potion-router";
+import type { Slippage } from "dapp-types";
 
 export function useSlippage(routerResult: Ref<DepthRouterReturn | null>) {
-  const slippage = ref([
+  const slippage = ref<Slippage[]>([
     { value: 0.005, label: "0.5%", selected: true },
     { value: 0.02, label: "2%", selected: false },
     { value: 0.05, label: "5%", selected: false },

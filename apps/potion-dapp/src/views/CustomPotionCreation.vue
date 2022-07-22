@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import {
-  BaseCard,
-  BaseTag,
-  InputNumber,
-  TokenSelection,
-  currencyFormatter,
-} from "potion-ui";
+import { BaseCard } from "potion-ui";
 
+import TokenSelectionPanel from "@/components/CustomPotion/TokenSelectionPanel.vue";
+import StrikeSelectionPanel from "@/components/CustomPotion/StrikeSelectionPanel.vue";
+import DurationSelectionPanel from "@/components/CustomPotion/DurationSelectionPanel.vue";
+import ReviewPanel from "@/components/CustomPotion/ReviewPanel.vue";
 import NavButtons from "@/components/CustomPotion/NavButtons.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import SimilarPotions from "@/components/CustomPotion/SimilarPotions.vue";
@@ -31,12 +29,8 @@ import { useUserData } from "@/composables/useUserData";
 import { CustomPotionStep } from "dapp-types";
 
 const { t } = useI18n();
-const currentStep = ref<CustomPotionStep>(CustomPotionStep.ASSET);
 
 const { userAllowance, userCollateralBalance } = useUserData();
-const userCollateralBalanceFormatted = computed(() =>
-  currencyFormatter(userCollateralBalance.value, "USDC")
-);
 const { ethPrice } = useEthereumPrice();
 
 // gas units to deploy an otoken: 840000
@@ -96,7 +90,7 @@ const {
 } = useSlippage(routerResult);
 
 // Steps
-
+const currentStep = ref<CustomPotionStep>(CustomPotionStep.ASSET);
 const handleChangeStep = (step: CustomPotionStep) => {
   if (step === CustomPotionStep.STRIKE && strikeSelected.value === 0) {
     strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
@@ -167,157 +161,45 @@ watch(buyPotionReceipt, (receipt) => {
         @update:current-step="handleChangeStep"
       >
       </SidebarMenu>
-      <div
+      <TokenSelectionPanel
         v-if="currentStep === CustomPotionStep.ASSET"
-        class="w-full xl:col-span-2"
-      >
-        <TokenSelection
-          v-if="availableTokens.length > 0"
-          :tokens="availableTokens"
-          @token-selected="selectToken"
-        />
-        <div v-else class="text-center">
-          <p class="text-white/40 text-3xl uppercase">
-            {{ t("no_underlying_asset_found") }}
-          </p>
-        </div>
-      </div>
-      <div
+        :tokens="availableTokens"
+        @token-selected="selectToken"
+      ></TokenSelectionPanel>
+      <StrikeSelectionPanel
         v-if="currentStep === CustomPotionStep.STRIKE"
-        class="xl:col-span-2 flex justify-center"
-      >
-        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
-          <div class="flex justify-between p-4">
-            <div class="flex gap-2 items-center">
-              <img
-                class="h-5 w-5"
-                :src="tokenSelected?.image"
-                :alt="tokenSelected?.symbol"
-              />
-              <p class="text-sm capitalize">{{ t("current_price") }}</p>
-            </div>
-            <p>{{ formattedPrice }}</p>
-          </div>
-          <InputNumber
-            v-model.number="strikeSelected"
-            color="no-bg"
-            :title="t('your_strike_price')"
-            :min="1"
-            :max="maxSelectableStrikeAbsolute"
-            :step="0.1"
-            unit="USDC"
-            :footer-description="t('max_strike_price')"
-            @valid-input="isStrikeValid = $event"
-          />
-        </BaseCard>
-      </div>
-      <div
+        :token-image="tokenSelected?.image ?? ''"
+        :token-symbol="tokenSelected?.symbol ?? ''"
+        :price="formattedPrice"
+        :strike="strikeSelected"
+        :max-strike="maxSelectableStrikeAbsolute"
+        @valid-input="isStrikeValid = $event"
+        @update:strike="(value) => (strikeSelected = value)"
+      ></StrikeSelectionPanel>
+      <DurationSelectionPanel
         v-if="currentStep === CustomPotionStep.EXPIRATION"
-        class="xl:col-span-2 flex justify-center"
+        :duration="durationSelected"
+        :max-duration="maxSelectableDuration"
+        :max-duration-in-days="maxSelectableDurationInDays"
+        :selected-date="durationSelectedDate"
+        @update:duration="(value) => (durationSelected = value)"
+        @valid-input="isDurationValid = $event"
       >
-        <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
-          <div class="flex justify-between p-4 items-start">
-            <div class="flex gap-2 items-center">
-              <p class="text-sm capitalize">{{ t("max_duration") }}</p>
-            </div>
-            <div class="text-sm">
-              <p>{{ maxSelectableDuration }} {{ t("days") }}</p>
-              <p>{{ maxSelectableDurationInDays }}</p>
-            </div>
-          </div>
-          <InputNumber
-            v-model.number="durationSelected"
-            color="no-bg"
-            :title="t('your_potion_expires_in')"
-            :min="1"
-            :max="maxSelectableDuration"
-            :step="1"
-            unit="days"
-            :max-decimals="0"
-            :footer-description="t('expiration')"
-            :footer-value="durationSelectedDate"
-            @valid-input="isDurationValid = $event"
-          />
-        </BaseCard>
-      </div>
-      <div
+      </DurationSelectionPanel>
+      <ReviewPanel
         v-if="currentStep === CustomPotionStep.REVIEW"
-        class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
-      >
-        <BaseCard color="no-bg" class="w-full justify-between">
-          <div class="flex justify-between p-4 items-start text-sm">
-            <div class="flex gap-2 items-center">
-              <p class="capitalize">{{ t("market_size") }}</p>
-            </div>
-            <div>
-              <p>{{ formattedMarketSize }}</p>
-            </div>
-          </div>
-          <InputNumber
-            v-model.number="potionQuantity"
-            color="no-bg"
-            :title="t('number_of_potions')"
-            :min="0.00000001"
-            :max="maxNumberOfPotions"
-            :step="1"
-            unit="POTION"
-            :max-decimals="8"
-            :footer-description="t('max_number_of_potions')"
-            :use-unit="false"
-            @valid-input="isPotionQuantityValid = $event"
-          />
-        </BaseCard>
-        <BaseCard color="no-bg" class="w-full gap-8 pt-4">
-          <div class="flex justify-between px-4 items-start text-sm">
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("price_per_potion") }}</p>
-              <p>{{ formattedPremium }}</p>
-            </div>
-          </div>
-          <div class="flex justify-between px-4 items-start text-sm">
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("number_of_potions") }}</p>
-              <p>{{ potionQuantity }}</p>
-            </div>
-          </div>
-          <div class="flex justify-between px-4 items-start text-sm">
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("number_of_transactions") }}</p>
-              <p>{{ numberOfTransactions }}</p>
-            </div>
-          </div>
-          <div
-            class="flex justify-between px-4 items-start text-sm text-secondary-500"
-          >
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("total") }}</p>
-              <div class="text-right">
-                <p>{{ formattedPremiumSlippage }}</p>
-                <p class="text-xs capitalize text-dwhite-300/30">
-                  {{ t("balance") }}: {{ userCollateralBalanceFormatted }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <BaseCard color="no-bg" class="p-4">
-            <p class="text-lg font-bold capitalize">
-              {{ t("slippage_tolerance") }}
-            </p>
-            <div class="flex gap-3 mt-3">
-              <button
-                v-for="(s, index) in slippage"
-                :key="`slippage-${index}`"
-                class="outline-none focus:outline-none"
-                @click="handleSlippageSelection(index)"
-              >
-                <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{
-                  s.label
-                }}</BaseTag>
-              </button>
-            </div>
-          </BaseCard>
-        </BaseCard>
-      </div>
+        :balance="userCollateralBalance"
+        :premium="formattedPremium"
+        :potion-quantity="potionQuantity"
+        :max-quantity="maxNumberOfPotions"
+        :number-of-transactions="numberOfTransactions"
+        :market-size="formattedMarketSize"
+        :slippage="slippage"
+        :selected-slippage="formattedPremiumSlippage"
+        @valid-input="isPotionQuantityValid = $event"
+        @update:potion-quantity="potionQuantity = $event"
+        @update:slippage="handleSlippageSelection"
+      ></ReviewPanel>
     </div>
     <NavButtons
       :current-step="currentStep"
