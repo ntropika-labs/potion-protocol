@@ -1,4 +1,4 @@
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
@@ -27,10 +27,12 @@ import type {
 //   };
 // }
 
+export type VaultStatus = "locked" | "unlocked" | "suspended";
+
 export function useHedgingVaultHelperContract() {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const { InvestmentVault } = contractsAddresses;
+  const { HedgingVaultOperatorHelper } = contractsAddresses;
 
   //Provider initialization
   const initContractSigner = () => {
@@ -38,7 +40,7 @@ export function useHedgingVaultHelperContract() {
       true,
       false,
       HedgingVaultOperatorHelper__factory,
-      InvestmentVault.address.toLowerCase()
+      HedgingVaultOperatorHelper.address.toLowerCase()
     ) as HedgingVaultOperatorHelper;
   };
 
@@ -47,7 +49,7 @@ export function useHedgingVaultHelperContract() {
       false,
       false,
       HedgingVaultOperatorHelper__factory,
-      InvestmentVault.address.toLowerCase()
+      HedgingVaultOperatorHelper.address.toLowerCase()
     ) as HedgingVaultOperatorHelper;
   };
 
@@ -170,6 +172,18 @@ export function useHedgingVaultHelperContract() {
     }
   };
 
+  const currentStatus = computed(() => {
+    if (canPositionBeEntered.value) {
+      return "unlocked";
+    } else if (canPositionBeExited.value) {
+      return "locked";
+    } else if (!canPositionBeExited.value && !canPositionBeEntered.value) {
+      return "suspended";
+    }
+
+    return "locked";
+  });
+
   // Automatically fetch current position on composable init
   onMounted(async () => {
     const provider = initContractProvider();
@@ -202,5 +216,6 @@ export function useHedgingVaultHelperContract() {
     fetchCanPositionBeExited,
     hedgingVaultAddress,
     actionsAddress,
+    currentStatus,
   };
 }
