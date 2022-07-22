@@ -1,428 +1,169 @@
 <script lang="ts" setup>
-import {
-  TokenSelection,
-  InputNumber,
-  BaseButton,
-  BaseTag,
-  PotionCard,
-} from "potion-ui";
-import { useCoinGecko } from "@/composables/useCoinGecko";
-import { useTokenList } from "@/composables/useTokenList";
-import { currencyFormatter } from "potion-ui";
-import {
-  usePoolsLiquidity,
-  useUnderlyingLiquidity,
-  useStrikeLiquidity,
-} from "@/composables/useProtocolLiquidity";
-import { useSimilarPotions } from "@/composables/useSimilarPotions";
-import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useDepthRouter } from "@/composables/useDepthRouter";
-import { useBlockNative } from "@/composables/useBlockNative";
-import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
-import { useOnboard } from "@onboard-composable";
-
-import type { SelectableToken, Criteria } from "dapp-types";
-import { BaseCard, SidebarLink } from "potion-ui";
-import { SrcsetEnum } from "dapp-types";
-import { ref, computed, watch, onMounted, unref } from "vue";
-import { watchDebounced } from "@vueuse/core";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { offsetToDate } from "@/helpers/days";
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
-import { useNotifications } from "@/composables/useNotifications";
+
+import {
+  AssetActiveIcon,
+  AssetDefaultIcon,
+  BaseButton,
+  BaseCard,
+  BaseTag,
+  DurationActiveIcon,
+  DurationDefaultIcon,
+  InputNumber,
+  PotionCard,
+  ReviewActiveIcon,
+  ReviewDefaultIcon,
+  SidebarLink,
+  StrikeActiveIcon,
+  StrikeDefaultIcon,
+  TokenSelection,
+  currencyFormatter,
+} from "potion-ui";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
+import { useOnboard } from "@onboard-composable";
+import { useBuyPotions } from "@/composables/useBuyPotions";
+import { useDepthRouter } from "@/composables/useDepthRouter";
+import { useDurationSelection } from "@/composables/useDurationSelection";
+import { useEthereumPrice } from "@/composables/useEthereumPrice";
+import { useGas } from "@/composables/useGas";
+import { useNotifications } from "@/composables/useNotifications";
+import { usePotionQuantity } from "@/composables/usePotionQuantity";
+import { usePotionTokens } from "@/composables/usePotionTokens";
+import { useRouterCriterias } from "@/composables/useRouterCriterias";
+import { useSimilarPotions } from "@/composables/useSimilarPotions";
+import { useSlippage } from "@/composables/useSlippage";
+import { useStrikeSelection } from "@/composables/useStrikeSelection";
+import { useUserData } from "@/composables/useUserData";
+
+enum CurrentIndex {
+  ASSET,
+  STRIKE,
+  EXPIRATION,
+  REVIEW,
+}
+
 const { t } = useI18n();
-const { blockTimestamp, getBlock } = useEthersProvider();
-const currentIndex = ref(0);
+const currentIndex = ref<CurrentIndex>(CurrentIndex.ASSET);
 const { connectedWallet } = useOnboard();
-const AssetActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/asset-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/asset-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/asset-active-32x32.webp"],
-]);
-const AssetDefaultIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/asset-default-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/asset-default-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/asset-default-32x32.webp"],
-]);
-const StrikeActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/strike-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/strike-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/strike-active-32x32.webp"],
-]);
-const StrikeDefaultIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/strike-default-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/strike-default-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/strike-default-32x32.webp"],
-]);
-const DurationActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/duration-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/duration-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/duration-active-32x32.webp"],
-]);
-const DurationDefaultIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/duration-default-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/duration-default-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/duration-default-32x32.webp"],
-]);
-const ReviewActiveIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/review-default-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/review-default-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/review-default-32x32.webp"],
-]);
-const ReviewDefaultIcon = new Map([
-  [SrcsetEnum.AVIF, "/icons/review-active-32x32.avif"],
-  [SrcsetEnum.PNG, "/icons/review-active-32x32.png"],
-  [SrcsetEnum.WEBP, "/icons/review-active-32x32.webp"],
-]);
 
-const gasUnitsToDeployOtoken = 840000;
-const { getGas, gasPrice } = useBlockNative();
-const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);
-const ethPrice = computed(() => {
-  if (coinsPrices.value && coinsPrices.value.ethereum.usd) {
-    return coinsPrices.value.ethereum.usd;
-  }
-  return 0;
-});
-onMounted(async () => {
-  await fetchCoinsPrices();
-  await getGas();
-});
-const savingByPickSimilar = computed(() => {
-  if (ethPrice.value && gasPrice.value) {
-    const saving =
-      ((gasPrice.value * 10e8 * gasUnitsToDeployOtoken) / 1e18) *
-      ethPrice.value;
-    return currencyFormatter(saving, "$");
-  }
-  return currencyFormatter(0, "$");
-});
+const { userAllowance, userCollateralBalance } = useUserData();
+const userCollateralBalanceFormatted = computed(() =>
+  currencyFormatter(userCollateralBalance.value, "USDC")
+);
+const { ethPrice } = useEthereumPrice();
 
-const sidebarItems = computed(() => {
-  return [
-    {
-      title: t("asset"),
-      iconSrcset: currentIndex.value === 0 ? AssetActiveIcon : AssetDefaultIcon,
-      selected: currentIndex.value === 0,
-      disabled: false,
-      onClick: () => {
-        currentIndex.value = 0;
-      },
-    },
-    {
-      title: t("strike_price"),
-      iconSrcset:
-        currentIndex.value === 1 ? StrikeActiveIcon : StrikeDefaultIcon,
-      selected: currentIndex.value === 1,
-      disabled: !isTokenSelected.value,
-      onClick: () => {
-        if (strikeSelected.value === 0) {
-          strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
-        }
-        currentIndex.value = 1;
-      },
-    },
-    {
-      title: t("expiration"),
-      iconSrcset:
-        currentIndex.value === 2 ? DurationActiveIcon : DurationDefaultIcon,
-      selected: currentIndex.value === 2,
-      disabled: !isTokenSelected.value || !isStrikeValid.value,
-      onClick: () => {
-        if (durationSelected.value === 0) {
-          durationSelected.value = 1;
-        }
-        currentIndex.value = 2;
-      },
-    },
-    {
-      title: t("review_and_create"),
-      iconSrcset:
-        currentIndex.value === 3 ? ReviewActiveIcon : ReviewDefaultIcon,
-      selected: currentIndex.value === 3,
-      disabled:
-        !isTokenSelected.value ||
-        !isStrikeValid.value ||
-        !isDurationValid.value,
-      onClick: () => {
-        currentIndex.value = 3;
-      },
-    },
-  ];
-});
-
-const tokenToSelectableToken = (
-  address: string,
-  decimals = 18,
-  selected = false
-): SelectableToken => {
-  const { name, symbol, image } = useTokenList(address);
-  return {
-    address,
-    decimals,
-    name,
-    symbol,
-    image,
-    selected,
-  };
-};
+// gas units to deploy an otoken: 840000
+const { gasPrice, formattedGasSaving } = useGas(ethPrice, 840000);
 
 // Token selection
-const selectableTokens = ref<SelectableToken[]>([]);
-const { underlyingsWithLiquidity } = usePoolsLiquidity();
-watch(underlyingsWithLiquidity, () => {
-  selectableTokens.value = underlyingsWithLiquidity.value.map((address) =>
-    tokenToSelectableToken(address)
-  );
-});
-const tokenSelected = ref<SelectableToken | null>(null);
-const tokenSelectedAddress = ref<string | null>(null);
-watch(
-  selectableTokens,
-  () => {
-    const selected = selectableTokens.value.find((token) => token.selected);
-    if (selected) {
-      tokenSelected.value = selected;
-      tokenSelectedAddress.value = selected.address;
-    }
-  },
-  {
-    deep: true,
-  }
-);
-
-const isTokenSelected = computed(() => {
-  return tokenSelected.value ? true : false;
-});
-
-const handleTokenSelection = (address: string) => {
-  selectableTokens.value.forEach((token) => {
-    if (token.address === address) {
-      token.selected = true;
-    } else {
-      token.selected = false;
-    }
-  });
-};
+const {
+  availableTokens,
+  tokenSelected,
+  tokenSelectedAddress,
+  isTokenSelected,
+  selectToken,
+  price,
+  formattedPrice,
+} = usePotionTokens();
 
 // Strike Selection
-const { fetchTokenPrice, formattedPrice, price } = useCoinGecko(
-  undefined,
-  tokenSelected.value?.address || ""
-);
-
-onMounted(() => {
-  fetchTokenPrice();
-});
-
-const { maxStrike: maxSelectableStrike } =
-  useUnderlyingLiquidity(tokenSelectedAddress);
-
-const maxSelectableStrikeAbsolute = computed(() => {
-  return (maxSelectableStrike.value * price.value) / 100;
-});
-
-const strikeSelected = ref(0);
-
-const strikeSelectedRelative = computed(() => {
-  return parseFloat(((strikeSelected.value * 100) / price.value).toFixed(2));
-});
-
-const isStrikeValid = ref(false);
+const {
+  strikeSelected,
+  strikeSelectedRelative,
+  maxSelectableStrikeAbsolute,
+  isStrikeValid,
+} = useStrikeSelection(tokenSelectedAddress, price);
 
 // Duration Selection
-const durationSelected = ref(0);
-watchDebounced(
-  durationSelected,
-  () => {
-    getBlock("latest");
-  },
-  { debounce: 1000 }
-);
-const durationSelectedDate = computed(() => {
-  return offsetToDate(blockTimestamp.value, durationSelected.value);
-});
 const {
-  maxDuration: maxSelectableDuration,
-  maxDurationInDays: maxSelectableDurationInDays,
-} = useStrikeLiquidity(tokenSelectedAddress, strikeSelectedRelative);
-const isDurationValid = ref(false);
+  durationSelected,
+  durationSelectedDate,
+  isDurationValid,
+  maxSelectableDuration,
+  maxSelectableDurationInDays,
+} = useDurationSelection(tokenSelectedAddress, strikeSelectedRelative);
 
 // Potion Quantity
-const potionQuantity = ref(0.001);
-const isPotionQuantityValid = ref(false);
-
-const orderSize = computed(() => {
-  return strikeSelected.value * potionQuantity.value;
-});
+const { orderSize, potionQuantity, isPotionQuantityValid } =
+  usePotionQuantity(strikeSelected);
 
 // Router logic
-const slippage = ref([
-  { value: 0.005, label: "0.5%", selected: true },
-  { value: 0.02, label: "2%", selected: false },
-  { value: 0.05, label: "5%", selected: false },
-]);
-
-const handleSlippageSelection = (index: number) => {
-  slippage.value.forEach((slippage, i) => {
-    if (i === index) {
-      slippage.selected = true;
-    } else {
-      slippage.selected = false;
-    }
-  });
-};
-const premiumSlippage = computed(() => {
-  const selectedSlippage = slippage.value.find((s) => s.selected);
-  if (selectedSlippage && routerResult.value && routerResult.value.premium) {
-    return (
-      routerResult.value.premium * selectedSlippage.value +
-      routerResult.value.premium
-    );
-  }
-  return 0;
-});
-const formattedPremiumSlippage = computed(() => {
-  return currencyFormatter(premiumSlippage.value, "USDC");
-});
-const criteriasParam = ref<Criteria[]>([]);
-watch([tokenSelected, strikeSelectedRelative, durationSelected], () => {
-  if (tokenSelected.value) {
-    const t = unref(tokenSelected) ?? { name: "", symbol: "", address: "" };
-    criteriasParam.value = [
-      {
-        token: t,
-        maxStrike: strikeSelectedRelative.value,
-        maxDuration: durationSelected.value,
-      },
-    ];
-  }
-});
+const { criterias } = useRouterCriterias(
+  tokenSelected,
+  strikeSelectedRelative,
+  durationSelected
+);
 const {
   routerResult,
   maxNumberOfPotions,
   formattedMarketSize,
   formattedPremium,
-} = useDepthRouter(
-  criteriasParam,
-  orderSize,
-  strikeSelected,
-  gasPrice,
-  ethPrice
-);
+  numberOfTransactions,
+} = useDepthRouter(criterias, orderSize, strikeSelected, gasPrice, ethPrice);
 
-const numberOfTransactions = computed(() => {
-  return Math.ceil(
-    routerResult.value?.counterparties.length ?? 0 / maxCounterparties
-  );
-});
+const {
+  slippage,
+  handleSlippageSelection,
+  formattedPremiumSlippage,
+  premiumSlippage,
+} = useSlippage(routerResult);
+
 // Steps validity
-const areStepsValid = computed(() => {
-  return (
+const areStepsValid = computed(
+  () =>
     isTokenSelected.value &&
     isStrikeValid.value &&
     isDurationValid.value &&
     isPotionQuantityValid.value
-  );
-});
+);
 
 // Buy logic
 const {
-  userCollateralBalance,
-  userAllowance,
+  handleBuyPotions,
+  buyPotionTx,
+  buyPotionReceipt,
   approveTx,
   approveReceipt,
-  fetchUserCollateralAllowance,
-  fetchUserCollateralBalance,
-  approveForPotionLiquidityPool,
-} = useCollateralTokenContract();
+} = useBuyPotions(
+  tokenSelectedAddress,
+  strikeSelected,
+  durationSelected,
+  routerResult
+);
 
-const userCollateralBalanceFormatted = computed(() => {
-  return currencyFormatter(userCollateralBalance.value, "USDC");
-});
-const fetchUserData = async () => {
-  if (connectedWallet.value) {
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  }
-};
-onMounted(async () => {
-  await fetchUserData();
-});
 const buyPotionButtonState = computed(() => {
-  if (
-    connectedWallet.value &&
-    userCollateralBalance.value >= premiumSlippage.value &&
-    areStepsValid.value
-  ) {
-    if (userAllowance.value >= premiumSlippage.value) {
+  if (connectedWallet.value) {
+    if (!areStepsValid.value) {
       return {
-        label: t("buy_potion"),
-        disabled: false,
-      };
-    } else {
-      return {
-        label: t("approve"),
-        disabled: false,
+        label: t("invalid_potion"),
+        disabled: true,
       };
     }
-  }
-  if (
-    connectedWallet.value &&
-    userCollateralBalance.value < premiumSlippage.value &&
-    areStepsValid.value
-  ) {
+    if (userCollateralBalance.value < premiumSlippage.value) {
+      return {
+        label: t("not_enough_usdc"),
+        disabled: true,
+      };
+    }
+
+    const label =
+      userAllowance.value >= premiumSlippage.value
+        ? t("buy_potion")
+        : t("approve");
     return {
-      label: t("not_enough_usdc"),
-      disabled: true,
+      label,
+      disabled: false,
     };
   }
-  if (!areStepsValid.value) {
-    return {
-      label: t("invalid_potion"),
-      disabled: true,
-    };
-  }
-  if (!connectedWallet.value) {
-    return {
-      label: t("connect_wallet"),
-      disabled: true,
-    };
-  }
+
   return {
-    label: t("buy_potion"),
+    label: t("connect_wallet"),
     disabled: true,
   };
 });
-const { buyPotions, buyPotionTx, buyPotionReceipt, maxCounterparties } =
-  usePotionLiquidityPoolContract();
-const handleBuyPotions = async () => {
-  if (
-    routerResult.value &&
-    routerResult.value.counterparties &&
-    tokenSelectedAddress.value
-  ) {
-    if (premiumSlippage.value > userAllowance.value) {
-      await approveForPotionLiquidityPool(premiumSlippage.value, true);
-      await fetchUserData();
-    } else {
-      await buyPotions(
-        routerResult.value?.counterparties,
-        premiumSlippage.value,
-        undefined,
-        tokenSelectedAddress.value,
-        strikeSelected.value,
-        durationSelected.value
-      );
-      await fetchUserData();
-    }
-  } else {
-    console.info("You are missing some parameters to be set");
-  }
-};
 
 // Notifications
 const {
@@ -461,16 +202,78 @@ const {
 );
 
 const similarPotionShown = computed(() => {
-  if (currentIndex.value === 0) {
+  if (currentIndex.value === CurrentIndex.ASSET) {
     return computedSimilarByAsset.value;
-  } else if (currentIndex.value === 1) {
+  } else if (currentIndex.value === CurrentIndex.STRIKE) {
     return computedSimilarByStrike.value;
-  } else if (currentIndex.value === 2) {
+  } else if (currentIndex.value === CurrentIndex.EXPIRATION) {
     return computedSimilarByDuration.value;
-  } else if (currentIndex.value === 3) {
+  } else if (currentIndex.value === CurrentIndex.REVIEW) {
     return computedSimilarByDuration.value;
   }
   return [];
+});
+
+const sidebarItems = computed(() => {
+  return [
+    {
+      title: t("asset"),
+      iconSrcset:
+        currentIndex.value === CurrentIndex.ASSET
+          ? AssetActiveIcon
+          : AssetDefaultIcon,
+      selected: currentIndex.value === CurrentIndex.ASSET,
+      disabled: false,
+      onClick: () => {
+        currentIndex.value = CurrentIndex.ASSET;
+      },
+    },
+    {
+      title: t("strike_price"),
+      iconSrcset:
+        currentIndex.value === CurrentIndex.STRIKE
+          ? StrikeActiveIcon
+          : StrikeDefaultIcon,
+      selected: currentIndex.value === CurrentIndex.STRIKE,
+      disabled: !isTokenSelected.value,
+      onClick: () => {
+        if (strikeSelected.value === 0) {
+          strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
+        }
+        currentIndex.value = CurrentIndex.STRIKE;
+      },
+    },
+    {
+      title: t("expiration"),
+      iconSrcset:
+        currentIndex.value === CurrentIndex.EXPIRATION
+          ? DurationActiveIcon
+          : DurationDefaultIcon,
+      selected: currentIndex.value === CurrentIndex.EXPIRATION,
+      disabled: !isTokenSelected.value || !isStrikeValid.value,
+      onClick: () => {
+        if (durationSelected.value === 0) {
+          durationSelected.value = 1;
+        }
+        currentIndex.value = CurrentIndex.EXPIRATION;
+      },
+    },
+    {
+      title: t("review_and_create"),
+      iconSrcset:
+        currentIndex.value === CurrentIndex.REVIEW
+          ? ReviewActiveIcon
+          : ReviewDefaultIcon,
+      selected: currentIndex.value === CurrentIndex.REVIEW,
+      disabled:
+        !isTokenSelected.value ||
+        !isStrikeValid.value ||
+        !isDurationValid.value,
+      onClick: () => {
+        currentIndex.value = CurrentIndex.REVIEW;
+      },
+    },
+  ];
 });
 </script>
 
@@ -480,8 +283,8 @@ const similarPotionShown = computed(() => {
       <div class="w-full flex justify-between items-center xl:col-span-3">
         <p class="capitalize">{{ t("your_put_recipe") }}</p>
         <router-link :to="{ name: 'discover-potions' }">
-          <i class="i-ph-x"></i
-        ></router-link>
+          <i class="i-ph-x"></i>
+        </router-link>
       </div>
       <ul
         class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) self-start items-start justify-center"
@@ -497,7 +300,7 @@ const similarPotionShown = computed(() => {
           @click="item.onClick"
         >
           <div
-            v-if="index === 0 && tokenSelected"
+            v-if="index === CurrentIndex.ASSET && tokenSelected"
             class="flex gap-2 items-center"
           >
             <img
@@ -507,19 +310,22 @@ const similarPotionShown = computed(() => {
             />
             <p class="text-xs">{{ tokenSelected?.symbol }}</p>
           </div>
-          <div v-if="index === 1 && strikeSelected">
+          <div v-if="index === CurrentIndex.STRIKE && strikeSelected">
             <p class="text-xs">USDC {{ strikeSelected }}</p>
           </div>
-          <div v-if="index === 2 && durationSelected">
+          <div v-if="index === CurrentIndex.EXPIRATION && durationSelected">
             <p class="text-xs">{{ durationSelectedDate }}</p>
           </div>
         </SidebarLink>
       </ul>
-      <div v-if="currentIndex === 0" class="w-full xl:col-span-2">
+      <div
+        v-if="currentIndex === CurrentIndex.ASSET"
+        class="w-full xl:col-span-2"
+      >
         <TokenSelection
-          v-if="selectableTokens.length > 0"
-          :tokens="selectableTokens"
-          @token-selected="handleTokenSelection"
+          v-if="availableTokens.length > 0"
+          :tokens="availableTokens"
+          @token-selected="selectToken"
         />
         <div v-else class="text-center">
           <p class="text-white/40 text-3xl uppercase">
@@ -527,7 +333,10 @@ const similarPotionShown = computed(() => {
           </p>
         </div>
       </div>
-      <div v-if="currentIndex === 1" class="xl:col-span-2 flex justify-center">
+      <div
+        v-if="currentIndex === CurrentIndex.STRIKE"
+        class="xl:col-span-2 flex justify-center"
+      >
         <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
           <div class="flex justify-between p-4">
             <div class="flex gap-2 items-center">
@@ -553,7 +362,10 @@ const similarPotionShown = computed(() => {
           />
         </BaseCard>
       </div>
-      <div v-if="currentIndex === 2" class="xl:col-span-2 flex justify-center">
+      <div
+        v-if="currentIndex === CurrentIndex.EXPIRATION"
+        class="xl:col-span-2 flex justify-center"
+      >
         <BaseCard color="no-bg" class="w-full xl:w-4/7 justify-between">
           <div class="flex justify-between p-4 items-start">
             <div class="flex gap-2 items-center">
@@ -580,7 +392,7 @@ const similarPotionShown = computed(() => {
         </BaseCard>
       </div>
       <div
-        v-if="currentIndex === 3"
+        v-if="currentIndex === CurrentIndex.REVIEW"
         class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
       >
         <BaseCard color="no-bg" class="w-full justify-between">
@@ -660,7 +472,7 @@ const similarPotionShown = computed(() => {
     </div>
     <div class="flex w-full justify-end items-center gap-3 p-4">
       <BaseButton
-        v-if="currentIndex !== 0"
+        v-if="currentIndex !== CurrentIndex.ASSET"
         class="uppercase"
         test-back
         palette="flat"
@@ -700,7 +512,7 @@ const similarPotionShown = computed(() => {
       {{ t("similar_potions") }}
     </h2>
     <p class="text-sm">
-      {{ t("similar_potion_message", { dollars: savingByPickSimilar }) }}
+      {{ t("similar_potion_message", { dollars: formattedGasSaving }) }}
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
       <PotionCard
@@ -718,12 +530,14 @@ const similarPotionShown = computed(() => {
         :otoken-address="potion.tokenAddress"
         :strike-price="potion.strikePrice"
         :expiration="potion.expiry"
-        ><router-link
+      >
+        <router-link
           :to="`/potions/${potion.tokenAddress}`"
           class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
-          >{{ t("show") }}</router-link
-        ></PotionCard
-      >
+        >
+          {{ t("show") }}</router-link
+        >
+      </PotionCard>
     </div>
   </div>
   <NotificationDisplay

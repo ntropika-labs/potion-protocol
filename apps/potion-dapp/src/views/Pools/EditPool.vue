@@ -81,7 +81,7 @@ import { useLiquidity } from "@/composables/useLiquidity";
 import { useNotifications } from "@/composables/useNotifications";
 import { usePool } from "@/composables/usePool";
 import { useRoutePoolId } from "@/composables/useRoutePoolId";
-import { useTokens } from "@/composables/useTokens";
+import { usePoolTokens } from "@/composables/usePoolTokens";
 import { useUserData } from "@/composables/useUserData";
 
 const { t } = useI18n();
@@ -106,7 +106,7 @@ const formattedSize = computed(() =>
 );
 
 const { availableTokens, tokenPricesMap, unselectedTokens, toggleToken } =
-  useTokens(collateral);
+  usePoolTokens(collateral);
 const {
   criteriaMap,
   criterias,

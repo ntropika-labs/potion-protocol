@@ -5,7 +5,7 @@ import { useSelectableTokens } from "@/composables/useSelectableTokens";
 
 import type { SelectableToken } from "dapp-types";
 
-export function useTokens(collateral: string) {
+export function usePoolTokens(collateral: string) {
   /*
    * Available tokens are fetched from the subgraph
    * Prices are loaded from an API

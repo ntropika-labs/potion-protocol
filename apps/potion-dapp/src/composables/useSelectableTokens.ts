@@ -1,7 +1,7 @@
 import { useCoinGecko } from "@/composables/useCoinGecko";
 import { ref, computed } from "vue";
 
-import type { ApiTokenPrice, SelectableToken, Token } from "dapp-types";
+import type { ApiTokenPrice, SelectableToken } from "dapp-types";
 
 export function useSelectableTokens() {
   const availableTokens = ref<SelectableToken[]>([]);
@@ -16,17 +16,31 @@ export function useSelectableTokens() {
   const toggleToken = async (address: string) => {
     const token = availableTokens.value.find((u) => u.address === address);
     if (token) {
-      const tokenHasPrice = tokenPricesMap.value.get(token.address)?.success;
-
       token.selected = !token.selected;
+      await updateMapPrice(token);
+    }
+  };
 
-      if (token.selected && !tokenHasPrice) {
-        updateTokenPrice(token);
+  const selectToken = async (address: string) => {
+    const promises = availableTokens.value.map(
+      async (token: SelectableToken) => {
+        token.selected = address === token.address;
+        await updateMapPrice(token);
+      }
+    );
+    await Promise.allSettled(promises);
+  };
+
+  const updateMapPrice = async (token: SelectableToken) => {
+    if (token.selected) {
+      const hasPrice = tokenPricesMap.value.get(token.address)?.success;
+      if (!hasPrice) {
+        await updateTokenPrice(token);
       }
     }
   };
 
-  const updateTokenPrice = async (token: Token) => {
+  const updateTokenPrice = async (token: SelectableToken) => {
     const { success, price, formattedPrice, fetchTokenPrice } = useCoinGecko(
       undefined,
       token.address
@@ -52,5 +66,6 @@ export function useSelectableTokens() {
     unselectedTokens,
     tokenPricesMap,
     toggleToken,
+    selectToken,
   };
 }

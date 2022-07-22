@@ -3,7 +3,6 @@ import { useOnboard } from "@onboard-composable";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
 
-
 const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
@@ -15,8 +14,7 @@ const ShowPool = () => import("@/views/Pools/ShowPool.vue");
 const ViewPools = () => import("@/views/Pools/ViewPools.vue");
 const PoolTemplate = () => import("@/views/PoolTemplate.vue");
 const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
-const ViewPotions = () => import ("@/views/Potions/ViewPotions.vue");
-
+const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -9,6 +9,7 @@ import type { DepthRouterReturn } from "potion-router";
 import type { Ref } from "vue";
 import type { Criteria, MaybeNumberRef } from "dapp-types";
 import type { ChartCriteriaPool, IPoolUntyped } from "potion-router/src/types";
+import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 export const useDepthRouter = (
   criterias: Ref<Criteria[]> | Criteria[],
   orderSize: MaybeNumberRef,
@@ -16,6 +17,7 @@ export const useDepthRouter = (
   gas: MaybeNumberRef,
   ethPrice: MaybeNumberRef
 ) => {
+  const { maxCounterparties } = usePotionLiquidityPoolContract();
   const poolSets = ref<ChartCriteriaPool[]>();
   const poolsUntyped = computed(() => {
     const pools: IPoolUntyped[] = [];
@@ -39,7 +41,14 @@ export const useDepthRouter = (
     }
     return 0;
   });
+
   const routerResult = ref<DepthRouterReturn | null>(null);
+
+  const numberOfTransactions = computed(() =>
+    Math.ceil(
+      routerResult.value?.counterparties.length ?? 0 / maxCounterparties
+    )
+  );
   const routerParams = computed(() => {
     return {
       pools: toRaw(unref(poolsUntyped)),
@@ -117,5 +126,6 @@ export const useDepthRouter = (
     formattedMarketSize,
     routerRunning,
     runRouter,
+    numberOfTransactions,
   };
 };

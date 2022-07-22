@@ -9,8 +9,8 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { offsetToDate } from "@/helpers/days";
 
 import type { MaybeStringRef, MaybeNumberRef } from "dapp-types";
-
 import type { CriteriaSetsWithLiquidityFragment } from "subgraph-queries/generated/operations";
+
 type TemplateId = CriteriaSetsWithLiquidityFragment["criteriaSet"]["templates"];
 
 const usePoolsLiquidity = () => {
@@ -43,14 +43,15 @@ const usePoolsLiquidity = () => {
   };
 };
 
-const useUnderlyingLiquidity = (underlyingAddress: MaybeStringRef) => {
-  const maxStrike = ref(0);
+const useUnderlyingLiquidity = (underlyingAddressParam: MaybeStringRef) => {
+  const alreadyLoadedStrikes = ref(new Map<string, number>());
+
+  const underlyingAddress = computed(() => unref(underlyingAddressParam) ?? "");
+  const maxStrike = computed(
+    () => alreadyLoadedStrikes.value.get(unref(underlyingAddress)) ?? 0
+  );
   const alreadyLoadedIds = ref<string[]>([""]);
-  const isPaused = computed(() => {
-    return unref(underlyingAddress) === "" || unref(underlyingAddress) === null
-      ? true
-      : false;
-  });
+  const isPaused = computed(() => unref(underlyingAddress) === "");
   const { data, executeQuery } = useGetMaxStrikeForUnderlyingQuery({
     variables: computed(() => ({
       underlying: unref(underlyingAddress),
@@ -66,6 +67,7 @@ const useUnderlyingLiquidity = (underlyingAddress: MaybeStringRef) => {
   });
 
   watch(data, () => {
+    let maxLoadedStrike = 0;
     data?.value?.criterias.forEach(({ criteriaSets, maxStrikePercent }) => {
       const templates =
         criteriaSets?.reduce(
@@ -74,25 +76,34 @@ const useUnderlyingLiquidity = (underlyingAddress: MaybeStringRef) => {
           new Array<TemplateId>()
         ) ?? [];
       if (templates.length > 0) {
-        maxStrike.value = Math.max(maxStrike.value, parseInt(maxStrikePercent));
+        maxLoadedStrike = Math.max(maxLoadedStrike, parseInt(maxStrikePercent));
       }
     });
     alreadyLoadedIds.value = alreadyLoadedIds.value.concat(
       data?.value?.criterias.map(({ id }) => id) ?? []
     );
+    alreadyLoadedStrikes.value.set(
+      unref(underlyingAddress),
+      Math.max(maxStrike.value, maxLoadedStrike)
+    );
   });
 
   return {
     maxStrike,
+    executeQuery,
   };
 };
 
 const useStrikeLiquidity = (
-  underlyingAddress: MaybeStringRef,
+  underlyingAddressParam: MaybeStringRef,
   strikeRelative: MaybeNumberRef
 ) => {
+  const alreadyLoadedDurations = ref(new Map<string, number>());
+  const underlyingAddress = computed(() => unref(underlyingAddressParam) ?? "");
   const { blockTimestamp, getBlock } = useEthersProvider();
-  const maxDuration = ref(0);
+  const maxDuration = computed(
+    () => alreadyLoadedDurations.value.get(unref(underlyingAddress)) ?? 0
+  );
   const alreadyLoadedIds = ref<string[]>([""]);
   const isPaused = computed(() => {
     return unref(underlyingAddress) === "" ||
@@ -117,6 +128,7 @@ const useStrikeLiquidity = (
     }
   });
   watch(data, () => {
+    let maxLoadedDuration = 0;
     data?.value?.criterias.forEach(({ criteriaSets, maxDurationInDays }) => {
       const templates =
         criteriaSets?.reduce(
@@ -125,14 +137,18 @@ const useStrikeLiquidity = (
           new Array<TemplateId>()
         ) ?? [];
       if (templates.length > 0) {
-        maxDuration.value = Math.max(
-          maxDuration.value,
+        maxLoadedDuration = Math.max(
+          maxLoadedDuration,
           parseInt(maxDurationInDays)
         );
       }
     });
     alreadyLoadedIds.value = alreadyLoadedIds.value.concat(
       data?.value?.criterias.map(({ id }) => id) ?? []
+    );
+    alreadyLoadedDurations.value.set(
+      unref(underlyingAddress),
+      Math.max(maxDuration.value, maxLoadedDuration)
     );
   });
   const maxDurationInDays = computed(() => {
@@ -142,6 +158,7 @@ const useStrikeLiquidity = (
   return {
     maxDuration,
     maxDurationInDays,
+    executeQuery,
   };
 };
 
