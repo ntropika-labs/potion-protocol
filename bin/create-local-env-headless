@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+#set -Eeuo pipefail
+#set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
 trap cleanup SIGINT SIGTERM ERR
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
@@ -12,6 +17,7 @@ Handle the docker compose environment
 Available options:
 -h, --help                    Print this help and exit
 -v, --verbose                 Print script debug info
+-i, --init                    Initialize the environment and force deploy containers
 -f, --force                   Force deploy containers [default: true]
 -n, --no-redeploy             Do not deploy containers if already available [default: false]
 -r, --redeploy boolean        When true containers are recreated, when false use existing environment if any
@@ -49,6 +55,7 @@ parse_params() {
   # default values of variables set from params
   force=0
   no_redeploy=0
+  init_environment=0
 
   while :; do
     case "${1-}" in
@@ -60,6 +67,10 @@ parse_params() {
         ;;
       --no-color)
         NO_COLOR=1
+        ;;
+      -i | --init)
+        force=1
+        init_environment=1
         ;;
       -f | --force) # force flag
         force=1
@@ -131,6 +142,7 @@ check_db_seed() {
   if [[ -s "$ganache_db_file" ]]; then
     msg "${GREEN}- - Ganache database already seeded${NOFORMAT}"
     is_db_seeded=1
+
     return
   fi
 
@@ -155,13 +167,23 @@ spin_up_environment() {
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
 
+  if [[ $init_environment -eq 1 ]]; then
+    local ganache_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
+    msg "${ORANGE}- - Removing db data${NOFORMAT}"
 
+    docker compose exec ganache rm -rf "${ganache_db_path}"
+
+    msg "${GREEN}- - Removed db data ${NOFORMAT}"
+
+    is_db_seeded=0
+  fi
   if [[ $is_db_seeded -eq 0 ]]; then
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
-    yarn nx run potion-contracts:deploy-local
+    yarn nx run @potion-protocol/core:deploy-local
     msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
-
+  fi
+  if [[ $is_db_seeded -eq 0 || $init_environment -eq 1 ]]; then
     yarn nx run potion-subgraph:prepare-local
     msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
 
@@ -177,6 +199,9 @@ spin_up_environment() {
 
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
   msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
+
+  yarn nx run @potion-protocol/hedging-vault:deploy-local
+  msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
 
   if [[ $is_db_seeded -eq 0 ]]; then
 
