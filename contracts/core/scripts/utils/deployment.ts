@@ -15,18 +15,26 @@ const DEPLOYMENTS_INDEX_FILE = "index.ts";
 
 export enum DeploymentFlags {
     Deploy = 1 << 0,
-    DeployAndVerify = 1 << 1,
+    Export = 1 << 1,
+    Verify = 1 << 2,
 }
 
-export interface DeploymentOptions extends FactoryOptions {
-    flags?: DeploymentFlags;
+export enum DeploymentOptions {
+    Deploy = DeploymentFlags.Deploy,
+    DeployAndExport = DeploymentFlags.Deploy | DeploymentFlags.Export,
+    DeployAndVerify = DeploymentFlags.Deploy | DeploymentFlags.Verify,
+    DeployAndExportAndVerify = DeploymentFlags.Deploy | DeploymentFlags.Export | DeploymentFlags.Verify,
+}
+
+export interface DeploymentParams extends FactoryOptions {
+    options?: DeploymentOptions;
     alias?: string; // The deployed contract will be exported in the JSON file with this alias
 }
 
-export function isDeploymentOptions(options: Signer | DeploymentOptions | undefined): options is DeploymentOptions {
+export function isDeploymentParams(options: Signer | DeploymentParams | undefined): options is DeploymentParams {
     return (
         options !== undefined &&
-        ((options as DeploymentOptions).flags !== undefined || (options as DeploymentOptions).alias !== undefined)
+        ((options as DeploymentParams).options !== undefined || (options as DeploymentParams).alias !== undefined)
     );
 }
 
@@ -116,26 +124,37 @@ export async function verify(contractAddress: string, args: unknown[]): Promise<
 export async function deploy(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | DeploymentOptions | undefined = undefined,
+    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
 ): Promise<Contract> {
-    const contractFactory = await ethers.getContractFactory(contractName, options);
-    const contract = await contractFactory.deploy(...args);
-    const transactionReceipt = await contract.deployTransaction.wait();
-
-    let flags = undefined,
+    let options = undefined,
         alias = undefined;
-    if (isDeploymentOptions(options)) {
-        flags = options.flags;
-        alias = options.alias;
+
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
     }
 
-    if (alias) {
-        await exportContract(alias, contract.address, transactionReceipt.blockNumber);
-    } else {
-        await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+    let contract;
+    let transactionReceipt;
+    if (options === undefined || options & DeploymentFlags.Deploy) {
+        const contractFactory = await ethers.getContractFactory(contractName, params);
+        contract = await contractFactory.deploy(...args);
+        transactionReceipt = await contract.deployTransaction.wait();
     }
 
-    if (flags && (flags & DeploymentFlags.DeployAndVerify) === DeploymentFlags.DeployAndVerify) {
+    if (contract === undefined) {
+        throw new Error("Contract not deployed, make sure to call deploy with the DeploymentOptions.Deploy flag");
+    }
+
+    if (contract && transactionReceipt && (options === undefined || options & DeploymentFlags.Export)) {
+        if (alias) {
+            await exportContract(alias, contract.address, transactionReceipt.blockNumber);
+        } else {
+            await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+        }
+    }
+
+    if (contract && options && options & DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
         await verify(contract.address, args);
     }
@@ -146,17 +165,38 @@ export async function deploy(
 export async function deployUpgrade(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | DeploymentOptions | undefined = undefined,
-    flags: DeploymentFlags = DeploymentFlags.Deploy,
+    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
 ): Promise<Contract> {
-    const contractFactory = await ethers.getContractFactory(contractName, options);
-    const contract = await upgrades.deployProxy(contractFactory, args);
-    const transactionReceipt = await contract.deployTransaction.wait();
+    let options = undefined,
+        alias = undefined;
+
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
+    }
+
+    let contract;
+    let transactionReceipt;
+    if (options == undefined || options & DeploymentFlags.Deploy) {
+        const contractFactory = await ethers.getContractFactory(contractName, params);
+        contract = await upgrades.deployProxy(contractFactory, args);
+        transactionReceipt = await contract.deployTransaction.wait();
+    }
+
+    if (contract === undefined) {
+        throw new Error("Contract not deployed, make sure to call deploy with the DeploymentOptions.Deploy flag");
+    }
 
     // Export the deployed contract
-    await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+    if (contract && transactionReceipt && (options === undefined || options & DeploymentFlags.Export)) {
+        if (alias) {
+            await exportContract(alias, contract.address, transactionReceipt.blockNumber);
+        } else {
+            await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
+        }
+    }
 
-    if ((flags & DeploymentFlags.DeployAndVerify) === DeploymentFlags.DeployAndVerify) {
+    if (contract && options && options & DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
         await verify(contract.address, args);
     }

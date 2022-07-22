@@ -14,16 +14,16 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_owner",
+        name: "_otoken",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "_vaultId",
+        name: "_amount",
         type: "uint256",
       },
     ],
-    name: "getProceed",
+    name: "getPayout",
     outputs: [
       {
         internalType: "uint256",
@@ -51,6 +51,61 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "enum IOpynController.ActionType",
+            name: "actionType",
+            type: "uint8",
+          },
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "secondAddress",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "asset",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "vaultId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "index",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IOpynController.ActionArgs[]",
+        name: "_actions",
+        type: "tuple[]",
+      },
+    ],
+    name: "operate",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

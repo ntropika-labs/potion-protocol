@@ -163,7 +163,7 @@ contract FaucetToken is StandardToken {
         string memory _tokenSymbol
     ) StandardToken(_initialAmount, _tokenName, _decimalUnits, _tokenSymbol) {}
 
-    function allocateTo(address _owner, uint256 value) public {
+    function mint(address _owner, uint256 value) public {
         balanceOf[_owner] += value;
         totalSupply += value;
         emit Transfer(address(this), _owner, value);
@@ -183,7 +183,7 @@ contract FaucetNonStandardToken is NonStandardToken {
         string memory _tokenSymbol
     ) NonStandardToken(_initialAmount, _tokenName, _decimalUnits, _tokenSymbol) {}
 
-    function allocateTo(address _owner, uint256 value) public {
+    function mint(address _owner, uint256 value) public {
         balanceOf[_owner] += value;
         totalSupply += value;
         emit Transfer(address(this), _owner, value);

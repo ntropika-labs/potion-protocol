@@ -10,8 +10,13 @@ import {
     DeployCurves,
     generateOneCriteriaAndOneCriteriaSet,
     generateOneCurve,
+    generateHedgingVaultCurves,
+    generateHedgingVaultCriteriaSet,
 } from "./postDeployActions/CurveAndCriteriaActions";
-import { InitializeSamplePoolsOfCapital } from "./postDeployActions/InitializeSamplePoolsOfCapital";
+import {
+    InitializeSamplePoolsOfCapital,
+    generateHedgingVaultDeposits,
+} from "./postDeployActions/InitializeSamplePoolsOfCapital";
 import { InitializeMockOracle, UpdateMockOraclePrices } from "./postDeployActions/MockOracleActions";
 import { WhitelistCollateral } from "./postDeployActions/WhitelistCollateral";
 import { DeploySampleUnderlyingToken } from "./postDeployActions/DeploySampleUnderlyingToken";
@@ -163,6 +168,19 @@ export const config: NetworkDeployConfigMap = {
     },
     goerli: newSelfContainedEcosystemConfig,
     localhost: newSelfContainedEcosystemConfig,
+    "localhost.hedging": {
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new DeploySampleUnderlyingToken("WETH"),
+            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
+            new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000")),
+            new DeployCurves(generateHedgingVaultCurves),
+            new DeployCriteriaAndCriteriaSets(generateHedgingVaultCriteriaSet),
+            new FastForwardDays(2),
+            new InitializeSamplePoolsOfCapital(generateHedgingVaultDeposits),
+            new InitializeMockOracle(1000),
+        ],
+    },
     "localhost.independent": {
         pricerConfigs: [
             {

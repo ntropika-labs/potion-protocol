@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 
 /**
      @title PercentageUtils
@@ -32,12 +32,8 @@ export const PERCENTAGE_100_BN = toSolidityPercentage(100.0);
     @dev It performs the following operation:
         (100.0 + percentage) * amount
 */
-export function addPercentage(amount: number, percentage: number | BigNumber): number {
-    if (typeof percentage === "number") {
-        return applyPercentage(amount, 100.0 + percentage);
-    } else {
-        return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
-    }
+export function addPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
 }
 
 /**
@@ -48,12 +44,8 @@ export function addPercentage(amount: number, percentage: number | BigNumber): n
     @dev It performs the following operation:
         (100.0 - percentage) * amount
 */
-export function substractPercentage(amount: number, percentage: number | BigNumber): number {
-    if (typeof percentage === "number") {
-        return applyPercentage(amount, 100.0 - percentage);
-    } else {
-        return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
-    }
+export function substractPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
 }
 
 /**
@@ -64,12 +56,8 @@ export function substractPercentage(amount: number, percentage: number | BigNumb
 
     @return The amount after the percentage is applied
 */
-export function applyPercentage(amount: number, percentage: number | BigNumber): number {
-    if (typeof percentage === "number") {
-        return Math.floor((amount * percentage) / 100.0);
-    } else {
-        return percentage.mul(amount).div(PERCENTAGE_100_BN).toNumber();
-    }
+export function applyPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return amount.mul(percentage).div(PERCENTAGE_100_BN);
 }
 
 /**

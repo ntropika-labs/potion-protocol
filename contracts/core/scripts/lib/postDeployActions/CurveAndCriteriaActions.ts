@@ -19,6 +19,10 @@ export const generateTwoCurves: CurveGenerator = () => {
     return [new HyperbolicCurve(8.03456817, 1.29961294, 4.71657739, 16.62165255), new HyperbolicCurve(5, 1.5, 4, 12)];
 };
 
+export const generateHedgingVaultCurves: CurveGenerator = () => {
+    return [new HyperbolicCurve(0.1, 0.1, 0.1, 0.1)];
+};
+
 export const generateOneCriteriaAndOneCriteriaSet: CriteriaGenerator = (wethAddress, usdcAddress) => {
     const criteria = [new CurveCriteria(wethAddress, usdcAddress, true, 90, 5)];
     const criteriaSets = [
@@ -38,6 +42,17 @@ export const generateTwoCriteriaAndTwoCriteriaSets: CriteriaGenerator = (wethAdd
     const criteriaSets = [
         new CriteriaSet([criteria[0].toKeccak256()]), // Only first criteria above
         new CriteriaSet([criteria[0].toKeccak256(), criteria[1].toKeccak256()]), // Both criteria above
+    ];
+    return {
+        criteria: criteria,
+        criteriaSets: criteriaSets,
+    };
+};
+
+export const generateHedgingVaultCriteriaSet: CriteriaGenerator = (wethAddress, usdcAddress) => {
+    const criteria = [new CurveCriteria(wethAddress, usdcAddress, true, 120, 365)];
+    const criteriaSets = [
+        new CriteriaSet([criteria[0].toKeccak256()]), // Only first criteria above
     ];
     return {
         criteria: criteria,

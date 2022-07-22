@@ -32,7 +32,11 @@ contract TestWrapperPotionProtocolLib {
     /**
         @notice See { PotionProtocolLib }
      */
-    function redeemPotion(IPotionLiquidityPool potionLiquidityPoolManager, address potion) external {
-        PotionProtocolLib.redeemPotion(potionLiquidityPoolManager, potion);
+    function redeemPotion(
+        IPotionLiquidityPool potionLiquidityPoolManager,
+        IOpynController opynController,
+        PotionBuyInfo calldata buyInfo
+    ) external {
+        PotionProtocolLib.redeemPotion(potionLiquidityPoolManager, opynController, buyInfo);
     }
 }

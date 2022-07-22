@@ -13,7 +13,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "asset",
         type: "address",
       },
     ],
@@ -25,13 +25,97 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "pure",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "isDisputePeriodOver",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "pricePerAsset",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_expiryTimestamp",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "_result",
+        type: "bool",
+      },
+    ],
+    name: "setIsDisputePeriodOver",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+    ],
+    name: "setStablePrice",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];
 
 const _bytecode =
-  "0x608060405234801561001057600080fd5b5060b88061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806341976e0914602d575b600080fd5b604260383660046054565b5064174876e80090565b60405190815260200160405180910390f35b600060208284031215606557600080fd5b81356001600160a01b0381168114607b57600080fd5b939250505056fea2646970667358221220441d1b0260ebbc41fcecff56dc064b9b32e4a08607346a10615fa04e9b76936864736f6c634300080e0033";
+  "0x608060405234801561001057600080fd5b50610248806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c80633434979f1461005c57806341976e091461008f5780635fdc7149146100b8578063601407eb146100f6578063854a5bdf14610122575b600080fd5b61007c61006a366004610181565b60006020819052908152604090205481565b6040519081526020015b60405180910390f35b61007c61009d366004610181565b6001600160a01b031660009081526020819052604090205490565b6100e66100c63660046101a3565b600160209081526000928352604080842090915290825290205460ff1681565b6040519015158152602001610086565b6101206101043660046101a3565b6001600160a01b03909116600090815260208190526040902055565b005b6101206101303660046101cd565b6001600160a01b0392909216600090815260016020908152604080832093835292905220805460ff1916911515919091179055565b80356001600160a01b038116811461017c57600080fd5b919050565b60006020828403121561019357600080fd5b61019c82610165565b9392505050565b600080604083850312156101b657600080fd5b6101bf83610165565b946020939093013593505050565b6000806000606084860312156101e257600080fd5b6101eb84610165565b9250602084013591506040840135801515811461020757600080fd5b80915050925092509256fea264697066735822122066a858b2539f137de32cb08cfeb7403bdb640bcf452baea37f5a8f40136f1d8a64736f6c634300080e0033";
 
 type MockOpynOracleConstructorParams =
   | [signer?: Signer]

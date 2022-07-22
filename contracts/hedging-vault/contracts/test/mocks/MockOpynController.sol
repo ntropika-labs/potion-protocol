@@ -25,10 +25,19 @@ contract MockOpynController is IOpynController {
     /**
         @inheritdoc IOpynController
     */
-    function getProceed(
-        address, /*_owner*/
-        uint256 /*_vaultId*/
+    function getPayout(
+        address, /*_otoken*/
+        uint256 /*_amount*/
     ) external pure returns (uint256) {
         return 30000000000; // 300.0 USDC with 8 decimals
+    }
+
+    /**
+        @inheritdoc IOpynController
+    */
+    function operate(
+        ActionArgs[] memory /*_actions*/
+    ) external {
+        // do nothing
     }
 }

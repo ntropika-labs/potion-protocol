@@ -1,5 +1,6 @@
 import { MockContract } from "@defi-wonderland/smock";
 import { PotionHedgingVaultConfigParams } from "../config/deployConfig";
+import { network } from "hardhat";
 
 import {
     MockERC20PresetMinterPauser,
@@ -59,7 +60,10 @@ export async function mockOpynFactory(deploymentConfig: PotionHedgingVaultConfig
     return mockContract<MockOpynFactory>(deploymentConfig.networkName, "MockOpynFactory", [], "OpynFactory");
 }
 
-export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVaultConfigParams): Promise<{
+export async function mockUniswapV3SwapRouter(
+    deploymentConfig: PotionHedgingVaultConfigParams,
+    tokens: string[] = [],
+): Promise<{
     softMock?: MockContract<MockUniswapV3Router>;
     hardMock: MockUniswapV3Router;
     address: string;
@@ -67,7 +71,7 @@ export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVau
     return mockContract<MockUniswapV3Router>(
         deploymentConfig.networkName,
         "MockUniswapV3Router",
-        [],
+        [tokens],
         "UniswapV3Router",
     );
 }
@@ -131,4 +135,10 @@ export function isMock<T extends BaseContract>(contract: MockOrContract<T>): con
 
 export function asMock<T extends BaseContract>(contract: MockOrContract<T>): MockContract<T> | undefined {
     return isMock(contract) ? (contract as MockContract<T>) : undefined;
+}
+
+export function ifMocksEnabled(fn: () => void): void {
+    if (network.name === "hardhat") {
+        fn();
+    }
 }

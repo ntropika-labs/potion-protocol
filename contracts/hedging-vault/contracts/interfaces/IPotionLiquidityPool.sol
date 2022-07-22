@@ -20,11 +20,27 @@ interface IPotionLiquidityPool {
         @custom:member orderSizeInOtokens The number of otokens to buy from this particular counterparty
     */
     struct CounterpartyDetails {
-        address lp; // The LP to buy from
-        uint256 poolId; // The pool (belonging to LP) that will colalteralize the otoken
-        ICurveManager.Curve curve; // The curve used to calculate the otoken premium
-        ICriteriaManager.Criteria criteria; // The criteria associated with this curve, which matches the otoken
-        uint256 orderSizeInOtokens; // The number of otokens to buy from this particular counterparty
+        address lp;
+        uint256 poolId;
+        ICurveManager.Curve curve;
+        ICriteriaManager.Criteria criteria;
+        uint256 orderSizeInOtokens;
+    }
+
+    /**
+        @notice The data associated with a given pool of capital, belonging to one LP
+
+        @custom:member total The total (locked or unlocked) of capital in the pool, denominated in collateral tokens
+        @custom:member locked The amount of locked capital in the pool, denominated in collateral tokens
+        @custom:member curveHash Identifies the curve to use when pricing the premiums charged for any otokens
+                                 sold (& collateralizated) by this pool
+        @custom:member criteriaSetHash Identifies the set of otokens that this pool is willing to sell (& collateralize)
+    */
+    struct PoolOfCapital {
+        uint256 total;
+        uint256 locked;
+        bytes32 curveHash;
+        bytes32 criteriaSetHash;
     }
 
     /**
@@ -83,4 +99,15 @@ interface IPotionLiquidityPool {
         @return The unique ID of the vault, > 0. If no vault exists, the returned value will be 0
      */
     function getVaultId(IOtoken _otoken) external view returns (uint256);
+
+    /**
+        @dev Returns the data about the pools of capital, indexed first by LP
+             address and then by an (arbitrary) numeric poolId
+
+        @param lpAddress The address of the LP that owns the pool
+        @param poolId The ID of the pool owned by the LP
+
+        @return The data about the pool of capital
+    */
+    function lpPools(address lpAddress, uint256 poolId) external view returns (PoolOfCapital memory);
 }
