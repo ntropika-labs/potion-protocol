@@ -9,5 +9,6 @@ export * as interfaces from "./interfaces";
 export * as library from "./library";
 export * as openzeppelin from "./openzeppelin";
 export * as test from "./test";
+export * as testWrappers from "./test-wrappers";
 export * as vault from "./vault";
 export * as versioning from "./versioning";

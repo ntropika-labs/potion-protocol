@@ -17,6 +17,8 @@ import type * as openzeppelin from "./openzeppelin";
 export type { openzeppelin };
 import type * as test from "./test";
 export type { test };
+import type * as testWrappers from "./test-wrappers";
+export type { testWrappers };
 import type * as vault from "./vault";
 export type { vault };
 import type * as versioning from "./versioning";
