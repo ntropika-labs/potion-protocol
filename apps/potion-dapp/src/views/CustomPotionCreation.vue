@@ -3,25 +3,17 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import {
-  AssetActiveIcon,
-  AssetDefaultIcon,
   BaseButton,
   BaseCard,
   BaseTag,
-  DurationActiveIcon,
-  DurationDefaultIcon,
   InputNumber,
-  ReviewActiveIcon,
-  ReviewDefaultIcon,
-  SidebarLink,
-  StrikeActiveIcon,
-  StrikeDefaultIcon,
   TokenSelection,
   currencyFormatter,
 } from "potion-ui";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import SimilarPotions from "@/components/CustomPotion/SimilarPotions.vue";
+import SidebarMenu from "@/components/CustomPotion/SidebarMenu.vue";
 
 import { useOnboard } from "@onboard-composable";
 import { useBuyPotions } from "@/composables/useBuyPotions";
@@ -105,7 +97,30 @@ const {
   premiumSlippage,
 } = useSlippage(routerResult);
 
-// Steps validity
+// Steps
+const nextStepEnabled = computed(() => {
+  switch (currentStep.value) {
+    case CustomPotionStep.ASSET:
+      return isTokenSelected.value;
+    case CustomPotionStep.STRIKE:
+      return isStrikeValid.value;
+    case CustomPotionStep.EXPIRATION:
+      return isDurationValid.value;
+    default:
+      return false;
+  }
+});
+
+const handleChangeStep = (step: CustomPotionStep) => {
+  if (step === CustomPotionStep.STRIKE && strikeSelected.value === 0) {
+    strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
+  }
+  if (step === CustomPotionStep.EXPIRATION && durationSelected.value === 0) {
+    durationSelected.value = 1;
+  }
+  currentStep.value = step;
+};
+
 const areStepsValid = computed(
   () =>
     isTokenSelected.value &&
@@ -182,68 +197,6 @@ watch(buyPotionTx, (transaction) => {
 watch(buyPotionReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
-
-const sidebarItems = computed(() => {
-  return [
-    {
-      title: t("asset"),
-      iconSrcset:
-        currentStep.value === CustomPotionStep.ASSET
-          ? AssetActiveIcon
-          : AssetDefaultIcon,
-      selected: currentStep.value === CustomPotionStep.ASSET,
-      disabled: false,
-      onClick: () => {
-        currentStep.value = CustomPotionStep.ASSET;
-      },
-    },
-    {
-      title: t("strike_price"),
-      iconSrcset:
-        currentStep.value === CustomPotionStep.STRIKE
-          ? StrikeActiveIcon
-          : StrikeDefaultIcon,
-      selected: currentStep.value === CustomPotionStep.STRIKE,
-      disabled: !isTokenSelected.value,
-      onClick: () => {
-        if (strikeSelected.value === 0) {
-          strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
-        }
-        currentStep.value = CustomPotionStep.STRIKE;
-      },
-    },
-    {
-      title: t("expiration"),
-      iconSrcset:
-        currentStep.value === CustomPotionStep.EXPIRATION
-          ? DurationActiveIcon
-          : DurationDefaultIcon,
-      selected: currentStep.value === CustomPotionStep.EXPIRATION,
-      disabled: !isTokenSelected.value || !isStrikeValid.value,
-      onClick: () => {
-        if (durationSelected.value === 0) {
-          durationSelected.value = 1;
-        }
-        currentStep.value = CustomPotionStep.EXPIRATION;
-      },
-    },
-    {
-      title: t("review_and_create"),
-      iconSrcset:
-        currentStep.value === CustomPotionStep.REVIEW
-          ? ReviewActiveIcon
-          : ReviewDefaultIcon,
-      selected: currentStep.value === CustomPotionStep.REVIEW,
-      disabled:
-        !isTokenSelected.value ||
-        !isStrikeValid.value ||
-        !isDurationValid.value,
-      onClick: () => {
-        currentStep.value = CustomPotionStep.REVIEW;
-      },
-    },
-  ];
-});
 </script>
 
 <template>
@@ -255,38 +208,18 @@ const sidebarItems = computed(() => {
           <i class="i-ph-x"></i>
         </router-link>
       </div>
-      <ul
-        class="grid grid-cols-1 lg:( grid-cols-4 ) gap-3 w-full xl:( grid-cols-1 ) self-start items-start justify-center"
+      <SidebarMenu
+        :token-image="tokenSelected?.image ?? ''"
+        :token-symbol="tokenSelected?.symbol ?? ''"
+        :strike-selected="strikeSelected"
+        :duration-selected="durationSelectedDate"
+        :is-token-selected="isTokenSelected"
+        :is-strike-valid="isStrikeValid"
+        :is-duration-valid="isDurationValid"
+        :current-step="currentStep"
+        @update:current-step="handleChangeStep"
       >
-        <SidebarLink
-          v-for="(item, index) in sidebarItems"
-          :key="`sidebar-item-${index}`"
-          :title="item.title"
-          :selected="item.selected"
-          :disabled="item.disabled"
-          :icon-srcset="item.iconSrcset"
-          class="lg:w-1/4 lg:w-full"
-          @click="item.onClick"
-        >
-          <div
-            v-if="index === CustomPotionStep.ASSET && tokenSelected"
-            class="flex gap-2 items-center"
-          >
-            <img
-              class="h-5 w-5"
-              :src="tokenSelected?.image"
-              :alt="tokenSelected?.symbol"
-            />
-            <p class="text-xs">{{ tokenSelected?.symbol }}</p>
-          </div>
-          <div v-if="index === CustomPotionStep.STRIKE && strikeSelected">
-            <p class="text-xs">USDC {{ strikeSelected }}</p>
-          </div>
-          <div v-if="index === CustomPotionStep.EXPIRATION && durationSelected">
-            <p class="text-xs">{{ durationSelectedDate }}</p>
-          </div>
-        </SidebarLink>
-      </ul>
+      </SidebarMenu>
       <div
         v-if="currentStep === CustomPotionStep.ASSET"
         class="w-full xl:col-span-2"
@@ -448,31 +381,31 @@ const sidebarItems = computed(() => {
         :inline="true"
         :label="t('back')"
         :disabled="false"
-        @click="currentStep--"
+        @click="handleChangeStep(currentStep - 1)"
       >
         <template #pre-icon>
           <i class="i-ph-caret-left"></i>
         </template>
       </BaseButton>
       <BaseButton
-        v-if="currentStep !== sidebarItems.length - 1"
+        v-if="currentStep !== CustomPotionStep.REVIEW"
         test-next
         palette="secondary"
         :inline="true"
         :label="t('next')"
-        :disabled="sidebarItems[currentStep + 1].disabled"
-        @click="sidebarItems[currentStep + 1].onClick()"
+        :disabled="!nextStepEnabled"
+        @click="handleChangeStep(currentStep + 1)"
       >
         <template #post-icon>
           <i class="i-ph-caret-right"></i>
         </template>
       </BaseButton>
       <BaseButton
-        v-if="currentStep === sidebarItems.length - 1"
+        v-if="currentStep === CustomPotionStep.REVIEW"
         palette="secondary"
         :label="buyPotionButtonState.label"
         :disabled="buyPotionButtonState.disabled"
-        @click="handleBuyPotions()"
+        @click="handleBuyPotions"
       />
     </div>
   </BaseCard>
