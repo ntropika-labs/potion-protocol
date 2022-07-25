@@ -61,6 +61,9 @@ export function usePotionBuyActionContract(contractAddress: string) {
 
   //Cycle duration
   const cycleDurationSecs = ref(0);
+  const cycleDurationDays = computed(() => {
+    return Math.floor(cycleDurationSecs.value / (3600 * 24));
+  });
   const cycleDurationSecsLoading = ref(false);
   const cycleDurationSecsError = ref<string | null>(null);
   const getCycleDurationSecs = async () => {
@@ -288,6 +291,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   });
 
   onMounted(async () => {
+    console.log("here");
+    console.log(contractAddress);
     await getStrategyInfo();
   });
 
@@ -327,5 +332,6 @@ export function usePotionBuyActionContract(contractAddress: string) {
     currentPayoutError,
     currentPayout,
     getCurrentPayout,
+    cycleDurationDays,
   };
 }

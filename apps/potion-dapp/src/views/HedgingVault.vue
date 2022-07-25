@@ -2,7 +2,7 @@
   <div>
     <BaseCard class="p-4 items-center md:items-start">
       <div class="mb-3">
-        <p class="capitalize">{{ t("protectiveputvault") }}</p>
+        <p class="capitalize">{{ t("protective_put_vault") }}</p>
         <a
           class="text-xs flex items-center font-normal text-white/50 hover:text-white transition"
           :href="etherscanUrl + '/address/' + validId"
@@ -25,19 +25,19 @@
         </div>
         <div>
           <p class="capitalize">{{ t("admin") }}</p>
-          <a :href="etherscanUrl + '/address/' + adminAddress">
+          <a :href="etherscanUrl + '/address/' + admin">
             <BaseTag>
               <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ adminAddress }}</span>
+              <span class="truncate max-w-[15ch]">{{ admin }}</span>
             </BaseTag>
           </a>
         </div>
         <div>
           <p class="capitalize">{{ t("operator") }}</p>
-          <a :href="etherscanUrl + '/address/' + operatorAddress">
+          <a :href="etherscanUrl + '/address/' + operator">
             <BaseTag>
               <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ operatorAddress }}</span>
+              <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
           </a>
         </div>
@@ -46,20 +46,20 @@
         <LabelValue
           size="lg"
           :title="t('share_price')"
-          value="23.4"
+          :value="sharePrice.toString()"
           symbol="MKR/Share"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          value="482938"
+          :value="totalAssets.toString()"
           symbol="MKR"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
-          value="32"
-          symbol="= 50 MKR"
+          :value="userBalance.toString()"
+          :symbol="`= ${userAssets} MKR`"
         />
       </div>
     </BaseCard>
@@ -67,7 +67,11 @@
       <BaseCard class="p-4 grid gap-4">
         <AssetTag
           :title="t('asset')"
-          :token="{ name: 'Maker', symbol: 'MKR', address: '0x98e9' }"
+          :token="{
+            name: assetName,
+            symbol: assetSymbol,
+            address: assetAddress,
+          }"
         />
         <LabelValue
           size="sm"
@@ -75,24 +79,34 @@
           value="95"
           symbol="%"
         />
-        <LabelValue size="sm" :title="t('strike')" value="80" symbol="%" />
         <LabelValue
           size="sm"
-          :title="t('cycle_duration')"
-          value="5"
-          symbol="days"
-        />
-        <LabelValue size="sm" :title="t('max_premium')" value="10" symbol="%" />
-        <LabelValue
-          size="sm"
-          :title="t('maxpremiumslippage')"
-          value="0.2"
+          :title="t('strike')"
+          :value="strikePercentage.toString()"
           symbol="%"
         />
         <LabelValue
           size="sm"
-          :title="t('maxswapslippage')"
-          value="0.01"
+          :title="t('cycle_duration')"
+          :value="cycleDurationDays.toString()"
+          symbol="days"
+        />
+        <LabelValue
+          size="sm"
+          :title="t('max_premium')"
+          :value="maxPremiumPercentage.toString()"
+          symbol="%"
+        />
+        <LabelValue
+          size="sm"
+          :title="t('max_premium_slippage')"
+          :value="premiumSlippage.toString()"
+          symbol="%"
+        />
+        <LabelValue
+          size="sm"
+          :title="t('max_swap_slippage')"
+          :value="swapSlippage.toString()"
           symbol="%"
         />
       </BaseCard>
@@ -100,7 +114,7 @@
         <BaseCard class="p-4">
           <div class="flex items-center gap-4">
             <p class="text-accent-500 text-sm font-normal capitalize">
-              {{ t("timeleft-untilnext_cycle") }}
+              {{ t("time_left_until_next_cycle") }}
             </p>
             <BaseTag>
               <span class="text-accent-500">24h 13m 18s</span>
@@ -108,32 +122,31 @@
           </div>
           <div class="flex gap-6 w-full mt-5">
             <div class="w-1/2 flex flex-col items-center gap-4">
-              <InputNumber class="self-stretch" />
+              <InputNumber
+                v-model="depositAmount"
+                class="self-stretch"
+                :max="assetUserBalance"
+                :min="1"
+                :step="0.01"
+                :unit="assetSymbol"
+              />
               <BaseButton palette="secondary" :label="t('deposit')" />
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
-              <InputNumber class="self-stretch" />
+              <InputNumber
+                v-model="withdrawAmount"
+                class="self-stretch"
+                :max="userBalance"
+                :min="1"
+                :step="0.01"
+                :unit="vaultSymbol"
+              />
               <BaseButton palette="secondary" :label="t('withdraw')" />
             </div>
           </div>
         </BaseCard>
       </div>
     </div>
-    <pre>
-      {{ operator }}
-      {{ admin }}
-      {{ validId }}
-      {{ status }}
-     {{ strategist }}
-     {{ vaultName }}
-     {{ vaultDecimals }}
-     {{ vaultSymbol }}
-     {{ assetName }}
-     {{ assetDecimals }}
-     {{ assetAddress }}
-      {{ assetSymbol }}
-     {{ assetImage }}
-    </pre>
   </div>
 </template>
 <script lang="ts" setup>
@@ -147,44 +160,62 @@ import {
 } from "potion-ui";
 import { useI18n } from "vue-i18n";
 import { etherscanUrl } from "@/helpers";
-import { useEthersProvider } from "@/composables/useEthersProvider";
-import { onMounted, ref, computed } from "vue";
+// import { useEthersProvider } from "@/composables/useEthersProvider";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
-// import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import { isArray } from "lodash";
+import { useErc20Contract } from "@/composables/useErc20Contract";
+import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
+import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 const { t } = useI18n();
 const status = ref(true);
-const vaultEns = ref("");
-const adminAddress = ref("0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E");
-const operatorAddress = ref("0x57B9f79515fED84d2f67e9Bf0fF3A17B9e60aD9E");
-const { lookupAddress } = useEthersProvider();
+const { PotionBuyAction } = contractsAddresses;
 
+// const { lookupAddress } = useEthersProvider();
+const depositAmount = ref(1);
+const withdrawAmount = ref(1);
 const route = useRoute();
 const { id } = route.params;
 const validId = computed(() => {
-  if (isArray(id)) {
+  if (Array.isArray(id)) {
     return id[0].toLowerCase();
   }
   return id.toLowerCase();
 });
 
-//@eslint-disable-next-line no-unused-vars
-const { operator, admin, strategist } = useInvestmentVaultContract(validId);
+const assetPrice = ref(34.42);
 const {
-  vaultName,
-  vaultDecimals,
+  strikePercentage,
+  maxPremiumPercentage,
+  cycleDurationDays,
+  premiumSlippage,
+  swapSlippage,
+} = usePotionBuyActionContract(PotionBuyAction.address);
+const { operator, admin } = useInvestmentVaultContract(validId);
+const {
+  // vaultName,
+  // vaultDecimals,
   vaultSymbol,
   assetName,
   assetSymbol,
   assetAddress,
-  assetDecimals,
-  assetImage,
+  // assetDecimals,
+  // assetImage,
+  assetToShare,
+  totalAssets,
+  userBalance,
+  userAssets,
 } = useErc4626Contract(validId);
-onMounted(async () => {
-  adminAddress.value = await lookupAddress(adminAddress.value);
-  operatorAddress.value = await lookupAddress(operatorAddress.value);
-  vaultEns.value = await lookupAddress(validId.value);
+
+const { userBalance: assetUserBalance, getTokenBalance } =
+  useErc20Contract(assetAddress);
+
+watch(assetAddress, async () => {
+  await getTokenBalance(true);
+});
+
+const sharePrice = computed(() => {
+  return assetPrice.value * assetToShare.value;
 });
 </script>
