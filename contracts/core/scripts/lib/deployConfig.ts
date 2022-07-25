@@ -110,6 +110,10 @@ const EXTERNAL_COLLATERAL_ALLOCATIONS = [
     new AccountValue("0x614B7f7Ed8E93260B6EA33BB081073036F73F9E9", parseUsdcAmount("1000000")), // E
 ];
 
+const HEDGING_VAULT_TEST_ALLOCATIONS = [
+    new AccountValue("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", parseUsdcAmount("1000000")), // Hardhat default test account
+];
+
 const newSelfContainedEcosystemConfig = {
     postDeployActions: basicDataForTesting(),
     // postDeployActions: priceHistoryData(),
@@ -172,7 +176,7 @@ export const config: NetworkDeployConfigMap = {
         postDeployActions: [
             new WhitelistCollateral(),
             new DeploySampleUnderlyingToken("WETH"),
-            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
+            new AllocateCollateralTokensFromFaucet(HEDGING_VAULT_TEST_ALLOCATIONS),
             new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000")),
             new DeployCurves(generateHedgingVaultCurves),
             new DeployCriteriaAndCriteriaSets(generateHedgingVaultCriteriaSet),
