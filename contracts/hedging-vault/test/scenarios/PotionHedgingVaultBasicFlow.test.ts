@@ -381,13 +381,7 @@ describe("HedgingVault", function () {
 
         const cycleEndTimestamp = await getNextTimestamp();
 
-        const balanceBefore = await tEnv.USDC.balanceOf(action.address);
-        console.log("balanceBeforeOutside", balanceBefore.toString());
-
         await vault.connect(ownerAccount).exitPosition();
-
-        const balanceAfter = await tEnv.USDC.balanceOf(action.address);
-        console.log("balanceAfterOutside", balanceAfter.toString());
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
