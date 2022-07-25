@@ -32,6 +32,17 @@ export class DeploySampleUnderlyingToken {
         );
         await trx.wait(); // Wait for mining to avoid duplicate nonces
 
+        const symbol = await token.symbol();
+
+        // Mint some tokens
+        const signers = await ethers.getSigners();
+        for (const signer of signers) {
+            printProgress && process.stdout.write(`Minting ${signer.address} ${symbol} tokens... `);
+            const trx = await token.mint(signer.address, ethers.utils.parseEther("1000000"));
+            await trx.wait();
+            printProgress && console.log("minted");
+        }
+
         if (isFirstToken) {
             // This is our first sample underlying token, so we persist it in the Deployment
             // Subsequent underlying tokens can be created, but their existence & data must be inferred from event logs
