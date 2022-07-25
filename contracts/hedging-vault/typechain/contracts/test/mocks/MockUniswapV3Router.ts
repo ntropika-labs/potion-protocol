@@ -133,6 +133,7 @@ export declare namespace ISwapRouter {
 
 export interface MockUniswapV3RouterInterface extends utils.Interface {
   functions: {
+    "assets(uint256)": FunctionFragment;
     "exactInput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
     "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))": FunctionFragment;
     "exactOutput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
@@ -142,6 +143,7 @@ export interface MockUniswapV3RouterInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "assets"
       | "exactInput"
       | "exactInputSingle"
       | "exactOutput"
@@ -149,6 +151,10 @@ export interface MockUniswapV3RouterInterface extends utils.Interface {
       | "uniswapV3SwapCallback"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "assets",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "exactInput",
     values: [ISwapRouter.ExactInputParamsStruct]
@@ -170,6 +176,7 @@ export interface MockUniswapV3RouterInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish, BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "assets", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exactInput", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exactInputSingle",
@@ -218,6 +225,8 @@ export interface MockUniswapV3Router extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    assets(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
     exactInput(
       params: ISwapRouter.ExactInputParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -245,6 +254,8 @@ export interface MockUniswapV3Router extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  assets(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   exactInput(
     params: ISwapRouter.ExactInputParamsStruct,
@@ -274,6 +285,8 @@ export interface MockUniswapV3Router extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    assets(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
     exactInput(
       params: ISwapRouter.ExactInputParamsStruct,
       overrides?: CallOverrides
@@ -305,6 +318,8 @@ export interface MockUniswapV3Router extends BaseContract {
   filters: {};
 
   estimateGas: {
+    assets(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     exactInput(
       params: ISwapRouter.ExactInputParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -334,6 +349,11 @@ export interface MockUniswapV3Router extends BaseContract {
   };
 
   populateTransaction: {
+    assets(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     exactInput(
       params: ISwapRouter.ExactInputParamsStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }

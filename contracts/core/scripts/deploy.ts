@@ -11,8 +11,8 @@ import { deploy, deployUpgrade, initDeployment, exportDeployments, exportContrac
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 let networkName = network.name;
-if (process.env.INDEPENDENT_DEPLOYMENT) {
-    networkName = networkName + ".independent";
+if (process.env.NETWORK_SUFFIX) {
+    networkName = networkName + "." + process.env.NETWORK_SUFFIX;
 }
 
 const deployConfig = deployConfiguration[networkName];
@@ -137,6 +137,7 @@ async function deployOpynContracts(deployConfig: NetworkDeployConfig): Promise<s
 
         console.log("Deploying pricers...");
         for (const pricerConfig of deployConfig.pricerConfigs) {
+            console.log(" - " + JSON.stringify(pricerConfig));
             const pricer = await deploy(
                 CHAINLINK_PRICER_CONTRACT_NAME,
                 [

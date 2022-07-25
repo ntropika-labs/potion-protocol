@@ -18,6 +18,10 @@ import {
   CriteriaSetAdded,
 } from "../generated/CriteriaManager/CriteriaManager";
 import { OtokenCreated } from "../generated/OtokenFactoryContract/OtokenFactoryContract";
+import {
+  ProductWhitelisted,
+  CollateralWhitelisted,
+} from "../generated/Whitelist/Whitelist";
 import { ethereum, BigInt, Address, Bytes } from "@graphprotocol/graph-ts";
 import { newMockEvent } from "matchstick-as/assembly/index";
 
@@ -345,5 +349,45 @@ export function createOtokenCreated(
     new ethereum.EventParam("isPut", ethereum.Value.fromBoolean(isPut)),
   ];
 
+  return event;
+}
+
+export function createCollateralWhitelisted(
+  collateral: Address
+): CollateralWhitelisted {
+  const event = changetype<CollateralWhitelisted>(newMockEvent());
+  event.parameters = [
+    new ethereum.EventParam(
+      "collateral",
+      ethereum.Value.fromAddress(collateral)
+    ),
+  ];
+  return event;
+}
+
+export function createProductWhitelisted(
+  productHash: Bytes,
+  underlying: Address,
+  strike: Address,
+  collateral: Address,
+  isPut: boolean
+): ProductWhitelisted {
+  const event = changetype<ProductWhitelisted>(newMockEvent());
+  event.parameters = [
+    new ethereum.EventParam(
+      "productHash",
+      ethereum.Value.fromBytes(productHash)
+    ),
+    new ethereum.EventParam(
+      "underlying",
+      ethereum.Value.fromAddress(underlying)
+    ),
+    new ethereum.EventParam("strike", ethereum.Value.fromAddress(strike)),
+    new ethereum.EventParam(
+      "collateral",
+      ethereum.Value.fromAddress(collateral)
+    ),
+    new ethereum.EventParam("isPut", ethereum.Value.fromBoolean(isPut)),
+  ];
   return event;
 }

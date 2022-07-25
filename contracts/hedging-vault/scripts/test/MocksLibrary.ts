@@ -1,5 +1,6 @@
 import { MockContract } from "@defi-wonderland/smock";
 import { PotionHedgingVaultConfigParams } from "../config/deployConfig";
+import { network, ethers } from "hardhat";
 
 import {
     MockERC20PresetMinterPauser,
@@ -27,6 +28,7 @@ export async function mockERC20(
         "MockERC20PresetMinterPauser",
         [],
         alias,
+        true,
     );
 }
 
@@ -40,6 +42,7 @@ export async function mockPotionLiquidityPoolManager(deploymentConfig: PotionHed
         "MockPotionLiquidityPool",
         [],
         "PotionLiquidityPool",
+        true,
     );
 }
 
@@ -48,7 +51,13 @@ export async function mockOpynController(deploymentConfig: PotionHedgingVaultCon
     hardMock: MockOpynController;
     address: string;
 }> {
-    return mockContract<MockOpynController>(deploymentConfig.networkName, "MockOpynController", [], "OpynController");
+    return mockContract<MockOpynController>(
+        deploymentConfig.networkName,
+        "MockOpynController",
+        [],
+        "OpynController",
+        true,
+    );
 }
 
 export async function mockOpynFactory(deploymentConfig: PotionHedgingVaultConfigParams): Promise<{
@@ -56,10 +65,13 @@ export async function mockOpynFactory(deploymentConfig: PotionHedgingVaultConfig
     hardMock: MockOpynFactory;
     address: string;
 }> {
-    return mockContract<MockOpynFactory>(deploymentConfig.networkName, "MockOpynFactory", [], "OpynFactory");
+    return mockContract<MockOpynFactory>(deploymentConfig.networkName, "MockOpynFactory", [], "OpynFactory", true);
 }
 
-export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVaultConfigParams): Promise<{
+export async function mockUniswapV3SwapRouter(
+    deploymentConfig: PotionHedgingVaultConfigParams,
+    tokens: string[] = [],
+): Promise<{
     softMock?: MockContract<MockUniswapV3Router>;
     hardMock: MockUniswapV3Router;
     address: string;
@@ -67,8 +79,9 @@ export async function mockUniswapV3SwapRouter(deploymentConfig: PotionHedgingVau
     return mockContract<MockUniswapV3Router>(
         deploymentConfig.networkName,
         "MockUniswapV3Router",
-        [],
+        [tokens],
         "UniswapV3Router",
+        true,
     );
 }
 
@@ -95,6 +108,7 @@ export async function mockOpynAddressBook(
         "MockOpynAddressBook",
         [opynController, opynFactory, opynOracle],
         "OpynAddressBook",
+        true,
     );
 }
 
@@ -103,6 +117,7 @@ export async function mockContract<T extends BaseContract>(
     contractName: string,
     parameters: any = [],
     alias?: string,
+    fundMockWallet: boolean = false,
 ): Promise<{
     softMock?: MockContract<T>;
     hardMock: T;
@@ -120,6 +135,14 @@ export async function mockContract<T extends BaseContract>(
         hardMock = (await deploy(contractName, parameters, alias !== undefined ? { alias } : undefined)) as T;
         address = hardMock.address;
     }
+
+    if (softMock !== undefined && fundMockWallet) {
+        await ethers.provider.send("hardhat_setBalance", [
+            softMock.address,
+            ethers.utils.hexStripZeros(ethers.utils.parseEther("10000").toHexString()),
+        ]);
+    }
+
     return { softMock, hardMock, address };
 }
 
@@ -129,6 +152,16 @@ export function isMock<T extends BaseContract>(contract: MockOrContract<T>): con
     return (contract as MockContract<T>).wallet !== undefined && (contract as MockContract<T>).fallback !== undefined;
 }
 
-export function asMock<T extends BaseContract>(contract: MockOrContract<T>): MockContract<T> | undefined {
-    return isMock(contract) ? (contract as MockContract<T>) : undefined;
+export function asMock<T extends BaseContract>(contract: MockOrContract<T>): MockContract<T> {
+    if (isMock(contract)) {
+        return contract as MockContract<T>;
+    } else {
+        throw new Error(`Contract with address ${contract.address} is not a mock`);
+    }
+}
+
+export function ifMocksEnabled(fn: () => void): void {
+    if (network.name === "hardhat") {
+        fn();
+    }
 }

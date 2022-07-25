@@ -1,6 +1,7 @@
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import { ethers, network } from "hardhat";
+import { BigNumber } from "ethers";
 import { TestWrapperUniswapV3SwapLib, ISwapRouter, ISwapRouter__factory } from "../../typechain";
 
 import * as PercentageUtils from "../utils/PercentageUtils";
@@ -42,10 +43,10 @@ describe("UniswapV3SwapLib", function () {
         const poolFee = 3000000;
         const swapInputParameter = {
             inputToken: "0x0000000000000000000000000000000000000000",
-            exactAmountIn: 356,
-            expectedAmountOut: 1984,
+            exactAmountIn: BigNumber.from(356),
+            expectedAmountOut: BigNumber.from(1984),
             slippage: PercentageUtils.toSolidityPercentage(2.0),
-            maxDuration: 1000000,
+            maxDuration: BigNumber.from(1000000),
             swapPath: ethers.utils.solidityPack(["address", "uint256", "address"], [tokenA, poolFee, tokenB]),
         };
 
@@ -67,7 +68,7 @@ describe("UniswapV3SwapLib", function () {
         const exactInputParameters: any = fakeUniswapRouter.exactInput.getCall(0).args[0];
         expect(exactInputParameters.path).to.be.equal(swapInputParameter.swapPath);
         expect(exactInputParameters.recipient).to.be.equal(uniswapV3SwapLib.address);
-        expect(exactInputParameters.deadline).to.be.equal(currentBlockTimestamp + swapInputParameter.maxDuration);
+        expect(exactInputParameters.deadline).to.be.equal(swapInputParameter.maxDuration.add(currentBlockTimestamp));
         expect(exactInputParameters.amountIn).to.be.equal(swapInputParameter.exactAmountIn);
         expect(exactInputParameters.amountOutMinimum).to.be.equal(amountOutMinimum);
     });
@@ -78,10 +79,10 @@ describe("UniswapV3SwapLib", function () {
         const poolFee = 3000000;
         const swapOutputParameter = {
             inputToken: "0x0000000000000000000000000000000000000000",
-            exactAmountOut: 1984,
-            expectedAmountIn: 356,
+            exactAmountOut: BigNumber.from(1984),
+            expectedAmountIn: BigNumber.from(356),
             slippage: PercentageUtils.toSolidityPercentage(2.0),
-            maxDuration: 1000000,
+            maxDuration: BigNumber.from(1000000),
             swapPath: ethers.utils.solidityPack(["address", "uint256", "address"], [tokenA, poolFee, tokenB]),
         };
 
@@ -103,7 +104,7 @@ describe("UniswapV3SwapLib", function () {
         const exactInputParameters: any = fakeUniswapRouter.exactOutput.getCall(0).args[0];
         expect(exactInputParameters.path).to.be.equal(swapOutputParameter.swapPath);
         expect(exactInputParameters.recipient).to.be.equal(uniswapV3SwapLib.address);
-        expect(exactInputParameters.deadline).to.be.equal(currentBlockTimestamp + swapOutputParameter.maxDuration);
+        expect(exactInputParameters.deadline).to.be.equal(swapOutputParameter.maxDuration.add(currentBlockTimestamp));
         expect(exactInputParameters.amountOut).to.be.equal(swapOutputParameter.exactAmountOut);
         expect(exactInputParameters.amountInMaximum).to.be.equal(amountInMaximum);
     });

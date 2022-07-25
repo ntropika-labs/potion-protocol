@@ -125,7 +125,7 @@ export declare namespace IPotionLiquidityPool {
 export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
   functions: {
     "buyPotion(address,address,(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256),uint256,address)": FunctionFragment;
-    "redeemPotion(address,address)": FunctionFragment;
+    "redeemPotion(address,address,(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
   getFunction(
@@ -138,7 +138,7 @@ export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "redeemPotion",
-    values: [string, string]
+    values: [string, string, PotionBuyInfoStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "buyPotion", data: BytesLike): Result;
@@ -188,7 +188,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
     redeemPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
+      opynController: string,
+      buyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -204,7 +205,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
   redeemPotion(
     potionLiquidityPoolManager: string,
-    potion: string,
+    opynController: string,
+    buyInfo: PotionBuyInfoStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -220,7 +222,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
     redeemPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
+      opynController: string,
+      buyInfo: PotionBuyInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -239,7 +242,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
     redeemPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
+      opynController: string,
+      buyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -256,7 +260,8 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
 
     redeemPotion(
       potionLiquidityPoolManager: string,
-      potion: string,
+      opynController: string,
+      buyInfo: PotionBuyInfoStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -85,15 +85,9 @@ updateStrikeDuration(maxStrike.value, maxDuration.value);
           class="flex flex-row items-center gap-2 text-sm text-secondary-600 mt-2 mb-12"
         >
           <i class="i-ph-warning-circle"></i>
-          <template v-if="priceInfo.success && !priceInfo.loading">
-            <p>{{ priceInfo.formattedPrice }}</p>
-          </template>
-          <template v-else-if="priceInfo.loading">
-            {{ t("loading") }}
-          </template>
-          <template v-else-if="!priceInfo.success && !priceInfo.loading">
-            {{ t("loading_error") }}
-          </template>
+          <p v-if="priceInfo?.loading">{{ t("loading") }}</p>
+          <p v-else-if="priceInfo?.success">{{ priceInfo.formattedPrice }}</p>
+          <p v-else>{{ t("loading_error") }}</p>
         </div>
         <InputSlider
           test-wrapper-strike

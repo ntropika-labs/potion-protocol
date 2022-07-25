@@ -66,4 +66,21 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
     ) external pure returns (uint256) {
         return 1;
     }
+
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
+    function lpPools(
+        address, /*lpAddress*/
+        uint256 /*poolId*/
+    ) external pure returns (PoolOfCapital memory) {
+        uint256 dummy = 0;
+        return
+            PoolOfCapital({
+                total: 917299615717, // Value coming from the Potion Protocol sample deployment
+                locked: 0,
+                curveHash: keccak256(abi.encodePacked(dummy)),
+                criteriaSetHash: keccak256(abi.encodePacked(dummy))
+            });
+    }
 }

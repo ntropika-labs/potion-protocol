@@ -234,22 +234,18 @@ type OrderBookEntry @entity(immutable: true) {
   premium: BigDecimal!
 }
 
+enum TokenType @entity {
+  COLLATERAL
+  UNDERLYING
+}
+
 type Token @entity(immutable: true) {
   id: ID!
   address: Bytes!
   decimals: BigInt!
   symbol: String!
   name: String!
-}
-
-type Underlying @entity {
-  id: ID!
-  token: Token!
-}
-
-type Collateral @entity {
-  id: ID!
-  token: Token!
+  tokenType: TokenType!
 }
 
 type Product @entity(immutable: true) {

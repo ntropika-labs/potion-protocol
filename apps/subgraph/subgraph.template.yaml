@@ -123,8 +123,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Token
-        - Underlying
-        - Collateral
       abis:
         - name: Whitelist
           file: ../../contracts/core/abis/Whitelist.json

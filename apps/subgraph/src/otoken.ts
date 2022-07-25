@@ -3,7 +3,7 @@ import { BigInt, BigDecimal, Bytes } from "@graphprotocol/graph-ts";
 import { OtokenCreated } from "../generated/OtokenFactoryContract/OtokenFactoryContract";
 import { OToken } from "../generated/schema";
 import { Otoken } from "../generated/OtokenFactoryContract/Otoken";
-import { createTokenId, collateralFixedtoDecimals } from "./token";
+import { createTokenId, collateralToDecimals } from "./token";
 import { bigIntToDecimal } from "./helpers";
 
 export function getOTokenIdFromEvent(event: OtokenCreated): string {
@@ -80,7 +80,7 @@ export function oTokenSettled(oToken: Bytes, collateralReturned: BigInt): void {
 
   if (otoken) {
     otoken.settled = true;
-    otoken.liquiditySettled = collateralFixedtoDecimals(collateralReturned);
+    otoken.liquiditySettled = collateralToDecimals(collateralReturned);
     otoken.save();
   }
 }
@@ -106,10 +106,10 @@ export function oTokenIncrementLiquidity(
       oTokenAddress,
       numberOfOtokens
     );
-    const liquidityCollateralizedDecimals = collateralFixedtoDecimals(
+    const liquidityCollateralizedDecimals = collateralToDecimals(
       liquidityCollateralized
     );
-    const premiumReceivedDecimals = collateralFixedtoDecimals(premiumReceived);
+    const premiumReceivedDecimals = collateralToDecimals(premiumReceived);
 
     otoken.numberOfOTokens = otoken.numberOfOTokens.plus(tokensDecimals);
     otoken.collateralized = otoken.collateralized.plus(

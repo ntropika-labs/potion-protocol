@@ -28,11 +28,11 @@ import type {
 
 export interface PotionTestUSDInterface extends utils.Interface {
   functions: {
-    "allocateTo(address,uint256)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -42,11 +42,11 @@ export interface PotionTestUSDInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "allocateTo"
       | "allowance"
       | "approve"
       | "balanceOf"
       | "decimals"
+      | "mint"
       | "name"
       | "symbol"
       | "totalSupply"
@@ -54,10 +54,6 @@ export interface PotionTestUSDInterface extends utils.Interface {
       | "transferFrom"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "allocateTo",
-    values: [string, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -68,6 +64,10 @@ export interface PotionTestUSDInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -83,11 +83,11 @@ export interface PotionTestUSDInterface extends utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "allocateTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
@@ -160,12 +160,6 @@ export interface PotionTestUSD extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    allocateTo(
-      _owner: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     allowance(
       arg0: string,
       arg1: string,
@@ -181,6 +175,12 @@ export interface PotionTestUSD extends BaseContract {
     balanceOf(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    mint(
+      _owner: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -202,12 +202,6 @@ export interface PotionTestUSD extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  allocateTo(
-    _owner: string,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   allowance(
     arg0: string,
     arg1: string,
@@ -223,6 +217,12 @@ export interface PotionTestUSD extends BaseContract {
   balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
+
+  mint(
+    _owner: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -244,12 +244,6 @@ export interface PotionTestUSD extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    allocateTo(
-      _owner: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     allowance(
       arg0: string,
       arg1: string,
@@ -265,6 +259,12 @@ export interface PotionTestUSD extends BaseContract {
     balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
+
+    mint(
+      _owner: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -311,12 +311,6 @@ export interface PotionTestUSD extends BaseContract {
   };
 
   estimateGas: {
-    allocateTo(
-      _owner: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     allowance(
       arg0: string,
       arg1: string,
@@ -332,6 +326,12 @@ export interface PotionTestUSD extends BaseContract {
     balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mint(
+      _owner: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -354,12 +354,6 @@ export interface PotionTestUSD extends BaseContract {
   };
 
   populateTransaction: {
-    allocateTo(
-      _owner: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     allowance(
       arg0: string,
       arg1: string,
@@ -378,6 +372,12 @@ export interface PotionTestUSD extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mint(
+      _owner: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

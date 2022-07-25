@@ -76,6 +76,8 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
             "Swap info not found for the given token pair"
         );
 
+        // TODO: price rate has to be passed as the price of the input token and the price of the output token
+        // TODO: so the rate can be calculated inside PriceUtis
         uint256 expectedAmountOut = PriceUtils.toOutputAmount(swapInfo.expectedPriceRate, amountIn);
 
         UniswapV3SwapLib.SwapInputParameters memory swapParameters = UniswapV3SwapLib.SwapInputParameters({
