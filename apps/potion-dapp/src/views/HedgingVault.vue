@@ -76,7 +76,7 @@
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
-          value="95"
+          :value="principalPercentages[0].toString()"
           symbol="%"
         />
         <LabelValue
@@ -192,7 +192,8 @@ const {
   premiumSlippage,
   swapSlippage,
 } = usePotionBuyActionContract(PotionBuyAction.address);
-const { operator, admin } = useInvestmentVaultContract(validId);
+const { operator, admin, principalPercentages } =
+  useInvestmentVaultContract(validId);
 const {
   // vaultName,
   // vaultDecimals,

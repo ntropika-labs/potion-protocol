@@ -91,7 +91,7 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     }
   };
 
-  const principalPercentages = ref<number[]>([]);
+  const principalPercentages = ref<number[]>([0]);
   const principalPercentagesLoading = ref(false);
   const getPrincipalPercentages = async () => {
     principalPercentagesLoading.value = true;
@@ -115,22 +115,26 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    await Promise.all([
-      getOperator(),
-      getAdmin(),
-      getStrategist(),
-      getPrincipalPercentages(),
-    ]);
-  });
-
-  if (isRef(address)) {
-    watch(address, async () => {
-      Promise.all([
+    if (unref(address)) {
+      await Promise.all([
         getOperator(),
         getAdmin(),
         getStrategist(),
         getPrincipalPercentages(),
       ]);
+    }
+  });
+
+  if (isRef(address)) {
+    watch(address, async () => {
+      if (unref(address)) {
+        Promise.all([
+          getOperator(),
+          getAdmin(),
+          getStrategist(),
+          getPrincipalPercentages(),
+        ]);
+      }
     });
   }
 
