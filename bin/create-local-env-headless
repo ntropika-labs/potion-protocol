@@ -163,7 +163,7 @@ spin_up_environment() {
   docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
-  ./bin/wait-for-tcp localhost:8545
+  # ./bin/wait-for-tcp localhost:8545
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
 
@@ -191,7 +191,7 @@ spin_up_environment() {
     msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
 
     yarn nx run potion-subgraph:codegen
-    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
+    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"
   fi
 
   sleep 10
