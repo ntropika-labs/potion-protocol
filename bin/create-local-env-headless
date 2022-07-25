@@ -182,6 +182,9 @@ spin_up_environment() {
 
     yarn nx run @potion-protocol/core:deploy-local
     msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
+
+    yarn nx run @potion-protocol/hedging-vault:deploy-local
+    msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
   fi
   if [[ $is_db_seeded -eq 0 || $init_environment -eq 1 ]]; then
     yarn nx run potion-subgraph:prepare-local
@@ -199,9 +202,6 @@ spin_up_environment() {
 
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
   msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
-
-  yarn nx run @potion-protocol/hedging-vault:deploy-local
-  msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
 
   if [[ $is_db_seeded -eq 0 ]]; then
 
