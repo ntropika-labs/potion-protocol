@@ -168,10 +168,10 @@ spin_up_environment() {
   sleep 2
 
   if [[ $init_environment -eq 1 ]]; then
-    local ganache_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
-    msg "${ORANGE}- - Removing db data${NOFORMAT}"
+    local ganache_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d'  | sed 's/\"//g')"
+    msg "${ORANGE}- - Removing db data: ${ganache_db_path} ${NOFORMAT}"
 
-    docker compose exec ganache rm -rf "${ganache_db_path}"
+    docker compose exec ganache rm -rf "$ganache_db_path"
 
     msg "${GREEN}- - Removed db data ${NOFORMAT}"
 
@@ -180,7 +180,8 @@ spin_up_environment() {
   if [[ $is_db_seeded -eq 0 ]]; then
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
-    yarn nx run @potion-protocol/core:deploy-local
+    #yarn nx run @potion-protocol/core:deploy-local
+    yarn nx run @potion-protocol/core:deploy-local.hedging
     msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
 
     yarn nx run @potion-protocol/hedging-vault:deploy-local
