@@ -139,14 +139,19 @@
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
               <InputNumber
-                v-model="withdrawAmount"
+                v-model="redeemAmount"
                 class="self-stretch"
                 :max="userBalance"
                 :min="1"
                 :step="0.01"
                 :unit="vaultSymbol"
               />
-              <BaseButton palette="secondary" :label="t('withdraw')" />
+              <BaseButton
+                palette="secondary"
+                :label="redeemButtonState.label"
+                :disabled="redeemButtonState.disabled"
+                @click="handleRedeem()"
+              />
             </div>
           </div>
         </BaseCard>
@@ -156,6 +161,7 @@
   <pre>
     {{ depositReceipt }}
     {{ approveReceipt }}
+    {{ redeemReceipt }}
   </pre>
 </template>
 <script lang="ts" setup>
@@ -186,7 +192,7 @@ const { PotionBuyAction } = contractsAddresses;
 
 // const { lookupAddress } = useEthersProvider();
 const depositAmount = ref(1);
-const withdrawAmount = ref(1);
+const redeemAmount = ref(1);
 const route = useRoute();
 const { id } = route.params;
 const validId = computed(() => {
@@ -219,7 +225,9 @@ const {
   totalAssets,
   userBalance,
   deposit,
+  redeem,
   depositReceipt,
+  redeemReceipt,
 } = useErc4626Contract(validId);
 
 const {
@@ -273,7 +281,7 @@ const depositButtonState = computed(() => {
 });
 
 const handleDeposit = async () => {
-  if (depositButtonState.value.label === t("approve")) {
+  if (depositButtonState.value.disabled === false) {
     await approveSpending(validId.value, true);
   } else {
     await deposit(depositAmount.value, true);
@@ -283,4 +291,35 @@ const handleDeposit = async () => {
 const sharePrice = computed(() => {
   return assetPrice.value * assetToShare.value;
 });
+
+const redeemButtonState = computed(() => {
+  if (connectedWallet.value && userBalance.value >= redeemAmount.value) {
+    return {
+      label: t("redeem"),
+      disabled: false,
+    };
+  }
+  if (connectedWallet.value && userBalance.value < redeemAmount.value) {
+    return {
+      label: t("not_enough", { msg: vaultSymbol.value }),
+      disabled: true,
+    };
+  }
+  if (!connectedWallet.value) {
+    return {
+      label: t("connect_wallet"),
+      disabled: true,
+    };
+  }
+  return {
+    label: t("redeem"),
+    disabled: true,
+  };
+});
+
+const handleRedeem = async () => {
+  if (redeemButtonState.value.disabled === false) {
+    await redeem(redeemAmount.value, true);
+  }
+};
 </script>

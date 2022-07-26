@@ -169,3 +169,4 @@ your_put_recipe: Your put recipe
 your_shares: your shares
 your_strike_price: your strike price
 not_enough: not enough  { msg }
+redeem: redeem
