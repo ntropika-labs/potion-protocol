@@ -16,6 +16,7 @@ const PoolTemplate = () => import("@/views/PoolTemplate.vue");
 const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
 const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
 const HedgingVault = () => import("@/views/HedgingVault.vue");
+const VaultOperator = () => import("@/views/Vault/VaultOperator.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,12 @@ const router = createRouter({
       name: "hedging-vault",
       component: HedgingVault,
       meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/hedging-vault/:id/operator",
+      name: "vault-operator",
+      component: VaultOperator,
+      meta: { requiredWallet: true, layout: BaseLayout },
     },
     {
       path: "/templates/:templateId",

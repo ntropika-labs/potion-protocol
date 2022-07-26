@@ -137,7 +137,8 @@ export function useHedgingVaultHelperContract() {
       canPositionBeEnteredLoading.value = true;
 
       const provider = initContractProvider();
-      return await provider.canPositionBeEntered();
+      canPositionBeEntered.value = await provider.canPositionBeEntered();
+      console.log("canPositionBeEntered", canPositionBeEntered.value);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -158,7 +159,8 @@ export function useHedgingVaultHelperContract() {
   const fetchCanPositionBeExited = async () => {
     try {
       const provider = initContractProvider();
-      return await provider.canPositionBeExited();
+      canPositionBeExited.value = await provider.canPositionBeExited();
+      console.log("canPositionBeExited", canPositionBeExited.value);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -173,6 +175,11 @@ export function useHedgingVaultHelperContract() {
   };
 
   const currentStatus = computed(() => {
+    console.log(
+      "currentStatus",
+      canPositionBeEntered.value,
+      canPositionBeExited.value
+    );
     if (canPositionBeEntered.value) {
       return "unlocked";
     } else if (canPositionBeExited.value) {
