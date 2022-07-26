@@ -59,7 +59,7 @@
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
-          :symbol="`= ${assetUserBalance} ${assetSymbol}`"
+          :symbol="`= ${sharePrice} ${assetSymbol}`"
         />
       </div>
     </BaseCard>

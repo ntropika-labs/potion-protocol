@@ -504,11 +504,15 @@ export function useErc4626Contract(
   const userBalance = ref(0);
   const getUserBalance = async () => {
     if (connectedWallet.value) {
+      console.log("here");
       try {
         maxDepositLoading;
         const contractProvider = initContractProvider();
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
+        );
+        userBalance.value = parseFloat(
+          formatUnits(result, vaultDecimals.value)
         );
         return formatUnits(result, vaultDecimals.value);
       } catch (error) {
@@ -600,6 +604,7 @@ export function useErc4626Contract(
       if (unref(address)) {
         console.log("address vault: ", unref(address));
         await fetchVaultData();
+        await getUserBalance();
         const response = await convertToShares(1);
         assetToShare.value = response;
       }
@@ -608,6 +613,7 @@ export function useErc4626Contract(
       watch(address, async () => {
         console.log("address vault: ", unref(address));
         await fetchVaultData();
+        await getUserBalance();
         const response = await convertToShares(1);
         assetToShare.value = response;
       });
