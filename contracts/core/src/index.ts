@@ -48,7 +48,7 @@ export const Deployments = {
         network: "kovan",
     },
     localhost: {
-        timestamp: 1658756836,
+        timestamp: 1658831011,
         network: "localhost",
         contracts: {
             AddressBook: {
@@ -64,8 +64,8 @@ export const Deployments = {
                 blockNumber: 3,
             },
             MarginCalculator: {
-                address: "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-                blockNumber: 57,
+                address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
+                blockNumber: 67,
             },
             OtokenFactory: {
                 address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
@@ -112,8 +112,8 @@ export const Deployments = {
                 blockNumber: 25,
             },
             MockOracle: {
-                address: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
-                blockNumber: 53,
+                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                blockNumber: 63,
             },
         },
     },

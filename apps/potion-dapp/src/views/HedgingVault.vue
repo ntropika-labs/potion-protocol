@@ -209,10 +209,8 @@ const {
   userAssets,
 } = useErc4626Contract(validId);
 
-const { userBalance: assetUserBalance, getTokenBalance } = useErc20Contract(
-  assetAddress,
-  false
-);
+const { userBalance: assetUserBalance, getTokenBalance } =
+  useErc20Contract(assetAddress);
 
 watch(assetAddress, async () => {
   await getTokenBalance(true);
