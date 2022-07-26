@@ -184,7 +184,7 @@ const validId = computed(() => {
   return id.toLowerCase();
 });
 
-const assetPrice = ref(34.42);
+const assetPrice = ref(3500);
 const {
   strikePercentage,
   maxPremiumPercentage,
@@ -209,8 +209,10 @@ const {
   userAssets,
 } = useErc4626Contract(validId);
 
-const { userBalance: assetUserBalance, getTokenBalance } =
-  useErc20Contract(assetAddress);
+const { userBalance: assetUserBalance, getTokenBalance } = useErc20Contract(
+  assetAddress,
+  false
+);
 
 watch(assetAddress, async () => {
   await getTokenBalance(true);

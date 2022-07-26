@@ -291,7 +291,6 @@ export function usePotionBuyActionContract(contractAddress: string) {
   });
 
   onMounted(async () => {
-    console.log("here");
     console.log(contractAddress);
     await getStrategyInfo();
   });

@@ -15,7 +15,10 @@ import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
-export function useErc20Contract(address: string | Ref<string>) {
+export function useErc20Contract(
+  address: string | Ref<string>,
+  fetchInitialData = true
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
 
@@ -45,7 +48,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getName = async () => {
     try {
       const contractProvider = initContractProvider();
-      name.value = await contractProvider.name();
+      const response = await contractProvider.name();
+      console.log("name: ", response);
+      name.value = response;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the name: ${error.message}`);
@@ -57,8 +62,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getSymbol = async () => {
     try {
       const contractProvider = initContractProvider();
-
-      symbol.value = await contractProvider.symbol();
+      const result = await contractProvider.symbol();
+      console.log("symbol: ", result);
+      symbol.value = result;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the symbol: ${error.message}`);
@@ -70,8 +76,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getDecimals = async () => {
     try {
       const contractProvider = initContractProvider();
-
-      decimals.value = await contractProvider.decimals();
+      const result = await contractProvider.decimals();
+      console.log("decimals: ", result);
+      decimals.value = result;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the decimals: ${error.message}`);
@@ -88,14 +95,13 @@ export function useErc20Contract(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    if (unref(address)) {
-      if (unref(address)) {
-        await fetchErc20Info();
-      }
+    if (unref(address) && fetchInitialData === true) {
+      console.log("address: ", unref(address));
+      await fetchErc20Info();
     }
   });
 
-  if (isRef(address) && unref(address).length === 42) {
+  if (isRef(address) && fetchInitialData === true) {
     watch(address, async () => {
       if (unref(address)) {
         await fetchErc20Info();
@@ -118,7 +124,6 @@ export function useErc20Contract(address: string | Ref<string>) {
   ) => {
     try {
       const contractProvider = initContractProvider();
-
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address

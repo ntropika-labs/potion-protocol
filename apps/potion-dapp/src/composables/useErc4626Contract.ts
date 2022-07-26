@@ -16,7 +16,10 @@ import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
 import type { BigNumber } from "@ethersproject/bignumber";
 
-export function useErc4626Contract(address: string | Ref<string>) {
+export function useErc4626Contract(
+  address: string | Ref<string>,
+  fetchInitialData = true
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
   const initContractSigner = () => {
@@ -55,7 +58,9 @@ export function useErc4626Contract(address: string | Ref<string>) {
     try {
       assetAddressLoading.value = true;
       const contractProvider = initContractProvider();
-      assetAddress.value = await contractProvider.asset();
+      const response = await contractProvider.asset();
+      assetAddress.value = response;
+      console.log("assetAddress: ", response);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the asset address: ${error.message}`);
@@ -66,13 +71,6 @@ export function useErc4626Contract(address: string | Ref<string>) {
       assetAddressLoading.value = false;
     }
   };
-
-  const {
-    name: assetName,
-    symbol: assetSymbol,
-    image: assetImage,
-    decimals: assetDecimals,
-  } = useErc20Contract(assetAddress);
 
   const totalAssets = ref(0);
   const totalAssetsLoading = ref(false);
@@ -99,16 +97,25 @@ export function useErc4626Contract(address: string | Ref<string>) {
   };
 
   onMounted(async () => {
-    if (unref(address).length === 42) {
+    if (unref(address) && fetchInitialData === true) {
+      console.log("address vault: ", unref(address));
       await getVaultAssetInfo();
     }
   });
 
-  if (isRef(address) && unref(address).length === 42) {
+  if (isRef(address) && unref(address) && fetchInitialData === true) {
     watch(address, async () => {
+      console.log("address vault: ", unref(address));
       await getVaultAssetInfo();
     });
   }
+
+  const {
+    name: assetName,
+    symbol: assetSymbol,
+    image: assetImage,
+    decimals: assetDecimals,
+  } = useErc20Contract(assetAddress);
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -496,10 +503,12 @@ export function useErc4626Contract(address: string | Ref<string>) {
   };
 
   const assetToShare = ref(0);
-  onMounted(async () => {
-    const response = await convertToShares(1);
-    assetToShare.value = response;
-  });
+  if (fetchInitialData === true) {
+    onMounted(async () => {
+      const response = await convertToShares(1);
+      assetToShare.value = response;
+    });
+  }
 
   const convertToAssets = async (amount: BigNumber, digits: number) => {
     try {
@@ -534,22 +543,23 @@ export function useErc4626Contract(address: string | Ref<string>) {
         }
       }
     } else {
-      // throw new Error("Connect your wallet first");
       userBalance.value = 0;
     }
   };
 
   const userAssets = ref(0);
 
-  onMounted(async () => {
-    await getUserBalance();
-    userAssets.value = parseFloat(
-      await convertToAssets(
-        parseUnits(userBalance.value.toString(), assetDecimals.value),
-        assetDecimals.value
-      )
-    );
-  });
+  if (fetchInitialData === true) {
+    onMounted(async () => {
+      await getUserBalance();
+      userAssets.value = parseFloat(
+        await convertToAssets(
+          parseUnits(userBalance.value.toString(), assetDecimals.value),
+          assetDecimals.value
+        )
+      );
+    });
+  }
 
   const allowance = ref(0);
   const allowanceLoading = ref(false);
