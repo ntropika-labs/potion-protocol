@@ -94,19 +94,21 @@ export function useErc20Contract(
     image.value = tokenImage;
   };
 
-  onMounted(async () => {
-    if (unref(address) && fetchInitialData === true) {
-      console.log("address: ", unref(address));
-      await fetchErc20Info();
-    }
-  });
-
-  if (isRef(address) && fetchInitialData === true) {
-    watch(address, async () => {
+  if (fetchInitialData === true) {
+    onMounted(async () => {
       if (unref(address)) {
+        console.log("address: ", unref(address));
         await fetchErc20Info();
       }
     });
+
+    if (isRef(address)) {
+      watch(address, async () => {
+        if (unref(address)) {
+          await fetchErc20Info();
+        }
+      });
+    }
   }
 
   const userBalance = ref(0);
@@ -123,6 +125,7 @@ export function useErc20Contract(
     walletAddresses?: string | string[]
   ) => {
     try {
+      console.log(decimals.value);
       const contractProvider = initContractProvider();
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
@@ -202,17 +205,19 @@ export function useErc20Contract(
   const approveReceipt = ref<ContractReceipt | null>(null);
   const approveSpending = async (
     spender: string,
-    amount: number,
-    infinite = true
+    infinite = true,
+    amount?: number
   ) => {
     approveLoading.value = true;
     try {
       if (connectedWallet.value) {
+        console.log("here");
         const contractSigner = initContractSigner();
         approveTx.value = await contractSigner.approve(
           spender,
-          infinite ? MaxUint256 : parseUnits(amount.toString(), 6)
+          infinite ? MaxUint256 : parseUnits(amount?.toString() ?? "0", 6)
         );
+        console.log(approveTx.value);
         approveReceipt.value = await approveTx.value.wait();
       } else {
         throw new Error("Connect your wallet first");
@@ -231,6 +236,7 @@ export function useErc20Contract(
   };
   return {
     approveSpending,
+    approveReceipt,
     decimals,
     fetchUserAllowance,
     fetchUserAllowanceLoading,
@@ -243,5 +249,6 @@ export function useErc20Contract(
     name,
     symbol,
     userAllowance,
+    fetchErc20Info,
   };
 }

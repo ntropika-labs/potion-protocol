@@ -45,7 +45,8 @@ export function useErc4626Contract(
     symbol: vaultSymbol,
     image: vaultImage,
     decimals: vaultDecimals,
-  } = useErc20Contract(address);
+    fetchErc20Info: vaultFetchErc20Info,
+  } = useErc20Contract(address, false);
 
   const getVaultDecimals = async () => {
     const provider = initContractProvider();
@@ -92,30 +93,13 @@ export function useErc4626Contract(
     }
   };
 
-  const getVaultAssetInfo = async () => {
-    await Promise.all([getAssetAddress(), getTotalAssets()]);
-  };
-
-  onMounted(async () => {
-    if (unref(address) && fetchInitialData === true) {
-      console.log("address vault: ", unref(address));
-      await getVaultAssetInfo();
-    }
-  });
-
-  if (isRef(address) && unref(address) && fetchInitialData === true) {
-    watch(address, async () => {
-      console.log("address vault: ", unref(address));
-      await getVaultAssetInfo();
-    });
-  }
-
   const {
     name: assetName,
     symbol: assetSymbol,
     image: assetImage,
     decimals: assetDecimals,
-  } = useErc20Contract(assetAddress);
+    fetchErc20Info: assetFetchErc20Info,
+  } = useErc20Contract(assetAddress, false);
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -502,14 +486,6 @@ export function useErc4626Contract(
     }
   };
 
-  const assetToShare = ref(0);
-  if (fetchInitialData === true) {
-    onMounted(async () => {
-      const response = await convertToShares(1);
-      assetToShare.value = response;
-    });
-  }
-
   const convertToAssets = async (amount: BigNumber, digits: number) => {
     try {
       const contractProvider = initContractProvider();
@@ -546,20 +522,6 @@ export function useErc4626Contract(
       userBalance.value = 0;
     }
   };
-
-  const userAssets = ref(0);
-
-  if (fetchInitialData === true) {
-    onMounted(async () => {
-      await getUserBalance();
-      userAssets.value = parseFloat(
-        await convertToAssets(
-          parseUnits(userBalance.value.toString(), assetDecimals.value),
-          assetDecimals.value
-        )
-      );
-    });
-  }
 
   const allowance = ref(0);
   const allowanceLoading = ref(false);
@@ -624,6 +586,34 @@ export function useErc4626Contract(
       approveLoading.value = false;
     }
   };
+
+  const fetchVaultData = async () => {
+    await getAssetAddress();
+    await Promise.all([vaultFetchErc20Info(), assetFetchErc20Info()]);
+    await getTotalAssets();
+  };
+
+  const assetToShare = ref(0);
+
+  if (fetchInitialData === true) {
+    onMounted(async () => {
+      if (unref(address)) {
+        console.log("address vault: ", unref(address));
+        await fetchVaultData();
+        const response = await convertToShares(1);
+        assetToShare.value = response;
+      }
+    });
+    if (isRef(address) && unref(address)) {
+      watch(address, async () => {
+        console.log("address vault: ", unref(address));
+        await fetchVaultData();
+        const response = await convertToShares(1);
+        assetToShare.value = response;
+      });
+    }
+  }
+
   return {
     allowance,
     allowanceLoading,
@@ -678,7 +668,6 @@ export function useErc4626Contract(
     redeemTx,
     totalAssets,
     totalAssetsLoading,
-    userAssets,
     userBalance,
     vaultDecimals,
     vaultImage,
@@ -688,5 +677,7 @@ export function useErc4626Contract(
     withdrawLoading,
     withdrawReceipt,
     withdrawTx,
+    fetchVaultData,
+    getUserBalance,
   };
 }

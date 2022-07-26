@@ -1,4 +1,3 @@
-
 action: Action
 active_options: Active Put Options
 active_potions: Active Potions
@@ -24,7 +23,9 @@ buy_potion: buy potion
 buying_potion: buying potion
 check_pool: check pool
 choose_pool_assets: Choose one or more assets this pool will insure
-choose_pool_curve: Curve the pool will use to determine sell prices, as a function of your pool utilization.
+choose_pool_curve: >-
+  Curve the pool will use to determine sell prices, as a function of your pool
+  utilization.
 claimed: Claimed
 claiming_collateral: claiming collateral
 cloned: Cloned
@@ -167,3 +168,4 @@ your_potion_expires_in: your potion expires in
 your_put_recipe: Your put recipe
 your_shares: your shares
 your_strike_price: your strike price
+not_enough: not enough  { msg }

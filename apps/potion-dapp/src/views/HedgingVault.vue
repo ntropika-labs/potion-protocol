@@ -47,19 +47,19 @@
           size="lg"
           :title="t('share_price')"
           :value="sharePrice.toString()"
-          symbol="MKR/Share"
+          :symbol="`${assetSymbol}/Share`"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
           :value="totalAssets.toString()"
-          symbol="MKR"
+          :symbol="assetSymbol"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
-          :symbol="`= ${userAssets} MKR`"
+          :symbol="`= ${assetUserBalance} ${assetSymbol}`"
         />
       </div>
     </BaseCard>
@@ -130,7 +130,12 @@
                 :step="0.01"
                 :unit="assetSymbol"
               />
-              <BaseButton palette="secondary" :label="t('deposit')" />
+              <BaseButton
+                palette="secondary"
+                :label="depositButtonState.label"
+                :disabled="depositButtonState.disabled"
+                @click="handleDeposit()"
+              />
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
               <InputNumber
@@ -148,6 +153,10 @@
       </div>
     </div>
   </div>
+  <pre>
+    {{ depositReceipt }}
+    {{ approveReceipt }}
+  </pre>
 </template>
 <script lang="ts" setup>
 import {
@@ -168,7 +177,10 @@ import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultCont
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { useOnboard } from "@onboard-composable";
+
 const { t } = useI18n();
+const { connectedWallet } = useOnboard();
 const status = ref(true);
 const { PotionBuyAction } = contractsAddresses;
 
@@ -206,15 +218,67 @@ const {
   assetToShare,
   totalAssets,
   userBalance,
-  userAssets,
+  deposit,
+  depositReceipt,
 } = useErc4626Contract(validId);
 
-const { userBalance: assetUserBalance, getTokenBalance } =
-  useErc20Contract(assetAddress);
+const {
+  userBalance: assetUserBalance,
+  userAllowance,
+  fetchUserAllowance,
+  approveSpending,
+  getTokenBalance,
+  approveReceipt,
+  fetchErc20Info,
+} = useErc20Contract(assetAddress, false);
 
 watch(assetAddress, async () => {
-  await getTokenBalance(true);
+  if (connectedWallet.value) {
+    await fetchErc20Info();
+    await getTokenBalance(true);
+    await fetchUserAllowance(validId.value);
+  }
 });
+
+const depositButtonState = computed(() => {
+  if (connectedWallet.value && assetUserBalance.value >= depositAmount.value) {
+    if (userAllowance.value >= depositAmount.value) {
+      return {
+        label: t("deposit"),
+        disabled: false,
+      };
+    } else {
+      return {
+        label: t("approve"),
+        disabled: false,
+      };
+    }
+  }
+  if (connectedWallet.value && assetUserBalance.value < depositAmount.value) {
+    return {
+      label: t("not_enough", { msg: assetSymbol.value }),
+      disabled: true,
+    };
+  }
+  if (!connectedWallet.value) {
+    return {
+      label: t("connect_wallet"),
+      disabled: true,
+    };
+  }
+  return {
+    label: t("deposit"),
+    disabled: true,
+  };
+});
+
+const handleDeposit = async () => {
+  if (depositButtonState.value.label === t("approve")) {
+    await approveSpending(validId.value, true);
+  } else {
+    await deposit(depositAmount.value, true);
+  }
+};
 
 const sharePrice = computed(() => {
   return assetPrice.value * assetToShare.value;
