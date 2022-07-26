@@ -12,7 +12,6 @@ import {
   OrderedCriteria,
 } from "contracts-math";
 import _chunk from "lodash.chunk";
-import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 import { ref } from "vue";
 
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -21,6 +20,7 @@ import { contractsAddresses } from "@/helpers/contracts";
 import { createValidExpiry } from "@/helpers/time";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
+import { PotionLiquidityPool__factory } from "@potion-protocol/core/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
@@ -435,7 +435,7 @@ export function usePotionLiquidityPoolContract() {
         isPut
       );
       // getOtokens returns 0x0000... if the otoken does not exist and it return a valid address if it exists
-      // getTargetOtokenAddress creates a valid address for an hypotetical otoken. If the addresses are the same, the otoken exists
+      // getTargetOtokenAddress creates a valid address for an hypothetical otoken. If the addresses are the same, the otoken exists
       const exists = newOtokenAddress === existingOtokenAddress;
       // if we hit the counterparties limit we chunk them
       if (counterparties.length > maxCounterparties) {
