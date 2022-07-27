@@ -21,8 +21,10 @@ const usdFormatter = new Intl.NumberFormat(locale, {
   maximumFractionDigits: 2,
 });
 
-export const currencyFormatter = (value: number, currency: string) =>
-  usdFormatter.format(value).replace("$", `${currency} `);
+export const currencyFormatter = (value: number, currency: string) => {
+  console.log(value);
+  return usdFormatter.format(value).replace("$", `${currency} `);
+};
 export const shortCurrencyFormatter = (value: number, currency: string) =>
   value === 0 ? "0" : currencyFormatter(value, currency);
 export const shortDigitFormatter = (value: number): string =>

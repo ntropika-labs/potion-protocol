@@ -46,7 +46,7 @@
         <LabelValue
           size="lg"
           :title="t('share_price')"
-          :value="sharePrice.toString()"
+          :value="shareToAssetRatio.toString()"
           :symbol="`${assetSymbol}/Share`"
         />
         <LabelValue
@@ -59,7 +59,7 @@
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
-          :symbol="`= ${sharePrice} ${assetSymbol}`"
+          :symbol="`= ${balanceInAsset} ${assetSymbol}`"
         />
       </div>
     </BaseCard>
@@ -202,7 +202,6 @@ const validId = computed(() => {
   return id.toLowerCase();
 });
 
-const assetPrice = ref(3500);
 const {
   strikePercentage,
   maxPremiumPercentage,
@@ -281,15 +280,19 @@ const depositButtonState = computed(() => {
 });
 
 const handleDeposit = async () => {
-  if (depositButtonState.value.disabled === false) {
-    await approveSpending(validId.value, true);
-  } else {
+  if (depositButtonState.value.label === t("deposit")) {
     await deposit(depositAmount.value, true);
+  } else {
+    await approveSpending(validId.value, true);
   }
 };
 
-const sharePrice = computed(() => {
-  return assetPrice.value * assetToShare.value;
+const shareToAssetRatio = computed(() => {
+  return 1 / assetToShare.value;
+});
+
+const balanceInAsset = computed(() => {
+  return userBalance.value * shareToAssetRatio.value;
 });
 
 const redeemButtonState = computed(() => {

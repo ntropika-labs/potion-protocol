@@ -14,7 +14,7 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
-import type { BigNumber } from "@ethersproject/bignumber";
+// import type { BigNumber } from "@ethersproject/bignumber";
 
 export function useErc4626Contract(
   address: string | Ref<string>,
@@ -476,6 +476,7 @@ export function useErc4626Contract(
       const contractProvider = initContractProvider();
       const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       const result = await contractProvider.convertToShares(parsedAmount);
+      console.log("assetToShare: ", formatUnits(result, vaultDecimals.value));
       return parseFloat(formatUnits(result, vaultDecimals.value));
     } catch (error) {
       if (error instanceof Error) {
@@ -486,12 +487,12 @@ export function useErc4626Contract(
     }
   };
 
-  const convertToAssets = async (amount: BigNumber, digits: number) => {
+  const convertToAssets = async (amount: number) => {
     try {
       const contractProvider = initContractProvider();
-      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
+      const parsedAmount = parseUnits(amount.toString(), vaultDecimals.value);
       const result = await contractProvider.convertToAssets(parsedAmount);
-      return formatUnits(result, digits);
+      return parseFloat(formatUnits(result, assetDecimals.value));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot convert to assets: ${error.message}`);
@@ -504,7 +505,6 @@ export function useErc4626Contract(
   const userBalance = ref(0);
   const getUserBalance = async () => {
     if (connectedWallet.value) {
-      console.log("here");
       try {
         maxDepositLoading;
         const contractProvider = initContractProvider();
@@ -598,7 +598,7 @@ export function useErc4626Contract(
   };
 
   const assetToShare = ref(0);
-
+  const shareToAsset = ref(0);
   if (fetchInitialData === true) {
     onMounted(async () => {
       if (unref(address)) {
@@ -606,7 +606,9 @@ export function useErc4626Contract(
         await fetchVaultData();
         await getUserBalance();
         const response = await convertToShares(1);
+        console.log("call to convertToShares on mounted: ", response);
         assetToShare.value = response;
+        shareToAsset.value = await convertToAssets(1);
       }
     });
     if (isRef(address) && unref(address)) {
@@ -615,6 +617,8 @@ export function useErc4626Contract(
         await fetchVaultData();
         await getUserBalance();
         const response = await convertToShares(1);
+        console.log("call to convertToShares: ", response);
+
         assetToShare.value = response;
       });
     }
