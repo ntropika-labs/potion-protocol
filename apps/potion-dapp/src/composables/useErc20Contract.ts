@@ -169,12 +169,16 @@ export function useErc20Contract(
   const userAllowance = ref(0);
   const fetchUserAllowanceLoading = ref(false);
 
-  const fetchUserAllowance = async (spender: string) => {
+  const fetchUserAllowance = async (
+    spender: string,
+    self = true,
+    address?: string
+  ) => {
     fetchUserAllowanceLoading.value = true;
     try {
       const contractProvider = initContractProvider();
 
-      if (connectedWallet.value) {
+      if (spender && connectedWallet.value && self === true) {
         const response = await contractProvider.allowance(
           connectedWallet.value.accounts[0].address,
           spender
@@ -186,8 +190,19 @@ export function useErc20Contract(
           )}`
         );
         userAllowance.value = parseFloat(formatUnits(response, decimals.value));
+        return userAllowance.value;
+      } else if (spender && self === false && address) {
+        const response = await contractProvider.allowance(address, spender);
+        console.info(
+          `Address allowance for ${spender} is ${formatUnits(
+            response,
+            decimals.value
+          )}`
+        );
+        userAllowance.value = parseFloat(formatUnits(response, decimals.value));
+        return userAllowance.value;
       } else {
-        throw new Error("Connect your wallet first");
+        throw new Error("Error retrieving allowance");
       }
     } catch (error) {
       if (error instanceof Error) {

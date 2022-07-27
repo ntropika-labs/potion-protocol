@@ -293,6 +293,7 @@ const handleDeposit = async () => {
   }
   if (depositButtonState.value.label === t("approve")) {
     await approveSpending(validId.value, true);
+    await fetchUserAllowance(validId.value);
   }
 };
 
