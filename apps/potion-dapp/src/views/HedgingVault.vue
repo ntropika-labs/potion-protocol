@@ -282,7 +282,8 @@ const depositButtonState = computed(() => {
 const handleDeposit = async () => {
   if (depositButtonState.value.label === t("deposit")) {
     await deposit(depositAmount.value, true);
-  } else {
+  }
+  if (depositButtonState.value.label === t("approve")) {
     await approveSpending(validId.value, true);
   }
 };
