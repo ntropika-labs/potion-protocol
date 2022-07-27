@@ -32,6 +32,7 @@ export interface Props {
   humanReadable?: boolean;
   fromTimestamps?: boolean;
   absoluteValue?: boolean;
+  horizontal?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   size: "md",
@@ -40,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
   humanReadable: true,
   fromTimestamps: true,
   absoluteValue: false,
+  horizontal: false,
 });
 const sizeClass = computed(() => labelSizeMap.get(props.size));
 
@@ -63,7 +65,11 @@ const timeDifference = computed(() => {
 });
 </script>
 <template>
-  <div>
+  <div
+    :class="
+      props.horizontal === true ? 'flex items-center gap-4 !children:m-0' : ''
+    "
+  >
     <h5 class="mb-2 font-medium capitalize" :class="sizeClass">
       {{ props.title }}
     </h5>
