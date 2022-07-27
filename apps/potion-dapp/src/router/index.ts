@@ -48,7 +48,7 @@ const router = createRouter({
       path: "/hedging-vault/:id/operator",
       name: "vault-operator",
       component: VaultOperator,
-      meta: { requiredWallet: true, layout: BaseLayout },
+      meta: { requireWallet: true, layout: BaseLayout },
     },
     {
       path: "/templates/:templateId",

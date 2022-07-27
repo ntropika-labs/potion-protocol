@@ -41,8 +41,9 @@ export const useAlphaRouter = (chainId: ChainId) => {
     inputTokenAmount: number,
     outputToken: Token,
     recipientAddress: string,
-    slippageToleranceInteger = 1,
-    deadlineTimestamp?: number
+    tradeType: TradeType,
+    deadlineTimestamp: number,
+    slippageToleranceInteger = 1
   ) => {
     routerError.value = null;
     routerLoading.value = true;
@@ -57,10 +58,11 @@ export const useAlphaRouter = (chainId: ChainId) => {
         inputToken,
         JSBI.BigInt(inputTokenAmount)
       );
+
       const route = await alphaRouter.route(
         tokenAmount,
         outputToken,
-        TradeType.EXACT_INPUT,
+        tradeType,
         {
           recipient: recipientAddress,
           slippageTolerance: new Percent(slippageToleranceInteger, 100),
@@ -73,7 +75,9 @@ export const useAlphaRouter = (chainId: ChainId) => {
       );
       console.log(`Gas Used USD: ${route?.estimatedGasUsedUSD.toFixed(6)}`);
 
-      // TODO: assert here theres only 1 route returned (no split routes)
+      // TODO remove: assert here theres only 1 route returned (no split routes)
+      if (!route || route.route.length > 1)
+        throw new Error("No split routes allowed for token swapping");
 
       routerData.value = route;
     } catch (error) {
