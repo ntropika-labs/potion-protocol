@@ -1,7 +1,11 @@
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+import duration from "dayjs/plugin/duration";
 
 dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 const locale = navigator.language ?? "en-US";
 
@@ -72,4 +76,23 @@ export const getPnlColor = (pnl: number) =>
 export const pnlFormatter = (pnl: number) => {
   const symbol = trendToSymbolMap.get(getPnlTrend(pnl));
   return `${symbol} ${pnl.toFixed(2)}%`;
+};
+
+export const getTimeDifference = (
+  startTimestamp: dayjs.Dayjs,
+  endTimestamp: dayjs.Dayjs,
+  asDuration = true,
+  humanReadable = true
+) => {
+  let diff: number | duration.Duration | string =
+    startTimestamp.diff(endTimestamp);
+  if (asDuration) {
+    diff = dayjs.duration(diff);
+
+    if (humanReadable) {
+      diff = diff.humanize();
+    }
+  }
+
+  return diff;
 };

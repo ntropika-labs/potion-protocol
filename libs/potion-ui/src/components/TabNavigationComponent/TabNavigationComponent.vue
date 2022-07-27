@@ -28,6 +28,33 @@ export interface Props {
   contentClasses?: string;
 }
 
+/**
+ * Note on reactivity
+ *
+ * See https://github.com/vuejs/core/issues/4903
+ *
+ * To be able to include steps dinamically using the default slot, each element must be a component of itself (pick one of your choice).
+ * This is the only way to retain reactivity while rendering dynamic component
+ * Working example:
+ * <TabNavigationComponent {..props}>
+ *  <MyStepComponent>
+ *    first step - {{reactive}}
+ *  </MyStepComponent>
+ *  <MyStepComponent>
+ *    second step
+ *  </MyStepComponent>
+ * </TabNavigationComponent>
+ *
+ * This doesnt work:
+ * <TabNavigationComponent {..props}>
+ *  <div>
+ *    first step - {{reactive}} <- 'reactive' here wont be updated
+ *  </div>
+ *  <div>
+ *    second step - {{reactive}}
+ *  </div>
+ * </TabNavigationComponent>
+ * */
 const props = withDefaults(defineProps<Props>(), {
   title: "",
   tabs: undefined,
