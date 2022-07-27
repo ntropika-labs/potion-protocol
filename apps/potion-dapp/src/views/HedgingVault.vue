@@ -113,12 +113,15 @@
       <div class="col-span-4 self-start">
         <BaseCard class="p-4">
           <div class="flex items-center gap-4">
-            <p class="text-accent-500 text-sm font-normal capitalize">
+            <!-- <p class="text-accent-500 text-sm font-normal capitalize">
               {{ t("time_left_until_next_cycle") }}
-            </p>
-            <BaseTag>
-              <span class="text-accent-500">24h 13m 18s</span>
-            </BaseTag>
+            </p> -->
+            <TimeTag
+              :horizontal="true"
+              :title="t('time_left_until_next_cycle')"
+              :time-from="blockTimestamp.toString()"
+              :time-to="nextCycleTimestamp.toString()"
+            />
           </div>
           <div class="flex gap-6 w-full mt-5">
             <div class="w-1/2 flex flex-col items-center gap-4">
@@ -172,11 +175,12 @@ import {
   AssetTag,
   InputNumber,
   BaseButton,
+  TimeTag,
 } from "potion-ui";
 import { useI18n } from "vue-i18n";
 import { etherscanUrl } from "@/helpers";
 // import { useEthersProvider } from "@/composables/useEthersProvider";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
@@ -184,13 +188,12 @@ import { useErc20Contract } from "@/composables/useErc20Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
-
+import { useEthersProvider } from "@/composables/useEthersProvider";
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
 const status = ref(true);
 const { PotionBuyAction } = contractsAddresses;
 
-// const { lookupAddress } = useEthersProvider();
 const depositAmount = ref(1);
 const redeemAmount = ref(1);
 const route = useRoute();
@@ -202,10 +205,12 @@ const validId = computed(() => {
   return id.toLowerCase();
 });
 
+const { blockTimestamp, getBlock } = useEthersProvider();
 const {
   strikePercentage,
   maxPremiumPercentage,
   cycleDurationDays,
+  nextCycleTimestamp,
   premiumSlippage,
   swapSlippage,
 } = usePotionBuyActionContract(PotionBuyAction.address);
@@ -246,6 +251,9 @@ watch(assetAddress, async () => {
     await fetchUserAllowance(validId.value);
   }
 });
+onMounted(() => {
+  getBlock("latest");
+});
 
 const depositButtonState = computed(() => {
   if (connectedWallet.value && assetUserBalance.value >= depositAmount.value) {
@@ -285,6 +293,7 @@ const handleDeposit = async () => {
   }
   if (depositButtonState.value.label === t("approve")) {
     await approveSpending(validId.value, true);
+    await fetchUserAllowance(validId.value);
   }
 };
 
