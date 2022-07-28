@@ -46,69 +46,78 @@ const emit = defineEmits<{
   (e: "swap-selected", selectedSwap: any): void;
 }>();
 
-console.log(props, emit);
+console.log(emit);
 </script>
 
 <template>
-  <div test-token-swap-wrap class="grid md:grid-cols-3">
-    <div class="md:col-span-2">
-      <p v-if="routerLoading">Loading route...</p>
-      <div v-else-if="routeData">
-        <div>
-          <h2>Routes</h2>
-          <div v-for="(uniRoute, index) in routeData.route" :key="index">
-            <p>Percent: {{ uniRoute.percent }}</p>
-            <p>Pool addresses: {{ uniRoute.poolAddresses }}</p>
+  <div test-token-swap-wrap>
+    <p v-if="routerLoading">Loading route...</p>
+    <div v-else-if="routeData">
+      <div>
+        <h2>Routes</h2>
+        <div v-for="(uniRoute, index) in props.routeData.route" :key="index">
+          <p>Percent: {{ uniRoute.percent }}</p>
+          <p>Pool addresses: {{ uniRoute.poolAddresses }}</p>
 
-            <p>Amount:</p>
-            <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniRoute.amount, null, 2) }}</pre
+          <p>Amount:</p>
+          <pre
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ JSON.stringify(uniRoute.amount, null, 2) }}</pre
+          >
+          <p>Quote adjusted for gas:</p>
+          <pre
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ JSON.stringify(uniRoute.quoteAdjustedForGas, null, 2) }}</pre
+          >
+          <p>Quote:</p>
+          <pre
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ JSON.stringify(uniRoute.quote, null, 2) }}</pre
+          >
+          <p>Token path:</p>
+          <div class="flex items-center justify-between">
+            <div
+              v-for="(step, index) in uniRoute.tokenPath"
+              :key="index"
+              class="flex items-center justify-between"
             >
-            <p>Quote adjusted for gas:</p>
-            <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniRoute.quoteAdjustedForGas, null, 2) }}</pre
-            >
-            <p>Quote:</p>
-            <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniRoute.quote, null, 2) }}</pre
-            >
-            <p>Route:</p>
-            <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniRoute.route, null, 2) }}</pre
-            >
-            <p>token path:</p>
-            <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniRoute.tokenPath, null, 2) }}</pre
-            >
-            <div class="flex justify-between">
-              <div v-for="(step, index) in uniRoute.tokenPath" :key="index">
-                <pre
-                  class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                  >{{ JSON.stringify(step, null, 2) }}</pre
-                >
+              <pre
+                class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                >{{ JSON.stringify(step, null, 2) }}</pre
+              >
+              <div
+                v-if="index < uniRoute.tokenPath.length - 1"
+                class="flex-shrink-0"
+              >
+                ->
               </div>
-              <div v-if="index < uniRoute.tokenPath.length - 1">-></div>
             </div>
-            <!-- <pre
+          </div>
+          <p>Route:</p>
+          <pre
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ JSON.stringify(uniRoute.route, null, 2) }}</pre
+          >
+          <p>token path:</p>
+          <pre
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ JSON.stringify(uniRoute.tokenPath, null, 2) }}</pre
+          >
+
+          <!-- <pre
               class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
               >{{ JSON.stringify(uniswapRouteData.route, null, 2) }}</pre
             > -->
-          </div>
         </div>
-        <!-- <div>
+      </div>
+      <!-- <div>
           <p>Trade</p>
           <pre
             class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
             >{{ JSON.stringify(uniswapRouteData.trade, null, 2) }}</pre
           >
         </div> -->
-      </div>
-      <div v-else>No quote available</div>
     </div>
+    <div v-else>No quote available</div>
   </div>
 </template>
