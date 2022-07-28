@@ -2,10 +2,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Token } from "@uniswap/sdk-core";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import duration from "dayjs/plugin/duration";
+import { Token, TradeType } from "@uniswap/sdk-core";
+
+import { formatUnits } from "@ethersproject/units";
 
 import {
   AssetTag,
@@ -14,8 +13,8 @@ import {
   BaseTag,
   LabelValue,
   TabNavigationComponent,
+  TimeTag,
 } from "potion-ui";
-import type { Criteria } from "dapp-types";
 
 import { useOnboard } from "@onboard-composable";
 
@@ -31,16 +30,20 @@ import { ChainId } from "@uniswap/smart-order-router";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
+import {
+  useInvestmentVaultContract,
+  LifecycleState,
+} from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses as coreContractAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { $fetch } from "ohmyfetch";
+import { useOtokenFactory } from "@/composables/useOtokenFactory";
+import dayjs from "dayjs";
 
-dayjs.extend(relativeTime);
-dayjs.extend(duration);
 /**
  * Const
  */
@@ -73,16 +76,9 @@ const validId = computed(() => {
   }
   return id.toLowerCase();
 });
-const totalAmountToSwap = ref(99);
-const timeToNextCycle = ref("-");
-// Form
-
-const potionQuantity = ref(1);
-const criteriasParam = ref<Criteria[]>([]);
 
 // Input validity
 
-const isPotionQuantityValid = ref(false);
 const hasSwapRoute = ref(false);
 
 /**
@@ -95,7 +91,7 @@ const { blockTimestamp, getBlock } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);
 
-const { fetchTokenPrice, formattedPrice } = useCoinGecko(
+const { fetchTokenPrice, formattedPrice, price } = useCoinGecko(
   undefined,
   WETH.address
 );
@@ -111,26 +107,16 @@ const ethPrice = computed(() => {
   return 0;
 });
 
-const orderSize = computed(() => {
-  return strikePercentage.value * potionQuantity.value;
-});
-
 /**
  * Vault operation
  */
-watch(blockTimestamp, (t) =>
-  console.log(
-    "blockTimestamp",
-    dayjs.unix(t).toISOString(),
-    dayjs.unix(nextCycleTimestamp.value).toISOString()
-  )
-);
-const { principalPercentages } = useInvestmentVaultContract(validId);
+const { principalPercentages, operator, vaultStatus, TESTenterPosition } =
+  useInvestmentVaultContract(validId);
 
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
-    ? principalPercentages.value[0].toString()
-    : "0"
+    ? principalPercentages.value[0]
+    : 0
 );
 
 //const actionsStrategyInfo = ref(new Map<string, string | number | boolean>());
@@ -140,17 +126,27 @@ const {
   assetSymbol,
   assetAddress,
   assetDecimals,
-  assetImage,
+  //assetImage,
+  totalAssets,
 } = useErc4626Contract(validId);
 
 const tokenAsset = computed(() => {
+  console.log();
   return {
     name: assetName.value,
     symbol: assetSymbol.value,
-    address: assetAddress.value,
+    address: assetAddress.value.toLowerCase(),
     decimas: assetDecimals.value,
-    image: assetImage.value,
+    //image: assetImage.value, // TODO FIX
   };
+});
+
+const strikePrice = computed(() => {
+  return (price.value * strikePercentage.value) / 100;
+});
+
+const orderSize = computed(() => {
+  return (principalPercentage.value / 100) * totalAssets.value * price.value;
 });
 // Hedging Vault interaction
 
@@ -166,18 +162,21 @@ const {
   exitPosition: vaultExitPosition,
   canPositionBeExited,
   //actionsAddress,
-  currentStatus,
 } = useHedgingVaultHelperContract();
 
 const statusInfo = computed(() => {
-  switch (currentStatus.value) {
-    case "unlocked":
+  switch (vaultStatus.value) {
+    case LifecycleState.Unlocked:
       return {
         label: "Unlocked",
         class: "bg-accent-500",
       };
-    case "locked":
-    case "suspended":
+    case LifecycleState.Committed:
+      return {
+        label: "Committed",
+        class: "bg-orange-500",
+      };
+    case LifecycleState.Locked:
     default:
       return {
         label: "Locked",
@@ -192,7 +191,7 @@ const statusInfo = computed(() => {
 console.log(contractsAddresses);
 const {
   nextCycleTimestamp,
-  cycleDurationSecs,
+  cycleDurationDays,
   maxPremiumPercentage,
   premiumSlippage,
   swapSlippage,
@@ -201,33 +200,25 @@ const {
   currentPayout,
   getCurrentPayout,
   getStrategyInfo,
+  TESTsetBuyInfo,
+  TESTsetSwapInfo,
 } = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
 
-const cycleDurationDays = computed(() => {
-  return (cycleDurationSecs.value / 8640).toString();
+// Depth Router logic
+const criteriasParam = computed(() => {
+  return [
+    {
+      token: tokenAsset.value,
+      maxStrike: strikePercentage.value,
+      maxDuration: cycleDurationDays.value,
+    },
+  ];
 });
 
-watch(
-  [blockTimestamp, nextCycleTimestamp],
-  ([blockTimestamp, nextCycleTimestamp]) => {
-    const blockT = dayjs.unix(blockTimestamp);
-    const cycleT = dayjs.unix(nextCycleTimestamp);
-
-    console.log(blockT, cycleT, blockT.isBefore(cycleT));
-
-    timeToNextCycle.value = blockT.isBefore(cycleT)
-      ? dayjs.duration(blockT.diff(cycleT)).humanize()
-      : "-";
-
-    getStrategyInfo();
-  }
-);
-
-// Depth Router logic
-const { routerResult, formattedPremium } = useDepthRouter(
+const { runRouter, routerResult, formattedPremium } = useDepthRouter(
   criteriasParam,
   orderSize,
-  strikePercentage,
+  strikePrice,
   gasPrice,
   ethPrice
 );
@@ -242,25 +233,13 @@ const hasCounterparties = computed(() => {
     : false;
 });
 
-watch([strikePercentage, assetAddress], async () => {
-  if (assetAddress.value) {
-    await getCurrentPayout(assetAddress);
-    if (strikePercentage.value) {
-      const t = {
-        name: assetName.value,
-        symbol: assetSymbol.value,
-        address: "0xa85233c63b9ee964add6f2cffe00fd84eb32338f", // assetAddress.value, // TODO REPLACE WITH CORRECT ADDRESS
-      };
-      console.log(t);
-      criteriasParam.value = [
-        {
-          token: t,
-          maxStrike: strikePercentage.value,
-          maxDuration: cycleDurationSecs.value / 8640, // TODO CHECK
-        },
-      ];
-    }
-  }
+const totalAmountToSwap = computed(() => {
+  if (!routerResult.value) return 0;
+
+  return (
+    (premiumSlippage.value / 100) * routerResult.value.premium +
+    routerResult.value.premium
+  );
 });
 
 const {
@@ -269,18 +248,93 @@ const {
   routerLoading,
 } = useAlphaRouter(ChainId.MAINNET);
 
+const { getTargetOtokenAddress } = useOtokenFactory();
+
 const exitPosition = async () => {
   console.log("test exit");
-  await getRoute(WETH, totalAmountToSwap.value, USDC, walletAddress.value);
+  await getRoute(
+    WETH,
+    totalAmountToSwap.value,
+    USDC,
+    walletAddress.value,
+    TradeType.EXACT_INPUT,
+    swapSlippage.value
+  );
 
   await vaultExitPosition(uniswapRouteData.value);
 };
 
 const loadEnterPositionRoute = async () => {
-  await getRoute(WETH, totalAmountToSwap.value, USDC, walletAddress.value);
+  await getRoute(
+    WETH,
+    totalAmountToSwap.value,
+    USDC,
+    walletAddress.value,
+    TradeType.EXACT_OUTPUT,
+    swapSlippage.value
+  );
 };
 const enterPosition = async () => {
-  console.log("enter position");
+  console.log(
+    "TIMESTAMPS",
+    dayjs.unix(blockTimestamp.value).toString(),
+    dayjs.unix(nextCycleTimestamp.value).toString()
+  );
+  console.log("enter position", routerResult.value, uniswapRouteData.value);
+  if (
+    !uniswapRouteData.value ||
+    !routerResult.value ||
+    !routerResult.value.counterparties
+  )
+    return;
+
+  const expirationTimestamp = nextCycleTimestamp.value + 86400;
+  const newOtokenAddress = await getTargetOtokenAddress(
+    tokenAsset.value.address,
+    coreContractAddresses.USDC.address,
+    coreContractAddresses.USDC.address,
+    strikePrice.value,
+    expirationTimestamp,
+    true
+  );
+
+  const swapRoute = uniswapRouteData.value.route[0];
+  // const inputToken = swapRoute.route.input;
+  // const outputToken = swapRoute.route.output;
+  const counterparties = routerResult.value.counterparties.map((seller) => {
+    return {
+      lp: seller.lp,
+      poolId: seller.poolId,
+      curve: seller.curve,
+      criteria: seller.criteria,
+      orderSizeInOtokens: seller.orderSizeInOtokens,
+    };
+  });
+  const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const swapInfo = {
+    steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
+    outputTokenAddress: contractsAddresses.USDC.address,
+    expectedPriceRate: 1,
+  };
+  const potionBuyInfo = {
+    targetPotionAddress: newOtokenAddress,
+    underlyingAsset: tokenAsset.value.address,
+    strikePriceInUSDC: strikePrice.value,
+    expirationTimestamp: expirationTimestamp,
+    sellers: counterparties,
+    expectedPremiumInUSDC: routerResult.value.premium,
+    totalSizeInPotions: orderSize.value / price.value,
+  };
+
+  console.log(swapInfo, potionBuyInfo);
+
+  console.log(walletAddress.value, operator.value);
+
+  await TESTsetBuyInfo(potionBuyInfo);
+  await TESTsetSwapInfo(swapInfo);
+
+  await TESTenterPosition();
+  //vaultEnterPosition(swapInfo, potionBuyInfo);
 };
 
 // Tab navigation
@@ -296,7 +350,7 @@ const tabs = ref([
     title: "Enter position",
     subtitle: "",
     isValid: hasSwapRoute,
-    enabled: hasCounterparties,
+    enabled: true, //hasCounterparties,
   },
 ]);
 
@@ -305,6 +359,7 @@ onMounted(async () => {
   await getGas();
   await fetchTokenPrice();
   await getBlock("latest");
+  await getCurrentPayout(contractsAddresses.PotionBuyAction.address);
 });
 
 // Toast notifications
@@ -337,68 +392,58 @@ const testAddBlock = async (addHours: number) => {
     method: "POST",
     body: {
       jsonrpc: "2.0",
+      method: "evm_increaseTime",
+      params: [addHours * 3660],
+    },
+  });
+  await $fetch("http://127.0.0.1:8545", {
+    method: "POST",
+    body: {
+      jsonrpc: "2.0",
       method: "evm_mine",
-      params: [
-        {
-          timestamp: dayjs
-            .unix(blockTimestamp.value)
-            .add(addHours, "hours")
-            .unix(),
-        },
-      ],
     },
   });
   await getBlock("latest");
+  await getStrategyInfo();
 };
 </script>
 <template>
-  <div class="flex flex-row gap-4">
-    <BaseButton
-      palette="primary"
-      label="TEST ENTER"
-      @click="() => enterPosition()"
-    >
+  <div class="flex flex-row items-end gap-4">
+    <BaseButton palette="primary" label="Load str." @click="getStrategyInfo()">
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
     </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="TEST EXIT"
-      @click="() => exitPosition()"
-    >
+    <div class="border-1">
+      <p class="text-sm">TEST ADD BLOCK</p>
+      <div class="flex flex-row gap-4">
+        <BaseButton
+          palette="primary"
+          label="+1D"
+          @click="() => testAddBlock(24)"
+        >
+          <template #pre-icon>
+            <i class="i-ph-test-tube-fill"></i>
+          </template>
+        </BaseButton>
+        <BaseButton
+          palette="primary"
+          label="+1M"
+          @click="() => testAddBlock(720)"
+        >
+          <template #pre-icon>
+            <i class="i-ph-test-tube-fill"></i>
+          </template>
+        </BaseButton>
+      </div>
+    </div>
+
+    <BaseButton palette="primary" label="Get block" @click="getBlock('latest')">
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
     </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="LOAD STR."
-      @click="() => getStrategyInfo()"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="TEST + BLOCK (24h)"
-      @click="() => testAddBlock(24)"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton palette="primary" label="+1M" @click="() => testAddBlock(720)">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="TEST GETBLOCK"
-      @click="() => getBlock('latest')"
-    >
+    <BaseButton palette="primary" label="Run router" @click="runRouter()">
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
@@ -418,113 +463,136 @@ const testAddBlock = async (addHours: number) => {
       <p>Vault: {{ vaultName }}</p>
     </div>
   </div>
-  <hr class="opacity-50 my-4 md:ml-4" />
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4 md:ml-4">
-    <div>
-      <p class="capitalize mb-2">{{ t("status") }}</p>
-      <BaseTag>
-        <div class="h-2 w-2 rounded-full mr-1" :class="statusInfo.class"></div>
-        <span>{{ statusInfo.label }}</span>
-      </BaseTag>
-    </div>
-    <div class="">
-      <p class="capitalize mb-2">
+
+  <BaseCard class="p-6 mt-4 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+      <div>
+        <p class="capitalize mb-2">{{ t("status") }}</p>
+        <BaseTag>
+          <div
+            class="h-2 w-2 rounded-full mr-1"
+            :class="statusInfo.class"
+          ></div>
+          <span>{{ statusInfo.label }}</span>
+        </BaseTag>
+      </div>
+      <div class="">
+        <!-- <p class="capitalize mb-2">
         {{ t("time_left_until_next_cycle") }}
       </p>
       <BaseTag>
         <span class="text-accent-500">{{ timeToNextCycle }}</span>
-      </BaseTag>
-    </div>
-    <div>
-      <p class="capitalize">{{ t("current_payout") }}</p>
-      <div v-if="currentPayout" class="flex flex-row gap-4 items-center">
-        <!-- TODO: add a tooltip to explain final payout -->
-        <span v-if="currentPayout.isFinal" class="i-ph-lock-key h-8 w-8"></span>
-        <span v-else class="i-ph-arrows-clockwise h-8 w-8"></span>
-        <p>{{ currentPayout.currentPayout }}</p>
+      </BaseTag> -->
+        <TimeTag
+          :title="t('time_left_until_next_cycle')"
+          :time-from="blockTimestamp.toString()"
+          :time-to="nextCycleTimestamp.toString()"
+        ></TimeTag>
+      </div>
+      <div>
+        <p class="capitalize">{{ t("current_payout") }}</p>
+        <div v-if="currentPayout" class="flex flex-row gap-4 items-center">
+          <!-- TODO: add a tooltip to explain final payout -->
+          <span
+            v-if="currentPayout.isFinal"
+            class="i-ph-lock-key h-8 w-8"
+          ></span>
+          <span v-else class="i-ph-arrows-clockwise h-8 w-8"></span>
+          <p>{{ currentPayout.currentPayout }}</p>
+        </div>
       </div>
     </div>
-    <div></div>
-  </div>
-  <hr class="opacity-50 my-4 md:ml-4" />
+  </BaseCard>
   <div class="grid md:grid-cols-3 gap-8">
     <div>
       <div class="relative md:sticky md:top-12">
-        <BaseCard class="p-4 grid gap-4">
+        <BaseCard class="p-6 grid gap-4">
           <h3 class="text-lg font-semibold mb-4">Recap</h3>
-          <div>
-            <AssetTag size="lg" :title="t('asset')" :token="tokenAsset" />
-            <p class="capitalize">{{ t("current_price") }}</p>
-            <p>{{ formattedPrice }}</p>
+          <div class="grid md:grid-cols-2 items-start gap-12">
+            <LabelValue
+              size="lg"
+              :title="t('vault_size')"
+              :value="totalAssets.toString()"
+              :symbol="assetSymbol"
+            />
+            <div class="flex flex-col gap-2">
+              <AssetTag size="lg" :title="t('asset')" :token="tokenAsset" />
+              <div>
+                <p class="capitalize">{{ t("current_price") }}</p>
+                <p>{{ formattedPrice }}</p>
+              </div>
+            </div>
           </div>
 
-          <LabelValue
-            size="lg"
-            :title="t('hedging_level')"
-            :value="principalPercentage"
-            symbol="%"
-          />
-          <LabelValue
-            size="lg"
-            :title="t('strike')"
-            :value="strikePercentage ? strikePercentage.toString() : '-'"
-            symbol="%"
-          />
+          <div class="grid md:grid-cols-2 gap-12">
+            <LabelValue
+              size="lg"
+              :title="t('hedging_level')"
+              :value="principalPercentage.toString()"
+              symbol="%"
+            />
+            <LabelValue
+              size="lg"
+              :title="t('strike')"
+              :value="strikePercentage ? strikePercentage.toString() : '-'"
+              symbol="%"
+            />
+          </div>
           <LabelValue
             size="lg"
             :title="t('cycle_duration')"
-            :value="cycleDurationDays"
+            :value="cycleDurationDays.toString()"
             symbol="days"
           />
-          <LabelValue
-            size="lg"
-            :title="t('max_premium')"
-            :value="
-              maxPremiumPercentage ? maxPremiumPercentage.toString() : '-'
-            "
-            symbol="%"
-          />
-          <LabelValue
-            size="lg"
-            :title="t('max_premium_slippage')"
-            :value="premiumSlippage ? premiumSlippage.toString() : '-'"
-            symbol="%"
-          />
-          <LabelValue
-            size="lg"
-            :title="t('max_swap_slippage')"
-            :value="swapSlippage ? swapSlippage.toString() : '-'"
-            symbol="%"
-          />
-          <LabelValue
-            size="lg"
-            :title="t('max_swap_duration')"
-            :value="maxSwapDurationSecs ? maxSwapDurationSecs.toString() : '-'"
-            symbol="%"
-          />
-        </BaseCard>
+          <div class="grid md:grid-cols-2 gap-12">
+            <LabelValue
+              size="lg"
+              :title="t('max_premium')"
+              :value="
+                maxPremiumPercentage ? maxPremiumPercentage.toString() : '-'
+              "
+              symbol="%"
+            />
+            <LabelValue
+              size="lg"
+              :title="t('max_premium_slippage')"
+              :value="premiumSlippage ? premiumSlippage.toString() : '-'"
+              symbol="%"
+            />
+          </div>
+          <div class="grid md:grid-cols-2 gap-12">
+            <LabelValue
+              size="lg"
+              :title="t('max_swap_slippage')"
+              :value="swapSlippage ? swapSlippage.toString() : '-'"
+              symbol="%"
+            />
+            <LabelValue
+              size="lg"
+              :title="t('max_swap_duration')"
+              :value="
+                maxSwapDurationSecs ? maxSwapDurationSecs.toString() : '-'
+              "
+              symbol="secs"
+            />
+          </div>
 
-        <div v-if="isPotionQuantityValid" class="flex flex-col justify-start">
-          <h3 class="font-medium text-white/80">> Market size</h3>
-          <div class="flex justify-between px-4 items-start text-sm">
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("price_per_potion") }}</p>
-              <p>{{ formattedPremium }}</p>
+          <div v-if="routerResult" class="flex flex-col justify-start">
+            <h3 class="font-medium text-white/80">> Market size</h3>
+            <div class="flex justify-between px-4 items-start text-sm">
+              <div class="flex gap-2 items-center justify-between w-full">
+                <p class="capitalize">{{ t("price_per_potion") }}</p>
+                <p>{{ formattedPremium }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between px-4 items-start text-sm mt-4">
+              <p class="capitalize text-lg font-bold">{{ t("total") }}</p>
+              <p class="text-lg font-bold">
+                {{ formattedPremiumSlippage }}
+              </p>
             </div>
           </div>
-          <div class="flex justify-between px-4 items-start text-sm">
-            <div class="flex gap-2 items-center justify-between w-full">
-              <p class="capitalize">{{ t("number_of_potions") }}</p>
-              <p>{{ potionQuantity }}</p>
-            </div>
-          </div>
-          <div class="flex justify-between px-4 items-start text-sm mt-4">
-            <p class="capitalize text-lg font-bold">{{ t("total") }}</p>
-            <p class="text-lg font-bold">
-              {{ formattedPremiumSlippage }}
-            </p>
-          </div>
-        </div>
+        </BaseCard>
       </div>
     </div>
 
@@ -537,146 +605,183 @@ const testAddBlock = async (addHours: number) => {
           :show-quit-tabs="false"
           @navigate-tab="(index) => (currentFormStep = index)"
         >
-          <BaseCard>
-            <div class="p-8 grid md:grid-cols-3 items-start gap-12">
-              <div class="md:col-span-2 flex flex-col gap-8">
-                <div>
-                  <h3 class="text-xl font-bold">Premium</h3>
+          <BaseCard class="p-6">
+            <div class="flex flex-col gap-8">
+              <div>
+                <h3 class="text-xl font-bold">Premium</h3>
 
-                  <div v-if="routerResult">
-                    <p>Premium + gas: {{ routerResult.premiumGas }}</p>
-                    <p>Premium: {{ routerResult.premium }}</p>
-                  </div>
-                  <div v-else class="text-center">
-                    <p class="text-white/40 uppercase">No result found</p>
-                  </div>
+                <div v-if="routerResult">
+                  <p>Premium + gas: {{ routerResult.premiumGas }}</p>
+                  <p>Premium: {{ routerResult.premium }}</p>
                 </div>
-                <div>
-                  <h3 class="text-xl font-bold">Counterparties</h3>
-                  <div v-if="routerResult?.counterparties">
-                    <div
-                      v-for="(cp, index) in routerResult.counterparties"
-                      :key="cp.lp"
-                    >
-                      <div>
-                        <h2>{{ index }}</h2>
-                        <p>LP: {{ cp.lp }}</p>
-                        <p>Pool id: {{ cp.poolId }}</p>
-                        <p>
-                          order size in otokens: {{ cp.orderSizeInOtokens }}
+                <div v-else class="text-center">
+                  <p class="text-white/40 uppercase">No result found</p>
+                </div>
+              </div>
+              <div>
+                <div v-if="routerResult?.counterparties">
+                  <h3 class="text-xl font-bold mb-4">
+                    <span
+                      class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full mr-2"
+                      >{{ routerResult.counterparties.length }}</span
+                    >Counterparties
+                  </h3>
+                  <BaseCard
+                    v-for="(cp, index) in routerResult.counterparties"
+                    :key="index"
+                    class="p-6 relative"
+                  >
+                    <div class="grid md:grid-cols-3 pl-4">
+                      <div class="md:col-span-2">
+                        <p class="font-semibold text-xl">LP: {{ cp.lp }}</p>
+                        <p class="font-semibold text-xl">
+                          Pool id: {{ cp.poolId }}
                         </p>
                       </div>
-                      <pre
-                        class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                        >{{ JSON.stringify(cp.curveAs64x64, null, 2) }}</pre
-                      >
-                      <pre
-                        class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                        >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
-                      >
+                      <p class="text-right">
+                        order size in otokens:
+                        <span class="block">{{
+                          formatUnits(cp.orderSizeInOtokens, 6)
+                        }}</span>
+                      </p>
                     </div>
-                  </div>
-                  <div v-else class="text-center">
-                    <p class="text-white/40 text-3xl uppercase">
-                      No result found
-                    </p>
-                  </div>
+                    <p class="">> Curve</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{ JSON.stringify(cp.curveAs64x64, null, 2) }}</pre
+                    >
+                    <p class="">> Criteria</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
+                    >
+                  </BaseCard>
+                </div>
+                <div v-else class="text-center">
+                  <p class="text-white/40 text-3xl uppercase">
+                    No result found
+                  </p>
                 </div>
               </div>
             </div>
           </BaseCard>
-          <BaseCard>
-            <TokenSwap
-              :token-input="WETH"
-              :token-output="USDC"
-              :input-amount-to-swap="totalAmountToSwap"
-              :recipient-address="walletAddress"
-              :route-data="uniswapRouteData"
-              :router-loading="routerLoading"
-            />
-            <div>
-              <h1>Uniswap route</h1>
-              <div class="flex justify-start gap-8">
-                <BaseButton
-                  label="update route"
-                  :disabled="routerLoading"
-                  @click="loadEnterPositionRoute"
-                ></BaseButton>
-                <!-- <BaseButton
+          <BaseCard class="p-6">
+            <div class="grid md:grid-cols-3">
+              <TokenSwap
+                :token-input="WETH"
+                :token-output="USDC"
+                :input-amount-to-swap="totalAmountToSwap"
+                :recipient-address="walletAddress"
+                :route-data="uniswapRouteData"
+                :router-loading="routerLoading"
+                class="md:col-span-2"
+              />
+              <div>
+                <h1>Uniswap route</h1>
+                <div class="flex justify-start gap-8">
+                  <BaseButton
+                    label="update route"
+                    :disabled="routerLoading"
+                    @click="loadEnterPositionRoute"
+                  ></BaseButton>
+                  <BaseButton
+                    label="enter position"
+                    :disabled="false"
+                    @click="enterPosition"
+                  ></BaseButton>
+                  <!-- <BaseButton
                   :label="
                     routerPolling ? 'Turn off polling' : 'Turn on polling'
                   "
                   :disabled="routerLoading"
                   @click="togglePolling"
                 ></BaseButton> -->
-              </div>
-              <div v-if="uniswapRouteData">
-                <div>
-                  <p>Quote for</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ JSON.stringify(uniswapRouteData.quote, null, 2) }}</pre
-                  >
                 </div>
+                <div v-if="uniswapRouteData">
+                  <div>
+                    <p>Quote for</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(uniswapRouteData.quote, null, 2)
+                      }}</pre
+                    >
+                  </div>
 
-                <div>
-                  <p>Gas</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(uniswapRouteData.quoteGasAdjusted, null, 2)
-                    }}</pre
-                  >
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(uniswapRouteData.estimatedGasUsed, null, 2)
-                    }}</pre
-                  >
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(uniswapRouteData.gasPriceWei, null, 2)
-                    }}</pre
-                  >
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(
-                        uniswapRouteData.estimatedGasUsedQuoteToken,
-                        null,
-                        2
-                      )
-                    }}</pre
-                  >
+                  <div>
+                    <p>Gas</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(
+                          uniswapRouteData.quoteGasAdjusted,
+                          null,
+                          2
+                        )
+                      }}</pre
+                    >
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(
+                          uniswapRouteData.estimatedGasUsed,
+                          null,
+                          2
+                        )
+                      }}</pre
+                    >
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(uniswapRouteData.gasPriceWei, null, 2)
+                      }}</pre
+                    >
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(
+                          uniswapRouteData.estimatedGasUsedQuoteToken,
+                          null,
+                          2
+                        )
+                      }}</pre
+                    >
+                  </div>
+                  <div>
+                    <p>Parameters</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{
+                        JSON.stringify(
+                          uniswapRouteData.methodParameters,
+                          null,
+                          2
+                        )
+                      }}</pre
+                    >
+                  </div>
                 </div>
-                <div>
-                  <p>Parameters</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(uniswapRouteData.methodParameters, null, 2)
-                    }}</pre
-                  >
-                </div>
+                <div v-else>No quote available</div>
               </div>
-              <div v-else>No quote available</div>
             </div>
           </BaseCard>
         </TabNavigationComponent>
       </div>
       <p v-else>position cant be entered</p>
       <template v-if="canPositionBeExited">
-        <BaseCard>
-          <TokenSwap
-            :token-input="USDC"
-            :token-output="WETH"
-            :input-amount-to-swap="totalAmountToSwap"
-            :recipient-address="walletAddress"
-            :route-data="uniswapRouteData"
-            :router-loading="routerLoading"
-          />
-        </BaseCard>
+        <BaseButton
+          label="exit position"
+          :disabled="false"
+          @click="exitPosition"
+        ></BaseButton>
+        <TokenSwap
+          :token-input="USDC"
+          :token-output="WETH"
+          :input-amount-to-swap="totalAmountToSwap"
+          :recipient-address="walletAddress"
+          :route-data="uniswapRouteData"
+          :router-loading="routerLoading"
+        />
       </template>
       <p v-else>Position cant be exited</p>
     </div>
