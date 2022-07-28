@@ -12,6 +12,12 @@ import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 // } from "@ethersproject/contracts";
 import type { Ref } from "vue";
 
+enum LifecycleState {
+  Unlocked,
+  Committed,
+  Locked,
+}
+
 export function useInvestmentVaultContract(address: string | Ref<string>) {
   const { initContract } = useEthersContract();
   // const { connectedWallet } = useOnboard();
@@ -114,27 +120,75 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     }
   };
 
-  onMounted(async () => {
+  const vaultStatus = ref<number>(0);
+  const vaultStatusLoading = ref(false);
+  const getVaultStatus = async () => {
+    const contract = initContractProvider();
+    vaultStatusLoading.value = true;
+    try {
+      const vaultStateNumber = await contract.getLifecycleState();
+      vaultStatus.value = vaultStateNumber as LifecycleState;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? `Cannot get vault status: ${error.message}`
+          : `Cannot get vault status: ${error}`;
+
+      throw new Error(message);
+    } finally {
+      vaultStatusLoading.value = false;
+    }
+  };
+
+  // const vaultActionsAddresses = ref<string[]>([]);
+  // const vaultActionsAddressesLoading = ref(false);
+  // const vaultActionsAddressesError = ref<string | null>(null);
+  // const getVaultActionsAddresses = async () => {
+  //   vaultActionsAddressesError.value = null;
+  //   vaultActionsAddressesLoading.value = true;
+  //   const contract = initContractProvider();
+  //   try {
+  //     const responseActionsLength = await contract.getActionsLength();
+  //     const actionsLength = formatUnits(responseActionsLength, 0);
+  //     const actions = new Array(actionsLength);
+  //     for (let i = 0; i < actions.length; i++) {
+  //       const act = await contract.getAction(i);
+
+  //       actions.push(act);
+  //     }
+  //     vaultActionsAddresses.value = actions;
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error instanceof Error
+  //         ? `Cannot get vault actions addresses: ${error.message}`
+  //         : `Cannot get vault actions addresses: ${error}`;
+
+  //     vaultActionsAddressesError.value = errorMessage;
+  //     throw new Error(errorMessage);
+  //   } finally {
+  //     vaultActionsAddressesLoading.value = false;
+  //   }
+  // };
+
+  const fetchInfo = async () => {
     if (unref(address)) {
-      await Promise.all([
+      return await Promise.all([
         getOperator(),
         getAdmin(),
         getStrategist(),
         getPrincipalPercentages(),
+        getVaultStatus(),
       ]);
     }
+  };
+
+  onMounted(async () => {
+    await fetchInfo();
   });
 
   if (isRef(address)) {
     watch(address, async () => {
-      if (unref(address)) {
-        Promise.all([
-          getOperator(),
-          getAdmin(),
-          getStrategist(),
-          getPrincipalPercentages(),
-        ]);
-      }
+      await fetchInfo();
     });
   }
 
@@ -151,5 +205,8 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     principalPercentages,
     principalPercentagesLoading,
     getPrincipalPercentages,
+    vaultStatus,
+    vaultStatusLoading,
+    getVaultStatus,
   };
 }
