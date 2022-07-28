@@ -1,6 +1,6 @@
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses, Swap } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
 import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
 
@@ -15,17 +15,14 @@ import type {
   HedgingVaultOperatorHelper,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
-// TODO: fix types
-// export interface UniSwapInfo {
-//   inputToken: Token;
-//   outputToken: Token;
-//   expectedPriceRate: any; //The expected price of the swap as a fixed point SD59x18 number
-//   swapPath: {
-//     input: string;
-//     hops?: { poolAddress: string; fee: number };
-//     output: string;
-//   };
-// }
+import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
+import { parseUnits } from "@ethersproject/units";
+
+export interface UniSwapInfo {
+  steps: Array<{ inputTokenAddress: string; fee: number }>;
+  outputTokenAddress: string;
+  expectedPriceRate: number; //The expected price of the swap to convert to a fixed point SD59x18 number
+}
 
 export type VaultStatus = "locked" | "unlocked" | "suspended";
 
@@ -71,21 +68,51 @@ export function useHedgingVaultHelperContract() {
   const enterPositionReceipt = ref<ContractReceipt | null>(null);
   const enterPositionLoading = ref(false);
   const enterPositionError = ref<string | null>(null);
-  const enterPosition = async (swapInfo: any, potionBuyInfo: any) => {
+  const enterPosition = async (
+    swapInfo: UniSwapInfo,
+    potionBuyInfo: PotionBuyInfoStruct
+  ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
         enterPositionLoading.value = true;
-        // const swapPath: any = {}; TODO: convert to kekkac encoded [ input, [pool, fee]|fee, output]
+        //TODO: also cover multihop swap case [ input token, [token, fee]|fee, output token]
+        const swapPath = new Swap(
+          swapInfo.steps[0].inputTokenAddress,
+          swapInfo.steps[0].fee,
+          swapInfo.outputTokenAddress
+        );
         const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-          inputToken: swapInfo.inputToken.address,
-          outputToken: swapInfo.outputToken.address,
-          expectedPriceRate: swapInfo.expectedPriceRate,
-          swapPath: swapInfo,
+          inputToken: swapInfo.steps[0].inputTokenAddress,
+          outputToken: swapInfo.outputTokenAddress,
+          expectedPriceRate: parseUnits(
+            swapInfo.expectedPriceRate.toString(),
+            18
+          ),
+          swapPath: swapPath.toKeccak256(),
         };
+        const potionBuyActionData: PotionBuyInfoStruct = {
+          targetPotionAddress: potionBuyInfo.targetPotionAddress,
+          underlyingAsset: potionBuyInfo.underlyingAsset,
+          strikePriceInUSDC: parseUnits(
+            potionBuyInfo.strikePriceInUSDC.toString(),
+            6
+          ),
+          expirationTimestamp: potionBuyInfo.expirationTimestamp,
+          sellers: potionBuyInfo.sellers,
+          expectedPremiumInUSDC: parseUnits(
+            potionBuyInfo.expectedPremiumInUSDC.toString(),
+            18
+          ),
+          totalSizeInPotions: parseUnits(
+            potionBuyInfo.totalSizeInPotions.toString(),
+            8
+          ),
+        };
+        console.log(swapData, potionBuyInfo);
         enterPositionTx.value = await contractSigner.enterPosition(
           swapData,
-          potionBuyInfo
+          potionBuyActionData
         );
         enterPositionReceipt.value = await enterPositionTx.value.wait();
       } catch (error) {
@@ -135,6 +162,7 @@ export function useHedgingVaultHelperContract() {
   const fetchCanPositionBeEntered = async () => {
     try {
       canPositionBeEnteredLoading.value = true;
+      canPositionBeEnteredError.value = null;
 
       const provider = initContractProvider();
       canPositionBeEntered.value = await provider.canPositionBeEntered();
@@ -143,10 +171,11 @@ export function useHedgingVaultHelperContract() {
       const errorMessage =
         error instanceof Error
           ? `Cannot get current position: ${error.message}`
-          : "Cannot get current position";
+          : `Cannot get current position: ${error}`;
       canPositionBeEnteredError.value = errorMessage;
 
-      throw new Error(errorMessage);
+      //throw new Error(errorMessage);
+      canPositionBeEntered.value = false;
     } finally {
       canPositionBeEnteredLoading.value = false;
     }
@@ -158,48 +187,34 @@ export function useHedgingVaultHelperContract() {
   const canPositionBeExitedError = ref<string | null>(null);
   const fetchCanPositionBeExited = async () => {
     try {
+      canPositionBeExitedLoading.value = true;
+      canPositionBeExitedError.value = null;
+
       const provider = initContractProvider();
       canPositionBeExited.value = await provider.canPositionBeExited();
+
       console.log("canPositionBeExited", canPositionBeExited.value);
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? `Cannot get current position: ${error.message}`
-          : "Cannot get current position";
+          : `Cannot get current position: ${error}`;
       canPositionBeExitedError.value = errorMessage;
 
-      throw new Error(errorMessage);
+      //throw new Error(errorMessage);
+      canPositionBeExited.value = false;
     } finally {
       canPositionBeExitedLoading.value = false;
     }
   };
-
-  const currentStatus = computed(() => {
-    console.log(
-      "currentStatus",
-      canPositionBeEntered.value,
-      canPositionBeExited.value
-    );
-    if (canPositionBeEntered.value) {
-      return "unlocked";
-    } else if (canPositionBeExited.value) {
-      return "locked";
-    } else if (!canPositionBeExited.value && !canPositionBeEntered.value) {
-      return "suspended";
-    }
-
-    return "locked";
-  });
 
   // Automatically fetch current position on composable init
   onMounted(async () => {
     const provider = initContractProvider();
     hedgingVaultAddress.value = await provider.hedgingVault();
     actionsAddress.value = await provider.potionBuyAction();
-    await Promise.all([
-      fetchCanPositionBeEntered(),
-      fetchCanPositionBeExited(),
-    ]);
+    await fetchCanPositionBeEntered();
+    await fetchCanPositionBeExited();
   });
 
   return {
@@ -223,6 +238,5 @@ export function useHedgingVaultHelperContract() {
     fetchCanPositionBeExited,
     hedgingVaultAddress,
     actionsAddress,
-    currentStatus,
   };
 }
