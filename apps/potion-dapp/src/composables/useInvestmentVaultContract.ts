@@ -12,7 +12,7 @@ import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 // } from "@ethersproject/contracts";
 import type { Ref } from "vue";
 
-enum LifecycleState {
+export enum LifecycleState {
   Unlocked,
   Committed,
   Locked,
@@ -21,14 +21,14 @@ enum LifecycleState {
 export function useInvestmentVaultContract(address: string | Ref<string>) {
   const { initContract } = useEthersContract();
   // const { connectedWallet } = useOnboard();
-  // const initContractSigner = () => {
-  //   return initContract(
-  //     true,
-  //     false,
-  //     InvestmentVault__factory,
-  //     unref(address).toLowerCase()
-  //   ) as InvestmentVault;
-  // };
+  const initContractSigner = () => {
+    return initContract(
+      true,
+      false,
+      InvestmentVault__factory,
+      unref(address).toLowerCase()
+    ) as InvestmentVault;
+  };
 
   const initContractProvider = () => {
     return initContract(
@@ -170,6 +170,25 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
   //   }
   // };
 
+  const TESTenterPosition = async () => {
+    try {
+      const signer = initContractSigner();
+
+      const tx = await signer.enterPosition();
+      const receipt = await tx.wait();
+      console.info(tx, receipt);
+
+      return { tx, receipt };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot TESTenterPosition: ${error.message}`
+          : `Cannot TESTenterPosition: ${error}`;
+
+      throw new Error(errorMessage);
+    }
+  };
+
   const fetchInfo = async () => {
     if (unref(address)) {
       return await Promise.all([
@@ -208,5 +227,6 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     vaultStatus,
     vaultStatusLoading,
     getVaultStatus,
+    TESTenterPosition,
   };
 }

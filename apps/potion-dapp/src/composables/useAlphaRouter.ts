@@ -56,7 +56,7 @@ export const useAlphaRouter = (chainId: ChainId) => {
           : Math.floor(Date.now() / 1000 + 1800);
       const tokenAmount = CurrencyAmount.fromRawAmount(
         inputToken,
-        JSBI.BigInt(inputTokenAmount)
+        JSBI.BigInt(Math.ceil(inputTokenAmount).toString()) // TODO check
       );
 
       const route = await alphaRouter.route(

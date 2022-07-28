@@ -1,13 +1,19 @@
 import { computed, onMounted, ref, unref } from "vue";
 
-import { formatUnits } from "@ethersproject/units";
-import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import {
+  PotionBuyAction__factory,
+  type IUniswapV3Oracle,
+} from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
+import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/actions/PotionBuyAction";
+import type { UniSwapInfo } from "./useHedgingVaultHelperContract";
+import { Swap } from "@/helpers/hedgingVaultContracts";
 
 export interface ActionPayout {
   currentPayout: number;
@@ -23,6 +29,16 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const initContractProvider = () => {
     return initContract(
       false,
+      false,
+      PotionBuyAction__factory,
+      contractAddress.toLowerCase()
+    ) as PotionBuyAction;
+  };
+
+  //Provider initialization
+  const initContractSigner = () => {
+    return initContract(
+      true,
       false,
       PotionBuyAction__factory,
       contractAddress.toLowerCase()
@@ -290,6 +306,68 @@ export function usePotionBuyActionContract(contractAddress: string) {
     return strategyError;
   });
 
+  const TESTsetBuyInfo = async (info: any) => {
+    try {
+      strategyLoading.value = true;
+      const signer = initContractSigner();
+      const potionBuyActionData: PotionBuyInfoStruct = {
+        targetPotionAddress: info.targetPotionAddress,
+        underlyingAsset: info.underlyingAsset,
+        strikePriceInUSDC: parseUnits(info.strikePriceInUSDC.toString(), 6),
+        expirationTimestamp: info.expirationTimestamp,
+        sellers: info.sellers,
+        expectedPremiumInUSDC: parseUnits(
+          info.expectedPremiumInUSDC.toString(),
+          18
+        ),
+        totalSizeInPotions: parseUnits(info.totalSizeInPotions.toString(), 8),
+      };
+      const tx = await signer.setPotionBuyInfo(potionBuyActionData);
+      const receipt = await tx.wait();
+      console.info(tx, receipt);
+
+      return { tx, receipt };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot TESTsetBuyInfo: ${error.message}`
+          : `Cannot TESTsetBuyInfo: ${error}`;
+
+      throw new Error(errorMessage);
+    }
+  };
+
+  const TESTsetSwapInfo = async (info: UniSwapInfo) => {
+    try {
+      strategyLoading.value = true;
+      const signer = initContractSigner();
+      const swapPath = new Swap(
+        info.steps[0].inputTokenAddress,
+        info.steps[0].fee,
+        info.outputTokenAddress
+      );
+      const swapData: IUniswapV3Oracle.SwapInfoStruct = {
+        inputToken: info.steps[0].inputTokenAddress,
+        outputToken: info.outputTokenAddress,
+        expectedPriceRate: parseUnits(info.expectedPriceRate.toString(), 18),
+        swapPath: swapPath.toKeccak256(),
+      };
+
+      const tx = await signer.setSwapInfo(swapData);
+      const receipt = await tx.wait();
+      console.info(tx, receipt);
+
+      return { tx, receipt };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot TESTsetSwapInfo: ${error.message}`
+          : `Cannot TESTsetSwapInfo: ${error}`;
+
+      throw new Error(errorMessage);
+    }
+  };
+
   onMounted(async () => {
     console.log(contractAddress);
     await getStrategyInfo();
@@ -332,5 +410,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
     currentPayout,
     getCurrentPayout,
     cycleDurationDays,
+    TESTsetBuyInfo,
+    TESTsetSwapInfo,
   };
 }
