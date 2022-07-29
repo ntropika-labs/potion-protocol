@@ -152,25 +152,27 @@ check_db_seed() {
 }
 
 spin_up_environment() {
-  msg "${GREEN}Starting local environment...${NOFORMAT}"
-
-  # Remove the existing environment if any and all of its volumes
-  docker compose down -v
-  msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
-
-  msg "${GREEN}- Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
-
+  
   if [[ $init_environment -eq 1 ]]; then
     local ganache_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d'  | sed 's/\"//g')"
     msg "${ORANGE}- - Removing db data: ${ganache_db_path} ${NOFORMAT}"
 
-    docker compose run --rm --entrypoint /bin/sh ganache -c "rm -rf ${ganache_db_path}"
+    if [[ $is_environment_running -eq 1 ]]; then
+      docker compose exec ganache sh -c "rm -rf ${ganache_db_path}/*"
+    else
+      docker compose run --rm --entrypoint /bin/sh ganache -c "rm -rf ${ganache_db_path}/*"
+    fi
 
     msg "${GREEN}- - Removed db data ${NOFORMAT}"
 
     is_db_seeded=0
   fi
 
+  # Remove the existing environment if any and all of its volumes
+  docker compose down
+  msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
+  
+  msg "${GREEN}Starting local environment...${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
   docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
@@ -179,6 +181,7 @@ spin_up_environment() {
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
 
+  msg "${GREEN}- Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
   if [[ $is_db_seeded -eq 0 ]]; then
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
