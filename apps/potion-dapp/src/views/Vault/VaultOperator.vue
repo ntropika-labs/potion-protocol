@@ -18,7 +18,7 @@ import {
 
 import { useOnboard } from "@onboard-composable";
 
-import { useHedgingVaultHelperContract } from "@/composables/useHedgingVaultHelperContract";
+import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -97,7 +97,7 @@ const walletAddress = computed(
 /**
  * Vault operation
  */
-const { principalPercentages, vaultStatus, TESTenterPosition } =
+const { principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId);
 
 const principalPercentage = computed(() =>
@@ -160,7 +160,7 @@ const {
   enterPositionTx,
   enterPositionReceipt,
   //enterPositionLoading,
-  //enterPosition: vaultEnterPosition,
+  enterPosition: vaultEnterPosition,
   canPositionBeEntered,
   exitPositionTx,
   exitPositionReceipt,
@@ -168,7 +168,7 @@ const {
   exitPosition: vaultExitPosition,
   canPositionBeExited,
   //actionsAddress,
-} = useHedgingVaultHelperContract();
+} = useHedgingVaultOperatorHelperContract();
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -205,8 +205,8 @@ const {
   currentPayout,
   getCurrentPayout,
   getStrategyInfo,
-  TESTsetBuyInfo,
-  TESTsetSwapInfo,
+  // TESTsetBuyInfo,
+  // TESTsetSwapInfo,
 } = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
 
 // Depth Router logic
@@ -279,12 +279,6 @@ const loadEnterPositionRoute = async () => {
   );
 };
 const enterPosition = async () => {
-  // console.log(
-  //   "TIMESTAMPS",
-  //   dayjs.unix(blockTimestamp.value).toString(),
-  //   dayjs.unix(nextCycleTimestamp.value).toString()
-  // );
-  // console.log("enter position", routerResult.value, uniswapRouteData.value);
   if (
     !uniswapRouteData.value ||
     !routerResult.value ||
@@ -338,11 +332,11 @@ const enterPosition = async () => {
 
   // console.log(walletAddress.value, operator.value);
 
-  await TESTsetBuyInfo(potionBuyInfo);
-  await TESTsetSwapInfo(swapInfo);
+  // await TESTsetBuyInfo(potionBuyInfo);
+  // await TESTsetSwapInfo(swapInfo);
 
-  await TESTenterPosition();
-  //vaultEnterPosition(swapInfo, potionBuyInfo);
+  // await TESTenterPosition();
+  vaultEnterPosition(swapInfo, potionBuyInfo);
 };
 
 // Tab navigation

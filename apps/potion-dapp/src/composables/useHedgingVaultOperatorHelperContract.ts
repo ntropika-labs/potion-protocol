@@ -1,22 +1,19 @@
-import { onMounted, ref } from "vue";
-
-import { contractsAddresses, Swap } from "@/helpers/hedgingVaultContracts";
-import { useOnboard } from "@onboard-composable";
-import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
-
-import { useEthersContract } from "./useEthersContract";
-
 import type {
-  ContractTransaction,
   ContractReceipt,
+  ContractTransaction,
 } from "@ethersproject/contracts";
-
 import type {
   HedgingVaultOperatorHelper,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
+import { Swap, contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { onMounted, ref } from "vue";
+
+import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
 import { parseUnits } from "@ethersproject/units";
+import { useEthersContract } from "./useEthersContract";
+import { useOnboard } from "@onboard-composable";
 
 export interface UniSwapInfo {
   steps: Array<{ inputTokenAddress: string; fee: number }>;
@@ -26,7 +23,7 @@ export interface UniSwapInfo {
 
 export type VaultStatus = "locked" | "unlocked" | "suspended";
 
-export function useHedgingVaultHelperContract() {
+export function useHedgingVaultOperatorHelperContract() {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
   const { HedgingVaultOperatorHelper } = contractsAddresses;

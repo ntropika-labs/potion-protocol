@@ -12,7 +12,7 @@ import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/actions/PotionBuyAction";
-import type { UniSwapInfo } from "./useHedgingVaultHelperContract";
+import type { UniSwapInfo } from "./useHedgingVaultOperatorHelperContract";
 // import { Swap } from "@/helpers/hedgingVaultContracts";
 
 export interface ActionPayout {
