@@ -2,7 +2,7 @@
 export * as Typechain from "../typechain";
 export const Deployments = {
     localhost: {
-        timestamp: 1659344493,
+        timestamp: 1659350617,
         network: "localhost",
         contracts: {
             USDC: {
@@ -38,20 +38,20 @@ export const Deployments = {
                 blockNumber: 0,
             },
             UniswapV3Router: {
-                address: "0xd6e1afe5cA8D00A2EFC01B89997abE2De47fdfAf",
-                blockNumber: 161,
+                address: "0x5c74c94173F05dA1720953407cbb920F3DF9f887",
+                blockNumber: 109,
             },
             PotionBuyAction: {
-                address: "0x5FeaeBfB4439F3516c74939A9D04e95AFE82C4ae",
-                blockNumber: 166,
+                address: "0x5067457698Fd6Fa1C6964e416b3f42713513B3dD",
+                blockNumber: 112,
             },
             InvestmentVault: {
-                address: "0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923",
-                blockNumber: 168,
+                address: "0x18E317A7D70d8fBf8e6E893616b52390EbBdb629",
+                blockNumber: 113,
             },
             HedgingVaultOperatorHelper: {
-                address: "0xfcDB4564c18A9134002b9771816092C9693622e3",
-                blockNumber: 170,
+                address: "0xCace1b78160AE76398F486c8a18044da0d66d86D",
+                blockNumber: 115,
             },
         },
     },

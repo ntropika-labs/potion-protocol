@@ -73,6 +73,7 @@ function getTokensFromUniswapPath(uniswapPath: string) {
     return { firstToken, secondToken };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
     asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
@@ -364,7 +365,14 @@ export function getDeploymentConfig(networkName: NetworksType): PotionHedgingVau
 
 export async function deployTestingEnv(
     deploymentConfig: PotionHedgingVaultConfigParams,
+    showLogs: boolean = false,
 ): Promise<TestingEnvironmentDeployment> {
+    if (!showLogs) {
+        console.log = function () {
+            /* empty on purpose */
+        };
+    }
+
     const deployer = (await ethers.getSigners())[0];
 
     const testEnvDeployment: TestingEnvironmentDeployment = await prepareTestEnvironment(deployer, deploymentConfig);
@@ -406,12 +414,14 @@ export async function deployTestingEnv(
     testEnvDeployment.potionBuyAction = potionBuyAction;
     testEnvDeployment.hedgingVaultOperatorHelper = hedgingVaultOperatorHelper;
 
+    printDeploymentEnvironment(testEnvDeployment);
+
     return testEnvDeployment;
 }
 
-export async function printTestingEnv(testEnvDeployment: TestingEnvironmentDeployment) {
+export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvironmentDeployment) {
     console.log(`------------------------------------------------------`);
-    console.log(`                 TESTING ENVIRONMENT`);
+    console.log(`                 DEPLOYMENT ENVIRONMENT`);
     console.log(`------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);

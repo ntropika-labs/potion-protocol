@@ -35,9 +35,40 @@ export interface HedgingVaultDeployParams {
     opynAddressBook: string;
 }
 
+function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
+    console.log(`--------------------------------------`);
+    console.log(` HedgingVaultDeployParams Params`);
+    console.log(`--------------------------------------`);
+    console.log(` adminAddress: ${deployParams.adminAddress}`);
+    console.log(` strategistAddress: ${deployParams.strategistAddress}`);
+    console.log(` operatorAddress: ${deployParams.operatorAddress}`);
+    console.log(` USDC: ${deployParams.USDC}`);
+    console.log(` underlyingAsset: ${deployParams.underlyingAsset}`);
+    console.log(`--------------------------------------`);
+    console.log(` underlyingAssetCap: ${deployParams.underlyingAssetCap}`);
+    console.log(` maxPremiumPercentage: ${deployParams.maxPremiumPercentage}`);
+    console.log(` premiumSlippage: ${deployParams.premiumSlippage}`);
+    console.log(` swapSlippage: ${deployParams.swapSlippage}`);
+    console.log(` maxSwapDurationSecs: ${deployParams.maxSwapDurationSecs}`);
+    console.log(` cycleDurationSecs: ${deployParams.cycleDurationSecs}`);
+    console.log(` strikePercentage: ${deployParams.strikePercentage}`);
+    console.log(` hedgingPercentage: ${deployParams.hedgingPercentage}`);
+    console.log(`--------------------------------------`);
+    console.log(` managementFee: ${deployParams.managementFee}`);
+    console.log(` performanceFee: ${deployParams.performanceFee}`);
+    console.log(` feesRecipient: ${deployParams.feesRecipient}`);
+    console.log(`--------------------------------------`);
+    console.log(` uniswapV3SwapRouter: ${deployParams.uniswapV3SwapRouter}`);
+    console.log(` potionLiquidityPoolManager: ${deployParams.potionLiquidityPoolManager}`);
+    console.log(` opynAddressBook: ${deployParams.opynAddressBook}`);
+    console.log(`--------------------------------------\n`);
+}
+
 export async function deployHedgingVault(
     parameters: HedgingVaultDeployParams,
 ): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOperatorHelper]> {
+    printHedgingVaultDeployParams(parameters);
+
     const potionBuyParams: PotionBuyActionDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
@@ -72,7 +103,8 @@ export async function deployHedgingVault(
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);
 
-    // Set the vault as the operator for the action
+    // Set the vault as the managing vault for the action
+    console.log(`- Setting ${investmentVaultContract.address} as the managing vault for ${potionBuyContract.address}`);
     await potionBuyContract.changeVault(investmentVaultContract.address);
 
     const hedgingVaultOperatorHelperParams: HedgingVaultOperatorHelperDeployParams = {
@@ -81,6 +113,14 @@ export async function deployHedgingVault(
     };
 
     const hedgingVaultOperatorHelper = await deployHedgingVaultHelper(hedgingVaultOperatorHelperParams);
+
+    // Set the operator helper as the operator of the action and the vault
+    console.log(`- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${potionBuyContract.address}`);
+    await potionBuyContract.changeOperator(hedgingVaultOperatorHelper.address);
+    console.log(
+        `- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${investmentVaultContract.address}`,
+    );
+    await investmentVaultContract.changeOperator(hedgingVaultOperatorHelper.address);
 
     return [investmentVaultContract, potionBuyContract, hedgingVaultOperatorHelper];
 }

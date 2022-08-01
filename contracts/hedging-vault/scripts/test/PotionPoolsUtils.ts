@@ -1,6 +1,5 @@
 import { IPotionLiquidityPool } from "../../typechain";
 import { HyperbolicCurve } from "contracts-math";
-import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
 
 export function calculatePremium(
