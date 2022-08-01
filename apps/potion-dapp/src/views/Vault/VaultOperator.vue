@@ -143,9 +143,6 @@ const orderSize = computed(() => {
   );
 });
 
-// const numberOfOtokensToBuy = computed(() => {
-//   return principalPercentage.value * totalAssets.value / 100;
-// });
 const numberOfOtokensToBuyBN = computed(() => {
   const ppBN = parseUnits(principalPercentage.value.toString(), 18);
   const taBN = parseUnits(totalAssets.value.toString(), 18);
@@ -190,10 +187,7 @@ const statusInfo = computed(() => {
       };
   }
 });
-// watch(vaultActionsAddresses, (addresses) => {
-//   const actionInfo = addresses[0];
-//   actionsStrategyInfo
-// })
+
 const {
   nextCycleTimestamp,
   cycleDurationDays,
@@ -205,8 +199,6 @@ const {
   currentPayout,
   getCurrentPayout,
   getStrategyInfo,
-  // TESTsetBuyInfo,
-  // TESTsetSwapInfo,
 } = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
 
 // Depth Router logic
@@ -286,7 +278,6 @@ const enterPosition = async () => {
   )
     return;
 
-  // const expirationTimestamp = nextCycleTimestamp.value + 86400;
   const expirationTimestamp = createValidExpiry(blockTimestamp.value, 1);
 
   const newOtokenAddress = await getTargetOtokenAddress(
@@ -299,8 +290,7 @@ const enterPosition = async () => {
   );
 
   const swapRoute = uniswapRouteData.value.route[0];
-  // const inputToken = swapRoute.route.input;
-  // const outputToken = swapRoute.route.output;
+
   const counterparties = routerResult.value.counterparties.map((seller) => {
     return {
       lp: seller.lp,
@@ -311,7 +301,6 @@ const enterPosition = async () => {
     };
   });
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-  // console.log(firstPoolFee, "firstPoolFee");
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
@@ -328,14 +317,6 @@ const enterPosition = async () => {
     totalSizeInPotions: numberOfOtokensToBuyBN.value,
   };
 
-  // console.log(swapInfo, potionBuyInfo);
-
-  // console.log(walletAddress.value, operator.value);
-
-  // await TESTsetBuyInfo(potionBuyInfo);
-  // await TESTsetSwapInfo(swapInfo);
-
-  // await TESTenterPosition();
   vaultEnterPosition(swapInfo, potionBuyInfo);
 };
 
