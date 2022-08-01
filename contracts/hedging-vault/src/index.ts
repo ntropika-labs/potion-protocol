@@ -30,11 +30,11 @@ export const Deployments = {
                 blockNumber: 0,
             },
             OpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
                 blockNumber: 0,
             },
             MockOpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
                 blockNumber: 0,
             },
             UniswapV3Router: {

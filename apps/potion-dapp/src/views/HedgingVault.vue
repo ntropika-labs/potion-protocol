@@ -17,9 +17,10 @@
           <BaseTag>
             <div
               class="h-2 w-2 rounded-full mr-1"
-              :class="status ? 'bg-accent-500' : 'bg-error'"
+              :class="vaultStatus === 0 ? 'bg-accent-500' : 'bg-error'"
             ></div>
-            <span v-if="status">{{ t("unlocked") }}</span>
+            <span v-if="vaultStatus === 0">{{ t("unlocked") }}</span>
+            <span v-if="vaultStatus === 1">{{ t("committed") }}</span>
             <span v-else>{{ t("locked") }}</span> </BaseTag
           ><!--  -->
         </div>
@@ -191,7 +192,6 @@ import { useOnboard } from "@onboard-composable";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
-const status = ref(true);
 const { PotionBuyAction } = contractsAddresses;
 
 const depositAmount = ref(1);
@@ -214,7 +214,7 @@ const {
   premiumSlippage,
   swapSlippage,
 } = usePotionBuyActionContract(PotionBuyAction.address);
-const { operator, admin, principalPercentages } =
+const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId);
 const {
   // vaultName,

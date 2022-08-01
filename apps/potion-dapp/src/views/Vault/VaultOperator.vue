@@ -3,9 +3,9 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Token, TradeType } from "@uniswap/sdk-core";
-
-import { formatUnits } from "@ethersproject/units";
-
+import { useOracleContract } from "@/composables/useOracleContract";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import { createValidExpiry } from "@/helpers/time";
 import {
   AssetTag,
   BaseButton,
@@ -20,7 +20,7 @@ import { useOnboard } from "@onboard-composable";
 
 import { useHedgingVaultHelperContract } from "@/composables/useHedgingVaultHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
-import { useCoinGecko } from "@/composables/useCoinGecko";
+// import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
 
@@ -42,7 +42,7 @@ import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { $fetch } from "ohmyfetch";
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 
 /**
  * Const
@@ -89,28 +89,15 @@ const router = useRouter();
 const { connectedWallet } = useOnboard();
 const { blockTimestamp, getBlock } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
-const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);
-
-const { fetchTokenPrice, formattedPrice, price } = useCoinGecko(
-  undefined,
-  WETH.address
-);
 
 const walletAddress = computed(
   () => connectedWallet.value?.accounts[0].address ?? ""
 );
 
-const ethPrice = computed(() => {
-  if (coinsPrices.value && coinsPrices.value.ethereum.usd) {
-    return coinsPrices.value.ethereum.usd;
-  }
-  return 0;
-});
-
 /**
  * Vault operation
  */
-const { principalPercentages, operator, vaultStatus, TESTenterPosition } =
+const { principalPercentages, vaultStatus, TESTenterPosition } =
   useInvestmentVaultContract(validId);
 
 const principalPercentage = computed(() =>
@@ -131,7 +118,6 @@ const {
 } = useErc4626Contract(validId);
 
 const tokenAsset = computed(() => {
-  console.log();
   return {
     name: assetName.value,
     symbol: assetSymbol.value,
@@ -141,12 +127,32 @@ const tokenAsset = computed(() => {
   };
 });
 
+const oraclePrice = ref(0);
+const { getPrice } = useOracleContract();
+watch(assetAddress, async () => {
+  oraclePrice.value = parseFloat(await getPrice(assetAddress.value));
+});
+
 const strikePrice = computed(() => {
-  return (price.value * strikePercentage.value) / 100;
+  return oraclePrice.value * (strikePercentage.value / 100);
 });
 
 const orderSize = computed(() => {
-  return (principalPercentage.value / 100) * totalAssets.value * price.value;
+  return (
+    (principalPercentage.value / 100) * totalAssets.value * strikePrice.value
+  );
+});
+
+// const numberOfOtokensToBuy = computed(() => {
+//   return principalPercentage.value * totalAssets.value / 100;
+// });
+const numberOfOtokensToBuyBN = computed(() => {
+  const ppBN = parseUnits(principalPercentage.value.toString(), 18);
+  const taBN = parseUnits(totalAssets.value.toString(), 18);
+  const dBN = parseUnits("100", 18);
+  const noBN = ppBN.mul(taBN).div(dBN);
+  // otokens are in 8 digits, we need to remove some digits here by dividing by 10^10
+  return noBN.div(10 ** 10);
 });
 // Hedging Vault interaction
 
@@ -188,7 +194,6 @@ const statusInfo = computed(() => {
 //   const actionInfo = addresses[0];
 //   actionsStrategyInfo
 // })
-console.log(contractsAddresses);
 const {
   nextCycleTimestamp,
   cycleDurationDays,
@@ -220,7 +225,7 @@ const { runRouter, routerResult, formattedPremium } = useDepthRouter(
   orderSize,
   strikePrice,
   gasPrice,
-  ethPrice
+  oraclePrice
 );
 
 const formattedPremiumSlippage = computed(() => {
@@ -251,7 +256,6 @@ const {
 const { getTargetOtokenAddress } = useOtokenFactory();
 
 const exitPosition = async () => {
-  console.log("test exit");
   await getRoute(
     WETH,
     totalAmountToSwap.value,
@@ -275,12 +279,12 @@ const loadEnterPositionRoute = async () => {
   );
 };
 const enterPosition = async () => {
-  console.log(
-    "TIMESTAMPS",
-    dayjs.unix(blockTimestamp.value).toString(),
-    dayjs.unix(nextCycleTimestamp.value).toString()
-  );
-  console.log("enter position", routerResult.value, uniswapRouteData.value);
+  // console.log(
+  //   "TIMESTAMPS",
+  //   dayjs.unix(blockTimestamp.value).toString(),
+  //   dayjs.unix(nextCycleTimestamp.value).toString()
+  // );
+  // console.log("enter position", routerResult.value, uniswapRouteData.value);
   if (
     !uniswapRouteData.value ||
     !routerResult.value ||
@@ -288,7 +292,9 @@ const enterPosition = async () => {
   )
     return;
 
-  const expirationTimestamp = nextCycleTimestamp.value + 86400;
+  // const expirationTimestamp = nextCycleTimestamp.value + 86400;
+  const expirationTimestamp = createValidExpiry(blockTimestamp.value, 1);
+
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
     coreContractAddresses.USDC.address,
@@ -311,24 +317,26 @@ const enterPosition = async () => {
     };
   });
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  // console.log(firstPoolFee, "firstPoolFee");
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
     expectedPriceRate: 1,
   };
+
   const potionBuyInfo = {
     targetPotionAddress: newOtokenAddress,
     underlyingAsset: tokenAsset.value.address,
-    strikePriceInUSDC: strikePrice.value,
+    strikePriceInUSDC: strikePrice.value.toFixed(6),
     expirationTimestamp: expirationTimestamp,
     sellers: counterparties,
-    expectedPremiumInUSDC: routerResult.value.premium,
-    totalSizeInPotions: orderSize.value / price.value,
+    expectedPremiumInUSDC: routerResult.value.premium.toFixed(6),
+    totalSizeInPotions: numberOfOtokensToBuyBN.value,
   };
 
-  console.log(swapInfo, potionBuyInfo);
+  // console.log(swapInfo, potionBuyInfo);
 
-  console.log(walletAddress.value, operator.value);
+  // console.log(walletAddress.value, operator.value);
 
   await TESTsetBuyInfo(potionBuyInfo);
   await TESTsetSwapInfo(swapInfo);
@@ -355,9 +363,7 @@ const tabs = ref([
 ]);
 
 onMounted(async () => {
-  await fetchCoinsPrices();
   await getGas();
-  await fetchTokenPrice();
   await getBlock("latest");
   await getCurrentPayout(contractsAddresses.PotionBuyAction.address);
 });
@@ -388,7 +394,7 @@ watch(exitPositionReceipt, (receipt) => {
 
 // TODO: DELETE
 const testAddBlock = async (addHours: number) => {
-  await $fetch("http://127.0.0.1:8545", {
+  await $fetch("http://localhost:8545", {
     method: "POST",
     body: {
       jsonrpc: "2.0",
@@ -396,7 +402,7 @@ const testAddBlock = async (addHours: number) => {
       params: [addHours * 3660],
     },
   });
-  await $fetch("http://127.0.0.1:8545", {
+  await $fetch("http://localhost:8545", {
     method: "POST",
     body: {
       jsonrpc: "2.0",
@@ -519,7 +525,7 @@ const testAddBlock = async (addHours: number) => {
               <AssetTag size="lg" :title="t('asset')" :token="tokenAsset" />
               <div>
                 <p class="capitalize">{{ t("current_price") }}</p>
-                <p>{{ formattedPrice }}</p>
+                <p>{{ oraclePrice }}</p>
               </div>
             </div>
           </div>
@@ -641,7 +647,7 @@ const testAddBlock = async (addHours: number) => {
                       <p class="text-right">
                         order size in otokens:
                         <span class="block">{{
-                          formatUnits(cp.orderSizeInOtokens, 6)
+                          formatUnits(cp.orderSizeInOtokens, 8)
                         }}</span>
                       </p>
                     </div>

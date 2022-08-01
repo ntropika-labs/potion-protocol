@@ -106,8 +106,8 @@ export const Deployments = {
                 blockNumber: 3,
             },
             MarginCalculator: {
-                address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-                blockNumber: 67,
+                address: "0xab16A69A5a8c12C732e0DEFF4BE56A70bb64c926",
+                blockNumber: 141,
             },
             OtokenFactory: {
                 address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
@@ -154,8 +154,8 @@ export const Deployments = {
                 blockNumber: 25,
             },
             MockOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-                blockNumber: 63,
+                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
+                blockNumber: 137,
             },
         },
     },
