@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { PercentageUtils } from "./PercentageUtils";
+export type { TimeUtils } from "./TimeUtils";

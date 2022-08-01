@@ -233,6 +233,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PercentageUtils__factory>;
     getContractFactory(
+      name: "TimeUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TimeUtils__factory>;
+    getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626Upgradeable__factory>;
@@ -608,6 +612,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PercentageUtils>;
+    getContractAt(
+      name: "TimeUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TimeUtils>;
     getContractAt(
       name: "ERC4626Upgradeable",
       address: string,
