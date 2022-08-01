@@ -20,5 +20,8 @@ export interface PotionBuyActionDeployParams {
 }
 
 export async function deployPotionBuyAction(parameters: PotionBuyActionDeployParams): Promise<PotionBuyAction> {
-    return (await deployUpgrade("PotionBuyAction", [parameters])) as PotionBuyAction;
+    console.log("- Deploying PotionBuyAction...");
+    const potionBuyAction = (await deployUpgrade("PotionBuyAction", [parameters])) as PotionBuyAction;
+    console.log(`    ...deployed to: ${potionBuyAction.address}`);
+    return potionBuyAction;
 }

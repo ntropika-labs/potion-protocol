@@ -20,15 +20,19 @@ async function main() {
 
     const deployer = (await ethers.provider.listAccounts())[0];
 
-    console.log(`Using network ${network.name}`);
-    console.log(`Deploying from ${deployer}`);
+    console.log(`---------------------------------------------------`);
+    console.log(` Hedging Vault Deployment Script`);
+    console.log(`---------------------------------------------------`);
+    console.log(`- Network ${network.name}`);
+    console.log(`- Deployer: ${deployer}`);
+    console.log(`---------------------------------------------------\n`);
 
     const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(network.name as NetworksType);
     if (!deploymentConfig) {
         throw new Error(`No deploy config found for network '${network.name}'`);
     }
 
-    await deployTestingEnv(deploymentConfig);
+    await deployTestingEnv(deploymentConfig, true);
     await exportDeployments();
 
     console.log("Deployment complete");
