@@ -12,9 +12,9 @@ pragma solidity 0.8.14;
             timestamp that falls on 08:00 UTC.
  */
 library TimeUtils {
-    uint256 private constant SECONDS_IN_DAY = 86400;
-    uint256 private constant SECONDS_IN_HOUR = 3600;
-    uint256 private constant SECONDS_TO_0800_UTC = 8 * SECONDS_IN_HOUR;
+    uint256 public constant SECONDS_IN_DAY = 86400;
+    uint256 public constant SECONDS_IN_HOUR = 3600;
+    uint256 public constant SECONDS_TO_0800_UTC = 8 * SECONDS_IN_HOUR;
 
     /**
       @notice Given a timestamp it calculates the timestamp that falls on the same day but is offset by

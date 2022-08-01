@@ -1,22 +1,22 @@
-import { onMounted, ref } from "vue";
-
-import { contractsAddresses, Swap } from "@/helpers/hedgingVaultContracts";
-import { useOnboard } from "@onboard-composable";
-import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
-
-import { useEthersContract } from "./useEthersContract";
-
 import type {
-  ContractTransaction,
   ContractReceipt,
+  ContractTransaction,
 } from "@ethersproject/contracts";
-
 import type {
   HedgingVaultOperatorHelper,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
+import { onMounted, ref } from "vue";
+
+import type { BigNumberish } from "@ethersproject/bignumber";
+import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
+import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
+import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { parseUnits } from "@ethersproject/units";
+import { useEthersContract } from "./useEthersContract";
+import { useOnboard } from "@onboard-composable";
+import { utils } from "ethers";
 
 export interface UniSwapInfo {
   steps: Array<{ inputTokenAddress: string; fee: number }>;
@@ -24,9 +24,35 @@ export interface UniSwapInfo {
   expectedPriceRate: number; //The expected price of the swap to convert to a fixed point SD59x18 number
 }
 
+interface PotionBuyInfo {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: string;
+  expirationTimestamp: BigNumberish;
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  expectedPremiumInUSDC: string;
+  totalSizeInPotions: BigNumberish;
+}
 export type VaultStatus = "locked" | "unlocked" | "suspended";
 
-export function useHedgingVaultHelperContract() {
+export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
+  const types = [];
+  const values = [];
+
+  for (let i = 0; i < tokensPath.length; i++) {
+    types.push("address");
+    values.push(tokensPath[i]);
+
+    if (i !== tokensPath.length - 1) {
+      types.push("uint24");
+      values.push(fee);
+    }
+  }
+
+  return utils.solidityPack(types, values);
+}
+
+export function useHedgingVaultOperatorHelperContract() {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
   const { HedgingVaultOperatorHelper } = contractsAddresses;
@@ -70,17 +96,16 @@ export function useHedgingVaultHelperContract() {
   const enterPositionError = ref<string | null>(null);
   const enterPosition = async (
     swapInfo: UniSwapInfo,
-    potionBuyInfo: PotionBuyInfoStruct
+    potionBuyInfo: PotionBuyInfo
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
         enterPositionLoading.value = true;
         //TODO: also cover multihop swap case [ input token, [token, fee]|fee, output token]
-        const swapPath = new Swap(
-          swapInfo.steps[0].inputTokenAddress,
-          swapInfo.steps[0].fee,
-          swapInfo.outputTokenAddress
+        const swapPath = getEncodedSwapPath(
+          [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
+          swapInfo.steps[0].fee
         );
         const swapData: IUniswapV3Oracle.SwapInfoStruct = {
           inputToken: swapInfo.steps[0].inputTokenAddress,
@@ -89,27 +114,20 @@ export function useHedgingVaultHelperContract() {
             swapInfo.expectedPriceRate.toString(),
             18
           ),
-          swapPath: swapPath.toKeccak256(),
+          swapPath: swapPath,
         };
         const potionBuyActionData: PotionBuyInfoStruct = {
           targetPotionAddress: potionBuyInfo.targetPotionAddress,
           underlyingAsset: potionBuyInfo.underlyingAsset,
-          strikePriceInUSDC: parseUnits(
-            potionBuyInfo.strikePriceInUSDC.toString(),
-            6
-          ),
+          strikePriceInUSDC: parseUnits(potionBuyInfo.strikePriceInUSDC, 8),
           expirationTimestamp: potionBuyInfo.expirationTimestamp,
           sellers: potionBuyInfo.sellers,
           expectedPremiumInUSDC: parseUnits(
-            potionBuyInfo.expectedPremiumInUSDC.toString(),
-            18
+            potionBuyInfo.expectedPremiumInUSDC,
+            6
           ),
-          totalSizeInPotions: parseUnits(
-            potionBuyInfo.totalSizeInPotions.toString(),
-            8
-          ),
+          totalSizeInPotions: potionBuyInfo.totalSizeInPotions,
         };
-        console.log(swapData, potionBuyInfo);
         enterPositionTx.value = await contractSigner.enterPosition(
           swapData,
           potionBuyActionData

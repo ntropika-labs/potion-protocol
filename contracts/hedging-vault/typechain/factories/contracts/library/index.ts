@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { PercentageUtils__factory } from "./PercentageUtils__factory";
+export { TimeUtils__factory } from "./TimeUtils__factory";

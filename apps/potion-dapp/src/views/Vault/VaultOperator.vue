@@ -18,7 +18,7 @@ import {
 
 import { useOnboard } from "@onboard-composable";
 
-import { useHedgingVaultHelperContract } from "@/composables/useHedgingVaultHelperContract";
+import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -96,7 +96,7 @@ const walletAddress = computed(
 /**
  * Vault operation
  */
-const { principalPercentages, vaultStatus, TESTenterPosition } =
+const { principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId);
 
 const principalPercentage = computed(() =>
@@ -142,9 +142,6 @@ const orderSize = computed(() => {
   );
 });
 
-// const numberOfOtokensToBuy = computed(() => {
-//   return principalPercentage.value * totalAssets.value / 100;
-// });
 const numberOfOtokensToBuyBN = computed(() => {
   const ppBN = parseUnits(principalPercentage.value.toString(), 18);
   const taBN = parseUnits(totalAssets.value.toString(), 18);
@@ -159,7 +156,7 @@ const {
   enterPositionTx,
   enterPositionReceipt,
   //enterPositionLoading,
-  //enterPosition: vaultEnterPosition,
+  enterPosition: vaultEnterPosition,
   canPositionBeEntered,
   exitPositionTx,
   exitPositionReceipt,
@@ -167,7 +164,7 @@ const {
   exitPosition: vaultExitPosition,
   canPositionBeExited,
   //actionsAddress,
-} = useHedgingVaultHelperContract();
+} = useHedgingVaultOperatorHelperContract();
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -189,10 +186,7 @@ const statusInfo = computed(() => {
       };
   }
 });
-// watch(vaultActionsAddresses, (addresses) => {
-//   const actionInfo = addresses[0];
-//   actionsStrategyInfo
-// })
+
 const {
   nextCycleTimestamp,
   cycleDurationDays,
@@ -204,8 +198,6 @@ const {
   currentPayout,
   getCurrentPayout,
   getStrategyInfo,
-  TESTsetBuyInfo,
-  TESTsetSwapInfo,
 } = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
 
 // Depth Router logic
@@ -277,12 +269,6 @@ const loadEnterPositionRoute = async () => {
   );
 };
 const enterPosition = async () => {
-  // console.log(
-  //   "TIMESTAMPS",
-  //   dayjs.unix(blockTimestamp.value).toString(),
-  //   dayjs.unix(nextCycleTimestamp.value).toString()
-  // );
-  // console.log("enter position", routerResult.value, uniswapRouteData.value);
   if (
     !uniswapRouteData.value ||
     !routerResult.value ||
@@ -292,7 +278,7 @@ const enterPosition = async () => {
 
   const expirationTimestamp = createValidExpiry(
     blockTimestamp.value,
-    cycleDurationDays.value
+    1 //cycleDurationDays.value
   ); //nextCycleTimestamp.value + 86400 * 10;
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
@@ -304,8 +290,7 @@ const enterPosition = async () => {
   );
 
   const swapRoute = uniswapRouteData.value.route[0];
-  // const inputToken = swapRoute.route.input;
-  // const outputToken = swapRoute.route.output;
+
   const counterparties = routerResult.value.counterparties.map((seller) => {
     return {
       lp: seller.lp,
@@ -317,7 +302,6 @@ const enterPosition = async () => {
   });
 
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-  // console.log(firstPoolFee, "firstPoolFee");
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
@@ -334,15 +318,7 @@ const enterPosition = async () => {
     totalSizeInPotions: numberOfOtokensToBuyBN.value,
   };
 
-  // console.log(swapInfo, potionBuyInfo);
-
-  // console.log(walletAddress.value, operator.value);
-
-  await TESTsetBuyInfo(potionBuyInfo);
-  await TESTsetSwapInfo(swapInfo);
-
-  await TESTenterPosition();
-  //vaultEnterPosition(swapInfo, potionBuyInfo);
+  vaultEnterPosition(swapInfo, potionBuyInfo);
 };
 
 // Tab navigation
