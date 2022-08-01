@@ -66,13 +66,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  ganache:
-    container_name: potion_ganache
-    image: trufflesuite/ganache:v7.3.0
-    ports:
-      - "8545:8545"
-    volumes:
-      - ${GANACHE_VOLUME}:/opt
-    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}' --database.dbPath='${DATABASE_PATH}' --miner.blockGasLimit 0x1C9C380 --miner.callGasLimit 0x1C9C380 --miner.defaultTransactionGasLimit 0x1C9C380 --chain.time='${CHAIN_TIME}'
-

@@ -133,75 +133,41 @@ check_environment_running() {
   return
 }
 
-check_db_seed() {
-  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
-  # strip only '/opt/' from the string
-  local ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
-  local ganache_db_file="${ganache_volume_folder}/${ganache_db_name}/LOG"
-
-  if [[ -s "$ganache_db_file" ]]; then
-    msg "${GREEN}- - Ganache database already seeded${NOFORMAT}"
-    is_db_seeded=1
-
-    return
-  fi
-
-  msg "${ORANGE}- - Ganache database not seeded${NOFORMAT}"
-  is_db_seeded=0
-  return
+check_hardhat_node_running() {
+  # use [y]arn to exclude grep itself from the process list
+  is_hardhat_running="$(ps aux | grep '[y]arn nx run @potion-protocol/core:hardhat-localnode' | wc -l)"
 }
 
+
 spin_up_environment() {
-  
-  if [[ $init_environment -eq 1 ]]; then
-    local ganache_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d'  | sed 's/\"//g')"
-    msg "${ORANGE}- - Removing db data: ${ganache_db_path} ${NOFORMAT}"
-
-    if [[ $is_environment_running -eq 1 ]]; then
-      docker compose exec ganache sh -c "rm -rf ${ganache_db_path}/*"
-    else
-      docker compose run --rm --entrypoint /bin/sh ganache -c "rm -rf ${ganache_db_path}/*"
-    fi
-
-    msg "${GREEN}- - Removed db data ${NOFORMAT}"
-
-    is_db_seeded=0
-  fi
 
   # Remove the existing environment if any and all of its volumes
   docker compose down -v
   msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
+  msg "${GREEN}- Run and deploy the contracts and subgraph on local env ${NOFORMAT}"
+
+  #if [[ $is_hardhat_running -eq 0 ]]; then
+  #  yarn nx run @potion-protocol/core:hardhat-localnode &>/dev/null &
+  #  msg "${GREEN}- - Hardhat local node created ${NOFORMAT}"
+  #else
+  #  msg "${GREEN}- - Hardhat local node already running ${NOFORMAT}"
+  #fi
+
+  yarn nx run @potion-protocol/core:deploy-local.hedging
+  msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
+
+  yarn nx run @potion-protocol/hedging-vault:clean
+  msg "${GREEN}- - Hedging vault contracts cache cleaned ${NOFORMAT}"
+
+  yarn nx run @potion-protocol/hedging-vault:compile
+  msg "${GREEN}- - Hedging vault contracts compiled ${NOFORMAT}"
   
   msg "${GREEN}Starting local environment...${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
-  docker compose -f docker-compose.yml -f docker-compose-ganache.yml up  -d -V 
+  docker compose up -d -V
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
-  # ./bin/wait-for-tcp localhost:8545
-  msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
-  sleep 2
-
-  msg "${GREEN}- Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
-  if [[ $is_db_seeded -eq 0 ]]; then
-    msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
-
-    #yarn nx run @potion-protocol/core:deploy-local
-    yarn nx run @potion-protocol/core:deploy-local.hedging
-    msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
-
-    yarn nx run @potion-protocol/hedging-vault:deploy-local
-    msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
-  fi
-  if [[ $is_db_seeded -eq 0 || $init_environment -eq 1 ]]; then
-    yarn nx run potion-subgraph:prepare-local
-    msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
-
-    yarn nx run potion-subgraph:codegen
-    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"
-  fi
-
-  sleep 10
-  msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
+  yarn nx run @potion-protocol/hedging-vault:deploy-local
 
   yarn nx run potion-subgraph:create-local
   msg "${GREEN}- - Potion subgraph created ${NOFORMAT}"
@@ -209,11 +175,8 @@ spin_up_environment() {
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
   msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
 
-  if [[ $is_db_seeded -eq 0 ]]; then
-
-    yarn nx run subgraph-queries:codegen
-    msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
-  fi
+  yarn nx run subgraph-queries:codegen
+  msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
 
   return 0
 }
@@ -230,7 +193,7 @@ msg "- no_redeploy: ${no_redeploy}"
 cd "${script_dir}/.."
 msg "${YELLOW} - Moved to root folder: $PWD"
 check_environment_running
-check_db_seed
+check_hardhat_node_running
 
 if [[ $is_environment_running -eq 0 || $force -eq 1 ]]; then
   spin_up_environment
