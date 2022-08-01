@@ -36,7 +36,6 @@ import {
 } from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
-import { contractsAddresses as coreContractAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
@@ -242,8 +241,7 @@ const totalAmountToSwap = computed(() => {
   if (!routerResult.value) return 0;
 
   return (
-    (premiumSlippage.value / 100) * routerResult.value.premium +
-    routerResult.value.premium
+    (premiumSlippage.value / 100) * routerResult.value.premium + orderSize.value
   );
 });
 
@@ -292,13 +290,14 @@ const enterPosition = async () => {
   )
     return;
 
-  // const expirationTimestamp = nextCycleTimestamp.value + 86400;
-  const expirationTimestamp = createValidExpiry(blockTimestamp.value, 1);
-
+  const expirationTimestamp = createValidExpiry(
+    blockTimestamp.value,
+    cycleDurationDays.value
+  ); //nextCycleTimestamp.value + 86400 * 10;
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
-    coreContractAddresses.USDC.address,
-    coreContractAddresses.USDC.address,
+    contractsAddresses.USDC.address,
+    contractsAddresses.USDC.address,
     strikePrice.value,
     expirationTimestamp,
     true
@@ -316,6 +315,7 @@ const enterPosition = async () => {
       orderSizeInOtokens: seller.orderSizeInOtokens,
     };
   });
+
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
   // console.log(firstPoolFee, "firstPoolFee");
   const swapInfo = {
@@ -509,7 +509,7 @@ const testAddBlock = async (addHours: number) => {
       </div>
     </div>
   </BaseCard>
-  <div class="grid md:grid-cols-3 gap-8">
+  <div class="grid lg:grid-cols-3 gap-8">
     <div>
       <div class="relative md:sticky md:top-12">
         <BaseCard class="p-6 grid gap-4">

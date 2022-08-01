@@ -14,48 +14,6 @@ export const Deployments = {
         sampleUnderlyingTokenAddress: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
         oracleIsMock: true,
     },
-    hardhat: {
-        timestamp: 1652193598,
-        network: "hardhat",
-        contracts: {
-            AddressBook: {
-                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-                blockNumber: 1,
-            },
-            Otoken: {
-                address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-                blockNumber: 2,
-            },
-            Oracle: {
-                address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-                blockNumber: 3,
-            },
-            MarginCalculator: {
-                address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-                blockNumber: 4,
-            },
-            OtokenFactory: {
-                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-                blockNumber: 5,
-            },
-            Whitelist: {
-                address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-                blockNumber: 6,
-            },
-            MarginPool: {
-                address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-                blockNumber: 7,
-            },
-            MarginVault: {
-                address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-                blockNumber: 8,
-            },
-            Controller: {
-                address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-                blockNumber: 10,
-            },
-        },
-    },
     "kovan.demo": {
         collateralTokenAddress: "0x7e6edA50d1c833bE936492BF42C1BF376239E9e2",
         opynAddressBookAddress: "0x8812f219f507e8cfe9d2f1e790164714c5e06a73",
@@ -90,7 +48,7 @@ export const Deployments = {
         network: "kovan",
     },
     localhost: {
-        timestamp: 1659349273,
+        timestamp: 1659370563,
         network: "localhost",
         contracts: {
             AddressBook: {
@@ -106,8 +64,8 @@ export const Deployments = {
                 blockNumber: 3,
             },
             MarginCalculator: {
-                address: "0xab16A69A5a8c12C732e0DEFF4BE56A70bb64c926",
-                blockNumber: 141,
+                address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
+                blockNumber: 67,
             },
             OtokenFactory: {
                 address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
@@ -154,8 +112,8 @@ export const Deployments = {
                 blockNumber: 25,
             },
             MockOracle: {
-                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
-                blockNumber: 137,
+                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                blockNumber: 63,
             },
         },
     },

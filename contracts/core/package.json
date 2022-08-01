@@ -71,7 +71,7 @@
         "lint-ts": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --ext .js,.ts .",
         "format": "prettier --config ./.prettierrc.js --write \"**/*.{js,json,md,sol,ts}\"",
         "format-check": "prettier --check --config ./.prettierrc.js \"**/*.{js,json,md,sol,ts}\"",
-        "fast-forward": "yarn run -T hardhat --network localhost fastForward --seconds 86400 ",
+        "fast-forward": "yarn run -T hardhat --network localhost fastForward --seconds 86400",
         "set-price": "yarn run -T hardhat setPrices"
     },
     "dependencies": {
