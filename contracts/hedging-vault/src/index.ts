@@ -2,7 +2,7 @@
 export * as Typechain from "../typechain";
 export const Deployments = {
     localhost: {
-        timestamp: 1658834842,
+        timestamp: 1659344493,
         network: "localhost",
         contracts: {
             USDC: {
@@ -30,28 +30,28 @@ export const Deployments = {
                 blockNumber: 0,
             },
             OpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
                 blockNumber: 0,
             },
             MockOpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
                 blockNumber: 0,
             },
             UniswapV3Router: {
-                address: "0xFD471836031dc5108809D173A067e8486B9047A3",
-                blockNumber: 70,
+                address: "0xd6e1afe5cA8D00A2EFC01B89997abE2De47fdfAf",
+                blockNumber: 161,
             },
             PotionBuyAction: {
-                address: "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-                blockNumber: 75,
+                address: "0x5FeaeBfB4439F3516c74939A9D04e95AFE82C4ae",
+                blockNumber: 166,
             },
             InvestmentVault: {
-                address: "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
-                blockNumber: 77,
+                address: "0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923",
+                blockNumber: 168,
             },
             HedgingVaultOperatorHelper: {
-                address: "0x04C89607413713Ec9775E14b954286519d836FEf",
-                blockNumber: 79,
+                address: "0xfcDB4564c18A9134002b9771816092C9693622e3",
+                blockNumber: 170,
             },
         },
     },

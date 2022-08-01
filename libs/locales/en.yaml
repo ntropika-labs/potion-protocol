@@ -170,3 +170,5 @@ your_shares: your shares
 your_strike_price: your strike price
 not_enough: not enough  { msg }
 redeem: redeem
+committed: committed
+max_swap_duration: max swap duration

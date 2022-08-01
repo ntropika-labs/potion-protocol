@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
-import duration from "dayjs/plugin/duration";
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
@@ -26,7 +26,6 @@ const usdFormatter = new Intl.NumberFormat(locale, {
 });
 
 export const currencyFormatter = (value: number, currency: string) => {
-  console.log(value);
   return usdFormatter.format(value).replace("$", `${currency} `);
 };
 export const shortCurrencyFormatter = (value: number, currency: string) =>

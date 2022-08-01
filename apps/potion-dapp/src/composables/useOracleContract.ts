@@ -1,9 +1,8 @@
 import type { Oracle } from "@potion-protocol/core/typechain";
-
 import { Oracle__factory } from "@potion-protocol/core/typechain";
 import { formatUnits } from "@ethersproject/units";
-import { useEthersContract } from "./useEthersContract";
 import { useAddressBookContract } from "./useAddressBookContract";
+import { useEthersContract } from "./useEthersContract";
 
 export function useOracleContract() {
   const { initContract } = useEthersContract();
@@ -25,6 +24,7 @@ export function useOracleContract() {
       const oracleContract = await initContractProvider();
 
       const price = await oracleContract.getPrice(address);
+      console.log("price from oracle", price);
       return formatUnits(price, 8);
     } catch (error) {
       if (error instanceof Error) {
