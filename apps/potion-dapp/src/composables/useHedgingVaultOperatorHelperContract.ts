@@ -8,6 +8,7 @@ import type {
 } from "@potion-protocol/hedging-vault/typechain";
 import { onMounted, ref } from "vue";
 
+import { BigNumber } from "@ethersproject/bignumber";
 import type { BigNumberish } from "@ethersproject/bignumber";
 import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
 import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
@@ -21,7 +22,7 @@ import { utils } from "ethers";
 export interface UniSwapInfo {
   steps: Array<{ inputTokenAddress: string; fee: number }>;
   outputTokenAddress: string;
-  expectedPriceRate: number; //The expected price of the swap to convert to a fixed point SD59x18 number
+  expectedPriceRate: number | string; //The expected price of the swap to convert to a fixed point SD59x18 number
 }
 
 interface PotionBuyInfo {
@@ -99,10 +100,16 @@ export function useHedgingVaultOperatorHelperContract() {
     const swapData: IUniswapV3Oracle.SwapInfoStruct = {
       inputToken: swapInfo.steps[0].inputTokenAddress,
       outputToken: swapInfo.outputTokenAddress,
+      //TODO: !ONLY FOR TEST need to be the same as the price of the underlying asset at expiration date so the swap gives us the correct amount of underlying asset
       expectedPriceRate: parseUnits(swapInfo.expectedPriceRate.toString(), 18),
       swapPath: swapPath,
     };
 
+    console.log("swapData", swapData);
+    console.log(
+      "expectedPriceRate to String: ",
+      swapData.expectedPriceRate.toString()
+    );
     return swapData;
   };
 
@@ -122,6 +129,10 @@ export function useHedgingVaultOperatorHelperContract() {
         enterPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
+        const divider = BigNumber.from(10).pow(12);
+        swapData.expectedPriceRate = BigNumber.from(
+          swapData.expectedPriceRate
+        ).div(divider);
         const potionBuyActionData: PotionBuyInfoStruct = {
           targetPotionAddress: potionBuyInfo.targetPotionAddress,
           underlyingAsset: potionBuyInfo.underlyingAsset,
@@ -134,6 +145,8 @@ export function useHedgingVaultOperatorHelperContract() {
           ),
           totalSizeInPotions: potionBuyInfo.totalSizeInPotions,
         };
+        console.log(swapInfo);
+
         enterPositionTx.value = await contractSigner.enterPosition(
           swapData,
           potionBuyActionData
@@ -166,6 +179,11 @@ export function useHedgingVaultOperatorHelperContract() {
         exitPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
+        const multiplier = BigNumber.from(10).pow(12);
+        swapData.expectedPriceRate = BigNumber.from(
+          swapData.expectedPriceRate
+        ).mul(multiplier);
+        console.log("swapInfo: ", swapInfo);
         exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
       } catch (error) {

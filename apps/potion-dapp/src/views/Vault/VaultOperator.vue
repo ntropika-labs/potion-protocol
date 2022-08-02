@@ -249,13 +249,18 @@ const {
 const { getTargetOtokenAddress } = useOtokenFactory();
 
 const loadExitPositionRoute = async () => {
-  if (!currentPayout.value?.currentPayout) {
-    throw new Error("no payout");
-  }
+  // if (!currentPayout.value?.currentPayout) {
+  //   throw new Error("no payout");
+  // }
 
+  /**
+   * TODO: we need to check the contract balance for USDC and add the amount to the eventual payout
+   * if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
+   * We will still need to pass a the swap object with an empty swapPath ("")
+   */
   await getRoute(
     USDC,
-    currentPayout.value?.currentPayout,
+    1000,
     WETH,
     walletAddress.value,
     TradeType.EXACT_INPUT,
@@ -275,7 +280,7 @@ const exitPosition = async () => {
       { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
     ],
     outputTokenAddress: tokenAsset.value.address,
-    expectedPriceRate: expectedPriceRate.value,
+    expectedPriceRate: "0.001", // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
   };
 
   await vaultExitPosition(swapInfo);
@@ -333,7 +338,7 @@ const enterPosition = async () => {
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: expectedPriceRate.value,
+    expectedPriceRate: 1000, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
   };
 
   const potionBuyInfo = {
