@@ -90,7 +90,7 @@ describe.skip("Show Potion Flow", () => {
         cy.get("[test-potion-slippage-button]")
           .should("be.visible")
           .and("have.length", 3);
-        cy.get("[test-potion-slippage-button].bg-primary-500").should(
+        cy.get("[test-potion-slippage-button] > .bg-primary-500").should(
           "contain.text",
           "0.5%"
         );
@@ -138,7 +138,7 @@ describe.skip("Show Potion Flow", () => {
 
       it("Can change the selected slippage", () => {
         cy.get("[test-potion-slippage-button]").last().click();
-        cy.get("[test-potion-slippage-button].bg-primary-500").should(
+        cy.get("[test-potion-slippage-button] > .bg-primary-500").should(
           "contain.text",
           "5%"
         );

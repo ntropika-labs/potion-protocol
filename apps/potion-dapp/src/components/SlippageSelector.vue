@@ -25,6 +25,7 @@ const { t } = useI18n();
         v-for="(s, index) in props.slippage"
         :key="`slippage-${index}`"
         class="outline-none focus:outline-none"
+        test-potion-slippage-button
         @click="emits('update:slippage', index)"
       >
         <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{

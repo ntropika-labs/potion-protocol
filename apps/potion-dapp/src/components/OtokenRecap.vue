@@ -79,6 +79,7 @@ const etherscanUrl = computed(() => getEtherscanUrl(props.address));
 
       <div class="col-span-2 md:col-span-1 md:justify-self-end">
         <BuyPotionButton
+          test-potion-buy-button
           :loading="props.loading"
           :slippage="props.slippage"
           :allowance="props.allowance"

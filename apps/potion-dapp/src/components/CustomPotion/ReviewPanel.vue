@@ -42,10 +42,11 @@ const balanceFormatted = computed(() =>
           <p class="capitalize">{{ t("market_size") }}</p>
         </div>
         <div>
-          <p>{{ props.marketSize }}</p>
+          <p test-potion-market-size>{{ props.marketSize }}</p>
         </div>
       </div>
       <InputNumber
+        test-potion-number-of-potions-input
         :model-value="props.potionQuantity"
         color="no-bg"
         :title="t('number_of_potions')"
@@ -64,19 +65,21 @@ const balanceFormatted = computed(() =>
       <div class="flex justify-between px-4 items-start text-sm">
         <div class="flex gap-2 items-center justify-between w-full">
           <p class="capitalize">{{ t("price_per_potion") }}</p>
-          <p>{{ props.premium }}</p>
+          <p test-potion-price-per-potion>{{ props.premium }}</p>
         </div>
       </div>
       <div class="flex justify-between px-4 items-start text-sm">
         <div class="flex gap-2 items-center justify-between w-full">
           <p class="capitalize">{{ t("number_of_potions") }}</p>
-          <p>{{ props.potionQuantity }}</p>
+          <p test-potion-number-of-potions>{{ props.potionQuantity }}</p>
         </div>
       </div>
       <div class="flex justify-between px-4 items-start text-sm">
         <div class="flex gap-2 items-center justify-between w-full">
           <p class="capitalize">{{ t("number_of_transactions") }}</p>
-          <p>{{ props.numberOfTransactions }}</p>
+          <p test-potion-number-of-transactions>
+            {{ props.numberOfTransactions }}
+          </p>
         </div>
       </div>
       <div
@@ -85,7 +88,7 @@ const balanceFormatted = computed(() =>
         <div class="flex gap-2 items-center justify-between w-full">
           <p class="capitalize">{{ t("total") }}</p>
           <div class="text-right">
-            <p>{{ props.selectedSlippage }}</p>
+            <p test-potion-total-price>{{ props.selectedSlippage }}</p>
             <p class="text-xs capitalize text-dwhite-300/30">
               {{ t("balance") }}: {{ balanceFormatted }}
             </p>
