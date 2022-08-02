@@ -39,7 +39,6 @@ import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
-import { $fetch } from "ohmyfetch";
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
 // import dayjs from "dayjs";
 
@@ -86,7 +85,7 @@ const hasSwapRoute = ref(false);
 const { t } = useI18n();
 const router = useRouter();
 const { connectedWallet } = useOnboard();
-const { blockTimestamp, getBlock } = useEthersProvider();
+const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 
 const walletAddress = computed(
@@ -385,21 +384,24 @@ watch(exitPositionReceipt, (receipt) => {
 
 // TODO: DELETE
 const testAddBlock = async (addHours: number) => {
-  await $fetch("http://localhost:8545", {
-    method: "POST",
-    body: {
-      jsonrpc: "2.0",
-      method: "evm_increaseTime",
-      params: [addHours * 3660],
-    },
-  });
-  await $fetch("http://localhost:8545", {
-    method: "POST",
-    body: {
-      jsonrpc: "2.0",
-      method: "evm_mine",
-    },
-  });
+  // await $fetch("http://localhost:8545", {
+  //   method: "POST",
+  //   body: {
+  //     jsonrpc: "2.0",
+  //     method: "evm_increaseTime",
+  //     params: [addHours * 3660],
+  //   },
+  // });
+  // await $fetch("http://localhost:8545", {
+  //   method: "POST",
+  //   body: {
+  //     jsonrpc: "2.0",
+  //     method: "evm_mine",
+  //   },
+  // });
+  const provider = initProvider(false);
+  await provider.send("evm_increaseTime", [addHours * 3660]);
+  await provider.send("evm_mine", []);
   await getBlock("latest");
   await getStrategyInfo();
 };
