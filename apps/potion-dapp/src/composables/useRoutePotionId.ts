@@ -9,7 +9,7 @@ export function useRoutePotionId(params: RouteParams) {
     return params.id;
   });
 
-  const validAddress = computed(() => address.value.startsWith("0x"));
+  const validAddress = computed(() => address.value?.startsWith("0x") ?? false);
 
   const potionAddress = computed(() => {
     if (validAddress.value) {
@@ -19,6 +19,8 @@ export function useRoutePotionId(params: RouteParams) {
   });
 
   return {
+    address,
+    validAddress,
     potionAddress,
   };
 }

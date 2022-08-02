@@ -12,13 +12,15 @@ export function useSlippage(routerResult: Ref<DepthRouterReturn | null>) {
   ]);
 
   const handleSlippageSelection = (index: number) => {
-    slippage.value.forEach((slippage, i) => {
-      slippage.selected = i === index;
-    });
+    if (index > -1 && index < slippage.value.length) {
+      slippage.value.forEach((slippage, i) => {
+        slippage.selected = i === index;
+      });
+    }
   };
   const premiumSlippage = computed(() => {
     const selectedSlippage = slippage.value.find((s) => s.selected);
-    if (selectedSlippage && routerResult.value && routerResult.value.premium) {
+    if (selectedSlippage && routerResult?.value?.premium) {
       return (
         routerResult.value.premium * selectedSlippage.value +
         routerResult.value.premium
