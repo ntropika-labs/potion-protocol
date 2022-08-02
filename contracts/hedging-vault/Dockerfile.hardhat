@@ -1,0 +1,22 @@
+FROM node:16-alpine
+
+RUN apk upgrade --no-cache -U && \
+ apk add yarn git --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
+ mkdir -p local_node/project
+
+WORKDIR /local_node
+
+RUN yarn add -D ts-node typescript dotenv \
+  ethereum-waffle ethers hardhat \
+  @nomiclabs/hardhat-ethers @nomiclabs/hardhat-etherscan @nomiclabs/hardhat-waffle \
+  @openzeppelin/contracts @openzeppelin/contracts-upgradeable @openzeppelin/hardhat-upgrades \
+  hardhat-abi-exporter hardhat-contract-sizer hardhat-gas-reporter \
+  typechain chai solidity-coverage \
+  fs-extra \
+  @typechain/ethers-v5 @typechain/hardhat @types/chai @types/cli-progress @types/eslint @types/fs-extra @types/node @types/mocha 
+
+WORKDIR /local_node/project
+
+EXPOSE 8545
+
+ENTRYPOINT ["yarn", "exec", "/local_node/node_modules/.bin/hardhat", "node", "--hostname 0.0.0.0", "--config /local_node/project/hardhat.config.ts"]

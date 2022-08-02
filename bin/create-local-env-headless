@@ -169,7 +169,7 @@ spin_up_environment() {
   fi
 
   # Remove the existing environment if any and all of its volumes
-  docker compose down -v
+  docker compose -f docker-compose.yml -f docker-compose-ganache.yml down -v
   msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   
   msg "${GREEN}Starting local environment...${NOFORMAT}"

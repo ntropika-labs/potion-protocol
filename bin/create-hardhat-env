@@ -17,7 +17,6 @@ Handle the docker compose environment
 Available options:
 -h, --help                    Print this help and exit
 -v, --verbose                 Print script debug info
--i, --init                    Initialize the environment and force deploy containers
 -f, --force                   Force deploy containers [default: true]
 -n, --no-redeploy             Do not deploy containers if already available [default: false]
 -r, --redeploy boolean        When true containers are recreated, when false use existing environment if any
@@ -67,10 +66,6 @@ parse_params() {
         ;;
       --no-color)
         NO_COLOR=1
-        ;;
-      -i | --init)
-        force=1
-        init_environment=1
         ;;
       -f | --force) # force flag
         force=1
@@ -133,19 +128,15 @@ check_environment_running() {
   return
 }
 
-check_hardhat_node_running() {
-  # use [y]arn to exclude grep itself from the process list
-  is_hardhat_running="$(ps aux | grep '[y]arn nx run @potion-protocol/core:hardhat-localnode' | wc -l)"
-}
-
 
 spin_up_environment() {
 
   # Remove the existing environment if any and all of its volumes
-  docker compose down -v
+  docker compose -f docker-compose.yml -f docker-compose-hardhat.yml down -v
   msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   msg "${GREEN}- Run and deploy the contracts and subgraph on local env ${NOFORMAT}"
 
+  docker compose -f docker-compose.yml -f docker-compose-hardhat.yml up -d -V
   #if [[ $is_hardhat_running -eq 0 ]]; then
   #  yarn nx run @potion-protocol/core:hardhat-localnode &>/dev/null &
   #  msg "${GREEN}- - Hardhat local node created ${NOFORMAT}"
@@ -164,7 +155,7 @@ spin_up_environment() {
   
   msg "${GREEN}Starting local environment...${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
-  docker compose up -d -V
+  
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
   yarn nx run @potion-protocol/hedging-vault:deploy-local
@@ -193,7 +184,6 @@ msg "- no_redeploy: ${no_redeploy}"
 cd "${script_dir}/.."
 msg "${YELLOW} - Moved to root folder: $PWD"
 check_environment_running
-check_hardhat_node_running
 
 if [[ $is_environment_running -eq 0 || $force -eq 1 ]]; then
   spin_up_environment
