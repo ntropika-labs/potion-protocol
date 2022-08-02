@@ -102,6 +102,17 @@ library PotionProtocolLib {
         @notice Settles the specified potion after it has expired
 
         @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
+        @param buyInfo The information used to previously purchase the potions
+     */
+    function settlePotion(IPotionLiquidityPool potionLiquidityPoolManager, PotionBuyInfo memory buyInfo) internal {
+        IOtoken potion = IOtoken(buyInfo.targetPotionAddress);
+        potionLiquidityPoolManager.settleAfterExpiry(potion);
+    }
+
+    /**
+        @notice Redeems the specified potion after it has expired
+
+        @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
         @param opynController Address of the Opyn controller to claim the payout
         @param buyInfo The information used to previously purchase the potions
         
@@ -115,10 +126,6 @@ library PotionProtocolLib {
         PotionBuyInfo memory buyInfo
     ) internal {
         IOtoken potion = IOtoken(buyInfo.targetPotionAddress);
-
-        // TODO: There is no way to get the amount of proceeds returned by the protocol. We may
-        // TODO: need to retrieve manually the USDC balance before and after in order to get it
-        potionLiquidityPoolManager.settleAfterExpiry(potion);
 
         uint256 potionVaultId = potionLiquidityPoolManager.getVaultId(potion);
 

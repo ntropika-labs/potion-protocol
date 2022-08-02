@@ -189,7 +189,11 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
         require(isPayoutFinal, "Potion cannot be redeemed yet");
 
-        _potionLiquidityPoolManager.redeemPotion(opynController, buyInfo);
+        _potionLiquidityPoolManager.settlePotion(buyInfo);
+
+        if (settledAmount > 0) {
+            _potionLiquidityPoolManager.redeemPotion(opynController, buyInfo);
+        }
     }
 
     /**
