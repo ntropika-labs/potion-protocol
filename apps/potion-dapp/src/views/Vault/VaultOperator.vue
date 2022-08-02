@@ -264,8 +264,10 @@ const exitPosition = async () => {
   const swapRoute = uniswapRouteData.value.route[0];
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
   const swapInfo = {
-    steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
-    outputTokenAddress: contractsAddresses.USDC.address,
+    steps: [
+      { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
+    ],
+    outputTokenAddress: tokenAsset.value.address,
     expectedPriceRate: 1,
   };
 
