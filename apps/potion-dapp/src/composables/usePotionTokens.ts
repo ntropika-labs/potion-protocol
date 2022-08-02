@@ -43,8 +43,10 @@ export function usePotionTokens() {
   };
 
   watch(underlyingsWithLiquidity, () => {
-    availableTokens.value = underlyingsWithLiquidity.value.map((address) =>
-      tokenToSelectableToken(address)
+    availableTokens.value = availableTokens.value.concat(
+      underlyingsWithLiquidity.value.map((address) =>
+        tokenToSelectableToken(address)
+      )
     );
   });
 

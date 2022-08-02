@@ -3,7 +3,7 @@ import { useBlockNative } from "./useBlockNative";
 import { currencyFormatter } from "potion-ui";
 import type { Ref } from "vue";
 
-export function useGas(ethPrice: Ref<number | null>, operationUnits: number) {
+export function useGas(ethPrice: Ref<number | null>, operationUnits = 0) {
   const { getGas, gasPrice } = useBlockNative();
 
   onMounted(async () => {

@@ -22,6 +22,7 @@ export function useSelectableTokens() {
   };
 
   const selectToken = async (address: string) => {
+    console.log(address, availableTokens.value);
     const promises = availableTokens.value.map(
       async (token: SelectableToken) => {
         token.selected = address === token.address;

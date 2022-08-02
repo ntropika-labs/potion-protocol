@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { BaseButton } from "potion-ui";
 import { CustomPotionStep } from "dapp-types";
-import { useOnboard } from "@onboard-composable";
+import BuyPotionButton from "@/components/CustomPotion/BuyPotionButton.vue";
 
 interface Props {
   currentStep: CustomPotionStep;
@@ -22,7 +22,6 @@ const emits = defineEmits<{
   (e: "buyPotions"): void;
 }>();
 
-const { connectedWallet } = useOnboard();
 const { t } = useI18n();
 
 const nextStepEnabled = computed(() => {
@@ -45,35 +44,6 @@ const areStepsValid = computed(
     props.isDurationValid &&
     props.isPotionQuantityValid
 );
-
-const buyPotionButton = computed(() => {
-  if (connectedWallet.value) {
-    if (!areStepsValid.value) {
-      return {
-        label: t("invalid_potion"),
-        disabled: true,
-      };
-    }
-    if (props.balance < props.slippage) {
-      return {
-        label: t("not_enough_usdc"),
-        disabled: true,
-      };
-    }
-
-    const label =
-      props.allowance >= props.slippage ? t("buy_potion") : t("approve");
-    return {
-      label,
-      disabled: false,
-    };
-  }
-
-  return {
-    label: t("connect_wallet"),
-    disabled: true,
-  };
-});
 </script>
 
 <template>
@@ -105,12 +75,13 @@ const buyPotionButton = computed(() => {
         <i class="i-ph-caret-right"></i>
       </template>
     </BaseButton>
-    <BaseButton
+    <BuyPotionButton
       v-if="props.currentStep === CustomPotionStep.REVIEW"
-      palette="secondary"
-      :label="buyPotionButton.label"
-      :disabled="buyPotionButton.disabled"
-      @click="emits('buyPotions')"
-    />
+      :valid="areStepsValid"
+      :slippage="props.slippage"
+      :allowance="props.allowance"
+      :balance="props.balance"
+      @buy-potions="emits('buyPotions')"
+    ></BuyPotionButton>
   </div>
 </template>

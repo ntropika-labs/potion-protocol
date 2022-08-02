@@ -103,7 +103,7 @@ const handleChangeStep = (step: CustomPotionStep) => {
 
 // Buy logic
 const {
-  handleBuyPotions,
+  handleBuyOrCreatePotions,
   buyPotionTx,
   buyPotionReceipt,
   approveTx,
@@ -188,6 +188,7 @@ watch(buyPotionReceipt, (receipt) => {
       </DurationSelectionPanel>
       <ReviewPanel
         v-if="currentStep === CustomPotionStep.REVIEW"
+        class="xl:col-span-2"
         :balance="userCollateralBalance"
         :premium="formattedPremium"
         :potion-quantity="potionQuantity"
@@ -211,7 +212,7 @@ watch(buyPotionReceipt, (receipt) => {
       :balance="userCollateralBalance"
       :allowance="userAllowance"
       @update:current-step="handleChangeStep"
-      @buy-potions="handleBuyPotions"
+      @buy-potions="handleBuyOrCreatePotions"
     >
     </NavButtons>
   </BaseCard>

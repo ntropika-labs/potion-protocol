@@ -100,6 +100,7 @@ not_enough_usdc: not enough usdc
 not_withdrawable: Not withdrawable
 number_of_potions: number of potions
 number_of_transactions: number of transactions
+orderbook: Orderbook
 pnl: Pnl
 pool_created: pool created
 pool_setup: Pool Setup

@@ -26,6 +26,23 @@ export function useBuyPotions(
         await buyPotions(
           routerResult.value?.counterparties,
           premiumSlippage.value,
+          tokenSelectedAddress.value
+        );
+      }
+      await fetchUserData();
+    } else {
+      console.info("You are missing some parameters to be set");
+    }
+  };
+
+  const handleBuyOrCreatePotions = async () => {
+    if (routerResult?.value?.counterparties && tokenSelectedAddress.value) {
+      if (premiumSlippage.value > userAllowance.value) {
+        await approveForPotionLiquidityPool(premiumSlippage.value, true);
+      } else {
+        await buyPotions(
+          routerResult.value?.counterparties,
+          premiumSlippage.value,
           undefined,
           tokenSelectedAddress.value,
           strikeSelected.value,
@@ -40,6 +57,7 @@ export function useBuyPotions(
 
   return {
     handleBuyPotions,
+    handleBuyOrCreatePotions,
     buyPotionTx,
     buyPotionReceipt,
     approveTx,

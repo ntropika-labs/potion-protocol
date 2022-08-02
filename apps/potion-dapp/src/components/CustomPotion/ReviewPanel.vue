@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { BaseCard, BaseTag, InputNumber, currencyFormatter } from "potion-ui";
+import { BaseCard, InputNumber, currencyFormatter } from "potion-ui";
+import { useTokenList } from "@/composables/useTokenList";
+import { contractsAddresses } from "@/helpers/contracts";
+import SlippageSelector from "@/components/SlippageSelector.vue";
 import type { Slippage } from "dapp-types";
 
 interface Props {
@@ -24,15 +27,15 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
+const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
+
 const balanceFormatted = computed(() =>
-  currencyFormatter(props.balance, "USDC")
+  currencyFormatter(props.balance, collateral.symbol)
 );
 </script>
 
 <template>
-  <div
-    class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3 justify-center"
-  >
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <BaseCard color="no-bg" class="w-full justify-between">
       <div class="flex justify-between p-4 items-start text-sm">
         <div class="flex gap-2 items-center">
@@ -89,23 +92,11 @@ const balanceFormatted = computed(() =>
           </div>
         </div>
       </div>
-      <BaseCard color="no-bg" class="p-4">
-        <p class="text-lg font-bold capitalize">
-          {{ t("slippage_tolerance") }}
-        </p>
-        <div class="flex gap-3 mt-3">
-          <button
-            v-for="(s, index) in props.slippage"
-            :key="`slippage-${index}`"
-            class="outline-none focus:outline-none"
-            @click="emits('update:slippage', index)"
-          >
-            <BaseTag :color="s.selected === true ? 'primary' : 'base'">{{
-              s.label
-            }}</BaseTag>
-          </button>
-        </div>
-      </BaseCard>
+      <SlippageSelector
+        :slippage="props.slippage"
+        @update:slippage="(index) => emits('update:slippage', index)"
+      >
+      </SlippageSelector>
     </BaseCard>
   </div>
 </template>

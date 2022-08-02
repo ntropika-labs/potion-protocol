@@ -1,5 +1,6 @@
 import { watchDebounced } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
+import dayjs from "dayjs";
 import { useStrikeLiquidity } from "./useProtocolLiquidity";
 import { offsetToDate } from "@/helpers/days";
 import { useEthersProvider } from "./useEthersProvider";
@@ -29,11 +30,19 @@ export function useDurationSelection(
 
   watch([tokenSelectedAddress, strikeSelectedRelative], executeQuery);
 
+  const setDurationFromExpiry = async (expiry: number) => {
+    await getBlock("latest");
+    durationSelected.value = dayjs
+      .unix(expiry)
+      .diff(dayjs.unix(blockTimestamp.value), "days");
+  };
+
   return {
     durationSelected,
     durationSelectedDate,
     isDurationValid,
     maxSelectableDuration,
     maxSelectableDurationInDays,
+    setDurationFromExpiry,
   };
 }

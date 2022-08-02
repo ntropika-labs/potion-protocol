@@ -7,9 +7,7 @@ export function usePotionQuantity(
   const potionQuantity = ref(0.001);
   const isPotionQuantityValid = ref(false);
 
-  const orderSize = computed(() => {
-    return strikeSelected.value * potionQuantity.value;
-  });
+  const orderSize = computed(() => strikeSelected.value * potionQuantity.value);
 
   return {
     potionQuantity,
