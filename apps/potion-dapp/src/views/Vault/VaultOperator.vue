@@ -211,7 +211,7 @@ const criteriasParam = computed(() => {
   ];
 });
 
-const { runRouter, routerResult, formattedPremium } = useDepthRouter(
+const { routerResult, formattedPremium } = useDepthRouter(
   criteriasParam,
   orderSize,
   strikePrice,
@@ -245,22 +245,21 @@ const {
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
-const exitPosition = async () => {
-  if (
-    !uniswapRouteData.value ||
-    !routerResult.value ||
-    !routerResult.value.counterparties
-  )
-    return;
-
+const loadExitPositionRoute = async () => {
   await getRoute(
-    WETH,
-    totalAmountToSwap.value,
     USDC,
+    1000, //totalAmountToSwap.value,
+    WETH,
     walletAddress.value,
     TradeType.EXACT_INPUT,
     swapSlippage.value
   );
+
+  console.log("exit route", uniswapRouteData.value);
+};
+
+const exitPosition = async () => {
+  if (!uniswapRouteData.value) return;
 
   const swapRoute = uniswapRouteData.value.route[0];
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
@@ -271,6 +270,8 @@ const exitPosition = async () => {
   };
 
   await vaultExitPosition(swapInfo);
+  //await TESTsetSwapInfo(swapInfo);
+  //await TESTexitPosition();
 };
 
 const loadEnterPositionRoute = async () => {
@@ -404,6 +405,8 @@ const testAddBlock = async (addHours: number) => {
   await provider.send("evm_mine", []);
   await getBlock("latest");
   await getStrategyInfo();
+
+  console.log(blockTimestamp.value);
 };
 </script>
 <template>
@@ -442,13 +445,25 @@ const testAddBlock = async (addHours: number) => {
         <i class="i-ph-test-tube-fill"></i>
       </template>
     </BaseButton>
-
-    <BaseButton palette="primary" label="Run Router" @click="runRouter()">
+    <BaseButton
+      palette="primary"
+      label="enter route"
+      @click="loadEnterPositionRoute()"
+    >
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
     </BaseButton>
-    <BaseButton palette="primary" label="Exit Position" @click="exitPosition()">
+    <BaseButton
+      palette="primary"
+      label="exit route"
+      @click="loadExitPositionRoute()"
+    >
+      <template #pre-icon>
+        <i class="i-ph-test-tube-fill"></i>
+      </template>
+    </BaseButton>
+    <BaseButton palette="primary" label="Test exit" @click="exitPosition()">
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
@@ -774,6 +789,11 @@ const testAddBlock = async (addHours: number) => {
       </div>
       <p v-else>position cant be entered</p>
       <template v-if="canPositionBeExited">
+        <BaseButton
+          label="update route"
+          :disabled="routerLoading"
+          @click="loadExitPositionRoute"
+        ></BaseButton>
         <BaseButton
           label="exit position"
           :disabled="false"

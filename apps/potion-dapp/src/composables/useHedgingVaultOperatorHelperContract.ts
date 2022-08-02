@@ -88,6 +88,23 @@ export function useHedgingVaultOperatorHelperContract() {
   /**
    * Contract methods
    **/
+  const getSwapData = (
+    swapInfo: UniSwapInfo
+  ): IUniswapV3Oracle.SwapInfoStruct => {
+    //TODO: also cover multihop swap case [ input token, [token, fee]|fee, output token]
+    const swapPath = getEncodedSwapPath(
+      [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
+      swapInfo.steps[0].fee
+    );
+    const swapData: IUniswapV3Oracle.SwapInfoStruct = {
+      inputToken: swapInfo.steps[0].inputTokenAddress,
+      outputToken: swapInfo.outputTokenAddress,
+      expectedPriceRate: parseUnits(swapInfo.expectedPriceRate.toString(), 18),
+      swapPath: swapPath,
+    };
+
+    return swapData;
+  };
 
   //Enter Position
   const enterPositionTx = ref<ContractTransaction | null>(null);
@@ -101,21 +118,10 @@ export function useHedgingVaultOperatorHelperContract() {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
+        enterPositionError.value = null;
         enterPositionLoading.value = true;
-        //TODO: also cover multihop swap case [ input token, [token, fee]|fee, output token]
-        const swapPath = getEncodedSwapPath(
-          [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
-          swapInfo.steps[0].fee
-        );
-        const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-          inputToken: swapInfo.steps[0].inputTokenAddress,
-          outputToken: swapInfo.outputTokenAddress,
-          expectedPriceRate: parseUnits(
-            swapInfo.expectedPriceRate.toString(),
-            18
-          ),
-          swapPath: swapPath,
-        };
+
+        const swapData = getSwapData(swapInfo);
         const potionBuyActionData: PotionBuyInfoStruct = {
           targetPotionAddress: potionBuyInfo.targetPotionAddress,
           underlyingAsset: potionBuyInfo.underlyingAsset,
@@ -156,20 +162,10 @@ export function useHedgingVaultOperatorHelperContract() {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
+        exitPositionError.value = null;
         exitPositionLoading.value = true;
-        const swapPath = getEncodedSwapPath(
-          [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
-          swapInfo.steps[0].fee
-        );
-        const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-          inputToken: swapInfo.steps[0].inputTokenAddress,
-          outputToken: swapInfo.outputTokenAddress,
-          expectedPriceRate: parseUnits(
-            swapInfo.expectedPriceRate.toString(),
-            18
-          ),
-          swapPath: swapPath,
-        };
+
+        const swapData = getSwapData(swapInfo);
         exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
       } catch (error) {
@@ -232,7 +228,7 @@ export function useHedgingVaultOperatorHelperContract() {
           : `Cannot get current position: ${error}`;
       canPositionBeExitedError.value = errorMessage;
 
-      //throw new Error(errorMessage);
+      throw new Error(errorMessage);
       canPositionBeExited.value = false;
     } finally {
       canPositionBeExitedLoading.value = false;
