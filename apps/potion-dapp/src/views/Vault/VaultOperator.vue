@@ -131,6 +131,7 @@ const oraclePrice = ref(0);
 const { getPrice } = useOracleContract();
 watch(assetAddress, async () => {
   oraclePrice.value = parseFloat(await getPrice(assetAddress.value));
+  await getCurrentPayout(assetAddress.value);
 });
 
 const strikePrice = computed(() => {
@@ -248,6 +249,13 @@ const {
 const { getTargetOtokenAddress } = useOtokenFactory();
 
 const exitPosition = async () => {
+  if (
+    !uniswapRouteData.value ||
+    !routerResult.value ||
+    !routerResult.value.counterparties
+  )
+    return;
+
   await getRoute(
     WETH,
     totalAmountToSwap.value,
@@ -257,7 +265,15 @@ const exitPosition = async () => {
     swapSlippage.value
   );
 
-  await vaultExitPosition(uniswapRouteData.value);
+  const swapRoute = uniswapRouteData.value.route[0];
+  const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const swapInfo = {
+    steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
+    outputTokenAddress: contractsAddresses.USDC.address,
+    expectedPriceRate: 1,
+  };
+
+  await vaultExitPosition(swapInfo);
 };
 
 const loadEnterPositionRoute = async () => {
@@ -340,7 +356,6 @@ const tabs = ref([
 onMounted(async () => {
   await getGas();
   await getBlock("latest");
-  await getCurrentPayout(contractsAddresses.PotionBuyAction.address);
 });
 
 // Toast notifications
@@ -424,7 +439,13 @@ const testAddBlock = async (addHours: number) => {
         <i class="i-ph-test-tube-fill"></i>
       </template>
     </BaseButton>
-    <BaseButton palette="primary" label="Run router" @click="runRouter()">
+
+    <BaseButton palette="primary" label="Run Router" @click="runRouter()">
+      <template #pre-icon>
+        <i class="i-ph-test-tube-fill"></i>
+      </template>
+    </BaseButton>
+    <BaseButton palette="primary" label="Exit Position" @click="exitPosition()">
       <template #pre-icon>
         <i class="i-ph-test-tube-fill"></i>
       </template>
@@ -753,7 +774,7 @@ const testAddBlock = async (addHours: number) => {
         <BaseButton
           label="exit position"
           :disabled="false"
-          @click="exitPosition"
+          @click="exitPosition()"
         ></BaseButton>
         <TokenSwap
           :token-input="USDC"

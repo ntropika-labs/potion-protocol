@@ -152,12 +152,25 @@ export function useHedgingVaultOperatorHelperContract() {
   const exitPositionReceipt = ref<ContractReceipt | null>(null);
   const exitPositionLoading = ref(false);
   const exitPositionError = ref<string | null>(null);
-  const exitPosition = async (swapInfo: any) => {
+  const exitPosition = async (swapInfo: UniSwapInfo) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
         exitPositionLoading.value = true;
-        exitPositionTx.value = await contractSigner.exitPosition(swapInfo);
+        const swapPath = getEncodedSwapPath(
+          [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
+          swapInfo.steps[0].fee
+        );
+        const swapData: IUniswapV3Oracle.SwapInfoStruct = {
+          inputToken: swapInfo.steps[0].inputTokenAddress,
+          outputToken: swapInfo.outputTokenAddress,
+          expectedPriceRate: parseUnits(
+            swapInfo.expectedPriceRate.toString(),
+            18
+          ),
+          swapPath: swapPath,
+        };
+        exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
       } catch (error) {
         const errorMessage =
