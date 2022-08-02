@@ -28,7 +28,7 @@ EOF
 cleanup() {
   trap - SIGINT SIGTERM ERR
   # script cleanup here
-  docker compose down -v
+  docker compose -f docker-compose.yml -f docker-compose-hardhat.yml down -v
 }
 
 setup_colors() {
