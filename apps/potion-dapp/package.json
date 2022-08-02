@@ -10,6 +10,7 @@
     "build-tsc": "NODE_ENV=production vue-tsc --noEmit",
     "preview": "yarn run -T vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
+    "test-unit-ui": "vitest --environment jsdom --ui",
     "test-unit-watch": "vitest watch --environment jsdom",
     "cypress": "cypress open",
     "test-e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --config baseUrl=http://127.0.0.1:5050/'",
