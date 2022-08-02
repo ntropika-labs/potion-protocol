@@ -20,7 +20,7 @@
               :class="vaultStatus === 0 ? 'bg-accent-500' : 'bg-error'"
             ></div>
             <span v-if="vaultStatus === 0">{{ t("unlocked") }}</span>
-            <span v-if="vaultStatus === 1">{{ t("committed") }}</span>
+            <span v-else-if="vaultStatus === 1">{{ t("committed") }}</span>
             <span v-else>{{ t("locked") }}</span> </BaseTag
           ><!--  -->
         </div>
