@@ -8,6 +8,7 @@ export default defineComponent({
 <script lang="ts" setup>
 //import { computed, ref, watch } from "vue";
 import { Token } from "@uniswap/sdk-core";
+import type { SwapRoute } from "@uniswap/smart-order-router";
 // import { ChainId, type SwapRoute } from "@uniswap/smart-order-router";
 
 // import { useAlphaRouter } from "@/composables/useAlphaRouter";
@@ -18,7 +19,7 @@ export interface Props {
   tokenOutput: Token;
   inputAmountToSwap: number;
   recipientAddress: string;
-  routeData: any;
+  routeData: SwapRoute | null;
   routerLoading: boolean;
 }
 
@@ -52,7 +53,7 @@ console.log(emit);
 <template>
   <div test-token-swap-wrap>
     <p v-if="routerLoading">Loading route...</p>
-    <div v-else-if="routeData">
+    <div v-else-if="props.routeData">
       <div>
         <h2>Routes</h2>
         <div v-for="(uniRoute, index) in props.routeData.route" :key="index">
@@ -62,23 +63,18 @@ console.log(emit);
           <p>Amount:</p>
           <pre
             class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ JSON.stringify(uniRoute.amount, null, 2) }}</pre
+            >{{ uniRoute.amount.toFixed(6) }}</pre
           >
-          <p>Quote adjusted for gas:</p>
           <pre
             class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ JSON.stringify(uniRoute.quoteAdjustedForGas, null, 2) }}</pre
+            >{{ JSON.stringify(uniRoute.amount.currency, null, 2) }}</pre
           >
-          <p>Quote:</p>
-          <pre
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ JSON.stringify(uniRoute.quote, null, 2) }}</pre
-          >
+
           <p>Token path:</p>
           <div class="flex items-center justify-between">
             <div
-              v-for="(step, index) in uniRoute.tokenPath"
-              :key="index"
+              v-for="(step, tokenIndex) in uniRoute.tokenPath"
+              :key="tokenIndex"
               class="flex items-center justify-between"
             >
               <pre
@@ -86,7 +82,7 @@ console.log(emit);
                 >{{ JSON.stringify(step, null, 2) }}</pre
               >
               <div
-                v-if="index < uniRoute.tokenPath.length - 1"
+                v-if="tokenIndex < uniRoute.tokenPath.length - 1"
                 class="flex-shrink-0"
               >
                 ->
