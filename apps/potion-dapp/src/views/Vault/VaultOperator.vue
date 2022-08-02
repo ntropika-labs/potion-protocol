@@ -74,11 +74,12 @@ const validId = computed(() => {
   }
   return id.toLowerCase();
 });
+const expectedPriceRate = ref(1);
 
 // Input validity
 
 const hasSwapRoute = ref(false);
-
+const isExpectedPriceRateValid = ref(true);
 /**
  * Setup
  */
@@ -155,12 +156,12 @@ const numberOfOtokensToBuyBN = computed(() => {
 const {
   enterPositionTx,
   enterPositionReceipt,
-  //enterPositionLoading,
+  enterPositionLoading,
   enterPosition: vaultEnterPosition,
   canPositionBeEntered,
   exitPositionTx,
   exitPositionReceipt,
-  //exitPositionLoading,
+  exitPositionLoading,
   exitPosition: vaultExitPosition,
   canPositionBeExited,
   //actionsAddress,
@@ -241,14 +242,20 @@ const {
   routerData: uniswapRouteData,
   getRoute,
   routerLoading,
+  togglePolling,
+  routerPolling,
 } = useAlphaRouter(ChainId.MAINNET);
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
 const loadExitPositionRoute = async () => {
+  if (!currentPayout.value?.currentPayout) {
+    throw new Error("no payout");
+  }
+
   await getRoute(
     USDC,
-    1000, //totalAmountToSwap.value,
+    currentPayout.value?.currentPayout,
     WETH,
     walletAddress.value,
     TradeType.EXACT_INPUT,
@@ -259,7 +266,7 @@ const loadExitPositionRoute = async () => {
 };
 
 const exitPosition = async () => {
-  if (!uniswapRouteData.value) return;
+  if (!uniswapRouteData.value || !expectedPriceRate.value) return;
 
   const swapRoute = uniswapRouteData.value.route[0];
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
@@ -268,7 +275,7 @@ const exitPosition = async () => {
       { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
     ],
     outputTokenAddress: tokenAsset.value.address,
-    expectedPriceRate: 1,
+    expectedPriceRate: expectedPriceRate.value,
   };
 
   await vaultExitPosition(swapInfo);
@@ -285,12 +292,15 @@ const loadEnterPositionRoute = async () => {
     TradeType.EXACT_OUTPUT,
     swapSlippage.value
   );
+
+  console.log("enter route", uniswapRouteData.value);
 };
 const enterPosition = async () => {
   if (
     !uniswapRouteData.value ||
     !routerResult.value ||
-    !routerResult.value.counterparties
+    !routerResult.value.counterparties ||
+    !expectedPriceRate.value
   )
     return;
 
@@ -323,7 +333,7 @@ const enterPosition = async () => {
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: 1,
+    expectedPriceRate: expectedPriceRate.value,
   };
 
   const potionBuyInfo = {
@@ -359,6 +369,23 @@ const tabs = ref([
 onMounted(async () => {
   await getGas();
   await getBlock("latest");
+});
+
+let pollingIntervalId: any = null;
+watch(routerPolling, (doPolling) => {
+  console.log("toggling polling", doPolling);
+  if (doPolling === true) {
+    let callback = null;
+    if (canPositionBeEntered.value) callback = loadEnterPositionRoute;
+    else if (canPositionBeExited.value) callback = loadExitPositionRoute;
+    else {
+      throw new Error("Vault is locked");
+    }
+    pollingIntervalId = setInterval(callback, 60000);
+    console.log(`next polling in 60 seconds`, pollingIntervalId);
+  } else if (pollingIntervalId) {
+    clearInterval(pollingIntervalId);
+  }
 });
 
 // Toast notifications
@@ -653,25 +680,78 @@ const testAddBlock = async (addHours: number) => {
                     :key="index"
                     class="p-6 relative"
                   >
-                    <div class="grid md:grid-cols-3 pl-4">
+                    <div class="grid md:grid-cols-3 pl-4 justify-between">
                       <div class="md:col-span-2">
-                        <p class="font-semibold text-xl">LP: {{ cp.lp }}</p>
-                        <p class="font-semibold text-xl">
-                          Pool id: {{ cp.poolId }}
+                        <p class="font-medium text-lg">
+                          LP: <span class="font-semibold">{{ cp.lp }}</span>
+                        </p>
+                        <p class="font-medium text-lg">
+                          Pool id:
+                          <span class="font-semibold">{{ cp.poolId }}</span>
                         </p>
                       </div>
-                      <p class="text-right">
-                        order size in otokens:
-                        <span class="block">{{
-                          formatUnits(cp.orderSizeInOtokens, 8)
-                        }}</span>
-                      </p>
+                      <div class="flex justify-end">
+                        <div
+                          class="flex flex-col items-end rounded-lg ring-1 ring-white ring-opacity-5 p-2"
+                        >
+                          <p>order size in otokens:</p>
+                          <pre
+                            class="bg-dark broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
+                            >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
+                          >
+                        </div>
+                      </div>
                     </div>
+                    <hr class="opacity-40 mx-4 mb-2 mt-3" />
                     <p class="">> Curve</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ JSON.stringify(cp.curveAs64x64, null, 2) }}</pre
-                    >
+                    <div class="flex flex-row gap-4">
+                      <div class="text-center">
+                        <p>a</p>
+                        <pre
+                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          >{{
+                            JSON.stringify(cp.curveAs64x64.a_number, null, 2)
+                          }}</pre
+                        >
+                      </div>
+                      <div class="text-center">
+                        <p>b</p>
+                        <pre
+                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          >{{
+                            JSON.stringify(cp.curveAs64x64.b_number, null, 2)
+                          }}</pre
+                        >
+                      </div>
+                      <div class="text-center">
+                        <p>c</p>
+                        <pre
+                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          >{{
+                            JSON.stringify(cp.curveAs64x64.c_number, null, 2)
+                          }}</pre
+                        >
+                      </div>
+                      <div class="text-center">
+                        <p>d</p>
+                        <pre
+                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          >{{
+                            JSON.stringify(cp.curveAs64x64.d_number, null, 2)
+                          }}</pre
+                        >
+                      </div>
+                      <div class="text-center">
+                        <p>max_util</p>
+                        <pre
+                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          >{{
+                            JSON.stringify(cp.curveAs64x64.max_util, null, 2)
+                          }}</pre
+                        >
+                      </div>
+                    </div>
+
                     <p class="">> Criteria</p>
                     <pre
                       class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
@@ -688,6 +768,7 @@ const testAddBlock = async (addHours: number) => {
             </div>
           </BaseCard>
           <BaseCard class="p-6">
+            <h1 class="text-xl font-semibold">Uniswap route</h1>
             <div class="grid md:grid-cols-3">
               <TokenSwap
                 :token-input="WETH"
@@ -699,25 +780,28 @@ const testAddBlock = async (addHours: number) => {
                 class="md:col-span-2"
               />
               <div>
-                <h1>Uniswap route</h1>
-                <div class="flex justify-start gap-8">
+                <div class="flex flex-col justify-start gap-4">
                   <BaseButton
-                    label="update route"
+                    label="route"
                     :disabled="routerLoading"
-                    @click="loadEnterPositionRoute"
-                  ></BaseButton>
+                    @click="loadEnterPositionRoute()"
+                  >
+                    <template #pre-icon>
+                      <i class="i-ph-arrows-clockwise mr-1"></i>
+                    </template>
+                  </BaseButton>
                   <BaseButton
                     label="enter position"
-                    :disabled="false"
-                    @click="enterPosition"
+                    :disabled="!uniswapRouteData || enterPositionLoading"
+                    @click="enterPosition()"
                   ></BaseButton>
-                  <!-- <BaseButton
-                  :label="
-                    routerPolling ? 'Turn off polling' : 'Turn on polling'
-                  "
-                  :disabled="routerLoading"
-                  @click="togglePolling"
-                ></BaseButton> -->
+                  <BaseButton
+                    :label="
+                      routerPolling ? 'Turn off polling' : 'Turn on polling'
+                    "
+                    :disabled="routerLoading"
+                    @click="togglePolling"
+                  ></BaseButton>
                 </div>
                 <div v-if="uniswapRouteData">
                   <div>
@@ -731,41 +815,32 @@ const testAddBlock = async (addHours: number) => {
                   </div>
 
                   <div>
-                    <p>Gas</p>
+                    <p class="text-lg">Quote</p>
+                    <p>Quote gas adjusted</p>
                     <pre
                       class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        JSON.stringify(
-                          uniswapRouteData.quoteGasAdjusted,
-                          null,
-                          2
-                        )
-                      }}</pre
+                      >{{ uniswapRouteData.quoteGasAdjusted.toFixed(4) }}</pre
                     >
                     <pre
                       class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{
                         JSON.stringify(
-                          uniswapRouteData.estimatedGasUsed,
+                          uniswapRouteData.quoteGasAdjusted.currency,
                           null,
                           2
                         )
                       }}</pre
                     >
+                    <p>Estimated gas used</p>
                     <pre
                       class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        JSON.stringify(uniswapRouteData.gasPriceWei, null, 2)
-                      }}</pre
+                      >{{ uniswapRouteData.estimatedGasUsed.toNumber() }}</pre
                     >
+                    <p>Gas used USD</p>
                     <pre
                       class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{
-                        JSON.stringify(
-                          uniswapRouteData.estimatedGasUsedQuoteToken,
-                          null,
-                          2
-                        )
+                        uniswapRouteData.estimatedGasUsedUSD.toFixed(6)
                       }}</pre
                     >
                   </div>
@@ -789,28 +864,108 @@ const testAddBlock = async (addHours: number) => {
           </BaseCard>
         </TabNavigationComponent>
       </div>
-      <p v-else>position cant be entered</p>
+      <!-- <p v-else>position cant be entered</p> -->
       <template v-if="canPositionBeExited">
-        <BaseButton
-          label="update route"
-          :disabled="routerLoading"
-          @click="loadExitPositionRoute"
-        ></BaseButton>
-        <BaseButton
-          label="exit position"
-          :disabled="false"
-          @click="exitPosition()"
-        ></BaseButton>
-        <TokenSwap
-          :token-input="USDC"
-          :token-output="WETH"
-          :input-amount-to-swap="totalAmountToSwap"
-          :recipient-address="walletAddress"
-          :route-data="uniswapRouteData"
-          :router-loading="routerLoading"
-        />
+        <BaseCard class="p-6">
+          <h1 class="text-xl font-semibold">Uniswap route</h1>
+          <div class="grid md:grid-cols-3">
+            <div class="md:col-span-2">
+              <InputNumber
+                v-model.number="expectedPriceRate"
+                color="no-bg"
+                :title="t('expected_price_rate')"
+                :min="1"
+                :step="0.1"
+                unit="USDC"
+                :footer-description="t('max_strike_price')"
+                @valid-input="isExpectedPriceRateValid = $event"
+              />
+              <TokenSwap
+                :token-input="USDC"
+                :token-output="WETH"
+                :input-amount-to-swap="totalAmountToSwap"
+                :recipient-address="walletAddress"
+                :route-data="uniswapRouteData"
+                :router-loading="routerLoading"
+              />
+            </div>
+
+            <div>
+              <div class="flex flex-col justify-start gap-4">
+                <BaseButton
+                  label="route"
+                  :disabled="routerLoading"
+                  @click="loadExitPositionRoute()"
+                >
+                  <template #pre-icon>
+                    <i class="i-ph-arrows-clockwise mr-1"></i> </template
+                ></BaseButton>
+                <BaseButton
+                  label="exit position"
+                  :disabled="!uniswapRouteData || exitPositionLoading"
+                  @click="exitPosition()"
+                ></BaseButton>
+                <BaseButton
+                  :label="
+                    routerPolling ? 'Turn off polling' : 'Turn on polling'
+                  "
+                  :disabled="routerLoading"
+                  @click="togglePolling"
+                ></BaseButton>
+              </div>
+              <div v-if="uniswapRouteData">
+                <div>
+                  <p>Quote for</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ JSON.stringify(uniswapRouteData.quote, null, 2) }}</pre
+                  >
+                </div>
+
+                <div>
+                  <p class="text-lg">Quote</p>
+                  <p>Quote gas adjusted</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ uniswapRouteData.quoteGasAdjusted.toFixed(4) }}</pre
+                  >
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{
+                      JSON.stringify(
+                        uniswapRouteData.quoteGasAdjusted.currency,
+                        null,
+                        2
+                      )
+                    }}</pre
+                  >
+                  <p>Estimated gas used</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ uniswapRouteData.estimatedGasUsed.toNumber() }}</pre
+                  >
+                  <p>Gas used USD</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ uniswapRouteData.estimatedGasUsedUSD.toFixed(6) }}</pre
+                  >
+                </div>
+                <div>
+                  <p>Parameters</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{
+                      JSON.stringify(uniswapRouteData.methodParameters, null, 2)
+                    }}</pre
+                  >
+                </div>
+              </div>
+              <div v-else>No quote available</div>
+            </div>
+          </div>
+        </BaseCard>
       </template>
-      <p v-else>Position cant be exited</p>
+      <!-- <p v-else>Position cant be exited</p> -->
     </div>
   </div>
   <NotificationDisplay

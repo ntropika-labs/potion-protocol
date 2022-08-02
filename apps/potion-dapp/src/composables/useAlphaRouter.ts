@@ -47,7 +47,12 @@ export const useAlphaRouter = (chainId: ChainId) => {
   ) => {
     routerError.value = null;
     routerLoading.value = true;
-
+    console.log(
+      "GETTING ALPHA ROUTE",
+      inputToken,
+      inputTokenAmount,
+      outputToken
+    );
     try {
       const alphaRouter = initAlphaRouter();
       const deadline =
@@ -72,6 +77,8 @@ export const useAlphaRouter = (chainId: ChainId) => {
           maxSplits: 1, // TODO remove: assert here theres only 1 route returned (no split routes)
         }
       );
+      console.log("ALPHA ROUTER ROUTE", route);
+
       console.log(`Quote Exact In: ${route?.quote.toFixed(2)}`);
       console.log(
         `Gas Adjusted Quote In: ${route?.quoteGasAdjusted.toFixed(2)}`
@@ -79,7 +86,6 @@ export const useAlphaRouter = (chainId: ChainId) => {
       console.log(`Gas Used USD: ${route?.estimatedGasUsedUSD.toFixed(6)}`);
 
       if (!route) {
-        console.log(route);
         throw new Error("No route found");
       }
 
