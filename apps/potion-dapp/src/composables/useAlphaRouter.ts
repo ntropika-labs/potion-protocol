@@ -67,6 +67,9 @@ export const useAlphaRouter = (chainId: ChainId) => {
           recipient: recipientAddress,
           slippageTolerance: new Percent(slippageToleranceInteger, 100),
           deadline: deadline,
+        },
+        {
+          maxSplits: 1, // TODO remove: assert here theres only 1 route returned (no split routes)
         }
       );
       console.log(`Quote Exact In: ${route?.quote.toFixed(2)}`);
@@ -75,9 +78,16 @@ export const useAlphaRouter = (chainId: ChainId) => {
       );
       console.log(`Gas Used USD: ${route?.estimatedGasUsedUSD.toFixed(6)}`);
 
+      if (!route) {
+        console.log(route);
+        throw new Error("No route found");
+      }
+
       // TODO remove: assert here theres only 1 route returned (no split routes)
-      if (!route || route.route.length > 1)
+      if (route.route.length > 1) {
+        console.log(route.route);
         throw new Error("No split routes allowed for token swapping");
+      }
 
       routerData.value = route;
     } catch (error) {
