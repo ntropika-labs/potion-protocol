@@ -25,7 +25,6 @@ import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
-import { currencyFormatter } from "potion-ui/src/helpers";
 import { ChainId } from "@uniswap/smart-order-router";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
@@ -171,18 +170,18 @@ const statusInfo = computed(() => {
   switch (vaultStatus.value) {
     case LifecycleState.Unlocked:
       return {
-        label: "Unlocked",
+        label: t("unlocked"),
         class: "bg-accent-500",
       };
     case LifecycleState.Committed:
       return {
-        label: "Committed",
+        label: t("committed"),
         class: "bg-orange-500",
       };
     case LifecycleState.Locked:
     default:
       return {
-        label: "Locked",
+        label: t("locked"),
         class: "bg-error",
       };
   }
@@ -199,6 +198,7 @@ const {
   currentPayout,
   getCurrentPayout,
   getStrategyInfo,
+  strategyLoading,
 } = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
 
 // Depth Router logic
@@ -212,7 +212,12 @@ const criteriasParam = computed(() => {
   ];
 });
 
-const { routerResult, formattedPremium } = useDepthRouter(
+const {
+  runRouter: loadCounterparties,
+  routerResult,
+  formattedPremium,
+  routerRunning: counterpartiesLoading,
+} = useDepthRouter(
   criteriasParam,
   orderSize,
   strikePrice,
@@ -220,29 +225,25 @@ const { routerResult, formattedPremium } = useDepthRouter(
   oraclePrice
 );
 
-const formattedPremiumSlippage = computed(() => {
-  return currencyFormatter(premiumSlippage.value, "USDC");
-});
-
 const hasCounterparties = computed(() => {
   return routerResult.value && routerResult.value.counterparties.length > 0
     ? true
     : false;
 });
 
-const totalAmountToSwap = computed(() => {
-  if (!routerResult.value) return 0;
-
-  return (
-    (premiumSlippage.value / 100) * routerResult.value.premium + orderSize.value
-  );
+const counterpartiesText = computed(() => {
+  return routerResult.value && routerResult.value.counterparties.length > 1
+    ? t("counterparties")
+    : t("counterparty");
 });
+
+const totalAmountToSwap = ref(0);
 
 const {
   routerData: uniswapRouteData,
   getRoute,
   routerLoading,
-  togglePolling,
+  togglePolling: toggleUniswapPolling,
   routerPolling,
 } = useAlphaRouter(ChainId.MAINNET);
 
@@ -258,23 +259,30 @@ const loadExitPositionRoute = async () => {
    * if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
    * We will still need to pass a the swap object with an empty swapPath ("")
    */
-  await getRoute(
-    USDC,
-    1000,
-    WETH,
-    walletAddress.value,
-    TradeType.EXACT_INPUT,
-    swapSlippage.value
-  );
+  if (currentPayout.value?.currentPayout) {
+    totalAmountToSwap.value = currentPayout.value.currentPayout;
+    await getRoute(
+      USDC,
+      WETH,
+      TradeType.EXACT_INPUT,
+      totalAmountToSwap.value,
+      1, // TODO remove: assert here theres only 1 route returned (no split routes)
+      walletAddress.value,
+      swapSlippage.value
+    );
+  }
 
   console.log("exit route", uniswapRouteData.value);
 };
 
 const exitPosition = async () => {
-  if (!uniswapRouteData.value || !expectedPriceRate.value) return;
+  if (!uniswapRouteData.value) return;
+
+  toggleUniswapPolling(false);
 
   const swapRoute = uniswapRouteData.value.route[0];
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+
   const swapInfo = {
     steps: [
       { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
@@ -284,35 +292,40 @@ const exitPosition = async () => {
   };
 
   await vaultExitPosition(swapInfo);
-  //await TESTsetSwapInfo(swapInfo);
-  //await TESTexitPosition();
 };
 
 const loadEnterPositionRoute = async () => {
+  if (!routerResult.value) {
+    throw new Error("No counterparty available");
+  }
+
+  totalAmountToSwap.value =
+    routerResult.value.premium +
+    (premiumSlippage.value * routerResult.value.premium) / 100;
   await getRoute(
     WETH,
-    totalAmountToSwap.value,
     USDC,
-    walletAddress.value,
     TradeType.EXACT_OUTPUT,
+    totalAmountToSwap.value,
+    1, // TODO remove: assert here theres only 1 route returned (no split routes)
+    walletAddress.value,
     swapSlippage.value
   );
-
-  console.log("enter route", uniswapRouteData.value);
 };
 const enterPosition = async () => {
   if (
     !uniswapRouteData.value ||
     !routerResult.value ||
-    !routerResult.value.counterparties ||
-    !expectedPriceRate.value
+    !routerResult.value.counterparties
   )
     return;
 
+  toggleUniswapPolling(false);
+
   const expirationTimestamp = createValidExpiry(
     blockTimestamp.value,
-    1 //cycleDurationDays.value
-  ); //nextCycleTimestamp.value + 86400 * 10;
+    1 //cycleDurationDays.value TODO: CHECK
+  );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
     contractsAddresses.USDC.address,
@@ -338,7 +351,7 @@ const enterPosition = async () => {
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: 1000, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
+    expectedPriceRate: 1000, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
   };
 
   const potionBuyInfo = {
@@ -367,7 +380,7 @@ const tabs = ref([
     title: "Enter position",
     subtitle: "",
     isValid: hasSwapRoute,
-    enabled: true, //hasCounterparties,
+    enabled: hasCounterparties,
   },
 ]);
 
@@ -444,6 +457,7 @@ const testAddBlock = async (addHours: number) => {
 };
 </script>
 <template>
+  <!-- START TEST COMMANDS -->
   <div class="flex flex-row items-end gap-4">
     <BaseButton palette="primary" label="Load str." @click="getStrategyInfo()">
       <template #pre-icon>
@@ -503,7 +517,8 @@ const testAddBlock = async (addHours: number) => {
       </template>
     </BaseButton>
   </div>
-
+  <!-- END TEST COMMANDS -->
+  <!-- START NAVIGATION HEADER -->
   <div
     class="flex flex-col-reverse justify-start gap-4 sm:(flex-row justify-between align-center)"
   >
@@ -517,12 +532,13 @@ const testAddBlock = async (addHours: number) => {
       <p>Vault: {{ vaultName }}</p>
     </div>
   </div>
-
+  <!-- END NAVIGATION HEADER -->
+  <!-- START HEADER -->
   <BaseCard class="p-6 mt-4 mb-8">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
       <div>
         <p class="capitalize mb-2">{{ t("status") }}</p>
-        <BaseTag>
+        <BaseTag :is-loading="strategyLoading">
           <div
             class="h-2 w-2 rounded-full mr-1"
             :class="statusInfo.class"
@@ -530,36 +546,39 @@ const testAddBlock = async (addHours: number) => {
           <span>{{ statusInfo.label }}</span>
         </BaseTag>
       </div>
-      <div class="">
-        <!-- <p class="capitalize mb-2">
-        {{ t("time_left_until_next_cycle") }}
-      </p>
-      <BaseTag>
-        <span class="text-accent-500">{{ timeToNextCycle }}</span>
-      </BaseTag> -->
+      <div>
         <TimeTag
+          :is-loading="strategyLoading"
           :title="t('time_left_until_next_cycle')"
           :time-from="blockTimestamp.toString()"
           :time-to="nextCycleTimestamp.toString()"
         ></TimeTag>
       </div>
       <div>
-        <p class="capitalize">{{ t("current_payout") }}</p>
-        <div v-if="currentPayout" class="flex flex-row gap-4 items-center">
-          <!-- TODO: add a tooltip to explain final payout -->
-          <span
-            v-if="currentPayout.isFinal"
-            class="i-ph-lock-key h-8 w-8"
-          ></span>
-          <span v-else class="i-ph-arrows-clockwise h-8 w-8"></span>
-          <p>{{ currentPayout.currentPayout }}</p>
-        </div>
+        <p class="capitalize mb-2">{{ t("current_payout") }}</p>
+        <BaseTag :is-loading="strategyLoading">
+          <div v-if="currentPayout" class="flex flex-row gap-4 items-center">
+            <!-- TODO: add a tooltip to explain final payout -->
+            <span
+              v-if="currentPayout.isFinal"
+              class="i-ph-lock-key h-6 w-6"
+            ></span>
+            <span v-else class="i-ph-arrows-clockwise h-6 w-6"></span>
+            <p class="text-lg font-semibold">
+              {{ currentPayout.currentPayout }}
+            </p>
+          </div>
+          <p v-else>-</p>
+        </BaseTag>
       </div>
     </div>
   </BaseCard>
+  <!-- END HEADER -->
+  <!-- START CONTENT -->
   <div class="grid lg:grid-cols-3 gap-8">
+    <!-- START FIXED SIDEBAR -->
     <div>
-      <div class="relative md:sticky md:top-12">
+      <div class="relative lg:sticky lg:top-12">
         <BaseCard class="p-6 grid gap-4">
           <h3 class="text-lg font-semibold mb-4">Recap</h3>
           <div class="grid md:grid-cols-2 items-start gap-12">
@@ -632,25 +651,24 @@ const testAddBlock = async (addHours: number) => {
           </div>
 
           <div v-if="routerResult" class="flex flex-col justify-start">
-            <h3 class="font-medium text-white/80">> Market size</h3>
+            <h3 class="font-medium text-white/80 text-lg font-bold">
+              > Market size
+            </h3>
             <div class="flex justify-between px-4 items-start text-sm">
               <div class="flex gap-2 items-center justify-between w-full">
-                <p class="capitalize">{{ t("price_per_potion") }}</p>
+                <p class="capitalize text-lg font-bold">
+                  {{ t("price_per_potion") }}
+                </p>
                 <p>{{ formattedPremium }}</p>
               </div>
-            </div>
-            <div class="flex justify-between px-4 items-start text-sm mt-4">
-              <p class="capitalize text-lg font-bold">{{ t("total") }}</p>
-              <p class="text-lg font-bold">
-                {{ formattedPremiumSlippage }}
-              </p>
             </div>
           </div>
         </BaseCard>
       </div>
     </div>
-
-    <div class="md:col-span-2">
+    <!-- END FIXED SIDEBAR -->
+    <div class="lg:col-span-2">
+      <!-- START ENTER POSITION -->
       <div v-if="canPositionBeEntered">
         <TabNavigationComponent
           title="Enter position"
@@ -661,25 +679,48 @@ const testAddBlock = async (addHours: number) => {
         >
           <BaseCard class="p-6">
             <div class="flex flex-col gap-8">
-              <div>
-                <h3 class="text-xl font-bold">Premium</h3>
-
+              <div class="flex flex-row justify-between">
                 <div v-if="routerResult">
+                  <h3 class="text-xl font-bold">Premium</h3>
                   <p>Premium + gas: {{ routerResult.premiumGas }}</p>
                   <p>Premium: {{ routerResult.premium }}</p>
                 </div>
                 <div v-else class="text-center">
                   <p class="text-white/40 uppercase">No result found</p>
                 </div>
+                <div>
+                  <BaseButton
+                    :label="t('counterparties')"
+                    :disabled="counterpartiesLoading"
+                    @click="loadCounterparties()"
+                  >
+                    <template #pre-icon
+                      ><i
+                        class="i-ph-arrows-clockwise mr-1"
+                        :class="counterpartiesLoading && 'animate-spin'"
+                      ></i
+                    ></template>
+                  </BaseButton>
+                </div>
               </div>
               <div>
-                <div v-if="routerResult?.counterparties">
-                  <h3 class="text-xl font-bold mb-4">
-                    <span
-                      class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full mr-2"
-                      >{{ routerResult.counterparties.length }}</span
-                    >Counterparties
+                <div class="flex flex-row items-center gap-2 mb-4">
+                  <div
+                    class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
+                  >
+                    <span v-if="routerResult?.counterparties">
+                      {{ routerResult.counterparties.length }}
+                    </span>
+                    <span v-else-if="counterpartiesLoading || strategyLoading"
+                      ><i class="i-ph-arrows-clockwise animate spin"></i
+                    ></span>
+                    <span v-else>no</span>
+                  </div>
+                  <h3 class="text-xl font-bold capitalize">
+                    {{ counterpartiesText }}
                   </h3>
+                </div>
+                <div v-if="routerResult?.counterparties">
                   <BaseCard
                     v-for="(cp, index) in routerResult.counterparties"
                     :key="index"
@@ -764,6 +805,25 @@ const testAddBlock = async (addHours: number) => {
                     >
                   </BaseCard>
                 </div>
+                <div v-else-if="counterpartiesLoading">
+                  <div class="animate-pulse flex space-x-4">
+                    <div class="rounded-full bg-slate-700 h-10 w-10"></div>
+                    <div class="flex-1 space-y-6 py-1">
+                      <div class="h-2 bg-slate-700 rounded"></div>
+                      <div class="space-y-3">
+                        <div class="grid grid-cols-3 gap-4">
+                          <div
+                            class="h-2 bg-slate-700 rounded col-span-2"
+                          ></div>
+                          <div
+                            class="h-2 bg-slate-700 rounded col-span-1"
+                          ></div>
+                        </div>
+                        <div class="h-2 bg-slate-700 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div v-else class="text-center">
                   <p class="text-white/40 text-3xl uppercase">
                     No result found
@@ -774,205 +834,106 @@ const testAddBlock = async (addHours: number) => {
           </BaseCard>
           <BaseCard class="p-6">
             <h1 class="text-xl font-semibold">Uniswap route</h1>
-            <div class="grid md:grid-cols-3">
-              <TokenSwap
-                :token-input="WETH"
-                :token-output="USDC"
-                :input-amount-to-swap="totalAmountToSwap"
-                :recipient-address="walletAddress"
-                :route-data="uniswapRouteData"
-                :router-loading="routerLoading"
-                class="md:col-span-2"
-              />
-              <div>
-                <div class="flex flex-col justify-start gap-4">
-                  <BaseButton
-                    label="route"
-                    :disabled="routerLoading"
-                    @click="loadEnterPositionRoute()"
-                  >
-                    <template #pre-icon>
-                      <i class="i-ph-arrows-clockwise mr-1"></i>
-                    </template>
-                  </BaseButton>
-                  <BaseButton
-                    label="enter position"
-                    :disabled="!uniswapRouteData || routerLoading"
-                    @click="enterPosition()"
-                  ></BaseButton>
-                  <BaseButton
-                    :label="
-                      routerPolling ? 'Turn off polling' : 'Turn on polling'
-                    "
-                    :disabled="routerLoading"
-                    @click="togglePolling"
-                  ></BaseButton>
-                </div>
-                <div v-if="uniswapRouteData">
-                  <div>
-                    <p>Quote for</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        JSON.stringify(uniswapRouteData.quote, null, 2)
-                      }}</pre
-                    >
-                  </div>
+            <div
+              class="flex flex-row-reverse md:flex-row justify-between gap-4 my-4"
+            >
+              <div class="flex md:flex-row gap-4">
+                <BaseButton
+                  label="route"
+                  :disabled="routerLoading || enterPositionLoading"
+                  @click="loadEnterPositionRoute()"
+                >
+                  <template #pre-icon>
+                    <i
+                      class="i-ph-arrows-clockwise mr-1"
+                      :class="routerLoading && 'animate-spin'"
+                    ></i>
+                  </template>
+                </BaseButton>
 
-                  <div>
-                    <p class="text-lg">Quote</p>
-                    <p>Quote gas adjusted</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ uniswapRouteData.quoteGasAdjusted.toFixed(4) }}</pre
-                    >
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        JSON.stringify(
-                          uniswapRouteData.quoteGasAdjusted.currency,
-                          null,
-                          2
-                        )
-                      }}</pre
-                    >
-                    <p>Estimated gas used</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ uniswapRouteData.estimatedGasUsed.toNumber() }}</pre
-                    >
-                    <p>Gas used USD</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        uniswapRouteData.estimatedGasUsedUSD.toFixed(6)
-                      }}</pre
-                    >
-                  </div>
-                  <div>
-                    <p>Parameters</p>
-                    <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{
-                        JSON.stringify(
-                          uniswapRouteData.methodParameters,
-                          null,
-                          2
-                        )
-                      }}</pre
-                    >
-                  </div>
-                </div>
-                <div v-else>No quote available</div>
+                <BaseButton
+                  :label="routerPolling ? 'disable polling' : 'enable polling'"
+                  :disabled="routerLoading"
+                  @click="toggleUniswapPolling"
+                ></BaseButton>
               </div>
+              <BaseButton
+                label="enter position"
+                palette="secondary"
+                :disabled="
+                  !uniswapRouteData || routerLoading || enterPositionLoading
+                "
+                :loading="enterPositionLoading"
+                @click="enterPosition()"
+              ></BaseButton>
             </div>
+            <TokenSwap
+              :route-data="uniswapRouteData"
+              :router-loading="routerLoading"
+            />
           </BaseCard>
         </TabNavigationComponent>
       </div>
-      <!-- <p v-else>position cant be entered</p> -->
-      <template v-if="canPositionBeExited">
-        <BaseCard class="p-6">
-          <h1 class="text-xl font-semibold">Uniswap route</h1>
-          <div class="grid md:grid-cols-3">
-            <div class="md:col-span-2">
-              <InputNumber
-                v-model.number="expectedPriceRate"
-                color="no-bg"
-                :title="t('expected_price_rate')"
-                :min="1"
-                :step="0.1"
-                unit="USDC"
-                :footer-description="t('max_strike_price')"
-                @valid-input="isExpectedPriceRateValid = $event"
-              />
-              <TokenSwap
-                :token-input="USDC"
-                :token-output="WETH"
-                :input-amount-to-swap="totalAmountToSwap"
-                :recipient-address="walletAddress"
-                :route-data="uniswapRouteData"
-                :router-loading="routerLoading"
-              />
-            </div>
+      <!-- END ENTER POSITION -->
+      <!-- START EXIT POSITION -->
+      <BaseCard v-else-if="canPositionBeExited" class="p-6">
+        <h1 class="text-xl font-semibold">Uniswap route</h1>
+        <div
+          class="flex flex-row-reverse md:flex-row justify-between gap-4 my-4"
+        >
+          <div class="flex md:flex-row gap-4">
+            <BaseButton
+              label="route"
+              :disabled="routerLoading || exitPositionLoading"
+              @click="loadExitPositionRoute()"
+            >
+              <template #pre-icon>
+                <i
+                  class="i-ph-arrows-clockwise mr-1"
+                  :class="routerLoading && 'animate-spin'"
+                ></i> </template
+            ></BaseButton>
 
-            <div>
-              <div class="flex flex-col justify-start gap-4">
-                <BaseButton
-                  label="route"
-                  :disabled="routerLoading"
-                  @click="loadExitPositionRoute()"
-                >
-                  <template #pre-icon>
-                    <i class="i-ph-arrows-clockwise mr-1"></i> </template
-                ></BaseButton>
-                <BaseButton
-                  label="exit position"
-                  :disabled="!uniswapRouteData || routerLoading"
-                  @click="exitPosition()"
-                ></BaseButton>
-                <BaseButton
-                  :label="
-                    routerPolling ? 'Turn off polling' : 'Turn on polling'
-                  "
-                  :disabled="routerLoading"
-                  @click="togglePolling"
-                ></BaseButton>
-              </div>
-              <div v-if="uniswapRouteData">
-                <div>
-                  <p>Quote for</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ JSON.stringify(uniswapRouteData.quote, null, 2) }}</pre
-                  >
-                </div>
-
-                <div>
-                  <p class="text-lg">Quote</p>
-                  <p>Quote gas adjusted</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ uniswapRouteData.quoteGasAdjusted.toFixed(4) }}</pre
-                  >
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(
-                        uniswapRouteData.quoteGasAdjusted.currency,
-                        null,
-                        2
-                      )
-                    }}</pre
-                  >
-                  <p>Estimated gas used</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ uniswapRouteData.estimatedGasUsed.toNumber() }}</pre
-                  >
-                  <p>Gas used USD</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ uniswapRouteData.estimatedGasUsedUSD.toFixed(6) }}</pre
-                  >
-                </div>
-                <div>
-                  <p>Parameters</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{
-                      JSON.stringify(uniswapRouteData.methodParameters, null, 2)
-                    }}</pre
-                  >
-                </div>
-              </div>
-              <div v-else>No quote available</div>
-            </div>
+            <BaseButton
+              :label="routerPolling ? 'disable polling' : 'enable polling'"
+              :disabled="routerLoading"
+              @click="toggleUniswapPolling"
+            ></BaseButton>
           </div>
-        </BaseCard>
-      </template>
-      <!-- <p v-else>Position cant be exited</p> -->
+          <BaseButton
+            label="exit position"
+            palette="secondary"
+            :disabled="
+              !uniswapRouteData || routerLoading || exitPositionLoading
+            "
+            :loading="exitPositionLoading"
+            @click="exitPosition()"
+          ></BaseButton>
+        </div>
+        <InputNumber
+          v-model.number="expectedPriceRate"
+          color="no-bg"
+          :title="t('expected_price_rate')"
+          :min="1"
+          :step="0.1"
+          unit="USDC"
+          :footer-description="t('max_strike_price')"
+          @valid-input="isExpectedPriceRateValid = $event"
+        />
+        <TokenSwap
+          :route-data="uniswapRouteData"
+          :router-loading="routerLoading"
+        />
+      </BaseCard>
+      <!-- END EXIT POSITION -->
+      <div v-else class="flex items-center justify-center h-full">
+        <p class="text-4xl text-dwhite-400 text-opacity-20">
+          No action available
+        </p>
+      </div>
     </div>
   </div>
+  <!-- END CONTET -->
   <NotificationDisplay
     :toasts="notifications"
     @hide-toast="(index: string) => removeToast(index)"
