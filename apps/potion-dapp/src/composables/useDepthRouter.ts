@@ -51,6 +51,7 @@ export const useDepthRouter = (
   });
   const routerRunning = ref(false);
   const runRouter = async () => {
+    routerRunning.value = true;
     const rawCriterias = toRaw(unref(criterias));
     poolSets.value = await getPoolsFromCriterias(rawCriterias);
     const { pools, orderSize, strikePriceUSDC, gas, ethPrice } =
@@ -67,7 +68,7 @@ export const useDepthRouter = (
         gas,
         ethPrice,
       });
-      routerRunning.value = true;
+
       routerResult.value = await worker.runDepthRouter(
         pools,
         orderSize,
@@ -75,8 +76,9 @@ export const useDepthRouter = (
         gas,
         ethPrice
       );
-      routerRunning.value = false;
     }
+
+    routerRunning.value = false;
   };
   const formattedMarketSize = computed(() => {
     if (marketSize.value > 0) {

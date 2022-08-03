@@ -35,38 +35,61 @@ export const useAlphaRouter = (chainId: ChainId) => {
     }
   };
 
-  // Get a swap route from input Token to output Token for the input token amount
+  //
+  /**
+   * Get a swap route from input Token to output Token for a specific amount
+   *
+   * @param inputToken The token to swap from
+   * @param outputToken The token to swap to
+   * @param tradeType Type of the trade. either EXACT_INPUT or EXACT_OUTPUT.
+   * @param tokenAmount For EXACT_INPUT swaps this is the input token amount. For EXACT_OUTPUT swaps this is the output token amount to expect from the swap.
+   * @param maxSplits Max number of split routes to allow
+   * @param recipientAddress The address of the recipient for each trade hop
+   * @param deadlineTimestamp
+   * @param slippageToleranceInteger
+   *
+   */
   const getRoute = async (
     inputToken: Token,
-    inputTokenAmount: number,
     outputToken: Token,
-    recipientAddress: string,
     tradeType: TradeType,
+    tokenAmount: number,
+    maxSplits: number,
+    recipientAddress: string,
     deadlineTimestamp: number,
     slippageToleranceInteger = 1
   ) => {
     routerError.value = null;
     routerLoading.value = true;
-    console.log(
-      "GETTING ALPHA ROUTE",
-      inputToken,
-      inputTokenAmount,
-      outputToken
-    );
+    console.log("GETTING ALPHA ROUTE", inputToken, tokenAmount, outputToken);
     try {
-      const alphaRouter = initAlphaRouter();
+      const inputTokenSwap =
+        tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
+      const outputTokenSwap =
+        tradeType === TradeType.EXACT_INPUT ? outputToken : inputToken;
+
+      const tokenAmountWithDecimals =
+        Math.ceil(tokenAmount) * 10 ** inputTokenSwap.decimals;
       const deadline =
         deadlineTimestamp !== undefined
           ? deadlineTimestamp
           : Math.floor(Date.now() / 1000 + 1800);
-      const tokenAmount = CurrencyAmount.fromRawAmount(
-        inputToken,
-        JSBI.BigInt(Math.ceil(inputTokenAmount).toString()) // TODO check
+
+      const currencyAmount = CurrencyAmount.fromRawAmount(
+        inputTokenSwap,
+        JSBI.BigInt(tokenAmountWithDecimals.toString()) // TODO check
       );
 
-      const route = await alphaRouter.route(
+      console.log(
+        "QUERY ALPHA FOR AMOUNT",
         tokenAmount,
-        outputToken,
+        tokenAmountWithDecimals,
+        currencyAmount.currency.name
+      );
+      const alphaRouter = initAlphaRouter();
+      const route = await alphaRouter.route(
+        currencyAmount,
+        outputTokenSwap,
         tradeType,
         {
           recipient: recipientAddress,
@@ -74,7 +97,7 @@ export const useAlphaRouter = (chainId: ChainId) => {
           deadline: deadline,
         },
         {
-          maxSplits: 1, // TODO remove: assert here theres only 1 route returned (no split routes)
+          maxSplits: maxSplits,
         }
       );
       console.log("ALPHA ROUTER ROUTE", route);
@@ -89,18 +112,13 @@ export const useAlphaRouter = (chainId: ChainId) => {
         throw new Error("No route found");
       }
 
-      // TODO remove: assert here theres only 1 route returned (no split routes)
-      if (route.route.length > 1) {
-        console.log(route.route);
-        throw new Error("No split routes allowed for token swapping");
-      }
-
       routerData.value = route;
     } catch (error) {
       routerError.value =
         error instanceof Error
           ? `Cannot get uniswap route: ${error.message}`
           : "Cannot get uniswap route";
+      routerData.value = null;
 
       console.log(error);
     } finally {

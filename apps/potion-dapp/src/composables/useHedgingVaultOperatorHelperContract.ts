@@ -246,7 +246,7 @@ export function useHedgingVaultOperatorHelperContract() {
           : `Cannot get current position: ${error}`;
       canPositionBeExitedError.value = errorMessage;
 
-      throw new Error(errorMessage);
+      //throw new Error(errorMessage);
       canPositionBeExited.value = false;
     } finally {
       canPositionBeExitedLoading.value = false;

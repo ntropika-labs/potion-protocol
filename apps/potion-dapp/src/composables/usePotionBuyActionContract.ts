@@ -275,7 +275,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
           : "Cannot get current payout";
       currentPayoutError.value = errorMessage;
 
-      throw new Error(errorMessage);
+      //throw new Error(errorMessage);
     } finally {
       currentPayoutLoading.value = false;
     }
