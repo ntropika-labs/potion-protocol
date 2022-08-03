@@ -33,6 +33,7 @@ export interface Props {
   fromTimestamps?: boolean;
   absoluteValue?: boolean;
   horizontal?: boolean;
+  isLoading?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   size: "md",
@@ -42,26 +43,38 @@ const props = withDefaults(defineProps<Props>(), {
   fromTimestamps: true,
   absoluteValue: false,
   horizontal: false,
+  isLoading: false,
 });
 const sizeClass = computed(() => labelSizeMap.get(props.size));
 
 const timeDifference = computed(() => {
-  const fromT = props.fromTimestamps
-    ? dayjs.unix(parseInt(props.timeFrom))
-    : dayjs(props.timeFrom);
-  const toT = props.fromTimestamps
-    ? dayjs.unix(parseInt(props.timeTo))
-    : dayjs(props.timeTo);
+  let fromTime = null;
+  let toTime = null;
 
-  if (
-    !fromT.isValid() ||
-    !toT.isValid() ||
-    (!props.absoluteValue && toT.isBefore(fromT))
-  ) {
-    return "-";
+  if (props.fromTimestamps) {
+    if (
+      Number.isSafeInteger(props.timeFrom) &&
+      Number.isSafeInteger(props.timeTo)
+    ) {
+      fromTime = dayjs.unix(parseInt(props.timeFrom));
+      toTime = dayjs.unix(parseInt(props.timeTo));
+    }
+  } else {
+    fromTime = dayjs(props.timeFrom);
+    toTime = dayjs(props.timeTo);
   }
 
-  return getTimeDifference(fromT, toT);
+  if (
+    fromTime &&
+    toTime &&
+    fromTime.isValid() &&
+    toTime.isValid() &&
+    (props.absoluteValue || (!props.absoluteValue && fromTime.isBefore(toTime))) // enable absolute values or require a valid diff
+  ) {
+    return getTimeDifference(fromTime, toTime);
+  }
+
+  return "-";
 });
 </script>
 <template>
@@ -73,7 +86,7 @@ const timeDifference = computed(() => {
     <h5 class="mb-2 font-medium capitalize" :class="sizeClass">
       {{ props.title }}
     </h5>
-    <BaseTag :size="props.size">
+    <BaseTag :size="props.size" :is-loading="props.isLoading">
       <span :class="timeColorClass">{{ timeDifference }}</span>
     </BaseTag>
   </div>

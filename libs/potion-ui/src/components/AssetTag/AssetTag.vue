@@ -24,11 +24,13 @@ export interface Props {
   tokens?: Token[];
   token?: Token;
   size?: LabelSize;
+  isLoading: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   tokens: undefined,
   token: undefined,
   size: "md",
+  isLoading: false,
 });
 const sizeClass = computed(() => labelSizeMap.get(props.size));
 </script>
@@ -43,6 +45,7 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         :address="tkn.address"
         :name="tkn.name"
         :image="tkn.image"
+        :is-loading="props.isLoading"
       />
     </div>
     <div v-else-if="props.token" class="flex flex-wrap items-center">
@@ -51,6 +54,7 @@ const sizeClass = computed(() => labelSizeMap.get(props.size));
         :address="props.token.address"
         :name="props.token.name"
         :image="props.token.image"
+        :is-loading="props.isLoading"
       />
       <p class="text-dwhite-300 font-bold uppercase">
         {{ props.token.symbol }}
