@@ -117,6 +117,7 @@
     "@web3-onboard/injected-wallets": "^2.0.6",
     "@web3-onboard/walletconnect": "^2.0.1",
     "billboard.js": "^3.4.1",
+    "c8": "^7.12.0",
     "chai": "^4.3.6",
     "chai-ethers-bn": "^0.0.3",
     "cli-progress": "^3.10.0",
