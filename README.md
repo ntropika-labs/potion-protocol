@@ -138,6 +138,11 @@ Every time that you do a fast forward remember to update your starting time to r
 
 ## Testing
 
+### unit test
+The project implements unit tests for `potion-contracts` with [Hardhat](https://hardhat.org/), `potion-subgraph` with [Matchstick](https://thegraph.com/docs/en/developing/unit-testing-framework/) and [Vitest](https://vitest.dev) for `potion-dapp` and `potion-ui`.
+Every package has at least one script (eg, `test-unit`) to launch them, for more details check the specific `package.json` of that package.
+
+### e2e
 The project currently implements e2e testing for `potion-dapp` and component testing for `potion-ui`.
 Both workspaces are configured to use [Cypress](https://github.com/cypress-io/cypress) as a testing tool.
 
