@@ -68,7 +68,7 @@ const useUnderlyingLiquidity = (underlyingAddressParam: MaybeStringRef) => {
 
   watch(data, () => {
     let maxLoadedStrike = 0;
-    data?.value?.criterias.forEach(({ criteriaSets, maxStrikePercent }) => {
+    data?.value?.criterias?.forEach(({ criteriaSets, maxStrikePercent }) => {
       const templates =
         criteriaSets?.reduce(
           (acc, { criteriaSet }) =>
@@ -80,7 +80,7 @@ const useUnderlyingLiquidity = (underlyingAddressParam: MaybeStringRef) => {
       }
     });
     alreadyLoadedIds.value = alreadyLoadedIds.value.concat(
-      data?.value?.criterias.map(({ id }) => id) ?? []
+      data?.value?.criterias?.map(({ id }) => id) ?? []
     );
     alreadyLoadedStrikes.value.set(
       unref(underlyingAddress),
@@ -129,7 +129,7 @@ const useStrikeLiquidity = (
   });
   watch(data, () => {
     let maxLoadedDuration = 0;
-    data?.value?.criterias.forEach(({ criteriaSets, maxDurationInDays }) => {
+    data?.value?.criterias?.forEach(({ criteriaSets, maxDurationInDays }) => {
       const templates =
         criteriaSets?.reduce(
           (acc, { criteriaSet }) =>
@@ -144,7 +144,7 @@ const useStrikeLiquidity = (
       }
     });
     alreadyLoadedIds.value = alreadyLoadedIds.value.concat(
-      data?.value?.criterias.map(({ id }) => id) ?? []
+      data?.value?.criterias?.map(({ id }) => id) ?? []
     );
     alreadyLoadedDurations.value.set(
       unref(underlyingAddress),
