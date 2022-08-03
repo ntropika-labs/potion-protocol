@@ -797,7 +797,7 @@ const testAddBlock = async (addHours: number) => {
                   </BaseButton>
                   <BaseButton
                     label="enter position"
-                    :disabled="!uniswapRouteData || enterPositionLoading"
+                    :disabled="!uniswapRouteData || routerLoading"
                     @click="enterPosition()"
                   ></BaseButton>
                   <BaseButton
@@ -907,7 +907,7 @@ const testAddBlock = async (addHours: number) => {
                 ></BaseButton>
                 <BaseButton
                   label="exit position"
-                  :disabled="!uniswapRouteData || exitPositionLoading"
+                  :disabled="!uniswapRouteData || routerLoading"
                   @click="exitPosition()"
                 ></BaseButton>
                 <BaseButton

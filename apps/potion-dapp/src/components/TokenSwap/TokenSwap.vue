@@ -30,18 +30,7 @@ const props = defineProps<Props>();
 // );
 // let pollingIntervalId: any = null;
 
-// watch(routePollingEnabled, (doPolling) => {
-//   console.log("toggling polling", doPolling);
-//   if (doPolling === true) {
-//     pollingIntervalId = setInterval(fetchRouteForTokens, 60000);
-//     console.log(
-//       `next polling in ${props.pollingIntervalSecs} seconds`,
-//       pollingIntervalId
-//     );
-//   } else if (pollingIntervalId) {
-//     clearInterval(pollingIntervalId);
-//   }
-// });
+// 
 const emit = defineEmits<{
   (e: "swap-available"): void;
   (e: "swap-selected", selectedSwap: any): void;
