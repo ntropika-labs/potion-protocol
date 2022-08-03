@@ -44,6 +44,9 @@ import { useOtokenFactory } from "@/composables/useOtokenFactory";
 /**
  * Const
  */
+const MODE = process.env.NODE_ENV;
+const IS_DEV_ENV = MODE === "development";
+
 const USDC = new Token(
   ChainId.MAINNET,
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -276,20 +279,25 @@ const loadExitPositionRoute = async () => {
 };
 
 const exitPosition = async () => {
-  if (!uniswapRouteData.value) return;
+  if (!uniswapRouteData.value || !uniswapRouteData.value.route) return;
 
   toggleUniswapPolling(false);
 
   const swapRoute = uniswapRouteData.value.route[0];
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const expectedPriceRate = IS_DEV_ENV
+    ? (1 / oraclePrice.value).toFixed(6)
+    : uniswapRouteData.value?.trade.executionPrice.invert().toFixed(6);
 
   const swapInfo = {
     steps: [
       { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
     ],
     outputTokenAddress: tokenAsset.value.address,
-    expectedPriceRate: "0.001", // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+    expectedPriceRate: expectedPriceRate, //"0.001", // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
   };
+
+  console.log("expectedPriceRate", expectedPriceRate);
 
   await vaultExitPosition(swapInfo);
 };
@@ -310,6 +318,12 @@ const loadEnterPositionRoute = async () => {
     1, // TODO remove: assert here theres only 1 route returned (no split routes)
     walletAddress.value,
     swapSlippage.value
+  );
+
+  console.log(
+    "EXECUTION PRICE",
+    uniswapRouteData.value?.trade.executionPrice,
+    uniswapRouteData.value?.trade.executionPrice.toFixed(10)
   );
 };
 const enterPosition = async () => {
@@ -348,10 +362,13 @@ const enterPosition = async () => {
   });
 
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const expectedPriceRate = IS_DEV_ENV
+    ? oraclePrice.value.toFixed(6)
+    : uniswapRouteData.value?.trade.executionPrice.toFixed(6);
   const swapInfo = {
     steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
     outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: 1000, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
+    expectedPriceRate: expectedPriceRate, //1000, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
   };
 
   const potionBuyInfo = {
@@ -363,6 +380,8 @@ const enterPosition = async () => {
     expectedPremiumInUSDC: routerResult.value.premium.toFixed(6),
     totalSizeInPotions: numberOfOtokensToBuyBN.value,
   };
+
+  console.log("expectedPriceRate", expectedPriceRate);
 
   vaultEnterPosition(swapInfo, potionBuyInfo);
 };
@@ -853,7 +872,7 @@ const testAddBlock = async (addHours: number) => {
 
                 <BaseButton
                   :label="routerPolling ? 'disable polling' : 'enable polling'"
-                  :disabled="routerLoading"
+                  :disabled="routerLoading || enterPositionLoading"
                   @click="toggleUniswapPolling"
                 ></BaseButton>
               </div>
@@ -877,7 +896,9 @@ const testAddBlock = async (addHours: number) => {
       <!-- END ENTER POSITION -->
       <!-- START EXIT POSITION -->
       <BaseCard v-else-if="canPositionBeExited" class="p-6">
-        <h1 class="text-xl font-semibold">Uniswap route</h1>
+        <h1 class="text-xl font-semibold">Exit position</h1>
+        <hr class="opacity-40 my-4" />
+        <h3 class="text-xl font-semibold">Uniswap route</h3>
         <div
           class="flex flex-row-reverse md:flex-row justify-between gap-4 my-4"
         >
@@ -896,7 +917,7 @@ const testAddBlock = async (addHours: number) => {
 
             <BaseButton
               :label="routerPolling ? 'disable polling' : 'enable polling'"
-              :disabled="routerLoading"
+              :disabled="routerLoading || exitPositionLoading"
               @click="toggleUniswapPolling"
             ></BaseButton>
           </div>

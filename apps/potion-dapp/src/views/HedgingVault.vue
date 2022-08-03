@@ -73,42 +73,49 @@
             symbol: assetSymbol,
             address: assetAddress,
           }"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
           :value="principalPercentages[0].toString()"
           symbol="%"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('strike')"
           :value="strikePercentage.toString()"
           symbol="%"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('cycle_duration')"
           :value="cycleDurationDays.toString()"
           symbol="days"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium')"
           :value="maxPremiumPercentage.toString()"
           symbol="%"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium_slippage')"
           :value="premiumSlippage.toString()"
           symbol="%"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_swap_slippage')"
           :value="swapSlippage.toString()"
           symbol="%"
+          :loading="strategyLoading"
         />
       </BaseCard>
       <div class="col-span-4 self-start">
@@ -122,6 +129,7 @@
               :title="t('time_left_until_next_cycle')"
               :time-from="blockTimestamp.toString()"
               :time-to="nextCycleTimestamp.toString()"
+              :loading="strategyLoading"
             />
           </div>
           <div class="flex gap-6 w-full mt-5">
@@ -137,7 +145,8 @@
               <BaseButton
                 palette="secondary"
                 :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled"
+                :disabled="depositButtonState.disabled || strategyLoading"
+                :loading="strategyLoading"
                 @click="handleDeposit()"
               />
             </div>
@@ -153,7 +162,8 @@
               <BaseButton
                 palette="secondary"
                 :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled"
+                :disabled="redeemButtonState.disabled || strategyLoading"
+                :loading="strategyLoading"
                 @click="handleRedeem()"
               />
             </div>
@@ -162,7 +172,9 @@
       </div>
     </div>
   </div>
-  <pre>
+  <pre
+    class="broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+  >
     {{ depositReceipt }}
     {{ approveReceipt }}
     {{ redeemReceipt }}
@@ -213,6 +225,7 @@ const {
   nextCycleTimestamp,
   premiumSlippage,
   swapSlippage,
+  strategyLoading,
 } = usePotionBuyActionContract(PotionBuyAction.address);
 const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId);

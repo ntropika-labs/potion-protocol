@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
+import { Token as UniswapToken, TradeType } from "@uniswap/sdk-core";
 import type { Token } from "dapp-types";
 export default defineComponent({
   name: "TokenSelection",
@@ -22,6 +23,9 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 
 const hasRoute = computed(() => props.routeData && props.routeData.route);
+const isTradeExactInput = computed(
+  () => props.routeData?.trade.tradeType === TradeType.EXACT_INPUT
+);
 const tradeCurrency = computed(() => props.routeData?.trade.inputAmount);
 const tradeCurrencyToken = computed(
   () => props.routeData?.trade.inputAmount.currency as Token
@@ -31,6 +35,9 @@ const quoteCurrencyToken = computed(
   () => props.routeData?.trade.outputAmount.currency as Token
 );
 const routes = computed(() => props.routeData?.route);
+
+const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
+  uniToken as Token;
 </script>
 
 <template>
@@ -46,46 +53,59 @@ const routes = computed(() => props.routeData?.route);
           ><template v-for="(address) in uniRoute.poolAddresses"
           >{{ address }}</template
           ></pre>
-          <h3 class="text-xl font-bold">Quote</h3>
           <hr class="opacity-40 my-4" />
+          <h3 class="text-xl font-bold">Quote</h3>
+
           <div class="grid md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
-              <div class="flex flex-row items-start justify-between my-2">
+              <div class="grid grid-cols-2 items-start justify-between my-2">
                 <AssetTag
                   size="xl"
                   :title="t('currency')"
                   :token="tradeCurrencyToken"
                 />
                 <div>
-                  <p>Final Quote</p>
+                  <p>Amount</p>
                   <pre
                     class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                     >{{ tradeCurrency?.toExact() }}</pre
                   >
-                  <p>Quote gas adjusted</p>
-                  <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
-                  >
+                  <template v-if="!isTradeExactInput">
+                    <p>Quote gas adjusted</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
+                    >
+                  </template>
                 </div>
               </div>
               <div class="text-center">
                 <i class="i-ph-arrow-down-bold w-8 h-8"></i>
               </div>
-              <div class="flex flex-row items-start justify-between my-2">
+              <div class="grid grid-cols-2 items-start justify-between my-2">
                 <AssetTag
                   size="xl"
                   :title="t('currency')"
                   :token="quoteCurrencyToken"
                 />
-                <pre
-                  class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                  >{{ quoteCurrency?.toExact() }}</pre
-                >
+                <div>
+                  <p>Amount</p>
+                  <pre
+                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ quoteCurrency?.toExact() }}</pre
+                  >
+                  <template v-if="isTradeExactInput">
+                    <p>Quote gas adjusted</p>
+                    <pre
+                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
+                    >
+                  </template>
+                </div>
               </div>
             </div>
             <div
-              class="pl-4 border-t-1 md:(border-t-0 border-l-1) border-white border-opacity-20"
+              class="pl-4 border-t-1 md:(border-t-0 border-l-1) border-white border-opacity-20 mt-2"
             >
               <p>Estimated gas used</p>
               <pre
@@ -101,39 +121,41 @@ const routes = computed(() => props.routeData?.route);
           </div>
           <hr class="opacity-40 my-4" />
           <h3 class="text-xl font-bold">Token path</h3>
-          <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 justify-center p-4">
             <div
               v-for="(step, tokenIndex) in uniRoute.tokenPath"
               :key="tokenIndex"
-              class="flex items-center justify-between"
+              class="flex items-center gap-4"
             >
-              <pre
+              <AssetTag
+                size="xl"
+                :title="t('Token')"
+                :token="uniswapTokenAsToken(step)"
+                class="border-1 rounded-xl border-white border-opacity-10 p-3"
+              />
+              <!-- <pre
                 class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                 >{{ JSON.stringify(step, null, 2) }}</pre
-              >
+              > -->
               <div
                 v-if="tokenIndex < uniRoute.tokenPath.length - 1"
                 class="flex-shrink-0"
               >
-                ->
+                <i class="i-ph-arrow-right-bold w-6 h-6"></i>
               </div>
             </div>
           </div>
           <hr class="opacity-40 my-4" />
-          <h3 class="text-xl font-bold">Route</h3>
+          <h3 class="text-xl font-bold">Trade</h3>
           <pre
             class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ JSON.stringify(uniRoute.route, null, 2) }}</pre
+            >{{ JSON.stringify(props.routeData?.trade, null, 2) }}</pre
           >
           <!-- <p>token path:</p>
-          <pre
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ JSON.stringify(uniRoute.tokenPath, null, 2) }}</pre
-          >
 
           <pre
               class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-              >{{ JSON.stringify(uniswapRouteData.route, null, 2) }}</pre
+              >{{ JSON.stringify(uniswapRouteData.trade, null, 2) }}</pre
             > -->
         </div>
       </div>
