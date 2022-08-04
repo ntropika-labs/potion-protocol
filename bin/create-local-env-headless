@@ -153,8 +153,10 @@ spin_up_environment() {
   msg "${GREEN}Starting local environment...${NOFORMAT}"
 
   # Remove the existing environment if any and all of its volumes
-  docker compose down -v
-  msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
+  if [[ $is_db_seeded -eq 0 ]]; then
+    docker compose down -v
+    msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
+  fi
 
   msg "${GREEN}- Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
@@ -165,34 +167,36 @@ spin_up_environment() {
   msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
   sleep 2
 
-
+  # Check if the ganache db specified in the .env has been already seeded
   if [[ $is_db_seeded -eq 0 ]]; then
+    # If it is a new database deploy the contracts
     msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
 
     yarn nx run potion-contracts:deploy-local
     msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
   fi
 
+  # wait a couple of seconds before deploying the subgraph
   sleep 10
   msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
 
-  yarn nx run potion-subgraph:prepare-local
-  msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
+  # run prepare-local and codegen only on cold starts
+  if [[ $is_environment_running -eq 0 ]]; then
+    yarn nx run potion-subgraph:prepare-local
+    msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
 
-  yarn nx run potion-subgraph:codegen
-  msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
+    yarn nx run potion-subgraph:codegen
+    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
+
+    yarn nx run subgraph-queries:codegen
+    msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
+  fi
 
   yarn nx run potion-subgraph:create-local
   msg "${GREEN}- - Potion subgraph created ${NOFORMAT}"
 
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
   msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
-
-  if [[ $is_db_seeded -eq 0 ]]; then
-
-    yarn nx run subgraph-queries:codegen
-    msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
-  fi
 
   msg "${GREEN} - - stack is ready"
   return 0
