@@ -117,7 +117,7 @@ copy_seed_folder() {
 
   local ganache_volume_folder
   if [[ -z ${GANACHE_VOLUME:-} ]]; then
-    ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+    ganache_volume_folder="$(grep -v '#' < .env | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
   else
     ganache_volume_folder=$GANACHE_VOLUME
   fi

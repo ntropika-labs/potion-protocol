@@ -126,13 +126,13 @@ check_db_seed() {
   local ganache_volume_folder
   local ganache_db_name
   if [[ -z ${GANACHE_VOLUME:-} ]]; then
-    ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+    ganache_volume_folder="$(grep -v '#' < .env | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
   else
     ganache_volume_folder=$GANACHE_VOLUME
   fi
   # strip only '/opt/' from the string
   if [[ -z ${DATABASE_PATH:-} ]]; then
-    ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+    ganache_db_name="$(grep -v '#' < .env | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
   else
     ganache_db_name="$(echo "$DATABASE_PATH" | sed 's/\(\"\|\/opt\/\)//g')"
   fi

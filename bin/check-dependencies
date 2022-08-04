@@ -15,7 +15,7 @@ msg() {
 
 setup_colors
 
-if ! which docker 2>&1 > /dev/null; then
+if ! which docker > /dev/null 2>&1; then
     msg "${RED}- Please install 'docker' first"
     exit 1
 fi
@@ -23,8 +23,8 @@ msg "${GREEN}- 'docker' detected"
 
 docker_version="$(docker -v | cut -d ',' -f1 | cut -d ' ' -f3)"
 
-if ! which docker-compose 2>&1 > /dev/null; then
-    if [ $docker_version -lt "20" ]; then
+if ! which docker-compose > /dev/null 2>&1; then
+    if [ "$docker_version" -lt "20" ]; then
         msg "${RED}- Please install 'docker-compose' first"
     else
         msg "${RED}- Please ensure that you have the 'docker-compose' compatibility layer for your docker version installed"
@@ -33,29 +33,29 @@ if ! which docker-compose 2>&1 > /dev/null; then
 fi
 msg "${GREEN}- 'docker-compose' detected"
 
-if ! which jq 2>&1 > /dev/null; then
+if ! which jq > /dev/null 2>&1; then
     msg "${RED}- Please install 'jq' first"
     exit 1
 fi
 msg "${GREEN}- 'jq' detected"
 
-if ! which node 2>&1 > /dev/null; then
+if ! which node > /dev/null 2>&1; then
   msg "${RED}- Please install 'node' first"
   exit 1
 else
   node_version="$(node -v | cut -d 'v' -f2 | cut -d '.' -f1)"
-  if [ $node_version -lt "16" ]; then
+  if [ "$node_version" -lt "16" ]; then
     msg "${RED}- Node $node_version detected; please ensure that you are using Node 16 instead"
     exit 1
   else 
-    if [ $node_version -gt "16" ]; then
+    if [ "$node_version" -gt "16" ]; then
       msg "${ORANGE}- Node $node_version detected; newer versions than Node 16 haven't been tested"
     fi
   fi
 fi 
 msg "${GREEN}- 'node' detected"
 
-if ! which yarn 2>&1 > /dev/null; then
+if ! which yarn > /dev/null 2>&1; then
   msg "${RED}- Please install 'yarn' first"
   exit 1
 fi 
