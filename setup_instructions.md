@@ -67,13 +67,13 @@ This file contains two main sections describing how to setup the project for loc
 7.  Run the [setup-database-seed](./bin/setup-database-seed) script to automatically copy all database seeds to your `GANACHE_VOLUME` folder
 
     ```bash
-    ./bin/setup-database-seed
+    ./bin/setup-database-seed --all
     ```
 
-8.  Run the [create-local-env](./bin/create-local-env) to bootstrap your environment
+8.  Run the [setup-local-env](./bin/setup-local-env) to bootstrap your environment
 
     ```bash
-    ./bin/create-local-env
+    ./bin/setup-local-env
     ```
 
 9.  To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.

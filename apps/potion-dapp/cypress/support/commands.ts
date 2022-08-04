@@ -69,7 +69,7 @@ Cypress.Commands.add(
             ? (Math.random() + 1).toString(36).substring(7)
             : "0.0.1";
 
-          cy.exec(`cd ../../ && ./bin/create-local-env-headless ${version}`, {
+          cy.exec(`cd ../../ && ./bin/setup-local-env ${version}`, {
             env: { DATABASE_PATH: testSeedPath, CHAIN_TIME: chainTime },
             failOnNonZeroExit: false,
             timeout: 180000,

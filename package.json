@@ -26,7 +26,7 @@
     "lint": "nx lint",
     "lint-affected": "nx affected --target=lint --uncommitted",
     "lint-all": "nx run-many --target=lint --all",
-    "local-env": "./bin/create-local-env-headless",
+    "local-env": "./bin/setup-local-env",
     "set-price": "yarn workspace potion-contracts set-price",
     "storybook": "nx run potion-ui:storybook",
     "test-e2e-ci": "nx run-many --target=test-e2e-ci",
