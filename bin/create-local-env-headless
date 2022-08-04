@@ -169,12 +169,12 @@ spin_up_environment() {
   fi
 
   # Remove the existing environment if any and all of its volumes
-  docker compose -f docker-compose.yml -f docker-compose-ganache.yml down -v
+  docker compose --profile ganache down -v
   msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   
   msg "${GREEN}Starting local environment...${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
-  docker compose -f docker-compose.yml -f docker-compose-ganache.yml up  -d -V 
+  docker compose --profile ganache up  -d -V 
   msg "${GREEN}- - Containers started ${NOFORMAT}"
 
   # ./bin/wait-for-tcp localhost:8545

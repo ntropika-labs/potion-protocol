@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 services:
   graph-node:
     container_name: potion_graph_node
@@ -66,3 +66,26 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  hardhat:
+    container_name: potion_hardhat
+    build:
+      context: ./contracts/hedging-vault
+      dockerfile: Dockerfile.hardhat
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./contracts/hedging-vault:/local_node/project
+    env_file:
+      - .env
+    profiles: ["hardhat"]
+
+  ganache:
+    container_name: potion_ganache
+    image: trufflesuite/ganache:v7.3.0
+    ports:
+      - "8545:8545"
+    volumes:
+      - ${GANACHE_VOLUME}:/opt
+    command: --logging.verbose --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}' --database.dbPath='${DATABASE_PATH}' --miner.blockGasLimit 0x1C9C380 --miner.callGasLimit 0x1C9C380 --miner.defaultTransactionGasLimit 0x1C9C380 --chain.time='${CHAIN_TIME}'
+    profiles: ["ganache"]
