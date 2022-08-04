@@ -82,6 +82,11 @@ This file contains two main sections describing how to setup the project for loc
     ```
     This will make the Vite development server available on `localhost:3000`
 
+### Recording
+
+If you prefer to see a video to help you with the setup you can look at the [setup cast](./examples/setup.cast) with [asciinema](https://github.com/asciinema/asciinema) or directly online
+[![asciicast](https://asciinema.org/a/k9I4Y02g5EKp8OGUd9pJvK2g2.svg)](https://asciinema.org/a/k9I4Y02g5EKp8OGUd9pJvK2g2)
+
 ### Common issues
 
 - `Operation timeout` - Check the environment variables for `GANACHE_VOLUME` and `DATABASE_PATH` are configured properly. Refer to [Using ganache databases](./README.md#using-ganache-databases)
