@@ -53,8 +53,8 @@ const timeDifference = computed(() => {
 
   if (props.fromTimestamps) {
     if (
-      Number.isSafeInteger(props.timeFrom) &&
-      Number.isSafeInteger(props.timeTo)
+      Number.isSafeInteger(+props.timeFrom) &&
+      Number.isSafeInteger(+props.timeTo)
     ) {
       fromTime = dayjs.unix(parseInt(props.timeFrom));
       toTime = dayjs.unix(parseInt(props.timeTo));
