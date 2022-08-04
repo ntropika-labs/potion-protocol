@@ -132,7 +132,7 @@ check_environment_running() {
 spin_up_environment() {
 
   # Remove the existing environment if any and all of its volumes
-  docker compose --profile hardhat down -v
+  docker compose --profile hardhat --profile ganache down -v
   msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   
 
