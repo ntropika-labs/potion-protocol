@@ -107,8 +107,8 @@ check_environment_running() {
       comm -13 <(sort <<<"$running_containers") <(sort <<<"$services")
 
       msg "${NOFORMAT}"
-  elif [ $total_containers -ne 4 ]; then
-      local offline_services=(4 - $total_containers)
+  elif [ "$total_containers" -ne 4 ]; then
+      local offline_services=(4 - "$total_containers")
       msg "${RED}Some services are not running:"
       msg "${RED}- total services not running: ${offline_services} ${NOFORMAT}"
   else
@@ -123,9 +123,19 @@ check_environment_running() {
 }
 
 check_db_seed() {
-  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  local ganache_volume_folder
+  local ganache_db_name
+  if [[ -z ${GANACHE_VOLUME:-} ]]; then
+    ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  else
+    ganache_volume_folder=$GANACHE_VOLUME
+  fi
   # strip only '/opt/' from the string
-  local ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+  if [[ -z ${DATABASE_PATH:-} ]]; then
+    ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+  else
+    ganache_db_name="$(echo "$DATABASE_PATH" | sed 's/\(\"\|\/opt\/\)//g')"
+  fi
   local ganache_db_file="${ganache_volume_folder}/${ganache_db_name}/LOG"
 
   if [[ -s "$ganache_db_file" ]]; then
@@ -161,16 +171,16 @@ spin_up_environment() {
 
     yarn nx run potion-contracts:deploy-local
     msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
-
-    yarn nx run potion-subgraph:prepare-local
-    msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
-
-    yarn nx run potion-subgraph:codegen
-    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
   fi
 
   sleep 10
   msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
+
+  yarn nx run potion-subgraph:prepare-local
+  msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
+
+  yarn nx run potion-subgraph:codegen
+  msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
 
   yarn nx run potion-subgraph:create-local
   msg "${GREEN}- - Potion subgraph created ${NOFORMAT}"
@@ -184,6 +194,7 @@ spin_up_environment() {
     msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
   fi
 
+  msg "${GREEN} - - stack is ready"
   return 0
 }
 
