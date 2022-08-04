@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Copy seeds in the Ganache volume
-        run: bin/prepare-seeds-headless
+        run: bin/setup-database-seed --all
         shell: bash
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}

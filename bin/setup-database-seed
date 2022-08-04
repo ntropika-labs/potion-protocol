@@ -103,8 +103,8 @@ copy_folders() {
       docker run --rm -v "$volume_folder:/data" busybox rm -i -rf "${destination_folder}/*"
       docker cp "$pathname"/* "docker_cp_helper:$destination_folder"
     else
-      docker run --rm -v "$volume_folder:/data" busybox rm -i -rf $destination_folder
-      docker cp $pathname "docker_cp_helper:$destination_folder"
+      docker run --rm -v "$volume_folder:/data" busybox rm -i -rf "$destination_folder"
+      docker cp "$pathname" "docker_cp_helper:$destination_folder"
     fi
   done
   docker rm docker_cp_helper
@@ -113,9 +113,15 @@ copy_folders() {
 }
 
 copy_seed_folder() {
-  local current_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
-  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
-  local absolute_volume_folder=$(realpath $ganache_volume_folder)
+  # local current_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
+
+  local ganache_volume_folder
+  if [[ -z $GANACHE_VOLUME ]]; then
+    ganache_volume_folder=$GANACHE_VOLUME
+  else
+    ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  fi
+  local absolute_volume_folder=$(realpath "$ganache_volume_folder")
   
   local ganache_db_folder="${ganache_volume_folder}/${seed_name}"
   local ganache_db_file="${ganache_db_folder}/LOG"
