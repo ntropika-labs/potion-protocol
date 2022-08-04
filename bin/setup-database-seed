@@ -116,7 +116,7 @@ copy_seed_folder() {
   # local current_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
 
   local ganache_volume_folder
-  if [[ -z $GANACHE_VOLUME ]]; then
+  if [[ -z ${GANACHE_VOLUME:-} ]]; then
     ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
   else
     ganache_volume_folder=$GANACHE_VOLUME

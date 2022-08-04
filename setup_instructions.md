@@ -64,10 +64,10 @@ This file contains two main sections describing how to setup the project for loc
     yarn install
     ```
 
-7.  Run the [prepare-seeds](./bin/prepare-seeds) script to automatically copy all database seeds to your `GANACHE_VOLUME` folder
+7.  Run the [setup-database-seed](./bin/setup-database-seed) script to automatically copy all database seeds to your `GANACHE_VOLUME` folder
 
     ```bash
-    sudo ./bin/prepare-seeds
+    ./bin/setup-database-seed
     ```
 
 8.  Run the [create-local-env](./bin/create-local-env) to bootstrap your environment

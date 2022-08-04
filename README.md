@@ -41,7 +41,7 @@ Run `cp .env.example .env` to copy the environment example file and customize th
   A default API key is generated when you sign up and is available in the Dashboard.
 - Setup [Ganache volume](#using-ganache-databases)
 
-- Run `sudo ./bin/prepare-seeds` to automatically copy all database seeds to your `GANACHE_VOLUME` folder using the [prepare-seeds](./bin/prepare-seeds) script
+- Run `./bin/setup-database-seed` to automatically copy all database seeds to your `GANACHE_VOLUME` folder using the [setup-database-seed](./bin/setup-database-seed) script
 
 - Run `./bin/create-local-env` to bootstrap your development environment
 
@@ -66,7 +66,7 @@ To make prototyping and testing easier to handle, we have prepared a set of [dat
 
 ### Creating/restoring databases
 
-1. Copy the databases in the `ganache_seeds` to the bind mount folder (there is a `prepare-seeds` script into the `bin` folder that will copy the databases in the correct place using your `.env` file).
+1. Copy the databases in the `ganache_seeds` to the bind mount folder (there is a `setup-database-seed` script into the `bin` folder that will copy the databases in the correct place using your `.env` file).
    It is possible to copy entire folders to "create" a new database (eg, copy the `base` database to `develop`).
 2. If you are using the `base` database ensure that `CHAIN_TIME` is set to **2021-01-01 09:00:00+00:00**
 
@@ -285,8 +285,6 @@ These consist of:
 - `check-dependencies`: Check for Docker dependencies required to run the stack locally
 - `create-local-env`: Spin up local Docker environment removing existing one if any
 - `create-local-env-headless`: Spin up local Docker environment by also checking for available environments and the current Ganache database.
-- `prepare-seeds`: Switch current [Ganache seed](#ganacheseeds) by changing `GANACHE_VOLUME` env variable and refreshing current env
-- `prepare-seeds-headless`: Switch current [Ganache seed](#ganacheseeds) by changing `GANACHE_VOLUME` env variable. _It's used by the CI._
 - `setup-database-seed`: Based on supplied parameters copies one or all seeds to your `DATABASE_PATH` folder. When called with `--all` flag, restores all database seeds from `ganache_seeds` folder and creates the `tests` subfolder used in e2e-testing.  
   _Called by default when running `yarn nx run potion-dapp:local-test-e2e`_
 
