@@ -178,7 +178,7 @@ watch(buyPotionTx, (transaction) => {
   createTransactionNotification(transaction, t("buying_potion"));
 });
 watch(buyPotionReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("usdc_approved"));
+  createReceiptNotification(receipt, t("potion_bought"));
 });
 
 // Select the correct data from the already existing potion after everything has been loaded
