@@ -34,12 +34,16 @@ export const dateFormatter = (value: string, isTimestamp: boolean) => {
   return dayjs(value).format("ll");
 };
 
-export const getEnsOrAddress = (value: string) => {
-  if (value.length === 42 && value.startsWith("0x")) {
-    return `${value.substring(0, 6)}...${value.substring(value.length - 4)}`;
-  }
-  return value;
-};
+export const getEtherscanUrl = (address: string) =>
+  `https://etherscan.io/address/${address}`;
+
+export const formatAddress = (address: string, digits = 4) =>
+  `${address.substring(0, digits + 2)}...${address.substring(
+    address.length - digits
+  )}`;
+
+export const getEnsOrAddress = (value: string) =>
+  value.length === 42 && value.startsWith("0x") ? formatAddress(value) : value;
 
 // PnL formatting
 type PnlTrend = "up" | "down" | "flat";

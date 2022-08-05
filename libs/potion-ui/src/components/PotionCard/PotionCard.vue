@@ -55,7 +55,7 @@ import type { Token, SelectableToken } from "dapp-types";
 import { useI18n } from "vue-i18n";
 
 export interface Props {
-  token: Token | SelectableToken;
+  token: Token | SelectableToken | undefined;
   otokenAddress: string;
   strikePrice: string;
   expiration: string;

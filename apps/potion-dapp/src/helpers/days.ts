@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
 import _isNil from "lodash.isnil";
-
+import localizedFormat from "dayjs/plugin/localizedFormat";
 import { createValidExpiry } from "./time";
+
+dayjs.extend(localizedFormat);
 
 const _exists = (x: number) => !_isNil(x);
 

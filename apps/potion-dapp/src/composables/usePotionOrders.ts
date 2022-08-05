@@ -3,7 +3,7 @@ import { ref, computed, watch, unref } from "vue";
 import type { Ref } from "vue";
 import type { GetOrderBookEntriesQuery } from "subgraph-queries/generated/operations";
 
-type OrderBookEntries = GetOrderBookEntriesQuery["orderBookEntries"];
+export type OrderBookEntries = GetOrderBookEntriesQuery["orderBookEntries"];
 
 const usePotionOrders = (address: string | Ref<string>) => {
   const orders = ref<OrderBookEntries>([]);
