@@ -2,16 +2,15 @@
 import { BaseCard } from "potion-ui";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
-import { usePotionOrders } from "@/composables/usePotionOrders";
+import type { OrderBookEntries } from "@/composables/usePotionOrders";
 
 interface Props {
-  address: string;
+  orders: OrderBookEntries;
 }
 
 const props = defineProps<Props>();
 
 const { t } = useI18n();
-const { orders } = usePotionOrders(props.address);
 </script>
 
 <template>
@@ -22,7 +21,7 @@ const { orders } = usePotionOrders(props.address);
       <div class="capitalize text-right">{{ t("quantity") }}</div>
     </div>
     <div
-      v-for="(order, index) in orders"
+      v-for="(order, index) in props.orders"
       :key="`order-${index}`"
       class="flex w-full justify-between py-1 odd:bg-white/10 rounded px-2 mt-0.5"
     >

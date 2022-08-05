@@ -34,7 +34,7 @@
           @update:potion-quantity="potionQuantity = $event"
           @update:slippage="handleSlippageSelection"
         ></ReviewPanel>
-        <OrderBook :address="potionAddress"></OrderBook>
+        <OrderBook :orders="orders"></OrderBook>
       </div>
     </template>
     <NotificationDisplay
@@ -64,6 +64,7 @@ import { useBuyPotions } from "@/composables/useBuyPotions";
 import { useUserData } from "@/composables/useUserData";
 import { useRoutePotionId } from "@/composables/useRoutePotionId";
 import { usePotion } from "@/composables/usePotion";
+import { usePotionOrders } from "@/composables/usePotionOrders";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import OrderBook from "@/components/OrderBook.vue";
@@ -89,6 +90,9 @@ const {
   error,
   fetching,
 } = usePotion(potionAddress);
+
+// Orders are loaded from the subgraph
+const { orders } = usePotionOrders(potionAddress);
 
 // Token
 const {
