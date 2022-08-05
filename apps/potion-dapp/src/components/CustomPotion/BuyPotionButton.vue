@@ -63,6 +63,7 @@ const state = computed(() => {
     palette="secondary"
     :label="state.label"
     :disabled="state.disabled"
+    :loading="props.loading"
     @click="emits('buyPotions')"
   />
 </template>

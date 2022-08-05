@@ -14,9 +14,10 @@ interface Props {
   slippage: number;
   balance: number;
   allowance: number;
+  loading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { loading: false });
 const emits = defineEmits<{
   (e: "update:currentStep", value: CustomPotionStep): void;
   (e: "buyPotions"): void;
@@ -81,6 +82,7 @@ const areStepsValid = computed(
       :slippage="props.slippage"
       :allowance="props.allowance"
       :balance="props.balance"
+      :loading="props.loading"
       @buy-potions="emits('buyPotions')"
     ></BuyPotionButton>
   </div>

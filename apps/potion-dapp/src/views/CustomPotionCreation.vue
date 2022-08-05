@@ -75,6 +75,7 @@ const { criterias } = useRouterCriterias(
   durationSelected
 );
 const {
+  routerRunning,
   routerResult,
   maxNumberOfPotions,
   formattedMarketSize,
@@ -211,6 +212,7 @@ watch(buyPotionReceipt, (receipt) => {
       :slippage="premiumSlippage"
       :balance="userCollateralBalance"
       :allowance="userAllowance"
+      :loading="routerRunning"
       @update:current-step="handleChangeStep"
       @buy-potions="handleBuyOrCreatePotions"
     >
