@@ -153,7 +153,7 @@ spin_up_environment() {
   msg "${GREEN}Starting local environment...${NOFORMAT}"
 
   # Remove the existing environment if any and all of its volumes
-  if [[ $is_db_seeded -eq 0 ]]; then
+  if [[ $is_environment_running -eq 1 ]]; then
     docker compose down -v
     msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   fi
