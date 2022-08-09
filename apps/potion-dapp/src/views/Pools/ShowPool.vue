@@ -13,7 +13,6 @@ import {
 } from "potion-ui";
 
 import { contractsAddresses } from "@/helpers/contracts";
-import { getTokenFromAddress } from "@/helpers/tokens";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import LiquidityCard from "@/components/LiquidityCard.vue";
@@ -38,8 +37,6 @@ import { useTokenList } from "@/composables/useTokenList";
 import { useUserData } from "@/composables/useUserData";
 import { useWithdraw } from "@/composables/useWithdraw";
 
-import type { Criteria } from "dapp-types";
-
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -49,7 +46,7 @@ const { fetchUserData, userCollateralBalance } = useUserData();
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const { poolId, poolLp, id } = useRoutePoolId(route.params);
-const { pool, template, fetching, error } = usePool(id);
+const { pool, curve, criterias, fetching, error } = usePool(id);
 
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 
@@ -69,16 +66,6 @@ const performanceChartDataReady = computed(
   () => !loadingSnapshots.value && !loadingBlock.value
 );
 
-const curve = computed(() => template?.value?.curve);
-const criteriaSet = computed(() => template?.value?.criteriaSet);
-const criterias = computed<Criteria[]>(
-  () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
-      token: getTokenFromAddress(criteria.underlyingAsset.address),
-      maxStrike: parseInt(criteria.maxStrikePercent),
-      maxDuration: parseInt(criteria.maxDurationInDays),
-    })) ?? []
-);
 const { assets, tokens, tokenPricesMap } = useCriteriasTokens(criterias);
 
 const poolLocked = computed(() => pool?.value?.locked ?? "0");
@@ -278,7 +265,8 @@ watch(claimCollateralReceipt, (receipt) =>
           :assets-flat="assets"
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
-        ></UnderlyingList>
+        >
+        </UnderlyingList>
         <OtokenClaimTable
           :active-otokens="activeOtokens"
           :expired-otokens="expiredOtokens"
