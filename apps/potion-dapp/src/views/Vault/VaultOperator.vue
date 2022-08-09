@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Token, TradeType } from "@uniswap/sdk-core";
@@ -12,7 +12,7 @@ import {
   BaseCard,
   BaseTag,
   LabelValue,
-  TabNavigationComponent,
+  //TabNavigationComponent,
   TimeTag,
 } from "potion-ui";
 
@@ -39,7 +39,14 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
-// import dayjs from "dayjs";
+import { $fetch } from "ohmyfetch";
+
+const TabNavigationComponent = defineAsyncComponent(
+  () =>
+    import(
+      "potion-ui/src/components/TabNavigationComponent/TabNavigationComponent.vue"
+    )
+);
 
 /**
  * Const
@@ -907,11 +914,7 @@ const testAddBlock = async (addHours: number) => {
                 <BaseButton
                   label="enter position"
                   palette="secondary"
-                  :disabled="
-                    !isEnterPositionOperationValid ||
-                    routerLoading ||
-                    enterPositionLoading
-                  "
+                  :disabled="!isEnterPositionOperationValid || routerLoading"
                   :loading="enterPositionLoading"
                   @click="enterPosition()"
                 ></BaseButton>
