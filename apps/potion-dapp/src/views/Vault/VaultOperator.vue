@@ -51,8 +51,7 @@ const TabNavigationComponent = defineAsyncComponent(
 /**
  * Const
  */
-const MODE = process.env.NODE_ENV;
-const IS_DEV_ENV = MODE === "development";
+const IS_DEV_ENV = import.meta.env.DEV;
 
 const USDC = new Token(
   ChainId.MAINNET,
@@ -88,7 +87,7 @@ const expectedPriceRate = ref(1);
 // Input validity
 
 const hasSwapRoute = ref(false);
-const isExpectedPriceRateValid = ref(true);
+
 /**
  * Setup
  */
@@ -509,64 +508,43 @@ const testAddBlock = async (addHours: number) => {
 </script>
 <template>
   <!-- START TEST COMMANDS -->
-  <div class="flex flex-row items-end gap-4">
-    <BaseButton palette="primary" label="Load str." @click="getStrategyInfo()">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <div class="border-1">
-      <p class="text-sm">TEST ADD BLOCK</p>
-      <div class="flex flex-row gap-4">
-        <BaseButton
-          palette="primary"
-          label="+1D"
-          @click="() => testAddBlock(24)"
-        >
-          <template #pre-icon>
-            <i class="i-ph-test-tube-fill"></i>
-          </template>
-        </BaseButton>
-        <BaseButton
-          palette="primary"
-          label="+1M"
-          @click="() => testAddBlock(720)"
-        >
-          <template #pre-icon>
-            <i class="i-ph-test-tube-fill"></i>
-          </template>
-        </BaseButton>
+  <div v-if="IS_DEV_ENV">
+    <div class="flex flex-row items-end gap-4">
+      <div class="border-1 p-2 rounded border-color-white border-opacity-20">
+        <p class="text-sm">TEST ADD BLOCK</p>
+        <div class="flex flex-row gap-4">
+          <BaseButton
+            palette="primary"
+            label="+1D"
+            @click="() => testAddBlock(24)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+          <BaseButton
+            palette="primary"
+            label="+1M"
+            @click="() => testAddBlock(720)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+        </div>
+      </div>
+      <BaseButton
+        palette="primary"
+        label="Load info"
+        class="mb-2"
+        @click="reloadInfoAfterAction"
+      >
+        <template #pre-icon>
+          <i class="i-ph-test-tube-fill"></i>
+        </template>
+      </BaseButton>
       </div>
     </div>
-
-    <BaseButton palette="primary" label="Get block" @click="getBlock('latest')">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="enter route"
-      @click="loadEnterPositionRoute()"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="exit route"
-      @click="loadExitPositionRoute()"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton palette="primary" label="Test exit" @click="exitPosition()">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
   </div>
   <!-- END TEST COMMANDS -->
   <!-- START NAVIGATION HEADER -->
