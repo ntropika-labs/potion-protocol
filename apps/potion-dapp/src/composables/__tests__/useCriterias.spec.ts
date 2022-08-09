@@ -89,7 +89,7 @@ describe("useCriterias", () => {
       const criteria = criterias.value[0];
       expect(criteria.maxStrike).toBe(10);
       expect(criteria.maxDuration).toBe(20);
-      expect(criteria.token).toEqual({
+      expect(criteria.token).toMatchObject({
         name: "mocked token 1",
         symbol: "mt1",
         address: "0x000",
@@ -107,7 +107,7 @@ describe("useCriterias", () => {
       const firstCriteria = criterias.value[0];
       expect(firstCriteria.maxStrike).toBe(10);
       expect(firstCriteria.maxDuration).toBe(20);
-      expect(firstCriteria.token).toEqual({
+      expect(firstCriteria.token).toMatchObject({
         name: "mocked token 1",
         symbol: "mt1",
         address: "0x000",
@@ -118,7 +118,7 @@ describe("useCriterias", () => {
       const secondCriteria = criterias.value[1];
       expect(secondCriteria.maxStrike).toBe(20);
       expect(secondCriteria.maxDuration).toBe(10);
-      expect(secondCriteria.token).toEqual({
+      expect(secondCriteria.token).toMatchObject({
         name: "mocked token 2",
         symbol: "mt2",
         address: "0x010",

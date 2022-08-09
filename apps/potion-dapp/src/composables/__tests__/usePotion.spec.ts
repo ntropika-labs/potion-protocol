@@ -76,7 +76,7 @@ describe("usePotion", () => {
         () => usePotion(ref("0x000")),
         mockOtoken("0x000", 100, 30, "0x001")
       );
-      expect(result.otoken.value).toEqual({
+      expect(result.otoken.value).toMatchObject({
         tokenAddress: "0x000",
         underlyingAsset: {
           symbol: "foo",

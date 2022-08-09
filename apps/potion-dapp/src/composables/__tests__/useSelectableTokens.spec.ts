@@ -131,7 +131,7 @@ describe("useSelectableTokens", () => {
       await toggleToken("0x000");
       const tokenPrice = tokenPricesMap.value.get("0x000");
       expect(tokenPrice).not.toBeUndefined();
-      expect(tokenPrice).toEqual({
+      expect(tokenPrice).toMatchObject({
         loading: false,
         price: 1300,
         formattedPrice: "$ 1.3K",
@@ -157,7 +157,7 @@ describe("useSelectableTokens", () => {
       await toggleToken("0x000");
       const tokenPrice = tokenPricesMap.value.get("0x000");
       expect(tokenPrice).not.toBeUndefined();
-      expect(tokenPrice).toEqual({
+      expect(tokenPrice).toMatchObject({
         loading: false,
         price: 1300,
         formattedPrice: "$ 1.3K",
