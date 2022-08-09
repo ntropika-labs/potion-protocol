@@ -21,8 +21,12 @@ export function usePoolLiquidity(
   const unutilizedLiquidity = computed(
     () => liquidity.value - utilization.value
   );
+  const percentage = computed(
+    () => (utilization.value * 100) / liquidity.value
+  );
+
   const utilizationPercentage = computed(() =>
-    ((utilization.value * 100) / liquidity.value).toString()
+    (isNaN(percentage.value) ? 0 : percentage.value).toString()
   );
 
   const addLiquidity = (provided: number | Ref<number> | ComputedRef<number>) =>
