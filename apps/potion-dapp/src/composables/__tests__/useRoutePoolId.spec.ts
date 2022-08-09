@@ -17,6 +17,16 @@ describe("useRoutePoolId", () => {
       const { validPoolId } = useRoutePoolId({});
       expect(validPoolId).not.toBeNull();
     });
+
+    it("returns a poolLp", () => {
+      const { poolLp } = useRoutePoolId({});
+      expect(poolLp).not.toBeUndefined();
+    });
+
+    it("returns a validLp", () => {
+      const { validLp } = useRoutePoolId({});
+      expect(validLp).not.toBeUndefined();
+    });
   });
 
   describe("it parse poolId correctly", () => {
@@ -41,6 +51,39 @@ describe("useRoutePoolId", () => {
         lp: "0x000",
       });
       expect(poolId.value).toBeNaN();
+    });
+  });
+
+  describe("it parse lp correctly", () => {
+    it("returns the lp if it is a string", () => {
+      const { poolLp } = useRoutePoolId({
+        lp: "0x000",
+        id: "10",
+      });
+      expect(poolLp.value).toBe("0x000");
+    });
+
+    it("returns '' if lp is an array", () => {
+      const { poolLp } = useRoutePoolId({
+        lp: ["0x000", "0x0001"],
+        id: "10",
+      });
+      expect(poolLp.value).toBe("");
+    });
+
+    it("returns '' if there isn't a lp", () => {
+      const { poolLp } = useRoutePoolId({
+        id: "10",
+      });
+      expect(poolLp.value).toBe("");
+    });
+
+    it("returns lp in lower case", () => {
+      const { poolLp } = useRoutePoolId({
+        lp: "0xABCD",
+        id: "10",
+      });
+      expect(poolLp.value).toBe("0xabcd");
     });
   });
 
@@ -75,9 +118,39 @@ describe("useRoutePoolId", () => {
       });
       expect(id.value).toBe("");
     });
+
+    it("returns '' if there isn't an lp", () => {
+      const { id } = useRoutePoolId({
+        id: "10",
+      });
+      expect(id.value).toBe("");
+    });
+
+    it("returns '' if lp isn't a valid lp address", () => {
+      const { id } = useRoutePoolId({
+        lp: "abcd",
+        id: "10",
+      });
+      expect(id.value).toBe("");
+    });
+
+    it("returns '' if lp is an array", () => {
+      const { id } = useRoutePoolId({
+        lp: ["0x000", "0x001"],
+        id: "10",
+      });
+      expect(id.value).toBe("");
+    });
+
+    it("returns '' if there isn't a lp", () => {
+      const { id } = useRoutePoolId({
+        id: "10",
+      });
+      expect(id.value).toBe("");
+    });
   });
 
-  describe("it validates as expected", () => {
+  describe("it validates poolId as expected", () => {
     it("returns true with a correct pool id", () => {
       const { validPoolId } = useRoutePoolId({
         lp: "0x000",
@@ -107,6 +180,39 @@ describe("useRoutePoolId", () => {
         lp: "0x000",
       });
       expect(validPoolId.value).toBe(false);
+    });
+  });
+
+  describe("it validates lp as expected", () => {
+    it("returns true with a correct lp", () => {
+      const { validLp } = useRoutePoolId({
+        lp: "0x000",
+        id: "10",
+      });
+      expect(validLp.value).toBe(true);
+    });
+
+    it("returns false if lp isn't a valid address", () => {
+      const { validLp } = useRoutePoolId({
+        lp: "aaa",
+        id: "10",
+      });
+      expect(validLp.value).toBe(false);
+    });
+
+    it("returns false if lp is an array", () => {
+      const { validLp } = useRoutePoolId({
+        lp: ["0x000", "0x001"],
+        id: "10",
+      });
+      expect(validLp.value).toBe(false);
+    });
+
+    it("returns false if there isn't a lp", () => {
+      const { validLp } = useRoutePoolId({
+        id: "10",
+      });
+      expect(validLp.value).toBe(false);
     });
   });
 });
