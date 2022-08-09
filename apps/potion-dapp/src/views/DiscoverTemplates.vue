@@ -205,8 +205,8 @@ const categoryTexts = new Map<
 const route = useRoute();
 const router = useRouter();
 const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
-const onTemplateIdNavigation = (templateId: string) => {
-  router.push({ name: "pool-template", params: { templateId } });
+const onTemplateIdNavigation = (id: string) => {
+  router.push({ name: "pool-template", params: { id } });
 };
 
 const innerNavProps = computed(() => {
