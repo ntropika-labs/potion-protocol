@@ -384,6 +384,9 @@ const enterPosition = async () => {
     expirationTimestamp,
     true
   );
+  if (IS_DEV_ENV) {
+    potionAddress.value = newOtokenAddress;
+  }
 
   const swapRoute = uniswapRouteData.value.route[0];
 
@@ -505,6 +508,32 @@ const testAddBlock = async (addHours: number) => {
 
   console.log(blockTimestamp.value);
 };
+const potionAddress = ref();
+const setPriceCommand = ref<HTMLElement>();
+const getPotionAddress = async () => {
+  const response = await $fetch(
+    "http://localhost:8000/subgraphs/name/potion-subgraph",
+    {
+      method: "POST",
+      body: {
+        query: `query MyQuery {\n  otokens(where: {expiry: "${nextCycleTimestamp.value}"}) {\n    id\n    expiry\n  }\n}`,
+        variables: null,
+        operationName: "MyQuery",
+        extensions: { headers: null },
+      },
+    }
+  );
+
+  console.log(response);
+
+  potionAddress.value = response.data.otokens[0].id;
+};
+const copySetPriceCommand = async () => {
+  console.log(setPriceCommand.value);
+  if (potionAddress.value && setPriceCommand.value?.textContent) {
+    await navigator.clipboard.writeText(setPriceCommand.value.textContent);
+  }
+};
 </script>
 <template>
   <!-- START TEST COMMANDS -->
@@ -543,6 +572,39 @@ const testAddBlock = async (addHours: number) => {
           <i class="i-ph-test-tube-fill"></i>
         </template>
       </BaseButton>
+      <BaseButton
+        palette="primary"
+        label="get potion"
+        class="mb-2"
+        @click="getPotionAddress()"
+      >
+        <template #pre-icon>
+          <i class="i-ph-test-tube-fill"></i>
+        </template>
+      </BaseButton>
+    </div>
+    <div class="flex flex-col mt-4 gap-2">
+      <p>Underlying asset: {{ assetAddress }}</p>
+      <div v-if="potionAddress">
+        <p>Set price command:</p>
+        <div class="flex flex-row items-start">
+          <pre
+            ref="setPriceCommand"
+            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+          >
+yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
+          >
+          <BaseButton
+            palette="primary"
+            label="copy"
+            size="sm"
+            @click="copySetPriceCommand"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+        </div>
       </div>
     </div>
   </div>
