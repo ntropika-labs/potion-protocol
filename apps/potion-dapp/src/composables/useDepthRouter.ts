@@ -14,7 +14,8 @@ export const useDepthRouter = (
   orderSize: MaybeNumberRef,
   strikePriceUSDC: MaybeNumberRef,
   gas: MaybeNumberRef,
-  ethPrice: MaybeNumberRef
+  ethPrice: MaybeNumberRef,
+  fetchDataOnParamUpdate = true
 ) => {
   const poolSets = ref<ChartCriteriaPool[]>();
   const poolsUntyped = computed(() => {
@@ -98,7 +99,8 @@ export const useDepthRouter = (
     isRef(orderSize) &&
     isRef(strikePriceUSDC) &&
     isRef(gas) &&
-    isRef(ethPrice)
+    isRef(ethPrice) &&
+    fetchDataOnParamUpdate
   ) {
     watchDebounced(
       [criterias, orderSize, strikePriceUSDC, gas, ethPrice],

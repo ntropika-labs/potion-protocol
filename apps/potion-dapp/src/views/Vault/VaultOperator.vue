@@ -240,7 +240,8 @@ const {
   orderSize,
   strikePrice,
   gasPrice,
-  oraclePrice
+  oraclePrice,
+  false
 );
 
 const hasCounterparties = computed(() => {
