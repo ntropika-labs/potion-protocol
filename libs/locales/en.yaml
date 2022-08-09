@@ -33,7 +33,7 @@ collateral_claimed: collateral claimed
 collateral: Collateral
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
 create_pool_title: Create custom pool from scratch
@@ -116,6 +116,7 @@ pool_created: pool created
 pool_setup: Pool Setup
 pool_underlyings: Underlying Pool Assets
 potion_bought: potion bought
+premium: Premium
 price_per_potion: price per potion
 profit_and_loss: Profit & Loss
 projected_pnl: Projected P&L
@@ -172,3 +173,8 @@ not_enough: not enough  { msg }
 redeem: redeem
 committed: committed
 max_swap_duration: max swap duration
+counterparties: Counterparties
+enter_position: Enter position
+counterparty: Counterparty
+currency: Currency
+token: Token

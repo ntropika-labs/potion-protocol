@@ -21,7 +21,7 @@ export const useAlphaRouter = (chainId: ChainId) => {
     });
   };
 
-  const routerData = ref<SwapRoute | null>(null);
+  const routerData = ref<SwapRoute | undefined>();
   const routerPolling = ref(false);
   const routerLoading = ref(false);
   const routerError = ref<string | null>(null);
@@ -112,13 +112,14 @@ export const useAlphaRouter = (chainId: ChainId) => {
         throw new Error("No route found");
       }
 
-      routerData.value = route;
+      // Ugly hack to fix typescript typing
+      routerData.value = route || undefined;
     } catch (error) {
       routerError.value =
         error instanceof Error
           ? `Cannot get uniswap route: ${error.message}`
           : "Cannot get uniswap route";
-      routerData.value = null;
+      routerData.value = undefined;
 
       console.log(error);
     } finally {

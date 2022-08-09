@@ -1,8 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useI18n } from "vue-i18n";
-import { Token as UniswapToken, TradeType } from "@uniswap/sdk-core";
-import type { Token } from "dapp-types";
+
 export default defineComponent({
   name: "TokenSelection",
 });
@@ -11,11 +9,14 @@ export default defineComponent({
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { SwapRoute } from "@uniswap/smart-order-router";
+import { useI18n } from "vue-i18n";
+import { Token as UniswapToken, TradeType } from "@uniswap/sdk-core";
 
+import type { Token } from "dapp-types";
 import { AssetTag } from "potion-ui";
 
 export interface Props {
-  routeData: SwapRoute | null;
+  routeData: SwapRoute | undefined;
   routerLoading: boolean;
 }
 
@@ -42,7 +43,45 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
 
 <template>
   <div test-token-swap-wrap>
-    <p v-if="routerLoading">Loading route...</p>
+    <div v-if="routerLoading" class="animate-pulse flex space-x-4">
+      <div class="flex-1 space-y-6 py-1">
+        <div class="h-2 bg-slate-700 rounded w-36 mb-2"></div>
+        <div class="h-6 bg-slate-700 rounded"></div>
+        <hr class="opacity-40 my-4" />
+        <div class="space-y-3">
+          <div class="h-2 bg-slate-700 rounded w-36 mb-2"></div>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="md:col-span-2">
+              <div class="grid grid-cols-2 items-start justify-between my-2">
+                <div class="rounded-full bg-slate-700 h-10 w-10"></div>
+                <div>
+                  <div class="h-2 bg-slate-700 rounded w-36 mb-2"></div>
+                  <div class="h-6 bg-slate-700 rounded"></div>
+                </div>
+              </div>
+              <div class="text-center">
+                <i class="i-ph-arrow-down-bold w-8 h-8 text-slate-700"></i>
+              </div>
+              <div class="grid grid-cols-2 items-start justify-between my-2">
+                <div class="rounded-full bg-slate-700 h-10 w-10"></div>
+                <div>
+                  <div class="h-4 bg-slate-700 rounded w-36 mb-2"></div>
+                  <div class="h-6 bg-slate-700 rounded"></div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="pl-4 border-t-1 md:(border-t-0 border-l-1) border-white border-opacity-20 mt-2"
+            >
+              <div class="h-2 bg-slate-700 rounded w-36 mb-2"></div>
+              <div class="h-6 bg-slate-700 rounded mb-4"></div>
+              <div class="h-2 bg-slate-700 rounded w-36 mb-2"></div>
+              <div class="h-6 bg-slate-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-else-if="hasRoute">
       <div>
         <div v-for="(uniRoute, index) in routes" :key="index">
@@ -129,7 +168,7 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
             >
               <AssetTag
                 size="xl"
-                :title="t('Token')"
+                :title="t('token')"
                 :token="uniswapTokenAsToken(step)"
                 class="border-1 rounded-xl border-white border-opacity-10 p-3"
               />

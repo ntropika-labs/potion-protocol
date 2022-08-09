@@ -51,10 +51,16 @@ const timeDifference = computed(() => {
   let fromTime = null;
   let toTime = null;
 
+  console.log(props.timeFrom, props.timeTo);
+
   if (props.fromTimestamps) {
+    const fromTimestamp = parseInt(props.timeFrom);
+    const toTimestamp = parseInt(props.timeTo);
     if (
-      Number.isSafeInteger(+props.timeFrom) &&
-      Number.isSafeInteger(+props.timeTo)
+      fromTimestamp !== 0 &&
+      toTimestamp !== 0 &&
+      Number.isSafeInteger(fromTimestamp) &&
+      Number.isSafeInteger(toTimestamp)
     ) {
       fromTime = dayjs.unix(parseInt(props.timeFrom));
       toTime = dayjs.unix(parseInt(props.timeTo));
