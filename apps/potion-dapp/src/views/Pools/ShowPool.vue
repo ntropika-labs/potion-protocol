@@ -1,112 +1,74 @@
 <script lang="ts" setup>
-import { useTokenList } from "@/composables/useTokenList";
 import { computed, onMounted, ref, watch } from "vue";
-
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { useGetPoolByIdQuery } from "subgraph-queries/generated/urql";
 
-import type {
-  BondingCurveParams,
-  Criteria,
-  OptionToken,
-  Token,
-} from "dapp-types";
+import {
+  BaseCard,
+  BaseButton,
+  LabelValue,
+  AssetTag,
+  BaseTag,
+  UnderlyingList,
+} from "potion-ui";
 
-import { BaseCard, BaseButton, LabelValue, AssetTag, BaseTag } from "potion-ui";
-import { useOnboard } from "@onboard-composable";
 import { contractsAddresses } from "@/helpers/contracts";
-import { hexValue } from "@ethersproject/bytes";
-
-import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
-import { useEmergingCurves } from "@/composables/useEmergingCurves";
-import { usePoolSnapshots } from "@/composables/useSnapshots";
-import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useCoinGecko } from "@/composables/useCoinGecko";
-import { usePoolOtokens } from "@/composables/usePoolRecords";
+import { getTokenFromAddress } from "@/helpers/tokens";
 
 import CurvesChart from "@/components/CurvesChart.vue";
-import PerformanceCard from "@/components/PerformanceCard.vue";
-import NotificationDisplay from "@/components/NotificationDisplay.vue";
-import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
 import LiquidityCard from "@/components/LiquidityCard.vue";
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import OtokenClaimTable from "@/components/OTokenClaimTable/OTokenClaimTable.vue";
-import { useNotifications } from "@/composables/useNotifications";
+import PerformanceCard from "@/components/PerformanceCard.vue";
 
-const getTokenFromAddress = (address: string): Token => {
-  const { image, name, symbol } = useTokenList(address);
-  return { address, image, name, symbol };
-};
+import { useBondingCurves } from "@/composables/useBondingCurves";
+import { useClaimCollateral } from "@/composables/useClaimCollateral";
+import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
+import { useCriteriasTokens } from "@/composables/useCriteriasTokens";
+import { useDeposit } from "@/composables/useDeposit";
+import { useEmergingCurves } from "@/composables/useEmergingCurves";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useNotifications } from "@/composables/useNotifications";
+import { usePool } from "@/composables/usePool";
+import { usePoolLiquidity } from "@/composables/usePoolLiquidity";
+import { usePoolOtokens } from "@/composables/usePoolOtokens";
+import { usePoolSnapshots } from "@/composables/useSnapshots";
+import { useRoutePoolId } from "@/composables/useRoutePoolId";
+import { useTokenList } from "@/composables/useTokenList";
+import { useUserData } from "@/composables/useUserData";
+import { useWithdraw } from "@/composables/useWithdraw";
+
+import type { Criteria } from "dapp-types";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const poolStatus = ref("Active");
-const payoutMap = ref<Map<string, number>>(new Map());
 
-const lpId = Array.isArray(route.params.lp)
-  ? route.params.lp[0]
-  : route.params.lp;
+const { fetchUserData, userCollateralBalance } = useUserData();
+const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+
+const { poolId, poolLp, id } = useRoutePoolId(route.params);
+const { pool, template, fetching, error } = usePool(id);
+
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
-const poolId = computed(() => {
-  const poolId = route.params.id;
-  if (Array.isArray(poolId)) {
-    return null;
-  }
-  return parseInt(poolId);
-});
 
-const poolIdentifier = computed(() => {
-  if (poolId.value !== null && Number.isInteger(poolId.value)) {
-    return `${lpId.toLowerCase()}${hexValue(poolId.value)}`;
-  }
-  return "";
-});
-
-const queryVariable = computed(() => {
-  return {
-    id: poolIdentifier.value,
-  };
-});
-
-const pauseQuery = computed(() => {
-  return !queryVariable.value.id;
-});
-const { data: poolData } = useGetPoolByIdQuery({
-  variables: queryVariable,
-  pause: pauseQuery,
-});
-
-const { poolOtokens } = usePoolOtokens(poolIdentifier.value);
+const { activeOtokens, expiredOtokens, payoutMap } = usePoolOtokens(
+  id,
+  poolId,
+  poolLp
+);
 
 const {
   chartData,
   fetching: loadingSnapshots,
   executeQuery: fetchPoolSnapshots,
-} = usePoolSnapshots(poolIdentifier.value as string);
-
-const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
-
-const activeOtokens = computed(() =>
-  poolOtokens.value.filter(
-    ({ otoken }) =>
-      !loadingBlock.value && parseInt(otoken.expiry) > blockTimestamp.value
-  )
-);
-const expiredOtokens = computed(() =>
-  poolOtokens.value.filter(
-    ({ otoken }) =>
-      !loadingBlock.value && parseInt(otoken.expiry) <= blockTimestamp.value
-  )
-);
+} = usePoolSnapshots(id.value);
 
 const performanceChartDataReady = computed(
   () => !loadingSnapshots.value && !loadingBlock.value
 );
 
-const pool = computed(() => poolData?.value?.pool);
-const template = computed(() => pool.value?.template);
 const curve = computed(() => template?.value?.curve);
 const criteriaSet = computed(() => template?.value?.criteriaSet);
 const criterias = computed<Criteria[]>(
@@ -117,214 +79,99 @@ const criterias = computed<Criteria[]>(
       maxDuration: parseInt(criteria.maxDurationInDays),
     })) ?? []
 );
-const assetsFlat = computed<OptionToken[]>(
-  () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => {
-      const token = getTokenFromAddress(criteria.underlyingAsset.address);
+const { assets, tokens, tokenPricesMap } = useCriteriasTokens(criterias);
 
-      return {
-        id: "",
-        isPut: false,
-        duration: criteria.maxDurationInDays,
-        strike: criteria.maxStrikePercent,
-        name: token.name,
-        symbol: token.symbol,
-        address: token.address,
-        decimals: token.decimals,
-        image: token.image,
-      };
-    }) ?? []
-);
-const tokenPricesMap = ref<Map<string, string>>(new Map());
-
-const fetchAssetsPrice = async () => {
-  const prices = new Map();
-  const addresses =
-    criteriaSet?.value?.criterias?.map(
-      ({ criteria }) => criteria.underlyingAsset.address
-    ) ?? [];
-
-  try {
-    const promises = addresses.map(async (address) => {
-      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
-      await fetchTokenPrice();
-      prices.set(address, price.value);
-    });
-    await Promise.allSettled(promises);
-  } catch (error) {
-    console.error("Error while fetching token prices.");
-  }
-
-  return prices;
-};
-
-const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
-const totalLiquidity = ref(0);
-const totalUtilization = computed(() => parseInt(pool?.value?.locked || "0"));
-const unutilizedLiquidity = computed(
-  () => totalLiquidity.value - totalUtilization.value
-);
-const utilizationPercentage = computed(() => {
-  const totSize = parseInt(pool?.value?.size || "0");
-
-  return (totalUtilization.value * 100) / totSize;
-});
+const poolLocked = computed(() => pool?.value?.locked ?? "0");
+const poolSize = computed(() => pool?.value?.size ?? "0");
 const pnlPercentage = computed(() => pool?.value?.pnlPercentage ?? "0");
 
-const bondingCurveParams = computed<BondingCurveParams>(() => {
-  return {
-    a: parseFloat(curve?.value?.a ?? "0"),
-    b: parseFloat(curve?.value?.b ?? "0"),
-    c: parseFloat(curve?.value?.c ?? "0"),
-    d: parseFloat(curve?.value?.d ?? "0"),
-    maxUtil: parseFloat(curve?.value?.maxUtil ?? "0"),
-  };
-});
-
-const modelDeposit = ref(100),
-  modelWithdraw = ref(100);
-
-const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
-
-const { connectedWallet } = useOnboard();
-const isNotConnected = computed(() => !connectedWallet.value);
-const walletAddress = computed(
-  () => connectedWallet.value?.accounts[0].address ?? ""
-);
-
 const {
-  fetchUserCollateralBalance,
-  fetchUserCollateralAllowance,
-  userAllowance,
-  userCollateralBalance,
-  approveForPotionLiquidityPool,
-  approveLoading,
-  approveTx,
-  approveReceipt,
-} = useCollateralTokenContract();
+  liquidity,
+  addLiquidity,
+  decreaseLiquidity,
+  formattedLiquidity,
+  utilization,
+  utilizationPercentage,
+  unutilizedLiquidity,
+} = usePoolLiquidity(poolSize, poolLocked);
 
-const fetchUserData = async () => {
-  if (connectedWallet.value) {
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  }
-};
+const { bondingCurve, setBondingCurve } = useBondingCurves();
 
-onMounted(async () => {
-  await fetchUserData();
-  tokenPricesMap.value = await fetchAssetsPrice();
-  fetchPoolSnapshots();
-  await getBlock("latest");
-});
-
-watch(walletAddress, async (newAWallet) => {
-  if (newAWallet) {
-    await fetchUserData();
-  } else {
-    userAllowance.value = 0;
-    userCollateralBalance.value = 0;
-  }
-});
-
-const amountNeededToApprove = computed(() => {
-  if (userAllowance.value === 0) {
-    return modelDeposit.value;
-  }
-  if (modelDeposit.value > userAllowance.value) {
-    return parseFloat(
-      (modelDeposit.value - userAllowance.value).toPrecision(6)
+watch(curve, () => {
+  if (curve?.value) {
+    setBondingCurve(
+      curve.value.a,
+      curve.value.b,
+      curve.value.c,
+      curve.value.d,
+      curve.value.maxUtil
     );
   }
-  return 0;
 });
 
 const {
-  depositTx,
-  depositReceipt,
+  canDeposit,
   deposit,
+  depositReceipt,
   depositLoading,
-  withdrawTx,
-  withdrawReceipt,
+  depositTx,
+  depositLabel,
+  amount: modelDeposit,
+} = useDeposit(poolId);
+
+const handleDeposit = async () => {
+  const deposited = await deposit();
+  if (deposited) {
+    addLiquidity(modelDeposit);
+    fetchUserData();
+  }
+};
+
+const {
+  canWithdraw,
   withdraw,
+  withdrawReceipt,
   withdrawLoading,
-  getOutstandingSettlements,
-  claimCollateral,
+  withdrawTx,
+  amount: modelWithdraw,
+} = useWithdraw(poolId, unutilizedLiquidity);
+
+const handleWithdraw = async () => {
+  const withdrawed = await withdraw();
+  if (withdrawed) {
+    decreaseLiquidity(modelWithdraw);
+    fetchUserData();
+  }
+};
+
+const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
+watch(criterias, loadEmergingCurves);
+
+const { approveLoading, approveTx, approveReceipt } =
+  useCollateralTokenContract();
+
+const {
+  claimOtoken,
   claimCollateralTx,
   claimCollateralReceipt,
-} = usePotionLiquidityPoolContract();
+  claimedOtokens,
+} = useClaimCollateral(poolId, poolLp);
 
-watch(poolOtokens, async () => {
-  if (poolId.value !== null) {
-    const otokens = poolOtokens.value.map(({ otoken }) => otoken.id);
-    payoutMap.value = await getOutstandingSettlements(otokens, {
-      lp: lpId,
-      poolId: poolId.value,
-    });
-  }
+onMounted(async () => {
+  await getBlock("latest");
 });
-
-const canDeposit = computed(
-  () =>
-    modelDeposit.value > 0 && modelDeposit.value <= userCollateralBalance.value
-);
-const handleDeposit = async () => {
-  if (canDeposit.value) {
-    if (amountNeededToApprove.value > 0) {
-      await approveForPotionLiquidityPool(modelDeposit.value, true);
-    } else {
-      if (poolId.value !== null) {
-        await deposit(poolId.value, modelDeposit.value);
-
-        totalLiquidity.value += modelDeposit.value;
-      }
-    }
-
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  }
-};
-
-const canWithdraw = computed(
-  () => unutilizedLiquidity.value >= modelWithdraw.value
-);
-const handleWithdraw = async () => {
-  if (canWithdraw.value) {
-    if (poolId.value !== null) {
-      await withdraw(poolId.value, modelWithdraw.value);
-
-      totalLiquidity.value -= modelWithdraw.value;
-    }
-
-    await fetchUserCollateralBalance();
-  }
-};
-
-const claimedOtokens = ref<string[]>([]);
-const claimOtoken = async (otokenId: string) => {
-  if (poolId.value !== null) {
-    await claimCollateral(otokenId, [{ lp: lpId, poolId: poolId.value }]);
-    claimedOtokens.value.push(otokenId);
-  }
-};
 
 const onEditClick = () =>
   router.push({
     name: "liquidity-provider-pool-edit",
-    params: { lp: lpId, id: poolId.value },
+    params: { lp: poolLp.value, id: poolId.value },
   });
 
-const addLiquidityButtonLabel = computed(() => {
-  if (amountNeededToApprove.value > 0) {
-    return `${t("approve")} USDC`;
-  }
-  return `${t("add_liquidity")}`;
-});
+const isLoading = computed(
+  () => depositLoading.value || withdrawLoading.value || approveLoading.value
+);
 
-watch(criterias, loadEmergingCurves);
-watch(poolData, (data) => {
-  totalLiquidity.value = parseInt(data?.pool?.size || "0");
-});
-watch(totalLiquidity, fetchPoolSnapshots);
+watch(liquidity, fetchPoolSnapshots);
 
 /*
  * Toast notifications
@@ -362,7 +209,13 @@ watch(claimCollateralReceipt, (receipt) =>
 );
 </script>
 <template>
-  <div>
+  <div v-if="fetching">
+    {{ t("loading") }}
+  </div>
+  <div v-else-if="error">
+    {{ t("error") }}
+  </div>
+  <div v-else>
     <BaseButton palette="transparent" :label="t('back')" @click="router.back">
       <template #pre-icon>
         <i class="i-ph-caret-left"></i>
@@ -383,13 +236,13 @@ watch(claimCollateralReceipt, (receipt) =>
         <LabelValue
           size="xl"
           :title="t('total_size')"
-          :value="totalLiquidity.toString()"
+          :value="formattedLiquidity"
           :symbol="collateral.symbol"
         />
         <LabelValue
           size="xl"
           :title="t('utilization')"
-          :value="utilizationPercentage.toString()"
+          :value="utilizationPercentage"
           symbol="%"
         />
         <LabelValue
@@ -418,18 +271,18 @@ watch(claimCollateralReceipt, (receipt) =>
         >
         </PerformanceCard>
         <CurvesChart
-          :bonding-curve-params="bondingCurveParams"
+          :bonding-curve-params="bondingCurve"
           :emerging-curves="emergingCurves"
         />
         <UnderlyingList
-          :assets-flat="assetsFlat"
+          :assets-flat="assets"
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
         ></UnderlyingList>
         <OtokenClaimTable
           :active-otokens="activeOtokens"
           :expired-otokens="expiredOtokens"
-          :underlyings="assetsFlat"
+          :underlyings="assets"
           :price-map="tokenPricesMap"
           :payout-map="payoutMap"
           :claimed-otokens="claimedOtokens"
@@ -440,9 +293,9 @@ watch(claimCollateralReceipt, (receipt) =>
         <LiquidityCard
           v-model:current-deposit.number="modelDeposit"
           v-model:current-withdraw.number="modelWithdraw"
-          :total-liquidity="totalLiquidity"
+          :total-liquidity="liquidity"
           :user-balance="userCollateralBalance"
-          :utilized-liquidity="totalUtilization"
+          :utilized-liquidity="utilization"
           :show-withdraw="true"
         >
           <template #withdraw-footer>
@@ -451,14 +304,8 @@ watch(claimCollateralReceipt, (receipt) =>
               palette="secondary"
               :inline="true"
               :label="t('withdraw')"
-              :disabled="
-                !canWithdraw ||
-                isNotConnected ||
-                depositLoading ||
-                approveLoading ||
-                withdrawLoading
-              "
-              :loading="depositLoading || withdrawLoading || approveLoading"
+              :disabled="!canWithdraw || isLoading"
+              :loading="isLoading"
               @click="handleWithdraw"
             >
               <template #pre-icon>
@@ -471,15 +318,9 @@ watch(claimCollateralReceipt, (receipt) =>
               test-clone-button
               palette="secondary"
               :inline="true"
-              :label="addLiquidityButtonLabel"
-              :disabled="
-                !canDeposit ||
-                isNotConnected ||
-                depositLoading ||
-                approveLoading ||
-                withdrawLoading
-              "
-              :loading="depositLoading || withdrawLoading || approveLoading"
+              :label="depositLabel"
+              :disabled="!canDeposit || isLoading"
+              :loading="isLoading"
               @click="handleDeposit"
             >
               <template #pre-icon>
