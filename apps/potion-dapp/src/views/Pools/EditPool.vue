@@ -2,7 +2,7 @@
   <template v-if="!fetching && pool">
     <PoolSetup
       v-model:liquidity.number="liquidity"
-      :size="formattedSize"
+      :size="parseFloat(pool.size)"
       :liquidity-title="t('add_more_liquidity')"
       :liquidity-check="true"
       :user-collateral-balance="userCollateralBalance"
@@ -65,7 +65,7 @@ import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { watchDebounced } from "@vueuse/core";
 
-import { currencyFormatter, BaseButton } from "potion-ui";
+import { BaseButton } from "potion-ui";
 
 import PoolSetup from "@/components/CustomPool/PoolSetup.vue";
 import CurveSetup from "@/components/CustomPool/CurveSetup.vue";
@@ -94,15 +94,17 @@ const router = useRouter();
 const collateral: string = contractsAddresses.USDC.address.toLowerCase();
 const { userCollateralBalance } = useUserData();
 const { poolId, id, validPoolId } = useRoutePoolId(route.params);
-const { pool, template, fetching, error } = usePool(id);
+const {
+  pool,
+  curve,
+  criterias: templateCriterias,
+  fetching,
+  error,
+} = usePool(id);
 const { liquidity, validInput, validLiquidity } = useLiquidity(
   0,
   userCollateralBalance,
   -1
-);
-
-const formattedSize = computed(() =>
-  currencyFormatter(parseFloat(pool?.value?.size ?? "0"), "USDC")
 );
 
 const { availableTokens, tokenPricesMap, unselectedTokens, toggleToken } =
@@ -126,31 +128,27 @@ const toggleTokenSelection = (tokenAddress: string) => {
 /*
  * load the already existing criteriaSet and curve
  */
-watch(template, () => {
-  if (template?.value?.curve) {
+watch(curve, () => {
+  if (curve.value) {
     setBondingCurve(
-      template.value.curve.a,
-      template.value.curve.b,
-      template.value.curve.c,
-      template.value.curve.d,
-      template.value.curve.maxUtil
+      curve.value.a,
+      curve.value.b,
+      curve.value.c,
+      curve.value.d,
+      curve.value.maxUtil
     );
   }
 });
 
-watch([availableTokens, template], () => {
+watch([availableTokens, templateCriterias], () => {
   if (availableTokens.value.length > 0) {
-    template?.value?.criteriaSet?.criterias.forEach(({ criteria }) => {
+    templateCriterias.value.forEach((criteria) => {
       const token = availableTokens.value.find(
-        (token) => token.address === criteria.underlyingAsset.address
+        (token) => token.address === criteria.token.address
       );
       if (token) {
         toggleTokenSelection(token.address);
-        updateCriteria(
-          token.address,
-          parseInt(criteria.maxStrikePercent),
-          parseInt(criteria.maxDurationInDays)
-        );
+        updateCriteria(token.address, criteria.maxStrike, criteria.maxDuration);
       }
     });
   }
