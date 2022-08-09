@@ -27,11 +27,11 @@ describe("useRoutePotionId", () => {
       expect(potionAddress.value).toBe("0x000");
     });
 
-    it("returns the first element if potionAddress is an array of addresses", () => {
+    it("returns '' if potionAddress is an array of addresses", () => {
       const { potionAddress } = useRoutePotionId({
         id: ["0x10", "0x20"],
       });
-      expect(potionAddress.value).toBe("0x10");
+      expect(potionAddress.value).toBe("");
     });
 
     it("returns '' if address is a random string", () => {
@@ -62,16 +62,16 @@ describe("useRoutePotionId", () => {
       expect(validAddress.value).toBe(true);
     });
 
-    it("returns true if address is an array of addresses", () => {
-      const { validAddress } = useRoutePotionId({
-        id: ["0x10", "0x20"],
-      });
-      expect(validAddress.value).toBe(true);
-    });
-
     it("returns false if address isn't a valid address", () => {
       const { validAddress } = useRoutePotionId({
         id: "abcd",
+      });
+      expect(validAddress.value).toBe(false);
+    });
+
+    it("returns false if address is an array of addresses", () => {
+      const { validAddress } = useRoutePotionId({
+        id: ["0x10", "0x20"],
       });
       expect(validAddress.value).toBe(false);
     });
