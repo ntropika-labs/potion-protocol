@@ -7,7 +7,7 @@
     @click="navigateToPotionCreation"
   >
   </JumboHeader>
-  <InnerNav v-bind="innerNavProps" class="mt-10" />
+  <PotionNav />
   <BaseCard class="p-4 mt-10">
     <h1 class="uppercase text-secondary-500 text-xs">
       {{ t("most_purchased") }}
@@ -86,26 +86,23 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { SrcsetEnum } from "dapp-types";
 import { PotionCard, BaseCard, BaseButton, JumboHeader } from "potion-ui";
 
-import { useOnboard } from "@onboard-composable";
 import { usePotions } from "@/composables/usePotions";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { usePoolsLiquidity } from "@/composables/useProtocolLiquidity";
 
-import InnerNav from "@/components/InnerNav.vue";
+import PotionNav from "@/components/InnerNav/PotionNav.vue";
 
 import { getTokenFromAddress } from "@/helpers/tokens";
 
 const { t } = useI18n();
 const router = useRouter();
-const route = useRoute();
-const { connectedWallet } = useOnboard();
 const { blockTimestamp, getBlock } = useEthersProvider();
 const { underlyingsWithLiquidity } = usePoolsLiquidity();
 
@@ -126,31 +123,5 @@ const jumboIconSrcset = new Map([
   [SrcsetEnum.WEBP, "/icons/potion-big.webp"],
 ]);
 
-const innerNavProps = computed(() => {
-  return {
-    currentRoute: route.name,
-    routes: [
-      {
-        name: "discover-potions",
-        label: "Discover Potions",
-        enabled: true,
-        params: {},
-      },
-      {
-        name: "buyer",
-        label: "My Potions",
-        enabled: connectedWallet.value?.accounts[0].address ? true : false,
-        params: {
-          address:
-            connectedWallet.value?.accounts[0].address.toLowerCase() ??
-            "not-valid",
-        },
-      },
-    ],
-  };
-});
-
-onMounted(async () => {
-  await getBlock("latest");
-});
+onMounted(() => getBlock("latest"));
 </script>

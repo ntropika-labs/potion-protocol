@@ -20,7 +20,7 @@
       />
     </div>
   </BaseCard>
-  <InnerNav v-bind="innerNavProps" class="mt-10" />
+  <PoolNav />
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 auto-rows-fr">
     <router-link
       v-if="isSameUserConnected"
@@ -74,7 +74,7 @@ import {
 import { useOnboard } from "@onboard-composable";
 import { computed, ref, onMounted } from "vue";
 import { useTokenList } from "@/composables/useTokenList";
-import InnerNav from "@/components/InnerNav.vue";
+import PoolNav from "@/components/InnerNav/PoolNav.vue";
 import { useRoute } from "vue-router";
 import type {
   TokenInfoFragment,
@@ -97,34 +97,9 @@ const lpId = Array.isArray(route.params.lp)
   ? route.params.lp[0]
   : route.params.lp;
 
-const isSameUserConnected = computed(() => {
-  if (connectedWallet.value?.accounts[0].address.toLowerCase() === lpId) {
-    return true;
-  } else {
-    return false;
-  }
-});
-const innerNavProps = computed(() => {
-  return {
-    currentRoute: route.name,
-    routes: [
-      {
-        name: "discover-templates",
-        label: "Discover Templates",
-        enabled: true,
-        params: {},
-      },
-      {
-        name: "liquidity-provider",
-        label: "My Pools",
-        enabled: connectedWallet.value?.accounts[0].address ? true : false,
-        params: {
-          lp: connectedWallet.value?.accounts[0].address ?? "not-valid",
-        },
-      },
-    ],
-  };
-});
+const isSameUserConnected = computed(
+  () => connectedWallet.value?.accounts[0].address.toLowerCase() === lpId
+);
 
 const pools = ref<SubgraphPools>([]);
 const alreadyFetchedIds = computed<string[]>(() =>

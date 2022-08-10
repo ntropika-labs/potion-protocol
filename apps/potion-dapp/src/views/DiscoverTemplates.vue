@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { JumboHeader, CardGrid, PoolTemplateCard, BaseButton } from "potion-ui";
-import InnerNav from "@/components/InnerNav.vue";
+import PoolNav from "@/components/InnerNav/PoolNav.vue";
 import { SrcsetEnum } from "dapp-types";
 import { useI18n } from "vue-i18n";
 import { useTokenList } from "@/composables/useTokenList";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { ref, watch, computed } from "vue";
 import {
   useMostPopularTemplatesQuery,
@@ -12,7 +12,6 @@ import {
   useLoadMoreTemplatesBySizeQuery,
   useLoadMoreTemplatesByNumberQuery,
 } from "subgraph-queries/generated/urql";
-import { useOnboard } from "@onboard-composable";
 import type {
   TemplateCardDataFragment,
   TokenInfoFragment,
@@ -31,7 +30,6 @@ interface TemplateCriteria {
   };
 }
 
-const { connectedWallet } = useOnboard();
 // Base query params
 const params = {
   size: "0",
@@ -202,36 +200,11 @@ const categoryTexts = new Map<
 ]);
 
 // Navigation to other pages
-const route = useRoute();
 const router = useRouter();
 const navigateToCustomPoolCreation = () => router.push("/custom-pool-creation");
 const onTemplateIdNavigation = (id: string) => {
   router.push({ name: "pool-template", params: { id } });
 };
-
-const innerNavProps = computed(() => {
-  return {
-    currentRoute: route.name,
-    routes: [
-      {
-        name: "discover-templates",
-        label: "Discover Templates",
-        enabled: true,
-        params: {},
-      },
-      {
-        name: "liquidity-provider",
-        label: "My Pools",
-        enabled: connectedWallet.value?.accounts[0].address ? true : false,
-        params: {
-          lp:
-            connectedWallet.value?.accounts[0].address.toLowerCase() ??
-            "not-valid",
-        },
-      },
-    ],
-  };
-});
 </script>
 
 <template>
@@ -248,7 +221,7 @@ const innerNavProps = computed(() => {
       }}</a>
     </div>
   </JumboHeader>
-  <InnerNav class="mt-10" v-bind="innerNavProps" />
+  <PoolNav></PoolNav>
   <div class="grid gap-8 mt-10">
     <CardGrid
       v-for="[key, { templates, canLoadMore }] in stateMap.entries()"
