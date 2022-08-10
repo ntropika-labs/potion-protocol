@@ -18,7 +18,7 @@ export function usePool(id: Ref<string> | ComputedRef<string>) {
   const pool = computed(() => data?.value?.pool ?? null);
   const template = computed(() => pool?.value?.template ?? null);
 
-  const curve = computed(() => template?.value?.curve);
+  const curve = computed(() => template?.value?.curve ?? null);
   const criteriaSet = computed(() => template?.value?.criteriaSet);
   const criterias = computed<Criteria[]>(
     () =>
@@ -30,7 +30,6 @@ export function usePool(id: Ref<string> | ComputedRef<string>) {
   );
 
   return {
-    data,
     error,
     fetching,
     pool,
