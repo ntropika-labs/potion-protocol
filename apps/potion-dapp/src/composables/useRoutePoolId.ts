@@ -1,26 +1,12 @@
 import { computed } from "vue";
 import { hexValue } from "@ethersproject/bytes";
-import { isValidAddress, formatAddress } from "@/helpers/addresses";
+import { useRouteLiquidityProvider } from "./useRouteLiquidityProvider";
+import { useRoutePoolIdentifier } from "./useRoutePoolIdentifier";
 import type { RouteParams } from "vue-router";
 
 export function useRoutePoolId(params: RouteParams) {
-  const poolId = computed(() => {
-    if (Array.isArray(params.id)) {
-      return -1;
-    }
-    return parseInt(params.id);
-  });
-
-  const lp = computed(() => {
-    if (Array.isArray(params.lp)) {
-      return "";
-    }
-    return params?.lp ? formatAddress(params.lp) : "";
-  });
-
-  const validPoolId = computed(() => poolId.value >= 0);
-  const validLp = computed(() => isValidAddress(lp.value));
-  const poolLp = computed(() => (validLp.value ? lp.value : ""));
+  const { validLp, poolLp } = useRouteLiquidityProvider(params);
+  const { validPoolId, poolId } = useRoutePoolIdentifier(params);
 
   const id = computed(() => {
     if (validPoolId.value && validLp.value) {
