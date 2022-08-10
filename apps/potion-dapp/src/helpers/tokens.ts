@@ -2,9 +2,9 @@ import { useTokenList } from "@/composables/useTokenList";
 
 import type { OptionToken, Token } from "dapp-types";
 
-const getTokenFromAddress = (address: string): Token => {
+const getTokenFromAddress = (address: string, decimals = 18): Token => {
   const { image, name, symbol } = useTokenList(address);
-  return { address, image, name, symbol };
+  return { address, image, name, symbol, decimals };
 };
 
 const toOptionToken = (

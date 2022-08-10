@@ -10,12 +10,14 @@ describe("tokens helper", () => {
         name: "",
         symbol: "",
         image: "",
+        decimals: 18,
       });
     });
 
     it("returns a token from the TokenList", () => {
       const result = getTokenFromAddress(
-        "0xc5a5c42992decbae36851359345fe25997f5c42d"
+        "0xc5a5c42992decbae36851359345fe25997f5c42d",
+        22
       );
       expect(result).toMatchObject({
         address: "0xc5a5c42992decbae36851359345fe25997f5c42d",
@@ -23,6 +25,7 @@ describe("tokens helper", () => {
         symbol: "UNI",
         image:
           "https://tokens.1inch.io/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png",
+        decimals: 22,
       });
     });
   });
