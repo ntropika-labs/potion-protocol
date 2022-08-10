@@ -20,6 +20,24 @@ const mockPool = ({
   };
 };
 
+const mockPoolTemplate = ({
+  id = "",
+  creator = "",
+  curve = { a: "1", b: "1", c: "1", d: "1", maxUtil: "1" },
+  criterias = [],
+}) => {
+  return {
+    template: {
+      id,
+      creator,
+      curve,
+      criteriaSet: {
+        criterias,
+      },
+    },
+  };
+};
+
 const mockCriteria = (
   address: string,
   maxStrikePercent: string,
@@ -77,4 +95,4 @@ const mockOtoken = (
   },
 });
 
-export { mockPool, mockCriteria, mockOtoken, mockCriterias };
+export { mockPool, mockPoolTemplate, mockCriteria, mockOtoken, mockCriterias };

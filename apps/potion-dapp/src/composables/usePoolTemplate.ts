@@ -10,10 +10,10 @@ export function usePoolTemplate(id: Ref<string> | ComputedRef<string>) {
     id: unref(id),
   }));
 
-  const { data } = useGetTemplateQuery({ variables });
+  const { data, error, fetching } = useGetTemplateQuery({ variables });
 
-  const template = computed(() => data?.value?.template);
-  const curve = computed(() => template?.value?.curve);
+  const template = computed(() => data?.value?.template ?? null);
+  const curve = computed(() => template?.value?.curve ?? null);
   const criteriaSet = computed(() => template?.value?.criteriaSet);
   const criterias = computed<Criteria[]>(
     () =>
@@ -24,5 +24,5 @@ export function usePoolTemplate(id: Ref<string> | ComputedRef<string>) {
       })) ?? []
   );
 
-  return { template, curve, criteriaSet, criterias };
+  return { error, fetching, template, curve, criteriaSet, criterias };
 }
