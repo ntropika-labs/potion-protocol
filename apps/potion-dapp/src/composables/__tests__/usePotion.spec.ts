@@ -2,25 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ref } from "vue";
 import { usePotion } from "../usePotion";
 import { withSetupUrql } from "./test-utils";
-
-const mockOtoken = (
-  tokenAddress: string,
-  strikePrice: number,
-  expiry: number,
-  underlyingAddress: string
-) => ({
-  otoken: {
-    tokenAddress,
-    underlyingAsset: {
-      symbol: "foo",
-      name: "bar",
-      address: underlyingAddress,
-      decimals: 18,
-    },
-    expiry,
-    strikePrice,
-  },
-});
+import { mockOtoken } from "./test-mocks";
 
 describe("usePotion", () => {
   describe("it doesn't have syntax errors", () => {

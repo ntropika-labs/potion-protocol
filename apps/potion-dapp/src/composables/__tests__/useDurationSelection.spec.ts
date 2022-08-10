@@ -2,22 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ref, nextTick } from "vue";
 import { useDurationSelection } from "../useDurationSelection";
 import { withSetupUrql } from "./test-utils";
-
-// helper to build the query result
-const mockCriterias = (
-  set: { templates: number[]; maxDurationInDays: number }[]
-) => {
-  return {
-    criterias: set.map(({ templates, maxDurationInDays }) => ({
-      criteriaSets: [
-        {
-          criteriaSet: { templates },
-        },
-      ],
-      maxDurationInDays,
-    })),
-  };
-};
+import { mockCriterias } from "./test-mocks";
 
 describe("useDurationSelection", () => {
   describe("it doesn't have syntax errors", () => {

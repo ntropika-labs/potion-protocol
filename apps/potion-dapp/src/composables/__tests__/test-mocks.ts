@@ -36,4 +36,45 @@ const mockCriteria = (
   };
 };
 
-export { mockPool, mockCriteria };
+const mockCriterias = (
+  set: {
+    templates?: number[];
+    maxStrikePercent?: number;
+    maxDurationInDays?: number;
+  }[]
+) => {
+  return {
+    criterias: set.map(
+      ({ templates, maxStrikePercent, maxDurationInDays }) => ({
+        criteriaSets: [
+          {
+            criteriaSet: { templates },
+          },
+        ],
+        maxStrikePercent,
+        maxDurationInDays,
+      })
+    ),
+  };
+};
+
+const mockOtoken = (
+  tokenAddress: string,
+  strikePrice: number,
+  expiry: number,
+  underlyingAddress: string
+) => ({
+  otoken: {
+    tokenAddress,
+    underlyingAsset: {
+      symbol: "foo",
+      name: "bar",
+      address: underlyingAddress,
+      decimals: 18,
+    },
+    expiry,
+    strikePrice,
+  },
+});
+
+export { mockPool, mockCriteria, mockOtoken, mockCriterias };
