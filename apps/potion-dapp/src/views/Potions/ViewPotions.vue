@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { usePersonalPotions } from "@/composables/usePotions";
+import { usePersonalPotions } from "@/composables/usePersonalPotions";
 import { BaseCard, LabelValue, BaseButton, MyPotionCard } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { computed, onMounted, ref, watch } from "vue";
