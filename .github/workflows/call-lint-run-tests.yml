@@ -79,6 +79,10 @@ jobs:
       - name: Dapp unit test
         run: yarn nx run potion-dapp:test-unit
 
+      - name: Dapp coverage
+        if: success()
+        run: yarn nx run potion-dapp:test-unit-coverage
+
   run-unit-test-subgraph:
     name: Run unit tests (subgraph)
     runs-on: ubuntu-latest
@@ -98,6 +102,10 @@ jobs:
 
       - name: Subgraph unit test
         run: yarn test-unit potion-subgraph
+
+      - name: Subgraph coverage
+        if: success()
+        run: yarn nx run potion-subgraph:coverage
 
   run-component-tests:
     name: Run component tests
