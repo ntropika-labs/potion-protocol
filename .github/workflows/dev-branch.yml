@@ -4,7 +4,7 @@ name: Development branch actions
 on:
   workflow_dispatch:
   push:
-    branches: [develop]
+    branches: [develop, feat-add-unit-test-to-ci-CU-390ex3y]
   pull_request:
     branches: [develop]
 
