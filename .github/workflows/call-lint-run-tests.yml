@@ -55,6 +55,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      - name: Codegen
+        run: yarn codegen subgraph-queries
+
       - name: Dapp unit test
         run: yarn nx run potion-dapp:test-unit
 
