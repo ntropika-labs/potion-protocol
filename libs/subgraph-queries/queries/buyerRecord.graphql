@@ -1,0 +1,14 @@
+query getBuyerRecords($buyer: Bytes, $expiry: BigInt) {
+  buyerRecords(where: { buyer: $buyer, expiry: $expiry }) {
+    id
+    buyer
+    expiry
+    otoken {
+      expiry
+      id
+      isPut
+      premium
+      strikePrice
+    }
+  }
+}

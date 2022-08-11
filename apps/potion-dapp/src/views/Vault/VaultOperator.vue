@@ -39,7 +39,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
-import { $fetch } from "ohmyfetch";
+import { useBuyerRecords } from "@/composables/useBuyerRecords";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -384,9 +384,6 @@ const enterPosition = async () => {
     expirationTimestamp,
     true
   );
-  if (IS_DEV_ENV) {
-    potionAddress.value = newOtokenAddress;
-  }
 
   const swapRoute = uniswapRouteData.value.route[0];
 
@@ -508,28 +505,18 @@ const testAddBlock = async (addHours: number) => {
 
   console.log(blockTimestamp.value);
 };
-const potionAddress = ref();
+
+const { records } = useBuyerRecords(
+  contractsAddresses["PotionBuyAction"].address,
+  nextCycleTimestamp
+);
+const potionAddress = computed(() => {
+  if (!records.value || !records.value.length) return null;
+
+  return records.value[0].otoken ? records.value[0].otoken.id : null;
+});
 const setPriceCommand = ref<HTMLElement>();
-const getPotionAddress = async () => {
-  const response = await $fetch(
-    "http://localhost:8000/subgraphs/name/potion-subgraph",
-    {
-      method: "POST",
-      body: {
-        query: `query MyQuery {\n  otokens(where: {expiry: "${nextCycleTimestamp.value}"}) {\n    id\n    expiry\n  }\n}`,
-        variables: null,
-        operationName: "MyQuery",
-        extensions: { headers: null },
-      },
-    }
-  );
-
-  console.log(response);
-
-  potionAddress.value = response.data.otokens[0].id;
-};
 const copySetPriceCommand = async () => {
-  console.log(setPriceCommand.value);
   if (potionAddress.value && setPriceCommand.value?.textContent) {
     await navigator.clipboard.writeText(setPriceCommand.value.textContent);
   }
@@ -567,16 +554,6 @@ const copySetPriceCommand = async () => {
         label="Load info"
         class="mb-2"
         @click="reloadInfoAfterAction"
-      >
-        <template #pre-icon>
-          <i class="i-ph-test-tube-fill"></i>
-        </template>
-      </BaseButton>
-      <BaseButton
-        palette="primary"
-        label="get potion"
-        class="mb-2"
-        @click="getPotionAddress()"
       >
         <template #pre-icon>
           <i class="i-ph-test-tube-fill"></i>
