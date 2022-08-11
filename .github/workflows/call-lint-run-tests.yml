@@ -144,7 +144,6 @@ jobs:
           retention-days: 25
 
   run-e2e-tests:
-    if: ${{ false }}
     name: Run e2e tests
     runs-on: ubuntu-latest
     needs: [run-component-tests, run-unit-test-subgraph, run-unit-test-contracts]
