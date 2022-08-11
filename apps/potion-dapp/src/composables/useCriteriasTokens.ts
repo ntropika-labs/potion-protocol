@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { toOptionToken } from "@/helpers/tokens";
 import { useCoinGecko } from "@/composables/useCoinGecko";
@@ -38,9 +38,14 @@ export function useCriteriasTokens(
     () => criterias.value?.map(({ token }) => token) ?? []
   );
 
-  onMounted(async () => {
-    tokenPricesMap.value = await fetchAssetsPrice();
-  });
+  const initializePriceMap = async () => {
+    if (tokens.value.length > 0) {
+      tokenPricesMap.value = await fetchAssetsPrice();
+    }
+  };
+
+  onMounted(initializePriceMap);
+  watch(criterias, initializePriceMap);
 
   return {
     tokenPricesMap,
