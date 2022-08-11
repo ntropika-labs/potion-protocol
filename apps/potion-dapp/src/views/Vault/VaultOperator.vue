@@ -2,7 +2,7 @@
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Token, TradeType } from "@uniswap/sdk-core";
+import { Token as UniToken, TradeType } from "@uniswap/sdk-core";
 import { useOracleContract } from "@/composables/useOracleContract";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { createValidExpiry } from "@/helpers/time";
@@ -18,7 +18,10 @@ import {
 
 import { useOnboard } from "@onboard-composable";
 
-import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
+import {
+  useHedgingVaultOperatorHelperContract,
+  type UniSwapInfo,
+} from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -53,7 +56,7 @@ const TabNavigationComponent = defineAsyncComponent(
  */
 const IS_DEV_ENV = import.meta.env.DEV;
 
-const USDC = new Token(
+const USDC = new UniToken(
   ChainId.MAINNET,
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   6,
@@ -62,7 +65,7 @@ const USDC = new Token(
 );
 
 // TODO: remove once we have proper integration for underlying assets
-const WETH = new Token(
+const WETH = new UniToken(
   ChainId.MAINNET,
   "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   18,
@@ -105,7 +108,7 @@ const walletAddress = computed(
  * Vault operation
  */
 const { principalPercentages, vaultStatus, getVaultStatus } =
-  useInvestmentVaultContract(validId);
+  useInvestmentVaultContract(validId, true);
 
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
@@ -306,33 +309,64 @@ const loadExitPositionRoute = async () => {
       walletAddress.value,
       swapSlippage.value
     );
+  } else {
+    totalAmountToSwap.value = 0;
   }
 
   console.log("exit route", uniswapRouteData.value);
 };
 
 const exitPosition = async () => {
-  if (!uniswapRouteData.value || !uniswapRouteData.value.route) return;
+  if (!isExitPositionOperationValid.value) {
+    throw new Error("A uniswap route is required to exit position");
+  }
 
   toggleUniswapPolling(false);
 
-  const swapRoute = uniswapRouteData.value.route[0];
-  const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-  const expectedPriceRate = IS_DEV_ENV
-    ? (1 / oraclePrice.value).toFixed(6)
-    : uniswapRouteData.value?.trade.executionPrice.invert().toFixed(6);
-
-  const swapInfo = {
-    steps: [
-      { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
-    ],
-    outputTokenAddress: tokenAsset.value.address,
-    expectedPriceRate: expectedPriceRate, //"0.001", // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+  let swapInfo: UniSwapInfo;
+  const USDCToken = {
+    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
+    name: USDC.name || "",
+    symbol: USDC.symbol || "",
+    decimals: USDC.decimals,
   };
+  if (totalAmountToSwap.value > 0) {
+    if (!uniswapRouteData.value?.route) {
+      throw new Error("A Uniswap route is required to exit position");
+    }
+
+    const swapRoute = uniswapRouteData.value.route[0];
+    const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+    const expectedPriceRate = IS_DEV_ENV
+      ? 1 / oraclePrice.value //0.001,
+      : uniswapRouteData.value?.trade.executionPrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+    swapInfo = {
+      steps: [
+        {
+          inputToken: USDCToken,
+          fee: firstPoolFee,
+        },
+      ],
+      outputToken: tokenAsset.value,
+      expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+    };
+  } else {
+    swapInfo = {
+      steps: [
+        {
+          inputToken: USDCToken,
+          fee: 0,
+        },
+      ],
+      outputToken: tokenAsset.value,
+      expectedPriceRate: 0,
+    };
+  }
 
   console.log("expectedPriceRate", expectedPriceRate);
 
   await vaultExitPosition(swapInfo);
+  await reloadInfoAfterAction();
 };
 
 const loadEnterPositionRoute = async () => {
@@ -398,13 +432,19 @@ const enterPosition = async () => {
   });
 
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const USDCToken = {
+    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
+    name: USDC.name || "",
+    symbol: USDC.symbol || "",
+    decimals: USDC.decimals,
+  };
   const expectedPriceRate = IS_DEV_ENV
-    ? oraclePrice.value.toFixed(6)
-    : uniswapRouteData.value?.trade.executionPrice.toFixed(6);
-  const swapInfo = {
-    steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
-    outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: expectedPriceRate, //1000, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
+    ? oraclePrice.value //1000,
+    : uniswapRouteData.value.trade.executionPrice.toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+  const swapInfo: UniSwapInfo = {
+    steps: [{ inputToken: tokenAsset.value, fee: firstPoolFee }],
+    outputToken: USDCToken,
+    expectedPriceRate: expectedPriceRate, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
   };
 
   const potionBuyInfo = {
