@@ -72,6 +72,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      - name: Prepare subgraph.yaml
+        run: yarn nx run potion-subgraph:prepare-local
+
       - name: Codegen
         run: yarn codegen potion-subgraph
 
