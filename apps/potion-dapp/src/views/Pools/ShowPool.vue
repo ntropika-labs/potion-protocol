@@ -42,7 +42,7 @@ const route = useRoute();
 const router = useRouter();
 const poolStatus = ref("Active");
 
-const { fetchUserData, userCollateralBalance } = useUserData();
+const { fetchUserData, userAllowance, userCollateralBalance } = useUserData();
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const { poolId, poolLp, id } = useRoutePoolId(route.params);
@@ -104,7 +104,7 @@ const {
   depositTx,
   depositLabel,
   amount: modelDeposit,
-} = useDeposit(poolId);
+} = useDeposit(poolId, userAllowance, userCollateralBalance);
 
 const handleDeposit = async () => {
   const deposited = await deposit();
