@@ -44,13 +44,13 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Copy seeds in the Ganache volume
-        run: bin/prepare-seeds-headless
+        run: bin/setup-database-seed --all
         shell: bash
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
 
       - name: Create and seed environment
-        run: ./bin/create-local-env-headless
+        run: ./bin/setup-local-env
         shell: bash
         env:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}

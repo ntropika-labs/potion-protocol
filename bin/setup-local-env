@@ -107,8 +107,8 @@ check_environment_running() {
       comm -13 <(sort <<<"$running_containers") <(sort <<<"$services")
 
       msg "${NOFORMAT}"
-  elif [ $total_containers -ne 4 ]; then
-      local offline_services=(4 - $total_containers)
+  elif [ "$total_containers" -ne 4 ]; then
+      local offline_services=(4 - "$total_containers")
       msg "${RED}Some services are not running:"
       msg "${RED}- total services not running: ${offline_services} ${NOFORMAT}"
   else
@@ -123,18 +123,28 @@ check_environment_running() {
 }
 
 check_db_seed() {
-  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  local ganache_volume_folder
+  local ganache_db_name
+  if [[ -z ${GANACHE_VOLUME:-} ]]; then
+    ganache_volume_folder="$(grep -v '#' < .env | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  else
+    ganache_volume_folder=$GANACHE_VOLUME
+  fi
   # strip only '/opt/' from the string
-  local ganache_db_name="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+  if [[ -z ${DATABASE_PATH:-} ]]; then
+    ganache_db_name="$(grep -v '#' < .env | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d' | sed 's/\(\"\|\/opt\/\)//g')"
+  else
+    ganache_db_name="$(echo "$DATABASE_PATH" | sed 's/\(\"\|\/opt\/\)//g')"
+  fi
   local ganache_db_file="${ganache_volume_folder}/${ganache_db_name}/LOG"
 
   if [[ -s "$ganache_db_file" ]]; then
-    msg "${GREEN}- - Ganache database already seeded${NOFORMAT}"
+    msg "${GREEN}Ganache database already seeded${NOFORMAT}"
     is_db_seeded=1
     return
   fi
 
-  msg "${ORANGE}- - Ganache database not seeded${NOFORMAT}"
+  msg "${ORANGE}Ganache database not seeded${NOFORMAT}"
   is_db_seeded=0
   return
 }
@@ -143,47 +153,50 @@ spin_up_environment() {
   msg "${GREEN}Starting local environment...${NOFORMAT}"
 
   # Remove the existing environment if any and all of its volumes
-  docker compose down -v
-  msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
-
-  msg "${GREEN}- Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
-  # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
-  docker compose up -d -V
-  msg "${GREEN}- - Containers started ${NOFORMAT}"
-
-  ./bin/wait-for-tcp localhost:8545
-  msg "${GREEN}- - Ganache is ready ${NOFORMAT}"
-  sleep 2
-
-
-  if [[ $is_db_seeded -eq 0 ]]; then
-    msg "${ORANGE}- - Seeding Ganache database${NOFORMAT}"
-
-    yarn nx run potion-contracts:deploy-local
-    msg "${GREEN}- - Potion smart contracts deployed ${NOFORMAT}"
-
-    yarn nx run potion-subgraph:prepare-local
-    msg "${GREEN}- - Potion subgraph.yaml is ready ${NOFORMAT}"
-
-    yarn nx run potion-subgraph:codegen
-    msg "${GREEN}- - Subgraph codegen ${NOFORMAT}"    
+  if [[ $is_environment_running -eq 1 ]]; then
+    docker compose down -v
+    msg "${GREEN}- Removed old containers and their volumes ${NOFORMAT}"
   fi
 
-  sleep 10
-  msg "${GREEN}- - graph-node is ready ${NOFORMAT}"
+  msg "${PURPLE}Run and deploy the contracts and subgraph on local ganache ${NOFORMAT}"
+  # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
+  docker compose up -d -V
+  msg "${GREEN}- Containers started ${NOFORMAT}"
 
-  yarn nx run potion-subgraph:create-local
-  msg "${GREEN}- - Potion subgraph created ${NOFORMAT}"
+  ./bin/wait-for-tcp localhost:8545
+  msg "${GREEN}- Ganache is ready ${NOFORMAT}"
+  sleep 2
 
-  yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
-  msg "${GREEN}- - Potion subgraph deployed ${NOFORMAT}"
-
+  # Check if the ganache db specified in the .env has been already seeded
   if [[ $is_db_seeded -eq 0 ]]; then
+    # If it is a new database deploy the contracts
+    msg "${ORANGE}Seeding Ganache database...${NOFORMAT}"
+
+    yarn nx run potion-contracts:deploy-local
+    msg "${GREEN}- Potion smart contracts deployed ${NOFORMAT}"
+  fi
+
+  # wait a couple of seconds before deploying the subgraph
+  sleep 10
+  msg "${GREEN}- graph-node is ready ${NOFORMAT}"
+
+  # run prepare-local and codegen only on cold starts
+  if [[ $is_environment_running -eq 0 ]]; then
+    yarn nx run potion-subgraph:prepare-local
+    msg "${GREEN}- Potion subgraph.yaml is ready ${NOFORMAT}"
+
+    yarn nx run potion-subgraph:codegen
+    msg "${GREEN}- Subgraph codegen ${NOFORMAT}"    
 
     yarn nx run subgraph-queries:codegen
     msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
   fi
 
+  yarn nx run potion-subgraph:create-local
+  msg "${GREEN}- Potion subgraph created ${NOFORMAT}"
+
+  yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
+  msg "${GREEN}- Potion subgraph deployed ${NOFORMAT}"
   return 0
 }
 
@@ -191,13 +204,12 @@ parse_params "$@"
 setup_colors
 
 # script logic here
-msg "${YELLOW}Read parameters:${NOFORMAT}"
-msg "- force: ${force}"
-msg "- no_redeploy: ${no_redeploy}"
+msg "${CYAN}Read parameters:${NOFORMAT}"
+msg "${BLUE}- force: ${force}${NOFORMAT}"
+msg "${BLUE}- no_redeploy: ${no_redeploy}${NOFORMAT}"
 
 
 cd "${script_dir}/.."
-msg "${YELLOW} - Moved to root folder: $PWD"
 check_environment_running
 check_db_seed
 
