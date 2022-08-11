@@ -57,6 +57,10 @@ jobs:
 
       - name: Contracts unit test
         run: yarn nx run potion-contracts:test
+        env:
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
+          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
 
   run-unit-test-dapp:
     name: Run unit tests (dapp)
