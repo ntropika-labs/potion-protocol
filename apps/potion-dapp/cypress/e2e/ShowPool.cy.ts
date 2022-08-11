@@ -3,7 +3,7 @@
 
 import { aliasQuery, resetApproval } from "../support/utilities";
 
-describe("Show Pool Flow", () => {
+describe.skip("Show Pool Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-pool", "2022-02-01 09:00:00+00:00");
