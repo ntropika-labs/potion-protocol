@@ -1,0 +1,229 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "curveHash",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct ICurveManager.Curve",
+        "name": "curveParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "CurveAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct ICurveManager.Curve",
+        "name": "_curve",
+        "type": "tuple"
+      }
+    ],
+    "name": "addCurve",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "_input59x18",
+        "type": "int256"
+      }
+    ],
+    "name": "cosh",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "output59x18",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct ICurveManager.Curve",
+        "name": "_curve",
+        "type": "tuple"
+      }
+    ],
+    "name": "hashCurve",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct ICurveManager.Curve",
+        "name": "_curve",
+        "type": "tuple"
+      },
+      {
+        "internalType": "int256",
+        "name": "_x_59x18",
+        "type": "int256"
+      }
+    ],
+    "name": "hyperbolicCurve",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "output59x18",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_hash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isKnownCurveHash",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "valid",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

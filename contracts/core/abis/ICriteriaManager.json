@@ -1,0 +1,312 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "criteriaHash",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct ICriteriaManager.Criteria",
+        "name": "criteria",
+        "type": "tuple"
+      }
+    ],
+    "name": "CriteriaAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "criteriaSetHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32[]",
+        "name": "criteriaSet",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "CriteriaSetAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.Criteria",
+        "name": "_criteria",
+        "type": "tuple"
+      }
+    ],
+    "name": "addCriteria",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_hashes",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "addCriteriaSet",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.Criteria",
+        "name": "_criteria",
+        "type": "tuple"
+      }
+    ],
+    "name": "hashCriteria",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_hashes",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "hashOfSortedHashes",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isCriteriaSetHash",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "valid",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_criteriaSetHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_criteriaHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isInCriteriaSet",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isInSet",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.Criteria",
+        "name": "_criteria",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "percentStrikeValue",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "wholeDaysRemaining",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.OtokenProperties",
+        "name": "_otokenCache",
+        "type": "tuple"
+      }
+    ],
+    "name": "requireOtokenMeetsCriteria",
+    "outputs": [],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

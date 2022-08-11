@@ -88,48 +88,56 @@ parse_params() {
   return 0
 }
 
+# use docker busybox to copy/remove files
 copy_folders() {
   local selected_seeds_folders=$1
   local volume_folder=$2
+  docker run --name docker_cp_helper -v "$volume_folder:/data" busybox true
 
   for pathname in $selected_seeds_folders; do
     local seed_name=$(echo "$pathname" | sed "s%$ganache_seeds_folder/%%g")
-    local destination_folder="${volume_folder}${seed_name}"
-    msg "${YELLOW}- - Copying seed: ${seed_name}${NOFORMAT}"
+    local destination_folder="/data/${seed_name}"
+    msg "${BLUE}- Copying seed: ${seed_name}${NOFORMAT}"
 
     if [[ -d "$destination_folder" ]]; then
-      rm -i -rf "${volume_folder}${seed_name}/*"
-      cp "$pathname"/* $destination_folder
+      docker run --rm -v "$volume_folder:/data" busybox rm -i -rf "${destination_folder}/*"
+      docker cp "$pathname"/* "docker_cp_helper:$destination_folder"
     else
-      rm -i -rf "${volume_folder}${seed_name}"
-      cp -R $pathname $volume_folder
+      docker run --rm -v "$volume_folder:/data" busybox rm -i -rf "$destination_folder"
+      docker cp "$pathname" "docker_cp_helper:$destination_folder"
     fi
   done
+  docker rm docker_cp_helper
 
   return 0
 }
 
 copy_seed_folder() {
-  local current_db_path="$(cat .env | grep -v '#' | sed -e 's/^DATABASE_PATH=\(.*\)$/\1/;t;d')"
-  local ganache_volume_folder="$(cat .env | grep -v '#' | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  local ganache_volume_folder
+  if [[ -z ${GANACHE_VOLUME:-} ]]; then
+    ganache_volume_folder="$(grep -v '#' < .env | sed -e 's/^GANACHE_VOLUME=\(.*\)$/\1/;t;d' | sed 's/\"//g')"
+  else
+    ganache_volume_folder=$GANACHE_VOLUME
+  fi
+  local absolute_volume_folder=$(realpath "$ganache_volume_folder")
   
   local ganache_db_folder="${ganache_volume_folder}/${seed_name}"
   local ganache_db_file="${ganache_db_folder}/LOG"
 
   if [[ $seed_name == "*" || -f "$ganache_db_file" ]]; then
-    msg "${YELLOW}- - Copying seed to volume folder${NOFORMAT}"
+    msg "${CYAN}Copying seed to volume folder:${NOFORMAT}"
     local source_folder="$ganache_seeds_folder/$seed_name"
 
-    copy_folders "$source_folder" "$ganache_volume_folder/"
+    copy_folders "$source_folder" "$absolute_volume_folder"
 
-    docker compose exec ganache mkdir -p /opt/tests 
+    docker run --rm -v "$absolute_volume_folder:/data" busybox mkdir -p /data/tests 
 
-    msg "${GREEN}- - Seed copied successfully [${ganache_seeds_folder}/${seed_name} -> ${ganache_volume_folder}/] ${NOFORMAT}"
+    msg "${GREEN}Seed copied successfully [${ganache_seeds_folder}/${seed_name} -> ${ganache_volume_folder}/] ${NOFORMAT}"
 
     return 0
   fi
 
-  msg "${RED}- - Seed does not exist within 'ganache_seeds': ${seed_name} ${NOFORMAT}"
+  msg "${RED}Seed does not exist within 'ganache_seeds': ${seed_name} ${NOFORMAT}"
   return 1
 }
 
@@ -138,9 +146,8 @@ parse_params "$@"
 setup_colors
 
 # SCRIPT LOGIC
-msg "${YELLOW}Read parameters:${NOFORMAT}"
-msg "- seed_name: ${seed_name}"
+msg "${CYAN}Read parameters:${NOFORMAT}"
+msg "${BLUE}- seed_name: ${seed_name}"
 
 cd "${script_dir}/.."
-msg "${YELLOW} - Moved to root folder: $PWD"
 copy_seed_folder

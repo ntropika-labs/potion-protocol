@@ -1,6 +1,8 @@
-# vue-starter
+# Potion DApp
 
-This template should help get you started developing with Vue 3 in Vite.
+This project contains the DApp of the Potion Protocol developed with Vue 3 in Vite.
+
+Before getting started please be sure to have installed the [Requirements](#requirements).
 
 ## Recommended IDE Setup
 
@@ -21,41 +23,53 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+## Requirements
+
+- [NodeJS](https://nodejs.org/en/download/) (v16)
+
+- [Yarn](https://yarnpkg.com/getting-started/install)
+
 ## Project Setup
 
 ```sh
-npm install
+yarn install
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+yarn dev
+```
+
+### Spin up Docker, Compile and Hot-Reload for Development
+
+```sh
+yarn local-dev
 ```
 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
-npm run build
+yarn build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Type-Check, Compile and Minify for Production with mocked `web3-onboard`
 
 ```sh
-npm run test:unit
+yarn build-test
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
 
 ```sh
-npm run build
-npm run test:e2e # or `npm run test:e2e:ci` for headless testing
+yarn build-test
+yarn test-e2e # or `yarn test-e2e-ci` for headless testing
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
-npm run lint
+yarn lint
 ```
 
 ### NX custom commands
