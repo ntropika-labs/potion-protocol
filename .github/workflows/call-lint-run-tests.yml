@@ -61,10 +61,27 @@ jobs:
       - name: Dapp unit test
         run: yarn nx run potion-dapp:test-unit
 
+  run-unit-test-subgraph:
+    name: Run unit tests (subgraph)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Codegen
+        run: yarn codegen potion-subgraph
+
+      - name: Dapp unit test
+        run: yarn test-unit potion-subgraph
+
   run-component-tests:
     name: Run component tests
     runs-on: ubuntu-latest
-    needs: [run-unit-test-dapp]
+    needs: [run-unit-test-dapp, run-unit-test-subgraph]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -101,7 +118,7 @@ jobs:
     if: ${{ false }}
     name: Run e2e tests
     runs-on: ubuntu-latest
-    needs: [run-unit-test-dapp]
+    needs: [run-unit-test-dapp, run-unit-test-subgraph]
     env:
       PREVIEW_URL: "http://127.0.0.1:5050"
     steps:
