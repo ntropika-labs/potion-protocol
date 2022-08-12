@@ -113,6 +113,41 @@ const mockPotionOrders = (
   };
 };
 
+interface mockSnapshotParams {
+  pnl?: string;
+  size?: string;
+  templatePnl?: string;
+  templateSize?: string;
+  templateUtilization?: string;
+  timestamp: string;
+  utilization?: string;
+}
+
+const mockSnapshots = (snapshots: mockSnapshotParams[]) => {
+  return {
+    poolSnapshots: snapshots.map(
+      ({
+        pnl = "0",
+        size = "0",
+        templatePnl = "0",
+        templateSize = "0",
+        templateUtilization = "0",
+        timestamp,
+        utilization = "0",
+      }) => ({
+        actionType: "MOCKED_SNAPSHOT",
+        pnlPercentage: pnl,
+        size: size,
+        templatePnlPercentage: templatePnl,
+        templateSize: templateSize,
+        templateUtilization: templateUtilization,
+        timestamp: timestamp,
+        utilization: utilization,
+      })
+    ),
+  };
+};
+
 export {
   mockPool,
   mockPoolTemplate,
@@ -120,4 +155,5 @@ export {
   mockOtoken,
   mockCriterias,
   mockPotionOrders,
+  mockSnapshots,
 };
