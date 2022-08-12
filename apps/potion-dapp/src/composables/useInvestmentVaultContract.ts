@@ -1,4 +1,4 @@
-import { isRef, onMounted, ref, unref, watch } from "vue";
+import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
 import { useEthersContract } from "@/composables/useEthersContract";
 import { formatUnits } from "@ethersproject/units";
@@ -11,6 +11,8 @@ import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 //   ContractReceipt,
 // } from "@ethersproject/contracts";
 import type { Ref } from "vue";
+import { useContractEvents } from "./useContractEvents";
+import { BigNumber } from "ethers";
 
 export enum LifecycleState {
   Unlocked,
@@ -18,17 +20,21 @@ export enum LifecycleState {
   Locked,
 }
 
-export function useInvestmentVaultContract(address: string | Ref<string>) {
+export function useInvestmentVaultContract(
+  address: string | Ref<string>,
+  useEventStream = false
+) {
   const { initContract } = useEthersContract();
+
   // const { connectedWallet } = useOnboard();
-  const initContractSigner = () => {
-    return initContract(
-      true,
-      false,
-      InvestmentVault__factory,
-      unref(address).toLowerCase()
-    ) as InvestmentVault;
-  };
+  // const initContractSigner = () => {
+  //   return initContract(
+  //     true,
+  //     false,
+  //     InvestmentVault__factory,
+  //     unref(address).toLowerCase()
+  //   ) as InvestmentVault;
+  // };
 
   const initContractProvider = () => {
     return initContract(
@@ -170,25 +176,6 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
   //   }
   // };
 
-  const TESTenterPosition = async () => {
-    try {
-      const signer = initContractSigner();
-
-      const tx = await signer.enterPosition();
-      const receipt = await tx.wait();
-      console.info(tx, receipt);
-
-      return { tx, receipt };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot TESTenterPosition: ${error.message}`
-          : `Cannot TESTenterPosition: ${error}`;
-
-      throw new Error(errorMessage);
-    }
-  };
-
   const fetchInfo = async () => {
     if (unref(address)) {
       return await Promise.all([
@@ -201,7 +188,105 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     }
   };
 
+  let removeEventListenersCallback: any;
+  const setupEventListeners = async () => {
+    const contractInstance = initContractProvider();
+    const startingBlock = await contractInstance.provider.getBlockNumber();
+    const { addEventListener, removeEventListeners } = useContractEvents(
+      contractInstance,
+      startingBlock,
+      true
+    );
+
+    // Check provider.filters for event names
+    addEventListener(
+      contractInstance.filters["ActionsAdded(address[])"](),
+      (event, ...params: [string[]]) => {
+        console.log("ActionsAdded(address[])", event, params);
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["LifecycleStateChanged(uint8,uint8)"](),
+      (event, ...params: [number, number]) => {
+        const oldStatus = params[0] as LifecycleState;
+        const newStatus = params[1] as LifecycleState;
+        console.log("LifecycleStateChanged(uint8,uint8)", newStatus, oldStatus);
+
+        vaultStatus.value = newStatus;
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["PerformanceFeeChanged(uint256,uint256)"](),
+      (event, ...params: [BigNumber, BigNumber]) => {
+        const oldFee = params[0];
+        const newFee = params[1];
+        console.log(
+          "PerformanceFeeChanged(uint256,uint256)",
+          newFee.toString(),
+          oldFee.toString()
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["PrincipalPercentagesUpdated(uint256[])"](),
+      (event, ...params: [BigNumber[]]) => {
+        console.log(
+          "PrincipalPercentagesUpdated(uint256[])",
+          event,
+          params.map((b) => b.toString())
+        );
+
+        principalPercentages.value = params[0].map((bn) =>
+          parseFloat(formatUnits(bn, 6))
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["VaultCapChanged(uint256,uint256)"](),
+      (event, ...params: [BigNumber, BigNumber]) => {
+        console.log(
+          "VaultCapChanged(uint256,uint256)",
+          event,
+          params.map((b) => b.toString())
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["VaultPositionEntered(uint256,uint256)"](),
+      (event, ...params: [BigNumber, BigNumber]) => {
+        console.log(
+          "VaultPositionEntered(uint256,uint256)",
+          event,
+          params.map((b) => b.toString())
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["VaultPositionExited(uint256)"](),
+      (event, ...params: [BigNumber, BigNumber]) => {
+        console.log(
+          "VaultPositionExited(uint256)",
+          event,
+          params.map((b) => b.toString())
+        );
+      }
+    );
+
+    removeEventListenersCallback = removeEventListeners;
+    // console.log("EVENT LISTENERS", getEventListeners());
+  };
+
   onMounted(async () => {
+    if (useEventStream) {
+      await setupEventListeners();
+    }
+
     await fetchInfo();
   });
 
@@ -210,6 +295,10 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
       await fetchInfo();
     });
   }
+
+  onUnmounted(() => {
+    if (removeEventListenersCallback) removeEventListenersCallback();
+  });
 
   return {
     operator,
@@ -227,6 +316,5 @@ export function useInvestmentVaultContract(address: string | Ref<string>) {
     vaultStatus,
     vaultStatusLoading,
     getVaultStatus,
-    TESTenterPosition,
   };
 }

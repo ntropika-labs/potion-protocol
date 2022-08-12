@@ -3,7 +3,7 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import { isRef, onMounted, ref, unref, watch } from "vue";
+import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
@@ -14,7 +14,9 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
-// import type { BigNumber } from "@ethersproject/bignumber";
+import { useContractEvents } from "./useContractEvents";
+import { BigNumber } from "ethers";
+import { until } from "@vueuse/core";
 
 export function useErc4626Contract(
   address: string | Ref<string>,
@@ -623,6 +625,67 @@ export function useErc4626Contract(
       });
     }
   }
+
+  let removeEventListenersCallback: any;
+  const setupEventListeners = async () => {
+    const contractInstance = initContractProvider();
+    const startingBlock = await contractInstance.provider.getBlockNumber();
+    const { addEventListener, removeEventListeners } = useContractEvents(
+      contractInstance,
+      startingBlock
+    );
+
+    // Check provider.filters for event names
+    addEventListener(
+      contractInstance.filters["Deposit(address,address,uint256,uint256)"](),
+      (event, ...params: [string, string, BigNumber, BigNumber]) => {
+        console.log("Deposit(address,address,uint256,uint256)", event, params);
+        const totalNewAssets = params[3];
+        totalAssets.value = parseFloat(
+          formatUnits(totalNewAssets, assetDecimals.value)
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters[
+        "Withdraw(address,address,address,uint256,uint256)"
+      ](),
+      (event, ...params: [string, string, string, BigNumber, BigNumber]) => {
+        console.log(
+          "Withdraw(address,address,address,uint256,uint256)",
+          event,
+          params
+        );
+        const totalNewAssets = params[4];
+        totalAssets.value = parseFloat(
+          formatUnits(totalNewAssets, assetDecimals.value)
+        );
+      }
+    );
+
+    addEventListener(
+      contractInstance.filters["Approval(address,address,uint256)"](),
+      (event, ...params: any) => {
+        console.log("Approval(address,address,uint256)", event, params);
+      }
+    );
+
+    removeEventListenersCallback = removeEventListeners;
+
+    // console.log("EVENT LISTENERS", getEventListeners());
+  };
+
+  onMounted(async () => {
+    await until(assetDecimals).toBeTruthy();
+    await setupEventListeners();
+  });
+
+  onUnmounted(() => {
+    if (removeEventListenersCallback) {
+      removeEventListenersCallback();
+    }
+  });
 
   return {
     allowance,

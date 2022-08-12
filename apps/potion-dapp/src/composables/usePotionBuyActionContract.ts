@@ -1,19 +1,14 @@
-import { computed, onMounted, ref, unref } from "vue";
-import { utils } from "ethers";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import {
-  PotionBuyAction__factory,
-  type IUniswapV3Oracle,
-} from "@potion-protocol/hedging-vault/typechain";
+import { computed, onMounted, onUnmounted, ref, unref } from "vue";
+import { BigNumber, utils } from "ethers";
+import { formatUnits } from "@ethersproject/units";
+import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
-import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/actions/PotionBuyAction";
-import type { UniSwapInfo } from "./useHedgingVaultOperatorHelperContract";
-// import { Swap } from "@/helpers/hedgingVaultContracts";
+import { useContractEvents } from "./useContractEvents";
 
 export interface ActionPayout {
   currentPayout: number;
@@ -46,16 +41,6 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const initContractProvider = () => {
     return initContract(
       false,
-      false,
-      PotionBuyAction__factory,
-      contractAddress.toLowerCase()
-    ) as PotionBuyAction;
-  };
-
-  //Provider initialization
-  const initContractSigner = () => {
-    return initContract(
-      true,
       false,
       PotionBuyAction__factory,
       contractAddress.toLowerCase()
@@ -324,75 +309,76 @@ export function usePotionBuyActionContract(contractAddress: string) {
     return strategyError;
   });
 
-  const TESTsetBuyInfo = async (info: any) => {
-    try {
-      strategyLoading.value = true;
-      // console.info(info)
-      console.log(parseUnits(info.expectedPremiumInUSDC, 8));
-      const signer = initContractSigner();
-      const potionBuyActionData: PotionBuyInfoStruct = {
-        targetPotionAddress: info.targetPotionAddress,
-        underlyingAsset: info.underlyingAsset,
-        strikePriceInUSDC: parseUnits(info.strikePriceInUSDC, 8),
-        expirationTimestamp: info.expirationTimestamp,
-        sellers: info.sellers,
-        expectedPremiumInUSDC: parseUnits(info.expectedPremiumInUSDC, 6),
-        totalSizeInPotions: info.totalSizeInPotions,
-      };
-      const tx = await signer.setPotionBuyInfo(potionBuyActionData);
-      const receipt = await tx.wait();
-      console.info(tx, receipt);
+  let removeEventListenersCallback: any;
+  const setupEventListeners = async () => {
+    const provider = initContractProvider();
+    const startingBlock = await provider.provider.getBlockNumber();
+    const { addEventListener, removeEventListeners } = useContractEvents(
+      provider,
+      startingBlock
+    );
 
-      return { tx, receipt };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot TESTsetBuyInfo: ${error.message}`
-          : `Cannot TESTsetBuyInfo: ${error}`;
+    // Check provider.filters for event names
+    addEventListener(
+      provider.filters["CycleDurationChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("CycleDurationChanged(uint256)", event, params);
+        cycleDurationSecs.value = parseFloat(formatUnits(params[0]));
+      }
+    );
 
-      throw new Error(errorMessage);
-    }
-  };
+    addEventListener(
+      provider.filters["MaxPremiumPercentageChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("MaxPremiumPercentageChanged(uint256)", event, params);
+        maxPremiumPercentage.value = parseFloat(formatUnits(params[0], 6));
+      }
+    );
 
-  const TESTsetSwapInfo = async (info: UniSwapInfo) => {
-    try {
-      strategyLoading.value = true;
-      const signer = initContractSigner();
-      // const swapPath = new Swap(
-      //   info.steps[0].inputTokenAddress,
-      //   info.steps[0].fee,
-      //   info.outputTokenAddress
-      // );
-      const swapPath = getEncodedSwapPath(
-        [info.steps[0].inputTokenAddress, info.outputTokenAddress],
-        info.steps[0].fee
-      );
-      console.log("swapPathEncoded", swapPath);
-      const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: info.steps[0].inputTokenAddress,
-        outputToken: info.outputTokenAddress,
-        expectedPriceRate: parseUnits(info.expectedPriceRate.toString(), 18),
-        swapPath: swapPath,
-      };
+    addEventListener(
+      provider.filters["MaxSwapDurationChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("MaxSwapDurationChanged(uint256)", event, params);
+        maxSwapDurationSecs.value = parseFloat(formatUnits(params[0]));
+      }
+    );
 
-      const tx = await signer.setSwapInfo(swapData);
-      const receipt = await tx.wait();
-      console.info(tx, receipt);
+    addEventListener(
+      provider.filters["PremiumSlippageChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("PremiumSlippageChanged(uint256)", event, params);
+        premiumSlippage.value = parseFloat(formatUnits(params[0], 6));
+      }
+    );
 
-      return { tx, receipt };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot TESTsetSwapInfo: ${error.message}`
-          : `Cannot TESTsetSwapInfo: ${error}`;
+    addEventListener(
+      provider.filters["StrikePercentageChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("StrikePercentageChanged(uint256)", event, params);
+        strikePercentage.value = parseFloat(formatUnits(params[0], 6));
+      }
+    );
 
-      throw new Error(errorMessage);
-    }
+    addEventListener(
+      provider.filters["SwapSlippageChanged(uint256)"](),
+      (event, ...params: [BigNumber]) => {
+        console.log("SwapSlippageChanged(uint256)", event, params);
+        swapSlippage.value = parseFloat(formatUnits(params[0], 6));
+      }
+    );
+
+    removeEventListenersCallback = removeEventListeners;
+    // console.log("EVENT LISTENERS", getEventListeners());
   };
 
   onMounted(async () => {
     console.log(contractAddress);
     await getStrategyInfo();
+    await setupEventListeners();
+  });
+
+  onUnmounted(() => {
+    if (removeEventListenersCallback) removeEventListenersCallback();
   });
 
   return {
@@ -432,7 +418,5 @@ export function usePotionBuyActionContract(contractAddress: string) {
     currentPayout,
     getCurrentPayout,
     cycleDurationDays,
-    TESTsetBuyInfo,
-    TESTsetSwapInfo,
   };
 }
