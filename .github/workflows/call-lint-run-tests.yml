@@ -81,14 +81,14 @@ jobs:
       - name: Dapp unit test
         run: yarn nx run potion-dapp:test-unit-coverage
 
-      - name: Dapp code coverage
-        if: github.event_name == 'pull_request'
-        uses: davelosert/vitest-coverage-report-action@v1
-        with:
-          json-summary-path: 'apps/potion-dapp/coverage/coverage-summary.json'
-          json-final-path: 'apps/potion-dapp/coverage/coverage-final.json'
-          vite-config-path: 'apps/potion-dapp/vitest.config.ts'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # - name: Dapp code coverage
+          #   if: github.event_name == 'pull_request'
+          #   uses: davelosert/vitest-coverage-report-action@v1
+          #   with:
+          #     json-summary-path: 'apps/potion-dapp/coverage/coverage-summary.json'
+          #     json-final-path: 'apps/potion-dapp/coverage/coverage-final.json'
+          #     vite-config-path: 'apps/potion-dapp/vitest.config.ts'
+          #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Dapp test report
         if: github.event_name == 'pull_request'
