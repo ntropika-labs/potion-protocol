@@ -65,8 +65,6 @@ jobs:
   run-unit-test-dapp:
     name: Run unit tests (dapp)
     runs-on: ubuntu-latest
-    permissions:
-      checks: write
     needs: [lint]
     env:
       VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
