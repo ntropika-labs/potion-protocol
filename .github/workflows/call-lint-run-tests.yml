@@ -79,19 +79,11 @@ jobs:
         run: yarn codegen subgraph-queries
 
       - name: Dapp unit test
-        run: yarn nx run potion-dapp:test-unit
-
-      - name: Dapp code coverage
-        if: success()
         run: yarn nx run potion-dapp:test-unit-coverage
 
-      - name: Archive code coverage
-        uses: actions/upload-artifact@v2
-        if: success()
-        with:
-          name: potion-dapp-unit-test-coverage
-          path: apps/potion-dapp/coverage
-          retention-days: 25
+      - name: Dapp code coverage
+        if: github.event.action == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v1
 
       - name: Dapp test report
         if: github.event.action == 'pull_request'

@@ -10,7 +10,7 @@ export default defineConfig({
       junit: "reports/report.xml",
     },
     coverage: {
-      reporter: ["text", "json", "html"],
+      reporter: ["text", "text-summary", "json", "json-summary", "html"],
     },
   },
   plugins: [vue({ reactivityTransform: true })],
