@@ -65,6 +65,8 @@ jobs:
   run-unit-test-dapp:
     name: Run unit tests (dapp)
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     needs: [lint]
     env:
       VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
@@ -88,12 +90,14 @@ jobs:
           json-summary-path: 'apps/potion-dapp/coverage/coverage-summary.json'
           json-final-path: 'apps/potion-dapp/coverage/coverage-final.json'
           vite-config-path: 'apps/potion-dapp/vitest.config.ts'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Dapp test report
         if: github.event_name == 'pull_request'
         uses: mikepenz/action-junit-report@v3
         with:
           report_paths: 'apps/potion-dapp/reports/*.xml'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   run-unit-test-subgraph:
     name: Run unit tests (subgraph)
