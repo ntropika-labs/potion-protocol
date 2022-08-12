@@ -1,17 +1,9 @@
-import { computed } from "vue";
-import { isValidAddress, formatAddress } from "@/helpers/addresses";
+import { useRouteAddress } from "./useRouteAddress";
 import type { RouteParams } from "vue-router";
 
 export function useRouteTemplateId(params: RouteParams) {
-  const id = computed(() => {
-    if (Array.isArray(params.id)) {
-      return "";
-    }
-    return params?.id ? formatAddress(params.id) : "";
-  });
-
-  const validTemplateId = computed(() => isValidAddress(id.value));
-  const templateId = computed(() => (validTemplateId.value ? id.value : ""));
+  const { formattedAddress: templateId, validAddress: validTemplateId } =
+    useRouteAddress(params.id);
 
   return {
     templateId,

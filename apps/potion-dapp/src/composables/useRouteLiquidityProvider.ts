@@ -1,17 +1,10 @@
-import { computed } from "vue";
-import { isValidAddress, formatAddress } from "@/helpers/addresses";
+import { useRouteAddress } from "./useRouteAddress";
 import type { RouteParams } from "vue-router";
 
 export function useRouteLiquidityProvider(params: RouteParams) {
-  const lp = computed(() => {
-    if (Array.isArray(params.lp)) {
-      return "";
-    }
-    return params?.lp ? formatAddress(params.lp) : "";
-  });
-
-  const validLp = computed(() => isValidAddress(lp.value));
-  const poolLp = computed(() => (validLp.value ? lp.value : ""));
+  const { formattedAddress: poolLp, validAddress: validLp } = useRouteAddress(
+    params.lp
+  );
 
   return {
     poolLp,
