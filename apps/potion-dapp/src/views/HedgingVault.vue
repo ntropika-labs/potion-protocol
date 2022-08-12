@@ -274,9 +274,11 @@ const {
 
 watch(assetAddress, async () => {
   if (connectedWallet.value) {
-    await fetchErc20Info();
-    await getTokenBalance(true);
-    await fetchUserAllowance(validId.value);
+    await Promise.all([
+      fetchErc20Info(),
+      getTokenBalance(true),
+      fetchUserAllowance(validId.value),
+    ]);
   }
 });
 onMounted(() => {
