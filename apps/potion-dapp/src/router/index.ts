@@ -37,7 +37,7 @@ const router = createRouter({
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {
-      path: "/templates/:templateId",
+      path: "/templates/:id",
       name: "pool-template",
       component: PoolTemplate,
       meta: { requireWallet: false, layout: BaseLayout },

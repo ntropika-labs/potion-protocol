@@ -1,4 +1,7 @@
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+import { useOnboard } from "@onboard-composable";
 
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
@@ -16,6 +19,9 @@ export function useDeployPool(
   approveMessage: string,
   deployMessage: string
 ) {
+  const { t } = useI18n();
+  const { connectedWallet } = useOnboard();
+
   const {
     depositAndCreateCurveAndCriteriaTx,
     depositAndCreateCurveAndCriteriaReceipt,
@@ -43,15 +49,16 @@ export function useDeployPool(
     return 0;
   });
 
-  const deployLabel = computed(() =>
-    amountNeededToApprove.value > 0 ? approveMessage : deployMessage
-  );
+  const deployLabel = computed(() => {
+    if (connectedWallet.value) {
+      return amountNeededToApprove.value > 0 ? approveMessage : deployMessage;
+    }
+    return t("connect_wallet");
+  });
 
   const handleDeployPool = async () => {
     if (amountNeededToApprove.value > 0) {
       await approveForPotionLiquidityPool(liquidity.value, true);
-      await fetchUserCollateralBalance();
-      await fetchUserCollateralAllowance();
     } else {
       await depositAndCreateCurveAndCriteria(
         poolId.value,
@@ -59,9 +66,9 @@ export function useDeployPool(
         bondingCurve.value,
         criterias.value
       );
-      await fetchUserCollateralBalance();
-      await fetchUserCollateralAllowance();
     }
+    fetchUserCollateralBalance();
+    fetchUserCollateralAllowance();
   };
 
   return {

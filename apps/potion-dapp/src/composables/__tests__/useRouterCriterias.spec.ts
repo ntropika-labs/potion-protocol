@@ -64,7 +64,7 @@ describe("useRouterCriterias", () => {
 
       nextTick(() => {
         expect(criterias.value.length).toBe(1);
-        expect(criterias.value[0].token).toEqual({
+        expect(criterias.value[0].token).toMatchObject({
           name: "xoxo",
           symbol: "XOX",
           address: "0x000",
@@ -88,7 +88,7 @@ describe("useRouterCriterias", () => {
 
       nextTick(() => {
         expect(criterias.value.length).toBe(1);
-        expect(criterias.value[0].token).toEqual({
+        expect(criterias.value[0].token).toMatchObject({
           name: "abcd",
           symbol: "SMB",
           address: "0x010",
@@ -112,7 +112,7 @@ describe("useRouterCriterias", () => {
 
       nextTick(() => {
         expect(criterias.value.length).toBe(1);
-        expect(criterias.value[0].token).toEqual({
+        expect(criterias.value[0].token).toMatchObject({
           name: "abcd",
           symbol: "SMB",
           address: "0x010",
@@ -138,7 +138,7 @@ describe("useRouterCriterias", () => {
 
       nextTick(() => {
         expect(criterias.value.length).toBe(1);
-        expect(criterias.value[0].token).toEqual({
+        expect(criterias.value[0].token).toMatchObject({
           name: "abcd",
           symbol: "SMB",
           address: "0x010",

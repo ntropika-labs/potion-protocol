@@ -1,19 +1,8 @@
 <script lang="ts" setup>
-import { useTokenList } from "@/composables/useTokenList";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import {
-  useGetTemplateQuery,
-  useGetLatestPoolIdQuery,
-} from "subgraph-queries/generated/urql";
-import type {
-  BondingCurveParams,
-  Criteria,
-  OptionToken,
-  Token,
-} from "dapp-types";
 import {
   BaseCard,
   BaseButton,
@@ -21,235 +10,108 @@ import {
   CreatorTag,
   AssetTag,
 } from "potion-ui";
-import { useOnboard } from "@onboard-composable";
-import { contractsAddresses } from "@/helpers/contracts";
-import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
-import { etherscanUrl } from "@/helpers";
-
-import { useEmergingCurves } from "@/composables/useEmergingCurves";
-import { useTemplateSnapshots } from "@/composables/useSnapshots";
-import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useCoinGecko } from "@/composables/useCoinGecko";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
 import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
-import { useNotifications } from "@/composables/useNotifications";
 
-const getTokenFromAddress = (address: string): Token => {
-  const { image, name, symbol } = useTokenList(address);
-  return { address, image, name, symbol };
-};
+import { useOnboard } from "@onboard-composable";
+import { contractsAddresses } from "@/helpers/contracts";
+import { getEtherscanUrl } from "@/helpers/addresses";
+
+import { useTokenList } from "@/composables/useTokenList";
+import { useEmergingCurves } from "@/composables/useEmergingCurves";
+import { useTemplateSnapshots } from "@/composables/useSnapshots";
+import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useNotifications } from "@/composables/useNotifications";
+import { useCriteriasTokens } from "@/composables/useCriteriasTokens";
+import { useUserData } from "@/composables/useUserData";
+import { useNextPoolId } from "@/composables/useNextPoolId";
+import { useBondingCurves } from "@/composables/useBondingCurves";
+import { useRouteTemplateId } from "@/composables/useRouteTemplateId";
+import { usePoolTemplate } from "@/composables/usePoolTemplate";
+import { useDeployPool } from "@/composables/useDeployPool";
+import { useLiquidity } from "@/composables/useLiquidity";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-
-const templateId = Array.isArray(route.params.templateId)
-  ? route.params.templateId[0]
-  : route.params.templateId;
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
-const { data } = useGetTemplateQuery({
-  variables: {
-    id: templateId,
-  },
-});
 
-const { chartData, fetching: loadingSnapshots } =
-  useTemplateSnapshots(templateId);
+const { walletAddress, userCollateralBalance } = useUserData();
+
+const { templateId } = useRouteTemplateId(route.params);
+const { template, curve, criterias } = usePoolTemplate(templateId);
+
+const { chartData, fetching: loadingSnapshots } = useTemplateSnapshots(
+  templateId.value
+);
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
+onMounted(() => getBlock("latest"));
 
 const performanceChartDataReady = computed(
-  () => !loadingSnapshots.value && !loadingBlock.value
+  () => !(loadingSnapshots.value || loadingBlock.value)
 );
 
-const template = computed(() => data?.value?.template);
-const curve = computed(() => template?.value?.curve);
-const criteriaSet = computed(() => template?.value?.criteriaSet);
-const criterias = computed<Criteria[]>(
-  () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => ({
-      token: getTokenFromAddress(criteria.underlyingAsset.address),
-      maxStrike: parseInt(criteria.maxStrikePercent),
-      maxDuration: parseInt(criteria.maxDurationInDays),
-    })) ?? []
-);
-const assetsFlat = computed<OptionToken[]>(
-  () =>
-    criteriaSet?.value?.criterias?.map(({ criteria }) => {
-      const token = getTokenFromAddress(criteria.underlyingAsset.address);
+const { tokens, assets, tokenPricesMap } = useCriteriasTokens(criterias);
 
-      return {
-        id: "",
-        isPut: false,
-        duration: criteria.maxDurationInDays,
-        strike: criteria.maxStrikePercent,
-        name: token.name,
-        symbol: token.symbol,
-        address: token.address,
-        decimals: token.decimals,
-        image: token.image,
-      };
-    }) ?? []
-);
-const tokenPricesMap = ref<Map<string, string>>(new Map());
-
-const fetchAssetsPrice = async () => {
-  const prices = new Map();
-  const addresses =
-    criteriaSet?.value?.criterias?.map(
-      ({ criteria }) => criteria.underlyingAsset.address
-    ) ?? [];
-
-  try {
-    const promises = addresses.map(async (address) => {
-      const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
-
-      await fetchTokenPrice();
-
-      prices.set(address, price.value);
-    });
-    await Promise.allSettled(promises);
-    tokenPricesMap.value = prices;
-  } catch (error) {
-    console.error("Error while fetching token prices.");
-  }
-
-  return prices;
-};
-
-const tokens = computed(() => criterias.value?.map(({ token }) => token) ?? []);
 const totalLiquidity = computed(() => template?.value?.size ?? "0");
 const timesCloned = computed(() => template?.value?.numPools ?? "0");
 const pnlPercentage = computed(() => template?.value?.pnlPercentage ?? "0");
+const creatorAddress = computed(() => template?.value?.creator ?? "");
+
 const creator = computed(() => ({
-  label: template?.value?.creator ?? "",
+  label: creatorAddress.value,
   icon: undefined,
-  link: etherscanUrl.concat(`/${template?.value?.creator ?? ""}`),
+  link: getEtherscanUrl(creatorAddress.value),
 }));
 
-const bondingCurveParams = computed<BondingCurveParams>(() => {
-  return {
-    a: parseFloat(curve?.value?.a ?? "0"),
-    b: parseFloat(curve?.value?.b ?? "0"),
-    c: parseFloat(curve?.value?.c ?? "0"),
-    d: parseFloat(curve?.value?.d ?? "0"),
-    maxUtil: parseFloat(curve?.value?.maxUtil ?? "0"),
-  };
+const { bondingCurve, setBondingCurve } = useBondingCurves();
+
+watch(curve, () => {
+  if (curve?.value) {
+    setBondingCurve(
+      curve.value.a,
+      curve.value.b,
+      curve.value.c,
+      curve.value.d,
+      curve.value.maxUtil
+    );
+  }
 });
 
-const liquidity = ref(100);
+const { liquidity, validInput } = useLiquidity(100, userCollateralBalance);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
-const onLiquidityUpdate = (newValue: number) => {
-  liquidity.value = newValue;
-};
-
 const { connectedWallet } = useOnboard();
 const isNotConnected = computed(() => !connectedWallet.value);
-const walletAddress = computed(
-  () => connectedWallet.value?.accounts[0].address ?? ""
+
+const { poolId } = useNextPoolId(walletAddress);
+
+const {
+  deployLabel,
+  approveDeployPoolTx,
+  approveDeployPoolLoading,
+  approveDeployPoolReceipt,
+  handleDeployPool,
+  deployPoolTx,
+  deployPoolLoading,
+  deployPoolReceipt,
+} = useDeployPool(
+  poolId,
+  liquidity,
+  bondingCurve,
+  criterias,
+  `${t("approve")} USDC`,
+  t("add_liquidity")
 );
 
-const {
-  fetchUserCollateralBalance,
-  fetchUserCollateralAllowance,
-  userAllowance,
-  userCollateralBalance,
-  approveForPotionLiquidityPool,
-  approveLoading,
-  approveTx,
-  approveReceipt,
-} = useCollateralTokenContract();
-
-const fetchUserData = async () => {
-  if (connectedWallet.value) {
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  }
-};
-
-onMounted(async () => {
-  await fetchUserData();
-  await fetchAssetsPrice();
-  await getBlock("latest");
-});
-
-watch(walletAddress, async (newAWallet) => {
-  if (newAWallet) {
-    await fetchUserData();
-  } else {
-    userAllowance.value = 0;
-  }
-});
-
-const amountNeededToApprove = computed(() => {
-  if (userAllowance.value === 0) {
-    return liquidity.value;
-  }
-  if (liquidity.value > userAllowance.value) {
-    return parseFloat((liquidity.value - userAllowance.value).toPrecision(6));
-  }
-  return 0;
-});
-
-const {
-  depositAndCreateCurveAndCriteriaTx,
-  depositAndCreateCurveAndCriteriaReceipt,
-  depositAndCreateCurveAndCriteria,
-  depositAndCreateCurveAndCriteriaLoading,
-} = usePotionLiquidityPoolContract();
-
-const userPoolsQueryVariables = computed(() => {
-  return {
-    lp: walletAddress.value,
-  };
-});
-const { data: userPools } = useGetLatestPoolIdQuery({
-  pause: isNotConnected,
-  variables: userPoolsQueryVariables,
-});
-
-const clonedPoolId = computed(() => {
-  const id = userPools?.value?.pools?.[0]?.poolId;
-  return id ? 1 + parseInt(id) : 0;
-});
-
-const handleCloneTemplate = async () => {
-  if (amountNeededToApprove.value > 0) {
-    await approveForPotionLiquidityPool(liquidity.value, true);
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  } else {
-    if (clonedPoolId.value) {
-      await depositAndCreateCurveAndCriteria(
-        clonedPoolId.value,
-        liquidity.value,
-        bondingCurveParams.value,
-        criterias.value
-      );
-    }
-
-    await fetchUserCollateralBalance();
-    await fetchUserCollateralAllowance();
-  }
-};
-
-const addLiquidityButtonLabel = computed(() => {
-  if (!connectedWallet.value) {
-    return `${t("connect_wallet")}`;
-  }
-  if (amountNeededToApprove.value > 0) {
-    return `${t("approve")} USDC`;
-  }
-  return `${t("add_liquidity")}`;
-});
-
-const emits = defineEmits(["update:modelValue", "validInput", "navigate:next"]);
+const deployLoading = computed(
+  () => approveDeployPoolLoading.value || deployPoolLoading.value
+);
 
 watch(criterias, loadEmergingCurves);
 /*
@@ -262,22 +124,23 @@ const {
   removeToast,
 } = useNotifications();
 
-watch(depositAndCreateCurveAndCriteriaTx, (transaction) => {
+watch(deployPoolTx, (transaction) => {
   createTransactionNotification(transaction, t("creating_pool"));
 });
 
-watch(depositAndCreateCurveAndCriteriaReceipt, (receipt) => {
+watch(deployPoolReceipt, (receipt) => {
   createReceiptNotification(receipt, t("pool_created"));
 });
 
-watch(approveTx, (transaction) => {
+watch(approveDeployPoolTx, (transaction) => {
   createTransactionNotification(transaction, t("approving_usdc"));
 });
 
-watch(approveReceipt, (receipt) => {
+watch(approveDeployPoolReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
+
 <template>
   <div>
     <BaseButton palette="transparent" :label="t('back')" @click="router.back">
@@ -328,40 +191,34 @@ watch(approveReceipt, (receipt) => {
         >
         </PerformanceCard>
         <CurvesChart
-          :bonding-curve-params="bondingCurveParams"
+          :bonding-curve-params="bondingCurve"
           :emerging-curves="emergingCurves"
         />
         <UnderlyingList
-          :assets-flat="assetsFlat"
+          :assets-flat="assets"
           :stable-coin-collateral="collateral.symbol"
           :price-map="tokenPricesMap"
-        ></UnderlyingList>
+        >
+        </UnderlyingList>
       </div>
       <BaseCard class="self-start" :full-height="false">
         <AddLiquidityCard
-          :model-value="liquidity"
+          v-model.number="liquidity"
           :title="t('add_liquidity')"
           :hint="t('add_liquidity_hint')"
           :user-balance="userCollateralBalance"
           class="md:col-span-4 xl:col-span-3 self-start"
-          @update:model-value="onLiquidityUpdate"
-          @valid-input="emits('validInput', $event)"
+          @valid-input="validInput = $event"
         >
           <template #card-footer>
             <BaseButton
               test-clone-button
               palette="secondary"
               :inline="true"
-              :label="addLiquidityButtonLabel"
-              :disabled="
-                isNotConnected ||
-                depositAndCreateCurveAndCriteriaLoading ||
-                approveLoading
-              "
-              :loading="
-                depositAndCreateCurveAndCriteriaLoading || approveLoading
-              "
-              @click="handleCloneTemplate"
+              :label="deployLabel"
+              :disabled="isNotConnected || deployLoading"
+              :loading="deployLoading"
+              @click="handleDeployPool"
             >
               <template #pre-icon>
                 <i class="i-ph-upload-simple-bold mr-2"></i>

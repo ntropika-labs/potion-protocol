@@ -51,6 +51,8 @@ deposit_collateral_description: Amount of stable coin you want to deposit in the
 deposit_collateral_footer: Balance
 deposit_collateral_title: You're providing
 depositing_liquidity: depositing liquidity
+discover_potions: Discover Potions
+discover_templates: Discover Templates
 duration: duration
 duration_description: How long the insurance you are selling will be valid for.
 edit: edit
@@ -90,6 +92,8 @@ most_collateralized_description: Top Potions by Locked Collateral
 most_purchased: most purchased
 most_purchased_description: Potions that have been purchased the most times.
 my_pool: My Pool
+my_pools: My Pools
+my_potions: My Potions
 my_summary: my summary
 next: next
 no_options: No options to show

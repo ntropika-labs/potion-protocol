@@ -8266,12 +8266,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/ui@npm:^0.20.2":
-  version: 0.20.2
-  resolution: "@vitest/ui@npm:0.20.2"
+"@vitest/ui@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "@vitest/ui@npm:0.21.0"
   dependencies:
     sirv: ^2.0.2
-  checksum: 1bb6e2d061b7bc901e08c5d5d8dca350e539d7f9d84fd070579f68e68a0f959ee320044114342c60fa1e2547055818ec1fccb630f93625c0c36d7092421868c3
+  checksum: e20a66bf744876793072eee283dea8bcf0f2b03354a1dacb9154d51923ec050f6a286ad16eda6ffaae02202cc33c74475647041c141d176593fbf4d41553afa8
   languageName: node
   linkType: hard
 
@@ -27570,7 +27570,7 @@ __metadata:
     "@unocss/reset": ^0.34.0
     "@urql/vue": ^0.6.1
     "@vitejs/plugin-vue": ^2.3.1
-    "@vitest/ui": ^0.20.2
+    "@vitest/ui": ^0.21.0
     "@vue/test-utils": ^2.0.0-rc.21
     "@vue/tsconfig": ^0.1.3
     "@vueuse/core": ^8.3.1
@@ -27652,7 +27652,7 @@ __metadata:
     unocss: ^0.34.0
     vite: ^2.9.6
     vite-plugin-comlink: ^3.0.2
-    vitest: ^0.20.0
+    vitest: ^0.21.0
     vue: ^3.2.33
     vue-eslint-parser: ^8.3.0
     vue-i18n: ^9.1.10
@@ -34103,9 +34103,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.20.0":
-  version: 0.20.3
-  resolution: "vitest@npm:0.20.3"
+"vitest@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "vitest@npm:0.21.0"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -34138,7 +34138,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: f04e0db5bb01f9ca135e18c55721568588a78ed5951be5f0633be7f4ac25379b2f482fca6b2cd4e9603d23d36cf3471717bfe8d0fe8194cc60d8b1b1152662c6
+  checksum: 01ae78e59e307be617fada683065beb07527ad4df5aeda509f99065a3c2c97ee46ec6672d5f560156d17fe491cd2f6cd70f048a2e66f6c93ad5c5ca93e26399d
   languageName: node
   linkType: hard
 

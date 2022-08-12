@@ -2,25 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ref } from "vue";
 import { usePotion } from "../usePotion";
 import { withSetupUrql } from "./test-utils";
-
-const mockOtoken = (
-  tokenAddress: string,
-  strikePrice: number,
-  expiry: number,
-  underlyingAddress: string
-) => ({
-  otoken: {
-    tokenAddress,
-    underlyingAsset: {
-      symbol: "foo",
-      name: "bar",
-      address: underlyingAddress,
-      decimals: 18,
-    },
-    expiry,
-    strikePrice,
-  },
-});
+import { mockOtoken } from "./test-mocks";
 
 describe("usePotion", () => {
   describe("it doesn't have syntax errors", () => {
@@ -76,7 +58,7 @@ describe("usePotion", () => {
         () => usePotion(ref("0x000")),
         mockOtoken("0x000", 100, 30, "0x001")
       );
-      expect(result.otoken.value).toEqual({
+      expect(result.otoken.value).toMatchObject({
         tokenAddress: "0x000",
         underlyingAsset: {
           symbol: "foo",

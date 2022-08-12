@@ -19,7 +19,7 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@web-worker": fileURLToPath(
         //@ts-expect-error volar giving errors
-        new URL("./src/web-worker", import.meta.url)
+        new URL("./src/web-worker/test.ts", import.meta.url)
       ),
       "@onboard-composable": fileURLToPath(
         //@ts-expect-error volar giving errors
