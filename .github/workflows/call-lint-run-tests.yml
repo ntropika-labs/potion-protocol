@@ -81,9 +81,13 @@ jobs:
       - name: Dapp unit test
         run: yarn nx run potion-dapp:test-unit
 
-      - name: Dapp coverage
-        if: success()
-        run: yarn nx run potion-dapp:test-unit-coverage
+      - name: Dapp test report
+        if: success() || failure()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Vitest Tests
+          path: apps/potion-dapp/reports/report.xml
+          reporter: jest-junit
 
   run-unit-test-subgraph:
     name: Run unit tests (subgraph)
