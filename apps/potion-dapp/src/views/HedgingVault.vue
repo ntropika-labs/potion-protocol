@@ -14,15 +14,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
         <div>
           <p class="capitalize">{{ t("status") }}</p>
-          <BaseTag>
+          <BaseTag :is-loading="strategyLoading">
             <div
               class="h-2 w-2 rounded-full mr-1"
-              :class="vaultStatus === 0 ? 'bg-accent-500' : 'bg-error'"
+              :class="statusInfo.class"
             ></div>
-            <span v-if="vaultStatus === 0">{{ t("unlocked") }}</span>
-            <span v-else-if="vaultStatus === 1">{{ t("committed") }}</span>
-            <span v-else>{{ t("locked") }}</span> </BaseTag
-          ><!--  -->
+            <span>{{ statusInfo.label }}</span>
+          </BaseTag>
         </div>
         <div>
           <p class="capitalize">{{ t("admin") }}</p>
@@ -145,8 +143,8 @@
               <BaseButton
                 palette="secondary"
                 :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled || strategyLoading"
-                :loading="strategyLoading"
+                :disabled="depositButtonState.disabled"
+                :loading="strategyLoading || depositLoading || approveLoading"
                 @click="handleDeposit()"
               />
             </div>
@@ -162,8 +160,8 @@
               <BaseButton
                 palette="secondary"
                 :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled || strategyLoading"
-                :loading="strategyLoading"
+                :disabled="redeemButtonState.disabled"
+                :loading="strategyLoading || redeemLoading"
                 @click="handleRedeem()"
               />
             </div>
@@ -201,7 +199,10 @@ import { etherscanUrl } from "@/helpers";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
+import {
+  LifecycleState,
+  useInvestmentVaultContract,
+} from "@/composables/useInvestmentVaultContract";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
@@ -238,6 +239,28 @@ const {
 } = usePotionBuyActionContract(PotionBuyAction.address);
 const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId);
+
+const statusInfo = computed(() => {
+  switch (vaultStatus.value) {
+    case LifecycleState.Unlocked:
+      return {
+        label: t("unlocked"),
+        class: "bg-accent-500",
+      };
+    case LifecycleState.Committed:
+      return {
+        label: t("committed"),
+        class: "bg-orange-500",
+      };
+    case LifecycleState.Locked:
+    default:
+      return {
+        label: t("locked"),
+        class: "bg-error",
+      };
+  }
+});
+
 const {
   // vaultName,
   // vaultDecimals,
