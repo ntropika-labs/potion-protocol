@@ -82,10 +82,9 @@ jobs:
         run: yarn nx run potion-dapp:test-unit
 
       - name: Dapp test report
-        if: always()
+        if: github.event.action == 'pull_request'
         uses: mikepenz/action-junit-report@v3
         with:
-          name: Vitest Tests
           report_paths: 'apps/potion-dapp/reports/*.xml'
 
   run-unit-test-subgraph:
