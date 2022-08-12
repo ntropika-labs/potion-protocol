@@ -25,7 +25,7 @@
         <div>
           <p class="capitalize">{{ t("admin") }}</p>
           <a :href="etherscanUrl + '/address/' + admin">
-            <BaseTag>
+            <BaseTag :is-loading="strategyLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ admin }}</span>
             </BaseTag>
@@ -34,7 +34,7 @@
         <div>
           <p class="capitalize">{{ t("operator") }}</p>
           <a :href="etherscanUrl + '/address/' + operator">
-            <BaseTag>
+            <BaseTag :is-loading="strategyLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
@@ -47,18 +47,21 @@
           :title="t('share_price')"
           :value="shareToAssetRatio.toString()"
           :symbol="`${assetSymbol}/Share`"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          :value="totalAssets.toString()"
+          :value="totalAssets?.toString()"
           :symbol="assetSymbol"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
           :symbol="`= ${balanceInAsset} ${assetSymbol}`"
+          :loading="strategyLoading"
         />
       </div>
     </BaseCard>
@@ -143,8 +146,12 @@
               <BaseButton
                 palette="secondary"
                 :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled"
-                :loading="strategyLoading || depositLoading || approveLoading"
+                :disabled="
+                  depositButtonState.disabled ||
+                  strategyLoading ||
+                  isTransactionPending
+                "
+                :loading="depositLoading || approveLoading"
                 @click="handleDeposit()"
               />
             </div>
@@ -160,8 +167,12 @@
               <BaseButton
                 palette="secondary"
                 :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled"
-                :loading="strategyLoading || redeemLoading"
+                :disabled="
+                  redeemButtonState.disabled ||
+                  strategyLoading ||
+                  isTransactionPending
+                "
+                :loading="redeemLoading"
                 @click="handleRedeem()"
               />
             </div>
@@ -238,7 +249,7 @@ const {
   strategyLoading,
 } = usePotionBuyActionContract(PotionBuyAction.address);
 const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(validId);
+  useInvestmentVaultContract(validId, true);
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -308,8 +319,19 @@ onMounted(() => {
   getBlock("latest");
 });
 
+const isTransactionPending = computed(
+  () => redeemLoading.value || depositLoading.value || approveLoading.value
+);
+
 const depositButtonState = computed(() => {
   if (connectedWallet.value && assetUserBalance.value >= depositAmount.value) {
+    if (vaultStatus.value !== LifecycleState.Unlocked) {
+      return {
+        label: "locked",
+        disabled: true,
+      };
+    }
+
     if (userAllowance.value >= depositAmount.value) {
       return {
         label: t("deposit"),
@@ -360,6 +382,13 @@ const balanceInAsset = computed(() => {
 
 const redeemButtonState = computed(() => {
   if (connectedWallet.value && userBalance.value >= redeemAmount.value) {
+    if (vaultStatus.value !== LifecycleState.Unlocked) {
+      return {
+        label: "locked",
+        disabled: true,
+      };
+    }
+
     return {
       label: t("redeem"),
       disabled: false,
