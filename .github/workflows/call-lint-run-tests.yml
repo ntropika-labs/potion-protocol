@@ -94,6 +94,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: mikepenz/action-junit-report@v3
         with:
+          check_name: 'potion-dapp unit tests'
           report_paths: 'apps/potion-dapp/reports/*.xml'
           token: ${{ secrets.GITHUB_TOKEN }}
 
