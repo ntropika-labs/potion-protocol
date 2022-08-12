@@ -82,12 +82,11 @@ jobs:
         run: yarn nx run potion-dapp:test-unit
 
       - name: Dapp test report
-        if: success() || failure()
-        uses: phoenix-actions/test-reporting@v8
+        if: always()
+        uses: mikepenz/action-junit-report@v3
         with:
           name: Vitest Tests
-          path: apps/potion-dapp/reports/report.xml
-          reporter: jest-junit
+          report_paths: 'apps/potion-dapp/reports/*.xml'
 
   run-unit-test-subgraph:
     name: Run unit tests (subgraph)
