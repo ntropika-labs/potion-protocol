@@ -5,6 +5,10 @@ import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
   test: {
+    reporters: ["default", "junit"],
+    outputFile: {
+      junit: "reports/report.xml",
+    },
     coverage: {
       reporter: ["text", "json", "html"],
     },
