@@ -83,7 +83,7 @@ jobs:
 
       - name: Dapp test report
         if: success() || failure()
-        uses: dorny/test-reporter@v1
+        uses: phoenix-actions/test-reporting@v8
         with:
           name: Vitest Tests
           path: apps/potion-dapp/reports/report.xml
