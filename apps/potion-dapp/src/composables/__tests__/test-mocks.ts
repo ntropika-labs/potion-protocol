@@ -95,4 +95,29 @@ const mockOtoken = (
   },
 });
 
-export { mockPool, mockPoolTemplate, mockCriteria, mockOtoken, mockCriterias };
+const mockPotionOrders = (
+  orders: {
+    id: string;
+    premium: string;
+    timestamp: string;
+    otokens: string;
+  }[]
+) => {
+  return {
+    orderBookEntries: orders.map((o) => ({
+      id: o.id,
+      premium: o.premium,
+      timestamp: o.timestamp,
+      numberOfOTokens: o.otokens,
+    })),
+  };
+};
+
+export {
+  mockPool,
+  mockPoolTemplate,
+  mockCriteria,
+  mockOtoken,
+  mockCriterias,
+  mockPotionOrders,
+};
