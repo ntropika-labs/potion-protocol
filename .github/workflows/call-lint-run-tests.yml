@@ -82,11 +82,11 @@ jobs:
         run: yarn nx run potion-dapp:test-unit-coverage
 
       - name: Dapp code coverage
-        if: github.event.action == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: davelosert/vitest-coverage-report-action@v1
 
       - name: Dapp test report
-        if: github.event.action == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: mikepenz/action-junit-report@v3
         with:
           report_paths: 'apps/potion-dapp/reports/*.xml'
