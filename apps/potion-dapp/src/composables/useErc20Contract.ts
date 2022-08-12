@@ -251,7 +251,9 @@ export function useErc20Contract(
   };
   return {
     approveSpending,
+    approveTx,
     approveReceipt,
+    approveLoading,
     decimals,
     fetchUserAllowance,
     fetchUserAllowanceLoading,

@@ -179,6 +179,11 @@
     {{ approveReceipt }}
     {{ redeemReceipt }}
   </pre>
+  <NotificationDisplay
+    :toasts="notifications"
+    @hide-toast="(index: string) => removeToast(index)"
+  >
+  </NotificationDisplay>
 </template>
 <script lang="ts" setup>
 import {
@@ -202,6 +207,10 @@ import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionCont
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useNotifications } from "@/composables/useNotifications";
+
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
 const { PotionBuyAction } = contractsAddresses;
@@ -242,9 +251,13 @@ const {
   totalAssets,
   userBalance,
   deposit,
+  depositTx,
   redeem,
+  redeemTx,
   depositReceipt,
   redeemReceipt,
+  depositLoading,
+  redeemLoading,
 } = useErc4626Contract(validId);
 
 const {
@@ -253,7 +266,9 @@ const {
   fetchUserAllowance,
   approveSpending,
   getTokenBalance,
+  approveTx,
   approveReceipt,
+  approveLoading,
   fetchErc20Info,
 } = useErc20Contract(assetAddress, false);
 
@@ -348,4 +363,36 @@ const handleRedeem = async () => {
     await redeem(redeemAmount.value, true);
   }
 };
+
+// Toast notifications
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
+
+watch(approveTx, (transaction) => {
+  createTransactionNotification(transaction, t("approving_usdc"));
+});
+
+watch(approveReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
+});
+
+watch(depositTx, (transaction) => {
+  createTransactionNotification(transaction, "Despositing");
+});
+
+watch(depositReceipt, (receipt) => {
+  createReceiptNotification(receipt, "Deposited");
+});
+
+watch(redeemTx, (transaction) => {
+  createTransactionNotification(transaction, "Redeeming");
+});
+
+watch(redeemReceipt, (receipt) => {
+  createReceiptNotification(receipt, "Redeemed");
+});
 </script>
