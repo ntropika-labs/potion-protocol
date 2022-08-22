@@ -35,42 +35,45 @@ export function usePersonalPools(address: MaybeRef<string>) {
       ids: unref(alreadyFetchedIds),
     };
   });
+
+  const pause = computed(() => unref(address) === "");
+
   const { data, executeQuery } = useGetPoolsFromUserQuery({
     variables,
-    pause: true,
+    pause,
   });
 
-  const loadMorePools = async () => {
+  const loadPools = async () => {
     if (unref(validAddress)) {
+      pools.value = [];
+      poolTokens.value.clear();
       await executeQuery();
-      pools.value = pools.value.concat(data.value?.pools ?? []);
-      data.value?.pools?.forEach(({ id, template }) => {
-        const tokenAddresses =
-          template?.criteriaSet?.criterias?.map(
-            ({ criteria }) => criteria.underlyingAsset.address
-          ) ?? [];
-        poolTokens.value.set(id, tokenAddresses.map(getTokenFromAddress));
-      });
     }
+  };
+
+  const appendPools = () => {
+    pools.value = pools.value.concat(data.value?.pools ?? []);
+    data.value?.pools?.forEach(({ id, template }) => {
+      const tokenAddresses =
+        template?.criteriaSet?.criterias?.map(
+          ({ criteria }) => criteria.underlyingAsset.address
+        ) ?? [];
+      poolTokens.value.set(id, tokenAddresses.map(getTokenFromAddress));
+    });
   };
 
   const getTokens = (address: string) => poolTokens.value.get(address) ?? [];
 
-  onMounted(loadMorePools);
+  onMounted(appendPools);
+  watch(data, appendPools);
 
   if (isRef(address)) {
-    watch(address, () => {
-      if (unref(validAddress)) {
-        pools.value = [];
-        poolTokens.value.clear();
-        loadMorePools();
-      }
-    });
+    watch(address, loadPools);
   }
 
   return {
     pools,
-    loadMorePools,
+    loadMorePools: executeQuery,
     getTokens,
     totalPools,
     averagePnl,
