@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { watchOnce } from "@vueuse/core";
 
 import {
@@ -133,8 +133,9 @@ export function useTemplates(
     storeNewTemplates(byPnl, data?.value?.templates, canLoadMoreByPnl);
   };
 
-  // Populate with the initial templates
-  watchOnce(popularTemplates, () => {
+  // initialize the categories from popularTemplates
+
+  const loadPopularTemplates = () => {
     storeNewTemplates(
       bySize,
       popularTemplates?.value?.bySize,
@@ -146,7 +147,10 @@ export function useTemplates(
       canLoadMoreByNumber
     );
     storeNewTemplates(byPnl, popularTemplates?.value?.byPnl, canLoadMoreByPnl);
-  });
+  };
+
+  onMounted(loadPopularTemplates);
+  watchOnce(popularTemplates, loadPopularTemplates);
 
   return {
     bySize,
