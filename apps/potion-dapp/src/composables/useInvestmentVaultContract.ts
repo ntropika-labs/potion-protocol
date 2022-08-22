@@ -1,3 +1,5 @@
+// import { useContractEvents } from "./useContractEvents";
+import type { BigNumberish } from "ethers";
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
 import { useEthersContract } from "@/composables/useEthersContract";
@@ -11,9 +13,6 @@ import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 //   ContractReceipt,
 // } from "@ethersproject/contracts";
 import type { Ref } from "vue";
-import { useContractEvents } from "./useContractEvents";
-import { BigNumber } from "ethers";
-
 export enum LifecycleState {
   Unlocked,
   Committed,
@@ -22,7 +21,7 @@ export enum LifecycleState {
 
 export function useInvestmentVaultContract(
   address: string | Ref<string>,
-  useEventStream = false
+  eventListeners = false
 ) {
   const { initContract } = useEthersContract();
 
@@ -35,10 +34,18 @@ export function useInvestmentVaultContract(
   //     unref(address).toLowerCase()
   //   ) as InvestmentVault;
   // };
+  const initContractProviderWS = () => {
+    return initContract(
+      false,
+      true,
+      InvestmentVault__factory,
+      unref(address).toLowerCase()
+    ) as InvestmentVault;
+  };
 
   const initContractProvider = () => {
     return initContract(
-      true,
+      false,
       false,
       InvestmentVault__factory,
       unref(address).toLowerCase()
@@ -188,104 +195,128 @@ export function useInvestmentVaultContract(
     }
   };
 
-  let removeEventListenersCallback: any;
-  const setupEventListeners = async () => {
-    const contractInstance = initContractProvider();
-    const startingBlock = await contractInstance.provider.getBlockNumber();
-    const { addEventListener, removeEventListeners } = useContractEvents(
-      contractInstance,
-      startingBlock,
-      true
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+    wsContract.on(
+      "LifecycleStateChanged",
+      (prevState: BigNumberish, nextState: BigNumberish) => {
+        vaultStatus.value = nextState as LifecycleState;
+      }
     );
-
-    // Check provider.filters for event names
-    addEventListener(
-      contractInstance.filters["ActionsAdded(address[])"](),
-      (event, ...params: [string[]]) => {
-        console.log("ActionsAdded(address[])", event, params);
+    wsContract.on(
+      "PrincipalPercentagesUpdated",
+      (newPrincipalPercentages: BigNumberish[]) => {
+        principalPercentages.value = newPrincipalPercentages.map((x) => {
+          return parseFloat(formatUnits(x, 6));
+        });
       }
     );
 
-    addEventListener(
-      contractInstance.filters["LifecycleStateChanged(uint8,uint8)"](),
-      (event, ...params: [number, number]) => {
-        const oldStatus = params[0] as LifecycleState;
-        const newStatus = params[1] as LifecycleState;
-        console.log("LifecycleStateChanged(uint8,uint8)", newStatus, oldStatus);
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
 
-        vaultStatus.value = newStatus;
-      }
-    );
+  // let removeEventListenersCallback: any;
+  // const setupEventListeners = async () => {
+  //   const contractInstance = initContractProvider();
+  //   const startingBlock = await contractInstance.provider.getBlockNumber();
+  //   const { addEventListener, removeEventListeners } = useContractEvents(
+  //     contractInstance,
+  //     startingBlock,
+  //     true
+  //   );
 
-    addEventListener(
-      contractInstance.filters["PerformanceFeeChanged(uint256,uint256)"](),
-      (event, ...params: [BigNumber, BigNumber]) => {
-        const oldFee = params[0];
-        const newFee = params[1];
-        console.log(
-          "PerformanceFeeChanged(uint256,uint256)",
-          newFee.toString(),
-          oldFee.toString()
-        );
-      }
-    );
+  //   // Check provider.filters for event names
+  //   addEventListener(
+  //     contractInstance.filters["ActionsAdded(address[])"](),
+  //     (event, ...params: [string[]]) => {
+  //       console.log("ActionsAdded(address[])", event, params);
+  //     }
+  //   );
 
-    addEventListener(
-      contractInstance.filters["PrincipalPercentagesUpdated(uint256[])"](),
-      (event, ...params: [BigNumber[]]) => {
-        console.log(
-          "PrincipalPercentagesUpdated(uint256[])",
-          event,
-          params.map((b) => b.toString())
-        );
+  //   addEventListener(
+  //     contractInstance.filters["LifecycleStateChanged(uint8,uint8)"](),
+  //     (event, ...params: [number, number]) => {
+  //       const oldStatus = params[0] as LifecycleState;
+  //       const newStatus = params[1] as LifecycleState;
+  //       console.log("LifecycleStateChanged(uint8,uint8)", newStatus, oldStatus);
 
-        principalPercentages.value = params[0].map((bn) =>
-          parseFloat(formatUnits(bn, 6))
-        );
-      }
-    );
+  //       vaultStatus.value = newStatus;
+  //     }
+  //   );
 
-    addEventListener(
-      contractInstance.filters["VaultCapChanged(uint256,uint256)"](),
-      (event, ...params: [BigNumber, BigNumber]) => {
-        console.log(
-          "VaultCapChanged(uint256,uint256)",
-          event,
-          params.map((b) => b.toString())
-        );
-      }
-    );
+  //   addEventListener(
+  //     contractInstance.filters["PerformanceFeeChanged(uint256,uint256)"](),
+  //     (event, ...params: [BigNumber, BigNumber]) => {
+  //       const oldFee = params[0];
+  //       const newFee = params[1];
+  //       console.log(
+  //         "PerformanceFeeChanged(uint256,uint256)",
+  //         newFee.toString(),
+  //         oldFee.toString()
+  //       );
+  //     }
+  //   );
 
-    addEventListener(
-      contractInstance.filters["VaultPositionEntered(uint256,uint256)"](),
-      (event, ...params: [BigNumber, BigNumber]) => {
-        console.log(
-          "VaultPositionEntered(uint256,uint256)",
-          event,
-          params.map((b) => b.toString())
-        );
-      }
-    );
+  //   addEventListener(
+  //     contractInstance.filters["PrincipalPercentagesUpdated(uint256[])"](),
+  //     (event, ...params: [BigNumber[]]) => {
+  //       console.log(
+  //         "PrincipalPercentagesUpdated(uint256[])",
+  //         event,
+  //         params.map((b) => b.toString())
+  //       );
 
-    addEventListener(
-      contractInstance.filters["VaultPositionExited(uint256)"](),
-      (event, ...params: [BigNumber, BigNumber]) => {
-        console.log(
-          "VaultPositionExited(uint256)",
-          event,
-          params.map((b) => b.toString())
-        );
-      }
-    );
+  //       principalPercentages.value = params[0].map((bn) =>
+  //         parseFloat(formatUnits(bn, 6))
+  //       );
+  //     }
+  //   );
 
-    removeEventListenersCallback = removeEventListeners;
-    // console.log("EVENT LISTENERS", getEventListeners());
-  };
+  //   addEventListener(
+  //     contractInstance.filters["VaultCapChanged(uint256,uint256)"](),
+  //     (event, ...params: [BigNumber, BigNumber]) => {
+  //       console.log(
+  //         "VaultCapChanged(uint256,uint256)",
+  //         event,
+  //         params.map((b) => b.toString())
+  //       );
+  //     }
+  //   );
+
+  //   addEventListener(
+  //     contractInstance.filters["VaultPositionEntered(uint256,uint256)"](),
+  //     (event, ...params: [BigNumber, BigNumber]) => {
+  //       console.log(
+  //         "VaultPositionEntered(uint256,uint256)",
+  //         event,
+  //         params.map((b) => b.toString())
+  //       );
+  //     }
+  //   );
+
+  //   addEventListener(
+  //     contractInstance.filters["VaultPositionExited(uint256)"](),
+  //     (event, ...params: [BigNumber, BigNumber]) => {
+  //       console.log(
+  //         "VaultPositionExited(uint256)",
+  //         event,
+  //         params.map((b) => b.toString())
+  //       );
+  //     }
+  //   );
+
+  //   removeEventListenersCallback = removeEventListeners;
+  //   // console.log("EVENT LISTENERS", getEventListeners());
+  // };
 
   onMounted(async () => {
-    if (useEventStream) {
-      await setupEventListeners();
-    }
+    // if (useEventStream) {
+    //   await setupEventListeners();
+    // }
 
     await fetchInfo();
   });
@@ -296,9 +327,9 @@ export function useInvestmentVaultContract(
     });
   }
 
-  onUnmounted(() => {
-    if (removeEventListenersCallback) removeEventListenersCallback();
-  });
+  // onUnmounted(() => {
+  //   if (removeEventListenersCallback) removeEventListenersCallback();
+  // });
 
   return {
     operator,

@@ -292,7 +292,7 @@ const {
   redeemReceipt,
   depositLoading,
   redeemLoading,
-} = useErc4626Contract(validId);
+} = useErc4626Contract(validId, true, true);
 
 const {
   userBalance: assetUserBalance,
