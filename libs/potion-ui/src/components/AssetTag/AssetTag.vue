@@ -24,7 +24,7 @@ export interface Props {
   tokens?: Token[];
   token?: Token;
   size?: LabelSize;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   tokens: undefined,

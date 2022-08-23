@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Token, TradeType } from "@uniswap/sdk-core";
@@ -12,7 +12,7 @@ import {
   BaseCard,
   BaseTag,
   LabelValue,
-  TabNavigationComponent,
+  //TabNavigationComponent,
   TimeTag,
 } from "potion-ui";
 
@@ -39,7 +39,14 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
-// import dayjs from "dayjs";
+import { $fetch } from "ohmyfetch";
+
+const TabNavigationComponent = defineAsyncComponent(
+  () =>
+    import(
+      "potion-ui/src/components/TabNavigationComponent/TabNavigationComponent.vue"
+    )
+);
 
 /**
  * Const
@@ -98,7 +105,7 @@ const walletAddress = computed(
 /**
  * Vault operation
  */
-const { principalPercentages, vaultStatus } =
+const { principalPercentages, vaultStatus, getVaultStatus } =
   useInvestmentVaultContract(validId);
 
 const principalPercentage = computed(() =>
@@ -130,9 +137,15 @@ const tokenAsset = computed(() => {
 
 const oraclePrice = ref(0);
 const { getPrice } = useOracleContract();
-watch(assetAddress, async () => {
-  oraclePrice.value = parseFloat(await getPrice(assetAddress.value));
-  await getCurrentPayout(assetAddress.value);
+watch(assetAddress, async (address) => {
+  if (!address) return;
+
+  const [price] = await Promise.all([
+    getPrice(address),
+    getCurrentPayout(address),
+  ]);
+
+  oraclePrice.value = parseFloat(price);
 });
 
 const strikePrice = computed(() => {
@@ -167,6 +180,8 @@ const {
   exitPosition: vaultExitPosition,
   canPositionBeExited,
   //actionsAddress,
+  fetchCanPositionBeEntered,
+  fetchCanPositionBeExited,
 } = useHedgingVaultOperatorHelperContract();
 
 const statusInfo = computed(() => {
@@ -241,7 +256,9 @@ const counterpartiesText = computed(() => {
 });
 
 const totalAmountToSwap = ref(0);
-
+const isTotalAmountValid = computed(
+  () => !Number.isNaN(totalAmountToSwap.value)
+);
 const {
   routerData: uniswapRouteData,
   getRoute,
@@ -252,11 +269,27 @@ const {
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
-const loadExitPositionRoute = async () => {
-  // if (!currentPayout.value?.currentPayout) {
-  //   throw new Error("no payout");
-  // }
+const isEnterPositionOperationValid = computed(() => {
+  return (
+    isTotalAmountValid.value &&
+    !!routerResult.value &&
+    routerResult.value.counterparties &&
+    routerResult.value.counterparties.length > 0 &&
+    !!uniswapRouteData.value &&
+    uniswapRouteData.value.route.length > 0
+  );
+});
+const isExitPositionOperationValid = computed(() => {
+  return (
+    (isTotalAmountValid.value &&
+      totalAmountToSwap.value > 0 &&
+      !!uniswapRouteData.value &&
+      uniswapRouteData.value.route.length > 0) ||
+    (totalAmountToSwap.value === 0 && currentPayout.value?.currentPayout === 0)
+  );
+});
 
+const loadExitPositionRoute = async () => {
   /**
    * TODO: we need to check the contract balance for USDC and add the amount to the eventual payout
    * if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
@@ -328,17 +361,20 @@ const loadEnterPositionRoute = async () => {
 };
 const enterPosition = async () => {
   if (
-    !uniswapRouteData.value ||
+    !isEnterPositionOperationValid.value ||
     !routerResult.value ||
-    !routerResult.value.counterparties
-  )
-    return;
+    !uniswapRouteData.value
+  ) {
+    throw new Error(
+      "A uniswap route and a set of counterparties is required to enter position"
+    );
+  }
 
   toggleUniswapPolling(false);
 
   const expirationTimestamp = createValidExpiry(
     blockTimestamp.value,
-    1 //cycleDurationDays.value TODO: CHECK
+    cycleDurationDays.value
   );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
@@ -377,26 +413,37 @@ const enterPosition = async () => {
     strikePriceInUSDC: strikePrice.value.toFixed(6),
     expirationTimestamp: expirationTimestamp,
     sellers: counterparties,
-    expectedPremiumInUSDC: routerResult.value.premium.toFixed(6),
+    expectedPremiumInUSDC: routerResult.value?.premium.toFixed(6),
     totalSizeInPotions: numberOfOtokensToBuyBN.value,
   };
 
   console.log("expectedPriceRate", expectedPriceRate);
 
-  vaultEnterPosition(swapInfo, potionBuyInfo);
+  await vaultEnterPosition(swapInfo, potionBuyInfo);
+  await reloadInfoAfterAction();
+};
+
+const reloadInfoAfterAction = async () => {
+  uniswapRouteData.value = undefined;
+  await Promise.all([
+    getStrategyInfo(),
+    getVaultStatus(),
+    fetchCanPositionBeEntered(),
+    fetchCanPositionBeExited(),
+  ]);
 };
 
 // Tab navigation
 const currentFormStep = ref(0);
 const tabs = ref([
   {
-    title: "Counterparties",
+    title: t("counterparties"),
     subtitle: "",
     isValid: hasCounterparties,
     enabled: true,
   },
   {
-    title: "Enter position",
+    title: t("enter_position"),
     subtitle: "",
     isValid: hasSwapRoute,
     enabled: hasCounterparties,
@@ -404,8 +451,7 @@ const tabs = ref([
 ]);
 
 onMounted(async () => {
-  await getGas();
-  await getBlock("latest");
+  await Promise.all([getGas(), getBlock("latest")]);
 });
 
 let pollingIntervalId: any = null;
@@ -451,21 +497,6 @@ watch(exitPositionReceipt, (receipt) => {
 
 // TODO: DELETE
 const testAddBlock = async (addHours: number) => {
-  // await $fetch("http://localhost:8545", {
-  //   method: "POST",
-  //   body: {
-  //     jsonrpc: "2.0",
-  //     method: "evm_increaseTime",
-  //     params: [addHours * 3660],
-  //   },
-  // });
-  // await $fetch("http://localhost:8545", {
-  //   method: "POST",
-  //   body: {
-  //     jsonrpc: "2.0",
-  //     method: "evm_mine",
-  //   },
-  // });
   const provider = initProvider(false);
   await provider.send("evm_increaseTime", [addHours * 3660]);
   await provider.send("evm_mine", []);
@@ -676,7 +707,7 @@ const testAddBlock = async (addHours: number) => {
             <div class="flex justify-between px-4 items-start text-sm">
               <div class="flex gap-2 items-center justify-between w-full">
                 <p class="capitalize text-lg font-bold">
-                  {{ t("price_per_potion") }}
+                  {{ t("premium") }}
                 </p>
                 <p>{{ formattedPremium }}</p>
               </div>
@@ -739,7 +770,10 @@ const testAddBlock = async (addHours: number) => {
                     {{ counterpartiesText }}
                   </h3>
                 </div>
-                <div v-if="routerResult?.counterparties">
+                <div
+                  v-if="routerResult?.counterparties"
+                  class="flex flex-col gap-4"
+                >
                   <BaseCard
                     v-for="(cp, index) in routerResult.counterparties"
                     :key="index"
@@ -854,7 +888,7 @@ const testAddBlock = async (addHours: number) => {
           <BaseCard class="p-6">
             <h1 class="text-xl font-semibold">Uniswap route</h1>
             <div
-              class="flex flex-row-reverse md:flex-row justify-between gap-4 my-4"
+              class="flex flex-row-reverse md:flex-row items-start justify-between gap-4 my-4"
             >
               <div class="flex md:flex-row gap-4">
                 <BaseButton
@@ -876,15 +910,21 @@ const testAddBlock = async (addHours: number) => {
                   @click="toggleUniswapPolling"
                 ></BaseButton>
               </div>
-              <BaseButton
-                label="enter position"
-                palette="secondary"
-                :disabled="
-                  !uniswapRouteData || routerLoading || enterPositionLoading
-                "
-                :loading="enterPositionLoading"
-                @click="enterPosition()"
-              ></BaseButton>
+              <div class="flex flex-col items-end">
+                <BaseButton
+                  label="enter position"
+                  palette="secondary"
+                  :disabled="!isEnterPositionOperationValid || routerLoading"
+                  :loading="enterPositionLoading"
+                  @click="enterPosition()"
+                ></BaseButton>
+                <p
+                  v-if="!isEnterPositionOperationValid"
+                  class="text-secondary-500 text-xs text-right mt-2"
+                >
+                  A route is required to enter the position
+                </p>
+              </div>
             </div>
             <TokenSwap
               :route-data="uniswapRouteData"
@@ -900,7 +940,7 @@ const testAddBlock = async (addHours: number) => {
         <hr class="opacity-40 my-4" />
         <h3 class="text-xl font-semibold">Uniswap route</h3>
         <div
-          class="flex flex-row-reverse md:flex-row justify-between gap-4 my-4"
+          class="flex flex-row-reverse md:flex-row justify-between items-start gap-4 my-4"
         >
           <div class="flex md:flex-row gap-4">
             <BaseButton
@@ -921,26 +961,26 @@ const testAddBlock = async (addHours: number) => {
               @click="toggleUniswapPolling"
             ></BaseButton>
           </div>
-          <BaseButton
-            label="exit position"
-            palette="secondary"
-            :disabled="
-              !uniswapRouteData || routerLoading || exitPositionLoading
-            "
-            :loading="exitPositionLoading"
-            @click="exitPosition()"
-          ></BaseButton>
+          <div class="flex flex-col items-end">
+            <BaseButton
+              label="exit position"
+              palette="secondary"
+              :disabled="
+                !isExitPositionOperationValid ||
+                routerLoading ||
+                exitPositionLoading
+              "
+              :loading="exitPositionLoading"
+              @click="exitPosition()"
+            ></BaseButton>
+            <p
+              v-if="!isExitPositionOperationValid"
+              class="text-secondary-500 text-xs text-right mt-2"
+            >
+              A route is required to exit the position
+            </p>
+          </div>
         </div>
-        <InputNumber
-          v-model.number="expectedPriceRate"
-          color="no-bg"
-          :title="t('expected_price_rate')"
-          :min="1"
-          :step="0.1"
-          unit="USDC"
-          :footer-description="t('max_strike_price')"
-          @valid-input="isExpectedPriceRateValid = $event"
-        />
         <TokenSwap
           :route-data="uniswapRouteData"
           :router-loading="routerLoading"
