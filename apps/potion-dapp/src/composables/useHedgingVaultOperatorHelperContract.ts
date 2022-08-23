@@ -8,8 +8,7 @@ import type {
 } from "@potion-protocol/hedging-vault/typechain";
 import { onMounted, ref } from "vue";
 
-import { BigNumber } from "@ethersproject/bignumber";
-import type { BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber, type BigNumberish } from "@ethersproject/bignumber";
 import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
 import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
@@ -18,11 +17,12 @@ import { parseUnits } from "@ethersproject/units";
 import { useEthersContract } from "./useEthersContract";
 import { useOnboard } from "@onboard-composable";
 import { utils } from "ethers";
+import type { Token } from "dapp-types";
 
 export interface UniSwapInfo {
-  steps: Array<{ inputTokenAddress: string; fee: number }>;
-  outputTokenAddress: string;
-  expectedPriceRate: number | string; //The expected price of the swap to convert to a fixed point SD59x18 number
+  steps: Array<{ inputToken: Token; fee: number }>;
+  outputToken: Token;
+  expectedPriceRate: BigNumberish; //The expected price of the swap as a fixed point SD59x18 number
 }
 
 interface PotionBuyInfo {
@@ -51,6 +51,24 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   }
 
   return utils.solidityPack(types, values);
+}
+
+export function toPRBMath(
+  numberRepresentation: string,
+  inputDecimals = 18,
+  outputDecimals = 18
+): BigNumber {
+  if (inputDecimals === outputDecimals) {
+    return parseUnits(numberRepresentation, inputDecimals);
+  } else if (inputDecimals > outputDecimals) {
+    return parseUnits(numberRepresentation, inputDecimals).div(
+      BigNumber.from(10).pow(inputDecimals - outputDecimals)
+    );
+  } else {
+    return parseUnits(numberRepresentation, inputDecimals).mul(
+      BigNumber.from(10).pow(outputDecimals - inputDecimals)
+    );
+  }
 }
 
 export function useHedgingVaultOperatorHelperContract() {
@@ -93,15 +111,30 @@ export function useHedgingVaultOperatorHelperContract() {
     swapInfo: UniSwapInfo
   ): IUniswapV3Oracle.SwapInfoStruct => {
     //TODO: also cover multihop swap case [ input token, [token, fee]|fee, output token]
-    const swapPath = getEncodedSwapPath(
-      [swapInfo.steps[0].inputTokenAddress, swapInfo.outputTokenAddress],
-      swapInfo.steps[0].fee
+    const inputToken = swapInfo.steps[0].inputToken;
+    if (!inputToken) throw new Error("At list 1 hop is required for the swap");
+
+    const expectedPriceRate = toPRBMath(
+      swapInfo.expectedPriceRate.toString(),
+      inputToken.decimals,
+      swapInfo.outputToken.decimals
     );
+    console.log("exit pos swap pat price rate", swapInfo.expectedPriceRate);
+    let swapPath = "";
+    if (!(expectedPriceRate.isNegative() || expectedPriceRate.isZero())) {
+      swapPath = getEncodedSwapPath(
+        [inputToken.address, swapInfo.outputToken.address],
+        swapInfo.steps[0].fee
+      );
+    } else {
+      // TODO: when expectedPriceRate is 0 the currentPayout is also 0
+      // signal to the contract we don't have a swap path
+    }
     const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-      inputToken: swapInfo.steps[0].inputTokenAddress,
-      outputToken: swapInfo.outputTokenAddress,
+      inputToken: inputToken.address,
+      outputToken: swapInfo.outputToken.address,
       //TODO: !ONLY FOR TEST need to be the same as the price of the underlying asset at expiration date so the swap gives us the correct amount of underlying asset
-      expectedPriceRate: parseUnits(swapInfo.expectedPriceRate.toString(), 18),
+      expectedPriceRate: expectedPriceRate,
       swapPath: swapPath,
     };
 
@@ -129,10 +162,11 @@ export function useHedgingVaultOperatorHelperContract() {
         enterPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
-        const divider = BigNumber.from(10).pow(12);
-        swapData.expectedPriceRate = BigNumber.from(
-          swapData.expectedPriceRate
-        ).div(divider);
+        // Superseded by toPRBMath()
+        // const divider = BigNumber.from(10).pow(12);
+        // swapData.expectedPriceRate = BigNumber.from(
+        //   swapData.expectedPriceRate
+        // ).div(divider);
         const potionBuyActionData: PotionBuyInfoStruct = {
           targetPotionAddress: potionBuyInfo.targetPotionAddress,
           underlyingAsset: potionBuyInfo.underlyingAsset,
@@ -179,11 +213,12 @@ export function useHedgingVaultOperatorHelperContract() {
         exitPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
-        const multiplier = BigNumber.from(10).pow(12);
-        swapData.expectedPriceRate = BigNumber.from(
-          swapData.expectedPriceRate
-        ).mul(multiplier);
-        console.log("swapInfo: ", swapInfo);
+        // Superseded by toPRBMath()
+        // const multiplier = BigNumber.from(10).pow(12);
+        // swapData.expectedPriceRate = BigNumber.from(
+        //   swapData.expectedPriceRate
+        // ).mul(multiplier);
+        console.log("swapData: ", swapData);
         exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
       } catch (error) {

@@ -88,7 +88,7 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
           <p>Percent: {{ uniRoute.percent }}</p>
           <p>Pool addresses:</p>
           <pre
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
           ><template v-for="(address) in uniRoute.poolAddresses"
           >{{ address }}</template
           ></pre>
@@ -106,13 +106,13 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 <div>
                   <p>Amount</p>
                   <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                     >{{ tradeCurrency?.toExact() }}</pre
                   >
                   <template v-if="!isTradeExactInput">
                     <p>Quote gas adjusted</p>
                     <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
                     >
                   </template>
@@ -130,13 +130,13 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 <div>
                   <p>Amount</p>
                   <pre
-                    class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                     >{{ quoteCurrency?.toExact() }}</pre
                   >
                   <template v-if="isTradeExactInput">
                     <p>Quote gas adjusted</p>
                     <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
                     >
                   </template>
@@ -148,12 +148,12 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
             >
               <p>Estimated gas used</p>
               <pre
-                class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                 >{{ props.routeData?.estimatedGasUsed.toNumber() }}</pre
               >
               <p>Gas used USD</p>
               <pre
-                class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                 >{{ props.routeData?.estimatedGasUsedUSD.toFixed(6) }}</pre
               >
             </div>
@@ -173,7 +173,7 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 class="border-1 rounded-xl border-white border-opacity-10 p-3"
               />
               <!-- <pre
-                class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                 >{{ JSON.stringify(step, null, 2) }}</pre
               > -->
               <div
@@ -187,13 +187,13 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
           <hr class="opacity-40 my-4" />
           <h3 class="text-xl font-bold">Trade</h3>
           <pre
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
             >{{ JSON.stringify(props.routeData?.trade, null, 2) }}</pre
           >
           <!-- <p>token path:</p>
 
           <pre
-              class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+              class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
               >{{ JSON.stringify(uniswapRouteData.trade, null, 2) }}</pre
             > -->
         </div>
@@ -201,14 +201,14 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
       <div>
         <p>Parameters</p>
         <pre
-          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
           >{{ JSON.stringify(props.routeData?.methodParameters, null, 2) }}</pre
         >
       </div>
       <!-- <div>
           <p>Trade</p>
           <pre
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
             >{{ JSON.stringify(uniswapRouteData.trade, null, 2) }}</pre
           >
         </div> -->

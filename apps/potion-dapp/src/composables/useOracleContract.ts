@@ -1,6 +1,8 @@
 import type { Oracle } from "@potion-protocol/core/typechain";
-import { Oracle__factory } from "@potion-protocol/core/typechain";
+
 import { formatUnits } from "@ethersproject/units";
+import { Oracle__factory } from "@potion-protocol/core/typechain";
+
 import { useAddressBookContract } from "./useAddressBookContract";
 import { useEthersContract } from "./useEthersContract";
 

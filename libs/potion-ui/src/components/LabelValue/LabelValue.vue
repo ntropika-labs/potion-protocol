@@ -21,6 +21,7 @@ export interface Props {
   valueType?: ValueType;
   size?: TextSize;
   symbol?: string;
+  loading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   trend: undefined,
   size: "md",
   valueType: "number",
+  loading: false,
 });
 
 // prettier-ignore
@@ -95,6 +97,11 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
       {{ props.title }}
     </h6>
     <div
+      v-if="loading"
+      class="animate-pulse h-2.5 bg-white/10 rounded-full w-30"
+    ></div>
+    <div
+      v-else
       class="flex flex-wrap items-center space-x-1"
       :class="valueAlignment"
       test-label-value-value

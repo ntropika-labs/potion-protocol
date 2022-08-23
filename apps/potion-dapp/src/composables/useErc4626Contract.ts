@@ -3,10 +3,11 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import { isRef, onMounted, ref, unref, watch } from "vue";
+import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
+import { BigNumber } from "@ethersproject/bignumber";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
@@ -14,11 +15,11 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
-// import type { BigNumber } from "@ethersproject/bignumber";
 
 export function useErc4626Contract(
   address: string | Ref<string>,
-  fetchInitialData = true
+  fetchInitialData = true,
+  eventListeners = false
 ) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
@@ -33,8 +34,17 @@ export function useErc4626Contract(
 
   const initContractProvider = () => {
     return initContract(
-      true,
       false,
+      false,
+      ERC4626CapUpgradeable__factory,
+      unref(address).toLowerCase()
+    ) as ERC4626Upgradeable;
+  };
+
+  const initContractProviderWS = () => {
+    return initContract(
+      false,
+      true,
       ERC4626CapUpgradeable__factory,
       unref(address).toLowerCase()
     ) as ERC4626Upgradeable;
@@ -624,6 +634,42 @@ export function useErc4626Contract(
     }
   }
 
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+
+    // listen on deposits and update the total assets
+    wsContract.on(
+      "Deposit",
+      (caller: string, owner: string, assets: BigNumber, shares: BigNumber) => {
+        console.info("Deposit event: ", caller, owner, assets, shares);
+        if (owner === connectedWallet?.value?.accounts[0].address) {
+          getUserBalance();
+        }
+        totalAssets.value =
+          totalAssets.value +
+          parseFloat(formatUnits(assets, assetDecimals.value));
+      }
+    );
+    // listen on withdrawals and update the total assets
+    wsContract.on(
+      "Withdraw",
+      (caller: string, receiver: string, owner: string, assets: BigNumber) => {
+        console.info("Withdraw event: ", caller, receiver, owner, assets);
+        if (caller === connectedWallet?.value?.accounts[0].address) {
+          getUserBalance();
+        }
+        totalAssets.value =
+          totalAssets.value -
+          parseFloat(formatUnits(assets, assetDecimals.value));
+      }
+    );
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
+
   return {
     allowance,
     allowanceLoading,
@@ -689,5 +735,6 @@ export function useErc4626Contract(
     withdrawTx,
     fetchVaultData,
     getUserBalance,
+    initContractProviderWS,
   };
 }

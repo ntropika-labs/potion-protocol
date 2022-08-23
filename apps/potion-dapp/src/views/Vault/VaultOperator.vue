@@ -2,7 +2,7 @@
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Token, TradeType } from "@uniswap/sdk-core";
+import { Token as UniToken, TradeType } from "@uniswap/sdk-core";
 import { useOracleContract } from "@/composables/useOracleContract";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { createValidExpiry } from "@/helpers/time";
@@ -18,7 +18,10 @@ import {
 
 import { useOnboard } from "@onboard-composable";
 
-import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
+import {
+  useHedgingVaultOperatorHelperContract,
+  type UniSwapInfo,
+} from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -39,7 +42,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
-import { $fetch } from "ohmyfetch";
+import { useBuyerRecords } from "@/composables/useBuyerRecords";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -51,10 +54,9 @@ const TabNavigationComponent = defineAsyncComponent(
 /**
  * Const
  */
-const MODE = process.env.NODE_ENV;
-const IS_DEV_ENV = MODE === "development";
+const IS_DEV_ENV = import.meta.env.DEV;
 
-const USDC = new Token(
+const USDC = new UniToken(
   ChainId.MAINNET,
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   6,
@@ -63,7 +65,7 @@ const USDC = new Token(
 );
 
 // TODO: remove once we have proper integration for underlying assets
-const WETH = new Token(
+const WETH = new UniToken(
   ChainId.MAINNET,
   "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   18,
@@ -88,7 +90,7 @@ const expectedPriceRate = ref(1);
 // Input validity
 
 const hasSwapRoute = ref(false);
-const isExpectedPriceRateValid = ref(true);
+
 /**
  * Setup
  */
@@ -106,7 +108,7 @@ const walletAddress = computed(
  * Vault operation
  */
 const { principalPercentages, vaultStatus, getVaultStatus } =
-  useInvestmentVaultContract(validId);
+  useInvestmentVaultContract(validId, true);
 
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
@@ -123,7 +125,7 @@ const {
   assetDecimals,
   //assetImage,
   totalAssets,
-} = useErc4626Contract(validId);
+} = useErc4626Contract(validId, true, true);
 
 const tokenAsset = computed(() => {
   return {
@@ -217,7 +219,10 @@ const {
   getCurrentPayout,
   getStrategyInfo,
   strategyLoading,
-} = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
+} = usePotionBuyActionContract(
+  contractsAddresses.PotionBuyAction.address,
+  true
+);
 
 // Depth Router logic
 const criteriasParam = computed(() => {
@@ -240,7 +245,8 @@ const {
   orderSize,
   strikePrice,
   gasPrice,
-  oraclePrice
+  oraclePrice,
+  false
 );
 
 const hasCounterparties = computed(() => {
@@ -306,33 +312,64 @@ const loadExitPositionRoute = async () => {
       walletAddress.value,
       swapSlippage.value
     );
+  } else {
+    totalAmountToSwap.value = 0;
   }
 
   console.log("exit route", uniswapRouteData.value);
 };
 
 const exitPosition = async () => {
-  if (!uniswapRouteData.value || !uniswapRouteData.value.route) return;
+  if (!isExitPositionOperationValid.value) {
+    throw new Error("A uniswap route is required to exit position");
+  }
 
   toggleUniswapPolling(false);
 
-  const swapRoute = uniswapRouteData.value.route[0];
-  const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-  const expectedPriceRate = IS_DEV_ENV
-    ? (1 / oraclePrice.value).toFixed(6)
-    : uniswapRouteData.value?.trade.executionPrice.invert().toFixed(6);
-
-  const swapInfo = {
-    steps: [
-      { inputTokenAddress: contractsAddresses.USDC.address, fee: firstPoolFee },
-    ],
-    outputTokenAddress: tokenAsset.value.address,
-    expectedPriceRate: expectedPriceRate, //"0.001", // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+  let swapInfo: UniSwapInfo;
+  const USDCToken = {
+    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
+    name: USDC.name || "",
+    symbol: USDC.symbol || "",
+    decimals: USDC.decimals,
   };
+  if (totalAmountToSwap.value > 0) {
+    if (!uniswapRouteData.value?.route) {
+      throw new Error("A Uniswap route is required to exit position");
+    }
+
+    const swapRoute = uniswapRouteData.value.route[0];
+    const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+    const expectedPriceRate = IS_DEV_ENV
+      ? 1 / oraclePrice.value //0.001,
+      : uniswapRouteData.value?.trade.executionPrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+    swapInfo = {
+      steps: [
+        {
+          inputToken: USDCToken,
+          fee: firstPoolFee,
+        },
+      ],
+      outputToken: tokenAsset.value,
+      expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+    };
+  } else {
+    swapInfo = {
+      steps: [
+        {
+          inputToken: USDCToken,
+          fee: 0,
+        },
+      ],
+      outputToken: tokenAsset.value,
+      expectedPriceRate: 0,
+    };
+  }
 
   console.log("expectedPriceRate", expectedPriceRate);
 
   await vaultExitPosition(swapInfo);
+  await reloadInfoAfterAction();
 };
 
 const loadEnterPositionRoute = async () => {
@@ -398,13 +435,19 @@ const enterPosition = async () => {
   });
 
   const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+  const USDCToken = {
+    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
+    name: USDC.name || "",
+    symbol: USDC.symbol || "",
+    decimals: USDC.decimals,
+  };
   const expectedPriceRate = IS_DEV_ENV
-    ? oraclePrice.value.toFixed(6)
-    : uniswapRouteData.value?.trade.executionPrice.toFixed(6);
-  const swapInfo = {
-    steps: [{ inputTokenAddress: tokenAsset.value.address, fee: firstPoolFee }],
-    outputTokenAddress: contractsAddresses.USDC.address,
-    expectedPriceRate: expectedPriceRate, //1000, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
+    ? oraclePrice.value //1000,
+    : uniswapRouteData.value.trade.executionPrice.toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+  const swapInfo: UniSwapInfo = {
+    steps: [{ inputToken: tokenAsset.value, fee: firstPoolFee }],
+    outputToken: USDCToken,
+    expectedPriceRate: expectedPriceRate, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
   };
 
   const potionBuyInfo = {
@@ -505,67 +548,85 @@ const testAddBlock = async (addHours: number) => {
 
   console.log(blockTimestamp.value);
 };
+
+const { records } = useBuyerRecords(
+  contractsAddresses["PotionBuyAction"].address,
+  nextCycleTimestamp
+);
+const potionAddress = computed(() => {
+  if (!records.value || !records.value.length) return null;
+
+  return records.value[0].otoken ? records.value[0].otoken.id : null;
+});
+const setPriceCommand = ref<HTMLElement>();
+const copySetPriceCommand = async () => {
+  if (potionAddress.value && setPriceCommand.value?.textContent) {
+    await navigator.clipboard.writeText(setPriceCommand.value.textContent);
+  }
+};
 </script>
 <template>
   <!-- START TEST COMMANDS -->
-  <div class="flex flex-row items-end gap-4">
-    <BaseButton palette="primary" label="Load str." @click="getStrategyInfo()">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <div class="border-1">
-      <p class="text-sm">TEST ADD BLOCK</p>
-      <div class="flex flex-row gap-4">
-        <BaseButton
-          palette="primary"
-          label="+1D"
-          @click="() => testAddBlock(24)"
-        >
-          <template #pre-icon>
-            <i class="i-ph-test-tube-fill"></i>
-          </template>
-        </BaseButton>
-        <BaseButton
-          palette="primary"
-          label="+1M"
-          @click="() => testAddBlock(720)"
-        >
-          <template #pre-icon>
-            <i class="i-ph-test-tube-fill"></i>
-          </template>
-        </BaseButton>
+  <div v-if="IS_DEV_ENV">
+    <div class="flex flex-row items-end gap-4">
+      <div class="border-1 p-2 rounded border-color-white border-opacity-20">
+        <p class="text-sm">TEST ADD BLOCK</p>
+        <div class="flex flex-row gap-4">
+          <BaseButton
+            palette="primary"
+            label="+1D"
+            @click="() => testAddBlock(24)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+          <BaseButton
+            palette="primary"
+            label="+1M"
+            @click="() => testAddBlock(720)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+        </div>
+      </div>
+      <BaseButton
+        palette="primary"
+        label="Load info"
+        class="mb-2"
+        @click="reloadInfoAfterAction"
+      >
+        <template #pre-icon>
+          <i class="i-ph-test-tube-fill"></i>
+        </template>
+      </BaseButton>
+    </div>
+    <div class="flex flex-col mt-4 gap-2">
+      <p>Underlying asset: {{ assetAddress }}</p>
+      <div v-if="potionAddress">
+        <p>Set price command:</p>
+        <div class="flex flex-row items-start">
+          <pre
+            ref="setPriceCommand"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+          >
+yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
+          >
+          <BaseButton
+            palette="primary"
+            label="copy"
+            size="sm"
+            @click="copySetPriceCommand"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+        </div>
       </div>
     </div>
-
-    <BaseButton palette="primary" label="Get block" @click="getBlock('latest')">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="enter route"
-      @click="loadEnterPositionRoute()"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton
-      palette="primary"
-      label="exit route"
-      @click="loadExitPositionRoute()"
-    >
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
-    <BaseButton palette="primary" label="Test exit" @click="exitPosition()">
-      <template #pre-icon>
-        <i class="i-ph-test-tube-fill"></i>
-      </template>
-    </BaseButton>
   </div>
   <!-- END TEST COMMANDS -->
   <!-- START NAVIGATION HEADER -->
@@ -795,7 +856,7 @@ const testAddBlock = async (addHours: number) => {
                         >
                           <p>order size in otokens:</p>
                           <pre
-                            class="bg-dark broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
+                            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
                             >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
                           >
                         </div>
@@ -807,7 +868,7 @@ const testAddBlock = async (addHours: number) => {
                       <div class="text-center">
                         <p>a</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.a_number, null, 2)
                           }}</pre
@@ -816,7 +877,7 @@ const testAddBlock = async (addHours: number) => {
                       <div class="text-center">
                         <p>b</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.b_number, null, 2)
                           }}</pre
@@ -825,7 +886,7 @@ const testAddBlock = async (addHours: number) => {
                       <div class="text-center">
                         <p>c</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.c_number, null, 2)
                           }}</pre
@@ -834,7 +895,7 @@ const testAddBlock = async (addHours: number) => {
                       <div class="text-center">
                         <p>d</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.d_number, null, 2)
                           }}</pre
@@ -843,7 +904,7 @@ const testAddBlock = async (addHours: number) => {
                       <div class="text-center">
                         <p>max_util</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.max_util, null, 2)
                           }}</pre
@@ -853,7 +914,7 @@ const testAddBlock = async (addHours: number) => {
 
                     <p class="">> Criteria</p>
                     <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
                     >
                   </BaseCard>

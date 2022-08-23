@@ -1,20 +1,14 @@
-import { computed, onMounted, ref, unref } from "vue";
-import { utils } from "ethers";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import {
-  PotionBuyAction__factory,
-  type IUniswapV3Oracle,
-} from "@potion-protocol/hedging-vault/typechain";
+import { BigNumber, utils } from "ethers";
+import { computed, onMounted, onUnmounted, ref, unref } from "vue";
+
+import { formatUnits } from "@ethersproject/units";
+import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
-import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/actions/PotionBuyAction";
-import type { UniSwapInfo } from "./useHedgingVaultOperatorHelperContract";
-// import { Swap } from "@/helpers/hedgingVaultContracts";
-
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
@@ -38,7 +32,10 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
 }
 
 // ActionsManager allows for querying the address of the action
-export function usePotionBuyActionContract(contractAddress: string) {
+export function usePotionBuyActionContract(
+  contractAddress: string,
+  eventListeners: boolean
+) {
   const { initContract } = useEthersContract();
   const errorRegistry: { [key: string]: Ref<string | null> } = {};
 
@@ -52,11 +49,10 @@ export function usePotionBuyActionContract(contractAddress: string) {
     ) as PotionBuyAction;
   };
 
-  //Provider initialization
-  const initContractSigner = () => {
+  const initContractProviderWS = () => {
     return initContract(
-      true,
       false,
+      true,
       PotionBuyAction__factory,
       contractAddress.toLowerCase()
     ) as PotionBuyAction;
@@ -324,76 +320,44 @@ export function usePotionBuyActionContract(contractAddress: string) {
     return strategyError;
   });
 
-  const TESTsetBuyInfo = async (info: any) => {
-    try {
-      strategyLoading.value = true;
-      // console.info(info)
-      console.log(parseUnits(info.expectedPremiumInUSDC, 8));
-      const signer = initContractSigner();
-      const potionBuyActionData: PotionBuyInfoStruct = {
-        targetPotionAddress: info.targetPotionAddress,
-        underlyingAsset: info.underlyingAsset,
-        strikePriceInUSDC: parseUnits(info.strikePriceInUSDC, 8),
-        expirationTimestamp: info.expirationTimestamp,
-        sellers: info.sellers,
-        expectedPremiumInUSDC: parseUnits(info.expectedPremiumInUSDC, 6),
-        totalSizeInPotions: info.totalSizeInPotions,
-      };
-      const tx = await signer.setPotionBuyInfo(potionBuyActionData);
-      const receipt = await tx.wait();
-      console.info(tx, receipt);
-
-      return { tx, receipt };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot TESTsetBuyInfo: ${error.message}`
-          : `Cannot TESTsetBuyInfo: ${error}`;
-
-      throw new Error(errorMessage);
-    }
-  };
-
-  const TESTsetSwapInfo = async (info: UniSwapInfo) => {
-    try {
-      strategyLoading.value = true;
-      const signer = initContractSigner();
-      // const swapPath = new Swap(
-      //   info.steps[0].inputTokenAddress,
-      //   info.steps[0].fee,
-      //   info.outputTokenAddress
-      // );
-      const swapPath = getEncodedSwapPath(
-        [info.steps[0].inputTokenAddress, info.outputTokenAddress],
-        info.steps[0].fee
-      );
-      console.log("swapPathEncoded", swapPath);
-      const swapData: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: info.steps[0].inputTokenAddress,
-        outputToken: info.outputTokenAddress,
-        expectedPriceRate: parseUnits(info.expectedPriceRate.toString(), 18),
-        swapPath: swapPath,
-      };
-
-      const tx = await signer.setSwapInfo(swapData);
-      const receipt = await tx.wait();
-      console.info(tx, receipt);
-
-      return { tx, receipt };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot TESTsetSwapInfo: ${error.message}`
-          : `Cannot TESTsetSwapInfo: ${error}`;
-
-      throw new Error(errorMessage);
-    }
-  };
-
   onMounted(async () => {
     console.log(contractAddress);
     await getStrategyInfo();
   });
+
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+
+    wsContract.on("CycleDurationChanged", (secs: BigNumber) => {
+      cycleDurationSecs.value = parseFloat(formatUnits(secs));
+    });
+
+    wsContract.on("MaxPremiumPercentageChanged", (perc: BigNumber) => {
+      maxPremiumPercentage.value = parseFloat(formatUnits(perc, 6));
+    });
+
+    wsContract.on("MaxSwapDurationChanged", (dur: BigNumber) => {
+      maxSwapDurationSecs.value = parseFloat(formatUnits(dur));
+    });
+
+    wsContract.on("PremiumSlippageChanged", (slip: BigNumber) => {
+      premiumSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    wsContract.on("StrikePercentageChanged", (strike: BigNumber) => {
+      strikePercentage.value = parseFloat(formatUnits(strike, 6));
+    });
+
+    wsContract.on("SwapSlippageChanged", (slip: BigNumber) => {
+      swapSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
 
   return {
     strategyLoading,
@@ -432,7 +396,5 @@ export function usePotionBuyActionContract(contractAddress: string) {
     currentPayout,
     getCurrentPayout,
     cycleDurationDays,
-    TESTsetBuyInfo,
-    TESTsetSwapInfo,
   };
 }

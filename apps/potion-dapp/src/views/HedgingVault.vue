@@ -14,20 +14,18 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
         <div>
           <p class="capitalize">{{ t("status") }}</p>
-          <BaseTag>
+          <BaseTag :is-loading="strategyLoading">
             <div
               class="h-2 w-2 rounded-full mr-1"
-              :class="vaultStatus === 0 ? 'bg-accent-500' : 'bg-error'"
+              :class="statusInfo.class"
             ></div>
-            <span v-if="vaultStatus === 0">{{ t("unlocked") }}</span>
-            <span v-else-if="vaultStatus === 1">{{ t("committed") }}</span>
-            <span v-else>{{ t("locked") }}</span> </BaseTag
-          ><!--  -->
+            <span>{{ statusInfo.label }}</span>
+          </BaseTag>
         </div>
         <div>
           <p class="capitalize">{{ t("admin") }}</p>
           <a :href="etherscanUrl + '/address/' + admin">
-            <BaseTag>
+            <BaseTag :is-loading="strategyLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ admin }}</span>
             </BaseTag>
@@ -36,7 +34,7 @@
         <div>
           <p class="capitalize">{{ t("operator") }}</p>
           <a :href="etherscanUrl + '/address/' + operator">
-            <BaseTag>
+            <BaseTag :is-loading="strategyLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
@@ -49,18 +47,21 @@
           :title="t('share_price')"
           :value="shareToAssetRatio.toString()"
           :symbol="`${assetSymbol}/Share`"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          :value="totalAssets.toString()"
+          :value="totalAssets?.toString()"
           :symbol="assetSymbol"
+          :loading="strategyLoading"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
           :symbol="`= ${balanceInAsset} ${assetSymbol}`"
+          :loading="strategyLoading"
         />
       </div>
     </BaseCard>
@@ -145,8 +146,12 @@
               <BaseButton
                 palette="secondary"
                 :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled || strategyLoading"
-                :loading="strategyLoading"
+                :disabled="
+                  depositButtonState.disabled ||
+                  strategyLoading ||
+                  isTransactionPending
+                "
+                :loading="depositLoading || approveLoading"
                 @click="handleDeposit()"
               />
             </div>
@@ -162,8 +167,12 @@
               <BaseButton
                 palette="secondary"
                 :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled || strategyLoading"
-                :loading="strategyLoading"
+                :disabled="
+                  redeemButtonState.disabled ||
+                  strategyLoading ||
+                  isTransactionPending
+                "
+                :loading="redeemLoading"
                 @click="handleRedeem()"
               />
             </div>
@@ -172,13 +181,11 @@
       </div>
     </div>
   </div>
-  <pre
-    class="broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+  <NotificationDisplay
+    :toasts="notifications"
+    @hide-toast="(index: string) => removeToast(index)"
   >
-    {{ depositReceipt }}
-    {{ approveReceipt }}
-    {{ redeemReceipt }}
-  </pre>
+  </NotificationDisplay>
 </template>
 <script lang="ts" setup>
 import {
@@ -196,12 +203,19 @@ import { etherscanUrl } from "@/helpers";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
+import {
+  LifecycleState,
+  useInvestmentVaultContract,
+} from "@/composables/useInvestmentVaultContract";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useOnboard } from "@onboard-composable";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useNotifications } from "@/composables/useNotifications";
+
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
 const { PotionBuyAction } = contractsAddresses;
@@ -226,9 +240,31 @@ const {
   premiumSlippage,
   swapSlippage,
   strategyLoading,
-} = usePotionBuyActionContract(PotionBuyAction.address);
+} = usePotionBuyActionContract(PotionBuyAction.address, true);
 const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(validId);
+  useInvestmentVaultContract(validId, true);
+
+const statusInfo = computed(() => {
+  switch (vaultStatus.value) {
+    case LifecycleState.Unlocked:
+      return {
+        label: t("unlocked"),
+        class: "bg-accent-500",
+      };
+    case LifecycleState.Committed:
+      return {
+        label: t("committed"),
+        class: "bg-orange-500",
+      };
+    case LifecycleState.Locked:
+    default:
+      return {
+        label: t("locked"),
+        class: "bg-error",
+      };
+  }
+});
+
 const {
   // vaultName,
   // vaultDecimals,
@@ -242,10 +278,14 @@ const {
   totalAssets,
   userBalance,
   deposit,
+  depositTx,
   redeem,
+  redeemTx,
   depositReceipt,
   redeemReceipt,
-} = useErc4626Contract(validId);
+  depositLoading,
+  redeemLoading,
+} = useErc4626Contract(validId, true, true);
 
 const {
   userBalance: assetUserBalance,
@@ -253,23 +293,38 @@ const {
   fetchUserAllowance,
   approveSpending,
   getTokenBalance,
+  approveTx,
   approveReceipt,
+  approveLoading,
   fetchErc20Info,
 } = useErc20Contract(assetAddress, false);
 
 watch(assetAddress, async () => {
   if (connectedWallet.value) {
-    await fetchErc20Info();
-    await getTokenBalance(true);
-    await fetchUserAllowance(validId.value);
+    await Promise.all([
+      fetchErc20Info(),
+      getTokenBalance(true),
+      fetchUserAllowance(validId.value),
+    ]);
   }
 });
 onMounted(() => {
   getBlock("latest");
 });
 
+const isTransactionPending = computed(
+  () => redeemLoading.value || depositLoading.value || approveLoading.value
+);
+
 const depositButtonState = computed(() => {
   if (connectedWallet.value && assetUserBalance.value >= depositAmount.value) {
+    if (vaultStatus.value !== LifecycleState.Unlocked) {
+      return {
+        label: "locked",
+        disabled: true,
+      };
+    }
+
     if (userAllowance.value >= depositAmount.value) {
       return {
         label: t("deposit"),
@@ -320,6 +375,13 @@ const balanceInAsset = computed(() => {
 
 const redeemButtonState = computed(() => {
   if (connectedWallet.value && userBalance.value >= redeemAmount.value) {
+    if (vaultStatus.value !== LifecycleState.Unlocked) {
+      return {
+        label: "locked",
+        disabled: true,
+      };
+    }
+
     return {
       label: t("redeem"),
       disabled: false,
@@ -348,4 +410,36 @@ const handleRedeem = async () => {
     await redeem(redeemAmount.value, true);
   }
 };
+
+// Toast notifications
+const {
+  notifications,
+  createTransactionNotification,
+  createReceiptNotification,
+  removeToast,
+} = useNotifications();
+
+watch(approveTx, (transaction) => {
+  createTransactionNotification(transaction, t("approving_usdc"));
+});
+
+watch(approveReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("usdc_approved"));
+});
+
+watch(depositTx, (transaction) => {
+  createTransactionNotification(transaction, "Despositing");
+});
+
+watch(depositReceipt, (receipt) => {
+  createReceiptNotification(receipt, "Deposited");
+});
+
+watch(redeemTx, (transaction) => {
+  createTransactionNotification(transaction, "Redeeming");
+});
+
+watch(redeemReceipt, (receipt) => {
+  createReceiptNotification(receipt, "Redeemed");
+});
 </script>
