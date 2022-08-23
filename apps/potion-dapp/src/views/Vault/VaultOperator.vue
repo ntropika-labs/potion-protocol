@@ -125,7 +125,7 @@ const {
   assetDecimals,
   //assetImage,
   totalAssets,
-} = useErc4626Contract(validId);
+} = useErc4626Contract(validId, true, true);
 
 const tokenAsset = computed(() => {
   return {
