@@ -1,13 +1,13 @@
 import { useGetBuyerRecordsQuery } from "subgraph-queries/generated/urql";
 import { ref, computed, watch, unref } from "vue";
-import type { Ref } from "vue";
+import type { MaybeRef } from "@vueuse/core";
 import type { GetBuyerRecordsQuery } from "subgraph-queries/generated/operations";
 
 type BuyerRecordsEntries = GetBuyerRecordsQuery["buyerRecords"];
 
 const useBuyerRecords = (
-  buyer: string | Ref<string>,
-  expiry: number | Ref<number>
+  buyer: MaybeRef<string>,
+  expiry: MaybeRef<number>
 ) => {
   const records = ref<BuyerRecordsEntries>([]);
 
@@ -21,9 +21,7 @@ const useBuyerRecords = (
   });
 
   watch(data, () => {
-    if (data?.value && data.value.buyerRecords.length > 0) {
-      records.value = data?.value?.buyerRecords;
-    }
+    records.value = data?.value?.buyerRecords ?? [];
   });
 
   return {
