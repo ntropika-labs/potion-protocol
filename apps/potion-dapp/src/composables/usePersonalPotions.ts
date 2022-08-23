@@ -3,18 +3,19 @@ import {
   useGetActivePotionsQuery,
   useGetExpiredPotionsQuery,
 } from "subgraph-queries/generated/urql";
-import { ref, computed, unref, watch } from "vue";
+import { ref, computed, unref, watch, onMounted } from "vue";
 
 import type { Ref } from "vue";
+import type { MaybeRef } from "@vueuse/core";
 import type { PersonalPotionCardFragment } from "subgraph-queries/generated/operations";
 
 const getPersonalPotionsIds = (potions: Ref<PersonalPotionCardFragment[]>) =>
   [""].concat(potions.value.map(({ id }) => id));
 
 export const usePersonalPotions = (
-  address: string | Ref<string>,
-  timestamp: string | Ref<string> | number | Ref<number>,
-  pauseQuery: Ref<boolean>
+  address: MaybeRef<string>,
+  timestamp: MaybeRef<string | number>,
+  timestampLoading: Ref<boolean>
 ) => {
   const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
   const activePotions = ref<PersonalPotionCardFragment[]>([]);
@@ -40,7 +41,7 @@ export const usePersonalPotions = (
     fetching: loadingUserPotions,
   } = useGetUserPotionsQuery({
     variables,
-    pause: true,
+    pause: timestampLoading,
   });
 
   const {
@@ -61,37 +62,57 @@ export const usePersonalPotions = (
     pause: true,
   });
 
+  const storePotions = (
+    potions: Ref<PersonalPotionCardFragment[]>,
+    newPotions: readonly PersonalPotionCardFragment[],
+    canLoadMore: Ref<boolean>
+  ) => {
+    potions.value = potions.value.concat(newPotions);
+    canLoadMore.value = newPotions.length === potionsPerQuery;
+  };
+
   const loadMoreActive = async () => {
     await executeGetMoreActivePotionsQuery();
-    canLoadMoreExpiredPotions.value =
-      newActivePotions?.value?.buyerRecords?.length === potionsPerQuery;
-    activePotions.value = activePotions.value.concat(
-      newActivePotions?.value?.buyerRecords ?? []
+    storePotions(
+      activePotions,
+      newActivePotions?.value?.buyerRecords ?? [],
+      canLoadMoreActivePotions
     );
   };
 
   const loadMoreExpired = async () => {
     await executeGetMoreExpiredPotionsQuery();
-    canLoadMoreExpiredPotions.value =
-      newExpiredPotions?.value?.buyerRecords?.length === potionsPerQuery;
-    expiredPotions.value = expiredPotions.value.concat(
-      newExpiredPotions?.value?.buyerRecords ?? []
+    storePotions(
+      expiredPotions,
+      newExpiredPotions?.value?.buyerRecords ?? [],
+      canLoadMoreExpiredPotions
     );
   };
 
-  watch(pauseQuery, async () => {
-    if (!pauseQuery.value) {
+  const appendPotions = () => {
+    storePotions(
+      activePotions,
+      userPotions?.value?.active ?? [],
+      canLoadMoreActivePotions
+    );
+
+    storePotions(
+      expiredPotions,
+      userPotions?.value?.expired ?? [],
+      canLoadMoreExpiredPotions
+    );
+  };
+
+  onMounted(() => {
+    if (!timestampLoading.value) {
+      appendPotions();
+    }
+  });
+
+  watch(timestampLoading, async () => {
+    if (!timestampLoading.value) {
       await getUserPotionsQuery();
-      canLoadMoreExpiredPotions.value =
-        userPotions?.value?.expired?.length === potionsPerQuery;
-      canLoadMoreActivePotions.value =
-        userPotions?.value?.active?.length === potionsPerQuery;
-      activePotions.value = activePotions.value.concat(
-        userPotions?.value?.active ?? []
-      );
-      expiredPotions.value = expiredPotions.value.concat(
-        userPotions?.value?.expired ?? []
-      );
+      appendPotions();
     }
   });
 

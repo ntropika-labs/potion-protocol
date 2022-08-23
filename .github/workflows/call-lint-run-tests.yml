@@ -79,25 +79,24 @@ jobs:
         run: yarn codegen subgraph-queries
 
       - name: Dapp unit test
-        run: yarn nx run potion-dapp:test-unit
-
-      - name: Dapp code coverage
-        if: success()
         run: yarn nx run potion-dapp:test-unit-coverage
 
-      - name: Archive code coverage
-        uses: actions/upload-artifact@v2
-        if: success()
-        with:
-          name: potion-dapp-unit-test-coverage
-          path: apps/potion-dapp/coverage
-          retention-days: 25
+          # - name: Dapp code coverage
+          #   if: github.event_name == 'pull_request'
+          #   uses: davelosert/vitest-coverage-report-action@v1
+          #   with:
+          #     json-summary-path: 'apps/potion-dapp/coverage/coverage-summary.json'
+          #     json-final-path: 'apps/potion-dapp/coverage/coverage-final.json'
+          #     vite-config-path: 'apps/potion-dapp/vitest.config.ts'
+          #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Dapp test report
-        if: github.event.action == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: mikepenz/action-junit-report@v3
         with:
+          check_name: 'potion-dapp unit tests'
           report_paths: 'apps/potion-dapp/reports/*.xml'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   run-unit-test-subgraph:
     name: Run unit tests (subgraph)

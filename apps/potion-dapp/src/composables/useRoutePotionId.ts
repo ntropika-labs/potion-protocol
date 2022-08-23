@@ -1,22 +1,13 @@
-import { computed } from "vue";
-import { isValidAddress, formatAddress } from "@/helpers/addresses";
+import { useRouteAddress } from "./useRouteAddress";
 import type { RouteParams } from "vue-router";
 
 export function useRoutePotionId(params: RouteParams) {
-  const address = computed(() => {
-    if (Array.isArray(params.id)) {
-      return "";
-    }
-    return params?.id ? formatAddress(params.id) : "";
-  });
-
-  const validAddress = computed<boolean>(() => isValidAddress(address.value));
-  const potionAddress = computed<string>(() =>
-    validAddress.value ? address.value : ""
+  const { formattedAddress: potionAddress, validAddress } = useRouteAddress(
+    params.id
   );
 
   return {
-    validAddress,
     potionAddress,
+    validAddress,
   };
 }
