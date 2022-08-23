@@ -181,13 +181,6 @@
       </div>
     </div>
   </div>
-  <pre
-    class="broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-  >
-    {{ depositReceipt }}
-    {{ approveReceipt }}
-    {{ redeemReceipt }}
-  </pre>
   <NotificationDisplay
     :toasts="notifications"
     @hide-toast="(index: string) => removeToast(index)"
