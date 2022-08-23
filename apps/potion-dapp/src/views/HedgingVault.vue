@@ -240,7 +240,7 @@ const {
   premiumSlippage,
   swapSlippage,
   strategyLoading,
-} = usePotionBuyActionContract(PotionBuyAction.address);
+} = usePotionBuyActionContract(PotionBuyAction.address, true);
 const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(validId, true);
 

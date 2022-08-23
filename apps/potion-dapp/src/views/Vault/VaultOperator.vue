@@ -219,7 +219,10 @@ const {
   getCurrentPayout,
   getStrategyInfo,
   strategyLoading,
-} = usePotionBuyActionContract(contractsAddresses.PotionBuyAction.address);
+} = usePotionBuyActionContract(
+  contractsAddresses.PotionBuyAction.address,
+  true
+);
 
 // Depth Router logic
 const criteriasParam = computed(() => {

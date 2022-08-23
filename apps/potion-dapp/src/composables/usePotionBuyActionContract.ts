@@ -1,5 +1,6 @@
-import { computed, onMounted, onUnmounted, ref, unref } from "vue";
 import { BigNumber, utils } from "ethers";
+import { computed, onMounted, onUnmounted, ref, unref } from "vue";
+
 import { formatUnits } from "@ethersproject/units";
 import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
 
@@ -8,8 +9,6 @@ import { useEthersContract } from "./useEthersContract";
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
-import { useContractEvents } from "./useContractEvents";
-
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
@@ -33,7 +32,10 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
 }
 
 // ActionsManager allows for querying the address of the action
-export function usePotionBuyActionContract(contractAddress: string) {
+export function usePotionBuyActionContract(
+  contractAddress: string,
+  eventListeners: boolean
+) {
   const { initContract } = useEthersContract();
   const errorRegistry: { [key: string]: Ref<string | null> } = {};
 
@@ -42,6 +44,15 @@ export function usePotionBuyActionContract(contractAddress: string) {
     return initContract(
       false,
       false,
+      PotionBuyAction__factory,
+      contractAddress.toLowerCase()
+    ) as PotionBuyAction;
+  };
+
+  const initContractProviderWS = () => {
+    return initContract(
+      false,
+      true,
       PotionBuyAction__factory,
       contractAddress.toLowerCase()
     ) as PotionBuyAction;
@@ -309,77 +320,44 @@ export function usePotionBuyActionContract(contractAddress: string) {
     return strategyError;
   });
 
-  let removeEventListenersCallback: any;
-  const setupEventListeners = async () => {
-    const provider = initContractProvider();
-    const startingBlock = await provider.provider.getBlockNumber();
-    const { addEventListener, removeEventListeners } = useContractEvents(
-      provider,
-      startingBlock
-    );
-
-    // Check provider.filters for event names
-    addEventListener(
-      provider.filters["CycleDurationChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("CycleDurationChanged(uint256)", event, params);
-        cycleDurationSecs.value = parseFloat(formatUnits(params[0]));
-      }
-    );
-
-    addEventListener(
-      provider.filters["MaxPremiumPercentageChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("MaxPremiumPercentageChanged(uint256)", event, params);
-        maxPremiumPercentage.value = parseFloat(formatUnits(params[0], 6));
-      }
-    );
-
-    addEventListener(
-      provider.filters["MaxSwapDurationChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("MaxSwapDurationChanged(uint256)", event, params);
-        maxSwapDurationSecs.value = parseFloat(formatUnits(params[0]));
-      }
-    );
-
-    addEventListener(
-      provider.filters["PremiumSlippageChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("PremiumSlippageChanged(uint256)", event, params);
-        premiumSlippage.value = parseFloat(formatUnits(params[0], 6));
-      }
-    );
-
-    addEventListener(
-      provider.filters["StrikePercentageChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("StrikePercentageChanged(uint256)", event, params);
-        strikePercentage.value = parseFloat(formatUnits(params[0], 6));
-      }
-    );
-
-    addEventListener(
-      provider.filters["SwapSlippageChanged(uint256)"](),
-      (event, ...params: [BigNumber]) => {
-        console.log("SwapSlippageChanged(uint256)", event, params);
-        swapSlippage.value = parseFloat(formatUnits(params[0], 6));
-      }
-    );
-
-    removeEventListenersCallback = removeEventListeners;
-    // console.log("EVENT LISTENERS", getEventListeners());
-  };
-
   onMounted(async () => {
     console.log(contractAddress);
     await getStrategyInfo();
-    await setupEventListeners();
   });
 
-  onUnmounted(() => {
-    if (removeEventListenersCallback) removeEventListenersCallback();
-  });
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+
+    wsContract.on("CycleDurationChanged", (secs: BigNumber) => {
+      cycleDurationSecs.value = parseFloat(formatUnits(secs));
+    });
+
+    wsContract.on("MaxPremiumPercentageChanged", (perc: BigNumber) => {
+      maxPremiumPercentage.value = parseFloat(formatUnits(perc, 6));
+    });
+
+    wsContract.on("MaxSwapDurationChanged", (dur: BigNumber) => {
+      maxSwapDurationSecs.value = parseFloat(formatUnits(dur));
+    });
+
+    wsContract.on("PremiumSlippageChanged", (slip: BigNumber) => {
+      premiumSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    wsContract.on("StrikePercentageChanged", (strike: BigNumber) => {
+      strikePercentage.value = parseFloat(formatUnits(strike, 6));
+    });
+
+    wsContract.on("SwapSlippageChanged", (slip: BigNumber) => {
+      swapSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
 
   return {
     strategyLoading,

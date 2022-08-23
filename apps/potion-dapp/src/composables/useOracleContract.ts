@@ -1,13 +1,12 @@
 import type { Oracle } from "@potion-protocol/core/typechain";
-import { Oracle__factory } from "@potion-protocol/core/typechain";
+
 import { formatUnits } from "@ethersproject/units";
+import { Oracle__factory } from "@potion-protocol/core/typechain";
+
 import { useAddressBookContract } from "./useAddressBookContract";
 import { useEthersContract } from "./useEthersContract";
-import { onMounted, onUnmounted } from "vue";
-import { useContractEvents } from "./useContractEvents";
-import { BigNumber } from "ethers";
 
-export function useOracleContract(useEventStream = false) {
+export function useOracleContract() {
   const { initContract } = useEthersContract();
   const { getOracle } = useAddressBookContract();
 
@@ -59,49 +58,6 @@ export function useOracleContract(useEventStream = false) {
       }
     }
   };
-
-  let removeEventListenersCallback: any;
-  const setupEventListeners = async () => {
-    const provider = await initContractProvider();
-    const startingBlock = await provider.provider.getBlockNumber();
-    const { addEventListener, removeEventListeners } = useContractEvents(
-      provider,
-      startingBlock,
-      true
-    );
-
-    // Check provider.filters for event names
-    addEventListener(
-      provider.filters["StablePriceUpdated(address,uint256)"](),
-      (event, ...params: [string, BigNumber]) => {
-        console.log("StablePriceUpdated(address,uint256)", event, params);
-      }
-    );
-
-    addEventListener(
-      provider.filters["ExpiryPriceUpdated(address,uint256,uint256,uint256)"](),
-      (event, ...params: [string, BigNumber, BigNumber, BigNumber]) => {
-        console.log(
-          "ExpiryPriceUpdated(address,uint256,uint256,uint256)",
-          event,
-          params
-        );
-      }
-    );
-
-    removeEventListenersCallback = removeEventListeners;
-    // console.log("EVENT LISTENERS", getEventListeners());
-  };
-
-  onMounted(async () => {
-    if (useEventStream) {
-      await setupEventListeners();
-    }
-  });
-
-  onUnmounted(() => {
-    if (removeEventListenersCallback) removeEventListenersCallback();
-  });
 
   return {
     getPrice,
