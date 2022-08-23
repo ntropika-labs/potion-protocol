@@ -110,7 +110,6 @@ const walletAddress = computed(
 const { principalPercentages, vaultStatus, getVaultStatus } =
   useInvestmentVaultContract(validId, true);
 
-
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
     ? principalPercentages.value[0]
@@ -608,7 +607,7 @@ const copySetPriceCommand = async () => {
         <div class="flex flex-row items-start">
           <pre
             ref="setPriceCommand"
-            class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
           >
 yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
           >
@@ -854,7 +853,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                         >
                           <p>order size in otokens:</p>
                           <pre
-                            class="bg-dark broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
+                            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
                             >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
                           >
                         </div>
@@ -866,7 +865,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                       <div class="text-center">
                         <p>a</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.a_number, null, 2)
                           }}</pre
@@ -875,7 +874,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                       <div class="text-center">
                         <p>b</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.b_number, null, 2)
                           }}</pre
@@ -884,7 +883,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                       <div class="text-center">
                         <p>c</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.c_number, null, 2)
                           }}</pre
@@ -893,7 +892,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                       <div class="text-center">
                         <p>d</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.d_number, null, 2)
                           }}</pre
@@ -902,7 +901,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                       <div class="text-center">
                         <p>max_util</p>
                         <pre
-                          class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                           >{{
                             JSON.stringify(cp.curveAs64x64.max_util, null, 2)
                           }}</pre
@@ -912,7 +911,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
 
                     <p class="">> Criteria</p>
                     <pre
-                      class="bg-dark broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
                       >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
                     >
                   </BaseCard>
