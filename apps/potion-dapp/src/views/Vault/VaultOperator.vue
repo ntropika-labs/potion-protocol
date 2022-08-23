@@ -110,6 +110,7 @@ const walletAddress = computed(
 const { principalPercentages, vaultStatus, getVaultStatus } =
   useInvestmentVaultContract(validId, true);
 
+
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
     ? principalPercentages.value[0]
