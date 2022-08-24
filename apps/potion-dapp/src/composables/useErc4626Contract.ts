@@ -3,10 +3,11 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import { isRef, onMounted, ref, unref, watch } from "vue";
+import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
+import { BigNumber } from "@ethersproject/bignumber";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
@@ -14,9 +15,12 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
-import type { BigNumber } from "@ethersproject/bignumber";
 
-export function useERC4626Upgradable(address: string | Ref<string>) {
+export function useErc4626Contract(
+  address: string | Ref<string>,
+  fetchInitialData = true,
+  eventListeners = false
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
   const initContractSigner = () => {
@@ -30,8 +34,17 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
 
   const initContractProvider = () => {
     return initContract(
-      true,
       false,
+      false,
+      ERC4626CapUpgradeable__factory,
+      unref(address).toLowerCase()
+    ) as ERC4626Upgradeable;
+  };
+
+  const initContractProviderWS = () => {
+    return initContract(
+      false,
+      true,
       ERC4626CapUpgradeable__factory,
       unref(address).toLowerCase()
     ) as ERC4626Upgradeable;
@@ -42,7 +55,8 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     symbol: vaultSymbol,
     image: vaultImage,
     decimals: vaultDecimals,
-  } = useErc20Contract(address);
+    fetchErc20Info: vaultFetchErc20Info,
+  } = useErc20Contract(address, false);
 
   const getVaultDecimals = async () => {
     const provider = initContractProvider();
@@ -55,7 +69,9 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     try {
       assetAddressLoading.value = true;
       const contractProvider = initContractProvider();
-      assetAddress.value = await contractProvider.asset();
+      const response = await contractProvider.asset();
+      assetAddress.value = response;
+      console.log("assetAddress: ", response);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the asset address: ${error.message}`);
@@ -67,13 +83,15 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
 
-  const totalAssets = ref<BigNumber>();
+  const totalAssets = ref(0);
   const totalAssetsLoading = ref(false);
   const getTotalAssets = async () => {
     try {
       totalAssetsLoading.value = true;
       const contractProvider = initContractProvider();
-      totalAssets.value = await contractProvider.totalAssets();
+      totalAssets.value = parseFloat(
+        formatUnits(await contractProvider.totalAssets(), assetDecimals.value)
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the total assets: ${error.message}`);
@@ -85,24 +103,13 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
 
-  const getVaultAssetInfo = async () => {
-    await Promise.all([getAssetAddress(), getTotalAssets()]);
-  };
-  onMounted(async () => {
-    await getVaultAssetInfo();
-  });
-
-  if (isRef(address)) {
-    watch(address, async () => {
-      await getVaultAssetInfo();
-    });
-  }
   const {
     name: assetName,
     symbol: assetSymbol,
     image: assetImage,
     decimals: assetDecimals,
-  } = useErc20Contract(assetAddress);
+    fetchErc20Info: assetFetchErc20Info,
+  } = useErc20Contract(assetAddress, false);
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -479,7 +486,8 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       const contractProvider = initContractProvider();
       const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
       const result = await contractProvider.convertToShares(parsedAmount);
-      return formatUnits(result, vaultDecimals.value);
+      console.log("assetToShare: ", formatUnits(result, vaultDecimals.value));
+      return parseFloat(formatUnits(result, vaultDecimals.value));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot convert to shares: ${error.message}`);
@@ -489,12 +497,12 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
 
-  const convertToAssets = async (amount: BigNumber, digits: number) => {
+  const convertToAssets = async (amount: number) => {
     try {
       const contractProvider = initContractProvider();
-      const parsedAmount = parseUnits(amount.toString(), assetDecimals.value);
+      const parsedAmount = parseUnits(amount.toString(), vaultDecimals.value);
       const result = await contractProvider.convertToAssets(parsedAmount);
-      return formatUnits(result, digits);
+      return parseFloat(formatUnits(result, assetDecimals.value));
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot convert to assets: ${error.message}`);
@@ -504,13 +512,17 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     }
   };
 
-  const balanceOfUser = async () => {
+  const userBalance = ref(0);
+  const getUserBalance = async () => {
     if (connectedWallet.value) {
       try {
         maxDepositLoading;
         const contractProvider = initContractProvider();
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
+        );
+        userBalance.value = parseFloat(
+          formatUnits(result, vaultDecimals.value)
         );
         return formatUnits(result, vaultDecimals.value);
       } catch (error) {
@@ -521,7 +533,7 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
         }
       }
     } else {
-      throw new Error("Connect your wallet first");
+      userBalance.value = 0;
     }
   };
 
@@ -588,38 +600,104 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
       approveLoading.value = false;
     }
   };
+
+  const fetchVaultData = async () => {
+    await getAssetAddress();
+    await Promise.all([vaultFetchErc20Info(), assetFetchErc20Info()]);
+    await getTotalAssets();
+  };
+
+  const assetToShare = ref(0);
+  const shareToAsset = ref(0);
+  if (fetchInitialData === true) {
+    onMounted(async () => {
+      if (unref(address)) {
+        console.log("address vault: ", unref(address));
+        await fetchVaultData();
+        await getUserBalance();
+        const response = await convertToShares(1);
+        console.log("call to convertToShares on mounted: ", response);
+        assetToShare.value = response;
+        shareToAsset.value = await convertToAssets(1);
+      }
+    });
+    if (isRef(address) && unref(address)) {
+      watch(address, async () => {
+        console.log("address vault: ", unref(address));
+        await fetchVaultData();
+        await getUserBalance();
+        const response = await convertToShares(1);
+        console.log("call to convertToShares: ", response);
+
+        assetToShare.value = response;
+      });
+    }
+  }
+
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+
+    // listen on deposits and update the total assets
+    wsContract.on(
+      "Deposit",
+      (caller: string, owner: string, assets: BigNumber, shares: BigNumber) => {
+        console.info("Deposit event: ", caller, owner, assets, shares);
+        if (owner === connectedWallet?.value?.accounts[0].address) {
+          getUserBalance();
+        }
+        totalAssets.value =
+          totalAssets.value +
+          parseFloat(formatUnits(assets, assetDecimals.value));
+      }
+    );
+    // listen on withdrawals and update the total assets
+    wsContract.on(
+      "Withdraw",
+      (caller: string, receiver: string, owner: string, assets: BigNumber) => {
+        console.info("Withdraw event: ", caller, receiver, owner, assets);
+        if (caller === connectedWallet?.value?.accounts[0].address) {
+          getUserBalance();
+        }
+        totalAssets.value =
+          totalAssets.value -
+          parseFloat(formatUnits(assets, assetDecimals.value));
+      }
+    );
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
+
   return {
-    vaultName,
-    vaultDecimals,
-    vaultSymbol,
-    vaultImage,
-    assetName,
-    assetSymbol,
-    assetDecimals,
-    assetImage,
     allowance,
     allowanceLoading,
-    getAllowance,
-    getVaultDecimals,
     approveLoading,
     approveReceipt,
     approveSpending,
     approveTx,
     assetAddress,
     assetAddressLoading,
-    balanceOfUser,
+    assetDecimals,
+    assetImage,
+    assetName,
+    assetSymbol,
+    assetToShare,
     convertToAssets,
     convertToShares,
     deposit,
     depositLoading,
     depositReceipt,
     depositTx,
+    getAllowance,
     getAssetAddress,
     getMaxDeposit,
     getMaxMint,
     getMaxRedeem,
     getMaxWithdraw,
     getTotalAssets,
+    getVaultDecimals,
     maxDeposit,
     maxDepositLoading,
     maxMint,
@@ -646,9 +724,17 @@ export function useERC4626Upgradable(address: string | Ref<string>) {
     redeemTx,
     totalAssets,
     totalAssetsLoading,
+    userBalance,
+    vaultDecimals,
+    vaultImage,
+    vaultName,
+    vaultSymbol,
     withdraw,
     withdrawLoading,
     withdrawReceipt,
     withdrawTx,
+    fetchVaultData,
+    getUserBalance,
+    initContractProviderWS,
   };
 }

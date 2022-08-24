@@ -41,7 +41,6 @@ describe("Custom Potion Creation Flow", () => {
       cy.contains("next").should("be.disabled");
     });
     it("Can select an asset and load the similar potions", () => {
-      console.log("here");
       cy.contains("WETH").click();
       cy.wait("@getSimilarPotionByAsset").then((interceptor) => {
         expect(interceptor.response?.body).to.haveOwnProperty("data");

@@ -1,4 +1,5 @@
-import { computed, onMounted, ref, unref } from "vue";
+import { BigNumber, utils } from "ethers";
+import { computed, onMounted, onUnmounted, ref, unref } from "vue";
 
 import { formatUnits } from "@ethersproject/units";
 import { PotionBuyAction__factory } from "@potion-protocol/hedging-vault/typechain";
@@ -8,14 +9,33 @@ import { useEthersContract } from "./useEthersContract";
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
-
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
 }
 
+export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
+  const types = [];
+  const values = [];
+
+  for (let i = 0; i < tokensPath.length; i++) {
+    types.push("address");
+    values.push(tokensPath[i]);
+
+    if (i !== tokensPath.length - 1) {
+      types.push("uint24");
+      values.push(fee);
+    }
+  }
+
+  return utils.solidityPack(types, values);
+}
+
 // ActionsManager allows for querying the address of the action
-export function usePotionBuyActionContract(contractAddress: string) {
+export function usePotionBuyActionContract(
+  contractAddress: string,
+  eventListeners: boolean
+) {
   const { initContract } = useEthersContract();
   const errorRegistry: { [key: string]: Ref<string | null> } = {};
 
@@ -25,7 +45,16 @@ export function usePotionBuyActionContract(contractAddress: string) {
       false,
       false,
       PotionBuyAction__factory,
-      contractAddress
+      contractAddress.toLowerCase()
+    ) as PotionBuyAction;
+  };
+
+  const initContractProviderWS = () => {
+    return initContract(
+      false,
+      true,
+      PotionBuyAction__factory,
+      contractAddress.toLowerCase()
     ) as PotionBuyAction;
   };
 
@@ -38,6 +67,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const nextCycleTimestampLoading = ref(false);
   const nextCycleTimestampError = ref<string | null>(null);
   const getNextCycleTimestamp = async () => {
+    nextCycleTimestampLoading.value = true;
+    nextCycleTimestampError.value = null;
     try {
       const provider = initContractProvider();
       nextCycleTimestamp.value = parseInt(
@@ -59,9 +90,14 @@ export function usePotionBuyActionContract(contractAddress: string) {
 
   //Cycle duration
   const cycleDurationSecs = ref(0);
+  const cycleDurationDays = computed(() => {
+    return Math.floor(cycleDurationSecs.value / (3600 * 24));
+  });
   const cycleDurationSecsLoading = ref(false);
   const cycleDurationSecsError = ref<string | null>(null);
   const getCycleDurationSecs = async () => {
+    cycleDurationSecsLoading.value = true;
+    cycleDurationSecsError.value = null;
     try {
       const provider = initContractProvider();
       cycleDurationSecs.value = parseFloat(
@@ -86,6 +122,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const maxPremiumPercentageLoading = ref(false);
   const maxPremiumPercentageError = ref<string | null>(null);
   const getMaxPremiumPercentage = async () => {
+    maxPremiumPercentageLoading.value = true;
+    maxPremiumPercentageError.value = null;
     try {
       const provider = initContractProvider();
       maxPremiumPercentage.value = parseFloat(
@@ -110,6 +148,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const premiumSlippageLoading = ref(false);
   const premiumSlippageError = ref<string | null>(null);
   const getPremiumSlippage = async () => {
+    premiumSlippageLoading.value = true;
+    premiumSlippageError.value = null;
     try {
       const provider = initContractProvider();
       premiumSlippage.value = parseFloat(
@@ -134,6 +174,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const swapSlippageLoading = ref(false);
   const swapSlippageError = ref<string | null>(null);
   const getSwapSlippage = async () => {
+    swapSlippageLoading.value = true;
+    swapSlippageError.value = null;
     try {
       const provider = initContractProvider();
       swapSlippage.value = parseFloat(
@@ -158,6 +200,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const maxSwapDurationSecsLoading = ref(false);
   const maxSwapDurationSecsError = ref<string | null>(null);
   const getMaxSwapDurationSecs = async () => {
+    maxSwapDurationSecsLoading.value = true;
+    maxSwapDurationSecsError.value = null;
     try {
       const provider = initContractProvider();
       maxSwapDurationSecs.value = parseFloat(
@@ -182,6 +226,8 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const strikePercentageLoading = ref(false);
   const strikePercentageError = ref<string | null>(null);
   const getStrikePercentage = async () => {
+    strikePercentageLoading.value = true;
+    strikePercentageError.value = null;
     try {
       const provider = initContractProvider();
       strikePercentage.value = parseFloat(
@@ -206,6 +252,9 @@ export function usePotionBuyActionContract(contractAddress: string) {
   const currentPayoutLoading = ref(false);
   const currentPayoutError = ref<string | null>(null);
   const getCurrentPayout = async (investmentAsset: string | Ref<string>) => {
+    console.log("currentpayout: ", investmentAsset);
+    currentPayoutLoading.value = true;
+    currentPayoutError.value = null;
     try {
       const provider = initContractProvider();
       const payout = await provider.calculateCurrentPayout(
@@ -222,7 +271,7 @@ export function usePotionBuyActionContract(contractAddress: string) {
           : "Cannot get current payout";
       currentPayoutError.value = errorMessage;
 
-      throw new Error(errorMessage);
+      //throw new Error(errorMessage);
     } finally {
       currentPayoutLoading.value = false;
     }
@@ -272,8 +321,43 @@ export function usePotionBuyActionContract(contractAddress: string) {
   });
 
   onMounted(async () => {
+    console.log(contractAddress);
     await getStrategyInfo();
   });
+
+  if (eventListeners) {
+    const wsContract = initContractProviderWS();
+
+    wsContract.on("CycleDurationChanged", (secs: BigNumber) => {
+      cycleDurationSecs.value = parseFloat(formatUnits(secs));
+    });
+
+    wsContract.on("MaxPremiumPercentageChanged", (perc: BigNumber) => {
+      maxPremiumPercentage.value = parseFloat(formatUnits(perc, 6));
+    });
+
+    wsContract.on("MaxSwapDurationChanged", (dur: BigNumber) => {
+      maxSwapDurationSecs.value = parseFloat(formatUnits(dur));
+    });
+
+    wsContract.on("PremiumSlippageChanged", (slip: BigNumber) => {
+      premiumSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    wsContract.on("StrikePercentageChanged", (strike: BigNumber) => {
+      strikePercentage.value = parseFloat(formatUnits(strike, 6));
+    });
+
+    wsContract.on("SwapSlippageChanged", (slip: BigNumber) => {
+      swapSlippage.value = parseFloat(formatUnits(slip, 6));
+    });
+
+    onUnmounted(() => {
+      wsContract.removeAllListeners();
+      //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
+      wsContract.provider.destroy();
+    });
+  }
 
   return {
     strategyLoading,
@@ -311,5 +395,6 @@ export function usePotionBuyActionContract(contractAddress: string) {
     currentPayoutError,
     currentPayout,
     getCurrentPayout,
+    cycleDurationDays,
   };
 }

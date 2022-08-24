@@ -1,7 +1,11 @@
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 const locale = navigator.language ?? "en-US";
 
@@ -21,8 +25,9 @@ const usdFormatter = new Intl.NumberFormat(locale, {
   maximumFractionDigits: 2,
 });
 
-export const currencyFormatter = (value: number, currency: string) =>
-  usdFormatter.format(value).replace("$", `${currency} `);
+export const currencyFormatter = (value: number, currency: string) => {
+  return usdFormatter.format(value).replace("$", `${currency} `);
+};
 export const shortCurrencyFormatter = (value: number, currency: string) =>
   value === 0 ? "0" : currencyFormatter(value, currency);
 export const shortDigitFormatter = (value: number): string =>
@@ -70,4 +75,23 @@ export const getPnlColor = (pnl: number) =>
 export const pnlFormatter = (pnl: number) => {
   const symbol = trendToSymbolMap.get(getPnlTrend(pnl));
   return `${symbol} ${pnl.toFixed(2)}%`;
+};
+
+export const getTimeDifference = (
+  startTimestamp: dayjs.Dayjs,
+  endTimestamp: dayjs.Dayjs,
+  asDuration = true,
+  humanReadable = true
+) => {
+  let diff: number | duration.Duration | string =
+    startTimestamp.diff(endTimestamp);
+  if (asDuration) {
+    diff = dayjs.duration(diff);
+
+    if (humanReadable) {
+      diff = diff.humanize();
+    }
+  }
+
+  return diff;
 };

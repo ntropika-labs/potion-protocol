@@ -15,7 +15,10 @@ import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
-export function useErc20Contract(address: string | Ref<string>) {
+export function useErc20Contract(
+  address: string | Ref<string>,
+  fetchInitialData = true
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
 
@@ -45,7 +48,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getName = async () => {
     try {
       const contractProvider = initContractProvider();
-      name.value = await contractProvider.name();
+      const response = await contractProvider.name();
+      console.log("name: ", response);
+      name.value = response;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the name: ${error.message}`);
@@ -57,8 +62,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getSymbol = async () => {
     try {
       const contractProvider = initContractProvider();
-
-      symbol.value = await contractProvider.symbol();
+      const result = await contractProvider.symbol();
+      console.log("symbol: ", result);
+      symbol.value = result;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the symbol: ${error.message}`);
@@ -70,8 +76,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   const getDecimals = async () => {
     try {
       const contractProvider = initContractProvider();
-
-      decimals.value = await contractProvider.decimals();
+      const result = await contractProvider.decimals();
+      console.log("decimals: ", result);
+      decimals.value = result;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the decimals: ${error.message}`);
@@ -87,14 +94,21 @@ export function useErc20Contract(address: string | Ref<string>) {
     image.value = tokenImage;
   };
 
-  onMounted(async () => {
-    await fetchErc20Info();
-  });
-
-  if (isRef(address)) {
-    watch(address, async () => {
-      await fetchErc20Info();
+  if (fetchInitialData === true) {
+    onMounted(async () => {
+      if (unref(address)) {
+        console.log("address: ", unref(address));
+        await fetchErc20Info();
+      }
     });
+
+    if (isRef(address)) {
+      watch(address, async () => {
+        if (unref(address)) {
+          await fetchErc20Info();
+        }
+      });
+    }
   }
 
   const userBalance = ref(0);
@@ -111,8 +125,8 @@ export function useErc20Contract(address: string | Ref<string>) {
     walletAddresses?: string | string[]
   ) => {
     try {
+      console.log(decimals.value);
       const contractProvider = initContractProvider();
-
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
@@ -155,12 +169,16 @@ export function useErc20Contract(address: string | Ref<string>) {
   const userAllowance = ref(0);
   const fetchUserAllowanceLoading = ref(false);
 
-  const fetchUserAllowance = async (spender: string) => {
+  const fetchUserAllowance = async (
+    spender: string,
+    self = true,
+    address?: string
+  ) => {
     fetchUserAllowanceLoading.value = true;
     try {
       const contractProvider = initContractProvider();
 
-      if (connectedWallet.value) {
+      if (spender && connectedWallet.value && self === true) {
         const response = await contractProvider.allowance(
           connectedWallet.value.accounts[0].address,
           spender
@@ -172,8 +190,19 @@ export function useErc20Contract(address: string | Ref<string>) {
           )}`
         );
         userAllowance.value = parseFloat(formatUnits(response, decimals.value));
+        return userAllowance.value;
+      } else if (spender && self === false && address) {
+        const response = await contractProvider.allowance(address, spender);
+        console.info(
+          `Address allowance for ${spender} is ${formatUnits(
+            response,
+            decimals.value
+          )}`
+        );
+        userAllowance.value = parseFloat(formatUnits(response, decimals.value));
+        return userAllowance.value;
       } else {
-        throw new Error("Connect your wallet first");
+        throw new Error("Error retrieving allowance");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -191,17 +220,19 @@ export function useErc20Contract(address: string | Ref<string>) {
   const approveReceipt = ref<ContractReceipt | null>(null);
   const approveSpending = async (
     spender: string,
-    amount: number,
-    infinite = true
+    infinite = true,
+    amount?: number
   ) => {
     approveLoading.value = true;
     try {
       if (connectedWallet.value) {
+        console.log("here");
         const contractSigner = initContractSigner();
         approveTx.value = await contractSigner.approve(
           spender,
-          infinite ? MaxUint256 : parseUnits(amount.toString(), 6)
+          infinite ? MaxUint256 : parseUnits(amount?.toString() ?? "0", 6)
         );
+        console.log(approveTx.value);
         approveReceipt.value = await approveTx.value.wait();
       } else {
         throw new Error("Connect your wallet first");
@@ -220,6 +251,9 @@ export function useErc20Contract(address: string | Ref<string>) {
   };
   return {
     approveSpending,
+    approveTx,
+    approveReceipt,
+    approveLoading,
     decimals,
     fetchUserAllowance,
     fetchUserAllowanceLoading,
@@ -227,9 +261,11 @@ export function useErc20Contract(address: string | Ref<string>) {
     getName,
     getSymbol,
     getTokenBalance,
+    userBalance,
     image,
     name,
     symbol,
     userAllowance,
+    fetchErc20Info,
   };
 }

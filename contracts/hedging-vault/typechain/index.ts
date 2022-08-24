@@ -118,6 +118,8 @@ export type { IVault } from "./contracts/interfaces/IVault";
 export { IVault__factory } from "./factories/contracts/interfaces/IVault__factory";
 export type { PercentageUtils } from "./contracts/library/PercentageUtils";
 export { PercentageUtils__factory } from "./factories/contracts/library/PercentageUtils__factory";
+export type { TimeUtils } from "./contracts/library/TimeUtils";
+export { TimeUtils__factory } from "./factories/contracts/library/TimeUtils__factory";
 export type { ERC4626Upgradeable } from "./contracts/openzeppelin/ERC4626Upgradeable";
 export { ERC4626Upgradeable__factory } from "./factories/contracts/openzeppelin/ERC4626Upgradeable__factory";
 export type { IERC4626Upgradeable } from "./contracts/openzeppelin/IERC4626Upgradeable";

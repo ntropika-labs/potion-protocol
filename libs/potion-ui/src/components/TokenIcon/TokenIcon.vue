@@ -21,11 +21,17 @@ const keys = Array.from(sizeToClasses.keys());
 type TokenSizes = typeof keys[number];
 
 const props = withDefaults(
-  defineProps<{ name: string; image?: string; size?: TokenSizes }>(),
+  defineProps<{
+    name: string;
+    image?: string;
+    size?: TokenSizes;
+    isLoading?: boolean;
+  }>(),
   {
     image:
       "https://s.gravatar.com/avatar/da32ff79613d46d206a45e5a3018acf3?size=496&default=retro",
     size: "md",
+    isLoading: false,
   }
 );
 
@@ -33,7 +39,13 @@ const size = computed(() => sizeToClasses.get(props.size));
 </script>
 
 <template>
+  <span
+    v-if="isLoading"
+    class="object-cover rounded-full bg-white bg-opacity-60 animate-pulse"
+    :class="size"
+  ></span>
   <img
+    v-else
     test-token-icon
     class="object-cover rounded-full"
     :src="props.image"

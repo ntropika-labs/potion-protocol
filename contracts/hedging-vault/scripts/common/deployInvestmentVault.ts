@@ -16,7 +16,8 @@ export interface InvestmentVaultDeployParams {
 }
 
 export async function deployInvestmentVault(parameters: InvestmentVaultDeployParams): Promise<InvestmentVault> {
-    return (await deployUpgrade("InvestmentVault", [
+    console.log("- Deploying InvestmentVault...");
+    const investmentVault = (await deployUpgrade("InvestmentVault", [
         parameters.adminAddress,
         parameters.strategistAddress,
         parameters.operatorAddress,
@@ -28,4 +29,6 @@ export async function deployInvestmentVault(parameters: InvestmentVaultDeployPar
         parameters.actions,
         parameters.principalPercentages,
     ])) as InvestmentVault;
+    console.log(`    ...deployed to: ${investmentVault.address}`);
+    return investmentVault;
 }

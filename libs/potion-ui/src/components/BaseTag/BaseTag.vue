@@ -7,6 +7,7 @@
         'bg-white/10': props.color === 'base',
         'bg-secondary-500': props.color === 'secondary',
         'bg-primary-500': props.color === 'primary',
+        'animate-pulse': props.isLoading,
       },
       sizeClass,
     ]"
@@ -35,11 +36,13 @@ import { computed } from "vue";
 
 export interface Props {
   isEmpty?: boolean;
+  isLoading?: boolean;
   size?: LabelSize;
   color?: Color;
 }
 const props = withDefaults(defineProps<Props>(), {
   isEmpty: false,
+  isLoading: false,
   size: "sm",
   color: "base",
 });

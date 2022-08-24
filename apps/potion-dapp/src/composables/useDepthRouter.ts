@@ -14,7 +14,8 @@ export const useDepthRouter = (
   orderSize: MaybeNumberRef,
   strikePriceUSDC: MaybeNumberRef,
   gas: MaybeNumberRef,
-  ethPrice: MaybeNumberRef
+  ethPrice: MaybeNumberRef,
+  fetchDataOnParamUpdate = true
 ) => {
   const poolSets = ref<ChartCriteriaPool[]>();
   const poolsUntyped = computed(() => {
@@ -51,6 +52,7 @@ export const useDepthRouter = (
   });
   const routerRunning = ref(false);
   const runRouter = async () => {
+    routerRunning.value = true;
     const rawCriterias = toRaw(unref(criterias));
     poolSets.value = await getPoolsFromCriterias(rawCriterias);
     const { pools, orderSize, strikePriceUSDC, gas, ethPrice } =
@@ -67,7 +69,7 @@ export const useDepthRouter = (
         gas,
         ethPrice,
       });
-      routerRunning.value = true;
+
       routerResult.value = await worker.runDepthRouter(
         pools,
         orderSize,
@@ -75,8 +77,9 @@ export const useDepthRouter = (
         gas,
         ethPrice
       );
-      routerRunning.value = false;
     }
+
+    routerRunning.value = false;
   };
   const formattedMarketSize = computed(() => {
     if (marketSize.value > 0) {
@@ -96,7 +99,8 @@ export const useDepthRouter = (
     isRef(orderSize) &&
     isRef(strikePriceUSDC) &&
     isRef(gas) &&
-    isRef(ethPrice)
+    isRef(ethPrice) &&
+    fetchDataOnParamUpdate
   ) {
     watchDebounced(
       [criterias, orderSize, strikePriceUSDC, gas, ethPrice],

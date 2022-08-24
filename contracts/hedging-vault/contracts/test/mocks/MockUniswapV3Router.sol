@@ -6,6 +6,7 @@ pragma solidity 0.8.14;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "../utils/UniswapV3Path.sol";
+import "hardhat/console.sol";
 
 /**
     @title MockOpynController
@@ -67,9 +68,10 @@ contract MockUniswapV3Router is ISwapRouter {
     function exactOutput(ExactOutputParams calldata params) external payable returns (uint256 amountIn) {
         (address tokenIn, address tokenOut, ) = params.path.decodeFirstPool();
 
+        console.log(tokenIn, tokenOut, params.amountInMaximum, params.amountOut);
+
         IERC20(tokenIn).transferFrom(msg.sender, address(this), params.amountInMaximum);
         IERC20(tokenOut).transfer(msg.sender, params.amountOut);
-
         return params.amountInMaximum;
     }
 

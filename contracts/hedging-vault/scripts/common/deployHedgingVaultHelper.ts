@@ -9,8 +9,11 @@ export interface HedgingVaultOperatorHelperDeployParams {
 export async function deployHedgingVaultHelper(
     parameters: HedgingVaultOperatorHelperDeployParams,
 ): Promise<HedgingVaultOperatorHelper> {
-    return (await deploy("HedgingVaultOperatorHelper", [
+    console.log("- Deploying HedgingVaultOperatorHelper...");
+    const hedgingVaultOperatorHelper = (await deploy("HedgingVaultOperatorHelper", [
         parameters.vaultAddress,
         parameters.potionBuyActionAddress,
     ])) as HedgingVaultOperatorHelper;
+    console.log(`    ...deployed to: ${hedgingVaultOperatorHelper.address}`);
+    return hedgingVaultOperatorHelper;
 }

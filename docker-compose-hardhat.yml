@@ -1,0 +1,13 @@
+version: "3"
+services:
+  hardhat:
+    container_name: potion_hardhat
+    build:
+      context: ./contracts/hedging-vault
+      dockerfile: Dockerfile.hardhat
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./contracts/hedging-vault:/local_node/project
+    env_file:
+      - .env

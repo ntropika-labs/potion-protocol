@@ -35,6 +35,7 @@ import TokenIcon from "./components/TokenIcon/TokenIcon.vue";
 import TokenSelection from "./components/TokenSelection/TokenSelection.vue";
 import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
+import TimeTag from "./components/TimeTag/TimeTag.vue";
 
 export type {
   IconStrokeWeight,
@@ -85,4 +86,5 @@ export {
   UnderlyingList,
   MyPotionCard,
   SidebarLink,
+  TimeTag,
 };
