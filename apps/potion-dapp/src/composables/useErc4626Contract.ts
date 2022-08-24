@@ -615,10 +615,15 @@ export function useErc4626Contract(
         console.log("address vault: ", unref(address));
         await fetchVaultData();
         await getUserBalance();
-        const response = await convertToShares(1);
-        console.log("call to convertToShares on mounted: ", response);
-        assetToShare.value = response;
-        shareToAsset.value = await convertToAssets(1);
+        console.log("call to convertToShares on mounted");
+        try {
+          const response = await convertToShares(1);
+          assetToShare.value = response;
+          shareToAsset.value = await convertToAssets(1);
+        } catch {
+          assetToShare.value = 0;
+          shareToAsset.value = 0;
+        }
       }
     });
     if (isRef(address) && unref(address)) {
@@ -626,10 +631,14 @@ export function useErc4626Contract(
         console.log("address vault: ", unref(address));
         await fetchVaultData();
         await getUserBalance();
-        const response = await convertToShares(1);
-        console.log("call to convertToShares: ", response);
-
-        assetToShare.value = response;
+        try {
+          const response = await convertToShares(1);
+          assetToShare.value = response;
+          shareToAsset.value = await convertToAssets(1);
+        } catch {
+          assetToShare.value = 0;
+          shareToAsset.value = 0;
+        }
       });
     }
   }
