@@ -4,6 +4,15 @@ import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
+  test: {
+    reporters: ["default", "junit"],
+    outputFile: {
+      junit: "reports/report.xml",
+    },
+    coverage: {
+      reporter: ["text", "text-summary", "json", "json-summary", "html"],
+    },
+  },
   plugins: [vue({ reactivityTransform: true })],
   resolve: {
     alias: {
@@ -14,7 +23,7 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@web-worker": fileURLToPath(
         //@ts-expect-error volar giving errors
-        new URL("./src/web-worker", import.meta.url)
+        new URL("./src/web-worker/test.ts", import.meta.url)
       ),
       "@onboard-composable": fileURLToPath(
         //@ts-expect-error volar giving errors

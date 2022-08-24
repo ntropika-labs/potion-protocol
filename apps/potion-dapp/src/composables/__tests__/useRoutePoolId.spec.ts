@@ -7,41 +7,6 @@ describe("useRoutePoolId", () => {
       const { id } = useRoutePoolId({});
       expect(id).not.toBeNull();
     });
-
-    it("returns a poolId", () => {
-      const { poolId } = useRoutePoolId({});
-      expect(poolId).not.toBeNull();
-    });
-
-    it("returns a validPoolId", () => {
-      const { validPoolId } = useRoutePoolId({});
-      expect(validPoolId).not.toBeNull();
-    });
-  });
-
-  describe("it parse poolId correctly", () => {
-    it("returns poolId as a number", () => {
-      const { poolId } = useRoutePoolId({
-        lp: "0x000",
-        id: "10",
-      });
-      expect(poolId.value).toBe(10);
-    });
-
-    it("returns -1 if poolId is an array", () => {
-      const { poolId } = useRoutePoolId({
-        lp: "0x000",
-        id: ["10", "20"],
-      });
-      expect(poolId.value).toBe(-1);
-    });
-
-    it("returns NaN if there isn't a poolId", () => {
-      const { poolId } = useRoutePoolId({
-        lp: "0x000",
-      });
-      expect(poolId.value).toBeNaN();
-    });
   });
 
   describe("it formats id correctly", () => {
@@ -75,38 +40,35 @@ describe("useRoutePoolId", () => {
       });
       expect(id.value).toBe("");
     });
-  });
 
-  describe("it validates as expected", () => {
-    it("returns true with a correct pool id", () => {
-      const { validPoolId } = useRoutePoolId({
-        lp: "0x000",
+    it("returns '' if there isn't an lp", () => {
+      const { id } = useRoutePoolId({
         id: "10",
       });
-      expect(validPoolId.value).toBe(true);
+      expect(id.value).toBe("");
     });
 
-    it("returns false if pool id isn't a valid number", () => {
-      const { validPoolId } = useRoutePoolId({
-        lp: "0x000",
-        id: "-112",
+    it("returns '' if lp isn't a valid lp address", () => {
+      const { id } = useRoutePoolId({
+        lp: "abcd",
+        id: "10",
       });
-      expect(validPoolId.value).toBe(false);
+      expect(id.value).toBe("");
     });
 
-    it("returns false if pool id is an array", () => {
-      const { validPoolId } = useRoutePoolId({
-        lp: "0x000",
-        id: ["10", "20"],
+    it("returns '' if lp is an array", () => {
+      const { id } = useRoutePoolId({
+        lp: ["0x000", "0x001"],
+        id: "10",
       });
-      expect(validPoolId.value).toBe(false);
+      expect(id.value).toBe("");
     });
 
-    it("returns false if there isn't a pool id", () => {
-      const { validPoolId } = useRoutePoolId({
-        lp: "0x000",
+    it("returns '' if there isn't a lp", () => {
+      const { id } = useRoutePoolId({
+        id: "10",
       });
-      expect(validPoolId.value).toBe(false);
+      expect(id.value).toBe("");
     });
   });
 });

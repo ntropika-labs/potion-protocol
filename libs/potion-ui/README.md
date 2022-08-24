@@ -11,6 +11,7 @@ The template uses Vue 3 `<script setup>` SFCs ([script setup docs](https://vuejs
 - `yarn build` : Build the library and create the bundle in `dist` folder
 - `yarn storybook` : Run Storybook on `localhost:6006`
 - `yarn test-unit` : Run unit tests using Vitest
+- `yarn cypress` : Run compent testing with cypress
 
 ## Recommended IDE Setup
 

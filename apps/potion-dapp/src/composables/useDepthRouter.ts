@@ -5,10 +5,14 @@ import { computed, isRef, ref, toRaw, unref } from "vue";
 import { worker } from "@/web-worker";
 import { watchDebounced } from "@vueuse/core";
 
+import { useTokenList } from "@/composables/useTokenList";
+import { contractsAddresses } from "@/helpers/contracts";
+
 import type { DepthRouterReturn } from "potion-router";
 import type { Ref } from "vue";
 import type { Criteria, MaybeNumberRef } from "dapp-types";
 import type { ChartCriteriaPool, IPoolUntyped } from "potion-router/src/types";
+import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 export const useDepthRouter = (
   criterias: Ref<Criteria[]> | Criteria[],
   orderSize: MaybeNumberRef,
@@ -17,6 +21,10 @@ export const useDepthRouter = (
   ethPrice: MaybeNumberRef,
   fetchDataOnParamUpdate = true
 ) => {
+  const collateral = useTokenList(
+    contractsAddresses.USDC.address.toLowerCase()
+  );
+  const { maxCounterparties } = usePotionLiquidityPoolContract();
   const poolSets = ref<ChartCriteriaPool[]>();
   const poolsUntyped = computed(() => {
     const pools: IPoolUntyped[] = [];
@@ -40,7 +48,14 @@ export const useDepthRouter = (
     }
     return 0;
   });
+
   const routerResult = ref<DepthRouterReturn | null>(null);
+
+  const numberOfTransactions = computed(() =>
+    Math.ceil(
+      routerResult.value?.counterparties.length ?? 0 / maxCounterparties
+    )
+  );
   const routerParams = computed(() => {
     return {
       pools: toRaw(unref(poolsUntyped)),
@@ -83,15 +98,15 @@ export const useDepthRouter = (
   };
   const formattedMarketSize = computed(() => {
     if (marketSize.value > 0) {
-      return currencyFormatter(marketSize.value, "USDC");
+      return currencyFormatter(marketSize.value, collateral.symbol);
     }
-    return currencyFormatter(0, "USDC");
+    return currencyFormatter(0, collateral.symbol);
   });
   const formattedPremium = computed(() => {
     if (routerResult.value && routerResult.value.premium) {
-      return currencyFormatter(routerResult.value.premium, "USDC");
+      return currencyFormatter(routerResult.value.premium, collateral.symbol);
     }
-    return currencyFormatter(0, "USDC");
+    return currencyFormatter(0, collateral.symbol);
   });
 
   if (
@@ -121,5 +136,6 @@ export const useDepthRouter = (
     formattedMarketSize,
     routerRunning,
     runRouter,
+    numberOfTransactions,
   };
 };

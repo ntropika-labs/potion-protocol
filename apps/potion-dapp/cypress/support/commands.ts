@@ -69,13 +69,13 @@ Cypress.Commands.add(
             ? (Math.random() + 1).toString(36).substring(7)
             : "0.0.1";
 
-          cy.exec(`cd ../../ && ./bin/start-local-env ${version}`, {
+          cy.exec(`cd ../../ && ./bin/setup-local-env ${version}`, {
             env: { DATABASE_PATH: testSeedPath, CHAIN_TIME: chainTime },
             failOnNonZeroExit: false,
             timeout: 180000,
           }).then((result) => {
             expect(result.code).to.eq(0);
-            expect(result.stdout).to.contain("stack is ready");
+            cy.wait(5000);
           });
         }
       });

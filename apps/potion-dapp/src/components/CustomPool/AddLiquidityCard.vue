@@ -7,11 +7,11 @@
     <div class="py-3 px-4">
       <p class="text-sm uppercase">{{ props.title }}</p>
       <div
-        v-if="size"
+        v-if="props.size > 0"
         class="flex justify-between border-b-1 border-white/10 pb-3 mt-5"
       >
         <p>{{ t("total_liquidity") }}</p>
-        <p class="font-semibold">{{ props.size }}</p>
+        <p class="font-semibold">{{ size }}</p>
       </div>
 
       <p class="text-sm mt-6">{{ t("deposit_collateral_description") }}</p>
@@ -37,8 +37,14 @@
   </BaseCard>
 </template>
 <script lang="ts" setup>
-import { BaseCard, CardFooter, InputNumber } from "potion-ui";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import {
+  BaseCard,
+  CardFooter,
+  InputNumber,
+  currencyFormatter,
+} from "potion-ui";
 const emits = defineEmits(["update:modelValue", "validInput"]);
 const { t } = useI18n();
 interface Props {
@@ -46,15 +52,17 @@ interface Props {
   hint?: string;
   userBalance: number;
   modelValue: number;
-  size?: string;
+  size?: number;
   min?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   hint: undefined,
   userBalance: 0,
   modelValue: 100,
-  size: "",
+  size: 0,
   title: "",
   min: 1,
 });
+
+const size = computed(() => currencyFormatter(props.size, "USDC"));
 </script>

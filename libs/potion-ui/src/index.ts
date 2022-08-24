@@ -1,5 +1,6 @@
 //helpers
 export * from "./helpers";
+export * from "./icons";
 
 import AssetTag from "./components/AssetTag/AssetTag.vue";
 import BaseButton from "./components/BaseButton/BaseButton.vue";

@@ -92,7 +92,7 @@ import { useCriterias } from "@/composables/useCriterias";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
 import { useNextPoolId } from "@/composables/useNextPoolId";
 import { useNotifications } from "@/composables/useNotifications";
-import { useTokens } from "@/composables/useTokens";
+import { usePoolTokens } from "@/composables/usePoolTokens";
 import { useDeployPool } from "@/composables/useDeployPool";
 import { useLiquidity } from "@/composables/useLiquidity";
 import { useUserData } from "@/composables/useUserData";
@@ -110,7 +110,7 @@ const { liquidity, validInput, validLiquidity } = useLiquidity(
   userCollateralBalance
 );
 const { availableTokens, tokenPricesMap, unselectedTokens, toggleToken } =
-  useTokens(collateral);
+  usePoolTokens(collateral);
 const { criterias, validCriterias, updateCriteria, deleteCriteria } =
   useCriterias(availableTokens);
 const { bondingCurve, validCurve } = useBondingCurves();

@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, describe, it } from "vitest";
 import { CurveCriteria, OrderedCriteria } from "../src/typeHelpers";
 
 describe("OrderedCriteria tests", () => {
