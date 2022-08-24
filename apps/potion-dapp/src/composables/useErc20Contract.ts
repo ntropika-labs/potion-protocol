@@ -262,6 +262,7 @@ export function useErc20Contract(
     getSymbol,
     getTokenBalance,
     userBalance,
+    balance,
     image,
     name,
     symbol,

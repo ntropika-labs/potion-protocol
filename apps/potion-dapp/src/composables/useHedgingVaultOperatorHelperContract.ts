@@ -6,17 +6,20 @@ import type {
   HedgingVaultOperatorHelper,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
+import { utils } from "ethers";
 import { onMounted, ref } from "vue";
 
-import { BigNumber, type BigNumberish } from "@ethersproject/bignumber";
+import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { BigNumber } from "@ethersproject/bignumber";
+import { parseUnits } from "@ethersproject/units";
+import { useOnboard } from "@onboard-composable";
 import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
+
+import { useEthersContract } from "./useEthersContract";
+
+import type { BigNumberish } from "@ethersproject/bignumber";
 import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
-import { parseUnits } from "@ethersproject/units";
-import { useEthersContract } from "./useEthersContract";
-import { useOnboard } from "@onboard-composable";
-import { utils } from "ethers";
 import type { Token } from "dapp-types";
 
 export interface UniSwapInfo {
@@ -59,13 +62,13 @@ export function toPRBMath(
   outputDecimals = 18
 ): BigNumber {
   if (inputDecimals === outputDecimals) {
-    return parseUnits(numberRepresentation, inputDecimals);
+    return parseUnits(numberRepresentation);
   } else if (inputDecimals > outputDecimals) {
-    return parseUnits(numberRepresentation, inputDecimals).div(
+    return parseUnits(numberRepresentation).div(
       BigNumber.from(10).pow(inputDecimals - outputDecimals)
     );
   } else {
-    return parseUnits(numberRepresentation, inputDecimals).mul(
+    return parseUnits(numberRepresentation).mul(
       BigNumber.from(10).pow(outputDecimals - inputDecimals)
     );
   }
@@ -119,7 +122,6 @@ export function useHedgingVaultOperatorHelperContract() {
       inputToken.decimals,
       swapInfo.outputToken.decimals
     );
-    console.log("exit pos swap pat price rate", swapInfo.expectedPriceRate);
     let swapPath = "";
     if (!(expectedPriceRate.isNegative() || expectedPriceRate.isZero())) {
       swapPath = getEncodedSwapPath(
@@ -179,7 +181,6 @@ export function useHedgingVaultOperatorHelperContract() {
           ),
           totalSizeInPotions: potionBuyInfo.totalSizeInPotions,
         };
-        console.log(swapInfo);
 
         enterPositionTx.value = await contractSigner.enterPosition(
           swapData,
