@@ -9,7 +9,7 @@
     <div class="container mx-auto mt-24 px-6 md:px-12">
       <slot />
     </div>
-    <div class="absolute fixed top-0 right-0 z-20 pr-10 pt-10">
+    <div class="absolute fixed top-0 right-0 z-[9999] pr-10 pt-10">
       <div
         id="toast-wrap"
         v-auto-animate

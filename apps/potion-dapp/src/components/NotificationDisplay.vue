@@ -22,7 +22,6 @@ const emits = defineEmits<{
   <template v-for="[hash, info] of props.toasts" :key="hash">
     <Teleport to="#toast-wrap">
       <BaseToast
-        class="z-9999"
         :title="info.title"
         :body="info.body"
         :cta="info.cta"
