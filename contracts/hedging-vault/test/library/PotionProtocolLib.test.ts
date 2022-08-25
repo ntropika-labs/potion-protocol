@@ -17,6 +17,7 @@ import {
 import { PotionBuyInfoStruct } from "../../typechain/contracts/test/wrappers/TestWrapperPotionProtocolLib";
 
 import * as PercentageUtils from "../utils/PercentageUtils";
+import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import { BigNumber } from "ethers";
 
 chai.use(smock.matchers);
@@ -277,7 +278,22 @@ describe("PotionProtocolLib", function () {
             buyInfo,
         );
 
-        expect(fakePotionLiquidityPool.settleAfterExpiry).to.have.been.calledOnce;
-        expect(fakePotionLiquidityPool.settleAfterExpiry).to.have.been.calledWith(potionAddress);
+        expect(fakeOpynController.operate).to.have.been.calledOnce;
+
+        const redeemExpectedArgs: IOpynController.ActionArgsStruct[] = [
+            {
+                actionType: 8,
+                owner: potionProtocolLib.address,
+                secondAddress: potionProtocolLib.address,
+                asset: buyInfo.targetPotionAddress,
+                vaultId: 0,
+                amount: buyInfo.totalSizeInPotions,
+                index: 0,
+                data: "0x",
+            },
+        ];
+        const redeemActualArgs = fakeOpynController.operate.getCall(0).args[0] as IOpynController.ActionArgsStruct[];
+
+        expectSolidityDeepCompare(redeemExpectedArgs, redeemActualArgs);
     });
 });

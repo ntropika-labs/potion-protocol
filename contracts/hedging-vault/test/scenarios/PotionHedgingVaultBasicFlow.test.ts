@@ -8,7 +8,14 @@ import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
-import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
+import {
+    InvestmentVault,
+    PotionBuyAction,
+    IPotionLiquidityPool,
+    IUniswapV3Oracle,
+    HedgingVaultOperatorHelper__factory,
+    HedgingVaultOperatorHelper,
+} from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "../utils/LifecycleStates";
 import { toPRBMath } from "../utils/PRBMathUtils";
@@ -32,6 +39,7 @@ describe("HedgingVault", function () {
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
+    let operatorHelper: HedgingVaultOperatorHelper;
     let tEnv: TestingEnvironmentDeployment;
 
     beforeEach(async function () {
@@ -47,13 +55,15 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
+        operatorHelper = tEnv.hedgingVaultOperatorHelper;
     });
 
     it("Vault Deployment Values", async function () {
         // Roles
         expect(await vault.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await vault.getOperator()).to.equal(tEnv.operatorAddress);
+        expect(await vault.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
         expect(await vault.getStrategist()).to.equal(tEnv.strategistAddress);
+        expect(await vault.getVault()).to.equal("0x0000000000000000000000000000000000000000");
 
         // Underlying asset and cap
         expect(await vault.asset()).to.equal(tEnv.underlyingAsset.address);
@@ -87,7 +97,7 @@ describe("HedgingVault", function () {
     it("Action Deployment Values", async function () {
         // Roles
         expect(await action.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await action.getOperator()).to.equal(tEnv.operatorAddress);
+        expect(await action.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
         expect(await action.getStrategist()).to.equal(tEnv.strategistAddress);
         expect(await action.getVault()).to.equal(vault.address);
 
@@ -229,8 +239,10 @@ describe("HedgingVault", function () {
         );
 
         /*
-            SET POTION BUY INFO
+            ENTER POSITION
         */
+
+        // POTION BUY INFO
 
         // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
         // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
@@ -255,19 +267,7 @@ describe("HedgingVault", function () {
             totalSizeInPotions: otokensAmount,
         };
 
-        await action.setPotionBuyInfo(potionBuyInfo);
-
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
-            tEnv.underlyingAsset.address,
-            strikePriceInUSDC,
-            expirationTimestamp,
-        );
-
-        expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
-
-        /*
-            ENTER POSITION
-        */
+        // UNISWAP INFO
 
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSDbn);
@@ -281,18 +281,25 @@ describe("HedgingVault", function () {
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
-        await action.setSwapInfo(swapInfoEnterPosition);
-
-        let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
-
-        expectSolidityDeepCompare(swapInfoEnterPosition, currentSwapInfo);
-
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
 
         const cycleStartTimestamp = await getNextTimestamp();
 
-        await vault.connect(ownerAccount).enterPosition();
+        await operatorHelper.connect(ownerAccount).enterPosition(swapInfoEnterPosition, potionBuyInfo);
+
+        // Check that the helper set the correct info in the action
+        const currentPotionBuyInfo = await action.getPotionBuyInfo(
+            tEnv.underlyingAsset.address,
+            strikePriceInUSDC,
+            expirationTimestamp,
+        );
+
+        expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
+
+        let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+
+        expectSolidityDeepCompare(swapInfoEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
@@ -309,6 +316,7 @@ describe("HedgingVault", function () {
         /*
             EXIT POSITION
         */
+
         // Use the strike percent and reduce it by 10% to get the exit price
         const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
         const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
@@ -363,12 +371,6 @@ describe("HedgingVault", function () {
             swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
-        await action.setSwapInfo(swapInfoExitPosition);
-
-        currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
-
-        expectSolidityDeepCompare(swapInfoExitPosition, currentSwapInfo);
-
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSDbn);
 
@@ -381,7 +383,12 @@ describe("HedgingVault", function () {
 
         const cycleEndTimestamp = await getNextTimestamp();
 
-        await vault.connect(ownerAccount).exitPosition();
+        await operatorHelper.connect(ownerAccount).exitPosition(swapInfoExitPosition);
+
+        // Check that the operator helper set the uniswap info correctly
+        currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
+
+        expectSolidityDeepCompare(swapInfoExitPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);

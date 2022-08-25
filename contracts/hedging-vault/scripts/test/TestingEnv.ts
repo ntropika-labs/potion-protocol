@@ -324,7 +324,6 @@ async function prepareTestEnvironment(
     return testingEnvironmentDeployment as TestingEnvironmentDeployment;
 }
 
-//function applyPotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams, potionDeployments: any) {}
 function getPotionProtocolDeployments(networkName: NetworksType): any {
     //@ts-expect-error iterator is not defined
     return Deployments[networkName].contracts;
