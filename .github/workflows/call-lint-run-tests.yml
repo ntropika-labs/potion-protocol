@@ -31,9 +31,151 @@ on:
         type: string
 
 jobs:
+  lint:
+    name: Run linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Nx linting
+        run: yarn lint-all
+
+  run-unit-test-contracts:
+    name: Run unit tests (contracts)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Contracts unit test
+        run: yarn nx run potion-contracts:test
+        env:
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
+          VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+
+  run-unit-test-math:
+    name: Run unit tests (math-library)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Math library unit test
+        run: yarn nx run contracts-math:test-unit
+
+  run-unit-test-dapp:
+    name: Run unit tests (dapp)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    env:
+      VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Codegen
+        run: yarn codegen subgraph-queries
+
+      - name: Dapp unit test
+        run: yarn nx run potion-dapp:test-unit-coverage
+
+          # - name: Dapp code coverage
+          #   if: github.event_name == 'pull_request'
+          #   uses: davelosert/vitest-coverage-report-action@v1
+          #   with:
+          #     json-summary-path: 'apps/potion-dapp/coverage/coverage-summary.json'
+          #     json-final-path: 'apps/potion-dapp/coverage/coverage-final.json'
+          #     vite-config-path: 'apps/potion-dapp/vitest.config.ts'
+          #     github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dapp test report
+        if: github.event_name == 'pull_request'
+        uses: mikepenz/action-junit-report@v3
+        with:
+          check_name: 'potion-dapp unit tests'
+          report_paths: 'apps/potion-dapp/reports/*.xml'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  run-unit-test-subgraph:
+    name: Run unit tests (subgraph)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Prepare subgraph.yaml
+        run: yarn nx run potion-subgraph:prepare-local
+
+      - name: Codegen
+        run: yarn codegen potion-subgraph
+
+      - name: Subgraph unit test
+        run: yarn test-unit potion-subgraph
+
+      - name: Subgraph coverage
+        if: success()
+        run: yarn nx run potion-subgraph:coverage
+
+  run-component-tests:
+    name: Run component tests
+    runs-on: ubuntu-latest
+    needs: [run-unit-test-dapp]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Cypress run (potion-ui components)
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          browser: chrome
+          record: false
+          component: true
+          working-directory: libs/potion-ui
+
+      - name: Archive screenshots code coverage results (potion-ui components)
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: potion-ui-components-cypress-screenshots
+          path: libs/potion-ui/cypress/screenshots
+          retention-days: 25
+
+      - name: Archive videos code coverage results (potion-ui components)
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: potion-ui-components-cypress-videos
+          path: libs/potion-ui/cypress/videos
+          retention-days: 25
+
   run-e2e-tests:
     name: Run e2e tests
     runs-on: ubuntu-latest
+    needs: [run-component-tests, run-unit-test-subgraph, run-unit-test-contracts]
     env:
       PREVIEW_URL: "http://127.0.0.1:5050"
     steps:
@@ -44,13 +186,13 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Copy seeds in the Ganache volume
-        run: bin/prepare-seeds-headless
+        run: bin/setup-database-seed --all
         shell: bash
         env:
           GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
 
       - name: Create and seed environment
-        run: ./bin/create-local-env-headless
+        run: ./bin/setup-local-env
         shell: bash
         env:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
@@ -120,50 +262,3 @@ jobs:
         if: always()
         run: docker-compose -f "docker-compose.yml" down
 
-  run-component-tests:
-    name: Run component tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Cypress run (potion-ui components)
-        uses: cypress-io/github-action@v4
-        with:
-          install: false
-          browser: chrome
-          record: false
-          component: true
-          working-directory: libs/potion-ui
-
-      - name: Archive screenshots code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: potion-ui-components-cypress-screenshots
-          path: libs/potion-ui/cypress/screenshots
-          retention-days: 25
-
-      - name: Archive videos code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: potion-ui-components-cypress-videos
-          path: libs/potion-ui/cypress/videos
-          retention-days: 25
-
-  lint:
-    name: Run linting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Nx linting
-        run: yarn lint-all

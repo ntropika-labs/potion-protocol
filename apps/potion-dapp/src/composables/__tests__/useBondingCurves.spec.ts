@@ -17,7 +17,7 @@ describe("useBondingCurves", () => {
   describe("bondingCurve initialization", () => {
     it("initialize correctly bondingCurve with default params", () => {
       const { bondingCurve } = useBondingCurves();
-      expect(bondingCurve.value).toEqual({
+      expect(bondingCurve.value).toMatchObject({
         a: 0.05,
         b: 0.05,
         c: 0.05,
@@ -34,7 +34,7 @@ describe("useBondingCurves", () => {
         d: 4,
         maxUtil: 0,
       });
-      expect(bondingCurve.value).toEqual({
+      expect(bondingCurve.value).toMatchObject({
         a: 1,
         b: 2,
         c: 3,
@@ -48,7 +48,7 @@ describe("useBondingCurves", () => {
     it("can use setBondingCurve with a bondingCurve that has been initialized with default params", () => {
       const { bondingCurve, setBondingCurve } = useBondingCurves();
       setBondingCurve("1", "2", "3", "4", "1");
-      expect(bondingCurve.value).toEqual({
+      expect(bondingCurve.value).toMatchObject({
         a: 1,
         b: 2,
         c: 3,
@@ -66,7 +66,7 @@ describe("useBondingCurves", () => {
         maxUtil: 0,
       });
       setBondingCurve("1.5", "2.1", "4.2", "3.8", "0.56");
-      expect(bondingCurve.value).toEqual({
+      expect(bondingCurve.value).toMatchObject({
         a: 1.5,
         b: 2.1,
         c: 4.2,

@@ -1,18 +1,33 @@
+import { computed, ref, watch, onMounted, isRef } from "vue";
 import {
   useGetSnapshotsByTemplateQuery,
   useGetSnapshotsByPoolQuery,
 } from "subgraph-queries/generated/urql";
-import { computed, ref, watch } from "vue";
-import type { SnapshotDataFragment } from "subgraph-queries/generated/operations";
+import { deepUnref } from "@/helpers/vue";
+
+import type {
+  SnapshotDataFragment,
+  GetSnapshotsByPoolQuery,
+  GetSnapshotsByTemplateQuery,
+} from "subgraph-queries/generated/operations";
 import type { PerformanceData } from "dapp-types";
+import type { ComputedRef } from "vue";
+import type { MaybeRef } from "@vueuse/core";
+import type { UseQueryResponse } from "@urql/vue";
 
 const getFloat = (value: null | undefined | string) =>
   value ? parseFloat(value) : 0;
 
 const useSnapshots = (
+  identifier: MaybeRef<string>,
   snapshotFragmentToChartData: (
     snapshot: SnapshotDataFragment
-  ) => PerformanceData
+  ) => PerformanceData,
+  urqlComposable: (
+    alreadyLoadedIds: ComputedRef<string[]>
+  ) =>
+    | UseQueryResponse<GetSnapshotsByPoolQuery, object>
+    | UseQueryResponse<GetSnapshotsByTemplateQuery, object>
 ) => {
   const snapshots = ref<SnapshotDataFragment[]>([]);
   const alreadyLoadedIds = computed(() =>
@@ -22,14 +37,38 @@ const useSnapshots = (
     snapshots.value.map(snapshotFragmentToChartData)
   );
 
+  const { data, fetching, executeQuery } = urqlComposable(alreadyLoadedIds);
+
+  const appendSnapshots = () => {
+    const newSnapshots = data?.value?.poolSnapshots ?? [];
+    snapshots.value = snapshots.value.concat(newSnapshots);
+  };
+
+  const loadSnapshots = async () => {
+    if (deepUnref(identifier)) {
+      snapshots.value = [];
+      await executeQuery();
+    }
+  };
+
+  if (isRef(identifier)) {
+    watch(identifier, loadSnapshots);
+  }
+
+  onMounted(appendSnapshots);
+  watch(data, appendSnapshots);
+
   return {
+    data,
+    fetching,
+    executeQuery,
     chartData,
     snapshots,
     alreadyLoadedIds,
   };
 };
 
-const usePoolSnapshots = (currentPool: string) => {
+const usePoolSnapshots = (currentPool: MaybeRef<string>) => {
   const snapshotFragmentToChartData = (snapshot: SnapshotDataFragment) => ({
     timestamp: parseInt(snapshot.timestamp),
     pnl: getFloat(snapshot.pnlPercentage),
@@ -37,20 +76,19 @@ const usePoolSnapshots = (currentPool: string) => {
     utilization: 100 * getFloat(snapshot.utilization),
   });
 
-  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots(
-    snapshotFragmentToChartData
+  const urqlComposable = (alreadyLoadedIds: ComputedRef<string[]>) =>
+    useGetSnapshotsByPoolQuery({
+      variables: computed(() => ({
+        currentPool: deepUnref(currentPool),
+        alreadyLoadedIds: deepUnref(alreadyLoadedIds),
+      })),
+    });
+
+  const { snapshots, chartData, fetching, executeQuery } = useSnapshots(
+    currentPool,
+    snapshotFragmentToChartData,
+    urqlComposable
   );
-
-  const { data, fetching, executeQuery } = useGetSnapshotsByPoolQuery({
-    variables: computed(() => ({
-      currentPool,
-      alreadyLoadedIds: alreadyLoadedIds.value,
-    })),
-  });
-
-  watch(data, () => {
-    snapshots.value = snapshots.value.concat(data?.value?.poolSnapshots ?? []);
-  });
 
   return {
     chartData,
@@ -60,7 +98,7 @@ const usePoolSnapshots = (currentPool: string) => {
   };
 };
 
-const useTemplateSnapshots = (templateAddress: string) => {
+const useTemplateSnapshots = (templateAddress: MaybeRef<string>) => {
   const snapshotFragmentToChartData = (snapshot: SnapshotDataFragment) => ({
     timestamp: parseInt(snapshot.timestamp),
     pnl: getFloat(snapshot.templatePnlPercentage),
@@ -68,25 +106,25 @@ const useTemplateSnapshots = (templateAddress: string) => {
     utilization: 100 * getFloat(snapshot.templateUtilization),
   });
 
-  const { snapshots, alreadyLoadedIds, chartData } = useSnapshots(
-    snapshotFragmentToChartData
+  const urqlComposable = (alreadyLoadedIds: ComputedRef<string[]>) =>
+    useGetSnapshotsByTemplateQuery({
+      variables: computed(() => ({
+        templateAddress: deepUnref(templateAddress),
+        alreadyLoadedIds: deepUnref(alreadyLoadedIds),
+      })),
+    });
+
+  const { snapshots, chartData, fetching, executeQuery } = useSnapshots(
+    templateAddress,
+    snapshotFragmentToChartData,
+    urqlComposable
   );
-
-  const { data, fetching } = useGetSnapshotsByTemplateQuery({
-    variables: computed(() => ({
-      templateAddress,
-      alreadyLoadedIds: alreadyLoadedIds.value,
-    })),
-  });
-
-  watch(data, () => {
-    snapshots.value = snapshots.value.concat(data?.value?.poolSnapshots ?? []);
-  });
 
   return {
     chartData,
     snapshots,
     fetching,
+    executeQuery,
   };
 };
 

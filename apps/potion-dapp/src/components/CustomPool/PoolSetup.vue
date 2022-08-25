@@ -49,7 +49,7 @@ const { t } = useI18n();
 interface Props {
   liquidityTitle: string;
   liquidity: number;
-  size?: string;
+  size?: number;
   userCollateralBalance: number;
   liquidityCheck: boolean;
   availableTokens: SelectableToken[];
@@ -60,7 +60,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   criteriaMap: () => new Map(),
-  size: "",
+  size: 0,
   min: 1,
 });
 
@@ -89,9 +89,9 @@ const handleCriteriaUpdate = (
 
 const handleTokenRemove = (address: string) => emits("token-remove", address);
 
-const selectedTokens = computed(() => {
-  return props.availableTokens.filter((u) => u.selected);
-});
+const selectedTokens = computed(() =>
+  props.availableTokens.filter((u) => u.selected)
+);
 
 const liquidityCardTitle = `${t("my_pool")} #${props.poolId}`;
 </script>

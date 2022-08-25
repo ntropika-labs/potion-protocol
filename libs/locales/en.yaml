@@ -29,20 +29,24 @@ choose_pool_curve: >-
 claimed: Claimed
 claiming_collateral: claiming collateral
 cloned: Cloned
-collateral_claimed: collateral claimed
 collateral: Collateral
+collateral_claimed: collateral claimed
+committed: committed
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
 connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
+counterparties: Counterparties
+counterparty: Counterparty
+create_pool: create pool
 create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
 create_pool_title: Create custom pool from scratch
-create_pool: create pool
+create_potion: create potion
 create_potion_subtitle: PROTECTION POWER IN YOUR HANDS!
 create_potion_title: Create protective potions by selecting asset, strike and duration.
-create_potion: create potion
 creating_pool: creating pool
 creator: Creator
+currency: Currency
 current_payout: Current Payout
 current_price: current price
 curve_formula_title: Equation
@@ -51,18 +55,21 @@ curve_parameters: Parameters defining the curve.
 curve_setup: Curve Setup
 cycle_duration: cycle duration
 days: days
+deposit: deposit
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer: Balance
 deposit_collateral_title: You're providing
-deposit: deposit
 depositing_liquidity: depositing liquidity
-duration_description: How long the insurance you are selling will be valid for.
+discover_potions: Discover Potions
+discover_templates: Discover Templates
 duration: duration
+duration_description: How long the insurance you are selling will be valid for.
 edit: edit
 empty: Empty
 enable_or_disable: Enable/Disable
-expiration_date: Exp. Date
+enter_position: Enter position
 expiration: Expiration
+expiration_date: Exp. Date
 expired_options: Expired Put Options
 expired_potions: Expired Potions
 expiry_date: expiry date
@@ -81,36 +88,41 @@ learn_more: Learn More
 liquidity_deposited: liquidity deposited
 liquidity_withdrawn: liquidity withdrawn
 load_more: load more
-loading_error: Error loading data
 loading: Loading..
+loading_error: Error loading data
 locked: locked
 market_size: market size
 max_duration: Max Duration
 max_number_of_potions: max number of potions
-max_premium_slippage: max premium slippage
 max_premium: max premium
-max_strike_price: max strike price
+max_premium_slippage: max premium slippage
 max_strike: Max Strike
+max_strike_price: max strike price
+max_swap_duration: max swap duration
 max_swap_slippage: max swap slippage
 max_value: max value
 most_cloned_templates_subtitle: MOST CLONED
 most_cloned_templates_title: Pools that have been cloned the most times
-most_collateralized_description: Top Potions by Locked Collateral
 most_collateralized: most collateralized
-most_purchased_description: Potions that have been purchased the most times.
+most_collateralized_description: Top Potions by Locked Collateral
 most_purchased: most purchased
+most_purchased_description: Potions that have been purchased the most times.
 my_pool: My Pool
+my_pools: My Pools
+my_potions: My Potions
 my_summary: my summary
 next: next
 no_options: No options to show
 no_potions_available: No potions to show
 no_underlying_asset_found: no underlying asset found
+not_enough: not enough  { msg }
 not_enough_collateral: not enough collateral
 not_enough_usdc: not enough usdc
 not_withdrawable: Not withdrawable
 number_of_potions: number of potions
 number_of_transactions: number of transactions
 operator: operator
+orderbook: Orderbook
 pnl: Pnl
 pool_created: pool created
 pool_setup: Pool Setup
@@ -125,31 +137,33 @@ purchased_potions_not_expired: Purchased Potions not expired.
 put_option: put option
 quantity: Quantity
 reclaimable: reclaimable
+redeem: redeem
 review_and_create: review and create
 review_your_choices: Review your choices before creating the pool on chain.
 set_bonding_curve_params: Set the following parameters and define your curve.
 share_price: share price
-show_more: Show more
 show: show
+show_more: Show more
 similar_potion_message: You are saving { dollars } in gas by buying an existing Potion
 similar_potions: similar potions
 slippage_tolerance: slippage tolerance
 status: Status
+strike: strike
 strike_description: Choose the maximum insurance cover.
 strike_price: Strike Price
-strike: strike
 summary: Summary
 time_left_until_next_cycle: time left until next cycle
 times: Times
 timestamp: timestamp
 title: Home page
+token: Token
 top_gainers_templates_subtitle: TOP GAINERS
 top_gainers_templates_title: Top PnL since creation.
+total: total
 total_liquidity: Total Liquidity
 total_payout: total payout
 total_pools: total pools
 total_size: Tot. Size
-total: total
 unlocked: unlocked
 unutilized_capital: Unutilized capital
 usdc_approved: usdc approved
@@ -159,9 +173,9 @@ utilization: utilization
 utilized_capital: Utilized Capital
 vault_size: vault size
 view_pool_recipe: view pool recipe
+withdraw: Withdraw
 withdraw_capital: Withdraw capital
 withdraw_expired_potions: Expired Potions ready to be withdrawn.
-withdraw: Withdraw
 withdrawing_liquidity: withdrawing liquidity
 wrong_bonding_curve_params: parameters aren't valid
 your_liquidity: Your liquidity
@@ -169,12 +183,3 @@ your_potion_expires_in: your potion expires in
 your_put_recipe: Your put recipe
 your_shares: your shares
 your_strike_price: your strike price
-not_enough: not enough  { msg }
-redeem: redeem
-committed: committed
-max_swap_duration: max swap duration
-counterparties: Counterparties
-enter_position: Enter position
-counterparty: Counterparty
-currency: Currency
-token: Token

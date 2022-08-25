@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { usePersonalPotions } from "@/composables/usePotions";
+import { usePersonalPotions } from "@/composables/usePersonalPotions";
 import { BaseCard, LabelValue, BaseButton, MyPotionCard } from "potion-ui";
 import { useOnboard } from "@onboard-composable";
 import { computed, onMounted, ref, watch } from "vue";
-import InnerNav from "@/components/InnerNav.vue";
+import PotionNav from "@/components/InnerNav/PotionNav.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import { useRoute } from "vue-router";
 import { useNotifications } from "@/composables/useNotifications";
@@ -28,28 +28,6 @@ const connectedWalletAddress = computed(() =>
 const isSameUserConnected = computed(
   () => connectedWalletAddress.value === buyerAddress
 );
-
-const innerNavProps = computed(() => {
-  return {
-    currentRoute: route.name,
-    routes: [
-      {
-        name: "discover-potions",
-        label: "Discover Potions",
-        enabled: true,
-        params: {},
-      },
-      {
-        name: "buyer",
-        label: "My Potions",
-        enabled: connectedWalletAddress.value ? true : false,
-        params: {
-          buyer: connectedWalletAddress.value ?? "not-valid",
-        },
-      },
-    ],
-  };
-});
 
 const { blockTimestamp, loading: blockLoading, getBlock } = useEthersProvider();
 
@@ -208,7 +186,7 @@ watch(redeemReceipt, (receipt) =>
       />
     </div>
   </BaseCard>
-  <InnerNav v-bind="innerNavProps" class="mt-10" />
+  <PotionNav />
   <div class="flex flex-col gap-6 mt-10">
     <template v-if="loadingUserPotions">
       <i class="i-eos-icons-loading"> </i>

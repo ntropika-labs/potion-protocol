@@ -1,124 +1,23 @@
 import {
-  useGetUserPotionsQuery,
-  useGetActivePotionsQuery,
-  useGetExpiredPotionsQuery,
   useGetMostPurchasedPotionsQuery,
   useGetMostCollateralizedPotionsQuery,
   useGetMostPopularPotionsQuery,
 } from "subgraph-queries/generated/urql";
-import { ref, computed, unref, onMounted, watch } from "vue";
-import type { Ref } from "vue";
-import type {
-  PersonalPotionCardFragment,
-  PotionCardFragment,
-} from "subgraph-queries/generated/operations";
+import { ref, computed, onMounted, isRef, watch } from "vue";
+import { deepUnref } from "@/helpers/vue";
 
-const getPersonalPotionsIds = (potions: Ref<PersonalPotionCardFragment[]>) =>
-  [""].concat(potions.value.map(({ id }) => id));
+import type { MaybeRef } from "@vueuse/core";
+import type { PotionCardFragment } from "subgraph-queries/generated/operations";
 
-const usePersonalPotions = (
-  address: string | Ref<string>,
-  timestamp: string | Ref<string> | number | Ref<number>,
-  pauseQuery: Ref<boolean>
-) => {
-  const expiredPotions = ref<PersonalPotionCardFragment[]>([]);
-  const activePotions = ref<PersonalPotionCardFragment[]>([]);
-  const canLoadMoreExpiredPotions = ref<boolean>(false);
-  const canLoadMoreActivePotions = ref<boolean>(false);
-
-  const expiredIds = computed(() => getPersonalPotionsIds(expiredPotions));
-  const activeIds = computed(() => getPersonalPotionsIds(activePotions));
-  const allIds = computed(() => [...expiredIds.value, ...activeIds.value]);
-
-  const potionsPerQuery = 8;
-
-  const variables = computed(() => ({
-    buyerAddress: unref(address),
-    expiry: unref(timestamp).toString(),
-    alreadyLoadedIds: allIds.value,
-    first: potionsPerQuery,
-  }));
-
-  const {
-    data: userPotions,
-    executeQuery: getUserPotionsQuery,
-    fetching: loadingUserPotions,
-  } = useGetUserPotionsQuery({
-    variables,
-    pause: true,
-  });
-
-  const {
-    data: newActivePotions,
-    executeQuery: executeGetMoreActivePotionsQuery,
-    fetching: loadingActivePotions,
-  } = useGetActivePotionsQuery({
-    variables,
-    pause: true,
-  });
-
-  const {
-    data: newExpiredPotions,
-    executeQuery: executeGetMoreExpiredPotionsQuery,
-    fetching: loadingExpiredPotions,
-  } = useGetExpiredPotionsQuery({
-    variables,
-    pause: true,
-  });
-
-  const loadMoreActive = async () => {
-    await executeGetMoreActivePotionsQuery();
-    canLoadMoreExpiredPotions.value =
-      newActivePotions?.value?.buyerRecords?.length === potionsPerQuery;
-    activePotions.value = activePotions.value.concat(
-      newActivePotions?.value?.buyerRecords ?? []
-    );
-  };
-
-  const loadMoreExpired = async () => {
-    await executeGetMoreExpiredPotionsQuery();
-    canLoadMoreExpiredPotions.value =
-      newExpiredPotions?.value?.buyerRecords?.length === potionsPerQuery;
-    expiredPotions.value = expiredPotions.value.concat(
-      newExpiredPotions?.value?.buyerRecords ?? []
-    );
-  };
-
-  watch(pauseQuery, async () => {
-    if (!pauseQuery.value) {
-      await getUserPotionsQuery();
-      canLoadMoreExpiredPotions.value =
-        userPotions?.value?.expired?.length === potionsPerQuery;
-      canLoadMoreActivePotions.value =
-        userPotions?.value?.active?.length === potionsPerQuery;
-      activePotions.value = activePotions.value.concat(
-        userPotions?.value?.active ?? []
-      );
-      expiredPotions.value = expiredPotions.value.concat(
-        userPotions?.value?.expired ?? []
-      );
-    }
-  });
-
-  return {
-    activePotions,
-    expiredPotions,
-    canLoadMoreActivePotions,
-    canLoadMoreExpiredPotions,
-    loadMoreActive,
-    loadMoreExpired,
-    loadingActivePotions,
-    loadingExpiredPotions,
-    loadingUserPotions,
-  };
-};
-
-const usePotions = (
-  underlyings: string[] | Ref<string[]>,
-  timestamp: string | Ref<string>
+export const usePotions = (
+  underlyings: MaybeRef<string[]>,
+  timestamp: MaybeRef<string | number>,
+  limit: MaybeRef<number> = 8
 ) => {
   const mostCollateralized = ref<PotionCardFragment[]>([]);
   const mostPurchased = ref<PotionCardFragment[]>([]);
+  const canLoadMoreCollateralized = ref(true);
+  const canLoadMorePurchased = ref(true);
 
   const mostCollateralizedIds = computed(() =>
     [""].concat(mostCollateralized.value.map(({ id }) => id))
@@ -131,15 +30,30 @@ const usePotions = (
     ...mostPurchasedIds.value,
   ]);
 
-  const variables = computed(() => ({
-    addresses: unref(underlyings),
-    expiry: unref(timestamp),
+  const mostCollateralizedVariables = computed(() => ({
+    addresses: deepUnref(underlyings),
+    expiry: deepUnref(timestamp).toString(),
+    limit: deepUnref(limit),
+    alreadyLoadedIds: mostCollateralizedIds.value,
+  }));
+
+  const mostPurchasedVariables = computed(() => ({
+    addresses: deepUnref(underlyings),
+    expiry: deepUnref(timestamp).toString(),
+    limit: deepUnref(limit),
+    alreadyLoadedIds: mostPurchasedIds.value,
+  }));
+
+  const mostPopularVariables = computed(() => ({
+    addresses: deepUnref(underlyings),
+    expiry: deepUnref(timestamp).toString(),
+    limit: deepUnref(limit),
     alreadyLoadedIds: allIds.value,
   }));
 
   const { data: mostPopular, executeQuery: mostPopularQuery } =
     useGetMostPopularPotionsQuery({
-      variables,
+      variables: mostPopularVariables,
       pause: true,
     });
 
@@ -147,7 +61,7 @@ const usePotions = (
     data: newMostCollateralized,
     executeQuery: executeGetMoreMostCollateralizedQuery,
   } = useGetMostCollateralizedPotionsQuery({
-    variables,
+    variables: mostCollateralizedVariables,
     pause: true,
   });
 
@@ -155,40 +69,68 @@ const usePotions = (
     data: newMostPurchased,
     executeQuery: executeGetMoreMostPurchasedQuery,
   } = useGetMostPurchasedPotionsQuery({
-    variables,
+    variables: mostPurchasedVariables,
     pause: true,
   });
 
-  const loadMoreMostCollateralized = async () => {
-    await executeGetMoreMostCollateralizedQuery();
-    mostCollateralized.value = mostCollateralized.value.concat(
-      newMostCollateralized?.value?.otokens ?? []
-    );
-  };
-
-  const loadMoreMostPurchased = async () => {
-    await executeGetMoreMostPurchasedQuery();
-    mostPurchased.value = mostPurchased.value.concat(
-      newMostPurchased?.value?.otokens ?? []
-    );
-  };
-
-  onMounted(async () => {
+  const loadMostPopular = async () => {
     await mostPopularQuery();
+
     mostCollateralized.value = mostCollateralized.value.concat(
       mostPopular?.value?.collateralized ?? []
     );
     mostPurchased.value = mostPurchased.value.concat(
       mostPopular?.value?.purchased ?? []
     );
-  });
+
+    canLoadMoreCollateralized.value =
+      mostPopular?.value?.collateralized?.length === limit ?? false;
+    canLoadMorePurchased.value =
+      mostPopular?.value?.purchased?.length === limit ?? false;
+  };
+
+  const loadMoreMostCollateralized = async () => {
+    await executeGetMoreMostCollateralizedQuery();
+
+    mostCollateralized.value = mostCollateralized.value.concat(
+      newMostCollateralized?.value?.otokens ?? []
+    );
+
+    canLoadMoreCollateralized.value =
+      newMostCollateralized?.value?.otokens?.length === limit ?? false;
+  };
+
+  const loadMoreMostPurchased = async () => {
+    await executeGetMoreMostPurchasedQuery();
+
+    mostPurchased.value = mostPurchased.value.concat(
+      newMostPurchased?.value?.otokens ?? []
+    );
+
+    canLoadMorePurchased.value =
+      newMostPurchased?.value?.otokens?.length === limit ?? false;
+  };
+
+  const cleanLoad = async () => {
+    if (deepUnref(timestamp) > 0) {
+      mostCollateralized.value = [];
+      mostPurchased.value = [];
+      await loadMostPopular();
+    }
+  };
+
+  onMounted(cleanLoad);
+
+  if (isRef(timestamp)) {
+    watch(timestamp, cleanLoad);
+  }
 
   return {
+    canLoadMoreCollateralized,
+    canLoadMorePurchased,
     mostCollateralized,
     mostPurchased,
     loadMoreMostCollateralized,
     loadMoreMostPurchased,
   };
 };
-
-export { usePotions, usePersonalPotions };

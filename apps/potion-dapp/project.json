@@ -8,7 +8,7 @@
       "options": {
         "commands": [
           {
-            "command": "./bin/create-local-env-headless",
+            "command": "./bin/setup-local-env",
             "forwardAllArgs": true
           },
           {
@@ -24,7 +24,7 @@
       "options": {
         "commands": [
           {
-            "command": "./bin/create-local-env-headless",
+            "command": "./bin/setup-local-env",
             "forwardAllArgs": true
           },
           {
@@ -56,7 +56,7 @@
       "options": {
         "commands": [
           {
-            "command": "./bin/create-local-env-headless --redeploy=false",
+            "command": "./bin/setup-local-env --redeploy=false",
             "forwardAllArgs": true
           },
           {

@@ -3,20 +3,20 @@ import { createRouter, createWebHistory } from "vue-router";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import { useOnboard } from "@onboard-composable";
 
-const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
 const DiscoverPotions = () => import("@/views/DiscoverPotions.vue");
 const DiscoverTemplates = () => import("@/views/DiscoverTemplates.vue");
-const NotFound = () => import("@/views/NotFound.vue");
 const EditPool = () => import("@/views/Pools/EditPool.vue");
-const ShowPool = () => import("@/views/Pools/ShowPool.vue");
-const ViewPools = () => import("@/views/Pools/ViewPools.vue");
-const PoolTemplate = () => import("@/views/PoolTemplate.vue");
-const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
-const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
+const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const HedgingVault = () => import("@/views/HedgingVault.vue");
+const NotFound = () => import("@/views/NotFound.vue");
+const PoolTemplate = () => import("@/views/PoolTemplate.vue");
+const ShowPool = () => import("@/views/Pools/ShowPool.vue");
+const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
 const VaultOperator = () => import("@/views/Vault/VaultOperator.vue");
+const ViewPools = () => import("@/views/Pools/ViewPools.vue");
+const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,7 +51,7 @@ const router = createRouter({
       meta: { requireWallet: true, layout: BaseLayout },
     },
     {
-      path: "/templates/:templateId",
+      path: "/templates/:id",
       name: "pool-template",
       component: PoolTemplate,
       meta: { requireWallet: false, layout: BaseLayout },

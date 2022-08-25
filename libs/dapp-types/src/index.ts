@@ -108,3 +108,16 @@ export interface OtokenDatasetItem {
 }
 
 export type OtokenDataset = OtokenDatasetItem[][];
+
+export enum CustomPotionStep {
+  ASSET,
+  STRIKE,
+  EXPIRATION,
+  REVIEW,
+}
+
+export interface Slippage {
+  value: number;
+  label: string;
+  selected: boolean;
+}

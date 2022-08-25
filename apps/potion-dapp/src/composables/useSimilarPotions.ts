@@ -62,22 +62,38 @@ export function useSimilarPotions(
       duration: validExpiry.value.toString(),
     };
   });
-  const { data: similarByAsset, executeQuery: getByAsset } =
-    useGetSimilarPotionByAssetQuery({
-      variables: assetStepVariables,
-      pause: true,
-    });
-  const { data: similarByStrike, executeQuery: getByStrike } =
-    useGetSimilarPotionByStrikeQuery({
-      variables: strikeStepVariables,
-      pause: true,
-    });
+  const {
+    data: similarByAsset,
+    executeQuery: getByAsset,
+    fetching: fetchingByAsset,
+  } = useGetSimilarPotionByAssetQuery({
+    variables: assetStepVariables,
+    pause: true,
+  });
+  const {
+    data: similarByStrike,
+    executeQuery: getByStrike,
+    fetching: fetchingByStrike,
+  } = useGetSimilarPotionByStrikeQuery({
+    variables: strikeStepVariables,
+    pause: true,
+  });
 
-  const { data: similarByDuration, executeQuery: getByDuration } =
-    useGetSimilarPotionByDurationQuery({
-      variables: durationStepVariables,
-      pause: true,
-    });
+  const {
+    data: similarByDuration,
+    executeQuery: getByDuration,
+    fetching: fetchingByDuration,
+  } = useGetSimilarPotionByDurationQuery({
+    variables: durationStepVariables,
+    pause: true,
+  });
+
+  const isLoading = computed(
+    () =>
+      fetchingByAsset.value ||
+      fetchingByStrike.value ||
+      fetchingByDuration.value
+  );
 
   if (isRef(underlyingAssetAddress) && isRef(strike) && isRef(duration)) {
     watchDebounced(
@@ -159,6 +175,7 @@ export function useSimilarPotions(
     return getCentralItems(minDuration.concat(maxDuration), 5);
   });
   return {
+    isLoading,
     computedSimilarByAsset,
     computedSimilarByStrike,
     computedSimilarByDuration,
