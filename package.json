@@ -27,7 +27,7 @@
     "lint-affected": "nx affected --target=lint --uncommitted",
     "lint-all": "nx run-many --target=lint --all",
     "local-env": "./bin/setup-local-env",
-    "set-price": "yarn workspace potion-contracts set-price",
+    "set-price": "yarn workspace @potion-protocol/core set-price",
     "storybook": "nx run potion-ui:storybook",
     "test-e2e-ci": "nx run-many --target=test-e2e-ci",
     "test-e2e-ci-affected": "nx affected --target=test-e2e",

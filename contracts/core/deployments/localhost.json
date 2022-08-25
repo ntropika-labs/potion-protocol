@@ -1,5 +1,5 @@
 {
-  "timestamp": 1656574612,
+  "timestamp": 1661414904,
   "network": "localhost",
   "contracts": {
     "AddressBook": {
@@ -15,8 +15,8 @@
       "blockNumber": 3
     },
     "MarginCalculator": {
-      "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f",
-      "blockNumber": 81
+      "address": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
+      "blockNumber": 67
     },
     "OtokenFactory": {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
@@ -59,12 +59,12 @@
       "blockNumber": 23
     },
     "SampleUnderlyingToken": {
-      "address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
-      "blockNumber": 35
+      "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+      "blockNumber": 25
     },
     "MockOracle": {
-      "address": "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
-      "blockNumber": 77
+      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+      "blockNumber": 63
     }
   }
 }

@@ -2,7 +2,7 @@
 export * as Typechain from "../typechain";
 export const Deployments = {
     localhost: {
-        timestamp: 1661414121,
+        timestamp: 1661414943,
         network: "localhost",
         contracts: {
             USDC: {
