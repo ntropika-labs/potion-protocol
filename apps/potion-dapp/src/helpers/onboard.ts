@@ -17,12 +17,12 @@ switch (ethereumNetwork) {
       rpcUrl: "http://localhost:8545",
     });
     break;
-  case "kovan":
+  case "goerli":
     chains.push({
-      id: "0x2a",
-      token: "ETH",
-      label: "Kovan Testnet",
-      rpcUrl: `https://eth-kovan.alchemyapi.io/v2/${alchemyKey}`,
+      id: "0x05",
+      token: "GoerliETH",
+      label: "Goerli Testnet",
+      rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${alchemyKey}`,
     });
     break;
   case "mainnet":
