@@ -1,18 +1,27 @@
+import type { Oracle } from "potion-contracts/typechain";
 import { $fetch } from "ohmyfetch";
+import { Oracle__factory } from "potion-contracts/typechain";
 import { currencyFormatter } from "potion-ui";
 import { computed, ref } from "vue";
 
-const network = import.meta.env.VITE_ETHEREUM_NETWORK;
-const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
+import { formatUnits } from "@ethersproject/units";
+
+import { useAddressBookContract } from "./useAddressBookContract";
+import { useEthersContract } from "./useEthersContract";
 
 interface CoinPricesResponse {
   [key: string]: { [key: string]: number };
 }
+const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
+
 export function useCoinGecko(
   coins?: string[],
   address?: string,
   currency = "usd"
 ) {
+  const { initContract } = useEthersContract();
+  const { getOracle } = useAddressBookContract();
+
   const success = ref(false);
   const loading = ref(false);
   const price = ref(0);
@@ -20,9 +29,21 @@ export function useCoinGecko(
     return currencyFormatter(price.value, currency === "usd" ? "$" : currency);
   });
 
+  //Provider initialization
+
+  const initContractProvider = async () => {
+    return initContract(
+      false,
+      false,
+      Oracle__factory,
+      await getOracle()
+    ) as Oracle;
+  };
+
   const coinsPrices = ref<CoinPricesResponse>();
   const coinsPricesLoading = ref(false);
   const fetchCoinsPrices = async () => {
+    console.info("fetchCoinsPriced Mocked");
     try {
       coinsPricesLoading.value = true;
       if (coins) {
@@ -47,32 +68,29 @@ export function useCoinGecko(
       }
     }
   };
+
   const fetchTokenPrice = async () => {
     try {
-      console.log("normal coingecko");
-      loading.value = true;
-      if (network === "mainnet" && address) {
-        const response = await $fetch(
-          endpoint.concat("/simple/token_price/ethereum"),
-          {
-            params: {
-              contract_addresses: address,
-              vs_currencies: currency,
-            },
-          }
-        );
-        price.value = response[address.toLowerCase()][currency.toLowerCase()];
-      } else {
-        price.value = 1300;
-      }
+      console.info("fetchTokenPrice Mocked");
 
-      loading.value = false;
+      const oracleContract = await initContractProvider();
+      console.log(address);
+      if (address) {
+        // console.log("here");
+        const response = await oracleContract.getPrice(address);
+        price.value = parseFloat(formatUnits(response, 8));
+      }
       success.value = true;
     } catch (error) {
-      loading.value = false;
-      throw new Error("Failed to fetch price");
+      success.value = false;
+      if (error instanceof Error) {
+        throw new Error(`Cannot get price: ${error.message}`);
+      } else {
+        throw new Error("Cannot get price");
+      }
     }
   };
+
   return {
     loading,
     success,

@@ -1,5 +1,6 @@
-import { useCoinGecko } from "@/composables/useCoinGecko";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
+
+import { useCoinGecko } from "@coingecko-composable";
 
 import type { ApiTokenPrice, SelectableToken } from "dapp-types";
 

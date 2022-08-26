@@ -1,5 +1,6 @@
 import { computed, onMounted } from "vue";
-import { useCoinGecko } from "./useCoinGecko";
+
+import { useCoinGecko } from "@coingecko-composable";
 
 export function useEthereumPrice() {
   const { coinsPrices, fetchCoinsPrices } = useCoinGecko(["ethereum"]);

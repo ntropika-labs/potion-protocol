@@ -11,6 +11,10 @@
       "@onboard-composable": [
         "./src/composables/useOnboard.ts",
         "./src/composables/useMockedOnboard.ts"
+      ],
+      "@coingecko-composable": [
+        "./src/composables/useCoinGecko.ts",
+        "./src/composables/useMockedCoinGecko.ts"
       ]
     },
     "importsNotUsedAsValues": "remove",
