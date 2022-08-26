@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vitest/config";
+
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
@@ -28,6 +29,10 @@ export default defineConfig({
       "@onboard-composable": fileURLToPath(
         //@ts-expect-error volar giving errors
         new URL("./src/composables/useMockedOnboard.ts", import.meta.url)
+      ),
+      "@coingecko-composable": fileURLToPath(
+        //@ts-expect-error volar giving errors
+        new URL("./src/composables/useMockedCoingecko.ts", import.meta.url)
       ),
     },
   },
