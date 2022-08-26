@@ -4,13 +4,19 @@
       <p class="text-3xl capitalize col-span-4 xl:col-span-1 font-semibold">
         {{ t("my_summary") }}
       </p>
-      <LabelValue :title="t('total_pools')" :value="totalPools.toString()" />
       <LabelValue
+        test-total-pools
+        :title="t('total_pools')"
+        :value="totalPools.toString()"
+      />
+      <LabelValue
+        test-average-pnl
         :title="t('average_pnl')"
         :value="averagePnl.toString()"
         symbol="%"
       />
       <LabelValue
+        test-total-liquidity
         :title="t('total_liquidity')"
         :value="totalLiquidity.toString()"
         symbol="USDC"
@@ -21,6 +27,7 @@
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 auto-rows-fr">
     <router-link
       v-if="isSameUserConnected"
+      test-to-custom-pool-creation-card
       to="/custom-pool-creation"
       class="min-h-[20rem]"
     >
@@ -30,6 +37,7 @@
       <PoolCard
         v-for="(pool, index) in pools"
         :key="`${pool.id}${index}`"
+        test-pool-card
         :active="true"
         :tokens="getTokens(pool.id)"
         :size="pool.size"
@@ -47,6 +55,7 @@
             }"
           >
             <BaseButton
+              test-pool-card-button
               :label="t('check_pool')"
               palette="secondary"
             ></BaseButton>
