@@ -49,6 +49,7 @@ const onTemplateIdNavigation = (id: string) => {
 
 <template>
   <JumboHeader
+    test-discover-templates-header
     :title="t('create_pool_title')"
     :subtitle="t('create_pool_subtitle')"
     :cta-label="t('create_pool')"
@@ -64,6 +65,7 @@ const onTemplateIdNavigation = (id: string) => {
   <PoolNav></PoolNav>
   <div class="grid gap-8 mt-10">
     <CardGrid
+      test-most-cloned-grid
       :title="t('most_cloned_templates_title')"
       :subtitle="t('most_cloned_templates_subtitle')"
     >
@@ -83,6 +85,7 @@ const onTemplateIdNavigation = (id: string) => {
       <template v-if="canLoadMoreBySize" #grid-footer>
         <div class="flex justify-center my-4">
           <BaseButton
+            test-load-more
             palette="secondary-o"
             :label="t('show_more')"
             @click="loadMoreBySize"
@@ -91,6 +94,7 @@ const onTemplateIdNavigation = (id: string) => {
       </template>
     </CardGrid>
     <CardGrid
+      test-largest-templates-grid
       :title="t('largest_templates_title')"
       :subtitle="t('largest_templates_subtitle')"
     >
@@ -110,6 +114,7 @@ const onTemplateIdNavigation = (id: string) => {
       <template v-if="canLoadMoreByNumber" #grid-footer>
         <div class="flex justify-center my-4">
           <BaseButton
+            test-load-more
             palette="secondary-o"
             :label="t('show_more')"
             @click="loadMoreByNumber"
@@ -118,6 +123,7 @@ const onTemplateIdNavigation = (id: string) => {
       </template>
     </CardGrid>
     <CardGrid
+      test-top-gainers-grid
       :title="t('top_gainers_templates_title')"
       :subtitle="t('top_gainers_templates_subtitle')"
     >
@@ -137,6 +143,7 @@ const onTemplateIdNavigation = (id: string) => {
       <template v-if="canLoadMoreByPnl" #grid-footer>
         <div class="flex justify-center my-4">
           <BaseButton
+            test-load-more
             palette="secondary-o"
             :label="t('show_more')"
             @click="loadMoreByPnl"
