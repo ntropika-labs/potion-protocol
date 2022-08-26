@@ -49,7 +49,6 @@ export function useErc20Contract(
     try {
       const contractProvider = initContractProvider();
       const response = await contractProvider.name();
-      console.log("name: ", response);
       name.value = response;
     } catch (error) {
       if (error instanceof Error) {
@@ -63,7 +62,6 @@ export function useErc20Contract(
     try {
       const contractProvider = initContractProvider();
       const result = await contractProvider.symbol();
-      console.log("symbol: ", result);
       symbol.value = result;
     } catch (error) {
       if (error instanceof Error) {
@@ -77,7 +75,6 @@ export function useErc20Contract(
     try {
       const contractProvider = initContractProvider();
       const result = await contractProvider.decimals();
-      console.log("decimals: ", result);
       decimals.value = result;
     } catch (error) {
       if (error instanceof Error) {
@@ -97,7 +94,6 @@ export function useErc20Contract(
   if (fetchInitialData === true) {
     onMounted(async () => {
       if (unref(address)) {
-        console.log("address: ", unref(address));
         await fetchErc20Info();
       }
     });
@@ -125,7 +121,6 @@ export function useErc20Contract(
     walletAddresses?: string | string[]
   ) => {
     try {
-      console.log(decimals.value);
       const contractProvider = initContractProvider();
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
@@ -226,13 +221,11 @@ export function useErc20Contract(
     approveLoading.value = true;
     try {
       if (connectedWallet.value) {
-        console.log("here");
         const contractSigner = initContractSigner();
         approveTx.value = await contractSigner.approve(
           spender,
           infinite ? MaxUint256 : parseUnits(amount?.toString() ?? "0", 6)
         );
-        console.log(approveTx.value);
         approveReceipt.value = await approveTx.value.wait();
       } else {
         throw new Error("Connect your wallet first");
