@@ -4,7 +4,7 @@
 describe("ViewPools", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
-      cy.seed("/opt/base", "2021-01-01 09:00:00+00:00", false);
+      cy.seed("/opt/e2e-view-pools", "2021-01-01 09:00:00+00:00", false);
     });
   });
   context("ViewPools test", () => {
