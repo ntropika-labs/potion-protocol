@@ -3,13 +3,8 @@ name: Development branch actions
 # run when issued manually, push or pr
 on:
   workflow_dispatch:
-  push:
-    branches: [develop]
-    paths-ignore:
-      - "**.md"
-      - "**.txt"
   pull_request:
-    branches: [develop]
+    branches: [feat-hedging-vault-mvp-CU-2f9b2q9]
     paths-ignore:
       - "**.md"
       - "**.txt"
