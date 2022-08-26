@@ -1,5 +1,6 @@
 <template>
   <JumboHeader
+    test-discover-potions-header
     :title="t('create_potion_title')"
     :subtitle="t('create_potion_subtitle')"
     :cta-label="t('create_potion')"
@@ -14,6 +15,7 @@
     </h1>
     <p class="mt-3">{{ t("most_purchased_description") }}</p>
     <div
+      test-most-purchased-grid
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-6"
     >
       <PotionCard
@@ -30,6 +32,7 @@
         :expiration="ptn.expiry"
       >
         <router-link
+          test-card-navigate-button
           :to="`/potions/${ptn.tokenAddress}`"
           class="rounded-full bg-dwhite-300 py-3 px-4 leading-none text-deepBlack-900 uppercase transition hover:( ring-1 ring-secondary-500 )"
         >
@@ -40,6 +43,7 @@
     <BaseButton
       v-if="canLoadMorePurchased"
       :inline="true"
+      test-load-more
       class="self-center mt-5"
       :label="t('load_more')"
       @click="loadMoreMostPurchased"
@@ -52,6 +56,7 @@
     </h1>
     <p class="mt-3">{{ t("most_collateralized_description") }}</p>
     <div
+      test-most-collateralized-grid
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-6"
     >
       <PotionCard
@@ -77,6 +82,7 @@
     </div>
     <BaseButton
       v-if="canLoadMoreCollateralized"
+      test-load-more
       :label="t('load_more')"
       class="self-center mt-5"
       @click="loadMoreMostCollateralized"
