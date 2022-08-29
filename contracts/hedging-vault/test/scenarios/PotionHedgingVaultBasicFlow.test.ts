@@ -18,11 +18,10 @@ import {
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "../utils/LifecycleStates";
-import { toPRBMath } from "../utils/PRBMathUtils";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
-import * as PercentageUtils from "../utils/PercentageUtils";
+import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { NetworksType } from "../../hardhat.helpers";
 import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
@@ -162,13 +161,16 @@ describe("HedgingVault", function () {
         /*
             COLLATERAL
         */
-        const amountProtected = PercentageUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
+        const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
         const amountProtectedInUSDC = amountProtected
             .mul(underlyingAssetPriceInUSDbn)
             .div(USDCPriceInUSDbn)
             .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
 
-        const collateralRequiredInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, tEnv.strikePercentage);
+        const collateralRequiredInUSDC = HedgingVaultUtils.applyPercentage(
+            amountProtectedInUSDC,
+            tEnv.strikePercentage,
+        );
 
         const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
         const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
@@ -177,12 +179,15 @@ describe("HedgingVault", function () {
         const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
         const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
 
-        const maxPremiumWithSlippageInUSDC = PercentageUtils.addPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
-        const strikePriceInUSDC = PercentageUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
+        const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(
+            expectedPremiumInUSDC,
+            tEnv.premiumSlippage,
+        );
+        const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
         const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
-        const uniswapEnterPositionInputAmount = PercentageUtils.addPercentage(
+        const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
             maxPremiumWithSlippageInUSDC
                 .mul(BigNumber.from(1000000000000))
                 .mul(USDCPriceInUSDbn)
@@ -277,7 +282,7 @@ describe("HedgingVault", function () {
         const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
-            expectedPriceRate: toPRBMath(underlyingAssetPriceInUSD / USDCPriceInUSD, 18, 6),
+            expectedPriceRate: HedgingVaultUtils.toPRBMath(underlyingAssetPriceInUSD / USDCPriceInUSD, 18, 6),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
@@ -320,11 +325,11 @@ describe("HedgingVault", function () {
         // Use the strike percent and reduce it by 10% to get the exit price
         const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
         const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
-        const underlyingAssetExitPriceInUSDbn = PercentageUtils.applyPercentage(
+        const underlyingAssetExitPriceInUSDbn = HedgingVaultUtils.applyPercentage(
             underlyingAssetPriceInUSDbn,
             underlyingAssetPricePercentage,
         );
-        const payoutInUSDC = PercentageUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
+        const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
 
         // TODO: When using the mocked version of the Potion Liquidity manager the premium is not transferred from the
         // TODO: action contract to the Potion Liquidity Manager contract. In the same way, the Opyn Controller mock is
@@ -342,7 +347,7 @@ describe("HedgingVault", function () {
             .mul(USDCPriceInUSDbn)
             .div(underlyingAssetPriceInUSDbn);
 
-        const uniswapExitPositionOutputAmount = PercentageUtils.substractPercentage(
+        const uniswapExitPositionOutputAmount = HedgingVaultUtils.substractPercentage(
             extraUnderlyingAssetInVaultAfterPayout,
             tEnv.swapSlippage,
         );
@@ -367,7 +372,7 @@ describe("HedgingVault", function () {
         const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
+            expectedPriceRate: HedgingVaultUtils.toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
             swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 

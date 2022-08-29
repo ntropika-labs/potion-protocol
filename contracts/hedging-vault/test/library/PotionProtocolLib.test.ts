@@ -16,7 +16,7 @@ import {
 
 import { PotionBuyInfoStruct } from "../../typechain/contracts/test/wrappers/TestWrapperPotionProtocolLib";
 
-import * as PercentageUtils from "../utils/PercentageUtils";
+import * as PercentageUtils from "hedging-vault-sdk";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import { BigNumber } from "ethers";
 
