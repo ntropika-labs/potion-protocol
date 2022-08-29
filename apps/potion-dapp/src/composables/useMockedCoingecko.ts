@@ -1,13 +1,8 @@
-import type { Oracle } from "potion-contracts/typechain";
 import { $fetch } from "ohmyfetch";
-import { Oracle__factory } from "potion-contracts/typechain";
 import { currencyFormatter } from "potion-ui";
 import { computed, ref } from "vue";
 
-import { formatUnits } from "@ethersproject/units";
-
-import { useAddressBookContract } from "./useAddressBookContract";
-import { useEthersContract } from "./useEthersContract";
+import { useOracleContract } from "./useOracleContract";
 
 interface CoinPricesResponse {
   [key: string]: { [key: string]: number };
@@ -19,9 +14,6 @@ export function useCoinGecko(
   address?: string,
   currency = "usd"
 ) {
-  const { initContract } = useEthersContract();
-  const { getOracle } = useAddressBookContract();
-
   const success = ref(false);
   const loading = ref(false);
   const price = ref(0);
@@ -29,21 +21,9 @@ export function useCoinGecko(
     return currencyFormatter(price.value, currency === "usd" ? "$" : currency);
   });
 
-  //Provider initialization
-
-  const initContractProvider = async () => {
-    return initContract(
-      false,
-      false,
-      Oracle__factory,
-      await getOracle()
-    ) as Oracle;
-  };
-
   const coinsPrices = ref<CoinPricesResponse>();
   const coinsPricesLoading = ref(false);
   const fetchCoinsPrices = async () => {
-    console.info("fetchCoinsPriced Mocked");
     try {
       coinsPricesLoading.value = true;
       if (coins) {
@@ -71,14 +51,11 @@ export function useCoinGecko(
 
   const fetchTokenPrice = async () => {
     try {
-      console.info("fetchTokenPrice Mocked");
-
-      const oracleContract = await initContractProvider();
-      console.log(address);
+      console.info("fetchTokenPrice Mocked, using the oracle");
+      const { getPrice } = useOracleContract();
       if (address) {
-        // console.log("here");
-        const response = await oracleContract.getPrice(address);
-        price.value = parseFloat(formatUnits(response, 8));
+        const response = await getPrice(address);
+        price.value = parseFloat(response);
       }
       success.value = true;
     } catch (error) {
