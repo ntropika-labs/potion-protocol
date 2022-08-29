@@ -1,7 +1,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 
 import { toOptionToken } from "@/helpers/tokens";
-import { useCoinGecko } from "@/composables/useCoinGecko";
+import { useCoinGecko } from "@coingecko-composable";
 
 import type { ComputedRef, Ref } from "vue";
 import type { Criteria, OptionToken } from "dapp-types";

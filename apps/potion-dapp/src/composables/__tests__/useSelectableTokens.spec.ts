@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { useSelectableTokens } from "../useSelectableTokens";
 
 describe("useSelectableTokens", () => {
@@ -133,9 +134,9 @@ describe("useSelectableTokens", () => {
       expect(tokenPrice).not.toBeUndefined();
       expect(tokenPrice).toMatchObject({
         loading: false,
-        price: 1300,
-        formattedPrice: "$ 1.3K",
-        success: true,
+        price: 0,
+        formattedPrice: "$ 0.0",
+        success: false,
       });
     });
 
@@ -159,9 +160,9 @@ describe("useSelectableTokens", () => {
       expect(tokenPrice).not.toBeUndefined();
       expect(tokenPrice).toMatchObject({
         loading: false,
-        price: 1300,
-        formattedPrice: "$ 1.3K",
-        success: true,
+        price: 0,
+        formattedPrice: "$ 0.0",
+        success: false,
       });
     });
   });

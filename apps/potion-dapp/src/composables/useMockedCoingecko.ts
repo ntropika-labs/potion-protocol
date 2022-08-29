@@ -2,12 +2,13 @@ import { $fetch } from "ohmyfetch";
 import { currencyFormatter } from "potion-ui";
 import { computed, ref } from "vue";
 
-const network = import.meta.env.VITE_ETHEREUM_NETWORK;
-const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
+import { useOracleContract } from "./useOracleContract";
 
 interface CoinPricesResponse {
   [key: string]: { [key: string]: number };
 }
+const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
+
 export function useCoinGecko(
   coins?: string[],
   address?: string,
@@ -47,32 +48,26 @@ export function useCoinGecko(
       }
     }
   };
+
   const fetchTokenPrice = async () => {
     try {
-      console.log("normal coingecko");
-      loading.value = true;
-      if (network === "mainnet" && address) {
-        const response = await $fetch(
-          endpoint.concat("/simple/token_price/ethereum"),
-          {
-            params: {
-              contract_addresses: address,
-              vs_currencies: currency,
-            },
-          }
-        );
-        price.value = response[address.toLowerCase()][currency.toLowerCase()];
-      } else {
-        price.value = 1300;
+      console.info("fetchTokenPrice Mocked, using the oracle");
+      const { getPrice } = useOracleContract();
+      if (address) {
+        const response = await getPrice(address);
+        price.value = parseFloat(response);
       }
-
-      loading.value = false;
       success.value = true;
     } catch (error) {
-      loading.value = false;
-      throw new Error("Failed to fetch price");
+      success.value = false;
+      if (error instanceof Error) {
+        throw new Error(`Cannot get price: ${error.message}`);
+      } else {
+        throw new Error("Cannot get price");
+      }
     }
   };
+
   return {
     loading,
     success,
