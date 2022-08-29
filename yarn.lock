@@ -20644,6 +20644,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hedging-vault-sdk@workspace:libs/hedging-vault-sdk":
+  version: 0.0.0-use.local
+  resolution: "hedging-vault-sdk@workspace:libs/hedging-vault-sdk"
+  languageName: unknown
+  linkType: soft
+
 "hi-base32@npm:~0.5.0":
   version: 0.5.1
   resolution: "hi-base32@npm:0.5.1"
