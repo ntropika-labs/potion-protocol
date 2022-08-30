@@ -28,7 +28,7 @@ import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
-import { ChainId } from "@uniswap/smart-order-router";
+import { getChainId, getUSDCAddress, getWETHAddress } from "@/helpers/uniswap";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
@@ -56,18 +56,12 @@ const TabNavigationComponent = defineAsyncComponent(
  */
 const IS_DEV_ENV = import.meta.env.DEV;
 
-const USDC = new UniToken(
-  ChainId.MAINNET,
-  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  6,
-  "USDC",
-  "USD//C"
-);
+const USDC = new UniToken(getChainId(), getUSDCAddress(), 6, "USDC", "USD//C");
 
 // TODO: remove once we have proper integration for underlying assets
 const WETH = new UniToken(
-  ChainId.MAINNET,
-  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  getChainId(),
+  getWETHAddress(),
   18,
   "WETH",
   "Wrapped Ether"
@@ -271,7 +265,7 @@ const {
   routerLoading,
   togglePolling: toggleUniswapPolling,
   routerPolling,
-} = useAlphaRouter(ChainId.MAINNET);
+} = useAlphaRouter(getChainId());
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
