@@ -29,6 +29,7 @@
     "potion-tokenlist": "*",
     "potion-ui": "*",
     "potion-unocss": "*",
-    "subgraph-queries": "*"
+    "subgraph-queries": "*",
+    "hedging-vault-sdk": "*"
   }
 }
