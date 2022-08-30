@@ -183,6 +183,7 @@ jobs:
   run-e2e-tests:
     name: Run e2e tests
     runs-on: ubuntu-latest
+    if: false
     needs:
       [run-component-tests, run-unit-test-subgraph, run-unit-test-contracts]
     env:
