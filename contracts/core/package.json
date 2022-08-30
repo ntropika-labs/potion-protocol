@@ -58,6 +58,7 @@
         "report-coverage": "COVERAGE=1 hardhat coverage --solcoverjs ./.solcover.js --temp artifacts",
         "report-size": "hardhat compile; hardhat size-contracts > reports/contracts-size.txt; cat reports/contracts-size.txt",
         "docs": "solidity-docgen --solc-module solc-0.8 -e contracts/packages/solcV6OpynContractsForTesting -t ./templates -o reference",
+        "prepare-independent-local": "hardhat --network localhost run ./scripts/prepareIndependentDeployment.ts",
         "deploy-hardhat": "hardhat --network hardhat run ./scripts/deploy.ts",
         "deploy-local": "hardhat --network localhost run ./scripts/deploy.ts",
         "deploy-local.independent": "NETWORK_SUFFIX=independent hardhat --network localhost run ./scripts/deploy.ts",

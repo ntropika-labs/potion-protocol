@@ -38,9 +38,9 @@ export function isDeploymentParams(options: Signer | DeploymentParams | undefine
     );
 }
 
-export async function initDeployment() {
+export async function initDeployment(interfix: string = "") {
     // Initialize deployment info
-    const latestDeploymentFilename = network.name + ".json";
+    const latestDeploymentFilename = network.name + "." + interfix + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
 
     // Cycle the previous deployment info to keep a history of deployments. When deploying to localhost
