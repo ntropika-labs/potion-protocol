@@ -22,6 +22,11 @@ describe("percentageUtils", () => {
     expect(isPercentageInRange(0)).toBe(true);
     expect(isPercentageInRange(-10)).toBe(false);
     expect(isPercentageInRange(110)).toBe(false);
+
+    expect(isPercentageInRange(toSolidityPercentage(10))).toBe(true);
+    expect(isPercentageInRange(toSolidityPercentage(0))).toBe(true);
+    expect(isPercentageInRange(toSolidityPercentage(110))).toBe(false);
+    expect(isPercentageInRange(toSolidityPercentage(100))).toBe(true);
   });
   it("adds the percentage to the given amount and returns the result", () => {
     const amount = toSolidityPercentage(100);
