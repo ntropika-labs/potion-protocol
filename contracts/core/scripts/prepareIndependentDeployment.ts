@@ -1,7 +1,7 @@
 import { network, ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import { deploy, initDeployment, exportDeployments, exportContract } from "./utils/deployment";
+import { deploy, initDeployment, exportDeployments } from "./utils/deployment";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -11,7 +11,7 @@ if (process.env.NETWORK_SUFFIX) {
 }
 
 async function init() {
-    await initDeployment("independent");
+    await initDeployment();
 
     const deployer = (await ethers.provider.listAccounts())[0];
 
