@@ -30,6 +30,7 @@ export enum DeploymentOptions {
 export interface DeploymentParams extends FactoryOptions {
     options?: DeploymentOptions;
     alias?: string; // The deployed contract will be exported in the JSON file with this alias
+    contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
 }
 
 export function isDeploymentParams(options: Signer | DeploymentParams | undefined): options is DeploymentParams {
@@ -113,11 +114,16 @@ export async function exportContract(name: string, address: string, blockNumber:
     fs.writeFileSync(latestDeploymentPath, JSON.stringify(latestDeployment, null, 2));
 }
 
-export async function verify(contractAddress: string, args: unknown[]): Promise<boolean> {
+export async function verify(
+    contractAddress: string,
+    args: unknown[],
+    contract: unknown = undefined,
+): Promise<boolean> {
     try {
         await hre.run("verify:verify", {
             address: contractAddress,
             constructorArguments: args,
+            contract: contract,
         });
     } catch (error) {
         console.error(error);
@@ -133,11 +139,13 @@ export async function deploy(
     params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
 ): Promise<Contract> {
     let options = undefined,
-        alias = undefined;
+        alias = undefined,
+        verifyContract = undefined;
 
     if (isDeploymentParams(params)) {
         options = params.options;
         alias = params.alias;
+        verifyContract = params.contract;
     }
 
     let contract;
@@ -162,7 +170,7 @@ export async function deploy(
 
     if (contract && options && options & DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
+        await verify(contract.address, args, verifyContract);
     }
 
     return contract.deployed();

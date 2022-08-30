@@ -14,6 +14,28 @@ export const Deployments = {
         sampleUnderlyingTokenAddress: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
         oracleIsMock: true,
     },
+    "goerli.independent": {
+        timestamp: 1661872235,
+        network: "goerli",
+        contracts: {
+            WETH: {
+                address: "0x9889DfADE1d68488590DF17bbA882914535a8F92",
+                blockNumber: 7498251,
+            },
+            WBTC: {
+                address: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4",
+                blockNumber: 7498257,
+            },
+            USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 7498264,
+            },
+            ChainlinkAggregatorUSDC: {
+                address: "0x5fea417c193828eCF578933121De0B943E356a92",
+                blockNumber: 7498271,
+            },
+        },
+    },
     "kovan.demo": {
         collateralTokenAddress: "0x7e6edA50d1c833bE936492BF42C1BF376239E9e2",
         opynAddressBookAddress: "0x8812f219f507e8cfe9d2f1e790164714c5e06a73",

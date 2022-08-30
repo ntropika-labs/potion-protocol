@@ -5,5 +5,7 @@ import type * as faucetTokenSol from "./FaucetToken.sol";
 export type { faucetTokenSol };
 import type * as sampleUnderlyingSol from "./SampleUnderlying.sol";
 export type { sampleUnderlyingSol };
+export type { ChainlinkAggregatorUSDC } from "./ChainlinkAggregatorUSDC";
 export type { PotionLiquidityPoolUpgradeTest } from "./PotionLiquidityPoolUpgradeTest";
 export type { PotionTestUSD } from "./PotionTestUSD";
+export type { TestERC20MinterPauser } from "./TestERC20MinterPauser";

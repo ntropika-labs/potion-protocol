@@ -3,5 +3,7 @@
 /* eslint-disable */
 export * as faucetTokenSol from "./FaucetToken.sol";
 export * as sampleUnderlyingSol from "./SampleUnderlying.sol";
+export { ChainlinkAggregatorUSDC__factory } from "./ChainlinkAggregatorUSDC__factory";
 export { PotionLiquidityPoolUpgradeTest__factory } from "./PotionLiquidityPoolUpgradeTest__factory";
 export { PotionTestUSD__factory } from "./PotionTestUSD__factory";
+export { TestERC20MinterPauser__factory } from "./TestERC20MinterPauser__factory";
