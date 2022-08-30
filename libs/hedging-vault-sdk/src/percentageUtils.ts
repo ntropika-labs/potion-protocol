@@ -30,7 +30,7 @@ export const PERCENTAGE_100_BN = toSolidityPercentage(100.0);
     @return The amount after the percentage is applied
 
     @dev It performs the following operation:
-        (100.0 + percentage) * amount
+        (100.0 + percentage) * amount / 100.0
 */
 export function addPercentage(
   amount: BigNumber,
@@ -45,7 +45,7 @@ export function addPercentage(
     @return The amount after the percentage is applied
 
     @dev It performs the following operation:
-        (100.0 - percentage) * amount
+        (100.0 - percentage) * amount / 100.0
 */
 export function substractPercentage(
   amount: BigNumber,

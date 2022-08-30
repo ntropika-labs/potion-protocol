@@ -8,7 +8,7 @@ import type {
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
 // import { BigNumber } from "@ethersproject/bignumber";
-import { toPRBMath } from "hedging-vault-sdk";
+import { getRateInUD60x18 } from "hedging-vault-sdk";
 import { onMounted, ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
@@ -118,8 +118,9 @@ export function useHedgingVaultOperatorHelperContract() {
     const inputToken = swapInfo.steps[0].inputToken;
     if (!inputToken) throw new Error("At list 1 hop is required for the swap");
 
-    const expectedPriceRate = toPRBMath(
+    const expectedPriceRate = getRateInUD60x18(
       parseFloat(swapInfo.expectedPriceRate.toString()),
+      1,
       inputToken.decimals,
       swapInfo.outputToken.decimals
     );

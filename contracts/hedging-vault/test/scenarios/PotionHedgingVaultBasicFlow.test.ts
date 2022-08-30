@@ -282,7 +282,7 @@ describe("HedgingVault", function () {
         const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
-            expectedPriceRate: HedgingVaultUtils.toPRBMath(underlyingAssetPriceInUSD / USDCPriceInUSD, 18, 6),
+            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(underlyingAssetPriceInUSD, USDCPriceInUSD, 18, 6),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
@@ -372,7 +372,7 @@ describe("HedgingVault", function () {
         const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: HedgingVaultUtils.toPRBMath(USDCPriceInUSD / underlyingAssetPriceInUSD, 6, 18),
+            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingAssetPriceInUSD, 6, 18),
             swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
