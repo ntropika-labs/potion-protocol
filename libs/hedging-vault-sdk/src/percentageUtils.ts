@@ -1,10 +1,10 @@
-import { BigNumber } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
 
 /**
      @title PercentageUtils
-     
+
      @notice Helper library to handle percentages in the same format as the Solidity files
-     
+
      @author Roberto Cano <robercano>
   */
 
@@ -30,10 +30,13 @@ export const PERCENTAGE_100_BN = toSolidityPercentage(100.0);
     @return The amount after the percentage is applied
 
     @dev It performs the following operation:
-        (100.0 + percentage) * amount
+        (100.0 + percentage) * amount / 100.0
 */
-export function addPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
-    return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
+export function addPercentage(
+  amount: BigNumber,
+  percentage: BigNumber
+): BigNumber {
+  return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
 }
 
 /**
@@ -42,10 +45,13 @@ export function addPercentage(amount: BigNumber, percentage: BigNumber): BigNumb
     @return The amount after the percentage is applied
 
     @dev It performs the following operation:
-        (100.0 - percentage) * amount
+        (100.0 - percentage) * amount / 100.0
 */
-export function substractPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
-    return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
+export function substractPercentage(
+  amount: BigNumber,
+  percentage: BigNumber
+): BigNumber {
+  return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
 }
 
 /**
@@ -56,8 +62,11 @@ export function substractPercentage(amount: BigNumber, percentage: BigNumber): B
 
     @return The amount after the percentage is applied
 */
-export function applyPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
-    return amount.mul(percentage).div(PERCENTAGE_100_BN);
+export function applyPercentage(
+  amount: BigNumber,
+  percentage: BigNumber
+): BigNumber {
+  return amount.mul(percentage).div(PERCENTAGE_100_BN);
 }
 
 /**
@@ -68,23 +77,23 @@ export function applyPercentage(amount: BigNumber, percentage: BigNumber): BigNu
     @return True if the percentage is in range, false otherwise
 */
 export function isPercentageInRange(percentage: number | BigNumber): boolean {
-    if (typeof percentage === "number") {
-        return percentage >= 0 && percentage <= 100;
-    } else {
-        return percentage.lte(PERCENTAGE_100_BN);
-    }
+  if (typeof percentage === "number") {
+    return percentage >= 0 && percentage <= 100;
+  } else {
+    return percentage.lte(PERCENTAGE_100_BN);
+  }
 }
 
 /**
     @notice Transforms the given floating point percentage to the format used by the Solidity files
 */
 export function toSolidityPercentage(percentage: number): BigNumber {
-    return BigNumber.from(Math.floor(percentage * PERCENTAGE_FACTOR));
+  return BigNumber.from(Math.floor(percentage * PERCENTAGE_FACTOR));
 }
 
 /**
     @notice Transforms a percentage in the format used by the Solidity files to a floating point percentage
 */
 export function fromSolidityPercentage(percentage: BigNumber): number {
-    return percentage.div(PERCENTAGE_FACTOR).toNumber();
+  return percentage.div(PERCENTAGE_FACTOR).toNumber();
 }

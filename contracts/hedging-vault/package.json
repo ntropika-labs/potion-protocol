@@ -68,5 +68,8 @@
         "@potion-protocol/core": "workspace:^",
         "@prb/math": "^2.5.0",
         "@uniswap/v3-periphery": "^1.4.1"
+    },
+    "devDependencies": {
+        "hedging-vault-sdk": "workspace:^"
     }
 }

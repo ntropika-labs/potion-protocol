@@ -7,10 +7,10 @@ import type {
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
+import { getRateInUD60x18 } from "hedging-vault-sdk";
 import { onMounted, ref } from "vue";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
-import { BigNumber } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
@@ -56,23 +56,23 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   return utils.solidityPack(types, values);
 }
 
-export function toPRBMath(
-  numberRepresentation: string,
-  inputDecimals = 18,
-  outputDecimals = 18
-): BigNumber {
-  if (inputDecimals === outputDecimals) {
-    return parseUnits(numberRepresentation);
-  } else if (inputDecimals > outputDecimals) {
-    return parseUnits(numberRepresentation).div(
-      BigNumber.from(10).pow(inputDecimals - outputDecimals)
-    );
-  } else {
-    return parseUnits(numberRepresentation).mul(
-      BigNumber.from(10).pow(outputDecimals - inputDecimals)
-    );
-  }
-}
+// export function toPRBMath(
+//   numberRepresentation: string,
+//   inputDecimals = 18,
+//   outputDecimals = 18
+// ): BigNumber {
+//   if (inputDecimals === outputDecimals) {
+//     return parseUnits(numberRepresentation);
+//   } else if (inputDecimals > outputDecimals) {
+//     return parseUnits(numberRepresentation).div(
+//       BigNumber.from(10).pow(inputDecimals - outputDecimals)
+//     );
+//   } else {
+//     return parseUnits(numberRepresentation).mul(
+//       BigNumber.from(10).pow(outputDecimals - inputDecimals)
+//     );
+//   }
+// }
 
 export function useHedgingVaultOperatorHelperContract() {
   const { initContract } = useEthersContract();
@@ -117,8 +117,9 @@ export function useHedgingVaultOperatorHelperContract() {
     const inputToken = swapInfo.steps[0].inputToken;
     if (!inputToken) throw new Error("At list 1 hop is required for the swap");
 
-    const expectedPriceRate = toPRBMath(
-      swapInfo.expectedPriceRate.toString(),
+    const expectedPriceRate = getRateInUD60x18(
+      parseFloat(swapInfo.expectedPriceRate.toString()),
+      1,
       inputToken.decimals,
       swapInfo.outputToken.decimals
     );

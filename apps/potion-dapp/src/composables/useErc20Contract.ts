@@ -25,7 +25,7 @@ export function useErc20Contract(
   //Provider initialization
   const initContractProvider = () => {
     return initContract(
-      true,
+      false,
       false,
       ERC20Upgradeable__factory,
       unref(address).toLowerCase()

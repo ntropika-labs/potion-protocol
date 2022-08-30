@@ -4,7 +4,7 @@ import { ethers, network } from "hardhat";
 import { BigNumber } from "ethers";
 import { TestWrapperUniswapV3SwapLib, ISwapRouter, ISwapRouter__factory } from "../../typechain";
 
-import * as PercentageUtils from "../utils/PercentageUtils";
+import * as PercentageUtils from "hedging-vault-sdk";
 
 chai.use(smock.matchers);
 

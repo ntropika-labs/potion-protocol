@@ -44,6 +44,9 @@
     },
     {
       "path": "libs/dapp-types"
+    },
+    {
+      "path": "libs/hedging-vault-sdk"
     }
   ],
   "exclude": ["node_modules", "tmp", "dist"]
