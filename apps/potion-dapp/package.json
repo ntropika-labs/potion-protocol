@@ -25,11 +25,11 @@
   "dependencies": {
     "@potion-protocol/core": "*",
     "dapp-types": "*",
+    "hedging-vault-sdk": "*",
     "potion-router": "*",
     "potion-tokenlist": "*",
     "potion-ui": "*",
     "potion-unocss": "*",
-    "subgraph-queries": "*",
-    "hedging-vault-sdk": "*"
+    "subgraph-queries": "*"
   }
 }

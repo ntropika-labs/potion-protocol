@@ -20644,7 +20644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hedging-vault-sdk@workspace:libs/hedging-vault-sdk":
+"hedging-vault-sdk@*, hedging-vault-sdk@workspace:libs/hedging-vault-sdk":
   version: 0.0.0-use.local
   resolution: "hedging-vault-sdk@workspace:libs/hedging-vault-sdk"
   languageName: unknown
@@ -28729,6 +28729,7 @@ __metadata:
   dependencies:
     "@potion-protocol/core": "*"
     dapp-types: "*"
+    hedging-vault-sdk: "*"
     potion-router: "*"
     potion-tokenlist: "*"
     potion-ui: "*"
