@@ -9,7 +9,7 @@ import {
   isPercentageInRange,
   substractPercentage,
   toSolidityPercentage,
-} from "../../src/percentageUtils";
+} from "../src/percentageUtils";
 
 describe("percentageUtils", () => {
   it("the percentage is created correctly", () => {

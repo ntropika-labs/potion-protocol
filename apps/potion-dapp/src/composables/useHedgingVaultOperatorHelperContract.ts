@@ -7,7 +7,6 @@ import type {
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
-// import { BigNumber } from "@ethersproject/bignumber";
 import { getRateInUD60x18 } from "hedging-vault-sdk";
 import { onMounted, ref } from "vue";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getRateInUD60x18 } from "../PRBMathUtils";
+import { getRateInUD60x18 } from "../src/PRBMathUtils";
 import { toBn } from "evm-bn";
 
 describe("PRBMathUtils", () => {
