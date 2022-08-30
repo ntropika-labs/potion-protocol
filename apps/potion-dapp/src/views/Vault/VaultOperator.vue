@@ -132,7 +132,7 @@ const tokenAsset = computed(() => {
     name: assetName.value,
     symbol: assetSymbol.value,
     address: assetAddress.value.toLowerCase(),
-    decimas: assetDecimals.value,
+    decimals: assetDecimals.value,
     //image: assetImage.value, // TODO FIX
   };
 });
