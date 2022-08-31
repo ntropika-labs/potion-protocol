@@ -8,6 +8,7 @@ import {
     FaucetToken,
     MockERC20,
     MockOracle,
+    Oracle,
     OtokenFactory,
     PotionLiquidityPool,
     Whitelist,
@@ -133,6 +134,13 @@ export class Deployment implements DeploymentAddresses {
         const address = await (await this.addressBook()).getWhitelist();
         const contract = await Whitelist.attach(address);
         return contract as Whitelist;
+    }
+
+    public async oracle(): Promise<Oracle> {
+        const OracleFactory = await ethers.getContractFactory("Oracle");
+        const address = await (await this.addressBook()).getOracle();
+        const contract = await OracleFactory.attach(address);
+        return contract as Oracle;
     }
 
     public async mockedOracle(): Promise<MockOracle> {

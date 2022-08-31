@@ -1,6 +1,6 @@
 import type { Contract } from "ethers";
 import { network, ethers } from "hardhat";
-import { PotionLiquidityPool } from "../typechain";
+import { PotionLiquidityPool, Whitelist } from "../typechain";
 import { config as deployConfiguration, NetworkDeployConfig } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
@@ -129,36 +129,6 @@ async function deployOpynContracts(deployConfig: NetworkDeployConfig): Promise<s
     contractAddresses.set(CONTROLLER_CONTRACT_NAME, controller.address);
 
     await updateAddressBook(addressbook);
-
-    if (deployConfig.pricerConfigs !== undefined) {
-        const oracleAddress = contractAddresses.get(ORACLE_CONTRACT_NAME);
-        const oracleFactory = await ethers.getContractFactory(ORACLE_CONTRACT_NAME);
-        const oracle = await oracleFactory.attach(oracleAddress);
-
-        console.log("Deploying pricers...");
-        for (const pricerConfig of deployConfig.pricerConfigs) {
-            console.log(" - " + JSON.stringify(pricerConfig));
-            const pricer = await deploy(
-                CHAINLINK_PRICER_CONTRACT_NAME,
-                [
-                    pricerConfig.relayerAddress,
-                    pricerConfig.assetAddress,
-                    pricerConfig.chainlinkAggregatorAddress,
-                    contractAddresses.get(ORACLE_CONTRACT_NAME),
-                ],
-                {
-                    alias: CHAINLINK_PRICER_CONTRACT_NAME + pricerConfig.assetName,
-                },
-            );
-
-            console.log(`  - Deployed ${pricerConfig.assetName} pricer to ${pricer.address}`);
-
-            const tx = await oracle.setAssetPricer(pricerConfig.assetAddress, pricer.address);
-            await tx.wait();
-
-            console.log(`  - Configured ${pricerConfig.assetName} pricer for Oracle`);
-        }
-    }
 
     return addressbook.address;
 }

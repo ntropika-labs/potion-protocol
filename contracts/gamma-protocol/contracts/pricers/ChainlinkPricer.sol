@@ -40,9 +40,18 @@ contract ChainLinkPricer is OpynPricerInterface {
         address _aggregator,
         address _oracle
     ) public {
-        require(_bot != address(0), "ChainLinkPricer: Cannot set 0 address as bot");
-        require(_oracle != address(0), "ChainLinkPricer: Cannot set 0 address as oracle");
-        require(_aggregator != address(0), "ChainLinkPricer: Cannot set 0 address as aggregator");
+        require(
+            _bot != address(0),
+            "ChainLinkPricer: Cannot set 0 address as bot"
+        );
+        require(
+            _oracle != address(0),
+            "ChainLinkPricer: Cannot set 0 address as oracle"
+        );
+        require(
+            _aggregator != address(0),
+            "ChainLinkPricer: Cannot set 0 address as aggregator"
+        );
 
         bot = _bot;
         oracle = OracleInterface(_oracle);
@@ -67,10 +76,18 @@ contract ChainLinkPricer is OpynPricerInterface {
      * @param _expiryTimestamp expiry to set a price for
      * @param _roundId the first roundId after expiryTimestamp
      */
-    function setExpiryPriceInOracle(uint256 _expiryTimestamp, uint80 _roundId) external onlyBot {
-        (, int256 price, , uint256 roundTimestamp, ) = aggregator.getRoundData(_roundId);
+    function setExpiryPriceInOracle(uint256 _expiryTimestamp, uint80 _roundId)
+        external
+        onlyBot
+    {
+        (, int256 price, , uint256 roundTimestamp, ) = aggregator.getRoundData(
+            _roundId
+        );
 
-        require(_expiryTimestamp <= roundTimestamp, "ChainLinkPricer: invalid roundId");
+        require(
+            _expiryTimestamp <= roundTimestamp,
+            "ChainLinkPricer: invalid roundId"
+        );
 
         oracle.setExpiryPrice(asset, _expiryTimestamp, uint256(price));
     }
@@ -80,7 +97,7 @@ contract ChainLinkPricer is OpynPricerInterface {
      * @dev overides the getPrice function in OpynPricerInterface
      * @return price of the asset in USD, scaled by 1e8
      */
-    function getPrice() external override view returns (uint256) {
+    function getPrice() external view override returns (uint256) {
         (, int256 answer, , , ) = aggregator.latestRoundData();
         require(answer > 0, "ChainLinkPricer: price is lower than 0");
         // chainlink's answer is already 1e8
@@ -92,8 +109,15 @@ contract ChainLinkPricer is OpynPricerInterface {
      * @param _roundId chainlink round id
      * @return round price and timestamp
      */
-    function getHistoricalPrice(uint80 _roundId) external override view returns (uint256, uint256) {
-        (, int256 price, , uint256 roundTimestamp, ) = aggregator.getRoundData(_roundId);
+    function getHistoricalPrice(uint80 _roundId)
+        external
+        view
+        override
+        returns (uint256, uint256)
+    {
+        (, int256 price, , uint256 roundTimestamp, ) = aggregator.getRoundData(
+            _roundId
+        );
         return (_scaleToBase(uint256(price)), roundTimestamp);
     }
 

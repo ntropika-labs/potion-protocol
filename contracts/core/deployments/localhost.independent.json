@@ -1,22 +1,70 @@
 {
-  "timestamp": 1661869216,
+  "timestamp": 1661938622,
   "network": "localhost",
   "contracts": {
-    "WETH": {
-      "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
-      "blockNumber": 16
+    "AddressBook": {
+      "address": "0xE1C86e8E80DE01b8A87344C808671D61aEE05b33",
+      "blockNumber": 7502579
     },
-    "WBTC": {
-      "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
-      "blockNumber": 17
+    "Otoken": {
+      "address": "0x12d73e63281fD1387290D75a66861B5368B4a616",
+      "blockNumber": 7502580
+    },
+    "Oracle": {
+      "address": "0xb8B814Fd019C00888eb34721f87aa82E3f2E1F28",
+      "blockNumber": 7502585
+    },
+    "MarginCalculator": {
+      "address": "0x15cAbd0536f9707d1c03b21dDdC556726D7FF136",
+      "blockNumber": 7502590
+    },
+    "OtokenFactory": {
+      "address": "0x58Be5Ec7F96Ef12B6d8B41611AdE2205F0AD1df7",
+      "blockNumber": 7502595
+    },
+    "Whitelist": {
+      "address": "0xFE0Ef5a9B7cA4FB1a327f48771cA9b4725063A64",
+      "blockNumber": 7502600
+    },
+    "MarginPool": {
+      "address": "0x85bdC135Bc56C3707551E9FEa8c5d7e31C82d16a",
+      "blockNumber": 7502605
+    },
+    "MarginVault": {
+      "address": "0x7B9985adBc2629d3e80C18397837A967399E8EAd",
+      "blockNumber": 7502610
+    },
+    "Controller": {
+      "address": "0x1B5AdE7927F798171F34e94a143113443ec46435",
+      "blockNumber": 7502619
     },
     "USDC": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "blockNumber": 18
+      "address": "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+      "blockNumber": 0
     },
-    "ChainlinkAggregatorUSDC": {
-      "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
-      "blockNumber": 19
+    "CurveManager": {
+      "address": "0x6863952619b2a5f6556F32Cb05De23CC5d080255",
+      "blockNumber": 7502653
+    },
+    "CriteriaManager": {
+      "address": "0xF09d18a431C56E859885B37582BD6BDd2333b54C",
+      "blockNumber": 7502657
+    },
+    "PotionLiquidityPool": {
+      "address": "0xe6F314143AE46b5b0594Ae7C88e6A39D36964bb7",
+      "blockNumber": 7502671
+    },
+    "ChainLinkPricerWETH": {
+      "address": "0xEdBe4b9b9d47B432A8e8230b97E2e1eE78d23591",
+      "blockNumber": 7502691
+    },
+    "ChainLinkPricerWBTC": {
+      "address": "0xe7dA9C7486556ec0061b6dac078a8569A6873088",
+      "blockNumber": 7502698
+    },
+    "ChainLinkPricerUSDC": {
+      "address": "0xF771D9111454D58D728d731752770B6Bf5Ad35Bf",
+      "blockNumber": 7502708
     }
   }
 }
