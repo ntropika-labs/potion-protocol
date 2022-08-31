@@ -1,4 +1,4 @@
-import { network, ethers } from "hardhat";
+import { ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { deploy, initDeployment, exportDeployments, DeploymentOptions } from "./utils/deployment";
@@ -6,7 +6,7 @@ import { getHardhatNetworkName, getDeploymentsNetworkName } from "./utils/networ
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-let networkName = getDeploymentsNetworkName();
+const networkName = getDeploymentsNetworkName();
 
 async function init() {
     await initDeployment();

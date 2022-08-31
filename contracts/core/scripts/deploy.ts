@@ -1,7 +1,7 @@
 import type { Contract } from "ethers";
 import { ethers } from "hardhat";
 import { PotionLiquidityPool } from "../typechain";
-import { config as deployConfiguration, NetworkDeployConfig } from "./lib/deployConfig";
+import { config as deployConfiguration } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
@@ -82,7 +82,7 @@ async function updateAddressBook(addressbook: Contract) {
 }
 
 // Deploys all of the Opyn contracts and returns the address of the addressbook contract
-async function deployOpynContracts(deployConfig: NetworkDeployConfig): Promise<string> {
+async function deployOpynContracts(): Promise<string> {
     console.log("Deploying Opyn Gamma protocol...");
 
     // Deploy the address book and other Opyn contracts
@@ -134,7 +134,7 @@ async function main() {
     await init();
 
     if (!deployConfig.opynAddressBook) {
-        deployConfig.opynAddressBook = await deployOpynContracts(deployConfig);
+        deployConfig.opynAddressBook = await deployOpynContracts();
     }
     const AddressBookFactory = await ethers.getContractFactory("AddressBook");
     const addressBook = await AddressBookFactory.attach(deployConfig.opynAddressBook);
