@@ -2,14 +2,11 @@ import { network, ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { deploy, initDeployment, exportDeployments, DeploymentOptions } from "./utils/deployment";
-import { getHardhatNetworkName } from "./utils/network";
+import { getHardhatNetworkName, getDeploymentsNetworkName } from "./utils/network";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-let networkName = network.name;
-if (process.env.NETWORK_SUFFIX) {
-    networkName = networkName + "." + process.env.NETWORK_SUFFIX;
-}
+let networkName = getDeploymentsNetworkName();
 
 async function init() {
     await initDeployment();

@@ -1,19 +1,17 @@
 import type { Contract } from "ethers";
-import { network, ethers } from "hardhat";
-import { PotionLiquidityPool, Whitelist } from "../typechain";
+import { ethers } from "hardhat";
+import { PotionLiquidityPool } from "../typechain";
 import { config as deployConfiguration, NetworkDeployConfig } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { deploy, deployUpgrade, initDeployment, exportDeployments, exportContract } from "./utils/deployment";
+import { getDeploymentsNetworkName } from "./utils/network";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-let networkName = network.name;
-if (process.env.NETWORK_SUFFIX) {
-    networkName = networkName + "." + process.env.NETWORK_SUFFIX;
-}
+const networkName = getDeploymentsNetworkName();
 
 const deployConfig = deployConfiguration[networkName];
 
@@ -29,7 +27,6 @@ const MARGIN_POOL_CONTRACT_NAME = "MarginPool";
 const MARGIN_CALCULATOR_CONTRACT_NAME = "MarginCalculator";
 const CONTROLLER_CONTRACT_NAME = "Controller";
 const MARGIN_VAULT_LIB_NAME = "MarginVaultLib";
-const CHAINLINK_PRICER_CONTRACT_NAME = "ChainLinkPricer";
 const CONTRACTS_TO_DEPLOY_WITH_NO_PARAM = [OTOKEN_CONTRACT_NAME, ORACLE_CONTRACT_NAME];
 const CONTRACTS_TO_DEPLOY_WITH_ORACLE_PARAM = [MARGIN_CALCULATOR_CONTRACT_NAME];
 const CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM = [

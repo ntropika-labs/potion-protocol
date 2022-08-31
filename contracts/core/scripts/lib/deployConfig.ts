@@ -209,7 +209,7 @@ export const config: NetworkDeployConfigMap = {
             new InitializeMockOracle(1000),
         ],
     },
-    "localhost.independent": {
+    "localhost.goerli": {
         collateralToken: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
         sampleUnderlyingToken: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
         postDeployActions: [
@@ -234,6 +234,25 @@ export const config: NetworkDeployConfigMap = {
                 relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
                 assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
                 chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
+            }),
+        ],
+    },
+    "localhost.independent": {
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new DeploySampleUnderlyingToken("PTNETH"),
+            new DeploySampleUnderlyingToken("PTNUNI"),
+            new DeploySampleUnderlyingToken("PTNLINK"),
+            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
+            new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000")),
+            new DeployCurves(),
+            new DeployCriteriaAndCriteriaSets(),
+            new InitializeSamplePoolsOfCapital(),
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
+                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
+                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
             }),
         ],
     },

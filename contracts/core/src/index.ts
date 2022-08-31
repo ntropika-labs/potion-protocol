@@ -69,6 +69,76 @@ export const Deployments = {
         whitelistAddress: "0x9164eB40a1b59512F1803aB4C2d1dE4B89627A93",
         network: "kovan",
     },
+    "localhost.goerli": {
+        timestamp: 1661939003,
+        network: "localhost",
+        contracts: {
+            AddressBook: {
+                address: "0x0F9fFED1201De979dBe3A1562463B99bd5e7aB36",
+                blockNumber: 7502960,
+            },
+            Otoken: {
+                address: "0x42c0A0437106284c9aE4a3A3acb0199bF148B3eb",
+                blockNumber: 7502964,
+            },
+            Oracle: {
+                address: "0x112774740cD0D7a3cA68e8F6a7b3d15650821600",
+                blockNumber: 7502965,
+            },
+            MarginCalculator: {
+                address: "0x2EFBA7923E9A32A4C239BD2f7Da0c5b0e22a909E",
+                blockNumber: 7502970,
+            },
+            OtokenFactory: {
+                address: "0x4Af81C96d19315212358f9E4a774bBcC0390B5f0",
+                blockNumber: 7502975,
+            },
+            Whitelist: {
+                address: "0xe7D757FdeB78A806A72A652ac411738DEbC1670E",
+                blockNumber: 7502980,
+            },
+            MarginPool: {
+                address: "0x1CD1a7E4158Eb444bC55AaE2b89bE7E03a4E6Ae5",
+                blockNumber: 7502985,
+            },
+            MarginVault: {
+                address: "0xf189e9EBCE19Ca3FC94427e64d4fa64D4118a180",
+                blockNumber: 7502990,
+            },
+            Controller: {
+                address: "0x9589f149FDcEe08aB054525EF8228F10CFD359C2",
+                blockNumber: 7502999,
+            },
+            USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 0,
+            },
+            CurveManager: {
+                address: "0x69dd60b4a7Bf521Dd7bFA1871FaB6C237191191d",
+                blockNumber: 7503033,
+            },
+            CriteriaManager: {
+                address: "0x7F00A7d1Cf59dCf0857aD6bDa376ecaA0662aD9C",
+                blockNumber: 7503038,
+            },
+            PotionLiquidityPool: {
+                address: "0x6b81e57848A75369cC5F13ED98c62412a40F19E7",
+                blockNumber: 7503045,
+            },
+            ChainLinkPricerWETH: {
+                address: "0x69FDC34D9deC661EB590515a5194Ce19d52B4596",
+                blockNumber: 7503064,
+            },
+            ChainLinkPricerWBTC: {
+                address: "0xF6987b595D4196A40db287ef77eEf181BB045272",
+                blockNumber: 7503074,
+            },
+            ChainLinkPricerUSDC: {
+                address: "0x93dc9AdeABcD0B36ce7F46B0e852E77B3Fd35bFE",
+                blockNumber: 7503083,
+            },
+        },
+    },
     "localhost.independent": {
         timestamp: 1661938622,
         network: "localhost",

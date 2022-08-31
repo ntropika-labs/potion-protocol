@@ -64,6 +64,7 @@
         "deploy-hardhat": "hardhat --network hardhat run ./scripts/deploy.ts",
         "deploy-local": "hardhat --network localhost run ./scripts/deploy.ts",
         "deploy-local.independent": "NETWORK_SUFFIX=independent hardhat --network localhost run ./scripts/deploy.ts",
+        "deploy-local.goerli": "NETWORK_SUFFIX=goerli hardhat --network localhost run ./scripts/deploy.ts",
         "deploy-local.hedging": "NETWORK_SUFFIX=hedging hardhat --network localhost run ./scripts/deploy.ts",
         "deploy-kovan": "hardhat --network kovan run ./scripts/deploy.ts",
         "deploy-kovan.independent": "NETWORK_SUFFIX=independent hardhat --network kovan run ./scripts/deploy.ts",
