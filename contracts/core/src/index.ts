@@ -14,6 +14,28 @@ export const Deployments = {
         sampleUnderlyingTokenAddress: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
         oracleIsMock: true,
     },
+    "goerli.independent": {
+        timestamp: 1661872235,
+        network: "goerli",
+        contracts: {
+            WETH: {
+                address: "0x9889DfADE1d68488590DF17bbA882914535a8F92",
+                blockNumber: 7498251,
+            },
+            WBTC: {
+                address: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4",
+                blockNumber: 7498257,
+            },
+            USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 7498264,
+            },
+            ChainlinkAggregatorUSDC: {
+                address: "0x5fea417c193828eCF578933121De0B943E356a92",
+                blockNumber: 7498271,
+            },
+        },
+    },
     "kovan.demo": {
         collateralTokenAddress: "0x7e6edA50d1c833bE936492BF42C1BF376239E9e2",
         opynAddressBookAddress: "0x8812f219f507e8cfe9d2f1e790164714c5e06a73",
@@ -46,6 +68,28 @@ export const Deployments = {
         otokenFactoryAddress: "0xb9D17Ab06e27f63d0FD75099d5874a194eE623e2",
         whitelistAddress: "0x9164eB40a1b59512F1803aB4C2d1dE4B89627A93",
         network: "kovan",
+    },
+    "localhost.independent": {
+        timestamp: 1661869216,
+        network: "localhost",
+        contracts: {
+            WETH: {
+                address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+                blockNumber: 16,
+            },
+            WBTC: {
+                address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+                blockNumber: 17,
+            },
+            USDC: {
+                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+                blockNumber: 18,
+            },
+            ChainlinkAggregatorUSDC: {
+                address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+                blockNumber: 19,
+            },
+        },
     },
     localhost: {
         timestamp: 1661782513,
@@ -92,8 +136,8 @@ export const Deployments = {
                 blockNumber: 18,
             },
             USDC: {
-                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-                blockNumber: 0,
+                address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+                blockNumber: 10,
             },
             CurveManager: {
                 address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
@@ -114,6 +158,18 @@ export const Deployments = {
             MockOracle: {
                 address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
                 blockNumber: 63,
+            },
+            WETH: {
+                address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+                blockNumber: 8,
+            },
+            WBTC: {
+                address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+                blockNumber: 9,
+            },
+            ChainlinkAggregatorUSDC: {
+                address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+                blockNumber: 11,
             },
         },
     },

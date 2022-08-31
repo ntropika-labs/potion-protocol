@@ -43,8 +43,8 @@
       "blockNumber": 18
     },
     "USDC": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "blockNumber": 0
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "blockNumber": 10
     },
     "CurveManager": {
       "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
@@ -65,6 +65,18 @@
     "MockOracle": {
       "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
       "blockNumber": 63
+    },
+    "WETH": {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "blockNumber": 8
+    },
+    "WBTC": {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "blockNumber": 9
+    },
+    "ChainlinkAggregatorUSDC": {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "blockNumber": 11
     }
   }
 }

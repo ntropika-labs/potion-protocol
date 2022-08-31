@@ -93,7 +93,7 @@ const config: HardhatUserConfig = {
             ":ICriteriaManager$",
             ":ICurveManager$",
             ":IERC20MetadataUpgradeable$",
-            ":ERC20$",
+            //":ERC20$",
             // scripts/compareAbis.ts checks that our interface definitions are up to date
             // To facilitate this, we dump ABIs for our interfaces and for each of the contracts they represent
             // Some of these are alos required for the vue or subgraph code

@@ -1,9 +1,10 @@
 import { config as dotenvConfig } from "dotenv";
 import { Contract, Signer } from "ethers";
 import fs from "fs";
-import hre, { ethers, network, upgrades } from "hardhat";
+import hre, { ethers, upgrades } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
+import { getDeploymentsNetworkName, getHardhatNetworkName } from "./network";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -29,6 +30,7 @@ export enum DeploymentOptions {
 export interface DeploymentParams extends FactoryOptions {
     options?: DeploymentOptions;
     alias?: string; // The deployed contract will be exported in the JSON file with this alias
+    contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
 }
 
 export function isDeploymentParams(options: Signer | DeploymentParams | undefined): options is DeploymentParams {
@@ -39,23 +41,26 @@ export function isDeploymentParams(options: Signer | DeploymentParams | undefine
 }
 
 export async function initDeployment() {
+    const deploymentNetworkName = getDeploymentsNetworkName();
+    const hardatNetworkName = getHardhatNetworkName();
+
     // Initialize deployment info
-    const latestDeploymentFilename = network.name + ".json";
+    const latestDeploymentFilename = deploymentNetworkName + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
 
     // Cycle the previous deployment info to keep a history of deployments. When deploying to localhost
     // only the latest deployment is kept.
-    if (network.name !== "localhost" && network.name !== "hardhat" && fs.existsSync(latestDeploymentPath)) {
+    if (hardatNetworkName !== "localhost" && hardatNetworkName !== "hardhat" && fs.existsSync(latestDeploymentPath)) {
         const latestDeployment = JSON.parse(fs.readFileSync(latestDeploymentPath, "utf8"));
         const timestamp = latestDeployment.timestamp;
 
-        const newDeploymentPath = resolve(deploymentsDir, network.name + "-" + timestamp + ".json");
+        const newDeploymentPath = resolve(deploymentsDir, deploymentNetworkName + "-" + timestamp + ".json");
         fs.renameSync(latestDeploymentPath, newDeploymentPath);
     }
 
     const deploymentsObject = {
         timestamp: Math.floor(new Date().getTime() / 1000),
-        network: network.name,
+        network: hardatNetworkName,
         contracts: {},
     };
 
@@ -94,8 +99,10 @@ export async function exportDeployments() {
 }
 
 export async function exportContract(name: string, address: string, blockNumber: number) {
+    const networkName = getDeploymentsNetworkName();
+
     // Export deployment info
-    const latestDeploymentFilename = network.name + ".json";
+    const latestDeploymentFilename = networkName + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
 
     if (!fs.existsSync(latestDeploymentPath)) {
@@ -107,11 +114,16 @@ export async function exportContract(name: string, address: string, blockNumber:
     fs.writeFileSync(latestDeploymentPath, JSON.stringify(latestDeployment, null, 2));
 }
 
-export async function verify(contractAddress: string, args: unknown[]): Promise<boolean> {
+export async function verify(
+    contractAddress: string,
+    args: unknown[],
+    contract: unknown = undefined,
+): Promise<boolean> {
     try {
         await hre.run("verify:verify", {
             address: contractAddress,
             constructorArguments: args,
+            contract: contract,
         });
     } catch (error) {
         console.error(error);
@@ -127,11 +139,13 @@ export async function deploy(
     params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
 ): Promise<Contract> {
     let options = undefined,
-        alias = undefined;
+        alias = undefined,
+        verifyContract = undefined;
 
     if (isDeploymentParams(params)) {
         options = params.options;
         alias = params.alias;
+        verifyContract = params.contract;
     }
 
     let contract;
@@ -156,7 +170,7 @@ export async function deploy(
 
     if (contract && options && options & DeploymentFlags.Verify) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
+        await verify(contract.address, args, verifyContract);
     }
 
     return contract.deployed();
