@@ -1,10 +1,11 @@
 <template>
-  <div class="flex w-full space-x-4 uppercase font-bold text-xs">
+  <div test-inner-nav class="flex w-full space-x-4 uppercase font-bold text-xs">
     <template v-for="route in props.routes">
       <router-link
         v-if="route.enabled"
         :key="`enabled-${route.name}`"
         class="text-dirty-white-300"
+        :test-route-link="route.name"
         :to="route"
       >
         {{ route.label }}
@@ -16,6 +17,7 @@
       <span
         v-else
         :key="`disabled-${route.name}`"
+        :test-disabled-route="route.name"
         class="text-dwhite-300/30 cursor-not-allowed"
         >{{ route.label }}</span
       >

@@ -1,5 +1,5 @@
 <template>
-  <BaseCard class="group relative">
+  <BaseCard test-potion-card class="group relative">
     <div
       class="absolute top-0 left-0 w-full h-full opacity-0 transition-opacity rounded-3xl group-hover:opacity-100 bg-radial-primary"
     ></div>

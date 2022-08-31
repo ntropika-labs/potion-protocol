@@ -39,7 +39,11 @@ const { t } = useI18n();
 const tagText = computed(() => props.tokens.map((t) => t.symbol).join("+"));
 </script>
 <template>
-  <BaseCard :full-height="false" class="text-dwhite-400 relative">
+  <BaseCard
+    :full-height="false"
+    class="text-dwhite-400 relative"
+    test-pool-template-card
+  >
     <div
       class="grid grid-flow-row grid-cols-1 gap-6 p-6 transition-all hover:opacity-0 rounded-3xl"
     >

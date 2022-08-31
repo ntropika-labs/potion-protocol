@@ -37,7 +37,7 @@ Example Queries: [docs/schemas.md](docs/schemas.md)
 
 First log in to https://thegraph.com/hosted-service/dashboard and create yourself a subgraph. Once you have a subgraph you should see an "access token" in the top-center.
 
-1. Ensure you have the correct config in subgraph.yaml. E.g. run `yarn prepare-kovan` or `yarn prepare-kovan-independent`
+1. Ensure you have the correct config in subgraph.yaml. E.g. run `yarn prepare-goerli` or `yarn prepare-goerli-independent`
 2. Authenticate the CLI: `yarn auth-hosted <your access token>`
 3. Build the subgraph: `yarn codegen && yarn build`
 4. Deploy the subgraph: `yarn deploy-hosted <your subgraph name>`. You will need to specify a version number.
