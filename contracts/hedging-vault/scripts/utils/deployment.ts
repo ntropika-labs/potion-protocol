@@ -1,10 +1,11 @@
 import { config as dotenvConfig } from "dotenv";
 import { Contract, Signer, BaseContract } from "ethers";
 import fs from "fs";
-import hre, { ethers, network, upgrades } from "hardhat";
+import hre, { ethers, upgrades } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
 import { smock, MockContract } from "@defi-wonderland/smock";
+import { getDeploymentsNetworkName, getHardhatNetworkName } from "./network";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -35,23 +36,26 @@ export function isDeploymentOptions(options: Signer | DeploymentOptions | undefi
 }
 
 export async function initDeployment(contractExportEnabled: boolean = false) {
+    const deploymentNetworkName = getDeploymentsNetworkName();
+    const hardatNetworkName = getHardhatNetworkName();
+
     // Initialize deployment info
-    const latestDeploymentFilename = network.name + ".json";
+    const latestDeploymentFilename = deploymentNetworkName + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
 
     // Cycle the previous deployment info to keep a history of deployments. When deploying to localhost
     // only the latest deployment is kept.
-    if (network.name !== "localhost" && network.name !== "hardhat" && fs.existsSync(latestDeploymentPath)) {
+    if (hardatNetworkName !== "localhost" && hardatNetworkName !== "hardhat" && fs.existsSync(latestDeploymentPath)) {
         const latestDeployment = JSON.parse(fs.readFileSync(latestDeploymentPath, "utf8"));
         const timestamp = latestDeployment.timestamp;
 
-        const newDeploymentPath = resolve(deploymentsDir, network.name + "-" + timestamp + ".json");
+        const newDeploymentPath = resolve(deploymentsDir, deploymentNetworkName + "-" + timestamp + ".json");
         fs.renameSync(latestDeploymentPath, newDeploymentPath);
     }
 
     const deploymentsObject = {
         timestamp: Math.floor(new Date().getTime() / 1000),
-        network: network.name,
+        network: hardatNetworkName,
         contracts: {},
     };
 
@@ -92,8 +96,10 @@ export async function exportDeployments() {
 }
 
 export async function exportContract(name: string, address: string, blockNumber: number = 0) {
+    const networkName = getDeploymentsNetworkName();
+
     // Export deployment info
-    const latestDeploymentFilename = network.name + ".json";
+    const latestDeploymentFilename = networkName + ".json";
     const latestDeploymentPath = resolve(deploymentsDir, latestDeploymentFilename);
 
     if (!fs.existsSync(latestDeploymentPath)) {

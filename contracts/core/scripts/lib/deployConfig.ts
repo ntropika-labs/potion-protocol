@@ -23,24 +23,18 @@ import { DeploySampleUnderlyingToken } from "./postDeployActions/DeploySampleUnd
 import { CreateOtokens, InitializeSamplePurchases } from "./postDeployActions/OtokensAndPurchaseActions";
 import { SettleAllExpiredOtokens } from "./postDeployActions/SettleAllExpiredOtokens";
 import { priceHistory1 } from "./postDeployActions/dataForImport/priceHistory.json";
+import { WhitelistUnderlying } from "./postDeployActions/WhitelistUnderlying";
+import { DeployChainlinkPricer, PricerConfig } from "./postDeployActions/DeployChainlinkPricer";
 
 function parseUsdcAmount(dollars: BigNumberish): BigNumber {
     return BigNumber.from(dollars).mul(1e6);
 }
 
-export interface PricerConfig {
-    assetName: string;
-    assetAddress: string;
-    relayerAddress: string;
-    chainlinkAggregatorAddress: string;
-}
 export interface NetworkDeployConfig {
     collateralToken?: string;
     opynAddressBook?: string;
     sampleUnderlyingToken?: string;
     postDeployActions: PostDeployAction[];
-    whitelistedTokenAddresses?: string[];
-    pricerConfigs?: PricerConfig[];
 }
 export interface NetworkDeployConfigMap {
     [networkName: string]: NetworkDeployConfig;
@@ -127,8 +121,8 @@ export const config: NetworkDeployConfigMap = {
         postDeployActions: [
             new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
             new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000"), false),
+            new WhitelistUnderlying("0x50570256f0da172a1908207aAf0c80d4b279f303"),
         ],
-        whitelistedTokenAddresses: ["0x50570256f0da172a1908207aAf0c80d4b279f303"],
     },
     // Added to keep the previous independent deployment post-deploy actions in case we need to
     // deploy a similar scenario
@@ -150,14 +144,6 @@ export const config: NetworkDeployConfigMap = {
 
     // The kovan.independent deployment deploys Opyn and Potion from the ground up, so that we control even the Opyn contracts
     "kovan.independent": {
-        pricerConfigs: [
-            {
-                assetName: "WETH",
-                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
-                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
-                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
-            },
-        ],
         postDeployActions: [
             new WhitelistCollateral(),
             new DeploySampleUnderlyingToken("PTNETH"),
@@ -168,9 +154,47 @@ export const config: NetworkDeployConfigMap = {
             new DeployCurves(),
             new DeployCriteriaAndCriteriaSets(),
             new InitializeSamplePoolsOfCapital(),
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
+                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
+                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
+            }),
         ],
     },
     goerli: newSelfContainedEcosystemConfig,
+
+    // The goerli.independent deployment deploys Opyn and Potion from the ground up, so that we control even the Opyn contracts
+    // It relies on previous deployment of the custom tokens and USDC aggregator. It also deploys the neccessary pricers
+    // for the custom tokens
+    "goerli.independent": {
+        collateralToken: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+        sampleUnderlyingToken: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x9889DfADE1d68488590DF17bbA882914535a8F92"), // Custom WETH
+            new WhitelistUnderlying("0x667c04420C2B8D319ac24f6E605dCC28759C55f4"), // Custom WBTC
+            new WhitelistUnderlying("0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7"), // Custom USDC
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WBTC
+                chainlinkAggregatorAddress: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4", // Custom WBTC
+                chainlinkAggregatorAddress: "0xA39434A63A52E749F02807ae27335515BA4b07F7", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+                chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
+            }),
+        ],
+    },
     localhost: newSelfContainedEcosystemConfig,
     "localhost.hedging": {
         postDeployActions: [
@@ -185,15 +209,35 @@ export const config: NetworkDeployConfigMap = {
             new InitializeMockOracle(1000),
         ],
     },
-    "localhost.independent": {
-        pricerConfigs: [
-            {
+    "localhost.goerli": {
+        collateralToken: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+        sampleUnderlyingToken: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x9889DfADE1d68488590DF17bbA882914535a8F92"), // Custom WETH
+            new WhitelistUnderlying("0x667c04420C2B8D319ac24f6E605dCC28759C55f4"), // Custom WBTC
+            new WhitelistUnderlying("0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7"), // Custom USDC
+            new DeployChainlinkPricer({
                 assetName: "WETH",
-                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
-                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
-                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
-            },
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WBTC
+                chainlinkAggregatorAddress: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4", // Custom WBTC
+                chainlinkAggregatorAddress: "0xA39434A63A52E749F02807ae27335515BA4b07F7", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+                chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
+            }),
         ],
+    },
+    "localhost.independent": {
         postDeployActions: [
             new WhitelistCollateral(),
             new DeploySampleUnderlyingToken("PTNETH"),
@@ -204,6 +248,12 @@ export const config: NetworkDeployConfigMap = {
             new DeployCurves(),
             new DeployCriteriaAndCriteriaSets(),
             new InitializeSamplePoolsOfCapital(),
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
+                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
+                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
+            }),
         ],
     },
     ganache: newSelfContainedEcosystemConfig,

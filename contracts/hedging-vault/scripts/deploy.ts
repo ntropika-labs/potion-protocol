@@ -6,7 +6,7 @@ import { getDeploymentConfig, deployTestingEnv } from "./test/TestingEnv";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { initDeployment, exportDeployments } from "./utils/deployment";
-import { NetworksType } from "../hardhat.helpers";
+import { getDeploymentsNetworkName, getHardhatNetworkName } from "./utils/network";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -16,6 +16,9 @@ if (!potionProtocolDeployment) {
 }
 
 async function main() {
+    const networkName = getHardhatNetworkName();
+    const deploymentNetworkName = getDeploymentsNetworkName();
+
     await initDeployment(true);
 
     const deployer = (await ethers.provider.listAccounts())[0];
@@ -23,13 +26,14 @@ async function main() {
     console.log(`---------------------------------------------------`);
     console.log(` Hedging Vault Deployment Script`);
     console.log(`---------------------------------------------------`);
-    console.log(`- Network ${network.name}`);
+    console.log(`- Network ${networkName}`);
+    console.log(`- Deployment Config '${deploymentNetworkName}'`);
     console.log(`- Deployer: ${deployer}`);
     console.log(`---------------------------------------------------\n`);
 
-    const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(network.name as NetworksType);
+    const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(deploymentNetworkName);
     if (!deploymentConfig) {
-        throw new Error(`No deploy config found for network '${network.name}'`);
+        throw new Error(`No deploy config found for network '${networkName}'`);
     }
 
     await deployTestingEnv(deploymentConfig, true);

@@ -1,14 +1,12 @@
-import { network, ethers } from "hardhat";
+import { ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { deploy, initDeployment, exportDeployments, DeploymentOptions } from "./utils/deployment";
+import { getHardhatNetworkName, getDeploymentsNetworkName } from "./utils/network";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-let networkName = network.name;
-if (process.env.NETWORK_SUFFIX) {
-    networkName = networkName + "." + process.env.NETWORK_SUFFIX;
-}
+const networkName = getDeploymentsNetworkName();
 
 async function init() {
     await initDeployment();
@@ -20,10 +18,15 @@ async function init() {
 }
 
 async function deployUnderlyingToken(name: string, symbol: string, decimals = 18): Promise<string> {
+    const networkName = getHardhatNetworkName();
+
     console.log(`--- Deploying test underlying token ${symbol} (${name}) with ${decimals} decimals ---`);
     const token = await deploy("TestERC20MinterPauser", [name, symbol, decimals], {
         alias: symbol,
-        options: DeploymentOptions.DeployAndExportAndVerify,
+        options:
+            networkName === "localhost"
+                ? DeploymentOptions.DeployAndExport
+                : DeploymentOptions.DeployAndExportAndVerify,
         contract: "contracts/test/TestERC20MinterPauser.sol:TestERC20MinterPauser",
     });
 
@@ -32,9 +35,14 @@ async function deployUnderlyingToken(name: string, symbol: string, decimals = 18
 }
 
 async function deployChainlinkAggregatorUSDC(): Promise<string> {
+    const networkName = getHardhatNetworkName();
+
     console.log(`--- Deploying Chainlink Aggregator for USDC ---`);
     const aggregator = await deploy("ChainlinkAggregatorUSDC", [], {
-        options: DeploymentOptions.DeployAndExportAndVerify,
+        options:
+            networkName === "localhost"
+                ? DeploymentOptions.DeployAndExport
+                : DeploymentOptions.DeployAndExportAndVerify,
     });
 
     console.log(`\nChainlink Aggregator for USDC deployed at ${aggregator.address}\n`);

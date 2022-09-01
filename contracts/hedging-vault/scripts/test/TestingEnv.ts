@@ -29,7 +29,6 @@ import { attachContract } from "../utils/deployment";
 import { deployHedgingVault, HedgingVaultDeployParams } from "../hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { NetworksType } from "../../hardhat.helpers";
 
 import { Deployments } from "@potion-protocol/core";
 export interface TestingEnvironmentDeployment {
@@ -324,7 +323,7 @@ async function prepareTestEnvironment(
     return testingEnvironmentDeployment as TestingEnvironmentDeployment;
 }
 
-function getPotionProtocolDeployments(networkName: NetworksType): any {
+function getPotionProtocolDeployments(networkName: string): any {
     //@ts-expect-error iterator is not defined
     return Deployments[networkName].contracts;
 }
@@ -349,7 +348,7 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     }
 }
 
-export function getDeploymentConfig(networkName: NetworksType): PotionHedgingVaultConfigParams {
+export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
     const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
 
     if (networkName !== "hardhat") {

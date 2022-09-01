@@ -69,25 +69,213 @@ export const Deployments = {
         whitelistAddress: "0x9164eB40a1b59512F1803aB4C2d1dE4B89627A93",
         network: "kovan",
     },
-    "localhost.independent": {
-        timestamp: 1661869216,
+    "localhost.goerli": {
+        timestamp: 1661939003,
         network: "localhost",
         contracts: {
-            WETH: {
-                address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
-                blockNumber: 16,
+            AddressBook: {
+                address: "0x0F9fFED1201De979dBe3A1562463B99bd5e7aB36",
+                blockNumber: 7502960,
             },
-            WBTC: {
-                address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
-                blockNumber: 17,
+            Otoken: {
+                address: "0x42c0A0437106284c9aE4a3A3acb0199bF148B3eb",
+                blockNumber: 7502964,
+            },
+            Oracle: {
+                address: "0x112774740cD0D7a3cA68e8F6a7b3d15650821600",
+                blockNumber: 7502965,
+            },
+            MarginCalculator: {
+                address: "0x2EFBA7923E9A32A4C239BD2f7Da0c5b0e22a909E",
+                blockNumber: 7502970,
+            },
+            OtokenFactory: {
+                address: "0x4Af81C96d19315212358f9E4a774bBcC0390B5f0",
+                blockNumber: 7502975,
+            },
+            Whitelist: {
+                address: "0xe7D757FdeB78A806A72A652ac411738DEbC1670E",
+                blockNumber: 7502980,
+            },
+            MarginPool: {
+                address: "0x1CD1a7E4158Eb444bC55AaE2b89bE7E03a4E6Ae5",
+                blockNumber: 7502985,
+            },
+            MarginVault: {
+                address: "0xf189e9EBCE19Ca3FC94427e64d4fa64D4118a180",
+                blockNumber: 7502990,
+            },
+            Controller: {
+                address: "0x9589f149FDcEe08aB054525EF8228F10CFD359C2",
+                blockNumber: 7502999,
             },
             USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 0,
+            },
+            CurveManager: {
+                address: "0x69dd60b4a7Bf521Dd7bFA1871FaB6C237191191d",
+                blockNumber: 7503033,
+            },
+            CriteriaManager: {
+                address: "0x7F00A7d1Cf59dCf0857aD6bDa376ecaA0662aD9C",
+                blockNumber: 7503038,
+            },
+            PotionLiquidityPool: {
+                address: "0x6b81e57848A75369cC5F13ED98c62412a40F19E7",
+                blockNumber: 7503045,
+            },
+            ChainLinkPricerWETH: {
+                address: "0x69FDC34D9deC661EB590515a5194Ce19d52B4596",
+                blockNumber: 7503064,
+            },
+            ChainLinkPricerWBTC: {
+                address: "0xF6987b595D4196A40db287ef77eEf181BB045272",
+                blockNumber: 7503074,
+            },
+            ChainLinkPricerUSDC: {
+                address: "0x93dc9AdeABcD0B36ce7F46B0e852E77B3Fd35bFE",
+                blockNumber: 7503083,
+            },
+        },
+    },
+    "localhost.hedging": {
+        timestamp: 1662028145,
+        network: "localhost",
+        contracts: {
+            AddressBook: {
+                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+                blockNumber: 1,
+            },
+            Otoken: {
+                address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+                blockNumber: 2,
+            },
+            Oracle: {
+                address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+                blockNumber: 3,
+            },
+            MarginCalculator: {
+                address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
+                blockNumber: 67,
+            },
+            OtokenFactory: {
+                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+                blockNumber: 5,
+            },
+            Whitelist: {
+                address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+                blockNumber: 6,
+            },
+            MarginPool: {
+                address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+                blockNumber: 7,
+            },
+            MarginVault: {
+                address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+                blockNumber: 8,
+            },
+            Controller: {
+                address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+                blockNumber: 10,
+            },
+            PotionTestUSD: {
                 address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
                 blockNumber: 18,
             },
-            ChainlinkAggregatorUSDC: {
+            USDC: {
+                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+                blockNumber: 0,
+            },
+            CurveManager: {
                 address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
                 blockNumber: 19,
+            },
+            CriteriaManager: {
+                address: "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
+                blockNumber: 20,
+            },
+            PotionLiquidityPool: {
+                address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+                blockNumber: 23,
+            },
+            SampleUnderlyingToken: {
+                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+                blockNumber: 25,
+            },
+            MockOracle: {
+                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                blockNumber: 63,
+            },
+        },
+    },
+    "localhost.independent": {
+        timestamp: 1661938622,
+        network: "localhost",
+        contracts: {
+            AddressBook: {
+                address: "0xE1C86e8E80DE01b8A87344C808671D61aEE05b33",
+                blockNumber: 7502579,
+            },
+            Otoken: {
+                address: "0x12d73e63281fD1387290D75a66861B5368B4a616",
+                blockNumber: 7502580,
+            },
+            Oracle: {
+                address: "0xb8B814Fd019C00888eb34721f87aa82E3f2E1F28",
+                blockNumber: 7502585,
+            },
+            MarginCalculator: {
+                address: "0x15cAbd0536f9707d1c03b21dDdC556726D7FF136",
+                blockNumber: 7502590,
+            },
+            OtokenFactory: {
+                address: "0x58Be5Ec7F96Ef12B6d8B41611AdE2205F0AD1df7",
+                blockNumber: 7502595,
+            },
+            Whitelist: {
+                address: "0xFE0Ef5a9B7cA4FB1a327f48771cA9b4725063A64",
+                blockNumber: 7502600,
+            },
+            MarginPool: {
+                address: "0x85bdC135Bc56C3707551E9FEa8c5d7e31C82d16a",
+                blockNumber: 7502605,
+            },
+            MarginVault: {
+                address: "0x7B9985adBc2629d3e80C18397837A967399E8EAd",
+                blockNumber: 7502610,
+            },
+            Controller: {
+                address: "0x1B5AdE7927F798171F34e94a143113443ec46435",
+                blockNumber: 7502619,
+            },
+            USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 0,
+            },
+            CurveManager: {
+                address: "0x6863952619b2a5f6556F32Cb05De23CC5d080255",
+                blockNumber: 7502653,
+            },
+            CriteriaManager: {
+                address: "0xF09d18a431C56E859885B37582BD6BDd2333b54C",
+                blockNumber: 7502657,
+            },
+            PotionLiquidityPool: {
+                address: "0xe6F314143AE46b5b0594Ae7C88e6A39D36964bb7",
+                blockNumber: 7502671,
+            },
+            ChainLinkPricerWETH: {
+                address: "0xEdBe4b9b9d47B432A8e8230b97E2e1eE78d23591",
+                blockNumber: 7502691,
+            },
+            ChainLinkPricerWBTC: {
+                address: "0xe7dA9C7486556ec0061b6dac078a8569A6873088",
+                blockNumber: 7502698,
+            },
+            ChainLinkPricerUSDC: {
+                address: "0xF771D9111454D58D728d731752770B6Bf5Ad35Bf",
+                blockNumber: 7502708,
             },
         },
     },

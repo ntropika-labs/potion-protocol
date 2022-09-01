@@ -73,15 +73,17 @@ In the `config` section you can see the definition for the `kovan.independent` n
 ```
 'kovan.independent': {
     pricerConfigs: [
-      {
-        assetName: 'WETH',
-        relayerAddress: '0xba6b224398fc87abced124ba3b34fb2a83c13cec', // OZ Relayer
-        assetAddress: '0xd0A1E359811322d97991E03f863a0C30C2cF029C', // WETH
-        chainlinkAggregatorAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331', // ETH/USD aggregator
-      },
     ],
     postDeployActions: [
-        ...
+      new DeployChainlinkPricer(
+          {
+            assetName: 'WETH',
+            relayerAddress: '0xba6b224398fc87abced124ba3b34fb2a83c13cec', // OZ Relayer
+            assetAddress: '0xd0A1E359811322d97991E03f863a0C30C2cF029C', // WETH
+            chainlinkAggregatorAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331', // ETH/USD aggregator
+          },
+      )
+      ...
 ```
 
 Copy the _Ethereum Address_ of the relayer you just created and paste it in the `relayerAddress` field. The `assetAddress` field is the address of the asset that we'll set the price for. In the example it is _WETH_. And finally the `chainlinkAggregatorAddress` is the address of the ChainLink aggregator that will be used to update the price for the specific asset. You can find the list of ChainLink aggregators for Kovan [here](https://docs.chain.link/docs/ethereum-addresses/#Kovan%20Testnet). In the example we are using the ETH/USD aggregator.
