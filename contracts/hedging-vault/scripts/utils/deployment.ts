@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 import { Contract, Signer, BaseContract } from "ethers";
 import fs from "fs";
-import hre, { ethers, network, upgrades } from "hardhat";
+import hre, { ethers, upgrades } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
 import { smock, MockContract } from "@defi-wonderland/smock";

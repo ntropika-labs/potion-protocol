@@ -115,7 +115,7 @@ export async function mockOpynAddressBook(
 export async function mockContract<T extends BaseContract>(
     networkName: string,
     contractName: string,
-    parameters: any = [],
+    parameters: unknown[] = [],
     alias?: string,
     fundMockWallet: boolean = false,
 ): Promise<{
