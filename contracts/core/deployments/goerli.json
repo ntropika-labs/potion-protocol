@@ -1,0 +1,70 @@
+{
+  "timestamp": 1662129986,
+  "network": "goerli",
+  "contracts": {
+    "AddressBook": {
+      "address": "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+      "blockNumber": 7516512
+    },
+    "Otoken": {
+      "address": "0xeb4eFc7c3f048aeF7AC80a86Ac9119432BaB093e",
+      "blockNumber": 7516519
+    },
+    "Oracle": {
+      "address": "0x5c26B53A6e8E50478AfEa123a3726E7188d1558B",
+      "blockNumber": 7516530
+    },
+    "MarginCalculator": {
+      "address": "0x008b8Dd774ac74dde38ea49ade5298282A9b107D",
+      "blockNumber": 7516539
+    },
+    "OtokenFactory": {
+      "address": "0x41D4Fe19c8C41Dc60638B5d12Cf32d59CFbac73a",
+      "blockNumber": 7516546
+    },
+    "Whitelist": {
+      "address": "0x8a97ef0A5b4AD17DbE509c2fd0F68879aa9904ad",
+      "blockNumber": 7516553
+    },
+    "MarginPool": {
+      "address": "0xaF520C36AB5a88f305F36D0c7Fa36483e52a402C",
+      "blockNumber": 7516561
+    },
+    "MarginVault": {
+      "address": "0xfD503Bc2A082a5ae82a4f6A1c97a80Dd69455788",
+      "blockNumber": 7516568
+    },
+    "Controller": {
+      "address": "0x06fcDD279c3A297864C93f45d34ffcDBD834f3D9",
+      "blockNumber": 7516577
+    },
+    "USDC": {
+      "address": "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+      "blockNumber": 0
+    },
+    "CurveManager": {
+      "address": "0x809Ce01AD915685878649E5201808af6AE01CDc4",
+      "blockNumber": 7516589
+    },
+    "CriteriaManager": {
+      "address": "0xD77399aEf4d4c7A54eA20eF0943b9e722dEf1339",
+      "blockNumber": 7516597
+    },
+    "PotionLiquidityPool": {
+      "address": "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+      "blockNumber": 7516607
+    },
+    "ChainLinkPricerWETH": {
+      "address": "0x54235B44Ebb8F8Bf1bc248339ebAF06f7829307C",
+      "blockNumber": 7516614
+    },
+    "ChainLinkPricerWBTC": {
+      "address": "0xb64c7dE03c87DcA86bb9d8f2a6ee00ced1a5bd5F",
+      "blockNumber": 7516618
+    },
+    "ChainLinkPricerUSDC": {
+      "address": "0x29D3bbB8088d3962B80ca06cE04EE43db46B2AEc",
+      "blockNumber": 7516622
+    }
+  }
+}
