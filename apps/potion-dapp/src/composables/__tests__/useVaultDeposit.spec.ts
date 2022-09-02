@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { ref } from "vue";
-import { useVaultRedeem } from "../useVaultRedeem";
+import { useVaultDeposit } from "../useVaultDeposit";
 import { LifecycleState } from "../useInvestmentVaultContract";
 import { withSetup } from "./test-utils";
 
-describe("useVaultRedeem", () => {
+describe("useVaultDeposit", () => {
   describe("it doesn't have syntax errors", () => {
     it("returns amount", () => {
       const [result] = withSetup(() =>
-        useVaultRedeem(
+        useVaultDeposit(
           ref(100),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
@@ -18,7 +18,7 @@ describe("useVaultRedeem", () => {
     });
     it("returns buttonState", () => {
       const [result] = withSetup(() =>
-        useVaultRedeem(
+        useVaultDeposit(
           ref(100),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
@@ -26,15 +26,15 @@ describe("useVaultRedeem", () => {
       );
       expect(result.buttonState).not.toBeUndefined();
     });
-    it("returns handleRedeem", () => {
+    it("returns handleDeposit", () => {
       const [result] = withSetup(() =>
-        useVaultRedeem(
+        useVaultDeposit(
           ref(100),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
         )
       );
-      expect(result.handleRedeem).not.toBeUndefined();
+      expect(result.handleDeposit).not.toBeUndefined();
     });
   });
 
@@ -43,7 +43,7 @@ describe("useVaultRedeem", () => {
       describe("locked state", () => {
         it("is locked if vaultStatus = LifecycleState.Locked", () => {
           const [result] = withSetup(() =>
-            useVaultRedeem(
+            useVaultDeposit(
               ref(100),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
               ref(LifecycleState.Locked)
@@ -55,7 +55,7 @@ describe("useVaultRedeem", () => {
 
         it("is locked if vaultStatus = LifecycleState.Committed", () => {
           const [result] = withSetup(() =>
-            useVaultRedeem(
+            useVaultDeposit(
               ref(100),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
               ref(LifecycleState.Committed)
@@ -66,9 +66,9 @@ describe("useVaultRedeem", () => {
         });
       });
 
-      it("is 'not_enough' if vaultBalance < amount", () => {
+      it("is 'not_enough' if userBalance < amount", () => {
         const [result] = withSetup(() =>
-          useVaultRedeem(
+          useVaultDeposit(
             ref(100),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
@@ -81,29 +81,45 @@ describe("useVaultRedeem", () => {
     });
 
     describe("buttonState is enabled", () => {
-      it("is 'redeem' if vaultBalance > amount", () => {
+      it("is 'approve' if userAllowance < amount", () => {
         const [result] = withSetup(() =>
-          useVaultRedeem(
-            ref(3000),
-            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-            ref(LifecycleState.Unlocked)
-          )
-        );
-        result.amount.value = 100;
-        expect(result.buttonState.value.label).toBe("redeem");
-        expect(result.buttonState.value.disabled).toBe(false);
-      });
-
-      it("is 'redeem' if vaultBalance = amount", () => {
-        const [result] = withSetup(() =>
-          useVaultRedeem(
+          useVaultDeposit(
             ref(100),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
           )
         );
+        result.userAllowance.value = 15;
+        result.amount.value = 30;
+        expect(result.buttonState.value.label).toBe("approve");
+        expect(result.buttonState.value.disabled).toBe(false);
+      });
+
+      it("is 'deposit' if userBalance > amount", () => {
+        const [result] = withSetup(() =>
+          useVaultDeposit(
+            ref(3000),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+            ref(LifecycleState.Unlocked)
+          )
+        );
+        result.userAllowance.value = 1500;
         result.amount.value = 100;
-        expect(result.buttonState.value.label).toBe("redeem");
+        expect(result.buttonState.value.label).toBe("deposit");
+        expect(result.buttonState.value.disabled).toBe(false);
+      });
+
+      it("is 'deposit' if userBalance = amount", () => {
+        const [result] = withSetup(() =>
+          useVaultDeposit(
+            ref(100),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+            ref(LifecycleState.Unlocked)
+          )
+        );
+        result.userAllowance.value = 1500;
+        result.amount.value = 100;
+        expect(result.buttonState.value.label).toBe("deposit");
         expect(result.buttonState.value.disabled).toBe(false);
       });
     });
