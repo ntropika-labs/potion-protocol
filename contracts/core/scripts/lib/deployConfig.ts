@@ -3,6 +3,7 @@ import { AccountValue, PostDeployAction } from "./postDeploy";
 import {
     AllocateCollateralTokensFromFaucet,
     AllocateCollateralTokensToWalletsFromFaucet,
+    AllocateCollateralTokensToWallets,
 } from "./postDeployActions/AllocateCollateralTokens";
 import { FastForwardDays, FastForwardPastNextActiveOtokenExpiry } from "./postDeployActions/FastForwardActions";
 import {
@@ -108,6 +109,13 @@ const HEDGING_VAULT_TEST_ALLOCATIONS = [
     new AccountValue("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", parseUsdcAmount("1000000")), // Hardhat default test account
 ];
 
+const LOCALHOST_GOERLI_ALL = [
+    // Team
+    new AccountValue("0x2c5eDB7F0EF80C7aBea2D2b7bF9Da96823Ec935d", parseUsdcAmount("1000000")), // G
+    new AccountValue("0x46BD46A8C0DcB4Ca501c4A5624B1F09Ba86ff8F6", parseUsdcAmount("1000000")), // N
+    new AccountValue("0x614B7f7Ed8E93260B6EA33BB081073036F73F9E9", parseUsdcAmount("1000000")), // E
+];
+
 const newSelfContainedEcosystemConfig = {
     postDeployActions: basicDataForTesting(),
     // postDeployActions: priceHistoryData(),
@@ -162,7 +170,33 @@ export const config: NetworkDeployConfigMap = {
             }),
         ],
     },
-    goerli: newSelfContainedEcosystemConfig,
+    goerli: {
+        collateralToken: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+        sampleUnderlyingToken: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x9889DfADE1d68488590DF17bbA882914535a8F92"), // Custom WETH
+            new WhitelistUnderlying("0x667c04420C2B8D319ac24f6E605dCC28759C55f4"), // Custom WBTC
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WBTC
+                chainlinkAggregatorAddress: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4", // Custom WBTC
+                chainlinkAggregatorAddress: "0xA39434A63A52E749F02807ae27335515BA4b07F7", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
+                assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
+                chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
+            }),
+        ],
+    },
 
     // The goerli.independent deployment deploys Opyn and Potion from the ground up, so that we control even the Opyn contracts
     // It relies on previous deployment of the custom tokens and USDC aggregator. It also deploys the neccessary pricers
@@ -216,7 +250,6 @@ export const config: NetworkDeployConfigMap = {
             new WhitelistCollateral(),
             new WhitelistUnderlying("0x9889DfADE1d68488590DF17bbA882914535a8F92"), // Custom WETH
             new WhitelistUnderlying("0x667c04420C2B8D319ac24f6E605dCC28759C55f4"), // Custom WBTC
-            new WhitelistUnderlying("0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7"), // Custom USDC
             new DeployChainlinkPricer({
                 assetName: "WETH",
                 relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
@@ -235,6 +268,10 @@ export const config: NetworkDeployConfigMap = {
                 assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
                 chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
             }),
+            new AllocateCollateralTokensToWallets([
+                new AccountValue("0xc892cfd3e75Cf428BDD25576e9a42D515697B2C7", parseUsdcAmount("1000000")),
+                new AccountValue("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", parseUsdcAmount("1000000")),
+            ]),
         ],
     },
     "localhost.independent": {
