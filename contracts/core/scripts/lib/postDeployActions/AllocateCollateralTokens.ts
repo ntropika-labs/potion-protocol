@@ -38,6 +38,18 @@ export class AllocateCollateralTokensToWalletsFromFaucet {
     }
 }
 
+export class AllocateCollateralTokensToWallets {
+    public constructor(public allocations: AccountValue[]) {}
+
+    async executePostDeployAction(
+        depl: Deployment,
+        dataAlreadyDeployed: PostDeployActionsResults,
+        printProgress: boolean,
+    ): Promise<void> {
+        await allocateCollateralTokens(depl, this.allocations, printProgress);
+    }
+}
+
 // Allocates funds to the provided addresses, and optionally approves a contract to spend these funds
 async function allocateCollateralTokensFromFaucet(
     depl: Deployment,
@@ -77,6 +89,35 @@ async function allocateCollateralTokensFromFaucet(
         if (approveFullAllowanceToAddress) {
             const approveTrx = await token.connect(r.account).approve(approveFullAllowanceToAddress, r.value);
             await approveTrx.wait(); // Wait for mining to avoid duplicate nonces
+        }
+        printProgress && console.log(` - ${address} gets ${commify(formatUnits(r.value, decimals))} ${symbol}`);
+    }
+}
+
+async function allocateCollateralTokens(
+    depl: Deployment,
+    allocations: AccountValue[],
+    printProgress = false,
+): Promise<void> {
+    // Mint some team balances
+    const token = await depl.collateralToken();
+    const symbol = await token.symbol();
+    const decimals = await token.decimals();
+
+    printProgress && console.log(`Pre-mining ${allocations.length} wallets with collateral (${symbol}) tokens:`);
+
+    for (const r of allocations) {
+        let address;
+        if (r.account instanceof Wallet || r.account instanceof SignerWithAddress) {
+            address = r.account.address;
+        } else {
+            address = r.account;
+        }
+        try {
+            const trx = await token.mint(address, r.value);
+            await trx.wait();
+        } catch (err) {
+            console.log("...Error minting tokens!");
         }
         printProgress && console.log(` - ${address} gets ${commify(formatUnits(r.value, decimals))} ${symbol}`);
     }
