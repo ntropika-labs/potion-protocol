@@ -42,7 +42,7 @@ const useVaultDeposit = (
         disabled: true,
       };
     }
-    if (amount.value < userAllowance.value) {
+    if (userAllowance.value < amount.value) {
       return {
         label: t("approve"),
         disabled: false,
@@ -68,6 +68,7 @@ const useVaultDeposit = (
     amount,
     buttonState,
     handleDeposit,
+    userAllowance,
   };
 };
 
