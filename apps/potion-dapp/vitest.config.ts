@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
+import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 export default defineConfig({
   test: {
@@ -13,7 +14,12 @@ export default defineConfig({
       reporter: ["text", "text-summary", "json", "json-summary", "html"],
     },
   },
-  plugins: [vue({ reactivityTransform: true })],
+  plugins: [
+    vue({ reactivityTransform: true }),
+    vueI18n({
+      include: path.resolve(__dirname, "../../libs/locales/testing.yaml"),
+    }),
+  ],
   resolve: {
     alias: {
       "lightweight-charts": path.resolve(

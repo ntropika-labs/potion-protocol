@@ -2,14 +2,12 @@ import { createApp, ref } from "vue";
 import { never, fromValue } from "wonka";
 import urql from "@urql/vue";
 import { createI18n } from "vue-i18n";
+import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
 const i18n = createI18n({
   legacy: false,
-  locale: "en",
-  fallbackLocale: "en",
-  messages: {
-    en: {},
-  },
+  locale: "testing",
+  messages,
 });
 
 /* eslint-disable vue/one-component-per-file, @typescript-eslint/no-empty-function, @typescript-eslint/ban-types */
