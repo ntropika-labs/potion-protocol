@@ -6,13 +6,13 @@ import { LifecycleState } from "./useInvestmentVaultContract";
 import type { Ref, ComputedRef } from "vue";
 
 const useVaultRedeem = (
-  userBalance: Ref<number> | ComputedRef<number>,
-  vaultId: Ref<string> | ComputedRef<string>,
+  vaultBalance: Ref<number> | ComputedRef<number>,
+  vaultAddress: Ref<string> | ComputedRef<string>,
   vaultStatus: Ref<LifecycleState> | ComputedRef<LifecycleState>
 ) => {
   const { connectedWallet } = useOnboard();
   const { t } = useI18n();
-  const { vaultSymbol, redeem } = useErc4626Contract(vaultId, true, true);
+  const { vaultSymbol, redeem } = useErc4626Contract(vaultAddress, true, true);
 
   const amount = ref(1);
 
@@ -29,7 +29,7 @@ const useVaultRedeem = (
         disabled: true,
       };
     }
-    if (userBalance.value < amount.value) {
+    if (vaultBalance.value < amount.value) {
       return {
         label: t("not_enough", { msg: vaultSymbol.value }),
         disabled: true,

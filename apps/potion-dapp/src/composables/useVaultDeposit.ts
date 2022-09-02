@@ -8,13 +8,13 @@ import type { Ref, ComputedRef } from "vue";
 
 const useVaultDeposit = (
   userBalance: Ref<number> | ComputedRef<number>,
-  vaultId: Ref<string> | ComputedRef<string>,
+  vaultAddress: Ref<string> | ComputedRef<string>,
   vaultStatus: Ref<LifecycleState> | ComputedRef<LifecycleState>
 ) => {
   const { connectedWallet } = useOnboard();
   const { t } = useI18n();
   const { assetSymbol, assetAddress, deposit } = useErc4626Contract(
-    vaultId,
+    vaultAddress,
     true,
     true
   );
@@ -59,8 +59,8 @@ const useVaultDeposit = (
       await deposit(amount.value, true);
     }
     if (buttonState.value.label === t("approve")) {
-      await approveSpending(vaultId.value, true);
-      await fetchUserAllowance(vaultId.value);
+      await approveSpending(vaultAddress.value, true);
+      await fetchUserAllowance(vaultAddress.value);
     }
   };
 
