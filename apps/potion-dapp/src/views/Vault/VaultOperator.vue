@@ -2,9 +2,7 @@
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Token as UniToken, TradeType } from "@uniswap/sdk-core";
-import { useOracleContract } from "@/composables/useOracleContract";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { createValidExpiry } from "@/helpers/time";
 import {
   AssetTag,
@@ -12,23 +10,16 @@ import {
   BaseCard,
   BaseTag,
   LabelValue,
-  //TabNavigationComponent,
   TimeTag,
 } from "potion-ui";
 
-import { useOnboard } from "@onboard-composable";
-
-import {
-  useHedgingVaultOperatorHelperContract,
-  type UniSwapInfo,
-} from "@/composables/useHedgingVaultOperatorHelperContract";
+import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
 import { useBlockNative } from "@/composables/useBlockNative";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
-import { getChainId, getUSDCAddress, getWETHAddress } from "@/helpers/uniswap";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
@@ -39,10 +30,12 @@ import {
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
-import { useAlphaRouter } from "@/composables/useAlphaRouter";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { useBuyerRecords } from "@/composables/useBuyerRecords";
+import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
+import { useVaultOperatorCalculations } from "@/composables/useVaultOperatorCalculations";
+import { useVaultOperatorActions } from "@/composables/useVaultOperatorActions";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -54,55 +47,28 @@ const TabNavigationComponent = defineAsyncComponent(
 /**
  * Const
  */
-const IS_DEV_ENV = import.meta.env.DEV;
 
-const USDC = new UniToken(getChainId(), getUSDCAddress(), 6, "USDC", "USD//C");
-
-// TODO: remove once we have proper integration for underlying assets
-const WETH = new UniToken(
-  getChainId(),
-  getWETHAddress(),
-  18,
-  "WETH",
-  "Wrapped Ether"
-);
-
-/**
- * Data
- */
-
-const route = useRoute();
-const { id } = route.params;
-const validId = computed(() => {
-  if (Array.isArray(id)) {
-    return id[0].toLowerCase();
-  }
-  return id.toLowerCase();
-});
-const expectedPriceRate = ref(1);
-
-// Input validity
-
-const hasSwapRoute = ref(false);
+const IS_DEV_ENV = import.meta.env;
 
 /**
  * Setup
  */
 const { t } = useI18n();
 const router = useRouter();
-const { connectedWallet } = useOnboard();
+
+const route = useRoute();
+const { vaultId } = useRouteVaultIdentifier(route.params);
+
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
-
-const walletAddress = computed(
-  () => connectedWallet.value?.accounts[0].address ?? ""
-);
 
 /**
  * Vault operation
  */
-const { principalPercentages, vaultStatus, getVaultStatus } =
-  useInvestmentVaultContract(validId, true);
+const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
+  vaultId,
+  true
+);
 
 const principalPercentage = computed(() =>
   principalPercentages.value && principalPercentages.value.length
@@ -113,56 +79,14 @@ const principalPercentage = computed(() =>
 //const actionsStrategyInfo = ref(new Map<string, string | number | boolean>());
 const {
   vaultName,
-  assetName,
+  //assetName,
   assetSymbol,
   assetAddress,
-  assetDecimals,
+  //assetDecimals,
   //assetImage,
   totalAssets,
-} = useErc4626Contract(validId, true, true);
-
-const tokenAsset = computed(() => {
-  return {
-    name: assetName.value,
-    symbol: assetSymbol.value,
-    address: assetAddress.value.toLowerCase(),
-    decimals: assetDecimals.value,
-    //image: assetImage.value, // TODO FIX
-  };
-});
-
-const oraclePrice = ref(0);
-const { getPrice } = useOracleContract();
-watch(assetAddress, async (address) => {
-  if (!address) return;
-
-  const [price] = await Promise.all([
-    getPrice(address),
-    getCurrentPayout(address),
-  ]);
-
-  oraclePrice.value = parseFloat(price);
-});
-
-const strikePrice = computed(() => {
-  return oraclePrice.value * (strikePercentage.value / 100);
-});
-
-const orderSize = computed(() => {
-  return (
-    (principalPercentage.value / 100) * totalAssets.value * strikePrice.value
-  );
-});
-
-const numberOfOtokensToBuyBN = computed(() => {
-  const ppBN = parseUnits(principalPercentage.value.toString(), 18);
-  const taBN = parseUnits(totalAssets.value.toString(), 18);
-  const dBN = parseUnits("100", 18);
-  const noBN = ppBN.mul(taBN).div(dBN);
-  // otokens are in 8 digits, we need to remove some digits here by dividing by 10^10
-  return noBN.div(10 ** 10);
-});
-// Hedging Vault interaction
+  tokenAsset,
+} = useErc4626Contract(vaultId, true, true);
 
 const {
   enterPositionTx,
@@ -179,6 +103,31 @@ const {
   fetchCanPositionBeEntered,
   fetchCanPositionBeExited,
 } = useHedgingVaultOperatorHelperContract();
+
+const {
+  nextCycleTimestamp,
+  cycleDurationDays,
+  maxPremiumPercentage,
+  premiumSlippage,
+  swapSlippage,
+  maxSwapDurationSecs,
+  strikePercentage,
+  currentPayout,
+  getCurrentPayout,
+  getStrategyInfo,
+  strategyLoading,
+} = usePotionBuyActionContract(
+  contractsAddresses.PotionBuyAction.address,
+  true
+);
+
+const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
+  useVaultOperatorCalculations(
+    assetAddress,
+    strikePercentage,
+    principalPercentage,
+    totalAssets
+  );
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -201,23 +150,6 @@ const statusInfo = computed(() => {
   }
 });
 
-const {
-  nextCycleTimestamp,
-  cycleDurationDays,
-  maxPremiumPercentage,
-  premiumSlippage,
-  swapSlippage,
-  maxSwapDurationSecs,
-  strikePercentage,
-  currentPayout,
-  getCurrentPayout,
-  getStrategyInfo,
-  strategyLoading,
-} = usePotionBuyActionContract(
-  contractsAddresses.PotionBuyAction.address,
-  true
-);
-
 // Depth Router logic
 const criteriasParam = computed(() => {
   return [
@@ -231,7 +163,7 @@ const criteriasParam = computed(() => {
 
 const {
   runRouter: loadCounterparties,
-  routerResult,
+  routerResult: potionRouterResult,
   formattedPremium,
   routerRunning: counterpartiesLoading,
 } = useDepthRouter(
@@ -243,165 +175,42 @@ const {
   false
 );
 
-const hasCounterparties = computed(() => {
-  return routerResult.value && routerResult.value.counterparties.length > 0
-    ? true
-    : false;
-});
-
 const counterpartiesText = computed(() => {
-  return routerResult.value && routerResult.value.counterparties.length > 1
+  return potionRouterResult.value &&
+    potionRouterResult.value.counterparties.length > 1
     ? t("counterparties")
     : t("counterparty");
 });
 
-const totalAmountToSwap = ref(0);
-const isTotalAmountValid = computed(
-  () => !Number.isNaN(totalAmountToSwap.value)
-);
+// const {
+//   routerData: uniswapRouteData,
+//   getRoute,
+//   routerLoading,
+//   togglePolling: toggleUniswapPolling,
+//   routerPolling,
+// } = useAlphaRouter(getChainId());
+
 const {
-  routerData: uniswapRouteData,
-  getRoute,
+  uniswapRouterResult,
   routerLoading,
-  togglePolling: toggleUniswapPolling,
-  routerPolling,
-} = useAlphaRouter(getChainId());
+  hasCounterparties,
+  hasRoute,
+  isEnterPositionOperationValid,
+  isExitPositionOperationValid,
+  loadEnterPositionRoute,
+  loadExitPositionRoute,
+  getEnterPositionData,
+  getExitPositionData,
+} = useVaultOperatorActions(potionRouterResult, currentPayout);
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
-const isEnterPositionOperationValid = computed(() => {
-  return (
-    isTotalAmountValid.value &&
-    !!routerResult.value &&
-    routerResult.value.counterparties &&
-    routerResult.value.counterparties.length > 0 &&
-    !!uniswapRouteData.value &&
-    uniswapRouteData.value.route.length > 0
-  );
-});
-const isExitPositionOperationValid = computed(() => {
-  return (
-    (isTotalAmountValid.value &&
-      totalAmountToSwap.value > 0 &&
-      !!uniswapRouteData.value &&
-      uniswapRouteData.value.route.length > 0) ||
-    (totalAmountToSwap.value === 0 && currentPayout.value?.currentPayout === 0)
-  );
-});
-
-const loadExitPositionRoute = async () => {
-  /**
-   * TODO: we need to check the contract balance for USDC and add the amount to the eventual payout
-   * if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
-   * We will still need to pass a the swap object with an empty swapPath ("")
-   */
-  if (currentPayout.value?.currentPayout) {
-    totalAmountToSwap.value = currentPayout.value.currentPayout;
-    await getRoute(
-      USDC,
-      WETH,
-      TradeType.EXACT_INPUT,
-      totalAmountToSwap.value,
-      1, // TODO remove: assert here theres only 1 route returned (no split routes)
-      walletAddress.value,
-      swapSlippage.value
-    );
-  } else {
-    totalAmountToSwap.value = 0;
-  }
-
-  console.log("exit route", uniswapRouteData.value);
-};
-
-const exitPosition = async () => {
-  if (!isExitPositionOperationValid.value) {
-    throw new Error("A uniswap route is required to exit position");
-  }
-
-  toggleUniswapPolling(false);
-
-  let swapInfo: UniSwapInfo;
-  const USDCToken = {
-    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
-    name: USDC.name || "",
-    symbol: USDC.symbol || "",
-    decimals: USDC.decimals,
-  };
-  if (totalAmountToSwap.value > 0) {
-    if (!uniswapRouteData.value?.route) {
-      throw new Error("A Uniswap route is required to exit position");
-    }
-
-    const swapRoute = uniswapRouteData.value.route[0];
-    const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-    const expectedPriceRate = IS_DEV_ENV
-      ? 1 / oraclePrice.value //0.001,
-      : uniswapRouteData.value?.trade.executionPrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
-    swapInfo = {
-      steps: [
-        {
-          inputToken: USDCToken,
-          fee: firstPoolFee,
-        },
-      ],
-      outputToken: tokenAsset.value,
-      expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
-    };
-  } else {
-    swapInfo = {
-      steps: [
-        {
-          inputToken: USDCToken,
-          fee: 0,
-        },
-      ],
-      outputToken: tokenAsset.value,
-      expectedPriceRate: 0,
-    };
-  }
-
-  console.log("expectedPriceRate", expectedPriceRate);
-
-  await vaultExitPosition(swapInfo);
-  await reloadInfoAfterAction();
-};
-
-const loadEnterPositionRoute = async () => {
-  if (!routerResult.value) {
-    throw new Error("No counterparty available");
-  }
-
-  totalAmountToSwap.value =
-    routerResult.value.premium +
-    (premiumSlippage.value * routerResult.value.premium) / 100;
-  await getRoute(
-    WETH,
-    USDC,
-    TradeType.EXACT_OUTPUT,
-    totalAmountToSwap.value,
-    1, // TODO remove: assert here theres only 1 route returned (no split routes)
-    walletAddress.value,
-    swapSlippage.value
-  );
-
-  console.log(
-    "EXECUTION PRICE",
-    uniswapRouteData.value?.trade.executionPrice,
-    uniswapRouteData.value?.trade.executionPrice.toFixed(10)
-  );
-};
 const enterPosition = async () => {
-  if (
-    !isEnterPositionOperationValid.value ||
-    !routerResult.value ||
-    !uniswapRouteData.value
-  ) {
+  if (!isEnterPositionOperationValid.value) {
     throw new Error(
       "A uniswap route and a set of counterparties is required to enter position"
     );
   }
-
-  toggleUniswapPolling(false);
 
   const expirationTimestamp = createValidExpiry(
     blockTimestamp.value,
@@ -416,59 +225,48 @@ const enterPosition = async () => {
     true
   );
 
-  const swapRoute = uniswapRouteData.value.route[0];
-
-  const counterparties = routerResult.value.counterparties.map((seller) => {
-    return {
-      lp: seller.lp,
-      poolId: seller.poolId,
-      curve: seller.curve,
-      criteria: seller.criteria,
-      orderSizeInOtokens: seller.orderSizeInOtokens,
-    };
-  });
-
-  const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-  const USDCToken = {
-    address: IS_DEV_ENV ? contractsAddresses.USDC.address : USDC.address,
-    name: USDC.name || "",
-    symbol: USDC.symbol || "",
-    decimals: USDC.decimals,
-  };
-  const expectedPriceRate = IS_DEV_ENV
-    ? oraclePrice.value //1000,
-    : uniswapRouteData.value.trade.executionPrice.toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
-  const swapInfo: UniSwapInfo = {
-    steps: [{ inputToken: tokenAsset.value, fee: firstPoolFee }],
-    outputToken: USDCToken,
-    expectedPriceRate: expectedPriceRate, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
-  };
-
-  const potionBuyInfo = {
-    targetPotionAddress: newOtokenAddress,
-    underlyingAsset: tokenAsset.value.address,
-    strikePriceInUSDC: strikePrice.value.toFixed(6),
-    expirationTimestamp: expirationTimestamp,
-    sellers: counterparties,
-    expectedPremiumInUSDC: routerResult.value?.premium.toFixed(6),
-    totalSizeInPotions: numberOfOtokensToBuyBN.value,
-  };
-
-  console.log("expectedPriceRate", expectedPriceRate);
+  const { swapInfo, potionBuyInfo } = await getEnterPositionData(
+    tokenAsset,
+    oraclePrice,
+    strikePrice,
+    numberOfOtokensToBuyBN,
+    newOtokenAddress,
+    expirationTimestamp
+  );
 
   await vaultEnterPosition(swapInfo, potionBuyInfo);
-  await reloadInfoAfterAction();
 };
 
-const reloadInfoAfterAction = async () => {
-  uniswapRouteData.value = undefined;
+const exitPosition = async () => {
+  console.log("EXIT POSITION");
+  const swapData = getExitPositionData(tokenAsset, oraclePrice);
+
+  await vaultExitPosition(swapData);
+};
+
+const callbackLoadEnterRoute = async () => {
+  await loadEnterPositionRoute(tokenAsset, premiumSlippage, swapSlippage);
+};
+
+const callbackLoadExitRoute = async () => {
+  console.log("LOAD EXIT POSITION ROUTE");
+
+  await loadExitPositionRoute(tokenAsset, swapSlippage);
+};
+
+watch(vaultStatus, async () => {
   await Promise.all([
     getStrategyInfo(),
-    getVaultStatus(),
     fetchCanPositionBeEntered(),
     fetchCanPositionBeExited(),
   ]);
-};
+});
+
+watch(assetAddress, async (address) => {
+  if (!address) return;
+
+  await getCurrentPayout(address);
+});
 
 // Tab navigation
 const currentFormStep = ref(0);
@@ -482,7 +280,7 @@ const tabs = ref([
   {
     title: t("enter_position"),
     subtitle: "",
-    isValid: hasSwapRoute,
+    isValid: hasRoute,
     enabled: hasCounterparties,
   },
 ]);
@@ -491,22 +289,22 @@ onMounted(async () => {
   await Promise.all([getGas(), getBlock("latest")]);
 });
 
-let pollingIntervalId: any = null;
-watch(routerPolling, (doPolling) => {
-  console.log("toggling polling", doPolling);
-  if (doPolling === true) {
-    let callback = null;
-    if (canPositionBeEntered.value) callback = loadEnterPositionRoute;
-    else if (canPositionBeExited.value) callback = loadExitPositionRoute;
-    else {
-      throw new Error("Vault is locked");
-    }
-    pollingIntervalId = setInterval(callback, 60000);
-    console.log(`next polling in 60 seconds`, pollingIntervalId);
-  } else if (pollingIntervalId) {
-    clearInterval(pollingIntervalId);
-  }
-});
+// let pollingIntervalId: any = null;
+// watch(routerPolling, (doPolling) => {
+//   console.log("toggling polling", doPolling);
+//   if (doPolling === true) {
+//     let callback = null;
+//     if (canPositionBeEntered.value) callback = loadEnterPositionRoute;
+//     else if (canPositionBeExited.value) callback = loadExitPositionRoute;
+//     else {
+//       throw new Error("Vault is locked");
+//     }
+//     pollingIntervalId = setInterval(callback, 60000);
+//     console.log(`next polling in 60 seconds`, pollingIntervalId);
+//   } else if (pollingIntervalId) {
+//     clearInterval(pollingIntervalId);
+//   }
+// });
 
 // Toast notifications
 const {
@@ -586,16 +384,6 @@ const copySetPriceCommand = async () => {
           </BaseButton>
         </div>
       </div>
-      <BaseButton
-        palette="primary"
-        label="Load info"
-        class="mb-2"
-        @click="reloadInfoAfterAction"
-      >
-        <template #pre-icon>
-          <i class="i-ph-test-tube-fill"></i>
-        </template>
-      </BaseButton>
     </div>
     <div class="flex flex-col mt-4 gap-2">
       <p>Underlying asset: {{ assetAddress }}</p>
@@ -755,7 +543,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
             />
           </div>
 
-          <div v-if="routerResult" class="flex flex-col justify-start">
+          <div v-if="hasCounterparties" class="flex flex-col justify-start">
             <h3 class="font-medium text-white/80 text-lg font-bold">
               > Market size
             </h3>
@@ -785,10 +573,10 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
           <BaseCard class="p-6">
             <div class="flex flex-col gap-8">
               <div class="flex flex-row justify-between">
-                <div v-if="routerResult">
+                <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
-                  <p>Premium + gas: {{ routerResult.premiumGas }}</p>
-                  <p>Premium: {{ routerResult.premium }}</p>
+                  <p>Premium + gas: {{ potionRouterResult?.premiumGas }}</p>
+                  <p>Premium: {{ potionRouterResult?.premium }}</p>
                 </div>
                 <div v-else class="text-center">
                   <p class="text-white/40 uppercase">No result found</p>
@@ -813,8 +601,8 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                   <div
                     class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
                   >
-                    <span v-if="routerResult?.counterparties">
-                      {{ routerResult.counterparties.length }}
+                    <span v-if="hasCounterparties">
+                      {{ potionRouterResult?.counterparties.length }}
                     </span>
                     <span v-else-if="counterpartiesLoading || strategyLoading"
                       ><i class="i-ph-arrows-clockwise animate spin"></i
@@ -825,12 +613,9 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                     {{ counterpartiesText }}
                   </h3>
                 </div>
-                <div
-                  v-if="routerResult?.counterparties"
-                  class="flex flex-col gap-4"
-                >
+                <div v-if="hasCounterparties" class="flex flex-col gap-4">
                   <BaseCard
-                    v-for="(cp, index) in routerResult.counterparties"
+                    v-for="(cp, index) in potionRouterResult?.counterparties"
                     :key="index"
                     class="p-6 relative"
                   >
@@ -949,7 +734,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                 <BaseButton
                   label="route"
                   :disabled="routerLoading || enterPositionLoading"
-                  @click="loadEnterPositionRoute()"
+                  @click="callbackLoadEnterRoute()"
                 >
                   <template #pre-icon>
                     <i
@@ -959,11 +744,11 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                   </template>
                 </BaseButton>
 
-                <BaseButton
+                <!-- <BaseButton
                   :label="routerPolling ? 'disable polling' : 'enable polling'"
                   :disabled="routerLoading || enterPositionLoading"
                   @click="toggleUniswapPolling"
-                ></BaseButton>
+                ></BaseButton> -->
               </div>
               <div class="flex flex-col items-end">
                 <BaseButton
@@ -982,7 +767,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               </div>
             </div>
             <TokenSwap
-              :route-data="uniswapRouteData"
+              :route-data="uniswapRouterResult"
               :router-loading="routerLoading"
             />
           </BaseCard>
@@ -1001,7 +786,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
             <BaseButton
               label="route"
               :disabled="routerLoading || exitPositionLoading"
-              @click="loadExitPositionRoute()"
+              @click="callbackLoadExitRoute()"
             >
               <template #pre-icon>
                 <i
@@ -1010,11 +795,11 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                 ></i> </template
             ></BaseButton>
 
-            <BaseButton
+            <!-- <BaseButton
               :label="routerPolling ? 'disable polling' : 'enable polling'"
               :disabled="routerLoading || exitPositionLoading"
               @click="toggleUniswapPolling"
-            ></BaseButton>
+            ></BaseButton> -->
           </div>
           <div class="flex flex-col items-end">
             <BaseButton
@@ -1037,7 +822,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
           </div>
         </div>
         <TokenSwap
-          :route-data="uniswapRouteData"
+          :route-data="uniswapRouterResult"
           :router-loading="routerLoading"
         />
       </BaseCard>
