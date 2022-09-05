@@ -3,7 +3,15 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
+import {
+  computed,
+  isRef,
+  onMounted,
+  onUnmounted,
+  ref,
+  unref,
+  watch,
+} from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
@@ -110,6 +118,16 @@ export function useErc4626Contract(
     decimals: assetDecimals,
     fetchErc20Info: assetFetchErc20Info,
   } = useErc20Contract(assetAddress, false);
+
+  const tokenAsset = computed(() => {
+    return {
+      name: assetName.value,
+      symbol: assetSymbol.value,
+      address: assetAddress.value.toLowerCase(),
+      decimals: assetDecimals.value,
+      //image: assetImage.value, // TODO FIX
+    };
+  });
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -745,5 +763,6 @@ export function useErc4626Contract(
     fetchVaultData,
     getUserBalance,
     initContractProviderWS,
+    tokenAsset,
   };
 }

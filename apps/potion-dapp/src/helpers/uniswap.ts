@@ -1,6 +1,7 @@
 // TODO: Add USDC and WETH address for goerli
 
 import { ChainId } from "@uniswap/smart-order-router";
+import { Token as UniswapToken } from "@uniswap/sdk-core";
 
 const getChainId = () => {
   switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
@@ -29,4 +30,12 @@ const getWETHAddress = () => {
   }
 };
 
-export { getChainId, getUSDCAddress, getWETHAddress };
+const USDCUniToken = new UniswapToken(
+  getChainId(),
+  getUSDCAddress(),
+  6,
+  "USDC",
+  "USD//C"
+);
+
+export { getChainId, getUSDCAddress, getWETHAddress, USDCUniToken };
