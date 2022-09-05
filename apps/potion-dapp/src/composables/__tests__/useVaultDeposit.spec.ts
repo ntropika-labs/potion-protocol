@@ -10,6 +10,8 @@ describe("useVaultDeposit", () => {
       const [result] = withSetup(() =>
         useVaultDeposit(
           ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
         )
@@ -20,6 +22,8 @@ describe("useVaultDeposit", () => {
       const [result] = withSetup(() =>
         useVaultDeposit(
           ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
         )
@@ -30,11 +34,49 @@ describe("useVaultDeposit", () => {
       const [result] = withSetup(() =>
         useVaultDeposit(
           ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
           ref(LifecycleState.Locked)
         )
       );
       expect(result.handleDeposit).not.toBeUndefined();
+    });
+    it("returns depositLoading", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.depositLoading).not.toBeUndefined();
+    });
+    it("returns depositTx", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.depositTx).not.toBeUndefined();
+    });
+    it("returns depositReceipt", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.depositReceipt).not.toBeUndefined();
     });
   });
 
@@ -45,6 +87,8 @@ describe("useVaultDeposit", () => {
           const [result] = withSetup(() =>
             useVaultDeposit(
               ref(100),
+              ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+              ref("TKN"),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
               ref(LifecycleState.Locked)
             )
@@ -57,6 +101,8 @@ describe("useVaultDeposit", () => {
           const [result] = withSetup(() =>
             useVaultDeposit(
               ref(100),
+              ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+              ref("TKN"),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
               ref(LifecycleState.Committed)
             )
@@ -70,12 +116,14 @@ describe("useVaultDeposit", () => {
         const [result] = withSetup(() =>
           useVaultDeposit(
             ref(100),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+            ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
           )
         );
         result.amount.value = 3000;
-        expect(result.buttonState.value.label).toBe("not_enough");
+        expect(result.buttonState.value.label).toBe("not_enough TKN");
         expect(result.buttonState.value.disabled).toBe(true);
       });
     });
@@ -85,6 +133,8 @@ describe("useVaultDeposit", () => {
         const [result] = withSetup(() =>
           useVaultDeposit(
             ref(100),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+            ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
           )
@@ -99,6 +149,8 @@ describe("useVaultDeposit", () => {
         const [result] = withSetup(() =>
           useVaultDeposit(
             ref(3000),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+            ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
           )
@@ -113,6 +165,8 @@ describe("useVaultDeposit", () => {
         const [result] = withSetup(() =>
           useVaultDeposit(
             ref(100),
+            ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+            ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
             ref(LifecycleState.Unlocked)
           )

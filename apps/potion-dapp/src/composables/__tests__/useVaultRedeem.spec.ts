@@ -36,6 +36,36 @@ describe("useVaultRedeem", () => {
       );
       expect(result.handleRedeem).not.toBeUndefined();
     });
+    it("returns redeemLoading", () => {
+      const [result] = withSetup(() =>
+        useVaultRedeem(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.redeemLoading).not.toBeUndefined();
+    });
+    it("returns redeemTx", () => {
+      const [result] = withSetup(() =>
+        useVaultRedeem(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.redeemTx).not.toBeUndefined();
+    });
+    it("returns redeemReceipt", () => {
+      const [result] = withSetup(() =>
+        useVaultRedeem(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.redeemReceipt).not.toBeUndefined();
+    });
   });
 
   describe("buttonState returns the correct state", () => {
@@ -75,7 +105,7 @@ describe("useVaultRedeem", () => {
           )
         );
         result.amount.value = 3000;
-        expect(result.buttonState.value.label).toBe("not_enough");
+        expect(result.buttonState.value.label).toBe("not_enough ");
         expect(result.buttonState.value.disabled).toBe(true);
       });
     });

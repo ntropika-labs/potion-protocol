@@ -8,19 +8,18 @@ import type { Ref, ComputedRef } from "vue";
 
 const useVaultDeposit = (
   userBalance: Ref<number> | ComputedRef<number>,
+  assetAddress: Ref<string> | ComputedRef<string>,
+  assetSymbol: Ref<string> | ComputedRef<string>,
   vaultAddress: Ref<string> | ComputedRef<string>,
   vaultStatus: Ref<LifecycleState> | ComputedRef<LifecycleState>
 ) => {
   const { connectedWallet } = useOnboard();
   const { t } = useI18n();
-  const { assetSymbol, assetAddress, deposit } = useErc4626Contract(
-    vaultAddress,
-    true,
-    true
-  );
+  const { deposit, depositLoading, depositReceipt, depositTx } =
+    useErc4626Contract(vaultAddress);
 
   const { userAllowance, fetchUserAllowance, approveSpending } =
-    useErc20Contract(assetAddress, false);
+    useErc20Contract(assetAddress);
 
   const amount = ref(1);
   const buttonState = computed(() => {
@@ -67,6 +66,9 @@ const useVaultDeposit = (
   return {
     amount,
     buttonState,
+    depositLoading,
+    depositReceipt,
+    depositTx,
     handleDeposit,
     userAllowance,
   };

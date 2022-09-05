@@ -235,19 +235,13 @@ const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(vaultAddress, true);
 
 const {
-  vaultSymbol,
+  assetAddress,
   assetName,
   assetSymbol,
-  assetAddress,
   assetToShare,
   totalAssets,
   userBalance,
-  depositTx,
-  redeemTx,
-  depositReceipt,
-  redeemReceipt,
-  depositLoading,
-  redeemLoading,
+  vaultSymbol,
 } = useErc4626Contract(vaultAddress, true, true);
 
 const {
@@ -261,12 +255,24 @@ const {
 } = useErc20Contract(assetAddress, false);
 
 const {
+  depositLoading,
+  depositReceipt,
+  depositTx,
   handleDeposit,
   amount: depositAmount,
   buttonState: depositButtonState,
-} = useVaultDeposit(assetUserBalance, vaultAddress, vaultStatus);
+} = useVaultDeposit(
+  assetUserBalance,
+  assetAddress,
+  assetSymbol,
+  vaultAddress,
+  vaultStatus
+);
 
 const {
+  redeemLoading,
+  redeemReceipt,
+  redeemTx,
   handleRedeem,
   amount: redeemAmount,
   buttonState: redeemButtonState,

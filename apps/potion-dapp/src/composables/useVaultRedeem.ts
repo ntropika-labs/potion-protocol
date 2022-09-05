@@ -12,7 +12,8 @@ const useVaultRedeem = (
 ) => {
   const { connectedWallet } = useOnboard();
   const { t } = useI18n();
-  const { vaultSymbol, redeem } = useErc4626Contract(vaultAddress, true, true);
+  const { redeem, redeemLoading, redeemReceipt, redeemTx, vaultSymbol } =
+    useErc4626Contract(vaultAddress);
 
   const amount = ref(1);
 
@@ -51,6 +52,9 @@ const useVaultRedeem = (
     amount,
     buttonState,
     handleRedeem,
+    redeemLoading,
+    redeemReceipt,
+    redeemTx,
   };
 };
 
