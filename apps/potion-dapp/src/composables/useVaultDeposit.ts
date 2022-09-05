@@ -18,8 +18,14 @@ const useVaultDeposit = (
   const { deposit, depositLoading, depositReceipt, depositTx } =
     useErc4626Contract(vaultAddress);
 
-  const { userAllowance, fetchUserAllowance, approveSpending } =
-    useErc20Contract(assetAddress);
+  const {
+    userAllowance,
+    fetchUserAllowance,
+    approveSpending,
+    approveLoading,
+    approveReceipt,
+    approveTx,
+  } = useErc20Contract(assetAddress);
 
   const amount = ref(1);
   const buttonState = computed(() => {
@@ -66,6 +72,9 @@ const useVaultDeposit = (
   return {
     amount,
     buttonState,
+    approveLoading,
+    approveReceipt,
+    approveTx,
     depositLoading,
     depositReceipt,
     depositTx,

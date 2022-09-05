@@ -248,13 +248,13 @@ const {
   userBalance: assetUserBalance,
   fetchUserAllowance,
   getTokenBalance,
-  approveTx,
-  approveReceipt,
-  approveLoading,
   fetchErc20Info,
 } = useErc20Contract(assetAddress, false);
 
 const {
+  approveTx,
+  approveReceipt,
+  approveLoading,
   depositLoading,
   depositReceipt,
   depositTx,

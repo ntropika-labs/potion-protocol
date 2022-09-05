@@ -78,6 +78,42 @@ describe("useVaultDeposit", () => {
       );
       expect(result.depositReceipt).not.toBeUndefined();
     });
+    it("returns approveLoading", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.approveLoading).not.toBeUndefined();
+    });
+    it("returns approveTx", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.approveTx).not.toBeUndefined();
+    });
+    it("returns approveReceipt", () => {
+      const [result] = withSetup(() =>
+        useVaultDeposit(
+          ref(100),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
+          ref("TKN"),
+          ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+          ref(LifecycleState.Locked)
+        )
+      );
+      expect(result.approveReceipt).not.toBeUndefined();
+    });
   });
 
   describe("buttonState returns the correct state", () => {
