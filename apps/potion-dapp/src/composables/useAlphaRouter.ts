@@ -10,11 +10,11 @@ import {
 import { TradeType, Percent, Token } from "@uniswap/sdk-core";
 import JSBI from "jsbi";
 
-import { uniswapRouterUrl } from "@/helpers";
+import { uniswapRpcUrl } from "@/helpers";
 
 export const useAlphaRouter = (chainId: ChainId) => {
   const initAlphaRouter = () => {
-    const web3Provider = new JsonRpcProvider(uniswapRouterUrl);
+    const web3Provider = new JsonRpcProvider(uniswapRpcUrl);
     return new AlphaRouter({
       chainId: chainId,
       provider: web3Provider,
@@ -61,7 +61,7 @@ export const useAlphaRouter = (chainId: ChainId) => {
   ) => {
     routerError.value = null;
     routerLoading.value = true;
-    console.log("GETTING ALPHA ROUTE", inputToken, tokenAmount, outputToken);
+
     try {
       const inputTokenSwap =
         tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
@@ -83,7 +83,6 @@ export const useAlphaRouter = (chainId: ChainId) => {
       console.log(
         "QUERY ALPHA FOR AMOUNT",
         tokenAmount,
-        tokenAmountWithDecimals,
         currencyAmount.currency.name
       );
       const alphaRouter = initAlphaRouter();
@@ -100,13 +99,6 @@ export const useAlphaRouter = (chainId: ChainId) => {
           maxSplits: maxSplits,
         }
       );
-      console.log("ALPHA ROUTER ROUTE", route);
-
-      console.log(`Quote Exact In: ${route?.quote.toFixed(2)}`);
-      console.log(
-        `Gas Adjusted Quote In: ${route?.quoteGasAdjusted.toFixed(2)}`
-      );
-      console.log(`Gas Used USD: ${route?.estimatedGasUsedUSD.toFixed(6)}`);
 
       if (!route) {
         throw new Error("No route found");
