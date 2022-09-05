@@ -11,6 +11,7 @@ import {
 } from "./helpers";
 import { marginalCostRouter } from "./marginalCostRouter";
 
+export * from "./types";
 import type { CounterpartyDetails, IPoolUntyped, IRouterReturn } from "./types";
 
 const runMarginalCostRouter = (
