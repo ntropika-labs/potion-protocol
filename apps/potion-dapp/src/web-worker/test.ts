@@ -1,3 +1,4 @@
+import { runPremiumSwapRouter } from "../helpers/premiumSwapRouter";
 import {
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
@@ -6,4 +7,5 @@ import {
 export const worker = {
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
+  runPremiumSwapRouter,
 };
