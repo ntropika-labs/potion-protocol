@@ -10,9 +10,18 @@ export interface Token {
   logoURI: string;
 }
 
-const getTokenList = (networkName: "localhost" | "ganache" | "kovan" | "mainnet"): Token[] => {
+const getTokenList = (
+  networkName:
+    | "localhost"
+    | "localhost.hedging"
+    | "ganache"
+    | "kovan"
+    | "mainnet"
+    | "goerli"
+): Token[] => {
   switch (networkName) {
     case "localhost":
+    case "localhost.hedging":
       return localhost.tokens;
     case "ganache":
       return ganache.tokens;
