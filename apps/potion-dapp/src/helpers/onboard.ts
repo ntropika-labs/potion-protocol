@@ -10,6 +10,7 @@ const walletConnect = walletConnectModule();
 const chains: Chain[] = [];
 switch (ethereumNetwork) {
   case "localhost":
+  case "localhost.hedging":
     chains.push({
       id: "0x7a69",
       token: "ETH",
