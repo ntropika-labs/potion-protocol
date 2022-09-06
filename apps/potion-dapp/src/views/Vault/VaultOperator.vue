@@ -316,19 +316,19 @@ const {
 } = useNotifications();
 
 watch(enterPositionTx, (transaction) => {
-  createTransactionNotification(transaction, "Entering Position");
+  createTransactionNotification(transaction, t("entering_position"));
 });
 
 watch(enterPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Position entered");
+  createReceiptNotification(receipt, t("position_entered"));
 });
 
 watch(exitPositionTx, (transaction) => {
-  createTransactionNotification(transaction, "Exiting Position");
+  createTransactionNotification(transaction, t("exiting_position"));
 });
 
 watch(exitPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, "Position Exited");
+  createReceiptNotification(receipt, t("position_exited"));
 });
 
 // TODO: DELETE
