@@ -110,6 +110,7 @@ async function deployOpynContracts(): Promise<string> {
     const marginVaultLib = await deploy("MarginVault");
     contractAddresses.set(MARGIN_VAULT_LIB_NAME, marginVaultLib.address);
 
+    // TODO: Check this double deployment, it does not look good
     const ControllerFactory = await ethers.getContractFactory(CONTROLLER_CONTRACT_NAME, {
         libraries: {
             MarginVault: marginVaultLib.address,
