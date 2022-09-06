@@ -2,45 +2,25 @@
 export * as Typechain from "../typechain";
 export const Deployments = {
     goerli: {
-        timestamp: 1662444546,
+        timestamp: 1662477222,
         network: "goerli",
         contracts: {
-            USDC: {
-                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
-                blockNumber: 0,
+            PotionBuyAction: {
+                address: "0x8C993aD2806F38Cae4d58631cDb9cd89D99cbBe3",
+                blockNumber: 7541791,
             },
-            UnderlyingAsset: {
-                address: "0x9889DfADE1d68488590DF17bbA882914535a8F92",
-                blockNumber: 0,
+            InvestmentVault: {
+                address: "0x7488e98ac657e57DBAf9906b6E6303f4D9Ef6974",
+                blockNumber: 7541801,
             },
-            PotionLiquidityPool: {
-                address: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
-                blockNumber: 0,
-            },
-            OpynAddressBook: {
-                address: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
-                blockNumber: 0,
-            },
-            OpynController: {
-                address: "0x540135Aa6aB61D6201c60d0F10A7626038Bd7d99",
-                blockNumber: 0,
-            },
-            OpynFactory: {
-                address: "0x41D4Fe19c8C41Dc60638B5d12Cf32d59CFbac73a",
-                blockNumber: 0,
-            },
-            OpynOracle: {
-                address: "0x5c26B53A6e8E50478AfEa123a3726E7188d1558B",
-                blockNumber: 0,
-            },
-            SwapRouter: {
-                address: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
-                blockNumber: 0,
+            HedgingVaultOperatorHelper: {
+                address: "0x646486d149528B55285aDB62869151cc6698Eec7",
+                blockNumber: 7541812,
             },
         },
     },
     "localhost.goerli": {
-        timestamp: 1662444672,
+        timestamp: 1662461323,
         network: "localhost",
         contracts: {
             USDC: {
@@ -148,19 +128,19 @@ export const Deployments = {
         network: "localhost",
         contracts: {
             USDC: {
-                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
                 blockNumber: 0,
             },
             UnderlyingAsset: {
-                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-                blockNumber: 0,
+                address: "0x821f3361D454cc98b7555221A06Be563a7E2E0A6",
+                blockNumber: 196,
             },
             PotionLiquidityPool: {
-                address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+                address: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
                 blockNumber: 0,
             },
             OpynAddressBook: {
-                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+                address: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
                 blockNumber: 0,
             },
             OpynController: {
