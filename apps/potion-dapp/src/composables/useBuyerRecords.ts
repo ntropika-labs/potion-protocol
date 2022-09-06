@@ -5,10 +5,7 @@ import type { GetBuyerRecordsQuery } from "subgraph-queries/generated/operations
 
 type BuyerRecordsEntries = GetBuyerRecordsQuery["buyerRecords"];
 
-const useBuyerRecords = (
-  buyer: MaybeRef<string>,
-  expiry: MaybeRef<number>
-) => {
+const useBuyerRecords = (buyer: MaybeRef<string>, expiry: MaybeRef<number>) => {
   const records = ref<BuyerRecordsEntries>([]);
 
   const variables = computed(() => ({
