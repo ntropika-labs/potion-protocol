@@ -122,9 +122,6 @@
       <div class="col-span-4 self-start">
         <BaseCard class="p-4">
           <div class="flex items-center gap-4">
-            <!-- <p class="text-accent-500 text-sm font-normal capitalize">
-              {{ t("time_left_until_next_cycle") }}
-            </p> -->
             <TimeTag
               :horizontal="true"
               :title="t('time_left_until_next_cycle')"
@@ -194,15 +191,14 @@ import {
   TimeTag,
   getEtherscanUrl,
 } from "potion-ui";
+import { LifecycleStates } from "hedging-vault-sdk";
+
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 
 import { useOnboard } from "@onboard-composable";
-import {
-  LifecycleState,
-  useInvestmentVaultContract,
-} from "@/composables/useInvestmentVaultContract";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -293,17 +289,17 @@ const isLoading = computed(
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
-    case LifecycleState.Unlocked:
+    case LifecycleStates.Unlocked:
       return {
         label: t("unlocked"),
         class: "bg-accent-500",
       };
-    case LifecycleState.Committed:
+    case LifecycleStates.Committed:
       return {
         label: t("committed"),
         class: "bg-orange-500",
       };
-    case LifecycleState.Locked:
+    case LifecycleStates.Locked:
     default:
       return {
         label: t("locked"),

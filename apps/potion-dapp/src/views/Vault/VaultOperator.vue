@@ -44,15 +44,8 @@ const TabNavigationComponent = defineAsyncComponent(
     )
 );
 
-/**
- * Const
- */
-
 const IS_DEV_ENV = import.meta.env;
 
-/**
- * Setup
- */
 const { t } = useI18n();
 const router = useRouter();
 
@@ -62,9 +55,6 @@ const { vaultId } = useRouteVaultIdentifier(route.params);
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 
-/**
- * Vault operation
- */
 const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
   vaultId,
   true,
@@ -77,17 +67,8 @@ const principalPercentage = computed(() =>
     : 0
 );
 
-//const actionsStrategyInfo = ref(new Map<string, string | number | boolean>());
-const {
-  vaultName,
-  //assetName,
-  assetSymbol,
-  assetAddress,
-  //assetDecimals,
-  //assetImage,
-  totalAssets,
-  tokenAsset,
-} = useErc4626Contract(vaultId, true, true);
+const { vaultName, assetSymbol, assetAddress, totalAssets, tokenAsset } =
+  useErc4626Contract(vaultId, true, true);
 
 const {
   enterPositionTx,
@@ -100,7 +81,6 @@ const {
   exitPositionLoading,
   exitPosition: vaultExitPosition,
   canPositionBeExited,
-  //actionsAddress,
   fetchCanPositionBeEntered,
   fetchCanPositionBeExited,
 } = useHedgingVaultOperatorHelperContract();
@@ -151,7 +131,6 @@ const statusInfo = computed(() => {
   }
 });
 
-// Depth Router logic
 const criteriasParam = computed(() => {
   return [
     {
@@ -182,14 +161,6 @@ const counterpartiesText = computed(() => {
     ? t("counterparties")
     : t("counterparty");
 });
-
-// const {
-//   routerData: uniswapRouteData,
-//   getRoute,
-//   routerLoading,
-//   togglePolling: toggleUniswapPolling,
-//   routerPolling,
-// } = useAlphaRouter(getChainId());
 
 const {
   uniswapRouterResult,
@@ -239,9 +210,7 @@ const enterPosition = async () => {
 };
 
 const exitPosition = async () => {
-  console.log("EXIT POSITION");
   const swapData = getExitPositionData(tokenAsset, oraclePrice);
-
   await vaultExitPosition(swapData);
 };
 
@@ -250,8 +219,6 @@ const callbackLoadEnterRoute = async () => {
 };
 
 const callbackLoadExitRoute = async () => {
-  console.log("LOAD EXIT POSITION ROUTE");
-
   await loadExitPositionRoute(tokenAsset, swapSlippage);
 };
 
@@ -289,23 +256,6 @@ const tabs = ref([
 onMounted(async () => {
   await Promise.all([getGas(), getBlock("latest")]);
 });
-
-// let pollingIntervalId: any = null;
-// watch(routerPolling, (doPolling) => {
-//   console.log("toggling polling", doPolling);
-//   if (doPolling === true) {
-//     let callback = null;
-//     if (canPositionBeEntered.value) callback = loadEnterPositionRoute;
-//     else if (canPositionBeExited.value) callback = loadExitPositionRoute;
-//     else {
-//       throw new Error("Vault is locked");
-//     }
-//     pollingIntervalId = setInterval(callback, 60000);
-//     console.log(`next polling in 60 seconds`, pollingIntervalId);
-//   } else if (pollingIntervalId) {
-//     clearInterval(pollingIntervalId);
-//   }
-// });
 
 // Toast notifications
 const {
@@ -741,12 +691,6 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                     ></i>
                   </template>
                 </BaseButton>
-
-                <!-- <BaseButton
-                  :label="routerPolling ? 'disable polling' : 'enable polling'"
-                  :disabled="routerLoading || enterPositionLoading"
-                  @click="toggleUniswapPolling"
-                ></BaseButton> -->
               </div>
               <div class="flex flex-col items-end">
                 <BaseButton
@@ -792,12 +736,6 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                   :class="routerLoading && 'animate-spin'"
                 ></i> </template
             ></BaseButton>
-
-            <!-- <BaseButton
-              :label="routerPolling ? 'disable polling' : 'enable polling'"
-              :disabled="routerLoading || exitPositionLoading"
-              @click="toggleUniswapPolling"
-            ></BaseButton> -->
           </div>
           <div class="flex flex-col items-end">
             <BaseButton
