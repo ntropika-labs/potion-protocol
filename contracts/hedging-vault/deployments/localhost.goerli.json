@@ -1,0 +1,50 @@
+{
+  "timestamp": 1662461323,
+  "network": "localhost",
+  "contracts": {
+    "USDC": {
+      "address": "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+      "blockNumber": 0
+    },
+    "UnderlyingAsset": {
+      "address": "0x9889DfADE1d68488590DF17bbA882914535a8F92",
+      "blockNumber": 0
+    },
+    "PotionLiquidityPool": {
+      "address": "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+      "blockNumber": 0
+    },
+    "OpynAddressBook": {
+      "address": "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+      "blockNumber": 0
+    },
+    "OpynController": {
+      "address": "0x540135Aa6aB61D6201c60d0F10A7626038Bd7d99",
+      "blockNumber": 0
+    },
+    "OpynFactory": {
+      "address": "0x41D4Fe19c8C41Dc60638B5d12Cf32d59CFbac73a",
+      "blockNumber": 0
+    },
+    "OpynOracle": {
+      "address": "0x5c26B53A6e8E50478AfEa123a3726E7188d1558B",
+      "blockNumber": 0
+    },
+    "SwapRouter": {
+      "address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+      "blockNumber": 0
+    },
+    "PotionBuyAction": {
+      "address": "0x70dd934556FcF69C89c7393f1024E5B1fcfaC675",
+      "blockNumber": 7540706
+    },
+    "InvestmentVault": {
+      "address": "0x0B15205C2ADb8C007597c13d98FEA3e7e46bA27B",
+      "blockNumber": 7540714
+    },
+    "HedgingVaultOperatorHelper": {
+      "address": "0x5333328a62F56df4CAaaAEd449a821Be43A203Fe",
+      "blockNumber": 7540719
+    }
+  }
+}
