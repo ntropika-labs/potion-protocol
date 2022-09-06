@@ -230,7 +230,9 @@ export async function deployUpgrade(
     ) {
         const implementationAddress = await getImplementationAddress(ethers.provider, contract.address);
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(implementationAddress, args);
+
+        // Upgradeable contracts have no parameters in the constructor, so we pass an empty array
+        await verify(implementationAddress, []);
     }
 
     return contract.deployed();
