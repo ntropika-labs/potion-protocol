@@ -8,11 +8,9 @@ import { formatUnits } from "@ethersproject/units";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
-// import type {
-//   ContractTransaction,
-//   ContractReceipt,
-// } from "@ethersproject/contracts";
+
 import type { Ref } from "vue";
+import { ContractInitError } from "@/helpers/errors";
 export enum LifecycleState {
   Unlocked,
   Committed,
@@ -21,6 +19,7 @@ export enum LifecycleState {
 
 export function useInvestmentVaultContract(
   address: string | Ref<string>,
+  fetchInitialData = true,
   eventListeners = false
 ) {
   const { initContract } = useEthersContract();
@@ -44,12 +43,21 @@ export function useInvestmentVaultContract(
   };
 
   const initContractProvider = () => {
-    return initContract(
-      false,
-      false,
-      InvestmentVault__factory,
-      unref(address).toLowerCase()
-    ) as InvestmentVault;
+    try {
+      return initContract(
+        false,
+        false,
+        InvestmentVault__factory,
+        unref(address).toLowerCase()
+      ) as InvestmentVault;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? "Unable to init contract: " + error.message
+          : "Unable to init contract";
+
+      throw new ContractInitError(errorMessage);
+    }
   };
 
   const operator = ref("");
@@ -117,7 +125,7 @@ export function useInvestmentVaultContract(
     const contract = initContractProvider();
     try {
       const response = await contract.getPrincipalPercentages();
-      principalPercentages.value = response.map((x) => {
+      principalPercentages.value = response.map((x: number) => {
         return parseFloat(formatUnits(x, 6));
       });
     } catch (error) {
@@ -313,13 +321,14 @@ export function useInvestmentVaultContract(
   //   // console.log("EVENT LISTENERS", getEventListeners());
   // };
 
-  onMounted(async () => {
-    // if (useEventStream) {
-    //   await setupEventListeners();
-    // }
-
-    await fetchInfo();
-  });
+  if (fetchInitialData) {
+    onMounted(async () => {
+      // if (useEventStream) {
+      //   await setupEventListeners();
+      // }
+      await fetchInfo();
+    });
+  }
 
   if (isRef(address)) {
     watch(address, async () => {

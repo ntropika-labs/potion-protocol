@@ -23,6 +23,7 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
+import { ContractInitError } from "@/helpers/errors";
 
 export function useErc4626Contract(
   address: string | Ref<string>,
@@ -41,12 +42,21 @@ export function useErc4626Contract(
   };
 
   const initContractProvider = () => {
-    return initContract(
-      false,
-      false,
-      ERC4626CapUpgradeable__factory,
-      unref(address).toLowerCase()
-    ) as ERC4626Upgradeable;
+    try {
+      return initContract(
+        false,
+        false,
+        ERC4626CapUpgradeable__factory,
+        unref(address).toLowerCase()
+      ) as ERC4626Upgradeable;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? "Unable to init contract: " + error.message
+          : "Unable to init contract";
+
+      throw new ContractInitError(errorMessage);
+    }
   };
 
   const initContractProviderWS = () => {
