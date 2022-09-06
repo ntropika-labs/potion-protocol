@@ -42,7 +42,7 @@ async function runNode(network: NetworksType, blocktime: number | undefined) {
 }
 
 async function runLocalNode() {
-    const ganacheArgs = ["-m", String(process.env.DEPLOYER_MNEMONIC)];
+    const ganacheArgs = ["-m", String(process.env.DEPLOYER_MNEMONIC), "--hostname", "0.0.0.0"];
 
     const ganache = spawn("ganache", ganacheArgs, {
         stdio: [process.stdin, process.stdout, process.stderr],

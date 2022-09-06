@@ -12,6 +12,7 @@ import {
     OtokenFactory,
     PotionLiquidityPool,
     Whitelist,
+    ERC20PresetMinterPauser,
 } from "../typechain";
 const fsPromises = fs.promises;
 
@@ -96,6 +97,12 @@ export class Deployment implements DeploymentAddresses {
         const MockERC20Factory = await ethers.getContractFactory("MockERC20");
         const contract = await MockERC20Factory.attach(this.collateralTokenAddress);
         return contract as MockERC20;
+    }
+
+    public async collateralToken(): Promise<ERC20PresetMinterPauser> {
+        const TokenFactory = await ethers.getContractFactory("ERC20PresetMinterPauser");
+        const contract = await TokenFactory.attach(this.collateralTokenAddress);
+        return contract as ERC20PresetMinterPauser;
     }
 
     public async potionLiquidityPool(): Promise<PotionLiquidityPool> {

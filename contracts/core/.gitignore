@@ -14,7 +14,7 @@ cache/
 dist/
 node_modules/
 .vscode
-.openzeppelin
+.openzeppelin/unknown-*.json
 
 # files
 *.env

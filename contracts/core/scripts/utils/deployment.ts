@@ -5,6 +5,7 @@ import hre, { ethers, upgrades } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
 import { getDeploymentsNetworkName, getHardhatNetworkName } from "./network";
+import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -136,7 +137,7 @@ export async function verify(
 export async function deploy(
     contractName: string,
     args: unknown[] = [],
-    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
+    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExportAndVerify },
 ): Promise<Contract> {
     let options = undefined,
         alias = undefined,
@@ -168,7 +169,15 @@ export async function deploy(
         }
     }
 
-    if (contract && options && options & DeploymentFlags.Verify) {
+    const networkName = getHardhatNetworkName();
+
+    if (
+        contract &&
+        options &&
+        options & DeploymentFlags.Verify &&
+        networkName !== "localhost" &&
+        networkName !== "hardhat"
+    ) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
         await verify(contract.address, args, verifyContract);
     }
@@ -179,7 +188,7 @@ export async function deploy(
 export async function deployUpgrade(
     contractName: string,
     args: unknown[] = [],
-    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExport },
+    params: Signer | DeploymentParams = { options: DeploymentOptions.DeployAndExportAndVerify },
 ): Promise<Contract> {
     let options = undefined,
         alias = undefined;
@@ -210,9 +219,18 @@ export async function deployUpgrade(
         }
     }
 
-    if (contract && options && options & DeploymentFlags.Verify) {
+    const networkName = getHardhatNetworkName();
+
+    if (
+        contract &&
+        options &&
+        options & DeploymentFlags.Verify &&
+        networkName !== "localhost" &&
+        networkName !== "hardhat"
+    ) {
+        const implementationAddress = await getImplementationAddress(ethers.provider, contract.address);
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
+        await verify(implementationAddress, args);
     }
 
     return contract.deployed();
