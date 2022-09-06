@@ -252,7 +252,6 @@ export function usePotionBuyActionContract(
   const currentPayoutLoading = ref(false);
   const currentPayoutError = ref<string | null>(null);
   const getCurrentPayout = async (investmentAsset: string | Ref<string>) => {
-    console.log("currentpayout: ", investmentAsset);
     currentPayoutLoading.value = true;
     currentPayoutError.value = null;
     try {

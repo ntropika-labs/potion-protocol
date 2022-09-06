@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isValidAddress, getEtherscanUrl, formatAddress } from "../addresses";
+import { etherscanUrl } from "../constants";
 
 describe("addresses helper", () => {
   describe("isValidAddress", () => {
@@ -29,9 +30,7 @@ describe("addresses helper", () => {
   describe("getEtherscanUrl", () => {
     it("returns the link to etherscan", () => {
       const result = getEtherscanUrl("0xab12cd34ef");
-      expect(result).toBe(
-        "https://localhost.etherscan.io/address/0xab12cd34ef"
-      );
+      expect(result).toBe(etherscanUrl + "/address/0xab12cd34ef");
     });
   });
 });
