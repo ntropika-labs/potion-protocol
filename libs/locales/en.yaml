@@ -59,6 +59,8 @@ deposit: deposit
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer: Balance
 deposit_collateral_title: You're providing
+deposited: Deposited
+depositing: Depositing
 depositing_liquidity: depositing liquidity
 discover_potions: Discover Potions
 discover_templates: Discover Templates
@@ -138,6 +140,8 @@ put_option: put option
 quantity: Quantity
 reclaimable: reclaimable
 redeem: redeem
+redeemed: Redeemed
+redeeming: Redeeming
 review_and_create: review and create
 review_your_choices: Review your choices before creating the pool on chain.
 set_bonding_curve_params: Set the following parameters and define your curve.

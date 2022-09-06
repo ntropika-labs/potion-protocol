@@ -17,7 +17,6 @@ const getTokenList = (
     | "ganache"
     | "kovan"
     | "mainnet"
-    | "goerli"
 ): Token[] => {
   switch (networkName) {
     case "localhost":
