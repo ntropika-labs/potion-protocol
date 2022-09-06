@@ -13,7 +13,7 @@
     "prepare-kovan-independent": "echo '{\"subgraphNetwork\": \"kovan\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/kovan.independent.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-goerli": "echo '{\"subgraphNetwork\": \"goerli\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/goerli.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-goerli-independent": "echo '{\"subgraphNetwork\": \"goerli\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/goerli.independent.json | mustache - subgraph.template.yaml > subgraph.yaml",
-    "prepare-forked-goerli": "echo '{\"subgraphNetwork\": \"goerli\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/localhost.goerli.json | mustache - subgraph.template.yaml > subgraph.yaml",
+    "prepare-forked-goerli": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/localhost.goerli.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "create": "graph create potion-subgraph --node https://api.thegraph.com/deploy",
     "create-local": "graph create potion-subgraph --node http://localhost:8020",
     "remove-local": "graph remove --node http://localhost:8020/",

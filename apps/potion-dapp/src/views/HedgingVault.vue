@@ -139,7 +139,7 @@
                 v-model="depositAmount"
                 class="self-stretch"
                 :max="assetUserBalance"
-                :min="1"
+                :min="0.1"
                 :step="0.01"
                 :unit="assetSymbol"
               />
@@ -156,7 +156,7 @@
                 v-model="redeemAmount"
                 class="self-stretch"
                 :max="userBalance"
-                :min="1"
+                :min="0.1"
                 :step="0.01"
                 :unit="vaultSymbol"
               />
