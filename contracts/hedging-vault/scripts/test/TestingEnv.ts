@@ -352,7 +352,7 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
 export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
     const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
 
-    if (networkName !== "hardhat") {
+    if (networkName !== "hardhat" && networkName !== "localhost.test") {
         const potionProtocolDeployments = getPotionProtocolDeployments(networkName);
         if (potionProtocolDeployments !== undefined) {
             usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);

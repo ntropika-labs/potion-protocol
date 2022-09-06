@@ -74,6 +74,22 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         managementFee: BigNumber.from(3000000), // 3%
         performanceFee: BigNumber.from(3000000), // 3%
     },
+    "localhost.test": {
+        networkName: "localhost",
+
+        // Investment configuration
+        maxPremiumPercentage: BigNumber.from(15000000), // 15%
+        premiumSlippage: BigNumber.from(2000000), //       2%
+        swapSlippage: BigNumber.from(2000000), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //       1 day
+        strikePercentage: BigNumber.from(80000000), //     80 %
+        hedgingPercentage: BigNumber.from(100000000), //   100%
+
+        // Fees configuration
+        managementFee: BigNumber.from(3000000), //  3%
+        performanceFee: BigNumber.from(3000000), // 3%
+    },
     "localhost.hedging": {
         networkName: "localhost",
 

@@ -6,6 +6,7 @@ import { FactoryOptions } from "hardhat/types";
 import { resolve } from "path";
 import { smock, MockContract } from "@defi-wonderland/smock";
 import { getDeploymentsNetworkName, getHardhatNetworkName } from "./network";
+import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
@@ -15,27 +16,39 @@ const indexDir = resolve(__dirname, "../../src");
 
 const DEPLOYMENTS_INDEX_FILE = "index.ts";
 
-let GlobalEnableExportContracts = false;
-
 export enum DeploymentFlags {
-    None = 0,
-    Verify = 1 << 0,
+    Deploy = 1 << 0,
     Export = 1 << 1,
+    Verify = 1 << 2,
 }
 
-export interface DeploymentOptions extends FactoryOptions {
-    flags?: DeploymentFlags;
+export enum DeploymentOptions {
+    Deploy = DeploymentFlags.Deploy,
+    DeployAndExport = DeploymentFlags.Deploy | DeploymentFlags.Export,
+    DeployAndVerify = DeploymentFlags.Deploy | DeploymentFlags.Verify,
+    DeployAndExportAndVerify = DeploymentFlags.Deploy | DeploymentFlags.Export | DeploymentFlags.Verify,
+}
+
+let GlobalDefaultDeploymentOptions = { options: DeploymentOptions.Deploy };
+
+export interface DeploymentParams extends FactoryOptions {
+    options?: DeploymentOptions;
     alias?: string; // The deployed contract will be exported in the JSON file with this alias
+    contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
 }
 
-export function isDeploymentOptions(options: Signer | DeploymentOptions | undefined): options is DeploymentOptions {
+export function isDeploymentParams(options: Signer | DeploymentParams | undefined): options is DeploymentParams {
     return (
         options !== undefined &&
-        ((options as DeploymentOptions).flags !== undefined || (options as DeploymentOptions).alias !== undefined)
+        ((options as DeploymentParams).options !== undefined || (options as DeploymentParams).alias !== undefined)
     );
 }
 
-export async function initDeployment(contractExportEnabled: boolean = false) {
+export async function initDeployment(
+    defaultDeploymentOptions = { options: DeploymentOptions.DeployAndExportAndVerify },
+) {
+    GlobalDefaultDeploymentOptions = defaultDeploymentOptions;
+
     const deploymentNetworkName = getDeploymentsNetworkName();
     const hardatNetworkName = getHardhatNetworkName();
 
@@ -60,8 +73,6 @@ export async function initDeployment(contractExportEnabled: boolean = false) {
     };
 
     fs.writeFileSync(latestDeploymentPath, JSON.stringify(deploymentsObject, null, 2));
-
-    setContractExport(contractExportEnabled);
 }
 
 export async function exportDeployments() {
@@ -111,11 +122,16 @@ export async function exportContract(name: string, address: string, blockNumber:
     fs.writeFileSync(latestDeploymentPath, JSON.stringify(latestDeployment, null, 2));
 }
 
-export async function verify(contractAddress: string, args: unknown[]): Promise<boolean> {
+export async function verify(
+    contractAddress: string,
+    args: unknown[],
+    contract: unknown = undefined,
+): Promise<boolean> {
     try {
         await hre.run("verify:verify", {
             address: contractAddress,
             constructorArguments: args,
+            contract: contract,
         });
     } catch (error) {
         console.error(error);
@@ -128,20 +144,32 @@ export async function verify(contractAddress: string, args: unknown[]): Promise<
 export async function deploy(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | DeploymentOptions | undefined = undefined,
+    params: Signer | DeploymentParams = GlobalDefaultDeploymentOptions,
 ): Promise<Contract> {
-    const contractFactory = await ethers.getContractFactory(contractName, options);
-    const contract = await contractFactory.deploy(...args);
-    const transactionReceipt = await contract.deployTransaction.wait();
+    let options = undefined,
+        alias = undefined,
+        verifyContract = undefined;
 
-    let flags = undefined,
-        alias = undefined;
-    if (isDeploymentOptions(options)) {
-        flags = options.flags;
-        alias = options.alias;
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
+        verifyContract = params.contract;
     }
 
-    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+    let contract;
+    let transactionReceipt;
+    if (options === undefined || options & DeploymentFlags.Deploy) {
+        const contractFactory = await ethers.getContractFactory(contractName, params);
+        contract = await contractFactory.deploy(...args);
+        transactionReceipt = await contract.deployTransaction.wait();
+    }
+
+    if (contract === undefined) {
+        throw new Error("Contract not deployed, make sure to call deploy with the DeploymentOptions.Deploy flag");
+    }
+    const networkName = getHardhatNetworkName();
+
+    if (contract && transactionReceipt && networkName !== "hardhat" && options && options & DeploymentFlags.Export) {
         if (alias) {
             await exportContract(alias, contract.address, transactionReceipt.blockNumber);
         } else {
@@ -149,9 +177,15 @@ export async function deploy(
         }
     }
 
-    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
+    if (
+        contract &&
+        options &&
+        options & DeploymentFlags.Verify &&
+        networkName !== "localhost" &&
+        networkName !== "hardhat"
+    ) {
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
+        await verify(contract.address, args, verifyContract);
     }
 
     return contract.deployed();
@@ -160,20 +194,32 @@ export async function deploy(
 export async function deployUpgrade(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | DeploymentOptions | undefined = undefined,
+    params: Signer | DeploymentParams = GlobalDefaultDeploymentOptions,
 ): Promise<Contract> {
-    const contractFactory = await ethers.getContractFactory(contractName, options);
-    const contract = await upgrades.deployProxy(contractFactory, args);
-    const transactionReceipt = await contract.deployTransaction.wait();
-
-    let flags = undefined,
+    let options = undefined,
         alias = undefined;
-    if (isDeploymentOptions(options)) {
-        flags = options.flags;
-        alias = options.alias;
+
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
     }
 
-    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+    let contract;
+    let transactionReceipt;
+    if (options == undefined || options & DeploymentFlags.Deploy) {
+        const contractFactory = await ethers.getContractFactory(contractName, params);
+        contract = await upgrades.deployProxy(contractFactory, args);
+        transactionReceipt = await contract.deployTransaction.wait();
+    }
+
+    if (contract === undefined) {
+        throw new Error("Contract not deployed, make sure to call deploy with the DeploymentOptions.Deploy flag");
+    }
+
+    const networkName = getHardhatNetworkName();
+
+    // Export the deployed contract
+    if (contract && transactionReceipt && networkName !== "hardhat" && options && options & DeploymentFlags.Export) {
         if (alias) {
             await exportContract(alias, contract.address, transactionReceipt.blockNumber);
         } else {
@@ -181,9 +227,16 @@ export async function deployUpgrade(
         }
     }
 
-    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
+    if (
+        contract &&
+        options &&
+        options & DeploymentFlags.Verify &&
+        networkName !== "localhost" &&
+        networkName !== "hardhat"
+    ) {
+        const implementationAddress = await getImplementationAddress(ethers.provider, contract.address);
         await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
+        await verify(implementationAddress, args);
     }
 
     return contract.deployed();
@@ -192,30 +245,29 @@ export async function deployUpgrade(
 export async function deployMock<T extends BaseContract>(
     contractName: string,
     args: unknown[] = [],
-    options: Signer | DeploymentOptions | undefined = undefined,
+    params: Signer | DeploymentParams = GlobalDefaultDeploymentOptions,
 ): Promise<MockContract<T>> {
     const contractFactory = await smock.mock(contractName);
     const contract = await contractFactory.deploy(...args);
     const transactionReceipt = await contract.deployTransaction.wait();
 
-    let flags = undefined,
+    let options = undefined,
         alias = undefined;
-    if (isDeploymentOptions(options)) {
-        flags = options.flags;
-        alias = options.alias;
+
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
     }
 
-    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+    const networkName = getHardhatNetworkName();
+
+    // Export the deployed contract
+    if (contract && transactionReceipt && networkName !== "hardhat" && options && options & DeploymentFlags.Export) {
         if (alias) {
             await exportContract(alias, contract.address, transactionReceipt.blockNumber);
         } else {
             await exportContract(contractName, contract.address, transactionReceipt.blockNumber);
         }
-    }
-
-    if (flags && (flags & DeploymentFlags.Verify) === DeploymentFlags.Verify) {
-        await contract.deployTransaction.wait(NUM_CONFIRMATIONS_WAIT);
-        await verify(contract.address, args);
     }
 
     return contract as unknown as MockContract<T>;
@@ -224,16 +276,17 @@ export async function deployMock<T extends BaseContract>(
 export async function attachContract<T extends Contract>(
     contractName: string,
     contractAddress: string,
-    options: Signer | DeploymentOptions | undefined = undefined,
+    params: Signer | DeploymentParams | undefined = undefined,
 ): Promise<T> {
-    let flags = undefined,
+    let options = undefined,
         alias = undefined;
-    if (isDeploymentOptions(options)) {
-        flags = options.flags;
-        alias = options.alias;
+
+    if (isDeploymentParams(params)) {
+        options = params.options;
+        alias = params.alias;
     }
 
-    if ((flags && flags & DeploymentFlags.Export) || GlobalEnableExportContracts) {
+    if (options && options & DeploymentFlags.Export) {
         if (alias) {
             await exportContract(alias, contractAddress);
         } else {
@@ -242,12 +295,4 @@ export async function attachContract<T extends Contract>(
     }
 
     return ethers.getContractAt(contractName, contractAddress) as Promise<T>;
-}
-
-export function setContractExport(enabled: boolean) {
-    GlobalEnableExportContracts = enabled;
-}
-
-export function isContractExportEnabled() {
-    return GlobalEnableExportContracts;
 }
