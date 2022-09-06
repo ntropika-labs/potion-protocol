@@ -2,13 +2,15 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import { useOnboard } from "@onboard-composable";
+import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
+import { useErc4626Contract } from "@/composables/useErc4626Contract";
 
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
 const DiscoverPotions = () => import("@/views/DiscoverPotions.vue");
 const DiscoverTemplates = () => import("@/views/DiscoverTemplates.vue");
 const EditPool = () => import("@/views/Pools/EditPool.vue");
-const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
+//const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const HedgingVault = () => import("@/views/HedgingVault.vue");
 const NotFound = () => import("@/views/NotFound.vue");
 const PoolTemplate = () => import("@/views/PoolTemplate.vue");
@@ -22,10 +24,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/:pathMatch(.)",
+      path: "/:pathMatch(.*)",
       name: "NotFound",
       component: NotFound,
-      meta: { layout: EmptyLayout },
+      meta: { layout: BaseLayout },
     },
     {
       path: "/",
@@ -43,12 +45,40 @@ const router = createRouter({
       name: "hedging-vault",
       component: HedgingVault,
       meta: { requireWallet: true, layout: BaseLayout },
+      beforeEnter: async (to, from, next) => {
+        const { vaultId, validVaultId } = useRouteVaultIdentifier(to.params);
+        if (!validVaultId) {
+          next({ name: "NotFound", params: { pathMatch: "404" } });
+        }
+
+        try {
+          const { getAssetAddress } = useErc4626Contract(vaultId, false, false);
+          await getAssetAddress();
+          next();
+        } catch {
+          next({ name: "NotFound", params: { pathMatch: "404" } });
+        }
+      },
     },
     {
       path: "/hedging-vault/:id/operator",
       name: "vault-operator",
       component: VaultOperator,
       meta: { requireWallet: true, layout: BaseLayout },
+      beforeEnter: async (to, from, next) => {
+        const { vaultId, validVaultId } = useRouteVaultIdentifier(to.params);
+        if (!validVaultId) {
+          next({ name: "NotFound", params: { pathMatch: "404" } });
+        }
+
+        try {
+          const { getAssetAddress } = useErc4626Contract(vaultId, false, false);
+          await getAssetAddress();
+          next();
+        } catch {
+          next({ name: "NotFound", params: { pathMatch: "404" } });
+        }
+      },
     },
     {
       path: "/templates/:id",
@@ -91,7 +121,7 @@ const router = createRouter({
           connectedWallet.value?.accounts[0].address.toLowerCase() !==
           to.params.lp
         ) {
-          next({ name: "NotFound" });
+          next({ name: "NotFound", params: { pathMatch: "404" } });
         } else {
           next();
         }

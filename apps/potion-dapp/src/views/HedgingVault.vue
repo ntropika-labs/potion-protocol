@@ -242,7 +242,7 @@ const {
   strategyLoading,
 } = usePotionBuyActionContract(PotionBuyAction.address, true);
 const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(validId, true);
+  useInvestmentVaultContract(validId, true, true);
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {

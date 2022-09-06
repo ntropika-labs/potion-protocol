@@ -67,6 +67,7 @@ const { getGas, gasPrice } = useBlockNative();
  */
 const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
   vaultId,
+  true,
   true
 );
 
