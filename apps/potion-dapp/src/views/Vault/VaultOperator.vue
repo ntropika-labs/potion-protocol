@@ -226,7 +226,7 @@ const enterPosition = async () => {
     true
   );
 
-  const { swapInfo, potionBuyInfo } = await getEnterPositionData(
+  const { swapInfo, potionBuyInfo } = getEnterPositionData(
     tokenAsset,
     oraclePrice,
     strikePrice,
@@ -346,11 +346,7 @@ const { records } = useBuyerRecords(
   contractsAddresses["PotionBuyAction"].address,
   nextCycleTimestamp
 );
-const potionAddress = computed(() => {
-  if (!records.value || !records.value.length) return null;
-
-  return records.value[0].otoken ? records.value[0].otoken.id : null;
-});
+const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
 const setPriceCommand = ref<HTMLElement>();
 const copySetPriceCommand = async () => {
   if (potionAddress.value && setPriceCommand.value?.textContent) {
@@ -358,6 +354,7 @@ const copySetPriceCommand = async () => {
   }
 };
 </script>
+
 <template>
   <!-- START TEST COMMANDS -->
   <div v-if="IS_DEV_ENV">
