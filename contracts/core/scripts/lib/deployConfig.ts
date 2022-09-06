@@ -111,9 +111,7 @@ const HEDGING_VAULT_TEST_ALLOCATIONS = [
 
 const LOCALHOST_GOERLI_ALL = [
     // Team
-    new AccountValue("0x2c5eDB7F0EF80C7aBea2D2b7bF9Da96823Ec935d", parseUsdcAmount("1000000")), // G
-    new AccountValue("0x46BD46A8C0DcB4Ca501c4A5624B1F09Ba86ff8F6", parseUsdcAmount("1000000")), // N
-    new AccountValue("0x614B7f7Ed8E93260B6EA33BB081073036F73F9E9", parseUsdcAmount("1000000")), // E
+    new AccountValue("0x72132eE89ED8A2B8d6b2797Bbd32285832c1c87e", parseUsdcAmount("1000000")), // S
 ];
 
 const newSelfContainedEcosystemConfig = {
