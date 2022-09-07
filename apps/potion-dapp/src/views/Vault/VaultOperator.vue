@@ -12,6 +12,7 @@ import {
   LabelValue,
   TimeTag,
 } from "potion-ui";
+import { LifecycleStates } from "hedging-vault-sdk";
 
 import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
@@ -23,10 +24,7 @@ import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import {
-  useInvestmentVaultContract,
-  LifecycleState,
-} from "@/composables/useInvestmentVaultContract";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -112,17 +110,17 @@ const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
-    case LifecycleState.Unlocked:
+    case LifecycleStates.Unlocked:
       return {
         label: t("unlocked"),
         class: "bg-accent-500",
       };
-    case LifecycleState.Committed:
+    case LifecycleStates.Committed:
       return {
         label: t("committed"),
         class: "bg-orange-500",
       };
-    case LifecycleState.Locked:
+    case LifecycleStates.Locked:
     default:
       return {
         label: t("locked"),
