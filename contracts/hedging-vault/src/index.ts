@@ -70,56 +70,20 @@ export const Deployments = {
         },
     },
     "localhost.hedging": {
-        timestamp: 1662028354,
+        timestamp: 1662563520,
         network: "localhost",
         contracts: {
-            USDC: {
-                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-                blockNumber: 0,
-            },
-            UnderlyingAsset: {
-                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-                blockNumber: 0,
-            },
-            PotionLiquidityPool: {
-                address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
-                blockNumber: 0,
-            },
-            OpynAddressBook: {
-                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-                blockNumber: 0,
-            },
-            OpynController: {
-                address: "0xa16E02E87b7454126E5E10d957A927A7F5B5d2be",
-                blockNumber: 0,
-            },
-            OpynFactory: {
-                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-                blockNumber: 0,
-            },
-            OpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-                blockNumber: 0,
-            },
-            MockOpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-                blockNumber: 0,
-            },
-            UniswapV3Router: {
-                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
-                blockNumber: 82,
-            },
             PotionBuyAction: {
-                address: "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
-                blockNumber: 85,
+                address: "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
+                blockNumber: 75,
             },
             InvestmentVault: {
-                address: "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
-                blockNumber: 86,
+                address: "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
+                blockNumber: 77,
             },
             HedgingVaultOperatorHelper: {
-                address: "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726",
-                blockNumber: 88,
+                address: "0x04C89607413713Ec9775E14b954286519d836FEf",
+                blockNumber: 79,
             },
         },
     },

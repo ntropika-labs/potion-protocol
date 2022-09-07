@@ -19,11 +19,6 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "strikePrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
         name: "expirationTimestamp",
         type: "uint256",
       },

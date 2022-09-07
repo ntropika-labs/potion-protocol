@@ -295,11 +295,7 @@ describe("HedgingVault", function () {
         await operatorHelper.connect(ownerAccount).enterPosition(swapInfoEnterPosition, potionBuyInfo);
 
         // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
-            tEnv.underlyingAsset.address,
-            strikePriceInUSDC,
-            expirationTimestamp,
-        );
+        const currentPotionBuyInfo = await action.getPotionBuyInfo(tEnv.underlyingAsset.address, expirationTimestamp);
 
         expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
 

@@ -135,7 +135,7 @@ export interface PotionProtocolOracleUpgradeableInterface
     "changeVault(address)": FunctionFragment;
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
-    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getVault()": FunctionFragment;
     "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
@@ -172,7 +172,7 @@ export interface PotionProtocolOracleUpgradeableInterface
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getStrategist",
@@ -339,7 +339,6 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
@@ -380,7 +379,6 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
   getPotionBuyInfo(
     underlyingAsset: string,
-    strikePrice: BigNumberish,
     expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
@@ -421,7 +419,6 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
@@ -504,7 +501,6 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -546,7 +542,6 @@ export interface PotionProtocolOracleUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
