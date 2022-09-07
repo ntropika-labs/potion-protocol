@@ -27,6 +27,7 @@ import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionCont
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
@@ -188,8 +189,8 @@ const enterPosition = async () => {
   );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
-    contractsAddresses.USDC.address,
-    contractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
     strikePrice.value,
     expirationTimestamp,
     true
