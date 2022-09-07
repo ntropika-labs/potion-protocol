@@ -1,11 +1,11 @@
-import { Token as UniswapToken } from "@uniswap/sdk-core";
-import { Trade } from "@uniswap/router-sdk";
-
-import type { Token } from "dapp-types";
+import { Token as UniswapToken, Price } from "@uniswap/sdk-core";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { getChainId, getWETHAddress } from "@/helpers/uniswap";
+
 import type { Ref } from "vue";
+import type { Token } from "dapp-types";
+import type { Currency } from "@uniswap/sdk-core";
 
 const IS_DEV_ENV = import.meta.env.DEV;
 
@@ -30,20 +30,20 @@ const convertInputToToken = (uniToken: UniswapToken): Token => {
 
 const getEnterExpectedPriceRate = (
   oraclePrice: Ref<number>,
-  routeTrade: Trade<any, any, any>
+  tradePrice: Price<Currency, Currency>
 ) => {
   return IS_DEV_ENV
     ? oraclePrice.value //1000,
-    : routeTrade.executionPrice.toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+    : tradePrice.toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
 };
 
 const getExitExpectedPriceRate = (
   oraclePrice: Ref<number>,
-  routeTrade: Trade<any, any, any>
+  tradePrice: Price<Currency, Currency>
 ) => {
   return IS_DEV_ENV
     ? 1 / oraclePrice.value //0.001,
-    : routeTrade.executionPrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
+    : tradePrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
 };
 
 export {
