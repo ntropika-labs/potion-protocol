@@ -227,6 +227,7 @@ async function mockContractsIfNeeded(
             },
         );
 
+        // TODO: Is this still needed?
         if (deploymentConfig.opynMockOracle) {
             testingEnvironmentDeployment.opynMockOracle = await attachContract<MockOpynOracle>(
                 "MockOpynOracle",

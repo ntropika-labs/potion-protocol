@@ -32,6 +32,7 @@ export class DeployChainlinkPricer implements PostDeployAction {
             ],
             {
                 alias: "ChainLinkPricer" + this.config.assetName,
+                options: DeploymentOptions.DeployAndExportAndVerify,
             },
         );
 
