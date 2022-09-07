@@ -57,7 +57,7 @@ export default defineConfig({
               new URL("./src/composables/useOnboard.ts", import.meta.url)
             ),
       "@vault-operator-utils":
-        VITE_MODE === "test"
+        VITE_MODE === "test" || development
           ? fileURLToPath(
               //@ts-expect-error volar giving errors
               new URL(

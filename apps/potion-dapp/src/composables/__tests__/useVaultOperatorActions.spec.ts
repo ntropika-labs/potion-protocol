@@ -5,10 +5,15 @@ import { withSetup } from "./test-utils";
 
 describe("useVaultOperatorActions", () => {
   describe("it doesn't have syntax errors", () => {
+    const potionRouterResult = {
+      premium: 1,
+      premiumGas: 1,
+      counterparties: [],
+    };
     it("returns totalAmountToSwap", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -17,7 +22,7 @@ describe("useVaultOperatorActions", () => {
     it("returns ruoterLoading", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -26,7 +31,7 @@ describe("useVaultOperatorActions", () => {
     it("returns isTotalAmountValid", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -35,7 +40,7 @@ describe("useVaultOperatorActions", () => {
     it("returns hasCounterparties", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -44,7 +49,7 @@ describe("useVaultOperatorActions", () => {
     it("returns hasRoute", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -53,7 +58,7 @@ describe("useVaultOperatorActions", () => {
     it("returns isEnterPositionOperationValid", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
@@ -62,7 +67,7 @@ describe("useVaultOperatorActions", () => {
     it("returns isExitPositionOperationValid", () => {
       const [result] = withSetup(() =>
         useVaultOperatorActions(
-          ref({}),
+          ref(potionRouterResult),
           ref({ isFinal: true, currentPayout: 1 })
         )
       );
