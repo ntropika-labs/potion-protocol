@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { TradeType } from "@uniswap/sdk-core";
+import { Protocol } from "@uniswap/router-sdk";
 import { BigNumber } from "ethers";
 
 import { getChainId, USDCUniToken } from "@/helpers/uniswap";
@@ -95,12 +96,6 @@ export function useVaultOperatorActions(
         PotionBuyAction.value,
         swapSlippage.value
       );
-
-      console.log(
-        "EXECUTION PRICE",
-        uniswapRouterResult.value?.trade.executionPrice,
-        uniswapRouterResult.value?.trade.executionPrice.toFixed(10)
-      );
     } else {
       throw new Error("No counterparty available");
     }
@@ -155,21 +150,25 @@ export function useVaultOperatorActions(
       }
 
       const swapRoute = uniswapRouterResult.value.route[0];
-      const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-      const expectedPriceRate = getExitExpectedPriceRate(
-        oraclePrice,
-        uniswapRouterResult.value.trade
-      );
-      swapInfo = {
-        steps: [
-          {
-            inputToken: USDCToken,
-            fee: firstPoolFee,
-          },
-        ],
-        outputToken: underlyingToken.value,
-        expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
-      };
+      if (swapRoute.protocol === Protocol.V3) {
+        const firstPoolFee = swapRoute.route.pools[0].fee;
+        const expectedPriceRate = getExitExpectedPriceRate(
+          oraclePrice,
+          uniswapRouterResult.value.trade.executionPrice
+        );
+        swapInfo = {
+          steps: [
+            {
+              inputToken: USDCToken,
+              fee: firstPoolFee,
+            },
+          ],
+          outputToken: underlyingToken.value,
+          expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+        };
+      } else {
+        throw new Error("swapRoute isn't a protocol v3 route");
+      }
     } else {
       swapInfo = {
         steps: [
@@ -205,7 +204,7 @@ export function useVaultOperatorActions(
       const swapRoute = uniswapRouterResult.value.route[0];
 
       const counterparties = potionRouterResult.value.counterparties.map(
-        (seller: any) => {
+        (seller) => {
           return {
             lp: seller.lp,
             poolId: seller.poolId,
@@ -216,31 +215,33 @@ export function useVaultOperatorActions(
         }
       );
 
-      const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
-      const USDCToken = convertInputToToken(USDCUniToken);
-      const expectedPriceRate = getEnterExpectedPriceRate(
-        oraclePrice,
-        uniswapRouterResult.value.trade
-      );
-      const swapInfo: UniSwapInfo = {
-        steps: [{ inputToken: underlyingToken.value, fee: firstPoolFee }],
-        outputToken: USDCToken,
-        expectedPriceRate: expectedPriceRate, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
-      };
+      if (swapRoute.protocol === Protocol.V3) {
+        const firstPoolFee = swapRoute.route.pools[0].fee;
+        const USDCToken = convertInputToToken(USDCUniToken);
+        const expectedPriceRate = getEnterExpectedPriceRate(
+          oraclePrice,
+          uniswapRouterResult.value.trade.executionPrice
+        );
+        const swapInfo: UniSwapInfo = {
+          steps: [{ inputToken: underlyingToken.value, fee: firstPoolFee }],
+          outputToken: USDCToken,
+          expectedPriceRate: expectedPriceRate, // TODO: this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 100
+        };
 
-      const potionBuyInfo = {
-        targetPotionAddress: newOtokenAddress,
-        underlyingAsset: underlyingToken.value.address,
-        strikePriceInUSDC: strikePrice.value.toFixed(6),
-        expirationTimestamp: expirationTimestamp,
-        sellers: counterparties,
-        expectedPremiumInUSDC: potionRouterResult.value?.premium.toFixed(6),
-        totalSizeInPotions: numberOfOtokensToBuyBN.value,
-      };
+        const potionBuyInfo = {
+          targetPotionAddress: newOtokenAddress,
+          underlyingAsset: underlyingToken.value.address,
+          strikePriceInUSDC: strikePrice.value.toFixed(6),
+          expirationTimestamp: expirationTimestamp,
+          sellers: counterparties,
+          expectedPremiumInUSDC: potionRouterResult.value?.premium.toFixed(6),
+          totalSizeInPotions: numberOfOtokensToBuyBN.value,
+        };
 
-      console.log("expectedPriceRate", expectedPriceRate);
-
-      return { swapInfo, potionBuyInfo };
+        return { swapInfo, potionBuyInfo };
+      } else {
+        throw new Error("swapRoute isn't a protocol v3 route");
+      }
     } else {
       throw new Error(
         "A uniswap route and a set of counterparties is required to enter position"

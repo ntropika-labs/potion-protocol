@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ref } from "vue";
 import { useVaultDeposit } from "../useVaultDeposit";
-import { LifecycleState } from "../useInvestmentVaultContract";
+import { LifecycleStates } from "hedging-vault-sdk";
 import { withSetup } from "./test-utils";
 
 describe("useVaultDeposit", () => {
@@ -13,7 +13,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.amount).not.toBeUndefined();
@@ -25,7 +25,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.buttonState).not.toBeUndefined();
@@ -37,7 +37,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.handleDeposit).not.toBeUndefined();
@@ -49,7 +49,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.depositLoading).not.toBeUndefined();
@@ -61,7 +61,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.depositTx).not.toBeUndefined();
@@ -73,7 +73,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.depositReceipt).not.toBeUndefined();
@@ -85,7 +85,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.approveLoading).not.toBeUndefined();
@@ -97,7 +97,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.approveTx).not.toBeUndefined();
@@ -109,7 +109,7 @@ describe("useVaultDeposit", () => {
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
           ref("TKN"),
           ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-          ref(LifecycleState.Locked)
+          ref(LifecycleStates.Locked)
         )
       );
       expect(result.approveReceipt).not.toBeUndefined();
@@ -119,28 +119,28 @@ describe("useVaultDeposit", () => {
   describe("buttonState returns the correct state", () => {
     describe("buttonState is disabled", () => {
       describe("locked state", () => {
-        it("is locked if vaultStatus = LifecycleState.Locked", () => {
+        it("is locked if vaultStatus = LifecycleStates.Locked", () => {
           const [result] = withSetup(() =>
             useVaultDeposit(
               ref(100),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
               ref("TKN"),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-              ref(LifecycleState.Locked)
+              ref(LifecycleStates.Locked)
             )
           );
           expect(result.buttonState.value.label).toBe("locked");
           expect(result.buttonState.value.disabled).toBe(true);
         });
 
-        it("is locked if vaultStatus = LifecycleState.Committed", () => {
+        it("is locked if vaultStatus = LifecycleStates.Committed", () => {
           const [result] = withSetup(() =>
             useVaultDeposit(
               ref(100),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
               ref("TKN"),
               ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-              ref(LifecycleState.Committed)
+              ref(LifecycleStates.Committed)
             )
           );
           expect(result.buttonState.value.label).toBe("locked");
@@ -155,7 +155,7 @@ describe("useVaultDeposit", () => {
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
             ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-            ref(LifecycleState.Unlocked)
+            ref(LifecycleStates.Unlocked)
           )
         );
         result.amount.value = 3000;
@@ -172,7 +172,7 @@ describe("useVaultDeposit", () => {
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
             ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-            ref(LifecycleState.Unlocked)
+            ref(LifecycleStates.Unlocked)
           )
         );
         result.userAllowance.value = 15;
@@ -188,7 +188,7 @@ describe("useVaultDeposit", () => {
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
             ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-            ref(LifecycleState.Unlocked)
+            ref(LifecycleStates.Unlocked)
           )
         );
         result.userAllowance.value = 1500;
@@ -204,7 +204,7 @@ describe("useVaultDeposit", () => {
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92260"),
             ref("TKN"),
             ref("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
-            ref(LifecycleState.Unlocked)
+            ref(LifecycleStates.Unlocked)
           )
         );
         result.userAllowance.value = 1500;

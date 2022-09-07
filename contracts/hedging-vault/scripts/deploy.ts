@@ -19,7 +19,7 @@ async function main() {
     const networkName = getHardhatNetworkName();
     const deploymentNetworkName = getDeploymentsNetworkName();
 
-    await initDeployment(true);
+    await initDeployment();
 
     const deployer = (await ethers.provider.listAccounts())[0];
 

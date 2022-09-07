@@ -85,6 +85,8 @@ contract InvestmentVault is BaseVaultUpgradeable {
 
         newPrincipalAmount = totalAssets();
 
+        // TODO: Apply fees here
+
         emit VaultPositionExited(newPrincipalAmount);
     }
 

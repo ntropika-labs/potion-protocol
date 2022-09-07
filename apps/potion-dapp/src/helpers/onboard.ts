@@ -11,6 +11,7 @@ const chains: Chain[] = [];
 switch (ethereumNetwork) {
   case "localhost":
   case "localhost.hedging":
+  case "localhost.goerli":
     chains.push({
       id: "0x7a69",
       token: "ETH",

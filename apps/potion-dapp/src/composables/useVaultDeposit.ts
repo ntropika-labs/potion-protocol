@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useOnboard } from "@onboard-composable";
 import { useErc4626Contract } from "./useErc4626Contract";
 import { useErc20Contract } from "./useErc20Contract";
-import { LifecycleState } from "./useInvestmentVaultContract";
+import { LifecycleStates } from "hedging-vault-sdk";
 import type { Ref, ComputedRef } from "vue";
 
 const useVaultDeposit = (
@@ -11,7 +11,7 @@ const useVaultDeposit = (
   assetAddress: Ref<string> | ComputedRef<string>,
   assetSymbol: Ref<string> | ComputedRef<string>,
   vaultAddress: Ref<string> | ComputedRef<string>,
-  vaultStatus: Ref<LifecycleState> | ComputedRef<LifecycleState>
+  vaultStatus: Ref<LifecycleStates> | ComputedRef<LifecycleStates>
 ) => {
   const { connectedWallet } = useOnboard();
   const { t } = useI18n();
@@ -35,7 +35,7 @@ const useVaultDeposit = (
         disabled: true,
       };
     }
-    if (vaultStatus.value !== LifecycleState.Unlocked) {
+    if (vaultStatus.value !== LifecycleStates.Unlocked) {
       return {
         label: "locked",
         disabled: true,

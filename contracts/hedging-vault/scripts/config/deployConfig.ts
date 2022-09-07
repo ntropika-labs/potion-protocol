@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { NetworksType } from "../../hardhat.helpers";
+import * as PercentageUtils from "hedging-vault-sdk";
 
 /**
  * @title PotionHedgingVaultConfigParams
@@ -62,32 +63,98 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         networkName: "hardhat",
 
         // Investment configuration
-        maxPremiumPercentage: BigNumber.from(15000000), // 15%
-        premiumSlippage: BigNumber.from(2000000), //       2%
-        swapSlippage: BigNumber.from(2000000), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //       1 day
-        strikePercentage: BigNumber.from(80000000), //     80%
-        hedgingPercentage: BigNumber.from(100000000), //   100%
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
 
         // Fees configuration
-        managementFee: BigNumber.from(3000000), // 3%
-        performanceFee: BigNumber.from(3000000), // 3%
+        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
+    },
+    "localhost.test": {
+        networkName: "localhost",
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
     },
     "localhost.hedging": {
         networkName: "localhost",
 
         // Investment configuration
-        maxPremiumPercentage: BigNumber.from(15000000), // 15%
-        premiumSlippage: BigNumber.from(2000000), //       2%
-        swapSlippage: BigNumber.from(2000000), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //       1 day
-        strikePercentage: BigNumber.from(80000000), //     80 %
-        hedgingPercentage: BigNumber.from(100000000), //   100%
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
 
         // Fees configuration
-        managementFee: BigNumber.from(3000000), //  3%
-        performanceFee: BigNumber.from(3000000), // 3%
+        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
+    },
+    "localhost.goerli": {
+        networkName: "localhost",
+
+        // Asset address
+        USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
+        underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(0), //         0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //        0%
+
+        // Third-party dependencies
+        uniswapV3SwapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+        potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+        opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+    },
+    goerli: {
+        networkName: "goerli",
+
+        // Asset address
+        USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
+        underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(0), //         0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //        0%
+
+        // Third-party dependencies
+        uniswapV3SwapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+        potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+        opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
     },
 };
