@@ -1,3 +1,4 @@
+import type { Ref } from "vue";
 import { Token as UniswapToken } from "@uniswap/sdk-core";
 import { Trade } from "@uniswap/router-sdk";
 
@@ -5,7 +6,8 @@ import type { Token } from "dapp-types";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { getChainId, getWETHAddress } from "@/helpers/uniswap";
-import type { Ref } from "vue";
+
+import { useUserData } from "@/composables/useUserData";
 
 const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
   return new UniswapToken(
@@ -42,9 +44,16 @@ const getExitExpectedPriceRate = (
   return 1 / oraclePrice.value; // default to 0.001,
 };
 
+const getRecipientAddress = () => {
+  const { walletAddress } = useUserData(false);
+
+  return walletAddress.value;
+};
+
 export {
   convertCollateralToUniswapToken,
   convertInputToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
+  getRecipientAddress,
 };

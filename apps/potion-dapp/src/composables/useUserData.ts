@@ -2,7 +2,7 @@ import { onMounted, computed, watch } from "vue";
 import { useOnboard } from "@onboard-composable";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 
-export function useUserData() {
+export function useUserData(fetchInitialData = true) {
   const { connectedWallet } = useOnboard();
   const walletAddress = computed(
     () => connectedWallet.value?.accounts[0].address ?? ""
@@ -22,7 +22,9 @@ export function useUserData() {
     }
   };
 
-  onMounted(async () => await fetchUserData());
+  if (fetchInitialData) {
+    onMounted(async () => await fetchUserData());
+  }
 
   watch(walletAddress, async (newAWallet) => {
     if (newAWallet) {

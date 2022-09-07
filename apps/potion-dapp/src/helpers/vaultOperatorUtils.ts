@@ -5,6 +5,7 @@ import type { Token } from "dapp-types";
 
 import { getChainId } from "@/helpers/uniswap";
 import type { Ref } from "vue";
+import { contractsAddresses } from "./hedgingVaultContracts";
 
 const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
   return new UniswapToken(
@@ -39,9 +40,16 @@ const getExitExpectedPriceRate = (
   return routeTrade.executionPrice.invert().toSignificant(18); //The expected price of the swap as a fixed point SD59x18 number
 };
 
+const getRecipientAddress = () => {
+  const { PotionBuyAction } = contractsAddresses;
+
+  return PotionBuyAction.address;
+};
+
 export {
   convertCollateralToUniswapToken,
   convertInputToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
+  getRecipientAddress,
 };

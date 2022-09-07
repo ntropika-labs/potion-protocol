@@ -1,6 +1,8 @@
 import { computed, ref } from "vue";
+import type { Ref } from "vue";
 import { TradeType } from "@uniswap/sdk-core";
 import { BigNumber } from "ethers";
+import { V3Route } from "@uniswap/smart-order-router";
 
 import { getChainId, USDCUniToken } from "@/helpers/uniswap";
 import {
@@ -8,12 +10,11 @@ import {
   convertInputToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
-} from "@/helpers/vaultOperatorTokens";
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+  getRecipientAddress,
+} from "@vault-operator-utils";
 
 import { useAlphaRouter } from "./useAlphaRouter";
 
-import type { Ref } from "vue";
 import type { DepthRouterReturn } from "potion-router";
 import type { Token } from "dapp-types";
 import type { UniSwapInfo } from "./useHedgingVaultOperatorHelperContract";
@@ -31,7 +32,7 @@ export function useVaultOperatorActions(
   } = useAlphaRouter(getChainId());
 
   const totalAmountToSwap = ref(0);
-  const { PotionBuyAction } = contractsAddresses;
+
   /**
    * FLAGS
    */
@@ -86,13 +87,15 @@ export function useVaultOperatorActions(
         collateralToken.value
       );
 
+      const recipientAddress = getRecipientAddress();
+
       await getRoute(
         collateralUniToken,
         USDCUniToken,
         TradeType.EXACT_OUTPUT,
         totalAmountToSwap.value,
         maxSplits, // TODO remove: assert here theres only 1 route returned (no split routes)
-        PotionBuyAction.value,
+        recipientAddress,
         swapSlippage.value
       );
 
@@ -122,13 +125,15 @@ export function useVaultOperatorActions(
         collateralToken.value
       );
 
+      const recipientAddress = getRecipientAddress();
+
       await getRoute(
         USDCUniToken,
         collateralUniToken,
         TradeType.EXACT_INPUT,
         totalAmountToSwap.value,
         1, // TODO remove: assert here theres only 1 route returned (no split routes)
-        PotionBuyAction.value,
+        recipientAddress,
         swapSlippage.value
       );
     } else {
@@ -155,7 +160,7 @@ export function useVaultOperatorActions(
       }
 
       const swapRoute = uniswapRouterResult.value.route[0];
-      const firstPoolFee: number = (swapRoute.route as any).pools[0].fee;
+      const firstPoolFee: number = (swapRoute.route as V3Route).pools[0].fee;
       const expectedPriceRate = getExitExpectedPriceRate(
         oraclePrice,
         uniswapRouterResult.value.trade
