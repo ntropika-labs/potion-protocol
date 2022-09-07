@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_ALCHEMY_KEY: string;
   readonly VITE_ETHEREUM_NETWORK:
     | "localhost"
+    | "localhost.hedging"
     | "ganache"
     | "goerli"
     | "mainnet";

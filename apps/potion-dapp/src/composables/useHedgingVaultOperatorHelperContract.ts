@@ -56,24 +56,6 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   return utils.solidityPack(types, values);
 }
 
-// export function toPRBMath(
-//   numberRepresentation: string,
-//   inputDecimals = 18,
-//   outputDecimals = 18
-// ): BigNumber {
-//   if (inputDecimals === outputDecimals) {
-//     return parseUnits(numberRepresentation);
-//   } else if (inputDecimals > outputDecimals) {
-//     return parseUnits(numberRepresentation).div(
-//       BigNumber.from(10).pow(inputDecimals - outputDecimals)
-//     );
-//   } else {
-//     return parseUnits(numberRepresentation).mul(
-//       BigNumber.from(10).pow(outputDecimals - inputDecimals)
-//     );
-//   }
-// }
-
 export function useHedgingVaultOperatorHelperContract() {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
@@ -132,6 +114,10 @@ export function useHedgingVaultOperatorHelperContract() {
     } else {
       // TODO: when expectedPriceRate is 0 the currentPayout is also 0
       // signal to the contract we don't have a swap path
+      swapPath = getEncodedSwapPath(
+        [inputToken.address, swapInfo.outputToken.address],
+        0
+      );
     }
     const swapData: IUniswapV3Oracle.SwapInfoStruct = {
       inputToken: inputToken.address,
@@ -165,11 +151,7 @@ export function useHedgingVaultOperatorHelperContract() {
         enterPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
-        // Superseded by toPRBMath()
-        // const divider = BigNumber.from(10).pow(12);
-        // swapData.expectedPriceRate = BigNumber.from(
-        //   swapData.expectedPriceRate
-        // ).div(divider);
+
         const potionBuyActionData: PotionBuyInfoStruct = {
           targetPotionAddress: potionBuyInfo.targetPotionAddress,
           underlyingAsset: potionBuyInfo.underlyingAsset,
@@ -215,11 +197,7 @@ export function useHedgingVaultOperatorHelperContract() {
         exitPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
-        // Superseded by toPRBMath()
-        // const multiplier = BigNumber.from(10).pow(12);
-        // swapData.expectedPriceRate = BigNumber.from(
-        //   swapData.expectedPriceRate
-        // ).mul(multiplier);
+
         console.log("swapData: ", swapData);
         exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
@@ -248,7 +226,6 @@ export function useHedgingVaultOperatorHelperContract() {
 
       const provider = initContractProvider();
       canPositionBeEntered.value = await provider.canPositionBeEntered();
-      console.log("canPositionBeEntered", canPositionBeEntered.value);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -274,8 +251,6 @@ export function useHedgingVaultOperatorHelperContract() {
 
       const provider = initContractProvider();
       canPositionBeExited.value = await provider.canPositionBeExited();
-
-      console.log("canPositionBeExited", canPositionBeExited.value);
     } catch (error) {
       const errorMessage =
         error instanceof Error

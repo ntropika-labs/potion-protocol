@@ -70,6 +70,8 @@ edit: edit
 empty: Empty
 enable_or_disable: Enable/Disable
 enter_position: Enter position
+entering_position: Entering position
+exiting_position: Existing position
 expiration: Expiration
 expiration_date: Exp. Date
 expired_options: Expired Put Options
@@ -129,6 +131,8 @@ pnl: Pnl
 pool_created: pool created
 pool_setup: Pool Setup
 pool_underlyings: Underlying Pool Assets
+position_entered: Position Entered
+position_exited: Position Exited
 potion_bought: potion bought
 premium: Premium
 price_per_potion: price per potion

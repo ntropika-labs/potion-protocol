@@ -5,10 +5,10 @@
         <p class="capitalize">{{ t("protective_put_vault") }}</p>
         <a
           class="text-xs flex items-center font-normal text-white/50 hover:text-white transition"
-          :href="getEtherscanUrl(vaultAddress)"
+          :href="getEtherscanUrl(vaultId)"
         >
           <i class="i-ph-arrow-square-in mr-1 text-xs"></i>
-          <span class="truncate max-w-[15ch]">{{ vaultAddress }}</span>
+          <span class="truncate max-w-[15ch]">{{ vaultId }}</span>
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
@@ -208,7 +208,7 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useNotifications } from "@/composables/useNotifications";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import { useRouteVaultId } from "@/composables/useRouteVaultId";
+import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useVaultDeposit } from "@/composables/useVaultDeposit";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
 
@@ -217,7 +217,7 @@ const { connectedWallet } = useOnboard();
 const { PotionBuyAction } = contractsAddresses;
 
 const route = useRoute();
-const { vaultAddress } = useRouteVaultId(route.params);
+const { vaultId } = useRouteVaultIdentifier(route.params);
 
 const { blockTimestamp, getBlock } = useEthersProvider();
 
@@ -232,7 +232,7 @@ const {
 } = usePotionBuyActionContract(PotionBuyAction.address, true);
 
 const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(vaultAddress, true);
+  useInvestmentVaultContract(vaultId, true, true);
 
 const {
   assetAddress,
@@ -242,7 +242,7 @@ const {
   totalAssets,
   userBalance,
   vaultSymbol,
-} = useErc4626Contract(vaultAddress, true, true);
+} = useErc4626Contract(vaultId, true, true);
 
 const {
   userBalance: assetUserBalance,
@@ -265,7 +265,7 @@ const {
   assetUserBalance,
   assetAddress,
   assetSymbol,
-  vaultAddress,
+  vaultId,
   vaultStatus
 );
 
@@ -276,7 +276,7 @@ const {
   handleRedeem,
   amount: redeemAmount,
   buttonState: redeemButtonState,
-} = useVaultRedeem(userBalance, vaultAddress, vaultStatus);
+} = useVaultRedeem(userBalance, vaultId, vaultStatus);
 
 const shareToAssetRatio = computed(() => 1 / assetToShare.value);
 const balanceInAsset = computed(
@@ -317,7 +317,7 @@ watch(assetAddress, async () => {
     await Promise.all([
       fetchErc20Info(),
       getTokenBalance(true),
-      fetchUserAllowance(vaultAddress.value),
+      fetchUserAllowance(vaultId.value),
     ]);
   }
 });

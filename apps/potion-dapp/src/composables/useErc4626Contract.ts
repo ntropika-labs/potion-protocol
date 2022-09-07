@@ -3,7 +3,15 @@ import type {
   ContractReceipt,
 } from "@ethersproject/contracts";
 
-import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
+import {
+  computed,
+  isRef,
+  onMounted,
+  onUnmounted,
+  ref,
+  unref,
+  watch,
+} from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
@@ -15,6 +23,7 @@ import { ERC4626CapUpgradeable__factory } from "@potion-protocol/hedging-vault/t
 
 import type { Ref } from "vue";
 import type { ERC4626Upgradeable } from "@potion-protocol/hedging-vault/typechain";
+import { ContractInitError } from "@/helpers/errors";
 
 export function useErc4626Contract(
   address: string | Ref<string>,
@@ -33,12 +42,21 @@ export function useErc4626Contract(
   };
 
   const initContractProvider = () => {
-    return initContract(
-      false,
-      false,
-      ERC4626CapUpgradeable__factory,
-      unref(address).toLowerCase()
-    ) as ERC4626Upgradeable;
+    try {
+      return initContract(
+        false,
+        false,
+        ERC4626CapUpgradeable__factory,
+        unref(address).toLowerCase()
+      ) as ERC4626Upgradeable;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? "Unable to init contract: " + error.message
+          : "Unable to init contract";
+
+      throw new ContractInitError(errorMessage);
+    }
   };
 
   const initContractProviderWS = () => {
@@ -110,6 +128,16 @@ export function useErc4626Contract(
     decimals: assetDecimals,
     fetchErc20Info: assetFetchErc20Info,
   } = useErc20Contract(assetAddress, false);
+
+  const tokenAsset = computed(() => {
+    return {
+      name: assetName.value,
+      symbol: assetSymbol.value,
+      address: assetAddress.value.toLowerCase(),
+      decimals: assetDecimals.value,
+      //image: assetImage.value, // TODO FIX
+    };
+  });
 
   const maxDeposit = ref(0);
   const maxDepositLoading = ref(false);
@@ -745,5 +773,6 @@ export function useErc4626Contract(
     fetchVaultData,
     getUserBalance,
     initContractProviderWS,
+    tokenAsset,
   };
 }

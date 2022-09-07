@@ -12,7 +12,8 @@ export const etherscanUrl =
   ethereumNetwork === "mainnet"
     ? "https://etherscan.io"
     : `https://${ethereumNetwork}.etherscan.io`;
-export const uniswapRouterUrl =
+
+export const uniswapRpcUrl =
   ethereumNetwork.indexOf("localhost") === 0
     ? `https://eth-mainnet.alchemyapi.io/v2/${alchemyKey}`
     : `https://eth-${ethereumNetwork}.alchemyapi.io/v2/${alchemyKey}`;
