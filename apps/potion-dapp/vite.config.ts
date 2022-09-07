@@ -56,6 +56,19 @@ export default defineConfig({
               //@ts-expect-error volar giving errors
               new URL("./src/composables/useOnboard.ts", import.meta.url)
             ),
+      "@vault-operator-utils":
+        VITE_MODE === "test"
+          ? fileURLToPath(
+              //@ts-expect-error volar giving errors
+              new URL(
+                "./src/helpers/mockedVaultOperatorUtils.ts",
+                import.meta.url
+              )
+            )
+          : fileURLToPath(
+              //@ts-expect-error volar giving errors
+              new URL("./src/helpers/vaultOperatorUtils.ts", import.meta.url)
+            ),
     },
   },
   build: {
