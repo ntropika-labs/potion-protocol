@@ -6,6 +6,7 @@
     "auth-hosted": "graph auth --hosted-service",
     "auth-studio": "graph auth --studio",
     "prepare-local": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/localhost.json | mustache - subgraph.template.yaml > subgraph.yaml",
+    "prepare-hedging": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/localhost.hedging.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-rinkeby": "echo '{\"subgraphNetwork\": \"rinkeby\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/rinkeby.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-mainnet": "echo '{\"subgraphNetwork\": \"mainnet\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/mainnet.json | mustache - subgraph.template.yaml > subgraph.yaml",
     "prepare-ganache": "echo '{\"subgraphNetwork\": \"ganache\"}' | jq -s '.[0] * .[1]' - ../../contracts/core/deployments/ganache.json | mustache - subgraph.template.yaml > subgraph.yaml",
