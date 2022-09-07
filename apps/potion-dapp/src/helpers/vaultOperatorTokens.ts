@@ -1,6 +1,6 @@
 import { Token as UniswapToken, Price } from "@uniswap/sdk-core";
 
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses } from "@/helpers/contracts";
 import { getChainId, getWETHAddress } from "@/helpers/uniswap";
 
 import type { Ref } from "vue";

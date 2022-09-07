@@ -12,6 +12,7 @@ import {
   LabelValue,
   TimeTag,
 } from "potion-ui";
+import { LifecycleStates } from "hedging-vault-sdk";
 
 import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
@@ -23,12 +24,10 @@ import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import {
-  useInvestmentVaultContract,
-  LifecycleState,
-} from "@/composables/useInvestmentVaultContract";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
@@ -112,17 +111,17 @@ const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
-    case LifecycleState.Unlocked:
+    case LifecycleStates.Unlocked:
       return {
         label: t("unlocked"),
         class: "bg-accent-500",
       };
-    case LifecycleState.Committed:
+    case LifecycleStates.Committed:
       return {
         label: t("committed"),
         class: "bg-orange-500",
       };
-    case LifecycleState.Locked:
+    case LifecycleStates.Locked:
     default:
       return {
         label: t("locked"),
@@ -190,8 +189,8 @@ const enterPosition = async () => {
   );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
-    contractsAddresses.USDC.address,
-    contractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
     strikePrice.value,
     expirationTimestamp,
     true
@@ -297,10 +296,13 @@ const { records } = useBuyerRecords(
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
-const setPriceCommand = ref<HTMLElement>();
+const setPriceCommand = computed(
+  () =>
+    `yarn set-price --otoken ${potionAddress.value} --price 500 --network localhost`
+);
 const copySetPriceCommand = async () => {
-  if (potionAddress.value && setPriceCommand.value?.textContent) {
-    await navigator.clipboard.writeText(setPriceCommand.value.textContent);
+  if (potionAddress.value) {
+    await navigator.clipboard.writeText(setPriceCommand.value);
   }
 };
 </script>
@@ -337,12 +339,10 @@ const copySetPriceCommand = async () => {
       <p>Underlying asset: {{ assetAddress }}</p>
       <div v-if="potionAddress">
         <p>Set price command:</p>
-        <div class="flex flex-row items-start">
+        <div class="flex flex-row items-center gap-4">
           <pre
-            ref="setPriceCommand"
             class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-          >
-yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
+            >{{ setPriceCommand }}</pre
           >
           <BaseButton
             palette="primary"
