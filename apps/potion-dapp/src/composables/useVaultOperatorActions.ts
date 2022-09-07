@@ -96,12 +96,6 @@ export function useVaultOperatorActions(
         PotionBuyAction.value,
         swapSlippage.value
       );
-
-      console.log(
-        "EXECUTION PRICE",
-        uniswapRouterResult.value?.trade.executionPrice,
-        uniswapRouterResult.value?.trade.executionPrice.toFixed(10)
-      );
     } else {
       throw new Error("No counterparty available");
     }
@@ -243,8 +237,6 @@ export function useVaultOperatorActions(
           expectedPremiumInUSDC: potionRouterResult.value?.premium.toFixed(6),
           totalSizeInPotions: numberOfOtokensToBuyBN.value,
         };
-
-        console.log("expectedPriceRate", expectedPriceRate);
 
         return { swapInfo, potionBuyInfo };
       } else {
