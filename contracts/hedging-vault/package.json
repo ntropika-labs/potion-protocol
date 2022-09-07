@@ -45,7 +45,7 @@
         "compile": "hardhat compile",
         "analyze": "slither ./contracts --json slither-results.json",
         "test": "hardhat test",
-        "test-local": "hardhat test --network localhost",
+        "test-local": "NETWORK_SUFFIX=test hardhat test --network localhost",
         "report": "yarn typechain; yarn report-gas; yarn report-coverage; yarn report-size",
         "report-gas": "GAS_REPORT_FILE=reports/gasCosts.txt ENABLE_GAS_REPORT=true hardhat test",
         "report-coverage": "COVERAGE=1 hardhat coverage --solcoverjs ./.solcover.js --temp artifacts",

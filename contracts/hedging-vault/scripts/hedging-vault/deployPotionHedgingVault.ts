@@ -105,7 +105,8 @@ export async function deployHedgingVault(
 
     // Set the vault as the managing vault for the action
     console.log(`- Setting ${investmentVaultContract.address} as the managing vault for ${potionBuyContract.address}`);
-    await potionBuyContract.changeVault(investmentVaultContract.address);
+    let tx = await potionBuyContract.changeVault(investmentVaultContract.address);
+    await tx.wait();
 
     const hedgingVaultOperatorHelperParams: HedgingVaultOperatorHelperDeployParams = {
         vaultAddress: investmentVaultContract.address,
@@ -116,11 +117,14 @@ export async function deployHedgingVault(
 
     // Set the operator helper as the operator of the action and the vault
     console.log(`- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${potionBuyContract.address}`);
-    await potionBuyContract.changeOperator(hedgingVaultOperatorHelper.address);
+    tx = await potionBuyContract.changeOperator(hedgingVaultOperatorHelper.address);
+    await tx.wait();
+
     console.log(
         `- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${investmentVaultContract.address}`,
     );
-    await investmentVaultContract.changeOperator(hedgingVaultOperatorHelper.address);
+    tx = await investmentVaultContract.changeOperator(hedgingVaultOperatorHelper.address);
+    await tx.wait();
 
     return [investmentVaultContract, potionBuyContract, hedgingVaultOperatorHelper];
 }
