@@ -1,5 +1,5 @@
 import { getPoolsFromCriterias } from "potion-router";
-import { worker } from "@/web-worker";
+import { worker } from "@web-worker";
 import { ref, unref } from "vue";
 
 import type { Ref, ComputedRef } from "vue";

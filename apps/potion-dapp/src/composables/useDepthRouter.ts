@@ -2,7 +2,7 @@ import { getPoolsFromCriterias as _getPoolsFromCriterias } from "potion-router";
 import { currencyFormatter } from "potion-ui";
 import { computed, isRef, ref, toRaw, unref, type ComputedRef } from "vue";
 
-import { worker } from "@/web-worker";
+import { worker } from "@web-worker";
 import { watchDebounced } from "@vueuse/core";
 
 import { useTokenList } from "@/composables/useTokenList";

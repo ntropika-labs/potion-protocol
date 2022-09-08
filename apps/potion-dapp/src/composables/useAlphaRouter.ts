@@ -3,7 +3,7 @@ import { ChainId } from "@uniswap/smart-order-router";
 import { TradeType } from "@uniswap/sdk-core";
 
 import type { Token as PotionToken } from "dapp-types";
-import { worker } from "@/web-worker";
+import { worker } from "@web-worker";
 import type { UniswapRouterReturn } from "@/types";
 
 export const useAlphaRouter = (chainId: ChainId) => {
