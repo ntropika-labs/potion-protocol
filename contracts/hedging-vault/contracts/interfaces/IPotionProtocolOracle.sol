@@ -32,7 +32,6 @@ interface IPotionProtocolOracle {
         @notice Gets the potion buy information for a given OToken
 
         @param underlyingAsset The address of the underlying token of the potion
-        @param strikePrice The strike price of the potion
         @param expirationTimestamp The timestamp when the potion expires
 
         @return The Potion Buy information for the given potion
@@ -40,9 +39,8 @@ interface IPotionProtocolOracle {
         @dev See { PotionBuyInfo }
 
      */
-    function getPotionBuyInfo(
-        address underlyingAsset,
-        uint256 strikePrice,
-        uint256 expirationTimestamp
-    ) external view returns (PotionBuyInfo memory);
+    function getPotionBuyInfo(address underlyingAsset, uint256 expirationTimestamp)
+        external
+        view
+        returns (PotionBuyInfo memory);
 }

@@ -148,7 +148,7 @@ export interface IPotionBuyActionInterface extends utils.Interface {
     "canPositionBeExited(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
-    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
     "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
@@ -184,7 +184,7 @@ export interface IPotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapInfo",
@@ -315,7 +315,6 @@ export interface IPotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
@@ -360,7 +359,6 @@ export interface IPotionBuyAction extends BaseContract {
 
   getPotionBuyInfo(
     underlyingAsset: string,
-    strikePrice: BigNumberish,
     expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
@@ -405,7 +403,6 @@ export interface IPotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
@@ -471,7 +468,6 @@ export interface IPotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -517,7 +513,6 @@ export interface IPotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

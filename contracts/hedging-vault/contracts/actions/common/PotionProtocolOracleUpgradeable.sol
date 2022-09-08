@@ -50,19 +50,19 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
         @inheritdoc IPotionProtocolOracle
      */
     function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyOperator {
-        bytes32 id = _getPotionId(info.underlyingAsset, info.strikePriceInUSDC, info.expirationTimestamp);
+        bytes32 id = _getPotionId(info.underlyingAsset, info.expirationTimestamp);
         _potionBuyInfo[id] = info;
     }
 
     /**
         @inheritdoc IPotionProtocolOracle
      */
-    function getPotionBuyInfo(
-        address underlyingAsset,
-        uint256 strikePrice,
-        uint256 expirationTimestamp
-    ) public view returns (PotionBuyInfo memory) {
-        bytes32 id = _getPotionId(underlyingAsset, strikePrice, expirationTimestamp);
+    function getPotionBuyInfo(address underlyingAsset, uint256 expirationTimestamp)
+        public
+        view
+        returns (PotionBuyInfo memory)
+    {
+        bytes32 id = _getPotionId(underlyingAsset, expirationTimestamp);
         return _potionBuyInfo[id];
     }
 
@@ -70,16 +70,11 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
         @notice Calculates the unique ID for a potion
 
         @param underlyingAsset The address of the underlying token of the potion
-        @param strikePrice The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
 
         @return The unique ID for the potion
      */
-    function _getPotionId(
-        address underlyingAsset,
-        uint256 strikePrice,
-        uint256 expirationTimestamp
-    ) private pure returns (bytes32) {
-        return keccak256(abi.encodePacked(underlyingAsset, strikePrice, expirationTimestamp));
+    function _getPotionId(address underlyingAsset, uint256 expirationTimestamp) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(underlyingAsset, expirationTimestamp));
     }
 }

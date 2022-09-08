@@ -90,12 +90,10 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     /// INTERNALS
 
     /**
-        @notice Calculates the premium required to buy potions and the strike price denominated in USDC
-        for the indicated amount of assets, the intended strike percentage and the intended slippage
+        @notice Calculates the maximum premium required to buy potions and the strike price denominated in USDC
+        for the indicated amount of assets by applying the indicated slippage
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePercentage The strike percentage of the asset price as a uint256 with 
-               `PercentageUtils.PERCENTAGE_DECIMALS` decimals
         @param expirationTimestamp The timestamp when the potion expires
         @param amount The amount of assets to be hedged
         @param slippage The slippage percentage to be used to calculate the premium
@@ -103,28 +101,17 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @return isValid Whether the maximum premium could be calculated or not
         @return maxPremiumInUSDC The maximum premium needed to buy the potions
      */
-    function _calculatePotionParameters(
+    function _calculatePotionMaxPremium(
         address hedgedAsset,
-        uint256 strikePercentage,
         uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
-    )
-        internal
-        view
-        returns (
-            bool isValid,
-            uint256 maxPremiumInUSDC,
-            uint256 strikePriceInUSDC
-        )
-    {
-        strikePriceInUSDC = _calculateStrikePrice(hedgedAsset, strikePercentage);
-
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+    ) internal view returns (bool isValid, uint256 maxPremiumInUSDC) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
         uint256 potionsAmount = PotionProtocolLib.getPotionsAmount(hedgedAsset, amount);
 
         if (buyInfo.targetPotionAddress == address(0) || potionsAmount != buyInfo.totalSizeInPotions) {
-            return (false, type(uint256).max, type(uint256).max);
+            return (false, type(uint256).max);
         }
 
         isValid = true;
@@ -135,7 +122,6 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @notice Buys potions from the Potion Protocol to insure the specific amount of assets
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePriceInUSDC The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
         @param amount The amount of assets to be hedged
         @param slippage The slippage percentage to be used to calculate the premium
@@ -146,12 +132,11 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
      */
     function _buyPotions(
         address hedgedAsset,
-        uint256 strikePriceInUSDC,
         uint256 expirationTimestamp,
         uint256 amount,
         uint256 slippage
     ) internal returns (uint256 actualPremium, uint256 amountPotions) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
         uint256 potionsAmount = PotionProtocolLib.getPotionsAmount(hedgedAsset, amount);
 
         require(buyInfo.targetPotionAddress != address(0), "Potion buy info not found for the given asset");
@@ -171,21 +156,16 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @notice Redeems the potions bought once the expiration timestamp is reached
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePriceInUSDC The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
 
         @return settledAmount The amount of USDC settled after the redemption
      */
-    function _redeemPotions(
-        address hedgedAsset,
-        uint256 strikePriceInUSDC,
-        uint256 expirationTimestamp
-    ) internal returns (uint256 settledAmount) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+    function _redeemPotions(address hedgedAsset, uint256 expirationTimestamp) internal returns (uint256 settledAmount) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
         IOpynController opynController = IOpynController(_opynAddressBook.getController());
 
         bool isPayoutFinal;
-        (isPayoutFinal, settledAmount) = _calculateCurrentPayout(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+        (isPayoutFinal, settledAmount) = _calculateCurrentPayout(hedgedAsset, expirationTimestamp);
 
         require(isPayoutFinal, "Potion cannot be redeemed yet");
 
@@ -200,15 +180,12 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @notice Checks if the potion for the given asset can be redeemed already
 
         @param hedgedAsset The address of the hedged asset related to the potion to be redeemed
+        @param expirationTimestamp The timestamp when the potion expires
 
         @return Whether the potion can be redeemed or not
      */
-    function _isPotionRedeemable(
-        address hedgedAsset,
-        uint256 strikePriceInUSDC,
-        uint256 expirationTimestamp
-    ) internal view returns (bool) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+    function _isPotionRedeemable(address hedgedAsset, uint256 expirationTimestamp) internal view returns (bool) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
         IOpynController opynController = IOpynController(_opynAddressBook.getController());
         return opynController.isPotionRedeemable(buyInfo.targetPotionAddress);
     }
@@ -216,44 +193,23 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     /// GETTERS
 
     /**
-        @notice Calculates the strike price of the potion given the hedged asset and the strike percentage
-
-        @param hedgedAsset The address of the asset to be hedged, used to get the price from the Opyn Oracle
-        @param strikePercentage The strike percentage of the asset price as a uint256 with 
-               `PercentageUtils.PERCENTAGE_DECIMALS` decimals
-
-        @return The strike price of the potion in USDC with 8 decimals
-
-        @dev This function calls the Opyn Oracle to get the price of the asset, so its value might
-             change if called in different blocks.
-     */
-    function _calculateStrikePrice(address hedgedAsset, uint256 strikePercentage) internal view returns (uint256) {
-        IOpynOracle opynOracle = IOpynOracle(_opynAddressBook.getOracle());
-
-        uint256 priceInUSDC = opynOracle.getPrice(hedgedAsset);
-
-        return priceInUSDC.applyPercentage(strikePercentage);
-    }
-
-    /**
         @notice Returns the calculated payout for the current block, and whether that payout is final or not
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
-        @param strikePriceInUSDC The strike price of the potion with 8 decimals
         @param expirationTimestamp The timestamp when the potion expires
 
         @return isFinal Whether the payout is final or not. If the payout is final it won't change anymore. If it
                 is not final it means that the potion has not expired yet and the payout may change in the future.
     */
-    function _calculateCurrentPayout(
-        address hedgedAsset,
-        uint256 strikePriceInUSDC,
-        uint256 expirationTimestamp
-    ) internal view returns (bool isFinal, uint256 payout) {
-        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+    function _calculateCurrentPayout(address hedgedAsset, uint256 expirationTimestamp)
+        internal
+        view
+        returns (bool isFinal, uint256 payout)
+    {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
         IOpynController opynController = IOpynController(_opynAddressBook.getController());
 
-        isFinal = _isPotionRedeemable(hedgedAsset, strikePriceInUSDC, expirationTimestamp);
+        isFinal = _isPotionRedeemable(hedgedAsset, expirationTimestamp);
         payout = PotionProtocolLib.getPayout(opynController, buyInfo.targetPotionAddress, buyInfo.totalSizeInPotions);
     }
 
