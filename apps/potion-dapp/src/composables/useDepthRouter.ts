@@ -1,6 +1,6 @@
-import { getPoolsFromCriterias } from "potion-router";
+import { getPoolsFromCriterias as _getPoolsFromCriterias } from "potion-router";
 import { currencyFormatter } from "potion-ui";
-import { computed, isRef, ref, toRaw, unref } from "vue";
+import { computed, isRef, ref, toRaw, unref, type ComputedRef } from "vue";
 
 import { worker } from "@/web-worker";
 import { watchDebounced } from "@vueuse/core";
@@ -11,7 +11,12 @@ import { contractsAddresses } from "@/helpers/contracts";
 import type { DepthRouterReturn } from "potion-router";
 import type { Ref } from "vue";
 import type { Criteria, MaybeNumberRef } from "dapp-types";
-import type { ChartCriteriaPool, IPoolUntyped } from "potion-router/src/types";
+import type {
+  ChartCriteriaPool,
+  IPoolUntyped,
+  IRouterParameters,
+} from "potion-router";
+
 import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 export const useDepthRouter = (
   criterias: Ref<Criteria[]> | Criteria[],
@@ -56,7 +61,7 @@ export const useDepthRouter = (
       routerResult.value?.counterparties.length ?? 0 / maxCounterparties
     )
   );
-  const routerParams = computed(() => {
+  const routerParams: ComputedRef<IRouterParameters> = computed(() => {
     return {
       pools: toRaw(unref(poolsUntyped)),
       orderSize: unref(orderSize) ?? 0,
@@ -66,10 +71,17 @@ export const useDepthRouter = (
     };
   });
   const routerRunning = ref(false);
+
+  const getPoolsFromCriterias = async () => {
+    console.log("getPoolsFromCriterias - criterias", unref(criterias));
+    poolSets.value = await _getPoolsFromCriterias(unref(criterias));
+  };
+
   const runRouter = async () => {
     routerRunning.value = true;
-    const rawCriterias = toRaw(unref(criterias));
-    poolSets.value = await getPoolsFromCriterias(rawCriterias);
+    // const rawCriterias = toRaw(unref(criterias));
+    // poolSets.value = await getPoolsFromCriterias(rawCriterias);
+    await getPoolsFromCriterias();
     const { pools, orderSize, strikePriceUSDC, gas, ethPrice } =
       unref(routerParams);
     if (
@@ -137,5 +149,7 @@ export const useDepthRouter = (
     routerRunning,
     runRouter,
     numberOfTransactions,
+    getPoolsFromCriterias,
+    routerParams,
   };
 };
