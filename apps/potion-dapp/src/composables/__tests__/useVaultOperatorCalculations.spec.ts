@@ -11,6 +11,12 @@ describe("useVaultOperatorCalculations", () => {
       );
       expect(result.oraclePrice).not.toBeUndefined();
     });
+    it("returns oraclePriceUpdated", () => {
+      const [result] = withSetup(() =>
+        useVaultOperatorCalculations(ref(""), ref(1), ref(1), ref(1))
+      );
+      expect(result.oraclePriceUpdated).not.toBeUndefined();
+    });
     it("returns strikePrice", () => {
       const [result] = withSetup(() =>
         useVaultOperatorCalculations(ref(""), ref(1), ref(1), ref(1))

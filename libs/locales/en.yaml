@@ -116,6 +116,7 @@ my_pools: My Pools
 my_potions: My Potions
 my_summary: my summary
 next: next
+new_price: There is a price update
 no_options: No options to show
 no_potions_available: No potions to show
 no_underlying_asset_found: no underlying asset found
@@ -135,6 +136,7 @@ position_entered: Position Entered
 position_exited: Position Exited
 potion_bought: potion bought
 premium: Premium
+price_changed: The price of { token } went from { oldPrice } to { newPrice } 
 price_per_potion: price per potion
 profit_and_loss: Profit & Loss
 projected_pnl: Projected P&L

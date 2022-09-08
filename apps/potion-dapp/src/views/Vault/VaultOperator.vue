@@ -101,13 +101,18 @@ const {
   true
 );
 
-const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
-  useVaultOperatorCalculations(
-    assetAddress,
-    strikePercentage,
-    principalPercentage,
-    totalAssets
-  );
+const {
+  oraclePrice,
+  oraclePriceUpdated,
+  strikePrice,
+  orderSize,
+  numberOfOtokensToBuyBN,
+} = useVaultOperatorCalculations(
+  assetAddress,
+  strikePercentage,
+  principalPercentage,
+  totalAssets
+);
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -259,6 +264,7 @@ onMounted(async () => {
 // Toast notifications
 const {
   notifications,
+  createSimpleNotification,
   createTransactionNotification,
   createReceiptNotification,
   removeToast,
@@ -278,6 +284,15 @@ watch(exitPositionTx, (transaction) => {
 
 watch(exitPositionReceipt, (receipt) => {
   createReceiptNotification(receipt, t("position_exited"));
+});
+
+watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
+  if (oldPrice !== undefined && oldPrice !== newPrice) {
+    createSimpleNotification(
+      t("new_price"),
+      t("price_changed", { token: assetSymbol.value, oldPrice, newPrice })
+    );
+  }
 });
 
 // TODO: DELETE
