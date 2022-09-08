@@ -1,24 +1,23 @@
 import JSBI from "jsbi";
-import type { ChainId } from "@uniswap/smart-order-router";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { Percent, Token, TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount } from "@uniswap/smart-order-router";
 
-import type { Token as PotionToken } from "dapp-types";
-import { uniswapRpcUrl } from "./";
-import {
-  runDepthRouter,
-  type DepthRouterReturn,
-  type IPoolUntyped,
-} from "potion-router";
+import { uniswapRpcUrl } from "./constants";
+import { runDepthRouter } from "potion-router";
 import {
   convertCollateralToUniswapToken,
   convertUniswapRouteToFlatRoute,
   evaluatePremium,
 } from "./vaultOperatorTokens";
+
+import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
+import type { Token as PotionToken } from "dapp-types";
+import type { ChainId } from "@uniswap/smart-order-router";
 import type { UniswapRouterReturn } from "@/types";
 
-// See import { Protocol as OriginalProtocol } from "@uniswap/router-sdk";
+// The alphaRouter expectes only V2 or V3 as protocol config and not also MIXED so we can't import the Protocol enum from uniswap sdk
+// as a workaround we just redeclare it here, hoping that uniswap decides to actually expose this enum from the router package
 enum Protocol {
   V2 = "V2",
   V3 = "V3",
@@ -70,22 +69,24 @@ const getUniswapRoute = async (
       JSBI.BigInt(tokenAmountWithDecimals.toString()) // TODO check
     );
 
+    const alphaRouter = initUniswapAlphaRouter(chainId);
+    const protocols = [Protocol.V3];
+    const slippageTolerance = new Percent(slippageToleranceInteger, 100);
+
     console.log(
       currencyAmount,
       outputTokenSwap,
       tradeType,
       {
         recipient: recipientAddress,
-        slippageTolerance: new Percent(slippageToleranceInteger, 100),
-        deadline: deadline,
+        slippageTolerance,
+        deadline,
       },
       {
-        maxSplits: maxSplits,
+        maxSplits,
+        protocols,
       }
     );
-
-    const alphaRouter = initUniswapAlphaRouter(chainId);
-    const protocols: Protocol[] = [Protocol.V3];
 
     const route = await alphaRouter.route(
       currencyAmount,
@@ -93,16 +94,16 @@ const getUniswapRoute = async (
       tradeType,
       {
         recipient: recipientAddress,
-        slippageTolerance: new Percent(slippageToleranceInteger, 100),
-        deadline: deadline,
+        slippageTolerance,
+        deadline,
       },
       {
-        maxSplits: maxSplits,
-        protocols: protocols,
+        maxSplits,
+        protocols,
       }
     );
 
-    if (!route || route === undefined) {
+    if (!route) {
       throw new Error("No route found");
     }
 
@@ -151,7 +152,6 @@ const runPremiumSwapRouter = async (
 
   console.log(
     "totalAmountToSwap",
-    //inputToken.equals(outputToken),
     inputToken,
     outputToken,
     chainId,
