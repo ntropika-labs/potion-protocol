@@ -34,7 +34,7 @@ const initUniswapAlphaRouter = (chainId: ChainId) => {
 const getUniswapRoute = async (
   chainId: ChainId,
   inputToken: PotionToken,
-  outputToken: Token | PotionToken,
+  outputToken: PotionToken,
   tradeType: TradeType,
   tokenAmount: number,
   maxSplits: number,
@@ -55,10 +55,10 @@ const getUniswapRoute = async (
     const inputTokenSwap =
       tradeType === TradeType.EXACT_INPUT ? inputUniToken : outputUniToken;
     const outputTokenSwap =
-      tradeType === TradeType.EXACT_INPUT ? outputToken : inputUniToken;
+      tradeType === TradeType.EXACT_INPUT ? outputUniToken : inputUniToken;
 
     const tokenAmountWithDecimals =
-      Math.ceil(tokenAmount) * 10 ** inputUniToken.decimals;
+      Math.ceil(tokenAmount) * 10 ** inputTokenSwap.decimals;
     const deadline =
       deadlineTimestamp !== undefined
         ? deadlineTimestamp
@@ -75,6 +75,7 @@ const getUniswapRoute = async (
 
     console.log(
       currencyAmount,
+      inputTokenSwap,
       outputTokenSwap,
       tradeType,
       {
@@ -126,12 +127,13 @@ const runPremiumSwapRouter = async (
   ethPrice: number,
   chainId: ChainId,
   inputToken: PotionToken,
-  outputToken: PotionToken | Token,
+  outputToken: PotionToken,
   tradeType: TradeType,
   maxSplits: number,
   premiumSlippage: number,
   recipientAddress: string,
   slippageToleranceInteger = 1,
+  actionType: "enter" | "exit" = "enter",
   deadlineTimestamp?: number
 ): Promise<{
   potionRouterResult: DepthRouterReturn;
@@ -173,12 +175,9 @@ const runPremiumSwapRouter = async (
     maxSplits,
     recipientAddress,
     slippageToleranceInteger,
-    "enter",
+    actionType,
     deadlineTimestamp
   );
-
-  // Fix serialization issues, strips methods from the object
-  //const serializedRoute = JSON.parse(JSON.stringify(uniswapResult));
 
   return {
     potionRouterResult: potionRouter,

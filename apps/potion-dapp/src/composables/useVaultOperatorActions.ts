@@ -112,8 +112,14 @@ export function useVaultOperatorActions(
       // const collateralUniToken = convertCollateralToUniswapToken(
       //   collateralToken.value
       // );
+      const USDCToken = convertInputToToken(USDCUniToken);
 
-      console.log("rawPotionrouterParams", rawPotionrouterParams);
+      console.log(
+        "rawPotionrouterParams",
+        rawPotionrouterParams,
+        collateralToken.value,
+        USDCToken
+      );
 
       // TODO: check for serialization issues
       // const route = await worker.getUniswapRoute(
@@ -125,7 +131,7 @@ export function useVaultOperatorActions(
         rawPotionrouterParams.ethPrice,
         getChainId(),
         collateralToken.value,
-        USDCUniToken,
+        USDCToken,
         TradeType.EXACT_OUTPUT,
         maxSplits,
         premiumSlippage.value,
