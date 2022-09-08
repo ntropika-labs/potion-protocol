@@ -19,6 +19,7 @@ const convertUniswapRouteToFlatRoute = (
   uniRoute: SwapRoute,
   actionType: "enter" | "exit"
 ) => {
+  console.log("UNIROUTE", uniRoute);
   const routes = uniRoute.route as V3RouteWithValidQuote[];
 
   const tradeExecutionPrice =
@@ -31,11 +32,15 @@ const convertUniswapRouteToFlatRoute = (
     routes: routes.map((route: V3RouteWithValidQuote) => {
       return {
         protocol: route.protocol,
-        inputToken: route.quoteToken as Token,
-        outputToken: route.amount.currency as Token,
-        inputAmount: route.quote.toExact(),
-        outputAmount: route.amount.toExact(),
-        quoteGasAdjusted: route.quoteAdjustedForGas.toExact(),
+        inputToken: convertUniswapTokenToToken(route.quoteToken),
+        outputToken: convertUniswapTokenToToken(route.amount.currency.wrapped),
+        inputAmount: route.quote.toSignificant(route.quoteToken.decimals),
+        outputAmount: route.amount.toSignificant(
+          route.amount.currency.wrapped.decimals
+        ),
+        quoteGasAdjusted: route.quoteAdjustedForGas.toSignificant(
+          route.quoteToken.decimals
+        ),
         poolAddresses: route.poolAddresses,
         pools: route.route.pools,
         percent: route.percent,
@@ -61,11 +66,20 @@ const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
   );
 };
 
-const convertInputToToken = (uniToken: UniswapToken): Token => {
+const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
   return {
     name: uniToken.name || "",
     symbol: uniToken.symbol || "",
     address: IS_DEV_ENV ? contractsAddresses.USDC.address : uniToken.address,
+    decimals: uniToken.decimals,
+  };
+};
+
+const convertUniswapTokenToToken = (uniToken: UniswapToken): Token => {
+  return {
+    name: uniToken.name || "",
+    symbol: uniToken.symbol || "",
+    address: uniToken.address,
     decimals: uniToken.decimals,
   };
 };
@@ -93,8 +107,9 @@ const evaluatePremium = (routerPremium: number, premiumSlippage: number) =>
 
 export {
   convertUniswapRouteToFlatRoute,
+  convertUniswapTokenToToken,
   convertCollateralToUniswapToken,
-  convertInputToToken,
+  convertQuoteUniswapTokenToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
   evaluatePremium,
