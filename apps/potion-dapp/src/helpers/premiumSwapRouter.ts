@@ -44,28 +44,29 @@ const getUniswapRoute = async (
   deadlineTimestamp?: number
 ): Promise<UniswapRouterReturn> => {
   try {
-    const inputUniToken = convertCollateralToUniswapToken(inputToken);
-    const outputUniToken = new Token(
-      chainId,
-      outputToken.address,
-      outputToken.decimals || 0,
-      outputToken.symbol,
-      outputToken.name
-    );
     const inputTokenSwap =
-      tradeType === TradeType.EXACT_INPUT ? inputUniToken : outputUniToken;
+      tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
     const outputTokenSwap =
-      tradeType === TradeType.EXACT_INPUT ? outputUniToken : inputUniToken;
+      tradeType === TradeType.EXACT_INPUT ? outputToken : inputToken;
+
+    const outputUniToken = convertCollateralToUniswapToken(outputTokenSwap);
+    const inputUniToken = new Token(
+      chainId,
+      inputTokenSwap.address,
+      inputTokenSwap.decimals || 0,
+      inputTokenSwap.symbol,
+      inputTokenSwap.name
+    );
 
     const tokenAmountWithDecimals =
-      Math.ceil(tokenAmount) * 10 ** inputTokenSwap.decimals;
+      Math.ceil(tokenAmount) * 10 ** inputUniToken.decimals;
     const deadline =
       deadlineTimestamp !== undefined
         ? deadlineTimestamp
         : Math.floor(Date.now() / 1000 + 1800);
 
     const currencyAmount = CurrencyAmount.fromRawAmount(
-      inputTokenSwap,
+      inputUniToken,
       JSBI.BigInt(tokenAmountWithDecimals.toString()) // TODO check
     );
 
@@ -75,8 +76,10 @@ const getUniswapRoute = async (
 
     console.log(
       currencyAmount,
-      inputTokenSwap,
-      outputTokenSwap,
+      inputToken,
+      inputUniToken,
+      outputToken,
+      outputUniToken,
       tradeType,
       {
         recipient: recipientAddress,

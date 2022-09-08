@@ -6,7 +6,8 @@ import { BigNumber } from "ethers";
 import { useOnboard } from "@onboard-composable";
 import { getChainId, USDCUniToken } from "@/helpers/uniswap";
 import {
-  convertInputToToken,
+  convertQuoteUniswapTokenToToken,
+  convertUniswapTokenToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
 } from "@/helpers/vaultOperatorTokens";
@@ -109,20 +110,9 @@ export function useVaultOperatorActions(
     try {
       swapRouterLoading.value = true;
       const rawPotionrouterParams = unref(potionRouterParameters);
-      // const collateralUniToken = convertCollateralToUniswapToken(
-      //   collateralToken.value
-      // );
-      const USDCToken = convertInputToToken(USDCUniToken);
 
-      console.log(
-        "rawPotionrouterParams",
-        rawPotionrouterParams,
-        collateralToken.value,
-        USDCToken
-      );
+      const USDCToken = convertUniswapTokenToToken(USDCUniToken);
 
-      // TODO: check for serialization issues
-      // const route = await worker.getUniswapRoute(
       const swapRouterResult = await worker.runPremiumSwapRouter(
         rawPotionrouterParams.pools,
         rawPotionrouterParams.orderSize,
@@ -163,12 +153,10 @@ export function useVaultOperatorActions(
     if (currentPayout.value && currentPayout.value.currentPayout > 0) {
       totalAmountToSwap.value = currentPayout.value.currentPayout;
 
-      // const collateralUniToken = convertCollateralToUniswapToken(
-      //   collateralToken.value
-      // );
+      const USDCToken = convertUniswapTokenToToken(USDCUniToken);
 
       const uniswapRouterResult = await getRoute(
-        USDCUniToken as Token,
+        USDCToken,
         collateralToken.value,
         TradeType.EXACT_INPUT,
         totalAmountToSwap.value,
@@ -195,7 +183,7 @@ export function useVaultOperatorActions(
     toggleUniswapPolling(false);
 
     let swapInfo: UniSwapInfo;
-    const USDCToken = convertInputToToken(USDCUniToken);
+    const USDCToken = convertQuoteUniswapTokenToToken(USDCUniToken);
 
     if (totalAmountToSwap.value > 0) {
       if (!exitPositionData.value || !exitPositionData.value.routes) {
@@ -267,7 +255,7 @@ export function useVaultOperatorActions(
 
       if (swapRoute && swapRoute.protocol === Protocol.V3) {
         const firstPoolFee = swapRoute.pools[0].fee;
-        const USDCToken = convertInputToToken(USDCUniToken);
+        const USDCToken = convertQuoteUniswapTokenToToken(USDCUniToken);
         const expectedPriceRate = getEnterExpectedPriceRate(
           oraclePrice,
           enterPositionData.value?.uniswapRouterResult.tradeExecutionPrice ||
