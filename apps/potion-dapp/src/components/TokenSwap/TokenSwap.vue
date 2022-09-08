@@ -8,37 +8,25 @@ export default defineComponent({
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { SwapRoute } from "@uniswap/smart-order-router";
 import { useI18n } from "vue-i18n";
-import { Token as UniswapToken, TradeType } from "@uniswap/sdk-core";
+import { TradeType } from "@uniswap/sdk-core";
 
-import type { Token } from "dapp-types";
 import { AssetTag } from "potion-ui";
+import type { UniswapRouterReturn } from "@/types";
 
 export interface Props {
-  routeData: SwapRoute | undefined;
+  routeData: UniswapRouterReturn | undefined | null;
   routerLoading: boolean;
 }
 
 const props = defineProps<Props>();
 const { t } = useI18n();
 
-const hasRoute = computed(() => props.routeData && props.routeData.route);
+const routes = computed(() => props?.routeData?.routes ?? []);
+
 const isTradeExactInput = computed(
   () => props.routeData?.trade.tradeType === TradeType.EXACT_INPUT
 );
-const tradeCurrency = computed(() => props.routeData?.trade.inputAmount);
-const tradeCurrencyToken = computed(
-  () => props.routeData?.trade.inputAmount.currency as Token
-);
-const quoteCurrency = computed(() => props.routeData?.trade.outputAmount);
-const quoteCurrencyToken = computed(
-  () => props.routeData?.trade.outputAmount.currency as Token
-);
-const routes = computed(() => props.routeData?.route);
-
-const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
-  uniToken as Token;
 </script>
 
 <template>
@@ -82,7 +70,7 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
         </div>
       </div>
     </div>
-    <div v-else-if="hasRoute">
+    <div v-else-if="routes.length > 0">
       <div>
         <div v-for="(uniRoute, index) in routes" :key="index">
           <p>Percent: {{ uniRoute.percent }}</p>
@@ -101,19 +89,19 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 <AssetTag
                   size="xl"
                   :title="t('currency')"
-                  :token="tradeCurrencyToken"
+                  :token="uniRoute.inputToken"
                 />
                 <div>
                   <p>Amount</p>
                   <pre
                     class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ tradeCurrency?.toExact() }}</pre
+                    >{{ uniRoute.inputAmount }}</pre
                   >
                   <template v-if="!isTradeExactInput">
                     <p>Quote gas adjusted</p>
                     <pre
                       class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
+                      >{{ uniRoute.quoteGasAdjusted }}</pre
                     >
                   </template>
                 </div>
@@ -125,19 +113,19 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 <AssetTag
                   size="xl"
                   :title="t('currency')"
-                  :token="quoteCurrencyToken"
+                  :token="uniRoute.outputToken"
                 />
                 <div>
                   <p>Amount</p>
                   <pre
                     class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                    >{{ quoteCurrency?.toExact() }}</pre
+                    >{{ uniRoute.outputAmount }}</pre
                   >
                   <template v-if="isTradeExactInput">
                     <p>Quote gas adjusted</p>
                     <pre
                       class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ props.routeData?.quoteGasAdjusted.toExact() }}</pre
+                      >{{ uniRoute.quoteGasAdjusted }}</pre
                     >
                   </template>
                 </div>
@@ -149,12 +137,12 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
               <p>Estimated gas used</p>
               <pre
                 class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                >{{ props.routeData?.estimatedGasUsed.toNumber() }}</pre
+                >{{ routeData?.estimatedGasUsed }}</pre
               >
               <p>Gas used USD</p>
               <pre
                 class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                >{{ props.routeData?.estimatedGasUsedUSD.toFixed(6) }}</pre
+                >{{ routeData?.estimatedGasUsedUSD }}</pre
               >
             </div>
           </div>
@@ -162,14 +150,14 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
           <h3 class="text-xl font-bold">Token path</h3>
           <div class="flex items-center gap-2 justify-center p-4">
             <div
-              v-for="(step, tokenIndex) in uniRoute.tokenPath"
+              v-for="(step, tokenIndex) in uniRoute.tokensPath"
               :key="tokenIndex"
               class="flex items-center gap-4"
             >
               <AssetTag
                 size="xl"
                 :title="t('token')"
-                :token="uniswapTokenAsToken(step)"
+                :token="step"
                 class="border-1 rounded-xl border-white border-opacity-10 p-3"
               />
               <!-- <pre
@@ -177,7 +165,7 @@ const uniswapTokenAsToken = (uniToken: UniswapToken): Token =>
                 >{{ JSON.stringify(step, null, 2) }}</pre
               > -->
               <div
-                v-if="tokenIndex < uniRoute.tokenPath.length - 1"
+                v-if="tokenIndex < uniRoute.tokensPath.length - 1"
                 class="flex-shrink-0"
               >
                 <i class="i-ph-arrow-right-bold w-6 h-6"></i>
