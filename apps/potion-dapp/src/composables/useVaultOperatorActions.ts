@@ -18,7 +18,10 @@ import type {
   IRouterParameters as DepthRouterParameters,
 } from "potion-router";
 import type { Token } from "dapp-types";
-import type { UniSwapInfo } from "./useHedgingVaultOperatorHelperContract";
+import type {
+  UniSwapInfo,
+  Sellers,
+} from "./useHedgingVaultOperatorHelperContract";
 import type { ActionPayout } from "./usePotionBuyActionContract";
 
 import { worker } from "@/web-worker";
@@ -254,7 +257,7 @@ export function useVaultOperatorActions(
               orderSizeInOtokens: seller.orderSizeInOtokens,
             };
           }
-        );
+        ) as Sellers;
 
       if (swapRoute && swapRoute.protocol === Protocol.V3) {
         const firstPoolFee = swapRoute.pools[0].fee;
@@ -277,7 +280,8 @@ export function useVaultOperatorActions(
           expirationTimestamp: expirationTimestamp,
           sellers: counterparties,
           expectedPremiumInUSDC:
-            enterPositionData.value?.potionRouterResult.premium.toFixed(6),
+            enterPositionData?.value?.potionRouterResult?.premium?.toFixed(6) ??
+            "0",
           totalSizeInPotions: numberOfOtokensToBuyBN.value,
         };
 

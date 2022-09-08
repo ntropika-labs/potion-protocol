@@ -15,7 +15,7 @@ import { AssetTag } from "potion-ui";
 import type { UniswapRouterReturn } from "@/types";
 
 export interface Props {
-  routeData: UniswapRouterReturn | undefined | null;
+  routeData?: UniswapRouterReturn | null;
   routerLoading: boolean;
 }
 
