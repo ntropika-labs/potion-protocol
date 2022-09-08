@@ -172,6 +172,8 @@ total_liquidity: Total Liquidity
 total_payout: total payout
 total_pools: total pools
 total_size: Tot. Size
+transaction_completed: Your transaction has completed
+transaction_pending: Your transaction is pending
 unlocked: unlocked
 unutilized_capital: Unutilized capital
 usdc_approved: usdc approved
@@ -180,6 +182,7 @@ user_balance: User collateral balance
 utilization: utilization
 utilized_capital: Utilized Capital
 vault_size: vault size
+view_on_etherscan: View on Etherscan
 view_pool_recipe: view pool recipe
 withdraw: Withdraw
 withdraw_capital: Withdraw capital
