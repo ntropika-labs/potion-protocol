@@ -30,7 +30,17 @@ describe("addresses helper", () => {
   describe("getEtherscanUrl", () => {
     it("returns the link to etherscan", () => {
       const result = getEtherscanUrl("0xab12cd34ef");
-      expect(result).toBe(etherscanUrl + "/address/0xab12cd34ef");
+      expect(result).toBe(`${etherscanUrl}/address/0xab12cd34ef`);
+    });
+
+    it("returns an address url if type = 'address'", () => {
+      const result = getEtherscanUrl("0xab12cd34ef", "address");
+      expect(result).toBe(`${etherscanUrl}/address/0xab12cd34ef`);
+    });
+
+    it("returns a tx url if type = 'tx'", () => {
+      const result = getEtherscanUrl("0xab12cd34ef", "tx");
+      expect(result).toBe(`${etherscanUrl}/tx/0xab12cd34ef`);
     });
   });
 });

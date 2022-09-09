@@ -1,4 +1,12 @@
-import { computed, ref, watch, unref, isRef } from "vue";
+import {
+  ref,
+  computed,
+  watch,
+  unref,
+  isRef,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import { BigNumber } from "ethers";
 import { parseUnits } from "@ethersproject/units";
 
@@ -12,9 +20,15 @@ export function useVaultOperatorCalculations(
   principalPercentage: MaybeRef<number | null>,
   totalAssets: MaybeRef<number>
 ) {
-  const pollingTimer = ref<NodeJS.Timer | null>(null);
-  const oraclePrice = ref(0);
-  const { getPrice } = useOracleContract();
+  const { polledPrice, startPolling, stopPolling } = useOracleContract();
+  const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
+  const oraclePriceUpdated = ref<{
+    oldPrice: string | undefined;
+    newPrice: string | undefined;
+  }>({
+    oldPrice: undefined,
+    newPrice: undefined,
+  });
 
   const strikePrice = computed(() => {
     const sp = unref(strikePercentage);
@@ -27,13 +41,6 @@ export function useVaultOperatorCalculations(
       ? 0
       : (pp / 100) * unref(totalAssets) * strikePrice.value;
   });
-
-  const fetchPrice = async (address: string | null) => {
-    if (address !== null) {
-      const price = await getPrice(address);
-      oraclePrice.value = parseFloat(price);
-    }
-  };
 
   const numberOfOtokensToBuyBN = computed(() => {
     const pp = unref(principalPercentage);
@@ -51,34 +58,32 @@ export function useVaultOperatorCalculations(
     return BigNumber.from(0);
   });
 
-  if (isRef(assetAddress)) {
-    watch(assetAddress, async (address) => await fetchPrice(address));
-  }
-
-  const togglePricePolling = (state?: boolean) => {
-    const isPolling = Boolean(pollingTimer.value);
-    const isToggle = state === undefined;
-    // If the polling is already set to the desired state then return
-    if (!isToggle && isPolling === state) return;
-
-    const enablePolling = !isPolling && (isToggle || state);
-
-    if (enablePolling) {
-      pollingTimer.value = setInterval(
-        () => fetchPrice(unref(assetAddress)),
-        15000
-      );
-    } else if (pollingTimer.value) {
-      clearInterval(pollingTimer.value);
-      pollingTimer.value = null;
+  const addOraclePolling = (address: string | null) => {
+    stopPolling();
+    if (address) {
+      startPolling(address);
     }
   };
 
+  if (isRef(assetAddress)) {
+    watch(assetAddress, (address) => addOraclePolling(address));
+  }
+
+  watch(
+    polledPrice,
+    (newPrice: string | undefined, oldPrice: string | undefined) => {
+      oraclePriceUpdated.value = { oldPrice, newPrice };
+    }
+  );
+
+  onMounted(() => addOraclePolling(unref(assetAddress)));
+  onBeforeUnmount(stopPolling);
+
   return {
     oraclePrice,
+    oraclePriceUpdated,
     strikePrice,
     orderSize,
     numberOfOtokensToBuyBN,
-    togglePricePolling,
   };
 }
