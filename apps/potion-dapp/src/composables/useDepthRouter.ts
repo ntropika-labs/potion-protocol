@@ -1,6 +1,6 @@
-import { getPoolsFromCriterias as _getPoolsFromCriterias } from "potion-router";
+import { getPoolsFromCriterias } from "potion-router";
 import { currencyFormatter } from "potion-ui";
-import { computed, isRef, ref, toRaw, unref, type ComputedRef } from "vue";
+import { computed, isRef, ref, toRaw, unref } from "vue";
 
 import { worker } from "@web-worker";
 import { watchDebounced } from "@vueuse/core";
@@ -61,7 +61,7 @@ export const useDepthRouter = (
       routerResult.value?.counterparties.length ?? 0 / maxCounterparties
     )
   );
-  const routerParams: ComputedRef<IRouterParameters> = computed(() => {
+  const routerParams = computed<IRouterParameters>(() => {
     return {
       pools: toRaw(unref(poolsUntyped)),
       orderSize: unref(orderSize) ?? 0,
@@ -72,16 +72,10 @@ export const useDepthRouter = (
   });
   const routerRunning = ref(false);
 
-  const getPoolsFromCriterias = async () => {
-    console.log("getPoolsFromCriterias - criterias", unref(criterias));
-    poolSets.value = await _getPoolsFromCriterias(unref(criterias));
-  };
-
   const runRouter = async () => {
     routerRunning.value = true;
-    // const rawCriterias = toRaw(unref(criterias));
-    // poolSets.value = await getPoolsFromCriterias(rawCriterias);
-    await getPoolsFromCriterias();
+    const rawCriterias = toRaw(unref(criterias));
+    poolSets.value = await getPoolsFromCriterias(rawCriterias);
     const { pools, orderSize, strikePriceUSDC, gas, ethPrice } =
       unref(routerParams);
     if (
