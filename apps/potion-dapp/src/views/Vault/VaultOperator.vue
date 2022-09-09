@@ -227,11 +227,9 @@ const callbackLoadExitRoute = async () => {
 };
 
 watch(vaultStatus, async () => {
-  await Promise.all([
-    getStrategyInfo(),
-    fetchCanPositionBeEntered(),
-    fetchCanPositionBeExited(),
-  ]);
+  await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
+
+  await getStrategyInfo();
 });
 
 watch(assetAddress, async (address) => {
@@ -297,7 +295,7 @@ const testAddBlock = async (addHours: number) => {
   console.log(blockTimestamp.value);
 };
 
-const { records } = useBuyerRecords(
+const { records, loadBuyerRecords } = useBuyerRecords(
   contractsAddresses["PotionBuyAction"].address,
   nextCycleTimestamp
 );
@@ -311,6 +309,16 @@ const copySetPriceCommand = async () => {
     await navigator.clipboard.writeText(setPriceCommand.value);
   }
 };
+
+watch(nextCycleTimestamp, () => {
+  loadBuyerRecords();
+});
+
+watch(blockTimestamp, () => {
+  getStrategyInfo();
+  fetchCanPositionBeEntered();
+  fetchCanPositionBeExited();
+});
 </script>
 
 <template>
