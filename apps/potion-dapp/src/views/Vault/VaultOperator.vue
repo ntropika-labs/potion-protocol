@@ -43,6 +43,7 @@ const TabNavigationComponent = defineAsyncComponent(
     )
 );
 
+const rerunRequired = ref(false);
 const IS_DEV_ENV = import.meta.env;
 
 const { t } = useI18n();
