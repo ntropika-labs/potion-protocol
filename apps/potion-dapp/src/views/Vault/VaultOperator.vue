@@ -43,6 +43,7 @@ const TabNavigationComponent = defineAsyncComponent(
     )
 );
 
+const rerunRequired = ref(false);
 const IS_DEV_ENV = import.meta.env;
 
 const { t } = useI18n();
@@ -107,13 +108,18 @@ const {
   true
 );
 
-const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
-  useVaultOperatorCalculations(
-    assetAddress,
-    strikePercentage,
-    principalPercentage,
-    totalAssets
-  );
+const {
+  oraclePrice,
+  oraclePriceUpdated,
+  strikePrice,
+  orderSize,
+  numberOfOtokensToBuyBN,
+} = useVaultOperatorCalculations(
+  assetAddress,
+  strikePercentage,
+  principalPercentage,
+  totalAssets
+);
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
@@ -223,6 +229,7 @@ const callbackLoadEnterRoute = async () => {
     premiumSlippage,
     swapSlippage
   );
+  rerunRequired.value = false;
 };
 
 const callbackLoadExitRoute = async () => {
@@ -268,6 +275,7 @@ onMounted(async () => {
 // Toast notifications
 const {
   notifications,
+  createSimpleNotification,
   createTransactionNotification,
   createReceiptNotification,
   removeToast,
@@ -287,6 +295,26 @@ watch(exitPositionTx, (transaction) => {
 
 watch(exitPositionReceipt, (receipt) => {
   createReceiptNotification(receipt, t("position_exited"));
+});
+
+watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
+  if (
+    oldPrice !== undefined &&
+    newPrice !== undefined &&
+    oldPrice !== newPrice
+  ) {
+    createSimpleNotification(
+      t("new_price"),
+      t("price_changed", { token: assetSymbol.value, oldPrice, newPrice })
+    );
+    const fop = parseFloat(oldPrice);
+    const fnp = parseFloat(newPrice);
+    const tollerance = (fop * swapSlippage.value) / 100;
+    if (fnp < fop - tollerance || fnp > fop + tollerance) {
+      createSimpleNotification(t("rerun_router"), t("price_not_in_tollerance"));
+      rerunRequired.value = true;
+    }
+  }
 });
 
 // TODO: DELETE

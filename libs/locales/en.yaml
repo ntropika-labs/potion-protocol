@@ -116,6 +116,7 @@ my_pools: My Pools
 my_potions: My Potions
 my_summary: my summary
 next: next
+new_price: There is a price update
 no_options: No options to show
 no_potions_available: No potions to show
 no_underlying_asset_found: no underlying asset found
@@ -135,6 +136,8 @@ position_entered: Position Entered
 position_exited: Position Exited
 potion_bought: potion bought
 premium: Premium
+price_changed: The price of { token } went from { oldPrice } to { newPrice } 
+price_not_in_tollerance: The new price is outside of the slippage tollerance
 price_per_potion: price per potion
 profit_and_loss: Profit & Loss
 projected_pnl: Projected P&L
@@ -146,6 +149,7 @@ reclaimable: reclaimable
 redeem: redeem
 redeemed: Redeemed
 redeeming: Redeeming
+rerun_router: Please rerun the Router
 review_and_create: review and create
 review_your_choices: Review your choices before creating the pool on chain.
 set_bonding_curve_params: Set the following parameters and define your curve.
@@ -172,6 +176,8 @@ total_liquidity: Total Liquidity
 total_payout: total payout
 total_pools: total pools
 total_size: Tot. Size
+transaction_completed: Your transaction has completed
+transaction_pending: Your transaction is pending
 unlocked: unlocked
 unutilized_capital: Unutilized capital
 usdc_approved: usdc approved
@@ -180,6 +186,7 @@ user_balance: User collateral balance
 utilization: utilization
 utilized_capital: Utilized Capital
 vault_size: vault size
+view_on_etherscan: View on Etherscan
 view_pool_recipe: view pool recipe
 withdraw: Withdraw
 withdraw_capital: Withdraw capital
