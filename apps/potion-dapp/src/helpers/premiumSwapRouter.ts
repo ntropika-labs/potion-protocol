@@ -14,7 +14,7 @@ import {
 import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
 import type { ChainId } from "@uniswap/smart-order-router";
-import type { UniswapRouterReturn } from "@/types";
+import { UniswapActionType, type UniswapRouterReturn } from "@/types";
 
 // The alphaRouter expectes only V2 or V3 as protocol config and not also MIXED so we can't import the Protocol enum from uniswap sdk
 // as a workaround we just redeclare it here, hoping that uniswap decides to actually expose this enum from the router package
@@ -40,7 +40,7 @@ const getUniswapRoute = async (
   maxSplits: number,
   recipientAddress: string,
   slippageToleranceInteger = 1,
-  actionType: "enter" | "exit" = "enter",
+  actionType: UniswapActionType = UniswapActionType.ENTER_POSITION,
   deadlineTimestamp?: number
 ): Promise<UniswapRouterReturn> => {
   try {
@@ -67,7 +67,7 @@ const getUniswapRoute = async (
 
     const currencyAmount = CurrencyAmount.fromRawAmount(
       inputUniToken,
-      JSBI.BigInt(tokenAmountWithDecimals.toString()) // TODO check
+      JSBI.BigInt(tokenAmountWithDecimals.toString())
     );
 
     const alphaRouter = initUniswapAlphaRouter(chainId);
@@ -136,7 +136,7 @@ const runPremiumSwapRouter = async (
   premiumSlippage: number,
   recipientAddress: string,
   slippageToleranceInteger = 1,
-  actionType: "enter" | "exit" = "enter",
+  actionType: UniswapActionType = UniswapActionType.ENTER_POSITION,
   deadlineTimestamp?: number
 ): Promise<{
   potionRouterResult: DepthRouterReturn;

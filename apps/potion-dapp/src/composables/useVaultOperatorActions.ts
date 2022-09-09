@@ -26,7 +26,7 @@ import type {
 import type { ActionPayout } from "./usePotionBuyActionContract";
 
 import { worker } from "@web-worker";
-import type { UniswapRouterReturn } from "@/types";
+import { UniswapActionType, type UniswapRouterReturn } from "@/types";
 
 export function useVaultOperatorActions(
   currentPayout: Ref<ActionPayout | undefined>
@@ -163,7 +163,7 @@ export function useVaultOperatorActions(
         1, // TODO remove: assert here theres only 1 route returned (no split routes)
         walletAddress.value,
         swapSlippage.value,
-        "exit"
+        UniswapActionType.EXIT_POSITION
       );
 
       exitPositionData.value = uniswapRouterResult || null;

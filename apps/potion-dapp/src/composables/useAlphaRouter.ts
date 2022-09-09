@@ -4,7 +4,7 @@ import { TradeType } from "@uniswap/sdk-core";
 
 import type { Token as PotionToken } from "dapp-types";
 import { worker } from "@web-worker";
-import type { UniswapRouterReturn } from "@/types";
+import type { UniswapActionType, UniswapRouterReturn } from "@/types";
 
 export const useAlphaRouter = (chainId: ChainId) => {
   const routerData = ref<UniswapRouterReturn>();
@@ -43,7 +43,7 @@ export const useAlphaRouter = (chainId: ChainId) => {
     maxSplits: number,
     recipientAddress: string,
     slippageToleranceInteger = 1,
-    actionType: "enter" | "exit",
+    actionType: UniswapActionType,
     deadlineTimestamp?: number
   ) => {
     routerError.value = null;

@@ -5,6 +5,10 @@ import type { MethodParameters, Pool } from "@uniswap/v3-sdk";
 import type { Token } from "dapp-types";
 import type { BigNumberish } from "ethers";
 
+export enum UniswapActionType {
+  ENTER_POSITION = "ENTER_POSITION",
+  EXIT_POSITION = "EXIT_POSITION",
+}
 export interface UniswapRoute {
   percent: number;
   protocol: Protocol;
