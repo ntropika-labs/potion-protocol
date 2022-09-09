@@ -142,9 +142,8 @@ const criteriasParam = computed(() => {
 
 const {
   runRouter: loadCounterparties,
-  routerResult: potionRouterResult,
-  formattedPremium,
-  routerRunning: counterpartiesLoading,
+  getPoolsFromCriterias,
+  routerParams: potionRouterParameters,
 } = useDepthRouter(
   criteriasParam,
   orderSize,
@@ -154,25 +153,26 @@ const {
   false
 );
 
-const counterpartiesText = computed(() => {
-  return potionRouterResult.value &&
-    potionRouterResult.value.counterparties.length > 1
-    ? t("counterparties")
-    : t("counterparty");
-});
-
 const {
-  uniswapRouterResult,
-  routerLoading,
+  //uniswapRouterResult,
+  enterPositionData,
+  exitPositionData,
+  isActionLoading,
   hasCounterparties,
-  hasRoute,
   isEnterPositionOperationValid,
   isExitPositionOperationValid,
   loadEnterPositionRoute,
   loadExitPositionRoute,
-  getEnterPositionData,
-  getExitPositionData,
-} = useVaultOperatorActions(potionRouterResult, currentPayout);
+  evaluateEnterPositionData,
+  evaluateExitPositionData,
+} = useVaultOperatorActions(currentPayout);
+
+const counterpartiesText = computed(() => {
+  return enterPositionData.value &&
+    enterPositionData.value.potionRouterResult.counterparties.length > 1
+    ? t("counterparties")
+    : t("counterparty");
+});
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
@@ -196,7 +196,7 @@ const enterPosition = async () => {
     true
   );
 
-  const { swapInfo, potionBuyInfo } = getEnterPositionData(
+  const { swapInfo, potionBuyInfo } = evaluateEnterPositionData(
     tokenAsset,
     oraclePrice,
     strikePrice,
@@ -209,12 +209,17 @@ const enterPosition = async () => {
 };
 
 const exitPosition = async () => {
-  const swapData = getExitPositionData(tokenAsset, oraclePrice);
+  const swapData = evaluateExitPositionData(tokenAsset, oraclePrice);
   await vaultExitPosition(swapData);
 };
 
 const callbackLoadEnterRoute = async () => {
-  await loadEnterPositionRoute(tokenAsset, premiumSlippage, swapSlippage);
+  await loadEnterPositionRoute(
+    potionRouterParameters,
+    tokenAsset,
+    premiumSlippage,
+    swapSlippage
+  );
 };
 
 const callbackLoadExitRoute = async () => {
@@ -222,17 +227,16 @@ const callbackLoadExitRoute = async () => {
 };
 
 watch(vaultStatus, async () => {
-  await Promise.all([
-    getStrategyInfo(),
-    fetchCanPositionBeEntered(),
-    fetchCanPositionBeExited(),
-  ]);
+  await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
+
+  await getStrategyInfo();
 });
 
 watch(assetAddress, async (address) => {
   if (!address) return;
 
   await getCurrentPayout(address);
+  await getPoolsFromCriterias();
 });
 
 // Tab navigation
@@ -247,7 +251,7 @@ const tabs = ref([
   {
     title: t("enter_position"),
     subtitle: "",
-    isValid: hasRoute,
+    isValid: true,
     enabled: hasCounterparties,
   },
 ]);
@@ -291,7 +295,7 @@ const testAddBlock = async (addHours: number) => {
   console.log(blockTimestamp.value);
 };
 
-const { records } = useBuyerRecords(
+const { records, loadBuyerRecords } = useBuyerRecords(
   contractsAddresses["PotionBuyAction"].address,
   nextCycleTimestamp
 );
@@ -305,6 +309,16 @@ const copySetPriceCommand = async () => {
     await navigator.clipboard.writeText(setPriceCommand.value);
   }
 };
+
+watch(nextCycleTimestamp, () => {
+  loadBuyerRecords();
+});
+
+watch(blockTimestamp, () => {
+  getStrategyInfo();
+  fetchCanPositionBeEntered();
+  fetchCanPositionBeExited();
+});
 </script>
 
 <template>
@@ -327,6 +341,15 @@ const copySetPriceCommand = async () => {
             palette="primary"
             label="+1M"
             @click="() => testAddBlock(720)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+          <BaseButton
+            palette="primary"
+            label="TEST load enter"
+            @click="() => callbackLoadEnterRoute()"
           >
             <template #pre-icon>
               <i class="i-ph-test-tube-fill"></i>
@@ -490,20 +513,6 @@ const copySetPriceCommand = async () => {
               symbol="secs"
             />
           </div>
-
-          <div v-if="hasCounterparties" class="flex flex-col justify-start">
-            <h3 class="font-medium text-white/80 text-lg font-bold">
-              > Market size
-            </h3>
-            <div class="flex justify-between px-4 items-start text-sm">
-              <div class="flex gap-2 items-center justify-between w-full">
-                <p class="capitalize text-lg font-bold">
-                  {{ t("premium") }}
-                </p>
-                <p>{{ formattedPremium }}</p>
-              </div>
-            </div>
-          </div>
         </BaseCard>
       </div>
     </div>
@@ -523,8 +532,14 @@ const copySetPriceCommand = async () => {
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
-                  <p>Premium + gas: {{ potionRouterResult?.premiumGas }}</p>
-                  <p>Premium: {{ potionRouterResult?.premium }}</p>
+                  <p>
+                    Premium + gas:
+                    {{ enterPositionData?.potionRouterResult?.premiumGas }}
+                  </p>
+                  <p>
+                    Premium:
+                    {{ enterPositionData?.potionRouterResult?.premium }}
+                  </p>
                 </div>
                 <div v-else class="text-center">
                   <p class="text-white/40 uppercase">No result found</p>
@@ -532,13 +547,13 @@ const copySetPriceCommand = async () => {
                 <div>
                   <BaseButton
                     :label="t('counterparties')"
-                    :disabled="counterpartiesLoading"
+                    :disabled="isActionLoading"
                     @click="loadCounterparties()"
                   >
                     <template #pre-icon
                       ><i
                         class="i-ph-arrows-clockwise mr-1"
-                        :class="counterpartiesLoading && 'animate-spin'"
+                        :class="isActionLoading && 'animate-spin'"
                       ></i
                     ></template>
                   </BaseButton>
@@ -550,10 +565,13 @@ const copySetPriceCommand = async () => {
                     class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
                   >
                     <span v-if="hasCounterparties">
-                      {{ potionRouterResult?.counterparties.length }}
+                      {{
+                        enterPositionData?.potionRouterResult?.counterparties
+                          .length
+                      }}
                     </span>
-                    <span v-else-if="counterpartiesLoading || strategyLoading"
-                      ><i class="i-ph-arrows-clockwise animate spin"></i
+                    <span v-else-if="isActionLoading || strategyLoading"
+                      ><i class="i-ph-arrows-clockwise animate-spin"></i
                     ></span>
                     <span v-else>no</span>
                   </div>
@@ -563,7 +581,8 @@ const copySetPriceCommand = async () => {
                 </div>
                 <div v-if="hasCounterparties" class="flex flex-col gap-4">
                   <BaseCard
-                    v-for="(cp, index) in potionRouterResult?.counterparties"
+                    v-for="(cp, index) in enterPositionData?.potionRouterResult
+                      ?.counterparties"
                     :key="index"
                     class="p-6 relative"
                   >
@@ -646,7 +665,7 @@ const copySetPriceCommand = async () => {
                     >
                   </BaseCard>
                 </div>
-                <div v-else-if="counterpartiesLoading">
+                <div v-else-if="isActionLoading">
                   <div class="animate-pulse flex space-x-4">
                     <div class="rounded-full bg-slate-700 h-10 w-10"></div>
                     <div class="flex-1 space-y-6 py-1">
@@ -681,13 +700,13 @@ const copySetPriceCommand = async () => {
               <div class="flex md:flex-row gap-4">
                 <BaseButton
                   label="route"
-                  :disabled="routerLoading || enterPositionLoading"
+                  :disabled="isActionLoading || enterPositionLoading"
                   @click="callbackLoadEnterRoute()"
                 >
                   <template #pre-icon>
                     <i
                       class="i-ph-arrows-clockwise mr-1"
-                      :class="routerLoading && 'animate-spin'"
+                      :class="isActionLoading && 'animate-spin'"
                     ></i>
                   </template>
                 </BaseButton>
@@ -696,7 +715,7 @@ const copySetPriceCommand = async () => {
                 <BaseButton
                   label="enter position"
                   palette="secondary"
-                  :disabled="!isEnterPositionOperationValid || routerLoading"
+                  :disabled="!isEnterPositionOperationValid || isActionLoading"
                   :loading="enterPositionLoading"
                   @click="enterPosition()"
                 ></BaseButton>
@@ -709,8 +728,8 @@ const copySetPriceCommand = async () => {
               </div>
             </div>
             <TokenSwap
-              :route-data="uniswapRouterResult"
-              :router-loading="routerLoading"
+              :route-data="enterPositionData?.uniswapRouterResult"
+              :router-loading="isActionLoading"
             />
           </BaseCard>
         </TabNavigationComponent>
@@ -727,13 +746,13 @@ const copySetPriceCommand = async () => {
           <div class="flex md:flex-row gap-4">
             <BaseButton
               label="route"
-              :disabled="routerLoading || exitPositionLoading"
+              :disabled="isActionLoading || exitPositionLoading"
               @click="callbackLoadExitRoute()"
             >
               <template #pre-icon>
                 <i
                   class="i-ph-arrows-clockwise mr-1"
-                  :class="routerLoading && 'animate-spin'"
+                  :class="isActionLoading && 'animate-spin'"
                 ></i> </template
             ></BaseButton>
           </div>
@@ -743,7 +762,7 @@ const copySetPriceCommand = async () => {
               palette="secondary"
               :disabled="
                 !isExitPositionOperationValid ||
-                routerLoading ||
+                isActionLoading ||
                 exitPositionLoading
               "
               :loading="exitPositionLoading"
@@ -758,8 +777,8 @@ const copySetPriceCommand = async () => {
           </div>
         </div>
         <TokenSwap
-          :route-data="uniswapRouterResult"
-          :router-loading="routerLoading"
+          :route-data="exitPositionData"
+          :router-loading="isActionLoading"
         />
       </BaseCard>
       <!-- END EXIT POSITION -->

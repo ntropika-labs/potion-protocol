@@ -1,4 +1,5 @@
 export * from "@/types/web3Onboard";
+export * from "@/types/uniswapAlphaRouter";
 
 export interface EstimatedPrice {
   confidence: number;
