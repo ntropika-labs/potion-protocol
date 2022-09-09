@@ -136,7 +136,7 @@ export interface PotionProtocolHelperUpgradeableInterface
     "getAdmin()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getOpynAddressBook()": FunctionFragment;
-    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getUSDC()": FunctionFragment;
@@ -182,7 +182,7 @@ export interface PotionProtocolHelperUpgradeableInterface
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionLiquidityManager",
@@ -365,7 +365,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
@@ -412,7 +411,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
   getPotionBuyInfo(
     underlyingAsset: string,
-    strikePrice: BigNumberish,
     expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
@@ -459,7 +457,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
@@ -548,7 +545,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -598,7 +594,6 @@ export interface PotionProtocolHelperUpgradeable extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

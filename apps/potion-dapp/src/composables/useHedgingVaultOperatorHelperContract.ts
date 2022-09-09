@@ -22,6 +22,8 @@ import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typech
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
 import type { Token } from "dapp-types";
 
+export type Sellers = IPotionLiquidityPool.CounterpartyDetailsStruct[];
+
 export interface UniSwapInfo {
   steps: Array<{ inputToken: Token; fee: number }>;
   outputToken: Token;
@@ -33,7 +35,7 @@ interface PotionBuyInfo {
   underlyingAsset: string;
   strikePriceInUSDC: string;
   expirationTimestamp: BigNumberish;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  sellers: Sellers;
   expectedPremiumInUSDC: string;
   totalSizeInPotions: BigNumberish;
 }

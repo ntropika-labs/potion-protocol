@@ -31,7 +31,6 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     "MIN_CYCLE_DURATION()": FunctionFragment;
     "calculateCurrentPayout(address)": FunctionFragment;
     "cycleDurationSecs()": FunctionFragment;
-    "lastStrikePriceInUSDC()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "nextCycleStartTimestamp()": FunctionFragment;
@@ -51,7 +50,6 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
       | "MIN_CYCLE_DURATION"
       | "calculateCurrentPayout"
       | "cycleDurationSecs"
-      | "lastStrikePriceInUSDC"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
       | "nextCycleStartTimestamp"
@@ -76,10 +74,6 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cycleDurationSecs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastStrikePriceInUSDC",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -141,10 +135,6 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "cycleDurationSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lastStrikePriceInUSDC",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -317,8 +307,6 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -371,8 +359,6 @@ export interface PotionBuyActionV0 extends BaseContract {
 
   cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
-  lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
-
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
@@ -424,8 +410,6 @@ export interface PotionBuyActionV0 extends BaseContract {
     ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -522,8 +506,6 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
-
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
@@ -578,10 +560,6 @@ export interface PotionBuyActionV0 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lastStrikePriceInUSDC(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     maxPremiumPercentage(
       overrides?: CallOverrides

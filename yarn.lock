@@ -23735,7 +23735,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsbi@npm:^3.1.4":
+"jsbi@npm:3.2.5, jsbi@npm:^3.1.4":
   version: 3.2.5
   resolution: "jsbi@npm:3.2.5"
   checksum: 642d1bb139ad1c1e96c4907eb159565e980a0d168487626b493d0d0b7b341da0e43001089d3b21703fe17b18a7a6c0f42c92026f71d54471ed0a0d1b3015ec0f
@@ -29360,6 +29360,7 @@ __metadata:
     hardhat-gas-reporter: ^1.0.8
     heap-js: ^2.2.0
     husky: ^7.0.4
+    jsbi: 3.2.5
     jsdom: ^19.0.0
     lightweight-charts: ^3.8.0
     lint-staged: ^13.0.1

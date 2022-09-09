@@ -13,7 +13,11 @@ const useBuyerRecords = (buyer: MaybeRef<string>, expiry: MaybeRef<number>) => {
     expiry: unref(expiry).toString(),
   }));
 
-  const { data, fetching: loading } = useGetBuyerRecordsQuery({
+  const {
+    executeQuery,
+    data,
+    fetching: loading,
+  } = useGetBuyerRecordsQuery({
     variables,
   });
 
@@ -24,6 +28,7 @@ const useBuyerRecords = (buyer: MaybeRef<string>, expiry: MaybeRef<number>) => {
   return {
     records,
     loading,
+    loadBuyerRecords: executeQuery,
   };
 };
 

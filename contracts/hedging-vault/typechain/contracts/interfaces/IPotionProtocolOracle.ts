@@ -124,7 +124,7 @@ export declare namespace IPotionLiquidityPool {
 
 export interface IPotionProtocolOracleInterface extends utils.Interface {
   functions: {
-    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
   };
 
@@ -134,7 +134,7 @@ export interface IPotionProtocolOracleInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
@@ -182,7 +182,6 @@ export interface IPotionProtocolOracle extends BaseContract {
   functions: {
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
@@ -195,7 +194,6 @@ export interface IPotionProtocolOracle extends BaseContract {
 
   getPotionBuyInfo(
     underlyingAsset: string,
-    strikePrice: BigNumberish,
     expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
@@ -208,7 +206,6 @@ export interface IPotionProtocolOracle extends BaseContract {
   callStatic: {
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
@@ -224,7 +221,6 @@ export interface IPotionProtocolOracle extends BaseContract {
   estimateGas: {
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -238,7 +234,6 @@ export interface IPotionProtocolOracle extends BaseContract {
   populateTransaction: {
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
