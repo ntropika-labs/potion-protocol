@@ -156,7 +156,7 @@
     "hardhat-gas-reporter": "^1.0.8",
     "heap-js": "^2.2.0",
     "husky": "^7.0.4",
-    "jsbi": "^4.3.0",
+    "jsbi": "3.2.5",
     "jsdom": "^19.0.0",
     "lightweight-charts": "^3.8.0",
     "lint-staged": "^13.0.1",
