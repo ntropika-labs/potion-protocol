@@ -22,6 +22,8 @@ import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typech
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
 import type { Token } from "dapp-types";
 
+export type Sellers = IPotionLiquidityPool.CounterpartyDetailsStruct[];
+
 export interface UniSwapInfo {
   steps: Array<{ inputToken: Token; fee: number }>;
   outputToken: Token;
@@ -33,7 +35,7 @@ interface PotionBuyInfo {
   underlyingAsset: string;
   strikePriceInUSDC: string;
   expirationTimestamp: BigNumberish;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+  sellers: Sellers;
   expectedPremiumInUSDC: string;
   totalSizeInPotions: BigNumberish;
 }
@@ -126,12 +128,6 @@ export function useHedgingVaultOperatorHelperContract() {
       expectedPriceRate: expectedPriceRate,
       swapPath: swapPath,
     };
-
-    console.log("swapData", swapData);
-    console.log(
-      "expectedPriceRate to String: ",
-      swapData.expectedPriceRate.toString()
-    );
     return swapData;
   };
 
@@ -145,8 +141,8 @@ export function useHedgingVaultOperatorHelperContract() {
     potionBuyInfo: PotionBuyInfo
   ) => {
     if (connectedWallet.value) {
-      const contractSigner = initContractSigner();
       try {
+        const contractSigner = initContractSigner();
         enterPositionError.value = null;
         enterPositionLoading.value = true;
 
@@ -171,10 +167,9 @@ export function useHedgingVaultOperatorHelperContract() {
         );
         enterPositionReceipt.value = await enterPositionTx.value.wait();
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? `Cannot enter Position: ${error.message}`
-            : "Cannot enter Position";
+        const errorMessage = `Cannot enter Position: ${
+          error instanceof Error ? error.message : error
+        }`;
         enterPositionError.value = errorMessage;
 
         throw new Error(errorMessage);
@@ -191,21 +186,19 @@ export function useHedgingVaultOperatorHelperContract() {
   const exitPositionError = ref<string | null>(null);
   const exitPosition = async (swapInfo: UniSwapInfo) => {
     if (connectedWallet.value) {
-      const contractSigner = initContractSigner();
       try {
+        const contractSigner = initContractSigner();
         exitPositionError.value = null;
         exitPositionLoading.value = true;
 
         const swapData = getSwapData(swapInfo);
 
-        console.log("swapData: ", swapData);
         exitPositionTx.value = await contractSigner.exitPosition(swapData);
         exitPositionReceipt.value = await exitPositionTx.value.wait();
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? `Cannot exit Position: ${error.message}`
-            : "Cannot exit Position";
+        const errorMessage = `Cannot exit Position: ${
+          error instanceof Error ? error.message : error
+        }`;
         exitPositionError.value = errorMessage;
 
         throw new Error(errorMessage);
@@ -227,14 +220,12 @@ export function useHedgingVaultOperatorHelperContract() {
       const provider = initContractProvider();
       canPositionBeEntered.value = await provider.canPositionBeEntered();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot get current position: ${error.message}`
-          : `Cannot get current position: ${error}`;
+      const errorMessage = `Position can not be entered: ${
+        error instanceof Error ? error.message : error
+      }`;
       canPositionBeEnteredError.value = errorMessage;
-
-      //throw new Error(errorMessage);
       canPositionBeEntered.value = false;
+      throw new Error(errorMessage);
     } finally {
       canPositionBeEnteredLoading.value = false;
     }
@@ -252,14 +243,12 @@ export function useHedgingVaultOperatorHelperContract() {
       const provider = initContractProvider();
       canPositionBeExited.value = await provider.canPositionBeExited();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? `Cannot get current position: ${error.message}`
-          : `Cannot get current position: ${error}`;
+      const errorMessage = `Position can not be exited: ${
+        error instanceof Error ? error.message : error
+      }`;
       canPositionBeExitedError.value = errorMessage;
-
-      //throw new Error(errorMessage);
       canPositionBeExited.value = false;
+      throw new Error(errorMessage);
     } finally {
       canPositionBeExitedLoading.value = false;
     }

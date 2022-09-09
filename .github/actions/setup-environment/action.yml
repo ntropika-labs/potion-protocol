@@ -7,7 +7,7 @@ runs:
     - name: Install node
       uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version-file: '.nvmrc'
         cache: yarn
 
     - name: Cache node_modules

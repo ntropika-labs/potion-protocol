@@ -1,27 +1,13 @@
 import { ref } from "vue";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { ChainId } from "@uniswap/smart-order-router";
+import { TradeType } from "@uniswap/sdk-core";
 
-import {
-  AlphaRouter,
-  ChainId,
-  CurrencyAmount,
-  type SwapRoute,
-} from "@uniswap/smart-order-router";
-import { TradeType, Percent, Token } from "@uniswap/sdk-core";
-import JSBI from "jsbi";
-
-import { uniswapRpcUrl } from "@/helpers";
+import type { Token as PotionToken } from "dapp-types";
+import { worker } from "@web-worker";
+import type { UniswapActionType, UniswapRouterReturn } from "@/types";
 
 export const useAlphaRouter = (chainId: ChainId) => {
-  const initAlphaRouter = () => {
-    const web3Provider = new JsonRpcProvider(uniswapRpcUrl);
-    return new AlphaRouter({
-      chainId: chainId,
-      provider: web3Provider,
-    });
-  };
-
-  const routerData = ref<SwapRoute | undefined>();
+  const routerData = ref<UniswapRouterReturn>();
   const routerPolling = ref(false);
   const routerLoading = ref(false);
   const routerError = ref<string | null>(null);
@@ -50,62 +36,36 @@ export const useAlphaRouter = (chainId: ChainId) => {
    *
    */
   const getRoute = async (
-    inputToken: Token,
-    outputToken: Token,
+    inputToken: PotionToken,
+    outputToken: PotionToken,
     tradeType: TradeType,
     tokenAmount: number,
     maxSplits: number,
     recipientAddress: string,
-    deadlineTimestamp: number,
-    slippageToleranceInteger = 1
+    slippageToleranceInteger = 1,
+    actionType: UniswapActionType,
+    deadlineTimestamp?: number
   ) => {
     routerError.value = null;
     routerLoading.value = true;
 
     try {
-      const inputTokenSwap =
-        tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
-      const outputTokenSwap =
-        tradeType === TradeType.EXACT_INPUT ? outputToken : inputToken;
-
-      const tokenAmountWithDecimals =
-        Math.ceil(tokenAmount) * 10 ** inputTokenSwap.decimals;
-      const deadline =
-        deadlineTimestamp !== undefined
-          ? deadlineTimestamp
-          : Math.floor(Date.now() / 1000 + 1800);
-
-      const currencyAmount = CurrencyAmount.fromRawAmount(
-        inputTokenSwap,
-        JSBI.BigInt(tokenAmountWithDecimals.toString()) // TODO check
-      );
-
-      console.log(
-        "QUERY ALPHA FOR AMOUNT",
-        tokenAmount,
-        currencyAmount.currency.name
-      );
-      const alphaRouter = initAlphaRouter();
-      const route = await alphaRouter.route(
-        currencyAmount,
-        outputTokenSwap,
+      const route = await worker.getUniswapRoute(
+        chainId,
+        inputToken,
+        outputToken,
         tradeType,
-        {
-          recipient: recipientAddress,
-          slippageTolerance: new Percent(slippageToleranceInteger, 100),
-          deadline: deadline,
-        },
-        {
-          maxSplits: maxSplits,
-        }
+        tokenAmount,
+        maxSplits,
+        recipientAddress,
+        slippageToleranceInteger,
+        actionType,
+        deadlineTimestamp
       );
 
-      if (!route) {
-        throw new Error("No route found");
-      }
+      routerData.value = route;
 
-      // Ugly hack to fix typescript typing
-      routerData.value = route || undefined;
+      return route;
     } catch (error) {
       routerError.value =
         error instanceof Error

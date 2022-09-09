@@ -69,3 +69,11 @@ export interface ChartCriteriaPool {
   pools: IPoolUntyped[];
   symbol: string;
 }
+
+export interface IRouterParameters {
+  pools: IPoolUntyped[];
+  orderSize: number;
+  strikePriceUSDC: number;
+  gas: number;
+  ethPrice: number;
+}

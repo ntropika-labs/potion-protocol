@@ -12,6 +12,7 @@ import {
   LabelValue,
   TimeTag,
 } from "potion-ui";
+import { LifecycleStates } from "hedging-vault-sdk";
 
 import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
 import { useNotifications } from "@/composables/useNotifications";
@@ -23,12 +24,10 @@ import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
-import {
-  useInvestmentVaultContract,
-  LifecycleState,
-} from "@/composables/useInvestmentVaultContract";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
@@ -44,15 +43,8 @@ const TabNavigationComponent = defineAsyncComponent(
     )
 );
 
-/**
- * Const
- */
-
 const IS_DEV_ENV = import.meta.env;
 
-/**
- * Setup
- */
 const { t } = useI18n();
 const router = useRouter();
 
@@ -62,9 +54,6 @@ const { vaultId } = useRouteVaultIdentifier(route.params);
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 
-/**
- * Vault operation
- */
 const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
   vaultId,
   true,
@@ -77,17 +66,8 @@ const principalPercentage = computed(() =>
     : 0
 );
 
-//const actionsStrategyInfo = ref(new Map<string, string | number | boolean>());
-const {
-  vaultName,
-  //assetName,
-  assetSymbol,
-  assetAddress,
-  //assetDecimals,
-  //assetImage,
-  totalAssets,
-  tokenAsset,
-} = useErc4626Contract(vaultId, true, true);
+const { vaultName, assetSymbol, assetAddress, totalAssets, tokenAsset } =
+  useErc4626Contract(vaultId, true, true);
 
 const {
   enterPositionTx,
@@ -100,7 +80,6 @@ const {
   exitPositionLoading,
   exitPosition: vaultExitPosition,
   canPositionBeExited,
-  //actionsAddress,
   fetchCanPositionBeEntered,
   fetchCanPositionBeExited,
 } = useHedgingVaultOperatorHelperContract();
@@ -132,17 +111,17 @@ const { oraclePrice, strikePrice, orderSize, numberOfOtokensToBuyBN } =
 
 const statusInfo = computed(() => {
   switch (vaultStatus.value) {
-    case LifecycleState.Unlocked:
+    case LifecycleStates.Unlocked:
       return {
         label: t("unlocked"),
         class: "bg-accent-500",
       };
-    case LifecycleState.Committed:
+    case LifecycleStates.Committed:
       return {
         label: t("committed"),
         class: "bg-orange-500",
       };
-    case LifecycleState.Locked:
+    case LifecycleStates.Locked:
     default:
       return {
         label: t("locked"),
@@ -151,7 +130,6 @@ const statusInfo = computed(() => {
   }
 });
 
-// Depth Router logic
 const criteriasParam = computed(() => {
   return [
     {
@@ -164,9 +142,8 @@ const criteriasParam = computed(() => {
 
 const {
   runRouter: loadCounterparties,
-  routerResult: potionRouterResult,
-  formattedPremium,
-  routerRunning: counterpartiesLoading,
+  getPoolsFromCriterias,
+  routerParams: potionRouterParameters,
 } = useDepthRouter(
   criteriasParam,
   orderSize,
@@ -176,33 +153,26 @@ const {
   false
 );
 
-const counterpartiesText = computed(() => {
-  return potionRouterResult.value &&
-    potionRouterResult.value.counterparties.length > 1
-    ? t("counterparties")
-    : t("counterparty");
-});
-
-// const {
-//   routerData: uniswapRouteData,
-//   getRoute,
-//   routerLoading,
-//   togglePolling: toggleUniswapPolling,
-//   routerPolling,
-// } = useAlphaRouter(getChainId());
-
 const {
-  uniswapRouterResult,
-  routerLoading,
+  //uniswapRouterResult,
+  enterPositionData,
+  exitPositionData,
+  isActionLoading,
   hasCounterparties,
-  hasRoute,
   isEnterPositionOperationValid,
   isExitPositionOperationValid,
   loadEnterPositionRoute,
   loadExitPositionRoute,
-  getEnterPositionData,
-  getExitPositionData,
-} = useVaultOperatorActions(potionRouterResult, currentPayout);
+  evaluateEnterPositionData,
+  evaluateExitPositionData,
+} = useVaultOperatorActions(currentPayout);
+
+const counterpartiesText = computed(() => {
+  return enterPositionData.value &&
+    enterPositionData.value.potionRouterResult.counterparties.length > 1
+    ? t("counterparties")
+    : t("counterparty");
+});
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
@@ -219,14 +189,14 @@ const enterPosition = async () => {
   );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
-    contractsAddresses.USDC.address,
-    contractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
+    coreContractsAddresses.USDC.address,
     strikePrice.value,
     expirationTimestamp,
     true
   );
 
-  const { swapInfo, potionBuyInfo } = getEnterPositionData(
+  const { swapInfo, potionBuyInfo } = evaluateEnterPositionData(
     tokenAsset,
     oraclePrice,
     strikePrice,
@@ -239,34 +209,34 @@ const enterPosition = async () => {
 };
 
 const exitPosition = async () => {
-  console.log("EXIT POSITION");
-  const swapData = getExitPositionData(tokenAsset, oraclePrice);
-
+  const swapData = evaluateExitPositionData(tokenAsset, oraclePrice);
   await vaultExitPosition(swapData);
 };
 
 const callbackLoadEnterRoute = async () => {
-  await loadEnterPositionRoute(tokenAsset, premiumSlippage, swapSlippage);
+  await loadEnterPositionRoute(
+    potionRouterParameters,
+    tokenAsset,
+    premiumSlippage,
+    swapSlippage
+  );
 };
 
 const callbackLoadExitRoute = async () => {
-  console.log("LOAD EXIT POSITION ROUTE");
-
   await loadExitPositionRoute(tokenAsset, swapSlippage);
 };
 
 watch(vaultStatus, async () => {
-  await Promise.all([
-    getStrategyInfo(),
-    fetchCanPositionBeEntered(),
-    fetchCanPositionBeExited(),
-  ]);
+  await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
+
+  await getStrategyInfo();
 });
 
 watch(assetAddress, async (address) => {
   if (!address) return;
 
   await getCurrentPayout(address);
+  await getPoolsFromCriterias();
 });
 
 // Tab navigation
@@ -281,7 +251,7 @@ const tabs = ref([
   {
     title: t("enter_position"),
     subtitle: "",
-    isValid: hasRoute,
+    isValid: true,
     enabled: hasCounterparties,
   },
 ]);
@@ -289,23 +259,6 @@ const tabs = ref([
 onMounted(async () => {
   await Promise.all([getGas(), getBlock("latest")]);
 });
-
-// let pollingIntervalId: any = null;
-// watch(routerPolling, (doPolling) => {
-//   console.log("toggling polling", doPolling);
-//   if (doPolling === true) {
-//     let callback = null;
-//     if (canPositionBeEntered.value) callback = loadEnterPositionRoute;
-//     else if (canPositionBeExited.value) callback = loadExitPositionRoute;
-//     else {
-//       throw new Error("Vault is locked");
-//     }
-//     pollingIntervalId = setInterval(callback, 60000);
-//     console.log(`next polling in 60 seconds`, pollingIntervalId);
-//   } else if (pollingIntervalId) {
-//     clearInterval(pollingIntervalId);
-//   }
-// });
 
 // Toast notifications
 const {
@@ -342,17 +295,30 @@ const testAddBlock = async (addHours: number) => {
   console.log(blockTimestamp.value);
 };
 
-const { records } = useBuyerRecords(
+const { records, loadBuyerRecords } = useBuyerRecords(
   contractsAddresses["PotionBuyAction"].address,
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
-const setPriceCommand = ref<HTMLElement>();
+const setPriceCommand = computed(
+  () =>
+    `yarn set-price --otoken ${potionAddress.value} --price 500 --network localhost`
+);
 const copySetPriceCommand = async () => {
-  if (potionAddress.value && setPriceCommand.value?.textContent) {
-    await navigator.clipboard.writeText(setPriceCommand.value.textContent);
+  if (potionAddress.value) {
+    await navigator.clipboard.writeText(setPriceCommand.value);
   }
 };
+
+watch(nextCycleTimestamp, () => {
+  loadBuyerRecords();
+});
+
+watch(blockTimestamp, () => {
+  getStrategyInfo();
+  fetchCanPositionBeEntered();
+  fetchCanPositionBeExited();
+});
 </script>
 
 <template>
@@ -380,6 +346,15 @@ const copySetPriceCommand = async () => {
               <i class="i-ph-test-tube-fill"></i>
             </template>
           </BaseButton>
+          <BaseButton
+            palette="primary"
+            label="TEST load enter"
+            @click="() => callbackLoadEnterRoute()"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -387,12 +362,10 @@ const copySetPriceCommand = async () => {
       <p>Underlying asset: {{ assetAddress }}</p>
       <div v-if="potionAddress">
         <p>Set price command:</p>
-        <div class="flex flex-row items-start">
+        <div class="flex flex-row items-center gap-4">
           <pre
-            ref="setPriceCommand"
             class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-          >
-yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
+            >{{ setPriceCommand }}</pre
           >
           <BaseButton
             palette="primary"
@@ -540,20 +513,6 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               symbol="secs"
             />
           </div>
-
-          <div v-if="hasCounterparties" class="flex flex-col justify-start">
-            <h3 class="font-medium text-white/80 text-lg font-bold">
-              > Market size
-            </h3>
-            <div class="flex justify-between px-4 items-start text-sm">
-              <div class="flex gap-2 items-center justify-between w-full">
-                <p class="capitalize text-lg font-bold">
-                  {{ t("premium") }}
-                </p>
-                <p>{{ formattedPremium }}</p>
-              </div>
-            </div>
-          </div>
         </BaseCard>
       </div>
     </div>
@@ -573,8 +532,14 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
-                  <p>Premium + gas: {{ potionRouterResult?.premiumGas }}</p>
-                  <p>Premium: {{ potionRouterResult?.premium }}</p>
+                  <p>
+                    Premium + gas:
+                    {{ enterPositionData?.potionRouterResult?.premiumGas }}
+                  </p>
+                  <p>
+                    Premium:
+                    {{ enterPositionData?.potionRouterResult?.premium }}
+                  </p>
                 </div>
                 <div v-else class="text-center">
                   <p class="text-white/40 uppercase">No result found</p>
@@ -582,13 +547,13 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                 <div>
                   <BaseButton
                     :label="t('counterparties')"
-                    :disabled="counterpartiesLoading"
+                    :disabled="isActionLoading"
                     @click="loadCounterparties()"
                   >
                     <template #pre-icon
                       ><i
                         class="i-ph-arrows-clockwise mr-1"
-                        :class="counterpartiesLoading && 'animate-spin'"
+                        :class="isActionLoading && 'animate-spin'"
                       ></i
                     ></template>
                   </BaseButton>
@@ -600,10 +565,13 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                     class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
                   >
                     <span v-if="hasCounterparties">
-                      {{ potionRouterResult?.counterparties.length }}
+                      {{
+                        enterPositionData?.potionRouterResult?.counterparties
+                          .length
+                      }}
                     </span>
-                    <span v-else-if="counterpartiesLoading || strategyLoading"
-                      ><i class="i-ph-arrows-clockwise animate spin"></i
+                    <span v-else-if="isActionLoading || strategyLoading"
+                      ><i class="i-ph-arrows-clockwise animate-spin"></i
                     ></span>
                     <span v-else>no</span>
                   </div>
@@ -613,7 +581,8 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                 </div>
                 <div v-if="hasCounterparties" class="flex flex-col gap-4">
                   <BaseCard
-                    v-for="(cp, index) in potionRouterResult?.counterparties"
+                    v-for="(cp, index) in enterPositionData?.potionRouterResult
+                      ?.counterparties"
                     :key="index"
                     class="p-6 relative"
                   >
@@ -696,7 +665,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
                     >
                   </BaseCard>
                 </div>
-                <div v-else-if="counterpartiesLoading">
+                <div v-else-if="isActionLoading">
                   <div class="animate-pulse flex space-x-4">
                     <div class="rounded-full bg-slate-700 h-10 w-10"></div>
                     <div class="flex-1 space-y-6 py-1">
@@ -731,28 +700,22 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               <div class="flex md:flex-row gap-4">
                 <BaseButton
                   label="route"
-                  :disabled="routerLoading || enterPositionLoading"
+                  :disabled="isActionLoading || enterPositionLoading"
                   @click="callbackLoadEnterRoute()"
                 >
                   <template #pre-icon>
                     <i
                       class="i-ph-arrows-clockwise mr-1"
-                      :class="routerLoading && 'animate-spin'"
+                      :class="isActionLoading && 'animate-spin'"
                     ></i>
                   </template>
                 </BaseButton>
-
-                <!-- <BaseButton
-                  :label="routerPolling ? 'disable polling' : 'enable polling'"
-                  :disabled="routerLoading || enterPositionLoading"
-                  @click="toggleUniswapPolling"
-                ></BaseButton> -->
               </div>
               <div class="flex flex-col items-end">
                 <BaseButton
                   label="enter position"
                   palette="secondary"
-                  :disabled="!isEnterPositionOperationValid || routerLoading"
+                  :disabled="!isEnterPositionOperationValid || isActionLoading"
                   :loading="enterPositionLoading"
                   @click="enterPosition()"
                 ></BaseButton>
@@ -765,8 +728,8 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               </div>
             </div>
             <TokenSwap
-              :route-data="uniswapRouterResult"
-              :router-loading="routerLoading"
+              :route-data="enterPositionData?.uniswapRouterResult"
+              :router-loading="isActionLoading"
             />
           </BaseCard>
         </TabNavigationComponent>
@@ -783,21 +746,15 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
           <div class="flex md:flex-row gap-4">
             <BaseButton
               label="route"
-              :disabled="routerLoading || exitPositionLoading"
+              :disabled="isActionLoading || exitPositionLoading"
               @click="callbackLoadExitRoute()"
             >
               <template #pre-icon>
                 <i
                   class="i-ph-arrows-clockwise mr-1"
-                  :class="routerLoading && 'animate-spin'"
+                  :class="isActionLoading && 'animate-spin'"
                 ></i> </template
             ></BaseButton>
-
-            <!-- <BaseButton
-              :label="routerPolling ? 'disable polling' : 'enable polling'"
-              :disabled="routerLoading || exitPositionLoading"
-              @click="toggleUniswapPolling"
-            ></BaseButton> -->
           </div>
           <div class="flex flex-col items-end">
             <BaseButton
@@ -805,7 +762,7 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
               palette="secondary"
               :disabled="
                 !isExitPositionOperationValid ||
-                routerLoading ||
+                isActionLoading ||
                 exitPositionLoading
               "
               :loading="exitPositionLoading"
@@ -820,8 +777,8 @@ yarn set-price --otoken {{ potionAddress }} --price 500 --network localhost</pre
           </div>
         </div>
         <TokenSwap
-          :route-data="uniswapRouterResult"
-          :router-loading="routerLoading"
+          :route-data="exitPositionData"
+          :router-loading="isActionLoading"
         />
       </BaseCard>
       <!-- END EXIT POSITION -->

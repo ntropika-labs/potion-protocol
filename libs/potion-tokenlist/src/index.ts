@@ -14,6 +14,7 @@ const getTokenList = (
   networkName:
     | "localhost"
     | "localhost.hedging"
+    | "localhost.goerli"
     | "ganache"
     | "kovan"
     | "mainnet"
@@ -21,6 +22,7 @@ const getTokenList = (
   switch (networkName) {
     case "localhost":
     case "localhost.hedging":
+    case "localhost.goerli":
       return localhost.tokens;
     case "ganache":
       return ganache.tokens;

@@ -227,6 +227,7 @@ async function mockContractsIfNeeded(
             },
         );
 
+        // TODO: Is this still needed?
         if (deploymentConfig.opynMockOracle) {
             testingEnvironmentDeployment.opynMockOracle = await attachContract<MockOpynOracle>(
                 "MockOpynOracle",
@@ -351,7 +352,7 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
 export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
     const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
 
-    if (networkName !== "hardhat") {
+    if (networkName !== "hardhat" && networkName !== "localhost.test") {
         const potionProtocolDeployments = getPotionProtocolDeployments(networkName);
         if (potionProtocolDeployments !== undefined) {
             usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);

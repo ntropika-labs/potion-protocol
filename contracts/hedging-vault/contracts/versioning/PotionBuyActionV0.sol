@@ -66,16 +66,6 @@ abstract contract PotionBuyActionV0 is IPotionBuyActionV0 {
      */
     uint256 public strikePercentage;
 
-    /**
-        @notice The strike price calculated for the last cycle when entering
-                the position. Kept in the storage for quick reference
-
-        @dev The price with 8 decimals denominated in USDC
-        @dev This the same as the strike price that Opyn uses in the Gamma protocol
-             and it must follow the same format
-     */
-    uint256 public lastStrikePriceInUSDC;
-
     /// MODIFIERS
 
     /**

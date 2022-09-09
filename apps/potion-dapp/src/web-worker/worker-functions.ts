@@ -3,4 +3,14 @@ import {
   runDepthRouter,
 } from "potion-router";
 
-export { getEmergingBondingCurvesFromCriterias, runDepthRouter };
+import {
+  getUniswapRoute,
+  runPremiumSwapRouter,
+} from "../helpers/premiumSwapRouter";
+
+export {
+  getEmergingBondingCurvesFromCriterias,
+  runDepthRouter,
+  getUniswapRoute,
+  runPremiumSwapRouter,
+};

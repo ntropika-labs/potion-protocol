@@ -159,9 +159,8 @@ contract PotionBuyAction is
         bool isValid;
         uint256 maxPremiumNeededInUSDC;
 
-        (isValid, maxPremiumNeededInUSDC, lastStrikePriceInUSDC) = _calculatePotionParameters(
+        (isValid, maxPremiumNeededInUSDC) = _calculatePotionMaxPremium(
             investmentAsset,
-            strikePercentage,
             nextCycleStartTimestamp,
             amountToInvest,
             premiumSlippage
@@ -174,7 +173,7 @@ contract PotionBuyAction is
         require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 
         _swapOutput(investmentAsset, address(getUSDC()), maxPremiumNeededInUSDC, swapSlippage, maxSwapDurationSecs);
-        _buyPotions(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
+        _buyPotions(investmentAsset, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -190,15 +189,12 @@ contract PotionBuyAction is
         nonReentrant
         returns (uint256 amountReturned)
     {
-        require(
-            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp),
-            "The Potion is not redeemable yet"
-        );
+        require(_isPotionRedeemable(investmentAsset, nextCycleStartTimestamp), "The Potion is not redeemable yet");
 
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
         IERC20 USDC = getUSDC();
 
-        _redeemPotions(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp);
+        _redeemPotions(investmentAsset, nextCycleStartTimestamp);
         uint256 amountToConvertToAssset = USDC.balanceOf(address(this));
 
         _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
@@ -271,7 +267,7 @@ contract PotionBuyAction is
     function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
         canExit =
             _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp) &&
+            _isPotionRedeemable(investmentAsset, nextCycleStartTimestamp) &&
             getLifecycleState() == LifecycleState.Locked;
     }
 
@@ -279,7 +275,7 @@ contract PotionBuyAction is
         @inheritdoc IPotionBuyActionV0
     */
     function calculateCurrentPayout(address investmentAsset) external view returns (bool isFinal, uint256 payout) {
-        return _calculateCurrentPayout(investmentAsset, lastStrikePriceInUSDC, nextCycleStartTimestamp);
+        return _calculateCurrentPayout(investmentAsset, nextCycleStartTimestamp);
     }
 
     /// INTERNAL FUNCTIONS

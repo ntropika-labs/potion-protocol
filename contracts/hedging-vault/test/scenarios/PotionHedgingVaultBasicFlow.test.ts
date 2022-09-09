@@ -13,7 +13,6 @@ import {
     PotionBuyAction,
     IPotionLiquidityPool,
     IUniswapV3Oracle,
-    HedgingVaultOperatorHelper__factory,
     HedgingVaultOperatorHelper,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
@@ -22,9 +21,9 @@ import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
-import { NetworksType } from "../../hardhat.helpers";
 import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
+import { getDeploymentsNetworkName } from "../../scripts/utils/network";
 
 /**
     @notice Hedging Vault basic flow unit tests    
@@ -45,7 +44,9 @@ describe("HedgingVault", function () {
         ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
-        deploymentConfig = getDeploymentConfig(network.name as NetworksType);
+        const deploymentNetworkName = getDeploymentsNetworkName();
+
+        deploymentConfig = getDeploymentConfig(deploymentNetworkName);
 
         tEnv = await deployTestingEnv(deploymentConfig);
 
@@ -294,11 +295,7 @@ describe("HedgingVault", function () {
         await operatorHelper.connect(ownerAccount).enterPosition(swapInfoEnterPosition, potionBuyInfo);
 
         // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
-            tEnv.underlyingAsset.address,
-            strikePriceInUSDC,
-            expirationTimestamp,
-        );
+        const currentPotionBuyInfo = await action.getPotionBuyInfo(tEnv.underlyingAsset.address, expirationTimestamp);
 
         expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
 
@@ -363,7 +360,8 @@ describe("HedgingVault", function () {
                     return;
                 }
                 // TODO: This is failing and I'm not sure if it is a Smock problem or a logic
-                // TODO: problem in the tests
+                // TODO: problem in the tests. Talking to the smock team it seems likely that it
+                // TODO: is a problem with the smock library and calling the EVM from an async callback
                 // await tEnv.USDC.connect(ownerAccount).mint(action.address, payoutInUSDC);
             });
         });

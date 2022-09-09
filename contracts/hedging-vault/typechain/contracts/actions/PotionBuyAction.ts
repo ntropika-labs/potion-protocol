@@ -212,7 +212,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getLifecycleState()": FunctionFragment;
     "getOperator()": FunctionFragment;
     "getOpynAddressBook()": FunctionFragment;
-    "getPotionBuyInfo(address,uint256,uint256)": FunctionFragment;
+    "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
     "getStrategist()": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
@@ -222,7 +222,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getUSDC()": FunctionFragment;
     "getVault()": FunctionFragment;
     "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "lastStrikePriceInUSDC()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "nextCycleStartTimestamp()": FunctionFragment;
@@ -273,7 +272,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getUSDC"
       | "getVault"
       | "initialize"
-      | "lastStrikePriceInUSDC"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
       | "nextCycleStartTimestamp"
@@ -353,7 +351,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionLiquidityManager",
@@ -384,10 +382,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PotionBuyAction.PotionBuyInitParamsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastStrikePriceInUSDC",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "maxPremiumPercentage",
@@ -550,10 +544,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lastStrikePriceInUSDC",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
     data: BytesLike
@@ -914,7 +904,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
@@ -953,8 +942,6 @@ export interface PotionBuyAction extends BaseContract {
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1096,7 +1083,6 @@ export interface PotionBuyAction extends BaseContract {
 
   getPotionBuyInfo(
     underlyingAsset: string,
-    strikePrice: BigNumberish,
     expirationTimestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
@@ -1135,8 +1121,6 @@ export interface PotionBuyAction extends BaseContract {
     initParams: PotionBuyAction.PotionBuyInitParamsStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1278,7 +1262,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
@@ -1317,8 +1300,6 @@ export interface PotionBuyAction extends BaseContract {
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1571,7 +1552,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1610,8 +1590,6 @@ export interface PotionBuyAction extends BaseContract {
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    lastStrikePriceInUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1761,7 +1739,6 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionBuyInfo(
       underlyingAsset: string,
-      strikePrice: BigNumberish,
       expirationTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1801,10 +1778,6 @@ export interface PotionBuyAction extends BaseContract {
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    lastStrikePriceInUSDC(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxPremiumPercentage(

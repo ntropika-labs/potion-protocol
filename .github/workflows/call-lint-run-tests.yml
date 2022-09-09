@@ -89,6 +89,7 @@ jobs:
     needs: [lint]
     env:
       VITE_ETHEREUM_NETWORK: ${{ inputs.VITE_ETHEREUM_NETWORK }}
+      VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
