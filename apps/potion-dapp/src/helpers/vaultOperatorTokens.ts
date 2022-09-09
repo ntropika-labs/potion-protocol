@@ -10,34 +10,43 @@ import type {
   SwapRoute,
   V3RouteWithValidQuote,
 } from "@uniswap/smart-order-router";
-import type { UniswapRouterReturn } from "@/types";
+import { UniswapActionType, type UniswapRouterReturn } from "@/types";
 import type { BigNumberish } from "ethers";
 
 const IS_DEV_ENV = import.meta.env.DEV;
 
 const convertUniswapRouteToFlatRoute = (
   uniRoute: SwapRoute,
-  actionType: "enter" | "exit"
+  actionType: UniswapActionType
 ) => {
   console.log("UNIROUTE", uniRoute);
   const routes = uniRoute.route as V3RouteWithValidQuote[];
 
-  const tradeExecutionPrice =
-    actionType === "enter"
-      ? uniRoute.trade.executionPrice.toSignificant(18)
-      : uniRoute.trade.executionPrice.invert().toSignificant(18);
+  const isEnterPosition = actionType === UniswapActionType.ENTER_POSITION;
+  const tradeExecutionPrice = isEnterPosition
+    ? uniRoute.trade.executionPrice.toSignificant(18)
+    : uniRoute.trade.executionPrice.invert().toSignificant(18);
 
   const uniswapRouterResult: UniswapRouterReturn = {
     trade: JSON.parse(JSON.stringify(uniRoute.trade)),
     routes: routes.map((route: V3RouteWithValidQuote) => {
+      const quoteToken = convertUniswapTokenToToken(route.quoteToken);
+      const amountToken = convertUniswapTokenToToken(
+        route.amount.currency.wrapped
+      );
+      const quoteTokenAmount = route.quote.toSignificant(
+        route.quoteToken.decimals
+      );
+      const amountTokenAmount = route.amount.toSignificant(
+        route.amount.currency.wrapped.decimals
+      );
+
       return {
         protocol: route.protocol,
-        inputToken: convertUniswapTokenToToken(route.quoteToken),
-        outputToken: convertUniswapTokenToToken(route.amount.currency.wrapped),
-        inputAmount: route.quote.toSignificant(route.quoteToken.decimals),
-        outputAmount: route.amount.toSignificant(
-          route.amount.currency.wrapped.decimals
-        ),
+        inputToken: isEnterPosition ? quoteToken : amountToken,
+        outputToken: isEnterPosition ? amountToken : quoteToken,
+        inputAmount: isEnterPosition ? quoteTokenAmount : amountTokenAmount,
+        outputAmount: isEnterPosition ? amountTokenAmount : quoteTokenAmount,
         quoteGasAdjusted: route.quoteAdjustedForGas.toSignificant(
           route.quoteToken.decimals
         ),
