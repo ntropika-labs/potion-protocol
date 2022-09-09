@@ -9,7 +9,7 @@ import {
   convertCollateralToUniswapToken,
   convertUniswapRouteToFlatRoute,
   evaluatePremium,
-} from "./vaultOperatorTokens";
+} from "@vault-operator-utils";
 
 import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
@@ -73,24 +73,6 @@ const getUniswapRoute = async (
     const alphaRouter = initUniswapAlphaRouter(chainId);
     const protocols = [Protocol.V3];
     const slippageTolerance = new Percent(slippageToleranceInteger, 100);
-
-    console.log(
-      currencyAmount,
-      inputToken,
-      inputUniToken,
-      outputToken,
-      outputUniToken,
-      tradeType,
-      {
-        recipient: recipientAddress,
-        slippageTolerance,
-        deadline,
-      },
-      {
-        maxSplits,
-        protocols,
-      }
-    );
 
     const route = await alphaRouter.route(
       currencyAmount,
