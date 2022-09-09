@@ -166,6 +166,7 @@ const counterpartiesText = computed(() => {
     : t("counterparty");
 });
 
+const rerunRequired = ref(false);
 const {
   uniswapRouterResult,
   routerLoading,
@@ -220,6 +221,7 @@ const exitPosition = async () => {
 
 const callbackLoadEnterRoute = async () => {
   await loadEnterPositionRoute(tokenAsset, premiumSlippage, swapSlippage);
+  rerunRequired.value = false;
 };
 
 const callbackLoadExitRoute = async () => {
@@ -287,11 +289,22 @@ watch(exitPositionReceipt, (receipt) => {
 });
 
 watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
-  if (oldPrice !== undefined && oldPrice !== newPrice) {
+  if (
+    oldPrice !== undefined &&
+    newPrice !== undefined &&
+    oldPrice !== newPrice
+  ) {
     createSimpleNotification(
       t("new_price"),
       t("price_changed", { token: assetSymbol.value, oldPrice, newPrice })
     );
+    const fop = parseFloat(oldPrice);
+    const fnp = parseFloat(newPrice);
+    const tollerance = (fop * swapSlippage.value) / 100;
+    if (fnp < fop - tollerance || fnp > fop + tollerance) {
+      createSimpleNotification(t("rerun_router"), t("price_not_in_tollerance"));
+      rerunRequired.value = true;
+    }
   }
 });
 
@@ -711,7 +724,11 @@ const copySetPriceCommand = async () => {
                 <BaseButton
                   label="enter position"
                   palette="secondary"
-                  :disabled="!isEnterPositionOperationValid || routerLoading"
+                  :disabled="
+                    rerunRequired ||
+                    routerLoading ||
+                    !isEnterPositionOperationValid
+                  "
                   :loading="enterPositionLoading"
                   @click="enterPosition()"
                 ></BaseButton>
