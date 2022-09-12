@@ -3,10 +3,13 @@ import { TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import { BigNumber } from "ethers";
 
-import { getChainId, USDCUniToken } from "@/helpers/uniswap";
+import {
+  getChainId,
+  USDCUniToken,
+  convertUniswapTokenToToken,
+} from "@/helpers/uniswap";
 import {
   convertQuoteUniswapTokenToToken,
-  convertUniswapTokenToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
   getRecipientAddress,

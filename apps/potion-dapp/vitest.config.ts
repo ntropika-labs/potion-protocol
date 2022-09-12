@@ -39,6 +39,10 @@ export default defineConfig({
         //@ts-expect-error volar giving errors
         new URL("./src/helpers/mockedVaultOperatorUtils.ts", import.meta.url)
       ),
+      "@premium-swap-router": fileURLToPath(
+        //@ts-expect-error volar giving errors
+        new URL("./src/helpers/mockedPremiumSwapRouter.ts", import.meta.url)
+      ),
     },
   },
 });

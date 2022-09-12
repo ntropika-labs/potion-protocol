@@ -69,6 +69,19 @@ export default defineConfig({
               //@ts-expect-error volar giving errors
               new URL("./src/helpers/vaultOperatorUtils.ts", import.meta.url)
             ),
+      "@premium-swap-router":
+        VITE_MODE === "test"
+          ? fileURLToPath(
+              //@ts-expect-error volar giving errors
+              new URL(
+                "./src/helpers/mockedPremiumSwapRouter.ts",
+                import.meta.url
+              )
+            )
+          : fileURLToPath(
+              //@ts-expect-error volar giving errors
+              new URL("./src/helpers/premiumSwapRouter.ts", import.meta.url)
+            ),
     },
   },
   build: {
