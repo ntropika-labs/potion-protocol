@@ -1,32 +1,23 @@
 import JSBI from "jsbi";
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { Percent, Token, TradeType } from "@uniswap/sdk-core";
+import { BigNumber } from "ethers";
+import { Token, TradeType } from "@uniswap/sdk-core";
+import { Protocol } from "@uniswap/router-sdk";
 import {
-  AlphaRouter,
   CurrencyAmount,
+  parseFeeAmount,
   type ChainId,
 } from "@uniswap/smart-order-router";
+import { type MethodParameters, Pool } from "@uniswap/v3-sdk";
 
-import { uniswapRpcUrl } from "./constants";
 import { runDepthRouter } from "potion-router";
-import {
-  convertCollateralToUniswapToken,
-  evaluatePremium,
-} from "@vault-operator-utils";
+import { evaluatePremium } from "@vault-operator-utils";
 
 import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
 
 import { UniswapActionType, type UniswapRouterReturn } from "@/types";
-import { convertUniswapRouteToFlatRoute, Protocol } from "@/helpers/uniswap";
 
-const initUniswapAlphaRouter = (chainId: ChainId) => {
-  const web3Provider = new JsonRpcProvider(uniswapRpcUrl);
-  return new AlphaRouter({
-    chainId: chainId,
-    provider: web3Provider,
-  });
-};
+console.log("Running a mocked version of 'premiumSwapRouter'");
 
 const getUniswapRoute = async (
   chainId: ChainId,
@@ -34,19 +25,18 @@ const getUniswapRoute = async (
   outputToken: PotionToken,
   tradeType: TradeType,
   tokenAmount: number,
-  maxSplits: number,
-  recipientAddress: string,
-  slippageToleranceInteger = 1,
-  actionType: UniswapActionType = UniswapActionType.ENTER_POSITION,
-  deadlineTimestamp?: number
+  _maxSplits: number,
+  _recipientAddress: string,
+  _slippageToleranceInteger?: number,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _actionType: UniswapActionType = UniswapActionType.ENTER_POSITION,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _deadlineTimestamp?: number
 ): Promise<UniswapRouterReturn> => {
   try {
     const inputTokenSwap =
       tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
-    const outputTokenSwap =
-      tradeType === TradeType.EXACT_INPUT ? outputToken : inputToken;
 
-    const outputUniToken = convertCollateralToUniswapToken(outputTokenSwap);
     const inputUniToken = new Token(
       chainId,
       inputTokenSwap.address,
@@ -57,40 +47,46 @@ const getUniswapRoute = async (
 
     const tokenAmountWithDecimals =
       Math.ceil(tokenAmount) * 10 ** inputUniToken.decimals;
-    const deadline =
-      deadlineTimestamp !== undefined
-        ? deadlineTimestamp
-        : Math.floor(Date.now() / 1000 + 1800);
 
     const currencyAmount = CurrencyAmount.fromRawAmount(
       inputUniToken,
       JSBI.BigInt(tokenAmountWithDecimals.toString())
-    );
+    ).toSignificant();
 
-    const alphaRouter = initUniswapAlphaRouter(chainId);
-    const protocols = [Protocol.V3];
-    const slippageTolerance = new Percent(slippageToleranceInteger, 100);
+    const uniswapRouterResult: UniswapRouterReturn = {
+      trade: JSON.parse(JSON.stringify({})),
+      routes: [
+        {
+          protocol: Protocol.V3,
+          inputToken: inputToken,
+          outputToken: outputToken,
+          inputAmount:
+            tradeType === TradeType.EXACT_INPUT
+              ? currencyAmount
+              : "? (mocked alpha router)",
+          outputAmount:
+            tradeType === TradeType.EXACT_INPUT
+              ? "? (mocked alpha router)"
+              : currencyAmount,
+          quoteGasAdjusted:
+            tradeType === TradeType.EXACT_INPUT ? currencyAmount : "?",
+          poolAddresses: ["0xMOCKED"],
+          pools: [
+            {
+              fee: parseFeeAmount("500"),
+            } as Pool,
+          ],
+          percent: 100,
+          tokensPath: [inputToken, outputToken],
+        },
+      ],
+      tradeExecutionPrice: BigNumber.from(0),
+      methodParameters: { calldata: "", value: "" } as MethodParameters,
+      estimatedGasUsed: "?",
+      estimatedGasUsedUSD: "?",
+    };
 
-    const route = await alphaRouter.route(
-      currencyAmount,
-      outputUniToken,
-      tradeType,
-      {
-        recipient: recipientAddress,
-        slippageTolerance,
-        deadline,
-      },
-      {
-        maxSplits,
-        protocols,
-      }
-    );
-
-    if (!route) {
-      throw new Error("No route found");
-    }
-
-    return convertUniswapRouteToFlatRoute(route, actionType);
+    return uniswapRouterResult;
   } catch (error) {
     if (error instanceof Error) {
       throw error;
