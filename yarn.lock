@@ -26435,7 +26435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.32, nanoid@npm:^3.3.1, nanoid@npm:^3.3.3, nanoid@npm:^3.3.4":
+"nanoid@npm:^3.3.1, nanoid@npm:^3.3.3, nanoid@npm:^3.3.4":
   version: 3.3.4
   resolution: "nanoid@npm:3.3.4"
   bin:
@@ -28773,8 +28773,8 @@ __metadata:
     prettier: ^2.7.1
     prettier-plugin-solidity: ^1.0.0-dev.23
     rollup-plugin-gzip: ^3.0.1
-    rollup-plugin-polyfill-node: ^0.9.0
-    rollup-plugin-visualizer: ^5.6.0
+    rollup-plugin-polyfill-node: ^0.10.2
+    rollup-plugin-visualizer: ^5.8.1
     semantic-release: ^19.0.5
     solc: ^0.8.17
     solhint: ^3.3.7
@@ -30868,30 +30868,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-polyfill-node@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "rollup-plugin-polyfill-node@npm:0.9.0"
+"rollup-plugin-polyfill-node@npm:^0.10.2":
+  version: 0.10.2
+  resolution: "rollup-plugin-polyfill-node@npm:0.10.2"
   dependencies:
     "@rollup/plugin-inject": ^4.0.0
   peerDependencies:
     rollup: ^1.20.0 || ^2.0.0
-  checksum: e7e2d3a8bfe87361326daef544da9733ee22bae7a4b6a95c18d30cc53e6dca757f3c1b223e20e6b4acaf88c967508e71af9b73a1e4972d1f3a591041bf9bb151
+  checksum: 10806925ddf17d9a49bea885fa30296dec20ac59c43986c6f1eca892dd260cc75cc2f77b098dbcb8bbf503c10c7aa4d3078f441c1e2384ba475c105273132c99
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^5.6.0":
-  version: 5.6.0
-  resolution: "rollup-plugin-visualizer@npm:5.6.0"
+"rollup-plugin-visualizer@npm:^5.8.1":
+  version: 5.8.1
+  resolution: "rollup-plugin-visualizer@npm:5.8.1"
   dependencies:
-    nanoid: ^3.1.32
+    nanoid: ^3.3.4
     open: ^8.4.0
     source-map: ^0.7.3
-    yargs: ^17.3.1
+    yargs: ^17.5.1
   peerDependencies:
     rollup: ^2.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: 27964e64ac15a4ab8df8dcfcdfedb4db686e3b16f8b0110cd2eaaf9e977c4c4f8f3c7479b7f1cd32274a3b05eafad26da87d75d2eaf7d68664823810361dc488
+  checksum: e277451738817a6ccb0aea675e73851d6a8081817d05fdd7c077d5a2d7a0827df2182ee3b181e86aa87013715776c6609059d3df9c3ac81966f00006133628fd
   languageName: node
   linkType: hard
 
@@ -37172,7 +37175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.3.1":
+"yargs@npm:^17.5.1":
   version: 17.5.1
   resolution: "yargs@npm:17.5.1"
   dependencies:

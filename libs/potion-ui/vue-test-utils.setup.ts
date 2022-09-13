@@ -4,12 +4,12 @@
 import { config } from "@vue/test-utils";
 import { createI18n } from "vue-i18n";
 
-import messages from "../locales/en.yaml";
+import en from "../locales/en.yaml";
 
 const i18n = createI18n({
+  legacy: false,
   locale: "en",
-  messages: { en: messages }
+  messages: { en },
 });
 
 config.global.plugins = [i18n];
-
