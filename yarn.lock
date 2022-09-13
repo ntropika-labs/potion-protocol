@@ -9378,28 +9378,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:^2.3.6":
-  version: 2.4.4
-  resolution: "@urql/core@npm:2.4.4"
+"@urql/core@npm:^3.0.0":
+  version: 3.0.3
+  resolution: "@urql/core@npm:3.0.3"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
-    wonka: ^4.0.14
+    wonka: ^6.0.0
   peerDependencies:
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: f8942a415f7ecc9f07eb38fdebb1663b37d2f8f31fe4da1002b354a63dbb68dc1fd3b7c8f1a89430e9034ffb011350a706b4d8ac8e2c8172ad21c43a0283d629
+  checksum: 7d2fbb306e41944017dcd84278e66d386e6bc9f95463bd49eee6034e643439348ade8aa067a78cc3269b58a7f05928fb57c6ecef8ffb29c39dd4e79640658136
   languageName: node
   linkType: hard
 
-"@urql/vue@npm:^0.6.4":
-  version: 0.6.4
-  resolution: "@urql/vue@npm:0.6.4"
+"@urql/vue@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@urql/vue@npm:1.0.2"
   dependencies:
-    "@urql/core": ^2.3.6
-    wonka: ^4.0.14
+    "@urql/core": ^3.0.0
+    wonka: ^6.0.0
   peerDependencies:
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     vue: ^2.7.0 || ^3.0.0
-  checksum: 352e7489d29fd76760b73640893ffc0725e29830fe6e4826c3fc6b28c7f9dd152ff1f4834ed1b30b445be5509415d5b9c7b9360cd9d19be9f4a6fff571066717
+  checksum: 1876bcf9bcb2ecfe7e2c0f1e378ca507f3d13b4ea1467afb0e62b4bf73a4d707be63e17194072da0db33428d4fa71f0f1580a452fe1df828e7570294c0b4f71b
   languageName: node
   linkType: hard
 
@@ -29140,7 +29140,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.37.0
     "@unocss/preset-icons": ^0.45.21
     "@unocss/reset": ^0.45.21
-    "@urql/vue": ^0.6.4
+    "@urql/vue": ^1.0.2
     "@vitejs/plugin-vue": ^2.3.4
     "@vitest/coverage-c8": ^0.23.2
     "@vitest/ui": ^0.23.2
@@ -36725,10 +36725,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wonka@npm:^4.0.14":
-  version: 4.0.15
-  resolution: "wonka@npm:4.0.15"
-  checksum: d51f81143f3727a847bae3c0ac937c13f5999009fbea273cd309d7fa32977fb10c98b51cbc3cbab356e0d3a9959b6806fc2bc8ae87c56be20cfc6385c80ed237
+"wonka@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "wonka@npm:6.0.0"
+  checksum: 52c53a9f1610a05b3f02a1cb38b2b888bfd0c64c62c64261e0452ba2b07fc454bba3e8a69d5a43a5f520801541d3c8c9037339512ad8e812d0733c38ad651414
   languageName: node
   linkType: hard
 
