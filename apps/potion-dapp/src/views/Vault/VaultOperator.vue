@@ -576,7 +576,7 @@ watch(blockTimestamp, async () => {
                     palette="primary"
                     label="Load data"
                     :disabled="isActionLoading"
-                    @click="() => callbackLoadEnterRoute()"
+                    @click="callbackLoadEnterRoute()"
                   >
                     <template #pre-icon
                       ><i
