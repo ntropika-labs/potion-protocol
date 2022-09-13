@@ -59,7 +59,7 @@ export default defineConfig({
           : fileURLToPath(
               //@ts-expect-error volar giving errors
 
-              new URL("./src/composables/useCoingecko.ts", import.meta.url)
+              new URL("./src/composables/useCoinGecko.ts", import.meta.url)
             ),
 
       "@onboard-composable":
