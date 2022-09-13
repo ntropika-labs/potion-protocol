@@ -24,16 +24,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export declare namespace MarginVault {
   export type VaultStruct = {
-    shortOtokens: string[];
-    longOtokens: string[];
-    collateralAssets: string[];
-    shortAmounts: BigNumberish[];
-    longAmounts: BigNumberish[];
-    collateralAmounts: BigNumberish[];
+    shortOtokens: PromiseOrValue<string>[];
+    longOtokens: PromiseOrValue<string>[];
+    collateralAssets: PromiseOrValue<string>[];
+    shortAmounts: PromiseOrValue<BigNumberish>[];
+    longAmounts: PromiseOrValue<BigNumberish>[];
+    collateralAmounts: PromiseOrValue<BigNumberish>[];
   };
 
   export type VaultStructOutput = [
@@ -55,14 +56,14 @@ export declare namespace MarginVault {
 
 export declare namespace Actions {
   export type ActionArgsStruct = {
-    actionType: BigNumberish;
-    owner: string;
-    secondAddress: string;
-    asset: string;
-    vaultId: BigNumberish;
-    amount: BigNumberish;
-    index: BigNumberish;
-    data: BytesLike;
+    actionType: PromiseOrValue<BigNumberish>;
+    owner: PromiseOrValue<string>;
+    secondAddress: PromiseOrValue<string>;
+    asset: PromiseOrValue<string>;
+    vaultId: PromiseOrValue<BigNumberish>;
+    amount: PromiseOrValue<BigNumberish>;
+    index: PromiseOrValue<BigNumberish>;
+    data: PromiseOrValue<BytesLike>;
   };
 
   export type ActionArgsStructOutput = [
@@ -184,11 +185,16 @@ export interface ControllerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "canSettleAssets",
-    values: [string, string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "donate",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "fullPauser",
@@ -196,49 +202,59 @@ export interface ControllerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountVaultCounter",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getConfiguration",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getNakedCap", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getNakedCap",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getNakedPoolBalance",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPayout",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getProceed",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVault",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVaultWithDetails",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "hasExpired", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "hasExpired",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isLiquidatable",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperator",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "operate",
@@ -261,35 +277,35 @@ export interface ControllerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCallRestriction",
-    values: [boolean]
+    values: [PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFullPauser",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setNakedCap",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOperator",
-    values: [string, boolean]
+    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPartialPauser",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSystemFullyPaused",
-    values: [boolean]
+    values: [PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSystemPartiallyPaused",
-    values: [boolean]
+    values: [PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "sync",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "systemFullyPaused",
@@ -301,7 +317,7 @@ export interface ControllerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "whitelist", values?: undefined): string;
 
@@ -766,23 +782,23 @@ export interface Controller extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<[boolean]>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     fullPauser(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -791,68 +807,71 @@ export interface Controller extends BaseContract {
     ): Promise<[string, string, string, string]>;
 
     getNakedCap(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getNakedPoolBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVault.VaultStructOutput]>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVault.VaultStructOutput, BigNumber, BigNumber]>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<[boolean]>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
-      _addressBook: string,
-      _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     oracle(overrides?: CallOverrides): Promise<[string]>;
@@ -864,54 +883,54 @@ export interface Controller extends BaseContract {
     pool(overrides?: CallOverrides): Promise<[string]>;
 
     refreshConfiguration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCallRestriction(
-      _isRestricted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _isRestricted: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setFullPauser(
-      _fullPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setNakedCap(
-      _collateral: string,
-      _cap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _cap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPartialPauser(
-      _partialPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partialPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSystemFullyPaused(
-      _fullyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSystemPartiallyPaused(
-      _partiallyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partiallyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<[boolean]>;
@@ -919,8 +938,8 @@ export interface Controller extends BaseContract {
     systemPartiallyPaused(overrides?: CallOverrides): Promise<[boolean]>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     whitelist(overrides?: CallOverrides): Promise<[string]>;
@@ -933,23 +952,23 @@ export interface Controller extends BaseContract {
   callRestricted(overrides?: CallOverrides): Promise<boolean>;
 
   canSettleAssets(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _expiry: BigNumberish,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _expiry: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   donate(
-    _asset: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   fullPauser(overrides?: CallOverrides): Promise<string>;
 
   getAccountVaultCounter(
-    _accountOwner: string,
+    _accountOwner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -957,66 +976,72 @@ export interface Controller extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[string, string, string, string]>;
 
-  getNakedCap(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getNakedCap(
+    _asset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getNakedPoolBalance(
-    _asset: string,
+    _asset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPayout(
-    _otoken: string,
-    _amount: BigNumberish,
+    _otoken: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getProceed(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getVault(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<MarginVault.VaultStructOutput>;
 
   getVaultWithDetails(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[MarginVault.VaultStructOutput, BigNumber, BigNumber]>;
 
-  hasExpired(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+  hasExpired(
+    _otoken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
-    _addressBook: string,
-    _owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _addressBook: PromiseOrValue<string>,
+    _owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isLiquidatable(
-    _owner: string,
-    _vaultId: BigNumberish,
-    _roundId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber, BigNumber]>;
 
   isOperator(
-    _owner: string,
-    _operator: string,
+    _owner: PromiseOrValue<string>,
+    _operator: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isSettlementAllowed(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   operate(
     _actions: Actions.ActionArgsStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   oracle(overrides?: CallOverrides): Promise<string>;
@@ -1028,54 +1053,54 @@ export interface Controller extends BaseContract {
   pool(overrides?: CallOverrides): Promise<string>;
 
   refreshConfiguration(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCallRestriction(
-    _isRestricted: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _isRestricted: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setFullPauser(
-    _fullPauser: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _fullPauser: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setNakedCap(
-    _collateral: string,
-    _cap: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _collateral: PromiseOrValue<string>,
+    _cap: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOperator(
-    _operator: string,
-    _isOperator: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _operator: PromiseOrValue<string>,
+    _isOperator: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPartialPauser(
-    _partialPauser: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _partialPauser: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSystemFullyPaused(
-    _fullyPaused: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _fullyPaused: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSystemPartiallyPaused(
-    _partiallyPaused: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _partiallyPaused: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   sync(
-    _owner: string,
-    _vaultId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   systemFullyPaused(overrides?: CallOverrides): Promise<boolean>;
@@ -1083,8 +1108,8 @@ export interface Controller extends BaseContract {
   systemPartiallyPaused(overrides?: CallOverrides): Promise<boolean>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   whitelist(overrides?: CallOverrides): Promise<string>;
@@ -1097,23 +1122,23 @@ export interface Controller extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<boolean>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     fullPauser(overrides?: CallOverrides): Promise<string>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1121,60 +1146,66 @@ export interface Controller extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string, string, string, string]>;
 
-    getNakedCap(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getNakedCap(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getNakedPoolBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<MarginVault.VaultStructOutput>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVault.VaultStructOutput, BigNumber, BigNumber]>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     initialize(
-      _addressBook: string,
-      _owner: string,
+      _addressBook: PromiseOrValue<string>,
+      _owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1196,45 +1227,45 @@ export interface Controller extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setCallRestriction(
-      _isRestricted: boolean,
+      _isRestricted: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setFullPauser(
-      _fullPauser: string,
+      _fullPauser: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setNakedCap(
-      _collateral: string,
-      _cap: BigNumberish,
+      _collateral: PromiseOrValue<string>,
+      _cap: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPartialPauser(
-      _partialPauser: string,
+      _partialPauser: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSystemFullyPaused(
-      _fullyPaused: boolean,
+      _fullyPaused: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSystemPartiallyPaused(
-      _partiallyPaused: boolean,
+      _partiallyPaused: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1243,7 +1274,7 @@ export interface Controller extends BaseContract {
     systemPartiallyPaused(overrides?: CallOverrides): Promise<boolean>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1252,24 +1283,24 @@ export interface Controller extends BaseContract {
 
   filters: {
     "AccountOperatorUpdated(address,address,bool)"(
-      accountOwner?: string | null,
-      operator?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      operator?: PromiseOrValue<string> | null,
       isSet?: null
     ): AccountOperatorUpdatedEventFilter;
     AccountOperatorUpdated(
-      accountOwner?: string | null,
-      operator?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      operator?: PromiseOrValue<string> | null,
       isSet?: null
     ): AccountOperatorUpdatedEventFilter;
 
     "CallExecuted(address,address,bytes)"(
-      from?: string | null,
-      to?: string | null,
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       data?: null
     ): CallExecutedEventFilter;
     CallExecuted(
-      from?: string | null,
-      to?: string | null,
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       data?: null
     ): CallExecutedEventFilter;
 
@@ -1277,155 +1308,155 @@ export interface Controller extends BaseContract {
     CallRestricted(isRestricted?: null): CallRestrictedEventFilter;
 
     "CollateralAssetDeposited(address,address,address,uint256,uint256)"(
-      asset?: string | null,
-      accountOwner?: string | null,
-      from?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): CollateralAssetDepositedEventFilter;
     CollateralAssetDeposited(
-      asset?: string | null,
-      accountOwner?: string | null,
-      from?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): CollateralAssetDepositedEventFilter;
 
     "CollateralAssetWithdrawed(address,address,address,uint256,uint256)"(
-      asset?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): CollateralAssetWithdrawedEventFilter;
     CollateralAssetWithdrawed(
-      asset?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): CollateralAssetWithdrawedEventFilter;
 
     "Donated(address,address,uint256)"(
-      donator?: string | null,
-      asset?: string | null,
+      donator?: PromiseOrValue<string> | null,
+      asset?: PromiseOrValue<string> | null,
       amount?: null
     ): DonatedEventFilter;
     Donated(
-      donator?: string | null,
-      asset?: string | null,
+      donator?: PromiseOrValue<string> | null,
+      asset?: PromiseOrValue<string> | null,
       amount?: null
     ): DonatedEventFilter;
 
     "FullPauserUpdated(address,address)"(
-      oldFullPauser?: string | null,
-      newFullPauser?: string | null
+      oldFullPauser?: PromiseOrValue<string> | null,
+      newFullPauser?: PromiseOrValue<string> | null
     ): FullPauserUpdatedEventFilter;
     FullPauserUpdated(
-      oldFullPauser?: string | null,
-      newFullPauser?: string | null
+      oldFullPauser?: PromiseOrValue<string> | null,
+      newFullPauser?: PromiseOrValue<string> | null
     ): FullPauserUpdatedEventFilter;
 
     "LongOtokenDeposited(address,address,address,uint256,uint256)"(
-      otoken?: string | null,
-      accountOwner?: string | null,
-      from?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): LongOtokenDepositedEventFilter;
     LongOtokenDeposited(
-      otoken?: string | null,
-      accountOwner?: string | null,
-      from?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): LongOtokenDepositedEventFilter;
 
     "LongOtokenWithdrawed(address,address,address,uint256,uint256)"(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): LongOtokenWithdrawedEventFilter;
     LongOtokenWithdrawed(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): LongOtokenWithdrawedEventFilter;
 
     "NakedCapUpdated(address,uint256)"(
-      collateral?: string | null,
+      collateral?: PromiseOrValue<string> | null,
       cap?: null
     ): NakedCapUpdatedEventFilter;
     NakedCapUpdated(
-      collateral?: string | null,
+      collateral?: PromiseOrValue<string> | null,
       cap?: null
     ): NakedCapUpdatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "PartialPauserUpdated(address,address)"(
-      oldPartialPauser?: string | null,
-      newPartialPauser?: string | null
+      oldPartialPauser?: PromiseOrValue<string> | null,
+      newPartialPauser?: PromiseOrValue<string> | null
     ): PartialPauserUpdatedEventFilter;
     PartialPauserUpdated(
-      oldPartialPauser?: string | null,
-      newPartialPauser?: string | null
+      oldPartialPauser?: PromiseOrValue<string> | null,
+      newPartialPauser?: PromiseOrValue<string> | null
     ): PartialPauserUpdatedEventFilter;
 
     "Redeem(address,address,address,address,uint256,uint256)"(
-      otoken?: string | null,
-      redeemer?: string | null,
-      receiver?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      redeemer?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       collateralAsset?: null,
       otokenBurned?: null,
       payout?: null
     ): RedeemEventFilter;
     Redeem(
-      otoken?: string | null,
-      redeemer?: string | null,
-      receiver?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      redeemer?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       collateralAsset?: null,
       otokenBurned?: null,
       payout?: null
     ): RedeemEventFilter;
 
     "ShortOtokenBurned(address,address,address,uint256,uint256)"(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      from?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): ShortOtokenBurnedEventFilter;
     ShortOtokenBurned(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      from?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): ShortOtokenBurnedEventFilter;
 
     "ShortOtokenMinted(address,address,address,uint256,uint256)"(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): ShortOtokenMintedEventFilter;
     ShortOtokenMinted(
-      otoken?: string | null,
-      AccountOwner?: string | null,
-      to?: string | null,
+      otoken?: PromiseOrValue<string> | null,
+      AccountOwner?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       vaultId?: null,
       amount?: null
     ): ShortOtokenMintedEventFilter;
@@ -1439,9 +1470,9 @@ export interface Controller extends BaseContract {
     SystemPartiallyPaused(isPaused?: null): SystemPartiallyPausedEventFilter;
 
     "VaultLiquidated(address,address,address,uint256,uint256,uint256,uint256,uint256)"(
-      liquidator?: string | null,
-      receiver?: string | null,
-      vaultOwner?: string | null,
+      liquidator?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      vaultOwner?: PromiseOrValue<string> | null,
       auctionPrice?: null,
       auctionStartingRound?: null,
       collateralPayout?: null,
@@ -1449,9 +1480,9 @@ export interface Controller extends BaseContract {
       vaultId?: null
     ): VaultLiquidatedEventFilter;
     VaultLiquidated(
-      liquidator?: string | null,
-      receiver?: string | null,
-      vaultOwner?: string | null,
+      liquidator?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      vaultOwner?: PromiseOrValue<string> | null,
       auctionPrice?: null,
       auctionStartingRound?: null,
       collateralPayout?: null,
@@ -1460,31 +1491,31 @@ export interface Controller extends BaseContract {
     ): VaultLiquidatedEventFilter;
 
     "VaultOpened(address,uint256,uint256)"(
-      accountOwner?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
       vaultId?: null,
-      vaultType?: BigNumberish | null
+      vaultType?: PromiseOrValue<BigNumberish> | null
     ): VaultOpenedEventFilter;
     VaultOpened(
-      accountOwner?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
       vaultId?: null,
-      vaultType?: BigNumberish | null
+      vaultType?: PromiseOrValue<BigNumberish> | null
     ): VaultOpenedEventFilter;
 
     "VaultSettled(address,address,address,uint256,uint256,uint256)"(
-      accountOwner?: string | null,
-      oTokenAddress?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      oTokenAddress?: PromiseOrValue<string> | null,
       to?: null,
       payout?: null,
       vaultId?: null,
-      vaultType?: BigNumberish | null
+      vaultType?: PromiseOrValue<BigNumberish> | null
     ): VaultSettledEventFilter;
     VaultSettled(
-      accountOwner?: string | null,
-      oTokenAddress?: string | null,
+      accountOwner?: PromiseOrValue<string> | null,
+      oTokenAddress?: PromiseOrValue<string> | null,
       to?: null,
       payout?: null,
       vaultId?: null,
-      vaultType?: BigNumberish | null
+      vaultType?: PromiseOrValue<BigNumberish> | null
     ): VaultSettledEventFilter;
   };
 
@@ -1496,88 +1527,94 @@ export interface Controller extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<BigNumber>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     fullPauser(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getConfiguration(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getNakedCap(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getNakedCap(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getNakedPoolBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(
-      _addressBook: string,
-      _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     oracle(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1589,54 +1626,54 @@ export interface Controller extends BaseContract {
     pool(overrides?: CallOverrides): Promise<BigNumber>;
 
     refreshConfiguration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCallRestriction(
-      _isRestricted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _isRestricted: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setFullPauser(
-      _fullPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setNakedCap(
-      _collateral: string,
-      _cap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _cap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPartialPauser(
-      _partialPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partialPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSystemFullyPaused(
-      _fullyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSystemPartiallyPaused(
-      _partiallyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partiallyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1644,8 +1681,8 @@ export interface Controller extends BaseContract {
     systemPartiallyPaused(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     whitelist(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1659,94 +1696,94 @@ export interface Controller extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     fullPauser(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getConfiguration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getNakedCap(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getNakedPoolBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasExpired(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _addressBook: string,
-      _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1758,54 +1795,54 @@ export interface Controller extends BaseContract {
     pool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     refreshConfiguration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCallRestriction(
-      _isRestricted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _isRestricted: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setFullPauser(
-      _fullPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setNakedCap(
-      _collateral: string,
-      _cap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _cap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPartialPauser(
-      _partialPauser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partialPauser: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSystemFullyPaused(
-      _fullyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _fullyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSystemPartiallyPaused(
-      _partiallyPaused: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _partiallyPaused: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1815,8 +1852,8 @@ export interface Controller extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     whitelist(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface OtokenInterfaceInterface extends utils.Interface {
@@ -52,7 +53,7 @@ export interface OtokenInterfaceInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "burnOtoken",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "collateralAsset",
@@ -69,19 +70,19 @@ export interface OtokenInterfaceInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "init",
     values: [
-      string,
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(functionFragment: "isPut", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mintOtoken",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "strikeAsset",
@@ -156,9 +157,9 @@ export interface OtokenInterface extends BaseContract {
 
   functions: {
     burnOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     collateralAsset(overrides?: CallOverrides): Promise<[string]>;
@@ -170,22 +171,22 @@ export interface OtokenInterface extends BaseContract {
     ): Promise<[string, string, string, BigNumber, BigNumber, boolean]>;
 
     init(
-      _addressBook: string,
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isPut(overrides?: CallOverrides): Promise<[boolean]>;
 
     mintOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     strikeAsset(overrides?: CallOverrides): Promise<[string]>;
@@ -196,9 +197,9 @@ export interface OtokenInterface extends BaseContract {
   };
 
   burnOtoken(
-    account: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    account: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   collateralAsset(overrides?: CallOverrides): Promise<string>;
@@ -210,22 +211,22 @@ export interface OtokenInterface extends BaseContract {
   ): Promise<[string, string, string, BigNumber, BigNumber, boolean]>;
 
   init(
-    _addressBook: string,
-    _underlyingAsset: string,
-    _strikeAsset: string,
-    _collateralAsset: string,
-    _strikePrice: BigNumberish,
-    _expiry: BigNumberish,
-    _isPut: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _addressBook: PromiseOrValue<string>,
+    _underlyingAsset: PromiseOrValue<string>,
+    _strikeAsset: PromiseOrValue<string>,
+    _collateralAsset: PromiseOrValue<string>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _expiry: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isPut(overrides?: CallOverrides): Promise<boolean>;
 
   mintOtoken(
-    account: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    account: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   strikeAsset(overrides?: CallOverrides): Promise<string>;
@@ -236,8 +237,8 @@ export interface OtokenInterface extends BaseContract {
 
   callStatic: {
     burnOtoken(
-      account: string,
-      amount: BigNumberish,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -250,21 +251,21 @@ export interface OtokenInterface extends BaseContract {
     ): Promise<[string, string, string, BigNumber, BigNumber, boolean]>;
 
     init(
-      _addressBook: string,
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _addressBook: PromiseOrValue<string>,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isPut(overrides?: CallOverrides): Promise<boolean>;
 
     mintOtoken(
-      account: string,
-      amount: BigNumberish,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -279,9 +280,9 @@ export interface OtokenInterface extends BaseContract {
 
   estimateGas: {
     burnOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     collateralAsset(overrides?: CallOverrides): Promise<BigNumber>;
@@ -291,22 +292,22 @@ export interface OtokenInterface extends BaseContract {
     getOtokenDetails(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
-      _addressBook: string,
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isPut(overrides?: CallOverrides): Promise<BigNumber>;
 
     mintOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     strikeAsset(overrides?: CallOverrides): Promise<BigNumber>;
@@ -318,9 +319,9 @@ export interface OtokenInterface extends BaseContract {
 
   populateTransaction: {
     burnOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     collateralAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -330,22 +331,22 @@ export interface OtokenInterface extends BaseContract {
     getOtokenDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      _addressBook: string,
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _addressBook: PromiseOrValue<string>,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isPut(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mintOtoken(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     strikeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;

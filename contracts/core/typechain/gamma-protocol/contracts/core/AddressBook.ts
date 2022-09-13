@@ -23,6 +23,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface AddressBookInterface extends utils.Interface {
@@ -79,7 +80,7 @@ export interface AddressBookInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getAddress",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getController",
@@ -117,44 +118,47 @@ export interface AddressBookInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setAddress",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setController",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setLiquidationManager",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMarginCalculator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMarginPool",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "setOracle", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setOracle",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setOtokenFactory",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOtokenImpl",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setWhitelist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "updateImpl",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
@@ -300,7 +304,10 @@ export interface AddressBook extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getAddress(_key: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    getAddress(
+      _key: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getController(overrides?: CallOverrides): Promise<[string]>;
 
@@ -321,68 +328,71 @@ export interface AddressBook extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setAddress(
-      _key: BytesLike,
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _key: PromiseOrValue<BytesLike>,
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setLiquidationManager(
-      _liquidationManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _liquidationManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMarginCalculator(
-      _marginCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginCalculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMarginPool(
-      _marginPool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginPool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOracle(
-      _oracle: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracle: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOtokenImpl(
-      _otokenImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setWhitelist(
-      _whitelist: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _whitelist: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     updateImpl(
-      _id: BytesLike,
-      _newAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _id: PromiseOrValue<BytesLike>,
+      _newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  getAddress(_key: BytesLike, overrides?: CallOverrides): Promise<string>;
+  getAddress(
+    _key: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getController(overrides?: CallOverrides): Promise<string>;
 
@@ -403,68 +413,71 @@ export interface AddressBook extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setAddress(
-    _key: BytesLike,
-    _address: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _key: PromiseOrValue<BytesLike>,
+    _address: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setController(
-    _controller: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _controller: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setLiquidationManager(
-    _liquidationManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _liquidationManager: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMarginCalculator(
-    _marginCalculator: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _marginCalculator: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMarginPool(
-    _marginPool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _marginPool: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOracle(
-    _oracle: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _oracle: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOtokenFactory(
-    _otokenFactory: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otokenFactory: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOtokenImpl(
-    _otokenImpl: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otokenImpl: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setWhitelist(
-    _whitelist: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _whitelist: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   updateImpl(
-    _id: BytesLike,
-    _newAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _id: PromiseOrValue<BytesLike>,
+    _newAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getAddress(_key: BytesLike, overrides?: CallOverrides): Promise<string>;
+    getAddress(
+      _key: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getController(overrides?: CallOverrides): Promise<string>;
 
@@ -487,88 +500,97 @@ export interface AddressBook extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setAddress(
-      _key: BytesLike,
-      _address: string,
+      _key: PromiseOrValue<BytesLike>,
+      _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setController(
-      _controller: string,
+      _controller: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setLiquidationManager(
-      _liquidationManager: string,
+      _liquidationManager: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMarginCalculator(
-      _marginCalculator: string,
+      _marginCalculator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMarginPool(
-      _marginPool: string,
+      _marginPool: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setOracle(_oracle: string, overrides?: CallOverrides): Promise<void>;
+    setOracle(
+      _oracle: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setOtokenFactory(
-      _otokenFactory: string,
+      _otokenFactory: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setOtokenImpl(
-      _otokenImpl: string,
+      _otokenImpl: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setWhitelist(_whitelist: string, overrides?: CallOverrides): Promise<void>;
+    setWhitelist(
+      _whitelist: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateImpl(
-      _id: BytesLike,
-      _newAddress: string,
+      _id: PromiseOrValue<BytesLike>,
+      _newAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "AddressAdded(bytes32,address)"(
-      id?: BytesLike | null,
-      add?: string | null
+      id?: PromiseOrValue<BytesLike> | null,
+      add?: PromiseOrValue<string> | null
     ): AddressAddedEventFilter;
     AddressAdded(
-      id?: BytesLike | null,
-      add?: string | null
+      id?: PromiseOrValue<BytesLike> | null,
+      add?: PromiseOrValue<string> | null
     ): AddressAddedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "ProxyCreated(bytes32,address)"(
-      id?: BytesLike | null,
-      proxy?: string | null
+      id?: PromiseOrValue<BytesLike> | null,
+      proxy?: PromiseOrValue<string> | null
     ): ProxyCreatedEventFilter;
     ProxyCreated(
-      id?: BytesLike | null,
-      proxy?: string | null
+      id?: PromiseOrValue<BytesLike> | null,
+      proxy?: PromiseOrValue<string> | null
     ): ProxyCreatedEventFilter;
   };
 
   estimateGas: {
-    getAddress(_key: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    getAddress(
+      _key: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getController(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -589,70 +611,70 @@ export interface AddressBook extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setAddress(
-      _key: BytesLike,
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _key: PromiseOrValue<BytesLike>,
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setLiquidationManager(
-      _liquidationManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _liquidationManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMarginCalculator(
-      _marginCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginCalculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMarginPool(
-      _marginPool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginPool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOracle(
-      _oracle: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracle: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOtokenImpl(
-      _otokenImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setWhitelist(
-      _whitelist: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _whitelist: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     updateImpl(
-      _id: BytesLike,
-      _newAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _id: PromiseOrValue<BytesLike>,
+      _newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getAddress(
-      _key: BytesLike,
+      _key: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -679,64 +701,64 @@ export interface AddressBook extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setAddress(
-      _key: BytesLike,
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _key: PromiseOrValue<BytesLike>,
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setLiquidationManager(
-      _liquidationManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _liquidationManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMarginCalculator(
-      _marginCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginCalculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMarginPool(
-      _marginPool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _marginPool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOracle(
-      _oracle: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracle: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOtokenImpl(
-      _otokenImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setWhitelist(
-      _whitelist: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _whitelist: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     updateImpl(
-      _id: BytesLike,
-      _newAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _id: PromiseOrValue<BytesLike>,
+      _newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
