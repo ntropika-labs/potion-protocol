@@ -12536,9 +12536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"billboard.js@npm:^3.4.1":
-  version: 3.4.1
-  resolution: "billboard.js@npm:3.4.1"
+"billboard.js@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "billboard.js@npm:3.5.1"
   dependencies:
     d3-axis: ^3.0.0
     d3-brush: ^3.0.0
@@ -12552,7 +12552,7 @@ __metadata:
     d3-time-format: ^4.1.0
     d3-transition: ^3.0.1
     d3-zoom: ^3.0.0
-  checksum: 715f9a7525f9c4feeae8a2abf033d034e68f41d580381f07fa583b4696111029a2c242c06492272b33d39ddc887a8834ad36beb91afa442abab9661e4dff6e3d
+  checksum: 5672c1bf88ea1b1f57278a77bc2be9ac2540ea46b724d9b80e29c78d89f95c6563351797f705ae86ca71841d6e406657d73039b37c2bfcff1cfc059b76bc98f7
   languageName: node
   linkType: hard
 
@@ -29117,7 +29117,7 @@ __metadata:
     "@web3-onboard/core": ^2.2.8
     "@web3-onboard/injected-wallets": ^2.0.6
     "@web3-onboard/walletconnect": ^2.0.1
-    billboard.js: ^3.4.1
+    billboard.js: ^3.5.1
     c8: ^7.12.0
     chai: ^4.3.6
     chai-ethers-bn: ^0.0.3
