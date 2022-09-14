@@ -8179,13 +8179,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trufflesuite/bigint-buffer@npm:1.1.9":
-  version: 1.1.9
-  resolution: "@trufflesuite/bigint-buffer@npm:1.1.9"
+"@trufflesuite/bigint-buffer@npm:1.1.10":
+  version: 1.1.10
+  resolution: "@trufflesuite/bigint-buffer@npm:1.1.10"
   dependencies:
     node-gyp: latest
-    node-gyp-build: 4.3.0
-  checksum: 396d98a5fd7a90aa638a04bbff1802144806acbbbb2b5c8816b443184e451941a76ae4f5ac37d796ae771b822726045052e9de6e5fbe7b33129a7ca181c7dfd6
+    node-gyp-build: 4.4.0
+  checksum: 56d54919de42678c408fda28348205e164f46e62254e81f1a1d740443a22b211730849e2613c40ee6229f7d0e621a79935093d782aee3b9d9868f8f4116a0bf5
   languageName: node
   linkType: hard
 
@@ -8696,7 +8696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lru-cache@npm:^5.1.0":
+"@types/lru-cache@npm:5.1.1, @types/lru-cache@npm:^5.1.0":
   version: 5.1.1
   resolution: "@types/lru-cache@npm:5.1.1"
   checksum: e1d6c0085f61b16ec5b3073ec76ad1be4844ea036561c3f145fc19f71f084b58a6eb600b14128aa95809d057d28f1d147c910186ae51219f58366ffd2ff2e118
@@ -8918,6 +8918,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 1bd10b9afa724084b655dc81b7b315def3d2d0e272014ef16009fa76e17537411c07c0695fdea412bc7b36d2a02687f5fea33522d55b8ef29eda42992f812913
+  languageName: node
+  linkType: hard
+
+"@types/seedrandom@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@types/seedrandom@npm:3.0.1"
+  checksum: d9755452f224a4f5072a1d8738da6c9de3039fc59a2a449b1f658e51087be7b48ada49bcabc8b0f16633c095f55598c32fcd072c448858422a2f6a0566569e4c
   languageName: node
   linkType: hard
 
@@ -20005,16 +20012,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ganache@npm:^7.0.5":
-  version: 7.1.0
-  resolution: "ganache@npm:7.1.0"
+"ganache@npm:^7.4.3":
+  version: 7.4.3
+  resolution: "ganache@npm:7.4.3"
   dependencies:
-    "@trufflesuite/bigint-buffer": 1.1.9
+    "@trufflesuite/bigint-buffer": 1.1.10
+    "@types/bn.js": ^5.1.0
+    "@types/lru-cache": 5.1.1
+    "@types/seedrandom": 3.0.1
     bufferutil: 4.0.5
     emittery: 0.10.0
-    keccak: 3.0.1
+    keccak: 3.0.2
     leveldown: 6.1.0
-    secp256k1: 4.0.2
+    secp256k1: 4.0.3
     utf-8-validate: 5.0.7
   dependenciesMeta:
     bufferutil:
@@ -20024,7 +20034,7 @@ __metadata:
   bin:
     ganache: dist/node/cli.js
     ganache-cli: dist/node/cli.js
-  checksum: 22a61d0a0437a93fbacd8eb94a3fca6c6b2f50dc7267098a6c4413bc871019b87dfe1d531c7bfec95437b2a2009e7a0eeecb8efbcc36901f6edce63b0ae5dbd0
+  checksum: edd52861c0d2b46fce4811e4f6c44336fe6b6afd2f2e98773902fb5f05c233431e7a49d8697cd28a81d88225abcaea7d5b4ce2c041ed2f5cf84396d425774c79
   languageName: node
   linkType: hard
 
@@ -24299,7 +24309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keccak@npm:^3.0.0, keccak@npm:^3.0.2":
+"keccak@npm:3.0.2, keccak@npm:^3.0.0, keccak@npm:^3.0.2":
   version: 3.0.2
   resolution: "keccak@npm:3.0.2"
   dependencies:
@@ -27172,18 +27182,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp-build@npm:4.3.0":
-  version: 4.3.0
-  resolution: "node-gyp-build@npm:4.3.0"
-  bin:
-    node-gyp-build: bin.js
-    node-gyp-build-optional: optional.js
-    node-gyp-build-test: build-test.js
-  checksum: 1ecab16d9f275174d516e223f60f65ebe07540347d5c04a6a7d6921060b7f2e3af4f19463d9d1dcedc452e275c2ae71354a99405e55ebd5b655bb2f38025c728
-  languageName: node
-  linkType: hard
-
-"node-gyp-build@npm:^4.2.0, node-gyp-build@npm:^4.3.0":
+"node-gyp-build@npm:4.4.0, node-gyp-build@npm:^4.2.0, node-gyp-build@npm:^4.3.0":
   version: 4.4.0
   resolution: "node-gyp-build@npm:4.4.0"
   bin:
@@ -29256,7 +29255,7 @@ __metadata:
     ethers: ^5.7.1
     from-exponential: ^1.1.1
     fs-extra: ^10.1.0
-    ganache: ^7.0.5
+    ganache: ^7.4.3
     graphql: ^16.6.0
     graphql-config: ^4.3.5
     graphql-tag: ^2.12.6
@@ -31780,15 +31779,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"secp256k1@npm:4.0.2":
-  version: 4.0.2
-  resolution: "secp256k1@npm:4.0.2"
+"secp256k1@npm:4.0.3, secp256k1@npm:^4.0.1":
+  version: 4.0.3
+  resolution: "secp256k1@npm:4.0.3"
   dependencies:
-    elliptic: ^6.5.2
+    elliptic: ^6.5.4
     node-addon-api: ^2.0.0
     node-gyp: latest
     node-gyp-build: ^4.2.0
-  checksum: b6e6c59dc0e3de81bdf9a3add993af94505c9385b47aa8e292e6839ecb7816f660b8b558f15d0478afc1bb52d7965690de9abe60cba149ad3db9aca2400b6ca6
+  checksum: 1b26270855b5c679fc4b36d11e12929de32367fd94836e25d002fc9f7d2c1b180d7f0ca4ad9cc10261f2dfba5433ed8709258e7e57f4d8726d2093c2dca4a188
   languageName: node
   linkType: hard
 
@@ -31806,18 +31805,6 @@ __metadata:
     node-gyp: latest
     safe-buffer: ^5.1.2
   checksum: 791bc66937b5d8530a40b34c97d443320302c12fb4edc903b0b72cb2dbac1b95f648284b19a37d15e745a759d44c58a1613c42698092fbc88978ab2730f3ec79
-  languageName: node
-  linkType: hard
-
-"secp256k1@npm:^4.0.1":
-  version: 4.0.3
-  resolution: "secp256k1@npm:4.0.3"
-  dependencies:
-    elliptic: ^6.5.4
-    node-addon-api: ^2.0.0
-    node-gyp: latest
-    node-gyp-build: ^4.2.0
-  checksum: 1b26270855b5c679fc4b36d11e12929de32367fd94836e25d002fc9f7d2c1b180d7f0ca4ad9cc10261f2dfba5433ed8709258e7e57f4d8726d2093c2dca4a188
   languageName: node
   linkType: hard
 
