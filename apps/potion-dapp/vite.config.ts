@@ -52,14 +52,13 @@ export default defineConfig({
               new URL(
                 "./src/composables/useMockedCoingecko.ts",
                 //@ts-expect-errorvolar  giving errors
-
                 import.meta.url
               )
             )
           : fileURLToPath(
               //@ts-expect-error volar giving errors
 
-              new URL("./src/composables/useCoingecko.ts", import.meta.url)
+              new URL("./src/composables/useCoinGecko.ts", import.meta.url)
             ),
 
       "@onboard-composable":
