@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
-import { BigNumber } from "ethers";
+import { BigNumber, type Wallet } from "ethers";
 import { waffle } from "hardhat";
 
 import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
@@ -15,7 +15,14 @@ import {
     PotionLiquidityPool,
 } from "../typechain";
 import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
-import { deployTestContracts, getTestOtoken, mintTokens, TestContracts, usdcDecimals } from "./helpers/testSetup";
+import {
+    deployTestContracts,
+    getTestOtoken,
+    MintDestination,
+    mintTokens,
+    TestContracts,
+    usdcDecimals,
+} from "./helpers/testSetup";
 
 const provider = waffle.provider;
 
@@ -26,7 +33,14 @@ const provider = waffle.provider;
 // To change what the generated tests *do*, edit the code that iterates through those arrays
 describe("PotionLiquidityPool - Edge and Error cases", function () {
     const wallets = provider.getWallets();
-    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets;
+    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets as [
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+    ];
     let usdcStartAmount: BigNumber;
 
     let testContracts: TestContracts;
@@ -85,7 +99,7 @@ describe("PotionLiquidityPool - Edge and Error cases", function () {
 
         // mint usdc to users
         usdcStartAmount = createTokenAmount(100000000, usdcDecimals);
-        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount }));
+        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount } as MintDestination));
         await mintTokens(usdc, mintings, potionLiquidityPool.address);
 
         // Have LPs deposit collateral
