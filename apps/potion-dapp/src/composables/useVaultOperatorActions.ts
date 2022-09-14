@@ -3,14 +3,17 @@ import { TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import { BigNumber } from "ethers";
 
-import { useOnboard } from "@onboard-composable";
-import { getChainId, USDCUniToken } from "@/helpers/uniswap";
+import {
+  getChainId,
+  USDCUniToken,
+  convertUniswapTokenToToken,
+} from "@/helpers/uniswap";
 import {
   convertQuoteUniswapTokenToToken,
-  convertUniswapTokenToToken,
   getEnterExpectedPriceRate,
   getExitExpectedPriceRate,
-} from "@/helpers/vaultOperatorTokens";
+  getRecipientAddress,
+} from "@vault-operator-utils";
 
 import { useAlphaRouter } from "./useAlphaRouter";
 
@@ -36,11 +39,6 @@ export function useVaultOperatorActions(
     routerLoading,
     togglePolling: toggleUniswapPolling,
   } = useAlphaRouter(getChainId());
-
-  const { connectedWallet } = useOnboard();
-  const walletAddress = computed(
-    () => connectedWallet.value?.accounts[0].address ?? ""
-  );
 
   const totalAmountToSwap = ref(0);
   const enterPositionData: Ref<{
@@ -112,6 +110,7 @@ export function useVaultOperatorActions(
       const rawPotionrouterParams = unref(potionRouterParameters);
 
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+      const recipientAddress = getRecipientAddress();
 
       const swapRouterResult = await worker.runPremiumSwapRouter(
         rawPotionrouterParams.pools,
@@ -125,17 +124,11 @@ export function useVaultOperatorActions(
         TradeType.EXACT_OUTPUT,
         maxSplits,
         premiumSlippage.value,
-        walletAddress.value,
+        recipientAddress,
         swapSlippage.value
       );
 
       enterPositionData.value = swapRouterResult;
-      // {
-      //   potionRouterResult: potionRouter,
-      //   uniswapRouterResult: route,
-      // };
-
-      console.log("ENTER POS VLA", enterPositionData.value);
     } finally {
       swapRouterLoading.value = false;
     }
@@ -154,6 +147,7 @@ export function useVaultOperatorActions(
       totalAmountToSwap.value = currentPayout.value.currentPayout;
 
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+      const recipientAddress = getRecipientAddress();
 
       const uniswapRouterResult = await getRoute(
         USDCToken,
@@ -161,7 +155,7 @@ export function useVaultOperatorActions(
         TradeType.EXACT_INPUT,
         totalAmountToSwap.value,
         1, // TODO remove: assert here theres only 1 route returned (no split routes)
-        walletAddress.value,
+        recipientAddress,
         swapSlippage.value,
         UniswapActionType.EXIT_POSITION
       );

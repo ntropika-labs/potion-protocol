@@ -67,8 +67,14 @@ const principalPercentage = computed(() =>
     : 0
 );
 
-const { vaultName, assetSymbol, assetAddress, totalAssets, tokenAsset } =
-  useErc4626Contract(vaultId, true, true);
+const {
+  vaultName,
+  assetSymbol,
+  assetAddress,
+  totalAssets,
+  tokenAsset,
+  getTotalAssets,
+} = useErc4626Contract(vaultId, true, true);
 
 const {
   enterPositionTx,
@@ -146,18 +152,15 @@ const criteriasParam = computed(() => {
   ];
 });
 
-const {
-  runRouter: loadCounterparties,
-  getPoolsFromCriterias,
-  routerParams: potionRouterParameters,
-} = useDepthRouter(
-  criteriasParam,
-  orderSize,
-  strikePrice,
-  gasPrice,
-  oraclePrice,
-  false
-);
+const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
+  useDepthRouter(
+    criteriasParam,
+    orderSize,
+    strikePrice,
+    gasPrice,
+    oraclePrice,
+    false
+  );
 
 const {
   //uniswapRouterResult,
@@ -234,9 +237,11 @@ const callbackLoadExitRoute = async () => {
 };
 
 watch(vaultStatus, async () => {
+  await getStrategyInfo();
+
   await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
 
-  await getStrategyInfo();
+  await Promise.all([getCurrentPayout(assetAddress.value), getTotalAssets()]);
 });
 
 watch(assetAddress, async (address) => {
@@ -318,9 +323,6 @@ const testAddBlock = async (addHours: number) => {
   await provider.send("evm_increaseTime", [addHours * 3660]);
   await provider.send("evm_mine", []);
   await getBlock("latest");
-  await getStrategyInfo();
-
-  console.log(blockTimestamp.value);
 };
 
 const { records, loadBuyerRecords } = useBuyerRecords(
@@ -342,11 +344,17 @@ watch(nextCycleTimestamp, () => {
   loadBuyerRecords();
 });
 
-watch(blockTimestamp, () => {
-  getStrategyInfo();
-  fetchCanPositionBeEntered();
-  fetchCanPositionBeExited();
+watch(blockTimestamp, async () => {
+  await Promise.all([
+    getStrategyInfo(),
+    getCurrentPayout(assetAddress.value),
+    fetchCanPositionBeEntered(),
+    fetchCanPositionBeExited(),
+  ]);
+
+  loadBuyerRecords();
 });
+// END TODO: DELETE
 </script>
 
 <template>
@@ -369,15 +377,6 @@ watch(blockTimestamp, () => {
             palette="primary"
             label="+1M"
             @click="() => testAddBlock(720)"
-          >
-            <template #pre-icon>
-              <i class="i-ph-test-tube-fill"></i>
-            </template>
-          </BaseButton>
-          <BaseButton
-            palette="primary"
-            label="TEST load enter"
-            @click="() => callbackLoadEnterRoute()"
           >
             <template #pre-icon>
               <i class="i-ph-test-tube-fill"></i>
@@ -574,9 +573,10 @@ watch(blockTimestamp, () => {
                 </div>
                 <div>
                   <BaseButton
-                    :label="t('counterparties')"
+                    palette="primary"
+                    label="Load data"
                     :disabled="isActionLoading"
-                    @click="loadCounterparties()"
+                    @click="callbackLoadEnterRoute()"
                   >
                     <template #pre-icon
                       ><i
