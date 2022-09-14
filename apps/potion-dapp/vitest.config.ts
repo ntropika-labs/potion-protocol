@@ -22,10 +22,10 @@ export default defineConfig({
       ),
       //@ts-expect-error volar giving errors
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "@web-worker": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/web-worker/test.ts", import.meta.url)
-      ),
+      // "@web-worker": fileURLToPath(
+      //   //@ts-expect-error volar giving errors
+      //   new URL("./src/web-worker/test.ts", import.meta.url)
+      // ),
       "@onboard-composable": fileURLToPath(
         //@ts-expect-error volar giving errors
         new URL("./src/composables/useMockedOnboard.ts", import.meta.url)

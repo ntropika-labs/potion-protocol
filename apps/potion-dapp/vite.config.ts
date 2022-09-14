@@ -5,7 +5,6 @@ import { visualizer } from "rollup-plugin-visualizer";
 import Unocss from "unocss/vite";
 import { fileURLToPath, URL } from "url";
 import { defineConfig, searchForWorkspaceRoot } from "vite";
-import comlink from "vite-plugin-comlink";
 import { brotliCompressSync } from "zlib";
 
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
@@ -23,7 +22,6 @@ export default defineConfig({
       include: path.resolve(__dirname, "../../libs/locales/**"),
     }),
     Unocss(),
-    comlink(),
     development &&
       nodePolyfills({
         include: [
@@ -32,9 +30,6 @@ export default defineConfig({
         ],
       }),
   ],
-  worker: {
-    plugins: [comlink()],
-  },
   resolve: {
     alias: {
       //@ts-expect-error volar giving errors

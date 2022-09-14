@@ -1,7 +1,7 @@
 import {
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
-} from "./worker-functions";
+} from "potion-router";
 
 export const worker = {
   getEmergingBondingCurvesFromCriterias,

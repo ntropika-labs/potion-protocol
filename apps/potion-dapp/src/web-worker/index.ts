@@ -1,5 +1,9 @@
-const worker = new ComlinkWorker<typeof import("./worker-functions")>(
-  new URL("./worker-functions", import.meta.url),
-  { type: "module" }
+import { wrap } from "comlink";
+const webWorker = new Worker(
+  new URL("./worker-functions.ts", import.meta.url),
+  {
+    type: "module",
+  }
 );
+const worker = wrap(webWorker);
 export { worker };
