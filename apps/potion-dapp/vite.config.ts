@@ -14,6 +14,15 @@ const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
 const VITE_MODE = process.env.MODE;
 
+const getFsPath = (path: string) =>
+  //@ts-expect-error import without module in package.json
+  fileURLToPath(new URL(path, import.meta.url));
+const getLibraryPath = (
+  libPath: string,
+  mockedPath: string,
+  isTestMode = VITE_MODE === "test"
+) => getFsPath(isTestMode ? mockedPath : libPath);
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -32,67 +41,29 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      //@ts-expect-error volar giving errors
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "@web-worker": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/web-worker", import.meta.url)
+      "@": getFsPath("./src"),
+      "@web-worker": getFsPath("./src/web-worker"),
+      "@coingecko-composable": getLibraryPath(
+        "./src/composables/useCoinGecko.ts",
+        "./src/composables/useMockedCoingecko.ts",
+        VITE_MODE === "test" || VITE_MODE === "testnet"
+      ),
+      "@onboard-composable": getLibraryPath(
+        "./src/composables/useOnboard.ts",
+        "./src/composables/useMockedOnboard.ts"
+      ),
+      "@vault-operator-utils": getLibraryPath(
+        "./src/helpers/vaultOperatorUtils.ts",
+        "./src/helpers/mockedVaultOperatorUtils.ts",
+        VITE_MODE === "test" || development
+      ),
+      "@premium-swap-router": getLibraryPath(
+        "./src/helpers/premiumSwapRouter.ts",
+        "./src/helpers/mockedPremiumSwapRouter.ts"
       ),
       crypto: "crypto-browserify",
       stream: "stream-browserify",
       assert: "assert",
-      "@coingecko-composable":
-        VITE_MODE === "test" || VITE_MODE === "testnet"
-          ? fileURLToPath(
-              new URL(
-                "./src/composables/useMockedCoingecko.ts",
-                //@ts-expect-errorvolar  giving errors
-
-                import.meta.url
-              )
-            )
-          : fileURLToPath(
-              //@ts-expect-error volar giving errors
-
-              new URL("./src/composables/useCoinGecko.ts", import.meta.url)
-            ),
-
-      "@onboard-composable":
-        VITE_MODE === "test"
-          ? fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL("./src/composables/useMockedOnboard.ts", import.meta.url)
-            )
-          : fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL("./src/composables/useOnboard.ts", import.meta.url)
-            ),
-      "@vault-operator-utils":
-        VITE_MODE === "test" || development
-          ? fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL(
-                "./src/helpers/mockedVaultOperatorUtils.ts",
-                import.meta.url
-              )
-            )
-          : fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL("./src/helpers/vaultOperatorUtils.ts", import.meta.url)
-            ),
-      "@premium-swap-router":
-        VITE_MODE === "test"
-          ? fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL(
-                "./src/helpers/mockedPremiumSwapRouter.ts",
-                import.meta.url
-              )
-            )
-          : fileURLToPath(
-              //@ts-expect-error volar giving errors
-              new URL("./src/helpers/premiumSwapRouter.ts", import.meta.url)
-            ),
     },
   },
   build: {
