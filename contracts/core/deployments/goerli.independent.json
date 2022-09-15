@@ -17,6 +17,26 @@
     "ChainlinkAggregatorUSDC": {
       "address": "0x5fea417c193828eCF578933121De0B943E356a92",
       "blockNumber": 7498271
+    },
+    "PotionLiquidityPool": {
+      "address": "0x49f957b11d1c8159a490f3cf4df95110d0630a41",
+      "blockNumber": 7516604
+    },
+    "CurveManager": {
+      "address": "0x809Ce01AD915685878649E5201808af6AE01CDc4",
+      "blockNumber": 7516589
+    },
+    "CriteriaManager": {
+      "address": "0xD77399aEf4d4c7A54eA20eF0943b9e722dEf1339",
+      "blockNumber": 7516597
+    },
+    "OtokenFactory": {
+      "address": "0x41D4Fe19c8C41Dc60638B5d12Cf32d59CFbac73a",
+      "blockNumber": 7516546
+    },
+    "Whitelist": {
+      "address": "0x8a97ef0A5b4AD17DbE509c2fd0F68879aa9904ad",
+      "blockNumber": 	7516553
     }
   }
 }
