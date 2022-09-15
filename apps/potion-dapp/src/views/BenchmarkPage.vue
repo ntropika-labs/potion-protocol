@@ -550,9 +550,7 @@ const totalSelectedProviders = computed(
   <div class="grid md:grid-cols-2 mt-8">
     <div>
       <h3 class="text-xl font-bold border-b mb-4">CoinGecko</h3>
-      <ul class="list-inside list-disc">
-        <li>https://docs.alchemy.com/reference/batch-requests</li>
-      </ul>
+      <ul class="list-inside list-disc"></ul>
     </div>
     <div>
       <h3 class="text-xl font-bold border-b mb-4">Oracle</h3>
@@ -560,6 +558,9 @@ const totalSelectedProviders = computed(
         <li>
           Exposes
           <pre>Event StablePriceUpdated(address asset, uint256 price)</pre>
+        </li>
+        <li>
+          Batch requests, eg: https://docs.alchemy.com/reference/batch-requests
         </li>
       </ul>
     </div>
