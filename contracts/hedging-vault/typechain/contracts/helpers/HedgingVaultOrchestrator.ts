@@ -143,7 +143,7 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export interface HedgingVaultOperatorHelperInterface extends utils.Interface {
+export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   functions: {
     "canPositionBeEntered()": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
@@ -256,12 +256,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface HedgingVaultOperatorHelper extends BaseContract {
+export interface HedgingVaultOrchestrator extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HedgingVaultOperatorHelperInterface;
+  interface: HedgingVaultOrchestratorInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -11,7 +11,7 @@ import "../interfaces/IUniswapV3Oracle.sol";
 import "../interfaces/IPotionProtocolOracle.sol";
 
 /**  
-    @title HedgingVaultOperatorHelper
+    @title HedgingVaultOrchestrator
 
     @author Roberto Cano <robercano>
 
@@ -21,7 +21,7 @@ import "../interfaces/IPotionProtocolOracle.sol";
     counterparties, and then enters the position. This also allows to minimize the amount of slippage in the
     Uniswap V3 swap and the Potion Protocol buy.
  */
-contract HedgingVaultOperatorHelper is Ownable {
+contract HedgingVaultOrchestrator is Ownable {
     IVault public immutable hedgingVault;
     IPotionBuyAction public immutable potionBuyAction;
 

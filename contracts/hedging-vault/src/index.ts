@@ -13,7 +13,7 @@ export const Deployments = {
                 address: "0x7488e98ac657e57DBAf9906b6E6303f4D9Ef6974",
                 blockNumber: 7541801,
             },
-            HedgingVaultOperatorHelper: {
+            HedgingVaultOrchestrator: {
                 address: "0x646486d149528B55285aDB62869151cc6698Eec7",
                 blockNumber: 7541812,
             },
@@ -63,27 +63,27 @@ export const Deployments = {
                 address: "0x0B15205C2ADb8C007597c13d98FEA3e7e46bA27B",
                 blockNumber: 7540714,
             },
-            HedgingVaultOperatorHelper: {
+            HedgingVaultOrchestrator: {
                 address: "0x5333328a62F56df4CAaaAEd449a821Be43A203Fe",
                 blockNumber: 7540719,
             },
         },
     },
     "localhost.hedging": {
-        timestamp: 1662563520,
+        timestamp: 1663224182,
         network: "localhost",
         contracts: {
             PotionBuyAction: {
-                address: "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-                blockNumber: 75,
+                address: "0x976fcd02f7C4773dd89C309fBF55D5923B4c98a1",
+                blockNumber: 170,
             },
             InvestmentVault: {
-                address: "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
-                blockNumber: 77,
+                address: "0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923",
+                blockNumber: 171,
             },
-            HedgingVaultOperatorHelper: {
-                address: "0x04C89607413713Ec9775E14b954286519d836FEf",
-                blockNumber: 79,
+            HedgingVaultOrchestrator: {
+                address: "0xfcDB4564c18A9134002b9771816092C9693622e3",
+                blockNumber: 173,
             },
         },
     },

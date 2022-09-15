@@ -464,7 +464,7 @@ BRF:4
 BRH:0
 end_of_record
 TN:
-SF:/home/rcano/Development/thesolidchain/ntropika/potion-protocol/contracts/hedging-vault/contracts/helpers/HedgingVaultOperatorHelper.sol
+SF:/home/rcano/Development/thesolidchain/ntropika/potion-protocol/contracts/hedging-vault/contracts/helpers/HedgingVaultOrchestrator.sol
 FN:33,constructor
 FN:50,enterPosition
 FN:64,exitPosition

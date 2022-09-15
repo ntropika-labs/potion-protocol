@@ -1,7 +1,7 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
-import { HedgingVaultOperatorHelperDeployParams, deployHedgingVaultHelper } from "../common/deployHedgingVaultHelper";
-import { HedgingVaultOperatorHelper, InvestmentVault, PotionBuyAction } from "../../typechain";
+import { HedgingVaultOrchestratorDeployParams, deployHedgingVaultHelper } from "../common/deployHedgingVaultHelper";
+import { HedgingVaultOrchestrator, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { BigNumber } from "ethers";
 
 export interface HedgingVaultDeployParams {
@@ -66,7 +66,7 @@ function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
 
 export async function deployHedgingVault(
     parameters: HedgingVaultDeployParams,
-): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOperatorHelper]> {
+): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOrchestrator]> {
     printHedgingVaultDeployParams(parameters);
 
     const potionBuyParams: PotionBuyActionDeployParams = {
@@ -108,23 +108,21 @@ export async function deployHedgingVault(
     let tx = await potionBuyContract.changeVault(investmentVaultContract.address);
     await tx.wait();
 
-    const hedgingVaultOperatorHelperParams: HedgingVaultOperatorHelperDeployParams = {
+    const hedgingVaultOrchestratorParams: HedgingVaultOrchestratorDeployParams = {
         vaultAddress: investmentVaultContract.address,
         potionBuyActionAddress: potionBuyContract.address,
     };
 
-    const hedgingVaultOperatorHelper = await deployHedgingVaultHelper(hedgingVaultOperatorHelperParams);
+    const hedgingVaultOrchestrator = await deployHedgingVaultHelper(hedgingVaultOrchestratorParams);
 
     // Set the operator helper as the operator of the action and the vault
-    console.log(`- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${potionBuyContract.address}`);
-    tx = await potionBuyContract.changeOperator(hedgingVaultOperatorHelper.address);
+    console.log(`- Setting ${hedgingVaultOrchestrator.address} as the operator of ${potionBuyContract.address}`);
+    tx = await potionBuyContract.changeOperator(hedgingVaultOrchestrator.address);
     await tx.wait();
 
-    console.log(
-        `- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${investmentVaultContract.address}`,
-    );
-    tx = await investmentVaultContract.changeOperator(hedgingVaultOperatorHelper.address);
+    console.log(`- Setting ${hedgingVaultOrchestrator.address} as the operator of ${investmentVaultContract.address}`);
+    tx = await investmentVaultContract.changeOperator(hedgingVaultOrchestrator.address);
     await tx.wait();
 
-    return [investmentVaultContract, potionBuyContract, hedgingVaultOperatorHelper];
+    return [investmentVaultContract, potionBuyContract, hedgingVaultOrchestrator];
 }

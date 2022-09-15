@@ -149,9 +149,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626CapUpgradeable__factory>;
     getContractFactory(
-      name: "HedgingVaultOperatorHelper",
+      name: "HedgingVaultOrchestrator",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HedgingVaultOperatorHelper__factory>;
+    ): Promise<Contracts.HedgingVaultOrchestrator__factory>;
     getContractFactory(
       name: "IAction",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -508,10 +508,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC4626CapUpgradeable>;
     getContractAt(
-      name: "HedgingVaultOperatorHelper",
+      name: "HedgingVaultOrchestrator",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HedgingVaultOperatorHelper>;
+    ): Promise<Contracts.HedgingVaultOrchestrator>;
     getContractAt(
       name: "IAction",
       address: string,

@@ -1,18 +1,18 @@
 {
-  "timestamp": 1662477222,
-  "network": "goerli",
-  "contracts": {
-    "PotionBuyAction": {
-      "address": "0x8C993aD2806F38Cae4d58631cDb9cd89D99cbBe3",
-      "blockNumber": 7541791
-    },
-    "InvestmentVault": {
-      "address": "0x7488e98ac657e57DBAf9906b6E6303f4D9Ef6974",
-      "blockNumber": 7541801
-    },
-    "HedgingVaultOperatorHelper": {
-      "address": "0x646486d149528B55285aDB62869151cc6698Eec7",
-      "blockNumber": 7541812
+    "timestamp": 1662477222,
+    "network": "goerli",
+    "contracts": {
+        "PotionBuyAction": {
+            "address": "0x8C993aD2806F38Cae4d58631cDb9cd89D99cbBe3",
+            "blockNumber": 7541791
+        },
+        "InvestmentVault": {
+            "address": "0x7488e98ac657e57DBAf9906b6E6303f4D9Ef6974",
+            "blockNumber": 7541801
+        },
+        "HedgingVaultOrchestrator": {
+            "address": "0x646486d149528B55285aDB62869151cc6698Eec7",
+            "blockNumber": 7541812
+        }
     }
-  }
 }

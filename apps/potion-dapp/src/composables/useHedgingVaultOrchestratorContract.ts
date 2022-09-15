@@ -3,7 +3,7 @@ import type {
   ContractTransaction,
 } from "@ethersproject/contracts";
 import type {
-  HedgingVaultOperatorHelper,
+  HedgingVaultOrchestrator,
   IUniswapV3Oracle,
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
@@ -13,13 +13,13 @@ import { onMounted, ref } from "vue";
 import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
 import { parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
-import { HedgingVaultOperatorHelper__factory } from "@potion-protocol/hedging-vault/typechain";
+import { HedgingVaultOrchestrator__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
 import type { BigNumberish } from "@ethersproject/bignumber";
 import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
-import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOperatorHelper";
+import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOrchestrator";
 import type { Token } from "dapp-types";
 
 export type Sellers = IPotionLiquidityPool.CounterpartyDetailsStruct[];
@@ -58,28 +58,28 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   return utils.solidityPack(types, values);
 }
 
-export function useHedgingVaultOperatorHelperContract() {
+export function useHedgingVaultOrchestratorContract() {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const { HedgingVaultOperatorHelper } = contractsAddresses;
+  const { HedgingVaultOrchestrator } = contractsAddresses;
 
   //Provider initialization
   const initContractSigner = () => {
     return initContract(
       true,
       false,
-      HedgingVaultOperatorHelper__factory,
-      HedgingVaultOperatorHelper.address.toLowerCase()
-    ) as HedgingVaultOperatorHelper;
+      HedgingVaultOrchestrator__factory,
+      HedgingVaultOrchestrator.address.toLowerCase()
+    ) as HedgingVaultOrchestrator;
   };
 
   const initContractProvider = () => {
     return initContract(
       false,
       false,
-      HedgingVaultOperatorHelper__factory,
-      HedgingVaultOperatorHelper.address.toLowerCase()
-    ) as HedgingVaultOperatorHelper;
+      HedgingVaultOrchestrator__factory,
+      HedgingVaultOrchestrator.address.toLowerCase()
+    ) as HedgingVaultOrchestrator;
   };
 
   /**

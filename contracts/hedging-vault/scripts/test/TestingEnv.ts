@@ -12,7 +12,7 @@ import {
     IOpynFactory,
     IOpynAddressBook,
     IOpynOracle,
-    HedgingVaultOperatorHelper,
+    HedgingVaultOrchestrator,
     MockOpynOracle,
 } from "../../typechain";
 import {
@@ -35,7 +35,7 @@ export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
-    hedgingVaultOperatorHelper: HedgingVaultOperatorHelper;
+    hedgingVaultOrchestrator: HedgingVaultOrchestrator;
     USDC: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     underlyingAsset: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     potionLiquidityPoolManager: IPotionLiquidityPool | MockContract<IPotionLiquidityPool>;
@@ -407,11 +407,11 @@ export async function deployTestingEnv(
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
-    const [investmentVault, potionBuyAction, hedgingVaultOperatorHelper] = await deployHedgingVault(deploymentParams);
+    const [investmentVault, potionBuyAction, hedgingVaultOrchestrator] = await deployHedgingVault(deploymentParams);
 
     testEnvDeployment.investmentVault = investmentVault;
     testEnvDeployment.potionBuyAction = potionBuyAction;
-    testEnvDeployment.hedgingVaultOperatorHelper = hedgingVaultOperatorHelper;
+    testEnvDeployment.hedgingVaultOrchestrator = hedgingVaultOrchestrator;
 
     printDeploymentEnvironment(testEnvDeployment);
 
@@ -424,7 +424,7 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
-    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOperatorHelper.address}`);
+    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
     console.log(`------------------------------------------------------`);
     console.log(`  - Underlying Asset: ${testEnvDeployment.underlyingAsset.address}`);
     console.log(`  - USDC: ${testEnvDeployment.USDC.address}`);

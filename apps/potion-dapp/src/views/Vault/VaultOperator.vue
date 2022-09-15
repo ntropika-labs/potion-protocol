@@ -14,7 +14,7 @@ import {
 } from "potion-ui";
 import { LifecycleStates } from "hedging-vault-sdk";
 
-import { useHedgingVaultOperatorHelperContract } from "@/composables/useHedgingVaultOperatorHelperContract";
+import { useHedgingVaultOrchestratorContract } from "@/composables/useHedgingVaultOrchestratorContract";
 import { useNotifications } from "@/composables/useNotifications";
 // import { useCoinGecko } from "@/composables/useCoinGecko";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -89,7 +89,7 @@ const {
   canPositionBeExited,
   fetchCanPositionBeEntered,
   fetchCanPositionBeExited,
-} = useHedgingVaultOperatorHelperContract();
+} = useHedgingVaultOrchestratorContract();
 
 const {
   nextCycleTimestamp,

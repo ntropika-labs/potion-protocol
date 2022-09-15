@@ -76,8 +76,8 @@ export type { RolesManagerUpgradeable } from "./contracts/common/RolesManagerUpg
 export { RolesManagerUpgradeable__factory } from "./factories/contracts/common/RolesManagerUpgradeable__factory";
 export type { ERC4626CapUpgradeable } from "./contracts/extensions/ERC4626CapUpgradeable";
 export { ERC4626CapUpgradeable__factory } from "./factories/contracts/extensions/ERC4626CapUpgradeable__factory";
-export type { HedgingVaultOperatorHelper } from "./contracts/helpers/HedgingVaultOperatorHelper";
-export { HedgingVaultOperatorHelper__factory } from "./factories/contracts/helpers/HedgingVaultOperatorHelper__factory";
+export type { HedgingVaultOrchestrator } from "./contracts/helpers/HedgingVaultOrchestrator";
+export { HedgingVaultOrchestrator__factory } from "./factories/contracts/helpers/HedgingVaultOrchestrator__factory";
 export type { IAction } from "./contracts/interfaces/IAction";
 export { IAction__factory } from "./factories/contracts/interfaces/IAction__factory";
 export type { IActionsManager } from "./contracts/interfaces/IActionsManager";

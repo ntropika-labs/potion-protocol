@@ -13,7 +13,7 @@ import {
     PotionBuyAction,
     IPotionLiquidityPool,
     IUniswapV3Oracle,
-    HedgingVaultOperatorHelper,
+    HedgingVaultOrchestrator,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "../utils/LifecycleStates";
@@ -37,7 +37,7 @@ describe("HedgingVault", function () {
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
-    let operatorHelper: HedgingVaultOperatorHelper;
+    let operatorHelper: HedgingVaultOrchestrator;
     let tEnv: TestingEnvironmentDeployment;
 
     beforeEach(async function () {
@@ -55,13 +55,13 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
-        operatorHelper = tEnv.hedgingVaultOperatorHelper;
+        operatorHelper = tEnv.hedgingVaultOrchestrator;
     });
 
     it("Vault Deployment Values", async function () {
         // Roles
         expect(await vault.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await vault.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
+        expect(await vault.getOperator()).to.equal(tEnv.hedgingVaultOrchestrator.address);
         expect(await vault.getStrategist()).to.equal(tEnv.strategistAddress);
         expect(await vault.getVault()).to.equal("0x0000000000000000000000000000000000000000");
 
@@ -97,7 +97,7 @@ describe("HedgingVault", function () {
     it("Action Deployment Values", async function () {
         // Roles
         expect(await action.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await action.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
+        expect(await action.getOperator()).to.equal(tEnv.hedgingVaultOrchestrator.address);
         expect(await action.getStrategist()).to.equal(tEnv.strategistAddress);
         expect(await action.getVault()).to.equal(vault.address);
 
