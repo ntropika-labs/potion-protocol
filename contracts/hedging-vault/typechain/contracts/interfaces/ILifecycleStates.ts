@@ -22,6 +22,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface ILifecycleStatesInterface extends utils.Interface {
@@ -98,12 +99,12 @@ export interface ILifecycleStates extends BaseContract {
 
   filters: {
     "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
     LifecycleStateChanged(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
   };
 

@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IVaultInterface extends utils.Interface {
@@ -92,21 +93,30 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "canRefund",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "canRefundETH",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "changeStrategist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeVault",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
@@ -144,23 +154,27 @@ export interface IVaultInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refund",
-    values: [string, BigNumberish, string]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "refundETH",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setManagementFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPerformanceFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
@@ -449,36 +463,39 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -498,39 +515,39 @@ export interface IVault extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -538,36 +555,39 @@ export interface IVault extends BaseContract {
 
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
-  canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+  canRefund(
+    token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdminAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeOperator(
-    newOperatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOperatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newStrategistAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeVault(
-    newVaultAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newVaultAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   enterPosition(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
@@ -587,39 +607,39 @@ export interface IVault extends BaseContract {
   getVault(overrides?: CallOverrides): Promise<string>;
 
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   refund(
-    token: string,
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   refundETH(
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setFeesRecipient(
-    newFeesRecipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newFeesRecipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setManagementFee(
-    newManagementFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newManagementFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPerformanceFee(
-    newPerformanceFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPerformanceFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -627,27 +647,30 @@ export interface IVault extends BaseContract {
 
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
     changeAdmin(
-      newAdminAddress: string,
+      newAdminAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeOperator(
-      newOperatorAddress: string,
+      newOperatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeStrategist(
-      newStrategistAddress: string,
+      newStrategistAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeVault(
-      newVaultAddress: string,
+      newVaultAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -674,30 +697,30 @@ export interface IVault extends BaseContract {
     pause(overrides?: CallOverrides): Promise<void>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
+      newFeesRecipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
+      newManagementFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -706,54 +729,54 @@ export interface IVault extends BaseContract {
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
 
     "FeesETHSent(address,uint256,uint256)"(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
     FeesETHSent(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
 
     "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
     FeesReceipientChanged(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
 
     "FeesSent(address,address,uint256,uint256)"(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
     FeesSent(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
     LifecycleStateChanged(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
 
     "ManagementFeeChanged(uint256,uint256)"(
@@ -766,12 +789,12 @@ export interface IVault extends BaseContract {
     ): ManagementFeeChangedEventFilter;
 
     "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
     OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
 
     "PerformanceFeeChanged(uint256,uint256)"(
@@ -784,21 +807,21 @@ export interface IVault extends BaseContract {
     ): PerformanceFeeChangedEventFilter;
 
     "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
     StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
 
     "VaultChanged(address,address)"(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
     VaultChanged(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
 
     "VaultPositionEntered(uint256,uint256)"(
@@ -823,36 +846,39 @@ export interface IVault extends BaseContract {
 
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -872,39 +898,39 @@ export interface IVault extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -918,38 +944,38 @@ export interface IVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     canRefund(
-      token: string,
+      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -969,39 +995,39 @@ export interface IVault extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

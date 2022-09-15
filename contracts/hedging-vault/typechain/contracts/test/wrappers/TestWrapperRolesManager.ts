@@ -23,6 +23,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface TestWrapperRolesManagerInterface extends utils.Interface {
@@ -51,16 +52,22 @@ export interface TestWrapperRolesManagerInterface extends utils.Interface {
       | "initialize"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "changeStrategist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeVault",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getOperator",
@@ -73,7 +80,11 @@ export interface TestWrapperRolesManagerInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -199,23 +210,23 @@ export interface TestWrapperRolesManager extends BaseContract {
 
   functions: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -227,31 +238,31 @@ export interface TestWrapperRolesManager extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   changeAdmin(
-    newAdminAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeOperator(
-    newOperatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOperatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newStrategistAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeVault(
-    newVaultAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newVaultAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
@@ -263,30 +274,30 @@ export interface TestWrapperRolesManager extends BaseContract {
   getVault(overrides?: CallOverrides): Promise<string>;
 
   initialize(
-    adminAddress: string,
-    strategistAddress: string,
-    operatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    adminAddress: PromiseOrValue<string>,
+    strategistAddress: PromiseOrValue<string>,
+    operatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     changeAdmin(
-      newAdminAddress: string,
+      newAdminAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeOperator(
-      newOperatorAddress: string,
+      newOperatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeStrategist(
-      newStrategistAddress: string,
+      newStrategistAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeVault(
-      newVaultAddress: string,
+      newVaultAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -299,73 +310,73 @@ export interface TestWrapperRolesManager extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<string>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
     "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
     OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
 
     "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
     StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
 
     "VaultChanged(address,address)"(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
     VaultChanged(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
   };
 
   estimateGas: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -377,32 +388,32 @@ export interface TestWrapperRolesManager extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -414,10 +425,10 @@ export interface TestWrapperRolesManager extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

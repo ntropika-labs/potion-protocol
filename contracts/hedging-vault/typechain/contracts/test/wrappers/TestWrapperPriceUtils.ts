@@ -18,6 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface TestWrapperPriceUtilsInterface extends utils.Interface {
@@ -32,11 +33,11 @@ export interface TestWrapperPriceUtilsInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "toInputAmount",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "toOutputAmount",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -79,40 +80,40 @@ export interface TestWrapperPriceUtils extends BaseContract {
 
   functions: {
     toInputAmount(
-      priceRate: BigNumberish,
-      outputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      outputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     toOutputAmount(
-      priceRate: BigNumberish,
-      inputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      inputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
   };
 
   toInputAmount(
-    priceRate: BigNumberish,
-    outputAmount: BigNumberish,
+    priceRate: PromiseOrValue<BigNumberish>,
+    outputAmount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   toOutputAmount(
-    priceRate: BigNumberish,
-    inputAmount: BigNumberish,
+    priceRate: PromiseOrValue<BigNumberish>,
+    inputAmount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   callStatic: {
     toInputAmount(
-      priceRate: BigNumberish,
-      outputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      outputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     toOutputAmount(
-      priceRate: BigNumberish,
-      inputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      inputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -121,28 +122,28 @@ export interface TestWrapperPriceUtils extends BaseContract {
 
   estimateGas: {
     toInputAmount(
-      priceRate: BigNumberish,
-      outputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      outputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     toOutputAmount(
-      priceRate: BigNumberish,
-      inputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      inputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     toInputAmount(
-      priceRate: BigNumberish,
-      outputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      outputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     toOutputAmount(
-      priceRate: BigNumberish,
-      inputAmount: BigNumberish,
+      priceRate: PromiseOrValue<BigNumberish>,
+      inputAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

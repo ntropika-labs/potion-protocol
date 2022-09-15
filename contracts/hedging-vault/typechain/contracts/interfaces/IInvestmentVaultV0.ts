@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IInvestmentVaultV0Interface extends utils.Interface {
@@ -37,7 +38,7 @@ export interface IInvestmentVaultV0Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "setPrincipalPercentages",
-    values: [BigNumberish[]]
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
 
   decodeFunctionResult(
@@ -93,19 +94,19 @@ export interface IInvestmentVaultV0 extends BaseContract {
 
   functions: {
     setPrincipalPercentages(
-      principalPercentages_: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      principalPercentages_: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   setPrincipalPercentages(
-    principalPercentages_: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    principalPercentages_: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     setPrincipalPercentages(
-      principalPercentages_: BigNumberish[],
+      principalPercentages_: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -121,15 +122,15 @@ export interface IInvestmentVaultV0 extends BaseContract {
 
   estimateGas: {
     setPrincipalPercentages(
-      principalPercentages_: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      principalPercentages_: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     setPrincipalPercentages(
-      principalPercentages_: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      principalPercentages_: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

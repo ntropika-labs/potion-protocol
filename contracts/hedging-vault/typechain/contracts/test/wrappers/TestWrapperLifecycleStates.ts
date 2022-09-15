@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface TestWrapperLifecycleStatesInterface extends utils.Interface {
@@ -50,7 +51,7 @@ export interface TestWrapperLifecycleStatesInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setLifecycleState",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -121,24 +122,24 @@ export interface TestWrapperLifecycleStates extends BaseContract {
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setLifecycleState(
-      newState: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newState: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
   initialize(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setLifecycleState(
-    newState: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newState: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -147,7 +148,7 @@ export interface TestWrapperLifecycleStates extends BaseContract {
     initialize(overrides?: CallOverrides): Promise<void>;
 
     setLifecycleState(
-      newState: BigNumberish,
+      newState: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -157,12 +158,12 @@ export interface TestWrapperLifecycleStates extends BaseContract {
     Initialized(version?: null): InitializedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
     LifecycleStateChanged(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
   };
 
@@ -170,12 +171,12 @@ export interface TestWrapperLifecycleStates extends BaseContract {
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setLifecycleState(
-      newState: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newState: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -183,12 +184,12 @@ export interface TestWrapperLifecycleStates extends BaseContract {
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setLifecycleState(
-      newState: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newState: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -20,15 +20,16 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -48,11 +49,11 @@ export declare namespace ICurveManager {
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -72,11 +73,11 @@ export declare namespace ICriteriaManager {
 
 export declare namespace IPotionLiquidityPool {
   export type CounterpartyDetailsStruct = {
-    lp: string;
-    poolId: BigNumberish;
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
     curve: ICurveManager.CurveStruct;
     criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: BigNumberish;
+    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
   };
 
   export type CounterpartyDetailsStructOutput = [
@@ -94,10 +95,10 @@ export declare namespace IPotionLiquidityPool {
   };
 
   export type PoolOfCapitalStruct = {
-    total: BigNumberish;
-    locked: BigNumberish;
-    curveHash: BytesLike;
-    criteriaSetHash: BytesLike;
+    total: PromiseOrValue<BigNumberish>;
+    locked: PromiseOrValue<BigNumberish>;
+    curveHash: PromiseOrValue<BytesLike>;
+    criteriaSetHash: PromiseOrValue<BytesLike>;
   };
 
   export type PoolOfCapitalStructOutput = [
@@ -134,32 +135,35 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "buyOtokens",
     values: [
-      string,
+      PromiseOrValue<string>,
       IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      BigNumberish
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "createAndBuyOtokens",
     values: [
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      boolean,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
       IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      BigNumberish
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "getVaultId", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getVaultId",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "lpPools",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "settleAfterExpiry",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "buyOtokens", data: BytesLike): Result;
@@ -205,171 +209,186 @@ export interface MockPotionLiquidityPool extends BaseContract {
 
   functions: {
     buyOtokens(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       arg1: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     createAndBuyOtokens(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getVaultId(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getVaultId(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[IPotionLiquidityPool.PoolOfCapitalStructOutput]>;
 
     settleAfterExpiry(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      arg0: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   buyOtokens(
-    arg0: string,
+    arg0: PromiseOrValue<string>,
     arg1: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-    _maxPremium: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _maxPremium: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   createAndBuyOtokens(
-    arg0: string,
-    arg1: string,
-    arg2: string,
-    arg3: BigNumberish,
-    arg4: BigNumberish,
-    arg5: boolean,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<string>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BigNumberish>,
+    arg5: PromiseOrValue<boolean>,
     arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-    maxPremium: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    maxPremium: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getVaultId(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   lpPools(
-    arg0: string,
-    arg1: BigNumberish,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
 
   settleAfterExpiry(
-    arg0: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    arg0: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     buyOtokens(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       arg1: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
+      _maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createAndBuyOtokens(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      maxPremium: BigNumberish,
+      maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getVaultId(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
 
-    settleAfterExpiry(arg0: string, overrides?: CallOverrides): Promise<void>;
+    settleAfterExpiry(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     buyOtokens(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       arg1: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     createAndBuyOtokens(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getVaultId(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getVaultId(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     settleAfterExpiry(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      arg0: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     buyOtokens(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       arg1: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     createAndBuyOtokens(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       arg6: IPotionLiquidityPool.CounterpartyDetailsStruct[],
-      maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getVaultId(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     settleAfterExpiry(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      arg0: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

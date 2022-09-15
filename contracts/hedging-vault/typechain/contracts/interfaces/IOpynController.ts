@@ -20,18 +20,19 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export declare namespace IOpynController {
   export type ActionArgsStruct = {
-    actionType: BigNumberish;
-    owner: string;
-    secondAddress: string;
-    asset: string;
-    vaultId: BigNumberish;
-    amount: BigNumberish;
-    index: BigNumberish;
-    data: BytesLike;
+    actionType: PromiseOrValue<BigNumberish>;
+    owner: PromiseOrValue<string>;
+    secondAddress: PromiseOrValue<string>;
+    asset: PromiseOrValue<string>;
+    vaultId: PromiseOrValue<BigNumberish>;
+    amount: PromiseOrValue<BigNumberish>;
+    index: PromiseOrValue<BigNumberish>;
+    data: PromiseOrValue<BytesLike>;
   };
 
   export type ActionArgsStructOutput = [
@@ -68,11 +69,11 @@ export interface IOpynControllerInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getPayout",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "operate",
@@ -117,47 +118,47 @@ export interface IOpynController extends BaseContract {
 
   functions: {
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     operate(
       _actions: IOpynController.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   getPayout(
-    _otoken: string,
-    _amount: BigNumberish,
+    _otoken: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   isSettlementAllowed(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   operate(
     _actions: IOpynController.ActionArgsStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -171,37 +172,37 @@ export interface IOpynController extends BaseContract {
 
   estimateGas: {
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     operate(
       _actions: IOpynController.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     operate(
       _actions: IOpynController.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface InvestmentVaultInterface extends utils.Interface {
@@ -160,14 +161,17 @@ export interface InvestmentVaultInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "allowance",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "approve",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
     values?: undefined
@@ -176,37 +180,46 @@ export interface InvestmentVaultInterface extends utils.Interface {
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "canRefund",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "canRefundETH",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "changeStrategist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeVault",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "convertToShares",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
@@ -218,7 +231,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAction",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getActionsLength",
@@ -247,7 +260,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPrincipalPercentage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPrincipalPercentages",
@@ -268,81 +281,101 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
-      string,
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      string[],
-      BigNumberish[]
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[]
     ]
   ): string;
-  encodeFunctionData(functionFragment: "maxDeposit", values: [string]): string;
-  encodeFunctionData(functionFragment: "maxMint", values: [string]): string;
-  encodeFunctionData(functionFragment: "maxRedeem", values: [string]): string;
-  encodeFunctionData(functionFragment: "maxWithdraw", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "maxDeposit",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxMint",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxRedeem",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxWithdraw",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "previewDeposit",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "previewMint",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "previewRedeem",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "previewWithdraw",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
-    values: [BigNumberish, string, string]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "refund",
-    values: [string, BigNumberish, string]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "refundETH",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setManagementFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPerformanceFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPrincipalPercentages",
-    values: [BigNumberish[]]
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setVaultCap",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -355,16 +388,24 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transfer",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [BigNumberish, string, string]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -862,20 +903,23 @@ export interface InvestmentVault extends BaseContract {
 
   functions: {
     allowance(
-      owner: string,
-      spender: string,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     asset(overrides?: CallOverrides): Promise<[string]>;
 
-    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    balanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     canPositionBeEntered(
       overrides?: CallOverrides
@@ -885,64 +929,67 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     convertToAssets(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { assets: BigNumber }>;
 
     convertToShares(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      subtractedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     deposit(
-      assets: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -961,7 +1008,7 @@ export interface InvestmentVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { percentage: BigNumber }>;
 
@@ -978,113 +1025,122 @@ export interface InvestmentVault extends BaseContract {
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      addedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      underlyingAsset: string,
-      underlyingAssetCap: BigNumberish,
-      managementFee: BigNumberish,
-      performanceFee: BigNumberish,
-      feesRecipient: string,
-      actions: string[],
-      principalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      underlyingAssetCap: PromiseOrValue<BigNumberish>,
+      managementFee: PromiseOrValue<BigNumberish>,
+      performanceFee: PromiseOrValue<BigNumberish>,
+      feesRecipient: PromiseOrValue<string>,
+      actions: PromiseOrValue<string>[],
+      principalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     maxDeposit(
-      receiver: string,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    maxMint(receiver: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxMint(
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    maxRedeem(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    maxWithdraw(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxWithdraw(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     mint(
-      shares: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     previewDeposit(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     previewMint(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     previewRedeem(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     previewWithdraw(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     redeem(
-      shares: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setVaultCap(
-      newCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
@@ -1094,107 +1150,116 @@ export interface InvestmentVault extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdraw(
-      assets: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   allowance(
-    owner: string,
-    spender: string,
+    owner: PromiseOrValue<string>,
+    spender: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   approve(
-    spender: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    spender: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   asset(overrides?: CallOverrides): Promise<string>;
 
-  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+  balanceOf(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
-  canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+  canRefund(
+    token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdminAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeOperator(
-    newOperatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOperatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newStrategistAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeVault(
-    newVaultAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newVaultAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   convertToAssets(
-    shares: BigNumberish,
+    shares: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   convertToShares(
-    assets: BigNumberish,
+    assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
   decreaseAllowance(
-    spender: string,
-    subtractedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    spender: PromiseOrValue<string>,
+    subtractedValue: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   deposit(
-    assets: BigNumberish,
-    receiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    assets: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   enterPosition(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  getAction(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1211,7 +1276,7 @@ export interface InvestmentVault extends BaseContract {
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPrincipalPercentage(
-    actionIndex: BigNumberish,
+    actionIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1226,110 +1291,122 @@ export interface InvestmentVault extends BaseContract {
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
   increaseAllowance(
-    spender: string,
-    addedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    spender: PromiseOrValue<string>,
+    addedValue: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   initialize(
-    adminAddress: string,
-    strategistAddress: string,
-    operatorAddress: string,
-    underlyingAsset: string,
-    underlyingAssetCap: BigNumberish,
-    managementFee: BigNumberish,
-    performanceFee: BigNumberish,
-    feesRecipient: string,
-    actions: string[],
-    principalPercentages: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    adminAddress: PromiseOrValue<string>,
+    strategistAddress: PromiseOrValue<string>,
+    operatorAddress: PromiseOrValue<string>,
+    underlyingAsset: PromiseOrValue<string>,
+    underlyingAssetCap: PromiseOrValue<BigNumberish>,
+    managementFee: PromiseOrValue<BigNumberish>,
+    performanceFee: PromiseOrValue<BigNumberish>,
+    feesRecipient: PromiseOrValue<string>,
+    actions: PromiseOrValue<string>[],
+    principalPercentages: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxDeposit(
+    receiver: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxMint(
+    receiver: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxRedeem(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  maxWithdraw(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxWithdraw(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   mint(
-    shares: BigNumberish,
-    receiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    shares: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
   previewDeposit(
-    assets: BigNumberish,
+    assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   previewMint(
-    shares: BigNumberish,
+    shares: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   previewRedeem(
-    shares: BigNumberish,
+    shares: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   previewWithdraw(
-    assets: BigNumberish,
+    assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   redeem(
-    shares: BigNumberish,
-    receiver: string,
-    owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    shares: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   refund(
-    token: string,
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   refundETH(
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setFeesRecipient(
-    newFeesRecipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newFeesRecipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setManagementFee(
-    newManagementFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newManagementFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPerformanceFee(
-    newPerformanceFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPerformanceFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPrincipalPercentages(
-    newPrincipalPercentages: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setVaultCap(
-    newCap: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newCap: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
@@ -1339,95 +1416,101 @@ export interface InvestmentVault extends BaseContract {
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    to: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    from: string,
-    to: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdraw(
-    assets: BigNumberish,
-    receiver: string,
-    owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    assets: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     allowance(
-      owner: string,
-      spender: string,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approve(
-      spender: string,
-      amount: BigNumberish,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     asset(overrides?: CallOverrides): Promise<string>;
 
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
     changeAdmin(
-      newAdminAddress: string,
+      newAdminAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeOperator(
-      newOperatorAddress: string,
+      newOperatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeStrategist(
-      newStrategistAddress: string,
+      newStrategistAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeVault(
-      newVaultAddress: string,
+      newVaultAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     convertToAssets(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     convertToShares(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
     decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
+      spender: PromiseOrValue<string>,
+      subtractedValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     deposit(
-      assets: BigNumberish,
-      receiver: string,
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1435,7 +1518,10 @@ export interface InvestmentVault extends BaseContract {
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    getAction(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1452,7 +1538,7 @@ export interface InvestmentVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1467,36 +1553,48 @@ export interface InvestmentVault extends BaseContract {
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
+      spender: PromiseOrValue<string>,
+      addedValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      underlyingAsset: string,
-      underlyingAssetCap: BigNumberish,
-      managementFee: BigNumberish,
-      performanceFee: BigNumberish,
-      feesRecipient: string,
-      actions: string[],
-      principalPercentages: BigNumberish[],
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      underlyingAssetCap: PromiseOrValue<BigNumberish>,
+      managementFee: PromiseOrValue<BigNumberish>,
+      performanceFee: PromiseOrValue<BigNumberish>,
+      feesRecipient: PromiseOrValue<string>,
+      actions: PromiseOrValue<string>[],
+      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxWithdraw(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxWithdraw(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     mint(
-      shares: BigNumberish,
-      receiver: string,
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1507,66 +1605,69 @@ export interface InvestmentVault extends BaseContract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     previewDeposit(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewMint(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewRedeem(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewWithdraw(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeem(
-      shares: BigNumberish,
-      receiver: string,
-      owner: string,
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
+      newFeesRecipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
+      newManagementFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setVaultCap(newCap: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    setVaultCap(
+      newCap: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -1575,24 +1676,24 @@ export interface InvestmentVault extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
     withdraw(
-      assets: BigNumberish,
-      receiver: string,
-      owner: string,
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -1602,67 +1703,67 @@ export interface InvestmentVault extends BaseContract {
     ActionsAdded(actions?: null): ActionsAddedEventFilter;
 
     "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
 
     "Approval(address,address,uint256)"(
-      owner?: string | null,
-      spender?: string | null,
+      owner?: PromiseOrValue<string> | null,
+      spender?: PromiseOrValue<string> | null,
       value?: null
     ): ApprovalEventFilter;
     Approval(
-      owner?: string | null,
-      spender?: string | null,
+      owner?: PromiseOrValue<string> | null,
+      spender?: PromiseOrValue<string> | null,
       value?: null
     ): ApprovalEventFilter;
 
     "Deposit(address,address,uint256,uint256)"(
-      caller?: string | null,
-      owner?: string | null,
+      caller?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): DepositEventFilter;
     Deposit(
-      caller?: string | null,
-      owner?: string | null,
+      caller?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): DepositEventFilter;
 
     "FeesETHSent(address,uint256,uint256)"(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
     FeesETHSent(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
 
     "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
     FeesReceipientChanged(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
 
     "FeesSent(address,address,uint256,uint256)"(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
     FeesSent(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
@@ -1671,12 +1772,12 @@ export interface InvestmentVault extends BaseContract {
     Initialized(version?: null): InitializedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
     LifecycleStateChanged(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
 
     "ManagementFeeChanged(uint256,uint256)"(
@@ -1689,12 +1790,12 @@ export interface InvestmentVault extends BaseContract {
     ): ManagementFeeChangedEventFilter;
 
     "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
     OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
@@ -1717,22 +1818,22 @@ export interface InvestmentVault extends BaseContract {
     ): PrincipalPercentagesUpdatedEventFilter;
 
     "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
     StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
 
     "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       value?: null
     ): TransferEventFilter;
     Transfer(
-      from?: string | null,
-      to?: string | null,
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       value?: null
     ): TransferEventFilter;
 
@@ -1740,21 +1841,21 @@ export interface InvestmentVault extends BaseContract {
     Unpaused(account?: null): UnpausedEventFilter;
 
     "VaultCapChanged(uint256,uint256)"(
-      prevCap?: BigNumberish | null,
-      newCap?: BigNumberish | null
+      prevCap?: PromiseOrValue<BigNumberish> | null,
+      newCap?: PromiseOrValue<BigNumberish> | null
     ): VaultCapChangedEventFilter;
     VaultCapChanged(
-      prevCap?: BigNumberish | null,
-      newCap?: BigNumberish | null
+      prevCap?: PromiseOrValue<BigNumberish> | null,
+      newCap?: PromiseOrValue<BigNumberish> | null
     ): VaultCapChangedEventFilter;
 
     "VaultChanged(address,address)"(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
     VaultChanged(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
 
     "VaultPositionEntered(uint256,uint256)"(
@@ -1774,16 +1875,16 @@ export interface InvestmentVault extends BaseContract {
     ): VaultPositionExitedEventFilter;
 
     "Withdraw(address,address,address,uint256,uint256)"(
-      caller?: string | null,
-      receiver?: string | null,
-      owner?: string | null,
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): WithdrawEventFilter;
     Withdraw(
-      caller?: string | null,
-      receiver?: string | null,
-      owner?: string | null,
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): WithdrawEventFilter;
@@ -1791,83 +1892,89 @@ export interface InvestmentVault extends BaseContract {
 
   estimateGas: {
     allowance(
-      owner: string,
-      spender: string,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
 
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     convertToAssets(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     convertToShares(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      subtractedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     deposit(
-      assets: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1886,7 +1993,7 @@ export interface InvestmentVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1901,110 +2008,122 @@ export interface InvestmentVault extends BaseContract {
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      addedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      underlyingAsset: string,
-      underlyingAssetCap: BigNumberish,
-      managementFee: BigNumberish,
-      performanceFee: BigNumberish,
-      feesRecipient: string,
-      actions: string[],
-      principalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      underlyingAssetCap: PromiseOrValue<BigNumberish>,
+      managementFee: PromiseOrValue<BigNumberish>,
+      performanceFee: PromiseOrValue<BigNumberish>,
+      feesRecipient: PromiseOrValue<string>,
+      actions: PromiseOrValue<string>[],
+      principalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    maxWithdraw(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxWithdraw(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     mint(
-      shares: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     previewDeposit(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewMint(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewRedeem(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewWithdraw(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeem(
-      shares: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setVaultCap(
-      newCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2014,47 +2133,47 @@ export interface InvestmentVault extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdraw(
-      assets: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     allowance(
-      owner: string,
-      spender: string,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
-      account: string,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2067,66 +2186,66 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     canRefund(
-      token: string,
+      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     convertToAssets(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     convertToShares(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      subtractedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     deposit(
-      assets: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2145,7 +2264,7 @@ export interface InvestmentVault extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2164,122 +2283,122 @@ export interface InvestmentVault extends BaseContract {
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      spender: PromiseOrValue<string>,
+      addedValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      adminAddress: string,
-      strategistAddress: string,
-      operatorAddress: string,
-      underlyingAsset: string,
-      underlyingAssetCap: BigNumberish,
-      managementFee: BigNumberish,
-      performanceFee: BigNumberish,
-      feesRecipient: string,
-      actions: string[],
-      principalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      adminAddress: PromiseOrValue<string>,
+      strategistAddress: PromiseOrValue<string>,
+      operatorAddress: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      underlyingAssetCap: PromiseOrValue<BigNumberish>,
+      managementFee: PromiseOrValue<BigNumberish>,
+      performanceFee: PromiseOrValue<BigNumberish>,
+      feesRecipient: PromiseOrValue<string>,
+      actions: PromiseOrValue<string>[],
+      principalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      receiver: string,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxMint(
-      receiver: string,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxRedeem(
-      owner: string,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxWithdraw(
-      owner: string,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mint(
-      shares: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     previewDeposit(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     previewMint(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     previewRedeem(
-      shares: BigNumberish,
+      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     previewWithdraw(
-      assets: BigNumberish,
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redeem(
-      shares: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setVaultCap(
-      newCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2289,27 +2408,27 @@ export interface InvestmentVault extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      assets: BigNumberish,
-      receiver: string,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

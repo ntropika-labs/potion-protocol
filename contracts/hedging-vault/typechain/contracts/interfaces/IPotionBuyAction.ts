@@ -24,16 +24,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export type PotionBuyInfoStruct = {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumberish;
-  expirationTimestamp: BigNumberish;
+  targetPotionAddress: PromiseOrValue<string>;
+  underlyingAsset: PromiseOrValue<string>;
+  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+  expirationTimestamp: PromiseOrValue<BigNumberish>;
   sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: BigNumberish;
-  totalSizeInPotions: BigNumberish;
+  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
+  totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
@@ -56,11 +57,11 @@ export type PotionBuyInfoStructOutput = [
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -80,11 +81,11 @@ export declare namespace ICurveManager {
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -104,11 +105,11 @@ export declare namespace ICriteriaManager {
 
 export declare namespace IPotionLiquidityPool {
   export type CounterpartyDetailsStruct = {
-    lp: string;
-    poolId: BigNumberish;
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
     curve: ICurveManager.CurveStruct;
     criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: BigNumberish;
+    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
   };
 
   export type CounterpartyDetailsStructOutput = [
@@ -128,10 +129,10 @@ export declare namespace IPotionLiquidityPool {
 
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
-    inputToken: string;
-    outputToken: string;
-    expectedPriceRate: BigNumberish;
-    swapPath: BytesLike;
+    inputToken: PromiseOrValue<string>;
+    outputToken: PromiseOrValue<string>;
+    expectedPriceRate: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
   export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
@@ -168,27 +169,27 @@ export interface IPotionBuyActionInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapInfo",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
@@ -293,123 +294,123 @@ export interface IPotionBuyAction extends BaseContract {
 
   functions: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
 
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   canPositionBeEntered(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   canPositionBeExited(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   enterPosition(
-    investmentAsset: string,
-    amountToInvest: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    amountToInvest: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    investmentAsset: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getPotionBuyInfo(
-    underlyingAsset: string,
-    expirationTimestamp: BigNumberish,
+    underlyingAsset: PromiseOrValue<string>,
+    expirationTimestamp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
 
   getSwapInfo(
-    inputToken: string,
-    outputToken: string,
+    inputToken: PromiseOrValue<string>,
+    outputToken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   setPotionBuyInfo(
     info: PotionBuyInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSwapInfo(
     info: IUniswapV3Oracle.SwapInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     exitPosition(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
 
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
@@ -426,111 +427,111 @@ export interface IPotionBuyAction extends BaseContract {
 
   filters: {
     "ActionPositionEntered(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
     ActionPositionEntered(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
 
     "ActionPositionExited(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
     ActionPositionExited(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
   };
 
   estimateGas: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

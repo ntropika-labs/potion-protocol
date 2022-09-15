@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface BaseActionUpgradeableInterface extends utils.Interface {
@@ -76,34 +77,43 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "canRefund",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "canRefundETH",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "changeStrategist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeVault",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
@@ -123,11 +133,15 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refund",
-    values: [string, BigNumberish, string]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "refundETH",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
@@ -343,48 +357,51 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   functions: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -398,72 +415,75 @@ export interface BaseActionUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   canPositionBeEntered(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   canPositionBeExited(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+  canRefund(
+    token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   changeAdmin(
-    newAdminAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeOperator(
-    newOperatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOperatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newStrategistAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeVault(
-    newVaultAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newVaultAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   enterPosition(
-    investmentAsset: string,
-    amountToInvest: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    amountToInvest: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    investmentAsset: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
@@ -477,71 +497,74 @@ export interface BaseActionUpgradeable extends BaseContract {
   getVault(overrides?: CallOverrides): Promise<string>;
 
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
   refund(
-    token: string,
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   refundETH(
-    amount: BigNumberish,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
     changeAdmin(
-      newAdminAddress: string,
+      newAdminAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeOperator(
-      newOperatorAddress: string,
+      newOperatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeStrategist(
-      newStrategistAddress: string,
+      newStrategistAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeVault(
-      newVaultAddress: string,
+      newVaultAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     exitPosition(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -560,15 +583,15 @@ export interface BaseActionUpgradeable extends BaseContract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -577,122 +600,125 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   filters: {
     "ActionPositionEntered(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
     ActionPositionEntered(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
 
     "ActionPositionExited(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
     ActionPositionExited(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
 
     "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
     LifecycleStateChanged(
-      prevState?: BigNumberish | null,
-      newState?: BigNumberish | null
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
 
     "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
     OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
     "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
     StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
 
     "VaultChanged(address,address)"(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
     VaultChanged(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
   };
 
   estimateGas: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -706,76 +732,76 @@ export interface BaseActionUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canRefund(
-      token: string,
+      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -789,26 +815,26 @@ export interface BaseActionUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     refund(
-      token: string,
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     refundETH(
-      amount: BigNumberish,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -20,14 +20,15 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
-    inputToken: string;
-    outputToken: string;
-    expectedPriceRate: BigNumberish;
-    swapPath: BytesLike;
+    inputToken: PromiseOrValue<string>;
+    outputToken: PromiseOrValue<string>;
+    expectedPriceRate: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
   export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
@@ -50,7 +51,7 @@ export interface IUniswapV3OracleInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getSwapInfo",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapInfo",
@@ -97,32 +98,32 @@ export interface IUniswapV3Oracle extends BaseContract {
 
   functions: {
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   getSwapInfo(
-    inputToken: string,
-    outputToken: string,
+    inputToken: PromiseOrValue<string>,
+    outputToken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
   setSwapInfo(
     info: IUniswapV3Oracle.SwapInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
@@ -136,27 +137,27 @@ export interface IUniswapV3Oracle extends BaseContract {
 
   estimateGas: {
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getSwapInfo(
-      inputToken: string,
-      outputToken: string,
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setSwapInfo(
       info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

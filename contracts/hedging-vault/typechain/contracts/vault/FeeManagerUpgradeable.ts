@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface FeeManagerUpgradeableInterface extends utils.Interface {
@@ -62,16 +63,22 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
       | "setPerformanceFee"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "changeOperator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "changeStrategist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "changeVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeVault",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getFeesRecipient",
@@ -96,15 +103,15 @@ export interface FeeManagerUpgradeableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setManagementFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPerformanceFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -324,23 +331,23 @@ export interface FeeManagerUpgradeable extends BaseContract {
 
   functions: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -358,39 +365,39 @@ export interface FeeManagerUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   changeAdmin(
-    newAdminAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeOperator(
-    newOperatorAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOperatorAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeStrategist(
-    newStrategistAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newStrategistAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   changeVault(
-    newVaultAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newVaultAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getAdmin(overrides?: CallOverrides): Promise<string>;
@@ -408,38 +415,38 @@ export interface FeeManagerUpgradeable extends BaseContract {
   getVault(overrides?: CallOverrides): Promise<string>;
 
   setFeesRecipient(
-    newFeesRecipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newFeesRecipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setManagementFee(
-    newManagementFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newManagementFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPerformanceFee(
-    newPerformanceFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPerformanceFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     changeAdmin(
-      newAdminAddress: string,
+      newAdminAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeOperator(
-      newOperatorAddress: string,
+      newOperatorAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeStrategist(
-      newStrategistAddress: string,
+      newStrategistAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeVault(
-      newVaultAddress: string,
+      newVaultAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -458,60 +465,60 @@ export interface FeeManagerUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<string>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
+      newFeesRecipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
+      newManagementFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "AdminChanged(address,address)"(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
     AdminChanged(
-      prevAdminAddress?: string | null,
-      newAdminAddress?: string | null
+      prevAdminAddress?: PromiseOrValue<string> | null,
+      newAdminAddress?: PromiseOrValue<string> | null
     ): AdminChangedEventFilter;
 
     "FeesETHSent(address,uint256,uint256)"(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
     FeesETHSent(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
 
     "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
     FeesReceipientChanged(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
 
     "FeesSent(address,address,uint256,uint256)"(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
     FeesSent(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
@@ -529,12 +536,12 @@ export interface FeeManagerUpgradeable extends BaseContract {
     ): ManagementFeeChangedEventFilter;
 
     "OperatorChanged(address,address)"(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
     OperatorChanged(
-      prevOperatorAddress?: string | null,
-      newOperatorAddress?: string | null
+      prevOperatorAddress?: PromiseOrValue<string> | null,
+      newOperatorAddress?: PromiseOrValue<string> | null
     ): OperatorChangedEventFilter;
 
     "PerformanceFeeChanged(uint256,uint256)"(
@@ -547,43 +554,43 @@ export interface FeeManagerUpgradeable extends BaseContract {
     ): PerformanceFeeChangedEventFilter;
 
     "StrategistChanged(address,address)"(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
     StrategistChanged(
-      prevStrategistAddress?: string | null,
-      newStrategistAddress?: string | null
+      prevStrategistAddress?: PromiseOrValue<string> | null,
+      newStrategistAddress?: PromiseOrValue<string> | null
     ): StrategistChangedEventFilter;
 
     "VaultChanged(address,address)"(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
     VaultChanged(
-      prevVaultAddress?: string | null,
-      newVaultAddress?: string | null
+      prevVaultAddress?: PromiseOrValue<string> | null,
+      newVaultAddress?: PromiseOrValue<string> | null
     ): VaultChangedEventFilter;
   };
 
   estimateGas: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -601,40 +608,40 @@ export interface FeeManagerUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     changeAdmin(
-      newAdminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeOperator(
-      newOperatorAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOperatorAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeStrategist(
-      newStrategistAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newStrategistAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     changeVault(
-      newVaultAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newVaultAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -652,18 +659,18 @@ export interface FeeManagerUpgradeable extends BaseContract {
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

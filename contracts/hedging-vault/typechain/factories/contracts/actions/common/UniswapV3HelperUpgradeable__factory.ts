@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   UniswapV3HelperUpgradeable,
   UniswapV3HelperUpgradeableInterface,
@@ -415,12 +416,12 @@ export class UniswapV3HelperUpgradeable__factory extends ContractFactory {
   }
 
   override deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<UniswapV3HelperUpgradeable> {
     return super.deploy(overrides || {}) as Promise<UniswapV3HelperUpgradeable>;
   }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }

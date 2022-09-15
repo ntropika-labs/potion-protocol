@@ -18,6 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
@@ -56,19 +57,19 @@ export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addPercentage",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "applyPercentage",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isPercentageInRange",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "substractPercentage",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -137,25 +138,25 @@ export interface TestWrapperPercentageUtils extends BaseContract {
     PERCENTAGE_FACTOR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     addPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     applyPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     isPercentageInRange(
-      percentage: BigNumberish,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     substractPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
   };
@@ -167,25 +168,25 @@ export interface TestWrapperPercentageUtils extends BaseContract {
   PERCENTAGE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
 
   addPercentage(
-    amount: BigNumberish,
-    percentage: BigNumberish,
+    amount: PromiseOrValue<BigNumberish>,
+    percentage: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   applyPercentage(
-    amount: BigNumberish,
-    percentage: BigNumberish,
+    amount: PromiseOrValue<BigNumberish>,
+    percentage: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   isPercentageInRange(
-    percentage: BigNumberish,
+    percentage: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   substractPercentage(
-    amount: BigNumberish,
-    percentage: BigNumberish,
+    amount: PromiseOrValue<BigNumberish>,
+    percentage: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -197,25 +198,25 @@ export interface TestWrapperPercentageUtils extends BaseContract {
     PERCENTAGE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     addPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     applyPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isPercentageInRange(
-      percentage: BigNumberish,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     substractPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -230,25 +231,25 @@ export interface TestWrapperPercentageUtils extends BaseContract {
     PERCENTAGE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     addPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     applyPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isPercentageInRange(
-      percentage: BigNumberish,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     substractPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -263,25 +264,25 @@ export interface TestWrapperPercentageUtils extends BaseContract {
     PERCENTAGE_FACTOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     applyPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isPercentageInRange(
-      percentage: BigNumberish,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     substractPercentage(
-      amount: BigNumberish,
-      percentage: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

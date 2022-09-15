@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   MockOpynAddressBook,
   MockOpynAddressBookInterface,
@@ -131,10 +132,10 @@ export class MockOpynAddressBook__factory extends ContractFactory {
   }
 
   override deploy(
-    opynController_: string,
-    opynFactory_: string,
-    opynOracle_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    opynController_: PromiseOrValue<string>,
+    opynFactory_: PromiseOrValue<string>,
+    opynOracle_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<MockOpynAddressBook> {
     return super.deploy(
       opynController_,
@@ -144,10 +145,10 @@ export class MockOpynAddressBook__factory extends ContractFactory {
     ) as Promise<MockOpynAddressBook>;
   }
   override getDeployTransaction(
-    opynController_: string,
-    opynFactory_: string,
-    opynOracle_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    opynController_: PromiseOrValue<string>,
+    opynFactory_: PromiseOrValue<string>,
+    opynOracle_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(
       opynController_,

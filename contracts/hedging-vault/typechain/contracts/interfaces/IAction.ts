@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IActionInterface extends utils.Interface {
@@ -44,19 +45,19 @@ export interface IActionInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -137,134 +138,134 @@ export interface IAction extends BaseContract {
 
   functions: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   canPositionBeEntered(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   canPositionBeExited(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   enterPosition(
-    investmentAsset: string,
-    amountToInvest: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    amountToInvest: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
-    investmentAsset: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     exitPosition(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   filters: {
     "ActionPositionEntered(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
     ActionPositionEntered(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountToInvest?: null
     ): ActionPositionEnteredEventFilter;
 
     "ActionPositionExited(address,uint256)"(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
     ActionPositionExited(
-      investmentAsset?: string | null,
+      investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
   };
 
   estimateGas: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     canPositionBeEntered(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canPositionBeExited(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
-      investmentAsset: string,
-      amountToInvest: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
-      investmentAsset: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

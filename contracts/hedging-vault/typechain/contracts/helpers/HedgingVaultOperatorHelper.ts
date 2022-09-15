@@ -24,16 +24,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export type PotionBuyInfoStruct = {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumberish;
-  expirationTimestamp: BigNumberish;
+  targetPotionAddress: PromiseOrValue<string>;
+  underlyingAsset: PromiseOrValue<string>;
+  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+  expirationTimestamp: PromiseOrValue<BigNumberish>;
   sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: BigNumberish;
-  totalSizeInPotions: BigNumberish;
+  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
+  totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
@@ -56,10 +57,10 @@ export type PotionBuyInfoStructOutput = [
 
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
-    inputToken: string;
-    outputToken: string;
-    expectedPriceRate: BigNumberish;
-    swapPath: BytesLike;
+    inputToken: PromiseOrValue<string>;
+    outputToken: PromiseOrValue<string>;
+    expectedPriceRate: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
   export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
@@ -72,11 +73,11 @@ export declare namespace IUniswapV3Oracle {
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -96,11 +97,11 @@ export declare namespace ICurveManager {
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -120,11 +121,11 @@ export declare namespace ICriteriaManager {
 
 export declare namespace IPotionLiquidityPool {
   export type CounterpartyDetailsStruct = {
-    lp: string;
-    poolId: BigNumberish;
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
     curve: ICurveManager.CurveStruct;
     criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: BigNumberish;
+    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
   };
 
   export type CounterpartyDetailsStructOutput = [
@@ -199,7 +200,7 @@ export interface HedgingVaultOperatorHelperInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -289,12 +290,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
       potionBuyInfo: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     hedgingVault(overrides?: CallOverrides): Promise<[string]>;
@@ -304,12 +305,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     potionBuyAction(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -320,12 +321,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
   enterPosition(
     swapInfo: IUniswapV3Oracle.SwapInfoStruct,
     potionBuyInfo: PotionBuyInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
     swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   hedgingVault(overrides?: CallOverrides): Promise<string>;
@@ -335,12 +336,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
   potionBuyAction(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -368,19 +369,19 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
   };
 
@@ -392,12 +393,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
       potionBuyInfo: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     hedgingVault(overrides?: CallOverrides): Promise<BigNumber>;
@@ -407,12 +408,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     potionBuyAction(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -428,12 +429,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     enterPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
       potionBuyInfo: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
       swapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     hedgingVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -443,12 +444,12 @@ export interface HedgingVaultOperatorHelper extends BaseContract {
     potionBuyAction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

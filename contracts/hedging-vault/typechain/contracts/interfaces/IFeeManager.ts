@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IFeeManagerInterface extends utils.Interface {
@@ -60,15 +61,15 @@ export interface IFeeManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setManagementFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPerformanceFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -206,18 +207,18 @@ export interface IFeeManager extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -228,18 +229,18 @@ export interface IFeeManager extends BaseContract {
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   setFeesRecipient(
-    newFeesRecipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newFeesRecipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setManagementFee(
-    newManagementFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newManagementFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPerformanceFee(
-    newPerformanceFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPerformanceFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -250,51 +251,51 @@ export interface IFeeManager extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
+      newFeesRecipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
+      newManagementFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "FeesETHSent(address,uint256,uint256)"(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
     FeesETHSent(
-      receipient?: string | null,
+      receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
 
     "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
     FeesReceipientChanged(
-      oldFeeReceipient?: string | null,
-      newFeeReceipient?: string | null
+      oldFeeReceipient?: PromiseOrValue<string> | null,
+      newFeeReceipient?: PromiseOrValue<string> | null
     ): FeesReceipientChangedEventFilter;
 
     "FeesSent(address,address,uint256,uint256)"(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
     FeesSent(
-      receipient?: string | null,
-      token?: string | null,
+      receipient?: PromiseOrValue<string> | null,
+      token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
@@ -326,18 +327,18 @@ export interface IFeeManager extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -349,18 +350,18 @@ export interface IFeeManager extends BaseContract {
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setFeesRecipient(
-      newFeesRecipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFeesRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setManagementFee(
-      newManagementFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newManagementFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPerformanceFee(
-      newPerformanceFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPerformanceFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

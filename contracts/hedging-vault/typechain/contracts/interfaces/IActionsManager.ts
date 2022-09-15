@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IActionsManagerInterface extends utils.Interface {
@@ -48,7 +49,7 @@ export interface IActionsManagerInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getAction",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getActionsLength",
@@ -56,7 +57,7 @@ export interface IActionsManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPrincipalPercentage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPrincipalPercentages",
@@ -68,7 +69,7 @@ export interface IActionsManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPrincipalPercentages",
-    values: [BigNumberish[]]
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
 
   decodeFunctionResult(functionFragment: "getAction", data: BytesLike): Result;
@@ -150,14 +151,14 @@ export interface IActionsManager extends BaseContract {
 
   functions: {
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     getActionsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -168,17 +169,20 @@ export interface IActionsManager extends BaseContract {
     ): Promise<[BigNumber]>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  getAction(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPrincipalPercentage(
-    actionIndex: BigNumberish,
+    actionIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -187,17 +191,20 @@ export interface IActionsManager extends BaseContract {
   getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
   setPrincipalPercentages(
-    newPrincipalPercentages: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getAction(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    getAction(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -206,7 +213,7 @@ export interface IActionsManager extends BaseContract {
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -225,14 +232,14 @@ export interface IActionsManager extends BaseContract {
 
   estimateGas: {
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -241,21 +248,21 @@ export interface IActionsManager extends BaseContract {
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getAction(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getActionsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPrincipalPercentage(
-      actionIndex: BigNumberish,
+      actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -268,8 +275,8 @@ export interface IActionsManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setPrincipalPercentages(
-      newPrincipalPercentages: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

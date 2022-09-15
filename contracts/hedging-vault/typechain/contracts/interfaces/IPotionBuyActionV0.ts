@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IPotionBuyActionV0Interface extends utils.Interface {
@@ -50,31 +51,31 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "calculateCurrentPayout",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxPremiumPercentage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxSwapDuration",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPremiumSlippage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setStrikePercentage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapSlippage",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -219,109 +220,109 @@ export interface IPotionBuyActionV0 extends BaseContract {
 
   functions: {
     calculateCurrentPayout(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
     setCycleDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMaxPremiumPercentage(
-      maxPremiumPercentage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMaxSwapDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPremiumSlippage(
-      premiumSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      premiumSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setStrikePercentage(
-      strikePercentage: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      strikePercentage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSwapSlippage(
-      swapSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      swapSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   calculateCurrentPayout(
-    investmentAsset: string,
+    investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
   setCycleDuration(
-    durationSeconds: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    durationSeconds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMaxPremiumPercentage(
-    maxPremiumPercentage_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMaxSwapDuration(
-    durationSeconds: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    durationSeconds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPremiumSlippage(
-    premiumSlippage_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    premiumSlippage_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setStrikePercentage(
-    strikePercentage: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    strikePercentage: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSwapSlippage(
-    swapSlippage_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    swapSlippage_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     calculateCurrentPayout(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
     setCycleDuration(
-      durationSeconds: BigNumberish,
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMaxPremiumPercentage(
-      maxPremiumPercentage_: BigNumberish,
+      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMaxSwapDuration(
-      durationSeconds: BigNumberish,
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPremiumSlippage(
-      premiumSlippage_: BigNumberish,
+      premiumSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setStrikePercentage(
-      strikePercentage: BigNumberish,
+      strikePercentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSwapSlippage(
-      swapSlippage_: BigNumberish,
+      swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -370,75 +371,75 @@ export interface IPotionBuyActionV0 extends BaseContract {
 
   estimateGas: {
     calculateCurrentPayout(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setCycleDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMaxPremiumPercentage(
-      maxPremiumPercentage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMaxSwapDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPremiumSlippage(
-      premiumSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      premiumSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setStrikePercentage(
-      strikePercentage: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      strikePercentage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSwapSlippage(
-      swapSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      swapSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     calculateCurrentPayout(
-      investmentAsset: string,
+      investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setCycleDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMaxPremiumPercentage(
-      maxPremiumPercentage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMaxSwapDuration(
-      durationSeconds: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPremiumSlippage(
-      premiumSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      premiumSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setStrikePercentage(
-      strikePercentage: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      strikePercentage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSwapSlippage(
-      swapSlippage_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      swapSlippage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

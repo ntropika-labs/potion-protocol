@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface MockOpynOracleInterface extends utils.Interface {
@@ -40,22 +41,29 @@ export interface MockOpynOracleInterface extends utils.Interface {
       | "setStablePrice"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getPrice",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "isDisputePeriodOver",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "pricePerAsset",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setIsDisputePeriodOver",
-    values: [string, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setStablePrice",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
@@ -106,77 +114,92 @@ export interface MockOpynOracle extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getPrice(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPrice(
+      asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     isDisputePeriodOver(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     pricePerAsset(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     setIsDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _result: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _result: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setStablePrice(
-      asset: string,
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      asset: PromiseOrValue<string>,
+      price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getPrice(
+    asset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   isDisputePeriodOver(
-    arg0: string,
-    arg1: BigNumberish,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  pricePerAsset(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   setIsDisputePeriodOver(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
-    _result: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
+    _result: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setStablePrice(
-    asset: string,
-    price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    asset: PromiseOrValue<string>,
+    price: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(
+      asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isDisputePeriodOver(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    pricePerAsset(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setIsDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _result: boolean,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _result: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setStablePrice(
-      asset: string,
-      price: BigNumberish,
+      asset: PromiseOrValue<string>,
+      price: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -184,58 +207,64 @@ export interface MockOpynOracle extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getPrice(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    isDisputePeriodOver(
-      arg0: string,
-      arg1: BigNumberish,
+    getPrice(
+      asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    pricePerAsset(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    isDisputePeriodOver(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    pricePerAsset(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setIsDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _result: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _result: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setStablePrice(
-      asset: string,
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      asset: PromiseOrValue<string>,
+      price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPrice(
-      asset: string,
+      asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isDisputePeriodOver(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     pricePerAsset(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setIsDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _result: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _result: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setStablePrice(
-      asset: string,
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      asset: PromiseOrValue<string>,
+      price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

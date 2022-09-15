@@ -20,16 +20,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export declare namespace UniswapV3SwapLib {
   export type SwapInputParametersStruct = {
-    inputToken: string;
-    exactAmountIn: BigNumberish;
-    expectedAmountOut: BigNumberish;
-    slippage: BigNumberish;
-    maxDuration: BigNumberish;
-    swapPath: BytesLike;
+    inputToken: PromiseOrValue<string>;
+    exactAmountIn: PromiseOrValue<BigNumberish>;
+    expectedAmountOut: PromiseOrValue<BigNumberish>;
+    slippage: PromiseOrValue<BigNumberish>;
+    maxDuration: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
   export type SwapInputParametersStructOutput = [
@@ -49,12 +50,12 @@ export declare namespace UniswapV3SwapLib {
   };
 
   export type SwapOutputParametersStruct = {
-    inputToken: string;
-    exactAmountOut: BigNumberish;
-    expectedAmountIn: BigNumberish;
-    slippage: BigNumberish;
-    maxDuration: BigNumberish;
-    swapPath: BytesLike;
+    inputToken: PromiseOrValue<string>;
+    exactAmountOut: PromiseOrValue<BigNumberish>;
+    expectedAmountIn: PromiseOrValue<BigNumberish>;
+    slippage: PromiseOrValue<BigNumberish>;
+    maxDuration: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
   export type SwapOutputParametersStructOutput = [
@@ -86,11 +87,14 @@ export interface TestWrapperUniswapV3SwapLibInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "swapInput",
-    values: [string, UniswapV3SwapLib.SwapInputParametersStruct]
+    values: [PromiseOrValue<string>, UniswapV3SwapLib.SwapInputParametersStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "swapOutput",
-    values: [string, UniswapV3SwapLib.SwapOutputParametersStruct]
+    values: [
+      PromiseOrValue<string>,
+      UniswapV3SwapLib.SwapOutputParametersStruct
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "swapInput", data: BytesLike): Result;
@@ -127,39 +131,39 @@ export interface TestWrapperUniswapV3SwapLib extends BaseContract {
 
   functions: {
     swapInput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapInputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapOutput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapOutputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   swapInput(
-    swapRouter: string,
+    swapRouter: PromiseOrValue<string>,
     parameters: UniswapV3SwapLib.SwapInputParametersStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapOutput(
-    swapRouter: string,
+    swapRouter: PromiseOrValue<string>,
     parameters: UniswapV3SwapLib.SwapOutputParametersStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     swapInput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapInputParametersStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     swapOutput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapOutputParametersStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -169,29 +173,29 @@ export interface TestWrapperUniswapV3SwapLib extends BaseContract {
 
   estimateGas: {
     swapInput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapInputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapOutput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapOutputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     swapInput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapInputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapOutput(
-      swapRouter: string,
+      swapRouter: PromiseOrValue<string>,
       parameters: UniswapV3SwapLib.SwapOutputParametersStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

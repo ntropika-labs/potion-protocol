@@ -17,6 +17,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface TestWrapperOpynProtocolLibInterface extends utils.Interface {
@@ -28,7 +29,7 @@ export interface TestWrapperOpynProtocolLibInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "isPotionRedeemable",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -67,22 +68,22 @@ export interface TestWrapperOpynProtocolLib extends BaseContract {
 
   functions: {
     isPotionRedeemable(
-      opynController: string,
-      potion: string,
+      opynController: PromiseOrValue<string>,
+      potion: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
   isPotionRedeemable(
-    opynController: string,
-    potion: string,
+    opynController: PromiseOrValue<string>,
+    potion: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   callStatic: {
     isPotionRedeemable(
-      opynController: string,
-      potion: string,
+      opynController: PromiseOrValue<string>,
+      potion: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -91,16 +92,16 @@ export interface TestWrapperOpynProtocolLib extends BaseContract {
 
   estimateGas: {
     isPotionRedeemable(
-      opynController: string,
-      potion: string,
+      opynController: PromiseOrValue<string>,
+      potion: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     isPotionRedeemable(
-      opynController: string,
-      potion: string,
+      opynController: PromiseOrValue<string>,
+      potion: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

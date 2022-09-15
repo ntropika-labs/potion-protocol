@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface IOpynOracleInterface extends utils.Interface {
@@ -32,10 +33,13 @@ export interface IOpynOracleInterface extends utils.Interface {
     nameOrSignatureOrTopic: "getPrice" | "setStablePrice"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getPrice",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setStablePrice",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
@@ -74,29 +78,38 @@ export interface IOpynOracle extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getPrice(
+    _asset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   setStablePrice(
-    _asset: string,
-    _price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _price: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -104,25 +117,28 @@ export interface IOpynOracle extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPrice(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

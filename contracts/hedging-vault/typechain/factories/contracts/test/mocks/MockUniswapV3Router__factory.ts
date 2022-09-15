@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   MockUniswapV3Router,
   MockUniswapV3RouterInterface,
@@ -299,8 +300,8 @@ export class MockUniswapV3Router__factory extends ContractFactory {
   }
 
   override deploy(
-    assets_: string[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    assets_: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<MockUniswapV3Router> {
     return super.deploy(
       assets_,
@@ -308,8 +309,8 @@ export class MockUniswapV3Router__factory extends ContractFactory {
     ) as Promise<MockUniswapV3Router>;
   }
   override getDeployTransaction(
-    assets_: string[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    assets_: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(assets_, overrides || {});
   }

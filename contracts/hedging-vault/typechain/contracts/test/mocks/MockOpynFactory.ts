@@ -18,6 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface MockOpynFactoryInterface extends utils.Interface {
@@ -32,11 +33,25 @@ export interface MockOpynFactoryInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getOtoken",
-    values: [string, string, string, BigNumberish, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getTargetOtokenAddress",
-    values: [string, string, string, BigNumberish, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "getOtoken", data: BytesLike): Result;
@@ -76,64 +91,64 @@ export interface MockOpynFactory extends BaseContract {
 
   functions: {
     getOtoken(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     getTargetOtokenAddress(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
 
   getOtoken(
-    arg0: string,
-    arg1: string,
-    arg2: string,
-    arg3: BigNumberish,
-    arg4: BigNumberish,
-    arg5: boolean,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<string>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BigNumberish>,
+    arg5: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   getTargetOtokenAddress(
-    arg0: string,
-    arg1: string,
-    arg2: string,
-    arg3: BigNumberish,
-    arg4: BigNumberish,
-    arg5: boolean,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<string>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BigNumberish>,
+    arg5: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   callStatic: {
     getOtoken(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     getTargetOtokenAddress(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -142,44 +157,44 @@ export interface MockOpynFactory extends BaseContract {
 
   estimateGas: {
     getOtoken(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTargetOtokenAddress(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getOtoken(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTargetOtokenAddress(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BigNumberish,
-      arg5: boolean,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BigNumberish>,
+      arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

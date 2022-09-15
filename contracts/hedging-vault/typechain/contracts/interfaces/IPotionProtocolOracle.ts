@@ -20,16 +20,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export type PotionBuyInfoStruct = {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumberish;
-  expirationTimestamp: BigNumberish;
+  targetPotionAddress: PromiseOrValue<string>;
+  underlyingAsset: PromiseOrValue<string>;
+  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+  expirationTimestamp: PromiseOrValue<BigNumberish>;
   sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: BigNumberish;
-  totalSizeInPotions: BigNumberish;
+  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
+  totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
@@ -52,11 +53,11 @@ export type PotionBuyInfoStructOutput = [
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -76,11 +77,11 @@ export declare namespace ICurveManager {
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -100,11 +101,11 @@ export declare namespace ICriteriaManager {
 
 export declare namespace IPotionLiquidityPool {
   export type CounterpartyDetailsStruct = {
-    lp: string;
-    poolId: BigNumberish;
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
     curve: ICurveManager.CurveStruct;
     criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: BigNumberish;
+    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
   };
 
   export type CounterpartyDetailsStructOutput = [
@@ -134,7 +135,7 @@ export interface IPotionProtocolOracleInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getPotionBuyInfo",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPotionBuyInfo",
@@ -181,32 +182,32 @@ export interface IPotionProtocolOracle extends BaseContract {
 
   functions: {
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[PotionBuyInfoStructOutput]>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   getPotionBuyInfo(
-    underlyingAsset: string,
-    expirationTimestamp: BigNumberish,
+    underlyingAsset: PromiseOrValue<string>,
+    expirationTimestamp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<PotionBuyInfoStructOutput>;
 
   setPotionBuyInfo(
     info: PotionBuyInfoStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PotionBuyInfoStructOutput>;
 
@@ -220,27 +221,27 @@ export interface IPotionProtocolOracle extends BaseContract {
 
   estimateGas: {
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPotionBuyInfo(
-      underlyingAsset: string,
-      expirationTimestamp: BigNumberish,
+      underlyingAsset: PromiseOrValue<string>,
+      expirationTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setPotionBuyInfo(
       info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
