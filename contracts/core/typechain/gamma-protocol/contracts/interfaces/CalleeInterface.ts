@@ -19,6 +19,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface CalleeInterfaceInterface extends utils.Interface {
@@ -30,7 +31,7 @@ export interface CalleeInterfaceInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "callFunction",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(
@@ -69,22 +70,22 @@ export interface CalleeInterface extends BaseContract {
 
   functions: {
     callFunction(
-      _sender: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _sender: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   callFunction(
-    _sender: string,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _sender: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     callFunction(
-      _sender: string,
-      _data: BytesLike,
+      _sender: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -93,17 +94,17 @@ export interface CalleeInterface extends BaseContract {
 
   estimateGas: {
     callFunction(
-      _sender: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _sender: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     callFunction(
-      _sender: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _sender: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

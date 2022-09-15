@@ -24,15 +24,16 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -52,11 +53,11 @@ export declare namespace ICriteriaManager {
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -76,11 +77,11 @@ export declare namespace ICurveManager {
 
 export declare namespace PotionLiquidityPool {
   export type CounterpartyDetailsStruct = {
-    lp: string;
-    poolId: BigNumberish;
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
     curve: ICurveManager.CurveStruct;
     criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: BigNumberish;
+    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
   };
 
   export type CounterpartyDetailsStructOutput = [
@@ -97,7 +98,10 @@ export declare namespace PotionLiquidityPool {
     orderSizeInOtokens: BigNumber;
   };
 
-  export type PoolIdentifierStruct = { lp: string; poolId: BigNumberish };
+  export type PoolIdentifierStruct = {
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
+  };
 
   export type PoolIdentifierStructOutput = [string, BigNumber] & {
     lp: string;
@@ -208,81 +212,97 @@ export interface PotionLiquidityPoolUpgradeTestInterface
 
   encodeFunctionData(
     functionFragment: "addAndSetCriterias",
-    values: [BigNumberish, ICriteriaManager.CriteriaStruct[]]
+    values: [PromiseOrValue<BigNumberish>, ICriteriaManager.CriteriaStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "addAndSetCurve",
-    values: [BigNumberish, ICurveManager.CurveStruct]
+    values: [PromiseOrValue<BigNumberish>, ICurveManager.CurveStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "buyOtokens",
     values: [
-      string,
+      PromiseOrValue<string>,
       PotionLiquidityPool.CounterpartyDetailsStruct[],
-      BigNumberish
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "collateralNeededForPuts",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "createAndBuyOtokens",
     values: [
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      boolean,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
       PotionLiquidityPool.CounterpartyDetailsStruct[],
-      BigNumberish
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "createNewVaultId",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "crit", values?: undefined): string;
   encodeFunctionData(functionFragment: "crv", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "depositAndConfigurePool",
-    values: [BigNumberish, BigNumberish, BytesLike, BytesLike]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositAndCreateCurveAndCriteria",
     values: [
-      BigNumberish,
-      BigNumberish,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       ICurveManager.CurveStruct,
       ICriteriaManager.CriteriaStruct[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "durationInDays",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "getVaultId", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getVaultId",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, string]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
-  encodeFunctionData(functionFragment: "isSettled", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "isSettled",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "lpLockedAmount",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "lpPools",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "lpTotalAmount",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "maxTotalValueLocked",
@@ -298,14 +318,14 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "outstandingSettlement",
-    values: [string, PotionLiquidityPool.PoolIdentifierStruct]
+    values: [PromiseOrValue<string>, PotionLiquidityPool.PoolIdentifierStruct]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "percentStrike",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "poolCollateralToken",
@@ -313,11 +333,14 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "premiums",
-    values: [string, PotionLiquidityPool.CounterpartyDetailsStruct[]]
+    values: [
+      PromiseOrValue<string>,
+      PotionLiquidityPool.CounterpartyDetailsStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "redistributeSettlement",
-    values: [string, PotionLiquidityPool.PoolIdentifierStruct[]]
+    values: [PromiseOrValue<string>, PotionLiquidityPool.PoolIdentifierStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -325,35 +348,35 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "setCriteriaManager",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCurve",
-    values: [BigNumberish, BytesLike]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCurveCriteria",
-    values: [BigNumberish, BytesLike]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCurveManager",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxTotalValueLocked",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setUpgradeTestVal",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "settleAfterExpiry",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "settleAndRedistributeSettlement",
-    values: [string, PotionLiquidityPool.PoolIdentifierStruct[]]
+    values: [PromiseOrValue<string>, PotionLiquidityPool.PoolIdentifierStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "sumOfAllLockedBalances",
@@ -365,7 +388,7 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
@@ -374,7 +397,11 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "util",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "vaultCount",
@@ -382,7 +409,7 @@ export interface PotionLiquidityPoolUpgradeTestInterface
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -714,45 +741,45 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
 
   functions: {
     addAndSetCriterias(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     addAndSetCurve(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     buyOtokens(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     collateralNeededForPuts(
-      _otoken: string,
-      _otokenQty: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _otokenQty: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     createAndBuyOtokens(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     createNewVaultId(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     crit(overrides?: CallOverrides): Promise<[string]>;
@@ -760,56 +787,59 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     crv(overrides?: CallOverrides): Promise<[string]>;
 
     deposit(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     depositAndConfigurePool(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      _curveHash: BytesLike,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     depositAndCreateCurveAndCriteria(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     durationInDays(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getVaultId(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     initialize(
-      _opynAddressBook: string,
-      _poolCollateralToken: string,
-      _curveManager: string,
-      _criteriaManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _opynAddressBook: PromiseOrValue<string>,
+      _poolCollateralToken: PromiseOrValue<string>,
+      _curveManager: PromiseOrValue<string>,
+      _criteriaManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    isSettled(_otoken: string, overrides?: CallOverrides): Promise<[boolean]>;
+    isSettled(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     lpLockedAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, string, string] & {
@@ -821,8 +851,8 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     >;
 
     lpTotalAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -833,7 +863,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     opynController(overrides?: CallOverrides): Promise<[string]>;
 
     outstandingSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pool: PotionLiquidityPool.PoolIdentifierStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { collateralDueBack: BigNumber }>;
@@ -841,20 +871,20 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     percentStrike(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     poolCollateralToken(overrides?: CallOverrides): Promise<[string]>;
 
     premiums(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
       overrides?: CallOverrides
     ): Promise<
@@ -865,56 +895,56 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     >;
 
     redistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCriteriaManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCurve(
-      _poolId: BigNumberish,
-      _curveHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCurveCriteria(
-      _poolId: BigNumberish,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCurveManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMaxTotalValueLocked(
-      _newMax: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newMax: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setUpgradeTestVal(
-      _v: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _v: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     settleAfterExpiry(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     settleAndRedistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     sumOfAllLockedBalances(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -922,20 +952,20 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     sumOfAllUnlockedBalances(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeTestVal(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     util(
-      _lp: string,
-      _poolId: BigNumberish,
-      _collateralToLock: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _collateralToLock: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -949,52 +979,52 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     vaultCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     withdraw(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addAndSetCriterias(
-    _poolId: BigNumberish,
+    _poolId: PromiseOrValue<BigNumberish>,
     _criterias: ICriteriaManager.CriteriaStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   addAndSetCurve(
-    _poolId: BigNumberish,
+    _poolId: PromiseOrValue<BigNumberish>,
     _curve: ICurveManager.CurveStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   buyOtokens(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-    _maxPremium: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _maxPremium: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   collateralNeededForPuts(
-    _otoken: string,
-    _otokenQty: BigNumberish,
+    _otoken: PromiseOrValue<string>,
+    _otokenQty: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   createAndBuyOtokens(
-    _underlyingAsset: string,
-    _strikeAsset: string,
-    _collateralAsset: string,
-    _strikePrice: BigNumberish,
-    _expiry: BigNumberish,
-    _isPut: boolean,
+    _underlyingAsset: PromiseOrValue<string>,
+    _strikeAsset: PromiseOrValue<string>,
+    _collateralAsset: PromiseOrValue<string>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _expiry: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
     _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-    _maxPremium: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _maxPremium: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   createNewVaultId(
-    _otoken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otoken: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   crit(overrides?: CallOverrides): Promise<string>;
@@ -1002,53 +1032,59 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   crv(overrides?: CallOverrides): Promise<string>;
 
   deposit(
-    _poolId: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _poolId: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   depositAndConfigurePool(
-    _poolId: BigNumberish,
-    _amount: BigNumberish,
-    _curveHash: BytesLike,
-    _criteriaSetHash: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _poolId: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
+    _curveHash: PromiseOrValue<BytesLike>,
+    _criteriaSetHash: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   depositAndCreateCurveAndCriteria(
-    _poolId: BigNumberish,
-    _amount: BigNumberish,
+    _poolId: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
     _curve: ICurveManager.CurveStruct,
     _criterias: ICriteriaManager.CriteriaStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   durationInDays(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getVaultId(
+    _otoken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   initialize(
-    _opynAddressBook: string,
-    _poolCollateralToken: string,
-    _curveManager: string,
-    _criteriaManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _opynAddressBook: PromiseOrValue<string>,
+    _poolCollateralToken: PromiseOrValue<string>,
+    _curveManager: PromiseOrValue<string>,
+    _criteriaManager: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  isSettled(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+  isSettled(
+    _otoken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   lpLockedAmount(
-    _lp: string,
-    _poolId: BigNumberish,
+    _lp: PromiseOrValue<string>,
+    _poolId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   lpPools(
-    arg0: string,
-    arg1: BigNumberish,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, string, string] & {
@@ -1060,8 +1096,8 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   >;
 
   lpTotalAmount(
-    _lp: string,
-    _poolId: BigNumberish,
+    _lp: PromiseOrValue<string>,
+    _poolId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1072,7 +1108,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   opynController(overrides?: CallOverrides): Promise<string>;
 
   outstandingSettlement(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     _pool: PotionLiquidityPool.PoolIdentifierStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1080,17 +1116,20 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
-  percentStrike(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+  percentStrike(
+    _otoken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   poolCollateralToken(overrides?: CallOverrides): Promise<string>;
 
   premiums(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
     overrides?: CallOverrides
   ): Promise<
@@ -1101,56 +1140,56 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   >;
 
   redistributeSettlement(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCriteriaManager(
-    _new: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _new: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCurve(
-    _poolId: BigNumberish,
-    _curveHash: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _poolId: PromiseOrValue<BigNumberish>,
+    _curveHash: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCurveCriteria(
-    _poolId: BigNumberish,
-    _criteriaSetHash: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _poolId: PromiseOrValue<BigNumberish>,
+    _criteriaSetHash: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCurveManager(
-    _new: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _new: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMaxTotalValueLocked(
-    _newMax: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _newMax: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setUpgradeTestVal(
-    _v: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _v: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   settleAfterExpiry(
-    _otoken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otoken: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   settleAndRedistributeSettlement(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   sumOfAllLockedBalances(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1158,20 +1197,20 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   sumOfAllUnlockedBalances(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeTestVal(overrides?: CallOverrides): Promise<BigNumber>;
 
   util(
-    _lp: string,
-    _poolId: BigNumberish,
-    _collateralToLock: BigNumberish,
+    _lp: PromiseOrValue<string>,
+    _poolId: PromiseOrValue<BigNumberish>,
+    _collateralToLock: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1185,51 +1224,51 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
   vaultCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdraw(
-    _poolId: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _poolId: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     addAndSetCriterias(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _criterias: ICriteriaManager.CriteriaStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     addAndSetCurve(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     buyOtokens(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
+      _maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     collateralNeededForPuts(
-      _otoken: string,
-      _otokenQty: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _otokenQty: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createAndBuyOtokens(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
+      _maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createNewVaultId(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1238,53 +1277,59 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     crv(overrides?: CallOverrides): Promise<string>;
 
     deposit(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     depositAndConfigurePool(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      _curveHash: BytesLike,
-      _criteriaSetHash: BytesLike,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     depositAndCreateCurveAndCriteria(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
       _criterias: ICriteriaManager.CriteriaStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     durationInDays(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getVaultId(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(
-      _opynAddressBook: string,
-      _poolCollateralToken: string,
-      _curveManager: string,
-      _criteriaManager: string,
+      _opynAddressBook: PromiseOrValue<string>,
+      _poolCollateralToken: PromiseOrValue<string>,
+      _curveManager: PromiseOrValue<string>,
+      _criteriaManager: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isSettled(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+    isSettled(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     lpLockedAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, string, string] & {
@@ -1296,8 +1341,8 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     >;
 
     lpTotalAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1308,7 +1353,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     opynController(overrides?: CallOverrides): Promise<string>;
 
     outstandingSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pool: PotionLiquidityPool.PoolIdentifierStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1320,14 +1365,14 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     percentStrike(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     poolCollateralToken(overrides?: CallOverrides): Promise<string>;
 
     premiums(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
       overrides?: CallOverrides
     ): Promise<
@@ -1338,46 +1383,52 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     >;
 
     redistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setCriteriaManager(_new: string, overrides?: CallOverrides): Promise<void>;
+    setCriteriaManager(
+      _new: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setCurve(
-      _poolId: BigNumberish,
-      _curveHash: BytesLike,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setCurveCriteria(
-      _poolId: BigNumberish,
-      _criteriaSetHash: BytesLike,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setCurveManager(_new: string, overrides?: CallOverrides): Promise<void>;
+    setCurveManager(
+      _new: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setMaxTotalValueLocked(
-      _newMax: BigNumberish,
+      _newMax: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setUpgradeTestVal(
-      _v: BigNumberish,
+      _v: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     settleAfterExpiry(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     settleAndRedistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1387,7 +1438,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     sumOfAllUnlockedBalances(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1396,9 +1447,9 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     upgradeTestVal(overrides?: CallOverrides): Promise<BigNumber>;
 
     util(
-      _lp: string,
-      _poolId: BigNumberish,
-      _collateralToLock: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _collateralToLock: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1412,43 +1463,43 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     vaultCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "CriteriaSetSelected(address,uint256,bytes32)"(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       criteriaSetHash?: null
     ): CriteriaSetSelectedEventFilter;
     CriteriaSetSelected(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       criteriaSetHash?: null
     ): CriteriaSetSelectedEventFilter;
 
     "CurveSelected(address,uint256,bytes32)"(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       curveHash?: null
     ): CurveSelectedEventFilter;
     CurveSelected(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       curveHash?: null
     ): CurveSelectedEventFilter;
 
     "Deposited(address,uint256,uint256)"(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       amount?: null
     ): DepositedEventFilter;
     Deposited(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       amount?: null
     ): DepositedEventFilter;
 
@@ -1456,53 +1507,53 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     Initialized(version?: null): InitializedEventFilter;
 
     "OptionSettled(address,uint256)"(
-      otoken?: string | null,
+      otoken?: PromiseOrValue<string> | null,
       collateralReturned?: null
     ): OptionSettledEventFilter;
     OptionSettled(
-      otoken?: string | null,
+      otoken?: PromiseOrValue<string> | null,
       collateralReturned?: null
     ): OptionSettledEventFilter;
 
     "OptionSettlementDistributed(address,address,uint256,uint256)"(
-      otoken?: string | null,
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      otoken?: PromiseOrValue<string> | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       collateralReturned?: null
     ): OptionSettlementDistributedEventFilter;
     OptionSettlementDistributed(
-      otoken?: string | null,
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      otoken?: PromiseOrValue<string> | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       collateralReturned?: null
     ): OptionSettlementDistributedEventFilter;
 
     "OptionsBought(address,address,uint256,uint256)"(
-      buyer?: string | null,
-      otoken?: string | null,
+      buyer?: PromiseOrValue<string> | null,
+      otoken?: PromiseOrValue<string> | null,
       numberOfOtokens?: null,
       totalPremiumPaid?: null
     ): OptionsBoughtEventFilter;
     OptionsBought(
-      buyer?: string | null,
-      otoken?: string | null,
+      buyer?: PromiseOrValue<string> | null,
+      otoken?: PromiseOrValue<string> | null,
       numberOfOtokens?: null,
       totalPremiumPaid?: null
     ): OptionsBoughtEventFilter;
 
     "OptionsSold(address,uint256,address,bytes32,uint256,uint256,uint256)"(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
-      otoken?: string | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
+      otoken?: PromiseOrValue<string> | null,
       curveHash?: null,
       numberOfOtokens?: null,
       liquidityCollateralized?: null,
       premiumReceived?: null
     ): OptionsSoldEventFilter;
     OptionsSold(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
-      otoken?: string | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
+      otoken?: PromiseOrValue<string> | null,
       curveHash?: null,
       numberOfOtokens?: null,
       liquidityCollateralized?: null,
@@ -1510,12 +1561,12 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     ): OptionsSoldEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
@@ -1525,58 +1576,58 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     Unpaused(account?: null): UnpausedEventFilter;
 
     "Withdrawn(address,uint256,uint256)"(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       amount?: null
     ): WithdrawnEventFilter;
     Withdrawn(
-      lp?: string | null,
-      poolId?: BigNumberish | null,
+      lp?: PromiseOrValue<string> | null,
+      poolId?: PromiseOrValue<BigNumberish> | null,
       amount?: null
     ): WithdrawnEventFilter;
   };
 
   estimateGas: {
     addAndSetCriterias(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     addAndSetCurve(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     buyOtokens(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     collateralNeededForPuts(
-      _otoken: string,
-      _otokenQty: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _otokenQty: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createAndBuyOtokens(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     createNewVaultId(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     crit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1584,59 +1635,65 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     crv(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     depositAndConfigurePool(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      _curveHash: BytesLike,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     depositAndCreateCurveAndCriteria(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     durationInDays(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVaultId(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    initialize(
-      _opynAddressBook: string,
-      _poolCollateralToken: string,
-      _curveManager: string,
-      _criteriaManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    getVaultId(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isSettled(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+    initialize(
+      _opynAddressBook: PromiseOrValue<string>,
+      _poolCollateralToken: PromiseOrValue<string>,
+      _curveManager: PromiseOrValue<string>,
+      _criteriaManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    isSettled(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     lpLockedAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     lpTotalAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1647,7 +1704,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     opynController(overrides?: CallOverrides): Promise<BigNumber>;
 
     outstandingSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pool: PotionLiquidityPool.PoolIdentifierStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1655,75 +1712,75 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     percentStrike(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     poolCollateralToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     premiums(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCriteriaManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCurve(
-      _poolId: BigNumberish,
-      _curveHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCurveCriteria(
-      _poolId: BigNumberish,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCurveManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMaxTotalValueLocked(
-      _newMax: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newMax: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setUpgradeTestVal(
-      _v: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _v: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     settleAfterExpiry(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     settleAndRedistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     sumOfAllLockedBalances(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1731,73 +1788,73 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     sumOfAllUnlockedBalances(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeTestVal(overrides?: CallOverrides): Promise<BigNumber>;
 
     util(
-      _lp: string,
-      _poolId: BigNumberish,
-      _collateralToLock: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _collateralToLock: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     vaultCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addAndSetCriterias(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     addAndSetCurve(
-      _poolId: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     buyOtokens(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     collateralNeededForPuts(
-      _otoken: string,
-      _otokenQty: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _otokenQty: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     createAndBuyOtokens(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
-      _maxPremium: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _maxPremium: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     createNewVaultId(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     crit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1805,65 +1862,65 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     crv(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     depositAndConfigurePool(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      _curveHash: BytesLike,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     depositAndCreateCurveAndCriteria(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
       _curve: ICurveManager.CurveStruct,
       _criterias: ICriteriaManager.CriteriaStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     durationInDays(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVaultId(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _opynAddressBook: string,
-      _poolCollateralToken: string,
-      _curveManager: string,
-      _criteriaManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _opynAddressBook: PromiseOrValue<string>,
+      _poolCollateralToken: PromiseOrValue<string>,
+      _curveManager: PromiseOrValue<string>,
+      _criteriaManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isSettled(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lpLockedAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lpPools(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lpTotalAmount(
-      _lp: string,
-      _poolId: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1876,7 +1933,7 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     opynController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     outstandingSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pool: PotionLiquidityPool.PoolIdentifierStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1884,13 +1941,13 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     percentStrike(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1899,62 +1956,62 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     premiums(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _sellers: PotionLiquidityPool.CounterpartyDetailsStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCriteriaManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCurve(
-      _poolId: BigNumberish,
-      _curveHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _curveHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCurveCriteria(
-      _poolId: BigNumberish,
-      _criteriaSetHash: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCurveManager(
-      _new: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _new: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMaxTotalValueLocked(
-      _newMax: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newMax: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setUpgradeTestVal(
-      _v: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _v: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     settleAfterExpiry(
-      _otoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     settleAndRedistributeSettlement(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       _pools: PotionLiquidityPool.PoolIdentifierStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     sumOfAllLockedBalances(
@@ -1966,29 +2023,29 @@ export interface PotionLiquidityPoolUpgradeTest extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeTestVal(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     util(
-      _lp: string,
-      _poolId: BigNumberish,
-      _collateralToLock: BigNumberish,
+      _lp: PromiseOrValue<string>,
+      _poolId: PromiseOrValue<BigNumberish>,
+      _collateralToLock: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     vaultCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
-      _poolId: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _poolId: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

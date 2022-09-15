@@ -7,7 +7,7 @@ import { isRef, onMounted, unref } from "vue";
 
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { createValidExpiry } from "@/helpers/time";
-import { computed } from "@vue/reactivity";
+import { computed } from "vue";
 import { watchDebounced } from "@vueuse/core";
 
 import type { MaybeStringRef, MaybeNumberRef } from "dapp-types";

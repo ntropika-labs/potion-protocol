@@ -18,6 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface AggregatorInterfaceInterface extends utils.Interface {
@@ -45,7 +46,7 @@ export interface AggregatorInterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getRoundData",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "latestRoundData",
@@ -103,7 +104,7 @@ export interface AggregatorInterface extends BaseContract {
     description(overrides?: CallOverrides): Promise<[string]>;
 
     getRoundData(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -135,7 +136,7 @@ export interface AggregatorInterface extends BaseContract {
   description(overrides?: CallOverrides): Promise<string>;
 
   getRoundData(
-    _roundId: BigNumberish,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -167,7 +168,7 @@ export interface AggregatorInterface extends BaseContract {
     description(overrides?: CallOverrides): Promise<string>;
 
     getRoundData(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -202,7 +203,7 @@ export interface AggregatorInterface extends BaseContract {
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoundData(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -217,7 +218,7 @@ export interface AggregatorInterface extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoundData(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

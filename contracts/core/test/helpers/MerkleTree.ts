@@ -1,3 +1,4 @@
+// @ts-expect-error missing typing for module
 import { bufferToHex, keccakFromString, keccak256 } from "ethereumjs-util";
 
 export default class MerkleTree {
@@ -115,7 +116,7 @@ export default class MerkleTree {
         if (typeof el === "string") {
             el = keccakFromString(el);
         }
-        const proof = this.getProof(el);
+        const proof = this.getProof(el as Buffer);
 
         return MerkleTree.bufArrToHexArr(proof);
     }

@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Contracts unit test
-        run: yarn nx run potion-contracts:test
+        run: yarn nx run potion-contracts:test -- --typecheck
         env:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}

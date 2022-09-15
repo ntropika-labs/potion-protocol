@@ -24,16 +24,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export declare namespace MarginVault {
   export type VaultStruct = {
-    shortOtokens: string[];
-    longOtokens: string[];
-    collateralAssets: string[];
-    shortAmounts: BigNumberish[];
-    longAmounts: BigNumberish[];
-    collateralAmounts: BigNumberish[];
+    shortOtokens: PromiseOrValue<string>[];
+    longOtokens: PromiseOrValue<string>[];
+    collateralAssets: PromiseOrValue<string>[];
+    shortAmounts: PromiseOrValue<BigNumberish>[];
+    longAmounts: PromiseOrValue<BigNumberish>[];
+    collateralAmounts: PromiseOrValue<BigNumberish>[];
   };
 
   export type VaultStructOutput = [
@@ -54,7 +55,7 @@ export declare namespace MarginVault {
 }
 
 export declare namespace FixedPointInt256 {
-  export type FixedPointIntStruct = { value: BigNumberish };
+  export type FixedPointIntStruct = { value: PromiseOrValue<BigNumberish> };
 
   export type FixedPointIntStructOutput = [BigNumber] & { value: BigNumber };
 }
@@ -113,36 +114,42 @@ export interface MarginCalculatorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCollateralDust",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getExcessCollateral",
-    values: [MarginVault.VaultStruct, BigNumberish]
+    values: [MarginVault.VaultStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getExpiredPayoutRate",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getMarginRequired",
-    values: [MarginVault.VaultStruct, BigNumberish]
+    values: [MarginVault.VaultStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getMaxPrice",
-    values: [string, string, string, boolean, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getNakedMarginRequired",
     values: [
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(
@@ -151,15 +158,30 @@ export interface MarginCalculatorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getSpotShock",
-    values: [string, string, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getTimesToExpiry",
-    values: [string, string, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isLiquidatable",
-    values: [MarginVault.VaultStruct, BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      MarginVault.VaultStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -169,27 +191,47 @@ export interface MarginCalculatorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCollateralDust",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOracleDeviation",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSpotShock",
-    values: [string, string, string, boolean, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setUpperBoundValues",
-    values: [string, string, string, boolean, BigNumberish[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "updateUpperBoundValue",
-    values: [string, string, string, boolean, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -400,24 +442,24 @@ export interface MarginCalculator extends BaseContract {
     AUCTION_TIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getCollateralDust(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getExcessCollateral(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean]>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getMarginRequired(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -427,50 +469,50 @@ export interface MarginCalculator extends BaseContract {
     >;
 
     getMaxPrice(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getNakedMarginRequired(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _shortAmount: BigNumberish,
-      _strikePrice: BigNumberish,
-      _underlyingPrice: BigNumberish,
-      _shortExpiryTimestamp: BigNumberish,
-      _collateralDecimals: BigNumberish,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _shortAmount: PromiseOrValue<BigNumberish>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _underlyingPrice: PromiseOrValue<BigNumberish>,
+      _shortExpiryTimestamp: PromiseOrValue<BigNumberish>,
+      _collateralDecimals: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getOracleDeviation(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getTimesToExpiry(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
     isLiquidatable(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
@@ -479,76 +521,76 @@ export interface MarginCalculator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setCollateralDust(
-      _collateral: string,
-      _dust: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _dust: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOracleDeviation(
-      _deviation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _deviation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _shockValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _shockValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setUpperBoundValues(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timesToExpiry: BigNumberish[],
-      _values: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timesToExpiry: PromiseOrValue<BigNumberish>[],
+      _values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     updateUpperBoundValue(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   AUCTION_TIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCollateralDust(
-    _collateral: string,
+    _collateral: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getExcessCollateral(
     _vault: MarginVault.VaultStruct,
-    _vaultType: BigNumberish,
+    _vaultType: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean]>;
 
   getExpiredPayoutRate(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getMarginRequired(
     _vault: MarginVault.VaultStruct,
-    _vaultType: BigNumberish,
+    _vaultType: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -558,50 +600,50 @@ export interface MarginCalculator extends BaseContract {
   >;
 
   getMaxPrice(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    _timeToExpiry: BigNumberish,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    _timeToExpiry: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getNakedMarginRequired(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _shortAmount: BigNumberish,
-    _strikePrice: BigNumberish,
-    _underlyingPrice: BigNumberish,
-    _shortExpiryTimestamp: BigNumberish,
-    _collateralDecimals: BigNumberish,
-    _isPut: boolean,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _shortAmount: PromiseOrValue<BigNumberish>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _underlyingPrice: PromiseOrValue<BigNumberish>,
+    _shortExpiryTimestamp: PromiseOrValue<BigNumberish>,
+    _collateralDecimals: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getOracleDeviation(overrides?: CallOverrides): Promise<BigNumber>;
 
   getSpotShock(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getTimesToExpiry(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   isLiquidatable(
     _vault: MarginVault.VaultStruct,
-    _vaultType: BigNumberish,
-    _vaultLatestUpdate: BigNumberish,
-    _roundId: BigNumberish,
+    _vaultType: PromiseOrValue<BigNumberish>,
+    _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber, BigNumber]>;
 
@@ -610,76 +652,76 @@ export interface MarginCalculator extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setCollateralDust(
-    _collateral: string,
-    _dust: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _collateral: PromiseOrValue<string>,
+    _dust: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOracleDeviation(
-    _deviation: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _deviation: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSpotShock(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    _shockValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    _shockValue: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setUpperBoundValues(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    _timesToExpiry: BigNumberish[],
-    _values: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    _timesToExpiry: PromiseOrValue<BigNumberish>[],
+    _values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   updateUpperBoundValue(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    _timeToExpiry: BigNumberish,
-    _value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    _timeToExpiry: PromiseOrValue<BigNumberish>,
+    _value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     AUCTION_TIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCollateralDust(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getExcessCollateral(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean]>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getMarginRequired(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -689,50 +731,50 @@ export interface MarginCalculator extends BaseContract {
     >;
 
     getMaxPrice(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getNakedMarginRequired(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _shortAmount: BigNumberish,
-      _strikePrice: BigNumberish,
-      _underlyingPrice: BigNumberish,
-      _shortExpiryTimestamp: BigNumberish,
-      _collateralDecimals: BigNumberish,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _shortAmount: PromiseOrValue<BigNumberish>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _underlyingPrice: PromiseOrValue<BigNumberish>,
+      _shortExpiryTimestamp: PromiseOrValue<BigNumberish>,
+      _collateralDecimals: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getOracleDeviation(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTimesToExpiry(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
     isLiquidatable(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
@@ -743,80 +785,80 @@ export interface MarginCalculator extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setCollateralDust(
-      _collateral: string,
-      _dust: BigNumberish,
+      _collateral: PromiseOrValue<string>,
+      _dust: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setOracleDeviation(
-      _deviation: BigNumberish,
+      _deviation: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _shockValue: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _shockValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setUpperBoundValues(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timesToExpiry: BigNumberish[],
-      _values: BigNumberish[],
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timesToExpiry: PromiseOrValue<BigNumberish>[],
+      _values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateUpperBoundValue(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
-      _value: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "CollateralDustUpdated(address,uint256)"(
-      collateral?: string | null,
+      collateral?: PromiseOrValue<string> | null,
       dust?: null
     ): CollateralDustUpdatedEventFilter;
     CollateralDustUpdated(
-      collateral?: string | null,
+      collateral?: PromiseOrValue<string> | null,
       dust?: null
     ): CollateralDustUpdatedEventFilter;
 
     "MaxPriceAdded(bytes32,uint256,uint256)"(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null,
       value?: null
     ): MaxPriceAddedEventFilter;
     MaxPriceAdded(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null,
       value?: null
     ): MaxPriceAddedEventFilter;
 
     "MaxPriceUpdated(bytes32,uint256,uint256,uint256)"(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null,
       oldValue?: null,
       newValue?: null
     ): MaxPriceUpdatedEventFilter;
     MaxPriceUpdated(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null,
       oldValue?: null,
       newValue?: null
@@ -830,29 +872,29 @@ export interface MarginCalculator extends BaseContract {
     ): OracleDeviationUpdatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "SpotShockUpdated(bytes32,uint256)"(
-      product?: BytesLike | null,
+      product?: PromiseOrValue<BytesLike> | null,
       spotShock?: null
     ): SpotShockUpdatedEventFilter;
     SpotShockUpdated(
-      product?: BytesLike | null,
+      product?: PromiseOrValue<BytesLike> | null,
       spotShock?: null
     ): SpotShockUpdatedEventFilter;
 
     "TimeToExpiryAdded(bytes32,uint256)"(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null
     ): TimeToExpiryAddedEventFilter;
     TimeToExpiryAdded(
-      productHash?: BytesLike | null,
+      productHash?: PromiseOrValue<BytesLike> | null,
       timeToExpiry?: null
     ): TimeToExpiryAddedEventFilter;
   };
@@ -861,72 +903,72 @@ export interface MarginCalculator extends BaseContract {
     AUCTION_TIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCollateralDust(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getExcessCollateral(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getMarginRequired(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getMaxPrice(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getNakedMarginRequired(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _shortAmount: BigNumberish,
-      _strikePrice: BigNumberish,
-      _underlyingPrice: BigNumberish,
-      _shortExpiryTimestamp: BigNumberish,
-      _collateralDecimals: BigNumberish,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _shortAmount: PromiseOrValue<BigNumberish>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _underlyingPrice: PromiseOrValue<BigNumberish>,
+      _shortExpiryTimestamp: PromiseOrValue<BigNumberish>,
+      _collateralDecimals: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getOracleDeviation(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTimesToExpiry(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isLiquidatable(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -935,52 +977,52 @@ export interface MarginCalculator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setCollateralDust(
-      _collateral: string,
-      _dust: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _dust: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOracleDeviation(
-      _deviation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _deviation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _shockValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _shockValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setUpperBoundValues(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timesToExpiry: BigNumberish[],
-      _values: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timesToExpiry: PromiseOrValue<BigNumberish>[],
+      _values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     updateUpperBoundValue(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -988,46 +1030,46 @@ export interface MarginCalculator extends BaseContract {
     AUCTION_TIME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCollateralDust(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getExcessCollateral(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getMarginRequired(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getMaxPrice(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getNakedMarginRequired(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _shortAmount: BigNumberish,
-      _strikePrice: BigNumberish,
-      _underlyingPrice: BigNumberish,
-      _shortExpiryTimestamp: BigNumberish,
-      _collateralDecimals: BigNumberish,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _shortAmount: PromiseOrValue<BigNumberish>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _underlyingPrice: PromiseOrValue<BigNumberish>,
+      _shortExpiryTimestamp: PromiseOrValue<BigNumberish>,
+      _collateralDecimals: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1036,26 +1078,26 @@ export interface MarginCalculator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTimesToExpiry(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isLiquidatable(
       _vault: MarginVault.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1064,52 +1106,52 @@ export interface MarginCalculator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setCollateralDust(
-      _collateral: string,
-      _dust: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      _dust: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOracleDeviation(
-      _deviation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _deviation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSpotShock(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _shockValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _shockValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setUpperBoundValues(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timesToExpiry: BigNumberish[],
-      _values: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timesToExpiry: PromiseOrValue<BigNumberish>[],
+      _values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     updateUpperBoundValue(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      _timeToExpiry: BigNumberish,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      _timeToExpiry: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

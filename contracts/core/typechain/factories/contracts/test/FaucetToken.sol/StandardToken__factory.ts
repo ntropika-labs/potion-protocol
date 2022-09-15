@@ -10,6 +10,7 @@ import {
   Overrides,
 } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   StandardToken,
   StandardTokenInterface,
@@ -287,11 +288,11 @@ export class StandardToken__factory extends ContractFactory {
   }
 
   override deploy(
-    _initialAmount: BigNumberish,
-    _tokenName: string,
-    _decimalUnits: BigNumberish,
-    _tokenSymbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _initialAmount: PromiseOrValue<BigNumberish>,
+    _tokenName: PromiseOrValue<string>,
+    _decimalUnits: PromiseOrValue<BigNumberish>,
+    _tokenSymbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<StandardToken> {
     return super.deploy(
       _initialAmount,
@@ -302,11 +303,11 @@ export class StandardToken__factory extends ContractFactory {
     ) as Promise<StandardToken>;
   }
   override getDeployTransaction(
-    _initialAmount: BigNumberish,
-    _tokenName: string,
-    _decimalUnits: BigNumberish,
-    _tokenSymbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _initialAmount: PromiseOrValue<BigNumberish>,
+    _tokenName: PromiseOrValue<string>,
+    _decimalUnits: PromiseOrValue<BigNumberish>,
+    _tokenSymbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(
       _initialAmount,

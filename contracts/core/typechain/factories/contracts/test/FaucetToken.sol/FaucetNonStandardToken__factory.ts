@@ -10,6 +10,7 @@ import {
   Overrides,
 } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   FaucetNonStandardToken,
   FaucetNonStandardTokenInterface,
@@ -293,11 +294,11 @@ export class FaucetNonStandardToken__factory extends ContractFactory {
   }
 
   override deploy(
-    _initialAmount: BigNumberish,
-    _tokenName: string,
-    _decimalUnits: BigNumberish,
-    _tokenSymbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _initialAmount: PromiseOrValue<BigNumberish>,
+    _tokenName: PromiseOrValue<string>,
+    _decimalUnits: PromiseOrValue<BigNumberish>,
+    _tokenSymbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<FaucetNonStandardToken> {
     return super.deploy(
       _initialAmount,
@@ -308,11 +309,11 @@ export class FaucetNonStandardToken__factory extends ContractFactory {
     ) as Promise<FaucetNonStandardToken>;
   }
   override getDeployTransaction(
-    _initialAmount: BigNumberish,
-    _tokenName: string,
-    _decimalUnits: BigNumberish,
-    _tokenSymbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _initialAmount: PromiseOrValue<BigNumberish>,
+    _tokenName: PromiseOrValue<string>,
+    _decimalUnits: PromiseOrValue<BigNumberish>,
+    _tokenSymbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(
       _initialAmount,

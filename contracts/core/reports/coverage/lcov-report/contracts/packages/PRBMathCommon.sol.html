@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70.18% </span>
+        <span class="strong">74.11% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>160/228</span>
+        <span class='fraction'>83/112</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">80.9% </span>
+        <span class="strong">76.6% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>144/178</span>
+        <span class='fraction'>144/188</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">66.67% </span>
@@ -1017,16 +1017,16 @@ library PRBMathCommon {
     /// @return msb The index of the most significant bit as an uint256.
     function mostSignificantBit(uint256 x) internal pure returns (uint256 msb) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (x &gt;= 2**128) {
-<span class="cstat-no" title="statement not covered" >            x &gt;&gt;= 128</span>;
-<span class="cstat-no" title="statement not covered" >            msb += 128</span>;
+            x &gt;&gt;= 128;
+            msb += 128;
         }
         <span class="missing-if-branch" title="if path not taken" >I</span>if (x &gt;= 2**64) {
-<span class="cstat-no" title="statement not covered" >            x &gt;&gt;= 64</span>;
-<span class="cstat-no" title="statement not covered" >            msb += 64</span>;
+            x &gt;&gt;= 64;
+            msb += 64;
         }
         <span class="missing-if-branch" title="if path not taken" >I</span>if (x &gt;= 2**32) {
-<span class="cstat-no" title="statement not covered" >            x &gt;&gt;= 32</span>;
-<span class="cstat-no" title="statement not covered" >            msb += 32</span>;
+            x &gt;&gt;= 32;
+            msb += 32;
         }
         if (x &gt;= 2**16) {
             x &gt;&gt;= 16;
@@ -1125,7 +1125,7 @@ library PRBMathCommon {
             }
 &nbsp;
             // Shift in bits from prod1 into prod0.
-<span class="cstat-no" title="statement not covered" >            prod0 |= prod1 * lpotdod</span>;
+            prod0 |= prod1 * lpotdod;
 &nbsp;
             // Invert denominator mod 2**256. Now that denominator is an odd number, it has an inverse modulo 2**256 such
             // that denominator * inv = 1 mod 2**256. Compute the inverse by starting with a seed that is correct for
@@ -1134,18 +1134,18 @@ library PRBMathCommon {
 &nbsp;
             // Now use Newton-Raphson iteration to improve the precision. Thanks to Hensel's lifting lemma, this also works
             // in modular arithmetic, doubling the correct bits in each step.
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**8
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**16
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**32
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**64
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**128
-<span class="cstat-no" title="statement not covered" >            inverse *= 2 - denominator * inverse</span>; // inverse mod 2**256
+            inverse *= 2 - denominator * inverse; // inverse mod 2**8
+            inverse *= 2 - denominator * inverse; // inverse mod 2**16
+            inverse *= 2 - denominator * inverse; // inverse mod 2**32
+            inverse *= 2 - denominator * inverse; // inverse mod 2**64
+            inverse *= 2 - denominator * inverse; // inverse mod 2**128
+            inverse *= 2 - denominator * inverse; // inverse mod 2**256
 &nbsp;
             // Because the division is now exact we can divide by multiplying with the modular inverse of denominator.
             // This will give us the correct result modulo 2**256. Since the precoditions guarantee that the outcome is
             // less than 2**256, this is the final result. We don't need to compute the high bits of the result and prod1
             // is no longer required.
-<span class="cstat-no" title="statement not covered" >            result = prod0 * inverse</span>;
+            result = prod0 * inverse;
 <span class="cstat-no" title="statement not covered" >            return result;</span>
         }
     }
@@ -1233,9 +1233,9 @@ library PRBMathCommon {
 <span class="cstat-no" title="statement not covered" >        uint256 ay;</span>
 <span class="cstat-no" title="statement not covered" >        uint256 ad;</span>
         unchecked {
-<span class="cstat-no" title="statement not covered" >            ax = x &lt; 0 ? uint256(-x) : uint256(x)</span>;
-<span class="cstat-no" title="statement not covered" >            ay = y &lt; 0 ? uint256(-y) : uint256(y)</span>;
-<span class="cstat-no" title="statement not covered" >            ad = denominator &lt; 0 ? uint256(-denominator) : uint256(denominator)</span>;
+            ax = x &lt; 0 ? uint256(-x) : uint256(x);
+            ay = y &lt; 0 ? uint256(-y) : uint256(y);
+            ad = denominator &lt; 0 ? uint256(-denominator) : uint256(denominator);
         }
 &nbsp;
         // Compute the absolute value of (x*y)÷denominator. The result must fit within int256.
@@ -1254,7 +1254,7 @@ library PRBMathCommon {
 &nbsp;
         // XOR over sx, sy and sd. This is checking whether there are one or three negative signs in the inputs.
         // If yes, the result should be negative.
-<span class="cstat-no" title="statement not covered" >        result = sx ^ sy ^ sd == 0 ? -int256(resultUnsigned) : int256(resultUnsigned)</span>;
+        result = sx ^ sy ^ sd == 0 ? -int256(resultUnsigned) : int256(resultUnsigned);
     }
 &nbsp;
     /// @notice Calculates the square root of x, rounding down.
@@ -1272,44 +1272,44 @@ library PRBMathCommon {
 &nbsp;
         // Set the initial guess to the closest power of two that is higher than x.
 <span class="cstat-no" title="statement not covered" >        uint256 xAux = uint256(x);</span>
-<span class="cstat-no" title="statement not covered" >        result = 1</span>;
+        result = 1;
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x100000000000000000000000000000000) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 128</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 64</span>;
+            xAux &gt;&gt;= 128;
+            result &lt;&lt;= 64;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x10000000000000000) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 64</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 32</span>;
+            xAux &gt;&gt;= 64;
+            result &lt;&lt;= 32;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x100000000) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 32</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 16</span>;
+            xAux &gt;&gt;= 32;
+            result &lt;&lt;= 16;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x10000) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 16</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 8</span>;
+            xAux &gt;&gt;= 16;
+            result &lt;&lt;= 8;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x100) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 8</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 4</span>;
+            xAux &gt;&gt;= 8;
+            result &lt;&lt;= 4;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x10) {</span>
-<span class="cstat-no" title="statement not covered" >            xAux &gt;&gt;= 4</span>;
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 2</span>;
+            xAux &gt;&gt;= 4;
+            result &lt;&lt;= 2;
         }
 <span class="cstat-no" title="statement not covered" >        if (xAux &gt;= 0x8) {</span>
-<span class="cstat-no" title="statement not covered" >            result &lt;&lt;= 1</span>;
+            result &lt;&lt;= 1;
         }
 &nbsp;
         // The operations can never overflow because the result is max 2^127 when it enters this block.
         unchecked {
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>;
-<span class="cstat-no" title="statement not covered" >            result = (result + x / result) &gt;&gt; 1</span>; // Seven iterations should be enough
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1;
+            result = (result + x / result) &gt;&gt; 1; // Seven iterations should be enough
 <span class="cstat-no" title="statement not covered" >            uint256 roundedDownResult = x / result;</span>
 <span class="cstat-no" title="statement not covered" >            return result &gt;= roundedDownResult ? roundedDownResult : result;</span>
         }
@@ -1321,7 +1321,7 @@ library PRBMathCommon {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu May 05 2022 11:54:59 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 13 2022 17:37:16 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

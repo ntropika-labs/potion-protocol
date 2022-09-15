@@ -13,7 +13,7 @@ import type {
 import type { PerformanceData } from "dapp-types";
 import type { ComputedRef } from "vue";
 import type { MaybeRef } from "@vueuse/core";
-import type { UseQueryResponse } from "@urql/vue";
+import type { AnyVariables, UseQueryResponse } from "@urql/vue";
 
 const getFloat = (value: null | undefined | string) =>
   value ? parseFloat(value) : 0;
@@ -26,8 +26,8 @@ const useSnapshots = (
   urqlComposable: (
     alreadyLoadedIds: ComputedRef<string[]>
   ) =>
-    | UseQueryResponse<GetSnapshotsByPoolQuery, object>
-    | UseQueryResponse<GetSnapshotsByTemplateQuery, object>
+    | UseQueryResponse<GetSnapshotsByPoolQuery, AnyVariables>
+    | UseQueryResponse<GetSnapshotsByTemplateQuery, AnyVariables>
 ) => {
   const snapshots = ref<SnapshotDataFragment[]>([]);
   const alreadyLoadedIds = computed(() =>
