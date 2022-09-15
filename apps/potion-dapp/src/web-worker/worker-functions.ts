@@ -1,3 +1,4 @@
+import { expose } from "comlink";
 import {
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
@@ -5,9 +6,9 @@ import {
 
 import { getUniswapRoute, runPremiumSwapRouter } from "@premium-swap-router";
 
-export {
+expose({
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
   getUniswapRoute,
   runPremiumSwapRouter,
-};
+});

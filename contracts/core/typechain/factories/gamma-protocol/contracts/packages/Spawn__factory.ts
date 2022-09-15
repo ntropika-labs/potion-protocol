@@ -10,6 +10,7 @@ import {
   BytesLike,
 } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   Spawn,
   SpawnInterface,
@@ -55,9 +56,9 @@ export class Spawn__factory extends ContractFactory {
   }
 
   override deploy(
-    logicContract: string,
-    initializationCalldata: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    logicContract: PromiseOrValue<string>,
+    initializationCalldata: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<Spawn> {
     return super.deploy(
       logicContract,
@@ -66,9 +67,9 @@ export class Spawn__factory extends ContractFactory {
     ) as Promise<Spawn>;
   }
   override getDeployTransaction(
-    logicContract: string,
-    initializationCalldata: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    logicContract: PromiseOrValue<string>,
+    initializationCalldata: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(
       logicContract,

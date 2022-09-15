@@ -10,6 +10,7 @@ import {
   Overrides,
 } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../common";
 import type {
   TestERC20MinterPauser,
   TestERC20MinterPauserInterface,
@@ -705,10 +706,10 @@ export class TestERC20MinterPauser__factory extends ContractFactory {
   }
 
   override deploy(
-    name: string,
-    symbol: string,
-    decimals_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    name: PromiseOrValue<string>,
+    symbol: PromiseOrValue<string>,
+    decimals_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<TestERC20MinterPauser> {
     return super.deploy(
       name,
@@ -718,10 +719,10 @@ export class TestERC20MinterPauser__factory extends ContractFactory {
     ) as Promise<TestERC20MinterPauser>;
   }
   override getDeployTransaction(
-    name: string,
-    symbol: string,
-    decimals_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    name: PromiseOrValue<string>,
+    symbol: PromiseOrValue<string>,
+    decimals_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(name, symbol, decimals_, overrides || {});
   }

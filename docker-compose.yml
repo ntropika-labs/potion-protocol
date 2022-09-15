@@ -2,7 +2,7 @@ version: "3.9"
 services:
   graph-node:
     container_name: potion_graph_node
-    image: graphprotocol/graph-node:v0.26.0
+    image: graphprotocol/graph-node:v0.27.0
     ports:
       - "8000:8000"
       - "8001:8001"
@@ -82,7 +82,7 @@ services:
 
   ganache:
     container_name: potion_ganache
-    image: trufflesuite/ganache:v7.3.0
+    image: trufflesuite/ganache:v7.4.3
     ports:
       - "8545:8545"
     volumes:

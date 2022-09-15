@@ -20,16 +20,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../../common";
 
 export declare namespace MarginVaultInterface {
   export type VaultStruct = {
-    shortOtokens: string[];
-    longOtokens: string[];
-    collateralAssets: string[];
-    shortAmounts: BigNumberish[];
-    longAmounts: BigNumberish[];
-    collateralAmounts: BigNumberish[];
+    shortOtokens: PromiseOrValue<string>[];
+    longOtokens: PromiseOrValue<string>[];
+    collateralAssets: PromiseOrValue<string>[];
+    shortAmounts: PromiseOrValue<BigNumberish>[];
+    longAmounts: PromiseOrValue<BigNumberish>[];
+    collateralAmounts: PromiseOrValue<BigNumberish>[];
   };
 
   export type VaultStructOutput = [
@@ -51,14 +52,14 @@ export declare namespace MarginVaultInterface {
 
 export declare namespace Actions {
   export type ActionArgsStruct = {
-    actionType: BigNumberish;
-    owner: string;
-    secondAddress: string;
-    asset: string;
-    vaultId: BigNumberish;
-    amount: BigNumberish;
-    index: BigNumberish;
-    data: BytesLike;
+    actionType: PromiseOrValue<BigNumberish>;
+    owner: PromiseOrValue<string>;
+    secondAddress: PromiseOrValue<string>;
+    asset: PromiseOrValue<string>;
+    vaultId: PromiseOrValue<BigNumberish>;
+    amount: PromiseOrValue<BigNumberish>;
+    index: PromiseOrValue<BigNumberish>;
+    data: PromiseOrValue<BytesLike>;
   };
 
   export type ActionArgsStructOutput = [
@@ -154,11 +155,16 @@ export interface ControllerInterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "canSettleAssets",
-    values: [string, string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "donate",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "fullPauser",
@@ -166,7 +172,7 @@ export interface ControllerInterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountVaultCounter",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getConfiguration",
@@ -174,32 +180,39 @@ export interface ControllerInterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getPayout",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getProceed",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVault",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVaultWithDetails",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "hasExpired", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "hasExpired",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "isLiquidatable",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperator",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isSettlementAllowed",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "operate",
@@ -213,11 +226,11 @@ export interface ControllerInterfaceInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "pool", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setOperator",
-    values: [string, boolean]
+    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "sync",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "systemFullyPaused",
@@ -328,23 +341,23 @@ export interface ControllerInterface extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<[boolean]>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     fullPauser(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -353,52 +366,55 @@ export interface ControllerInterface extends BaseContract {
     ): Promise<[string, string, string, string]>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVaultInterface.VaultStructOutput]>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVaultInterface.VaultStructOutput, BigNumber, BigNumber]>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<[boolean]>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     oracle(overrides?: CallOverrides): Promise<[string]>;
@@ -408,15 +424,15 @@ export interface ControllerInterface extends BaseContract {
     pool(overrides?: CallOverrides): Promise<[string]>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<[boolean]>;
@@ -433,23 +449,23 @@ export interface ControllerInterface extends BaseContract {
   callRestricted(overrides?: CallOverrides): Promise<boolean>;
 
   canSettleAssets(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _expiry: BigNumberish,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _expiry: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   donate(
-    _asset: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   fullPauser(overrides?: CallOverrides): Promise<string>;
 
   getAccountVaultCounter(
-    _accountOwner: string,
+    _accountOwner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -458,52 +474,55 @@ export interface ControllerInterface extends BaseContract {
   ): Promise<[string, string, string, string]>;
 
   getPayout(
-    _otoken: string,
-    _amount: BigNumberish,
+    _otoken: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getProceed(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getVault(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<MarginVaultInterface.VaultStructOutput>;
 
   getVaultWithDetails(
-    _owner: string,
-    _vaultId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[MarginVaultInterface.VaultStructOutput, BigNumber, BigNumber]>;
 
-  hasExpired(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+  hasExpired(
+    _otoken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isLiquidatable(
-    _owner: string,
-    _vaultId: BigNumberish,
-    _roundId: BigNumberish,
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber, BigNumber]>;
 
   isOperator(
-    _owner: string,
-    _operator: string,
+    _owner: PromiseOrValue<string>,
+    _operator: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isSettlementAllowed(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   operate(
     _actions: Actions.ActionArgsStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   oracle(overrides?: CallOverrides): Promise<string>;
@@ -513,15 +532,15 @@ export interface ControllerInterface extends BaseContract {
   pool(overrides?: CallOverrides): Promise<string>;
 
   setOperator(
-    _operator: string,
-    _isOperator: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _operator: PromiseOrValue<string>,
+    _isOperator: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   sync(
-    _owner: string,
-    _vaultId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _owner: PromiseOrValue<string>,
+    _vaultId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   systemFullyPaused(overrides?: CallOverrides): Promise<boolean>;
@@ -538,23 +557,23 @@ export interface ControllerInterface extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<boolean>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     fullPauser(overrides?: CallOverrides): Promise<string>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -563,46 +582,49 @@ export interface ControllerInterface extends BaseContract {
     ): Promise<[string, string, string, string]>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<MarginVaultInterface.VaultStructOutput>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[MarginVaultInterface.VaultStructOutput, BigNumber, BigNumber]>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<boolean>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -618,14 +640,14 @@ export interface ControllerInterface extends BaseContract {
     pool(overrides?: CallOverrides): Promise<string>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -646,75 +668,78 @@ export interface ControllerInterface extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<BigNumber>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     fullPauser(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getConfiguration(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hasExpired(_otoken: string, overrides?: CallOverrides): Promise<BigNumber>;
+    hasExpired(
+      _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     oracle(overrides?: CallOverrides): Promise<BigNumber>;
@@ -724,15 +749,15 @@ export interface ControllerInterface extends BaseContract {
     pool(overrides?: CallOverrides): Promise<BigNumber>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -750,78 +775,78 @@ export interface ControllerInterface extends BaseContract {
     callRestricted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     canSettleAssets(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _expiry: BigNumberish,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     donate(
-      _asset: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     fullPauser(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAccountVaultCounter(
-      _accountOwner: string,
+      _accountOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getConfiguration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPayout(
-      _otoken: string,
-      _amount: BigNumberish,
+      _otoken: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getProceed(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVault(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVaultWithDetails(
-      _owner: string,
-      _vaultId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasExpired(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isLiquidatable(
-      _owner: string,
-      _vaultId: BigNumberish,
-      _roundId: BigNumberish,
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isOperator(
-      _owner: string,
-      _operator: string,
+      _owner: PromiseOrValue<string>,
+      _operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isSettlementAllowed(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     operate(
       _actions: Actions.ActionArgsStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -831,15 +856,15 @@ export interface ControllerInterface extends BaseContract {
     pool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setOperator(
-      _operator: string,
-      _isOperator: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _operator: PromiseOrValue<string>,
+      _isOperator: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     sync(
-      _owner: string,
-      _vaultId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _owner: PromiseOrValue<string>,
+      _vaultId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     systemFullyPaused(overrides?: CallOverrides): Promise<PopulatedTransaction>;

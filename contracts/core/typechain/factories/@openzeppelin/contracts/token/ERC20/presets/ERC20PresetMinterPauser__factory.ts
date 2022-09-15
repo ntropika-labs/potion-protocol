@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../../../common";
 import type {
   ERC20PresetMinterPauser,
   ERC20PresetMinterPauserInterface,
@@ -693,9 +694,9 @@ export class ERC20PresetMinterPauser__factory extends ContractFactory {
   }
 
   override deploy(
-    name: string,
-    symbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    name: PromiseOrValue<string>,
+    symbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ERC20PresetMinterPauser> {
     return super.deploy(
       name,
@@ -704,9 +705,9 @@ export class ERC20PresetMinterPauser__factory extends ContractFactory {
     ) as Promise<ERC20PresetMinterPauser>;
   }
   override getDeployTransaction(
-    name: string,
-    symbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    name: PromiseOrValue<string>,
+    symbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(name, symbol, overrides || {});
   }

@@ -1,9 +1,9 @@
 import {
-  getUniswapRoute,
-  runPremiumSwapRouter,
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
-} from "./worker-functions";
+} from "potion-router";
+
+import { getUniswapRoute, runPremiumSwapRouter } from "@premium-swap-router";
 
 export const worker = {
   getEmergingBondingCurvesFromCriterias,

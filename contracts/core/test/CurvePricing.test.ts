@@ -20,7 +20,7 @@ describe("CurvePricing", function () {
     const wallets = provider.getWallets();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [potionBuyer1, potionLp1] = wallets;
+    const [potionBuyer1, potionLp1] = wallets as [Wallet, Wallet];
 
     const ETH_SPOT_PRICE_IN_DOLLARS = 250; // $ per ETH
     const lowerStrikeInDollars = 10; // $ per ETH

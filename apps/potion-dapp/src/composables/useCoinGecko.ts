@@ -49,6 +49,7 @@ export function useCoinGecko(
   };
   const fetchTokenPrice = async () => {
     try {
+      console.log("normal coingecko");
       loading.value = true;
       if (network === "mainnet" && address) {
         const response = await $fetch(

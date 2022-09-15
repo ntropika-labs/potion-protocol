@@ -19,6 +19,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface MockAddressBookInterface extends utils.Interface {
@@ -84,28 +85,31 @@ export interface MockAddressBookInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setController",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMarginCalculator",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMarginPool",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "setOracle", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setOracle",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setOtokenFactory",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOtokenImpl",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setWhitelist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -204,38 +208,38 @@ export interface MockAddressBook extends BaseContract {
     getWhitelist(overrides?: CallOverrides): Promise<[string]>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMarginCalculator(
-      _calculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _calculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMarginPool(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOracle(
-      _oracleAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracleAddr: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setOtokenImpl(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setWhitelist(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -254,38 +258,38 @@ export interface MockAddressBook extends BaseContract {
   getWhitelist(overrides?: CallOverrides): Promise<string>;
 
   setController(
-    _controller: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _controller: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMarginCalculator(
-    _calculator: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _calculator: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMarginPool(
-    _pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _pool: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOracle(
-    _oracleAddr: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _oracleAddr: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOtokenFactory(
-    _otokenFactory: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otokenFactory: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setOtokenImpl(
-    _newImpl: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _newImpl: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setWhitelist(
-    _newImpl: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _newImpl: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -304,27 +308,39 @@ export interface MockAddressBook extends BaseContract {
     getWhitelist(overrides?: CallOverrides): Promise<string>;
 
     setController(
-      _controller: string,
+      _controller: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMarginCalculator(
-      _calculator: string,
+      _calculator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMarginPool(_pool: string, overrides?: CallOverrides): Promise<void>;
+    setMarginPool(
+      _pool: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    setOracle(_oracleAddr: string, overrides?: CallOverrides): Promise<void>;
+    setOracle(
+      _oracleAddr: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setOtokenFactory(
-      _otokenFactory: string,
+      _otokenFactory: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setOtokenImpl(_newImpl: string, overrides?: CallOverrides): Promise<void>;
+    setOtokenImpl(
+      _newImpl: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    setWhitelist(_newImpl: string, overrides?: CallOverrides): Promise<void>;
+    setWhitelist(
+      _newImpl: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -345,38 +361,38 @@ export interface MockAddressBook extends BaseContract {
     getWhitelist(overrides?: CallOverrides): Promise<BigNumber>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMarginCalculator(
-      _calculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _calculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMarginPool(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOracle(
-      _oracleAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracleAddr: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setOtokenImpl(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setWhitelist(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -398,38 +414,38 @@ export interface MockAddressBook extends BaseContract {
     getWhitelist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setController(
-      _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _controller: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMarginCalculator(
-      _calculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _calculator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMarginPool(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOracle(
-      _oracleAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _oracleAddr: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOtokenFactory(
-      _otokenFactory: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenFactory: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setOtokenImpl(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setWhitelist(
-      _newImpl: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newImpl: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -24,15 +24,16 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../common";
 
 export declare namespace ICurveManager {
   export type CurveStruct = {
-    a_59x18: BigNumberish;
-    b_59x18: BigNumberish;
-    c_59x18: BigNumberish;
-    d_59x18: BigNumberish;
-    max_util_59x18: BigNumberish;
+    a_59x18: PromiseOrValue<BigNumberish>;
+    b_59x18: PromiseOrValue<BigNumberish>;
+    c_59x18: PromiseOrValue<BigNumberish>;
+    d_59x18: PromiseOrValue<BigNumberish>;
+    max_util_59x18: PromiseOrValue<BigNumberish>;
   };
 
   export type CurveStructOutput = [
@@ -76,26 +77,29 @@ export interface CurveManagerInterface extends utils.Interface {
     functionFragment: "addCurve",
     values: [ICurveManager.CurveStruct]
   ): string;
-  encodeFunctionData(functionFragment: "cosh", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "cosh",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "hashCurve",
     values: [ICurveManager.CurveStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "hyperbolicCurve",
-    values: [ICurveManager.CurveStruct, BigNumberish]
+    values: [ICurveManager.CurveStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isKnownCurveHash",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "powerDecimal",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "registeredCurves",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(functionFragment: "addCurve", data: BytesLike): Result;
@@ -165,11 +169,11 @@ export interface CurveManager extends BaseContract {
   functions: {
     addCurve(
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     cosh(
-      _input59x18: BigNumberish,
+      _input59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { output59x18: BigNumber }>;
 
@@ -180,34 +184,34 @@ export interface CurveManager extends BaseContract {
 
     hyperbolicCurve(
       _curve: ICurveManager.CurveStruct,
-      _x_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { output59x18: BigNumber }>;
 
     isKnownCurveHash(
-      _hash: BytesLike,
+      _hash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { valid: boolean }>;
 
     powerDecimal(
-      _x_59x18: BigNumberish,
-      _y_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
+      _y_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     registeredCurves(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
   addCurve(
     _curve: ICurveManager.CurveStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   cosh(
-    _input59x18: BigNumberish,
+    _input59x18: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -218,23 +222,23 @@ export interface CurveManager extends BaseContract {
 
   hyperbolicCurve(
     _curve: ICurveManager.CurveStruct,
-    _x_59x18: BigNumberish,
+    _x_59x18: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   isKnownCurveHash(
-    _hash: BytesLike,
+    _hash: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   powerDecimal(
-    _x_59x18: BigNumberish,
-    _y_59x18: BigNumberish,
+    _x_59x18: PromiseOrValue<BigNumberish>,
+    _y_59x18: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   registeredCurves(
-    arg0: BytesLike,
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -245,7 +249,7 @@ export interface CurveManager extends BaseContract {
     ): Promise<string>;
 
     cosh(
-      _input59x18: BigNumberish,
+      _input59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -256,34 +260,34 @@ export interface CurveManager extends BaseContract {
 
     hyperbolicCurve(
       _curve: ICurveManager.CurveStruct,
-      _x_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isKnownCurveHash(
-      _hash: BytesLike,
+      _hash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     powerDecimal(
-      _x_59x18: BigNumberish,
-      _y_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
+      _y_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registeredCurves(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
     "CurveAdded(bytes32,tuple)"(
-      curveHash?: BytesLike | null,
+      curveHash?: PromiseOrValue<BytesLike> | null,
       curveParams?: null
     ): CurveAddedEventFilter;
     CurveAdded(
-      curveHash?: BytesLike | null,
+      curveHash?: PromiseOrValue<BytesLike> | null,
       curveParams?: null
     ): CurveAddedEventFilter;
   };
@@ -291,11 +295,11 @@ export interface CurveManager extends BaseContract {
   estimateGas: {
     addCurve(
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     cosh(
-      _input59x18: BigNumberish,
+      _input59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -306,23 +310,23 @@ export interface CurveManager extends BaseContract {
 
     hyperbolicCurve(
       _curve: ICurveManager.CurveStruct,
-      _x_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isKnownCurveHash(
-      _hash: BytesLike,
+      _hash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     powerDecimal(
-      _x_59x18: BigNumberish,
-      _y_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
+      _y_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registeredCurves(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -330,11 +334,11 @@ export interface CurveManager extends BaseContract {
   populateTransaction: {
     addCurve(
       _curve: ICurveManager.CurveStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     cosh(
-      _input59x18: BigNumberish,
+      _input59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -345,23 +349,23 @@ export interface CurveManager extends BaseContract {
 
     hyperbolicCurve(
       _curve: ICurveManager.CurveStruct,
-      _x_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isKnownCurveHash(
-      _hash: BytesLike,
+      _hash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     powerDecimal(
-      _x_59x18: BigNumberish,
-      _y_59x18: BigNumberish,
+      _x_59x18: PromiseOrValue<BigNumberish>,
+      _y_59x18: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     registeredCurves(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

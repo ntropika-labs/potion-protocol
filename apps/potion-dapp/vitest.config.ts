@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vitest/config";
+
 import vue from "@vitejs/plugin-vue";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
@@ -27,10 +28,10 @@ export default defineConfig({
       ),
       //@ts-expect-error volar giving errors
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "@web-worker": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/web-worker/test.ts", import.meta.url)
-      ),
+      // "@web-worker": fileURLToPath(
+      //   //@ts-expect-error volar giving errors
+      //   new URL("./src/web-worker/test.ts", import.meta.url)
+      // ),
       "@onboard-composable": fileURLToPath(
         //@ts-expect-error volar giving errors
         new URL("./src/composables/useMockedOnboard.ts", import.meta.url)
@@ -42,6 +43,10 @@ export default defineConfig({
       "@premium-swap-router": fileURLToPath(
         //@ts-expect-error volar giving errors
         new URL("./src/helpers/mockedPremiumSwapRouter.ts", import.meta.url)
+      ),
+      "@coingecko-composable": fileURLToPath(
+        //@ts-expect-error volar giving errors
+        new URL("./src/composables/useMockedCoingecko.ts", import.meta.url)
       ),
     },
   },

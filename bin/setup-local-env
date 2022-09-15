@@ -190,7 +190,7 @@ spin_up_environment() {
   docker compose --profile ganache up  -d -V 
   msg "${GREEN}- Containers started ${NOFORMAT}"
 
-  # ./bin/wait-for-tcp localhost:8545
+  ./bin/wait-for-it localhost:8545
   msg "${GREEN}- Ganache is ready ${NOFORMAT}"
   sleep 2
 
