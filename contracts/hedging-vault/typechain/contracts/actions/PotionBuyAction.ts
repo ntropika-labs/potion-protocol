@@ -2,1335 +2,868 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-  PromiseOrValue,
-} from "../../common";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "../../common";
 
 export type PotionBuyInfoStruct = {
-  targetPotionAddress: PromiseOrValue<string>;
-  underlyingAsset: PromiseOrValue<string>;
-  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
-  expirationTimestamp: PromiseOrValue<BigNumberish>;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
-  totalSizeInPotions: PromiseOrValue<BigNumberish>;
+    targetPotionAddress: PromiseOrValue<string>;
+    underlyingAsset: PromiseOrValue<string>;
+    strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+    expirationTimestamp: PromiseOrValue<BigNumberish>;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+    expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
+    totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-  BigNumber,
-  BigNumber
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+    BigNumber,
+    BigNumber,
 ] & {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumber;
-  expirationTimestamp: BigNumber;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-  expectedPremiumInUSDC: BigNumber;
-  totalSizeInPotions: BigNumber;
+    targetPotionAddress: string;
+    underlyingAsset: string;
+    strikePriceInUSDC: BigNumber;
+    expirationTimestamp: BigNumber;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+    expectedPremiumInUSDC: BigNumber;
+    totalSizeInPotions: BigNumber;
 };
 
 export declare namespace ICurveManager {
-  export type CurveStruct = {
-    a_59x18: PromiseOrValue<BigNumberish>;
-    b_59x18: PromiseOrValue<BigNumberish>;
-    c_59x18: PromiseOrValue<BigNumberish>;
-    d_59x18: PromiseOrValue<BigNumberish>;
-    max_util_59x18: PromiseOrValue<BigNumberish>;
-  };
+    export type CurveStruct = {
+        a_59x18: PromiseOrValue<BigNumberish>;
+        b_59x18: PromiseOrValue<BigNumberish>;
+        c_59x18: PromiseOrValue<BigNumberish>;
+        d_59x18: PromiseOrValue<BigNumberish>;
+        max_util_59x18: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CurveStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    a_59x18: BigNumber;
-    b_59x18: BigNumber;
-    c_59x18: BigNumber;
-    d_59x18: BigNumber;
-    max_util_59x18: BigNumber;
-  };
+    export type CurveStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        a_59x18: BigNumber;
+        b_59x18: BigNumber;
+        c_59x18: BigNumber;
+        d_59x18: BigNumber;
+        max_util_59x18: BigNumber;
+    };
 }
 
 export declare namespace ICriteriaManager {
-  export type CriteriaStruct = {
-    underlyingAsset: PromiseOrValue<string>;
-    strikeAsset: PromiseOrValue<string>;
-    isPut: PromiseOrValue<boolean>;
-    maxStrikePercent: PromiseOrValue<BigNumberish>;
-    maxDurationInDays: PromiseOrValue<BigNumberish>;
-  };
+    export type CriteriaStruct = {
+        underlyingAsset: PromiseOrValue<string>;
+        strikeAsset: PromiseOrValue<string>;
+        isPut: PromiseOrValue<boolean>;
+        maxStrikePercent: PromiseOrValue<BigNumberish>;
+        maxDurationInDays: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CriteriaStructOutput = [
-    string,
-    string,
-    boolean,
-    BigNumber,
-    BigNumber
-  ] & {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumber;
-    maxDurationInDays: BigNumber;
-  };
+    export type CriteriaStructOutput = [string, string, boolean, BigNumber, BigNumber] & {
+        underlyingAsset: string;
+        strikeAsset: string;
+        isPut: boolean;
+        maxStrikePercent: BigNumber;
+        maxDurationInDays: BigNumber;
+    };
 }
 
 export declare namespace IPotionLiquidityPool {
-  export type CounterpartyDetailsStruct = {
-    lp: PromiseOrValue<string>;
-    poolId: PromiseOrValue<BigNumberish>;
-    curve: ICurveManager.CurveStruct;
-    criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
-  };
+    export type CounterpartyDetailsStruct = {
+        lp: PromiseOrValue<string>;
+        poolId: PromiseOrValue<BigNumberish>;
+        curve: ICurveManager.CurveStruct;
+        criteria: ICriteriaManager.CriteriaStruct;
+        orderSizeInOtokens: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CounterpartyDetailsStructOutput = [
-    string,
-    BigNumber,
-    ICurveManager.CurveStructOutput,
-    ICriteriaManager.CriteriaStructOutput,
-    BigNumber
-  ] & {
-    lp: string;
-    poolId: BigNumber;
-    curve: ICurveManager.CurveStructOutput;
-    criteria: ICriteriaManager.CriteriaStructOutput;
-    orderSizeInOtokens: BigNumber;
-  };
+    export type CounterpartyDetailsStructOutput = [
+        string,
+        BigNumber,
+        ICurveManager.CurveStructOutput,
+        ICriteriaManager.CriteriaStructOutput,
+        BigNumber,
+    ] & {
+        lp: string;
+        poolId: BigNumber;
+        curve: ICurveManager.CurveStructOutput;
+        criteria: ICriteriaManager.CriteriaStructOutput;
+        orderSizeInOtokens: BigNumber;
+    };
 }
 
 export declare namespace IUniswapV3Oracle {
-  export type SwapInfoStruct = {
-    inputToken: PromiseOrValue<string>;
-    outputToken: PromiseOrValue<string>;
-    expectedPriceRate: PromiseOrValue<BigNumberish>;
-    swapPath: PromiseOrValue<BytesLike>;
-  };
+    export type SwapInfoStruct = {
+        inputToken: PromiseOrValue<string>;
+        outputToken: PromiseOrValue<string>;
+        expectedPriceRate: PromiseOrValue<BigNumberish>;
+        swapPath: PromiseOrValue<BytesLike>;
+    };
 
-  export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
-    inputToken: string;
-    outputToken: string;
-    expectedPriceRate: BigNumber;
-    swapPath: string;
-  };
+    export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
+        inputToken: string;
+        outputToken: string;
+        expectedPriceRate: BigNumber;
+        swapPath: string;
+    };
 }
 
 export declare namespace PotionBuyAction {
-  export type PotionBuyInitParamsStruct = {
-    adminAddress: PromiseOrValue<string>;
-    strategistAddress: PromiseOrValue<string>;
-    operatorAddress: PromiseOrValue<string>;
-    investmentAsset: PromiseOrValue<string>;
-    USDC: PromiseOrValue<string>;
-    uniswapV3SwapRouter: PromiseOrValue<string>;
-    potionLiquidityPoolManager: PromiseOrValue<string>;
-    opynAddressBook: PromiseOrValue<string>;
-    maxPremiumPercentage: PromiseOrValue<BigNumberish>;
-    premiumSlippage: PromiseOrValue<BigNumberish>;
-    swapSlippage: PromiseOrValue<BigNumberish>;
-    maxSwapDurationSecs: PromiseOrValue<BigNumberish>;
-    cycleDurationSecs: PromiseOrValue<BigNumberish>;
-    strikePercentage: PromiseOrValue<BigNumberish>;
-  };
+    export type PotionBuyInitParamsStruct = {
+        adminAddress: PromiseOrValue<string>;
+        strategistAddress: PromiseOrValue<string>;
+        operatorAddress: PromiseOrValue<string>;
+        investmentAsset: PromiseOrValue<string>;
+        USDC: PromiseOrValue<string>;
+        uniswapV3SwapRouter: PromiseOrValue<string>;
+        potionLiquidityPoolManager: PromiseOrValue<string>;
+        opynAddressBook: PromiseOrValue<string>;
+        maxPremiumPercentage: PromiseOrValue<BigNumberish>;
+        premiumSlippage: PromiseOrValue<BigNumberish>;
+        swapSlippage: PromiseOrValue<BigNumberish>;
+        maxSwapDurationSecs: PromiseOrValue<BigNumberish>;
+        cycleDurationSecs: PromiseOrValue<BigNumberish>;
+        strikePercentage: PromiseOrValue<BigNumberish>;
+    };
 
-  export type PotionBuyInitParamsStructOutput = [
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    adminAddress: string;
-    strategistAddress: string;
-    operatorAddress: string;
-    investmentAsset: string;
-    USDC: string;
-    uniswapV3SwapRouter: string;
-    potionLiquidityPoolManager: string;
-    opynAddressBook: string;
-    maxPremiumPercentage: BigNumber;
-    premiumSlippage: BigNumber;
-    swapSlippage: BigNumber;
-    maxSwapDurationSecs: BigNumber;
-    cycleDurationSecs: BigNumber;
-    strikePercentage: BigNumber;
-  };
+    export type PotionBuyInitParamsStructOutput = [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+    ] & {
+        adminAddress: string;
+        strategistAddress: string;
+        operatorAddress: string;
+        investmentAsset: string;
+        USDC: string;
+        uniswapV3SwapRouter: string;
+        potionLiquidityPoolManager: string;
+        opynAddressBook: string;
+        maxPremiumPercentage: BigNumber;
+        premiumSlippage: BigNumber;
+        swapSlippage: BigNumber;
+        maxSwapDurationSecs: BigNumber;
+        cycleDurationSecs: BigNumber;
+        strikePercentage: BigNumber;
+    };
 }
 
 export interface PotionBuyActionInterface extends utils.Interface {
-  functions: {
-    "MIN_CYCLE_DURATION()": FunctionFragment;
-    "calculateCurrentPayout(address)": FunctionFragment;
-    "canPositionBeEntered(address)": FunctionFragment;
-    "canPositionBeExited(address)": FunctionFragment;
-    "canRefund(address)": FunctionFragment;
-    "canRefundETH()": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
-    "cycleDurationSecs()": FunctionFragment;
-    "enterPosition(address,uint256)": FunctionFragment;
-    "exitPosition(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getLifecycleState()": FunctionFragment;
-    "getOperator()": FunctionFragment;
-    "getOpynAddressBook()": FunctionFragment;
-    "getPotionBuyInfo(address,uint256)": FunctionFragment;
-    "getPotionLiquidityManager()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
-    "getSwapInfo(address,address)": FunctionFragment;
-    "getSwapInputAmount(address,address,uint256)": FunctionFragment;
-    "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
-    "getSwapRouter()": FunctionFragment;
-    "getUSDC()": FunctionFragment;
-    "getVault()": FunctionFragment;
-    "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "maxPremiumPercentage()": FunctionFragment;
-    "maxSwapDurationSecs()": FunctionFragment;
-    "nextCycleStartTimestamp()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "premiumSlippage()": FunctionFragment;
-    "refund(address,uint256,address)": FunctionFragment;
-    "refundETH(uint256,address)": FunctionFragment;
-    "setCycleDuration(uint256)": FunctionFragment;
-    "setMaxPremiumPercentage(uint256)": FunctionFragment;
-    "setMaxSwapDuration(uint256)": FunctionFragment;
-    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
-    "setPremiumSlippage(uint256)": FunctionFragment;
-    "setStrikePercentage(uint256)": FunctionFragment;
-    "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
-    "setSwapSlippage(uint256)": FunctionFragment;
-    "strikePercentage()": FunctionFragment;
-    "swapSlippage()": FunctionFragment;
-    "unpause()": FunctionFragment;
-  };
+    functions: {
+        "ADMIN_ROLE()": FunctionFragment;
+        "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+        "INVESTOR_ROLE()": FunctionFragment;
+        "MIN_CYCLE_DURATION()": FunctionFragment;
+        "OPERATOR_ROLE()": FunctionFragment;
+        "STRATEGIST_ROLE()": FunctionFragment;
+        "VAULT_ROLE()": FunctionFragment;
+        "calculateCurrentPayout(address)": FunctionFragment;
+        "canPositionBeEntered(address)": FunctionFragment;
+        "canPositionBeExited(address)": FunctionFragment;
+        "canRefund(address)": FunctionFragment;
+        "canRefundETH()": FunctionFragment;
+        "cycleDurationSecs()": FunctionFragment;
+        "enterPosition(address,uint256)": FunctionFragment;
+        "exitPosition(address)": FunctionFragment;
+        "getLifecycleState()": FunctionFragment;
+        "getOpynAddressBook()": FunctionFragment;
+        "getPotionBuyInfo(address,uint256)": FunctionFragment;
+        "getPotionLiquidityManager()": FunctionFragment;
+        "getRoleAdmin(bytes32)": FunctionFragment;
+        "getRoleMember(bytes32,uint256)": FunctionFragment;
+        "getRoleMemberCount(bytes32)": FunctionFragment;
+        "getSwapInfo(address,address)": FunctionFragment;
+        "getSwapInputAmount(address,address,uint256)": FunctionFragment;
+        "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
+        "getSwapRouter()": FunctionFragment;
+        "getUSDC()": FunctionFragment;
+        "grantRole(bytes32,address)": FunctionFragment;
+        "hasRole(bytes32,address)": FunctionFragment;
+        "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+        "maxPremiumPercentage()": FunctionFragment;
+        "maxSwapDurationSecs()": FunctionFragment;
+        "nextCycleStartTimestamp()": FunctionFragment;
+        "pause()": FunctionFragment;
+        "paused()": FunctionFragment;
+        "premiumSlippage()": FunctionFragment;
+        "refund(address,uint256,address)": FunctionFragment;
+        "refundETH(uint256,address)": FunctionFragment;
+        "renounceRole(bytes32,address)": FunctionFragment;
+        "revokeRole(bytes32,address)": FunctionFragment;
+        "setCycleDuration(uint256)": FunctionFragment;
+        "setMaxPremiumPercentage(uint256)": FunctionFragment;
+        "setMaxSwapDuration(uint256)": FunctionFragment;
+        "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+        "setPremiumSlippage(uint256)": FunctionFragment;
+        "setStrikePercentage(uint256)": FunctionFragment;
+        "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
+        "setSwapSlippage(uint256)": FunctionFragment;
+        "strikePercentage()": FunctionFragment;
+        "supportsInterface(bytes4)": FunctionFragment;
+        "swapSlippage()": FunctionFragment;
+        "unpause()": FunctionFragment;
+    };
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "MIN_CYCLE_DURATION"
-      | "calculateCurrentPayout"
-      | "canPositionBeEntered"
-      | "canPositionBeExited"
-      | "canRefund"
-      | "canRefundETH"
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
-      | "cycleDurationSecs"
-      | "enterPosition"
-      | "exitPosition"
-      | "getAdmin"
-      | "getLifecycleState"
-      | "getOperator"
-      | "getOpynAddressBook"
-      | "getPotionBuyInfo"
-      | "getPotionLiquidityManager"
-      | "getStrategist"
-      | "getSwapInfo"
-      | "getSwapInputAmount"
-      | "getSwapOutputAmount"
-      | "getSwapRouter"
-      | "getUSDC"
-      | "getVault"
-      | "initialize"
-      | "maxPremiumPercentage"
-      | "maxSwapDurationSecs"
-      | "nextCycleStartTimestamp"
-      | "pause"
-      | "paused"
-      | "premiumSlippage"
-      | "refund"
-      | "refundETH"
-      | "setCycleDuration"
-      | "setMaxPremiumPercentage"
-      | "setMaxSwapDuration"
-      | "setPotionBuyInfo"
-      | "setPremiumSlippage"
-      | "setStrikePercentage"
-      | "setSwapInfo"
-      | "setSwapSlippage"
-      | "strikePercentage"
-      | "swapSlippage"
-      | "unpause"
-  ): FunctionFragment;
+    getFunction(
+        nameOrSignatureOrTopic:
+            | "ADMIN_ROLE"
+            | "DEFAULT_ADMIN_ROLE"
+            | "INVESTOR_ROLE"
+            | "MIN_CYCLE_DURATION"
+            | "OPERATOR_ROLE"
+            | "STRATEGIST_ROLE"
+            | "VAULT_ROLE"
+            | "calculateCurrentPayout"
+            | "canPositionBeEntered"
+            | "canPositionBeExited"
+            | "canRefund"
+            | "canRefundETH"
+            | "cycleDurationSecs"
+            | "enterPosition"
+            | "exitPosition"
+            | "getLifecycleState"
+            | "getOpynAddressBook"
+            | "getPotionBuyInfo"
+            | "getPotionLiquidityManager"
+            | "getRoleAdmin"
+            | "getRoleMember"
+            | "getRoleMemberCount"
+            | "getSwapInfo"
+            | "getSwapInputAmount"
+            | "getSwapOutputAmount"
+            | "getSwapRouter"
+            | "getUSDC"
+            | "grantRole"
+            | "hasRole"
+            | "initialize"
+            | "maxPremiumPercentage"
+            | "maxSwapDurationSecs"
+            | "nextCycleStartTimestamp"
+            | "pause"
+            | "paused"
+            | "premiumSlippage"
+            | "refund"
+            | "refundETH"
+            | "renounceRole"
+            | "revokeRole"
+            | "setCycleDuration"
+            | "setMaxPremiumPercentage"
+            | "setMaxSwapDuration"
+            | "setPotionBuyInfo"
+            | "setPremiumSlippage"
+            | "setStrikePercentage"
+            | "setSwapInfo"
+            | "setSwapSlippage"
+            | "strikePercentage"
+            | "supportsInterface"
+            | "swapSlippage"
+            | "unpause",
+    ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "MIN_CYCLE_DURATION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateCurrentPayout",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "canPositionBeEntered",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "canPositionBeExited",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "canRefund",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "canRefundETH",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cycleDurationSecs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enterPosition",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exitPosition",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getLifecycleState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOpynAddressBook",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPotionBuyInfo",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPotionLiquidityManager",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSwapInfo",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSwapInputAmount",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSwapOutputAmount",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSwapRouter",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [PotionBuyAction.PotionBuyInitParamsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxPremiumPercentage",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxSwapDurationSecs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nextCycleStartTimestamp",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "premiumSlippage",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refund",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refundETH",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCycleDuration",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxPremiumPercentage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxSwapDuration",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPotionBuyInfo",
-    values: [PotionBuyInfoStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPremiumSlippage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStrikePercentage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSwapInfo",
-    values: [IUniswapV3Oracle.SwapInfoStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSwapSlippage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "strikePercentage",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapSlippage",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+    encodeFunctionData(functionFragment: "ADMIN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "INVESTOR_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "MIN_CYCLE_DURATION", values?: undefined): string;
+    encodeFunctionData(functionFragment: "OPERATOR_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "VAULT_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "calculateCurrentPayout", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "canPositionBeEntered", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "canPositionBeExited", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "canRefund", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "canRefundETH", values?: undefined): string;
+    encodeFunctionData(functionFragment: "cycleDurationSecs", values?: undefined): string;
+    encodeFunctionData(
+        functionFragment: "enterPosition",
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+    ): string;
+    encodeFunctionData(functionFragment: "exitPosition", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "getLifecycleState", values?: undefined): string;
+    encodeFunctionData(functionFragment: "getOpynAddressBook", values?: undefined): string;
+    encodeFunctionData(
+        functionFragment: "getPotionBuyInfo",
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+    ): string;
+    encodeFunctionData(functionFragment: "getPotionLiquidityManager", values?: undefined): string;
+    encodeFunctionData(functionFragment: "getRoleAdmin", values: [BytesLike]): string;
+    encodeFunctionData(functionFragment: "getRoleMember", values: [BytesLike, BigNumberish]): string;
+    encodeFunctionData(functionFragment: "getRoleMemberCount", values: [BytesLike]): string;
+    encodeFunctionData(
+        functionFragment: "getSwapInfo",
+        values: [PromiseOrValue<string>, PromiseOrValue<string>],
+    ): string;
+    encodeFunctionData(
+        functionFragment: "getSwapInputAmount",
+        values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+    ): string;
+    encodeFunctionData(
+        functionFragment: "getSwapOutputAmount",
+        values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+    ): string;
+    encodeFunctionData(functionFragment: "getSwapRouter", values?: undefined): string;
+    encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
+    encodeFunctionData(functionFragment: "grantRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "hasRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "initialize", values: [PotionBuyAction.PotionBuyInitParamsStruct]): string;
+    encodeFunctionData(functionFragment: "maxPremiumPercentage", values?: undefined): string;
+    encodeFunctionData(functionFragment: "maxSwapDurationSecs", values?: undefined): string;
+    encodeFunctionData(functionFragment: "nextCycleStartTimestamp", values?: undefined): string;
+    encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+    encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+    encodeFunctionData(functionFragment: "premiumSlippage", values?: undefined): string;
+    encodeFunctionData(
+        functionFragment: "refund",
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>, PromiseOrValue<string>],
+    ): string;
+    encodeFunctionData(
+        functionFragment: "refundETH",
+        values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>],
+    ): string;
+    encodeFunctionData(functionFragment: "renounceRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "revokeRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "setCycleDuration", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "setMaxPremiumPercentage", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "setMaxSwapDuration", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "setPotionBuyInfo", values: [PotionBuyInfoStruct]): string;
+    encodeFunctionData(functionFragment: "setPremiumSlippage", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "setStrikePercentage", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "setSwapInfo", values: [IUniswapV3Oracle.SwapInfoStruct]): string;
+    encodeFunctionData(functionFragment: "setSwapSlippage", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "strikePercentage", values?: undefined): string;
+    encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
+    encodeFunctionData(functionFragment: "swapSlippage", values?: undefined): string;
+    encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "MIN_CYCLE_DURATION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateCurrentPayout",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "canPositionBeEntered",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "canPositionBeExited",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "canRefund", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "canRefundETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cycleDurationSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "enterPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exitPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getLifecycleState",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOpynAddressBook",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPotionBuyInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPotionLiquidityManager",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSwapInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSwapInputAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSwapOutputAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSwapRouter",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "maxPremiumPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxSwapDurationSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nextCycleStartTimestamp",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "premiumSlippage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setCycleDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxPremiumPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxSwapDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPotionBuyInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPremiumSlippage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStrikePercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSwapInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSwapSlippage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "strikePercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapSlippage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "INVESTOR_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "MIN_CYCLE_DURATION", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "OPERATOR_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "calculateCurrentPayout", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "canPositionBeEntered", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "canPositionBeExited", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "canRefund", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "canRefundETH", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "cycleDurationSecs", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "enterPosition", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "exitPosition", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getLifecycleState", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getOpynAddressBook", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getPotionBuyInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getPotionLiquidityManager", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleMember", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleMemberCount", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getSwapInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getSwapInputAmount", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getSwapOutputAmount", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getSwapRouter", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "maxPremiumPercentage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "maxSwapDurationSecs", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "nextCycleStartTimestamp", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "premiumSlippage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setCycleDuration", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setMaxPremiumPercentage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setMaxSwapDuration", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setPotionBuyInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setPremiumSlippage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setStrikePercentage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setSwapInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setSwapSlippage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "strikePercentage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "swapSlippage", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
-  events: {
-    "ActionPositionEntered(address,uint256)": EventFragment;
-    "ActionPositionExited(address,uint256)": EventFragment;
-    "AdminChanged(address,address)": EventFragment;
-    "CycleDurationChanged(uint256)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "LifecycleStateChanged(uint8,uint8)": EventFragment;
-    "MaxPremiumPercentageChanged(uint256)": EventFragment;
-    "MaxSwapDurationChanged(uint256)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "PremiumSlippageChanged(uint256)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
-    "StrikePercentageChanged(uint256)": EventFragment;
-    "SwapSlippageChanged(uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
-  };
+    events: {
+        "ActionPositionEntered(address,uint256)": EventFragment;
+        "ActionPositionExited(address,uint256)": EventFragment;
+        "CycleDurationChanged(uint256)": EventFragment;
+        "Initialized(uint8)": EventFragment;
+        "LifecycleStateChanged(uint8,uint8)": EventFragment;
+        "MaxPremiumPercentageChanged(uint256)": EventFragment;
+        "MaxSwapDurationChanged(uint256)": EventFragment;
+        "Paused(address)": EventFragment;
+        "PremiumSlippageChanged(uint256)": EventFragment;
+        "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+        "RoleGranted(bytes32,address,address)": EventFragment;
+        "RoleRevoked(bytes32,address,address)": EventFragment;
+        "StrikePercentageChanged(uint256)": EventFragment;
+        "SwapSlippageChanged(uint256)": EventFragment;
+        "Unpaused(address)": EventFragment;
+    };
 
-  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrikePercentageChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "StrikePercentageChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
-  investmentAsset: string;
-  amountToInvest: BigNumber;
+    investmentAsset: string;
+    amountToInvest: BigNumber;
 }
-export type ActionPositionEnteredEvent = TypedEvent<
-  [string, BigNumber],
-  ActionPositionEnteredEventObject
->;
+export type ActionPositionEnteredEvent = TypedEvent<[string, BigNumber], ActionPositionEnteredEventObject>;
 
-export type ActionPositionEnteredEventFilter =
-  TypedEventFilter<ActionPositionEnteredEvent>;
+export type ActionPositionEnteredEventFilter = TypedEventFilter<ActionPositionEnteredEvent>;
 
 export interface ActionPositionExitedEventObject {
-  investmentAsset: string;
-  amountReturned: BigNumber;
+    investmentAsset: string;
+    amountReturned: BigNumber;
 }
-export type ActionPositionExitedEvent = TypedEvent<
-  [string, BigNumber],
-  ActionPositionExitedEventObject
->;
+export type ActionPositionExitedEvent = TypedEvent<[string, BigNumber], ActionPositionExitedEventObject>;
 
-export type ActionPositionExitedEventFilter =
-  TypedEventFilter<ActionPositionExitedEvent>;
-
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+export type ActionPositionExitedEventFilter = TypedEventFilter<ActionPositionExitedEvent>;
 
 export interface CycleDurationChangedEventObject {
-  cycleDurationSecs: BigNumber;
+    cycleDurationSecs: BigNumber;
 }
-export type CycleDurationChangedEvent = TypedEvent<
-  [BigNumber],
-  CycleDurationChangedEventObject
->;
+export type CycleDurationChangedEvent = TypedEvent<[BigNumber], CycleDurationChangedEventObject>;
 
-export type CycleDurationChangedEventFilter =
-  TypedEventFilter<CycleDurationChangedEvent>;
+export type CycleDurationChangedEventFilter = TypedEventFilter<CycleDurationChangedEvent>;
 
 export interface InitializedEventObject {
-  version: number;
+    version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface LifecycleStateChangedEventObject {
-  prevState: number;
-  newState: number;
+    prevState: number;
+    newState: number;
 }
-export type LifecycleStateChangedEvent = TypedEvent<
-  [number, number],
-  LifecycleStateChangedEventObject
->;
+export type LifecycleStateChangedEvent = TypedEvent<[number, number], LifecycleStateChangedEventObject>;
 
-export type LifecycleStateChangedEventFilter =
-  TypedEventFilter<LifecycleStateChangedEvent>;
+export type LifecycleStateChangedEventFilter = TypedEventFilter<LifecycleStateChangedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
-  maxPremiumPercentage: BigNumber;
+    maxPremiumPercentage: BigNumber;
 }
-export type MaxPremiumPercentageChangedEvent = TypedEvent<
-  [BigNumber],
-  MaxPremiumPercentageChangedEventObject
->;
+export type MaxPremiumPercentageChangedEvent = TypedEvent<[BigNumber], MaxPremiumPercentageChangedEventObject>;
 
-export type MaxPremiumPercentageChangedEventFilter =
-  TypedEventFilter<MaxPremiumPercentageChangedEvent>;
+export type MaxPremiumPercentageChangedEventFilter = TypedEventFilter<MaxPremiumPercentageChangedEvent>;
 
 export interface MaxSwapDurationChangedEventObject {
-  maxSwapDurationSecs: BigNumber;
+    maxSwapDurationSecs: BigNumber;
 }
-export type MaxSwapDurationChangedEvent = TypedEvent<
-  [BigNumber],
-  MaxSwapDurationChangedEventObject
->;
+export type MaxSwapDurationChangedEvent = TypedEvent<[BigNumber], MaxSwapDurationChangedEventObject>;
 
-export type MaxSwapDurationChangedEventFilter =
-  TypedEventFilter<MaxSwapDurationChangedEvent>;
-
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
-
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+export type MaxSwapDurationChangedEventFilter = TypedEventFilter<MaxSwapDurationChangedEvent>;
 
 export interface PausedEventObject {
-  account: string;
+    account: string;
 }
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface PremiumSlippageChangedEventObject {
-  premiumSlippage: BigNumber;
+    premiumSlippage: BigNumber;
 }
-export type PremiumSlippageChangedEvent = TypedEvent<
-  [BigNumber],
-  PremiumSlippageChangedEventObject
->;
+export type PremiumSlippageChangedEvent = TypedEvent<[BigNumber], PremiumSlippageChangedEventObject>;
 
-export type PremiumSlippageChangedEventFilter =
-  TypedEventFilter<PremiumSlippageChangedEvent>;
+export type PremiumSlippageChangedEventFilter = TypedEventFilter<PremiumSlippageChangedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleAdminChangedEventObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
->;
+export type RoleAdminChangedEvent = TypedEvent<[string, string, string], RoleAdminChangedEventObject>;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+    role: string;
+    account: string;
+    sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<[string, string, string], RoleGrantedEventObject>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+    role: string;
+    account: string;
+    sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<[string, string, string], RoleRevokedEventObject>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface StrikePercentageChangedEventObject {
-  strikePercentage: BigNumber;
+    strikePercentage: BigNumber;
 }
-export type StrikePercentageChangedEvent = TypedEvent<
-  [BigNumber],
-  StrikePercentageChangedEventObject
->;
+export type StrikePercentageChangedEvent = TypedEvent<[BigNumber], StrikePercentageChangedEventObject>;
 
-export type StrikePercentageChangedEventFilter =
-  TypedEventFilter<StrikePercentageChangedEvent>;
+export type StrikePercentageChangedEventFilter = TypedEventFilter<StrikePercentageChangedEvent>;
 
 export interface SwapSlippageChangedEventObject {
-  swapSlippage: BigNumber;
+    swapSlippage: BigNumber;
 }
-export type SwapSlippageChangedEvent = TypedEvent<
-  [BigNumber],
-  SwapSlippageChangedEventObject
->;
+export type SwapSlippageChangedEvent = TypedEvent<[BigNumber], SwapSlippageChangedEventObject>;
 
-export type SwapSlippageChangedEventFilter =
-  TypedEventFilter<SwapSlippageChangedEvent>;
+export type SwapSlippageChangedEventFilter = TypedEventFilter<SwapSlippageChangedEvent>;
 
 export interface UnpausedEventObject {
-  account: string;
+    account: string;
 }
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
-}
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
->;
-
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
-
 export interface PotionBuyAction extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: PotionBuyActionInterface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    calculateCurrentPayout(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
-
-    canPositionBeEntered(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { canEnter: boolean }>;
-
-    canPositionBeExited(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { canExit: boolean }>;
-
-    canRefund(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    connect(signerOrProvider: Signer | Provider | string): this;
+    attach(addressOrName: string): this;
+    deployed(): Promise<this>;
 
-    canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    enterPosition(
-      investmentAsset: PromiseOrValue<string>,
-      amountToInvest: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    exitPosition(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
-    getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
-
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
-
-    getOpynAddressBook(overrides?: CallOverrides): Promise<[string]>;
-
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[PotionBuyInfoStructOutput]>;
-
-    getPotionLiquidityManager(overrides?: CallOverrides): Promise<[string]>;
-
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
-
-    getSwapInfo(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
-
-    getSwapInputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountOut: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getSwapOutputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountIn: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    interface: PotionBuyActionInterface;
 
-    getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
-
-    getUSDC(overrides?: CallOverrides): Promise<[string]>;
-
-    getVault(overrides?: CallOverrides): Promise<[string]>;
-
-    initialize(
-      initParams: PotionBuyAction.PotionBuyInitParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    premiumSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    refund(
-      token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    refundETH(
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setCycleDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setMaxPremiumPercentage(
-      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setMaxSwapDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined,
+    ): Promise<Array<TEvent>>;
 
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setPremiumSlippage(
-      premiumSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
+    listeners(eventName?: string): Array<Listener>;
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+    removeAllListeners(eventName?: string): this;
+    off: OnEvent<this>;
+    on: OnEvent<this>;
+    once: OnEvent<this>;
+    removeListener: OnEvent<this>;
 
-    setStrikePercentage(
-      strikePercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    functions: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    setSwapInfo(
-      info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setSwapSlippage(
-      swapSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    strikePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  calculateCurrentPayout(
-    investmentAsset: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+        MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  canPositionBeEntered(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  canPositionBeExited(
-    investmentAsset: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  canRefund(
-    token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+        VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  canRefundETH(overrides?: CallOverrides): Promise<boolean>;
+        calculateCurrentPayout(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        canPositionBeEntered(
+            arg0: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<[boolean] & { canEnter: boolean }>;
 
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        canPositionBeExited(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<[boolean] & { canExit: boolean }>;
 
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
 
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
-  cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+        cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  enterPosition(
-    investmentAsset: PromiseOrValue<string>,
-    amountToInvest: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        enterPosition(
+            investmentAsset: PromiseOrValue<string>,
+            amountToInvest: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  exitPosition(
-    investmentAsset: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        exitPosition(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
+        getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
-  getLifecycleState(overrides?: CallOverrides): Promise<number>;
+        getOpynAddressBook(overrides?: CallOverrides): Promise<[string]>;
 
-  getOperator(overrides?: CallOverrides): Promise<string>;
-
-  getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<[PotionBuyInfoStructOutput]>;
 
-  getPotionBuyInfo(
-    underlyingAsset: PromiseOrValue<string>,
-    expirationTimestamp: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<PotionBuyInfoStructOutput>;
-
-  getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
-
-  getStrategist(overrides?: CallOverrides): Promise<string>;
-
-  getSwapInfo(
-    inputToken: PromiseOrValue<string>,
-    outputToken: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
+        getPotionLiquidityManager(overrides?: CallOverrides): Promise<[string]>;
 
-  getSwapInputAmount(
-    inputToken: PromiseOrValue<string>,
-    outputToken: PromiseOrValue<string>,
-    amountOut: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-  getSwapOutputAmount(
-    inputToken: PromiseOrValue<string>,
-    outputToken: PromiseOrValue<string>,
-    amountIn: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
-  getSwapRouter(overrides?: CallOverrides): Promise<string>;
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  getUSDC(overrides?: CallOverrides): Promise<string>;
+        getSwapInfo(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+        getSwapInputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountOut: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<[BigNumber]>;
 
-  initialize(
-    initParams: PotionBuyAction.PotionBuyInitParamsStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        getSwapOutputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountIn: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<[BigNumber]>;
+
+        getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
 
-  maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+        getUSDC(overrides?: CallOverrides): Promise<[string]>;
 
-  maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-  pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        initialize(
+            initParams: PotionBuyAction.PotionBuyInitParamsStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  paused(overrides?: CallOverrides): Promise<boolean>;
+        maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+        maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  refund(
-    token: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        nextCycleStartTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  refundETH(
-    amount: PromiseOrValue<BigNumberish>,
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
 
-  setCycleDuration(
-    durationSeconds: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-  setMaxPremiumPercentage(
-    maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        premiumSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  setMaxSwapDuration(
-    durationSeconds: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        refund(
+            token: PromiseOrValue<string>,
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  setPotionBuyInfo(
-    info: PotionBuyInfoStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        refundETH(
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  setPremiumSlippage(
-    premiumSlippage_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  setStrikePercentage(
-    strikePercentage_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  setSwapInfo(
-    info: IUniswapV3Oracle.SwapInfoStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        setCycleDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  setSwapSlippage(
-    swapSlippage_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        setMaxPremiumPercentage(
+            maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+        setMaxSwapDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  unpause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        setPremiumSlippage(
+            premiumSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  callStatic: {
+        setStrikePercentage(
+            strikePercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
+
+        setSwapInfo(
+            info: IUniswapV3Oracle.SwapInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
+
+        setSwapSlippage(
+            swapSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
+
+        strikePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+
+        swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
+    };
+
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
     calculateCurrentPayout(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
+        investmentAsset: PromiseOrValue<string>,
+        overrides?: CallOverrides,
     ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
-    canPositionBeEntered(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    canPositionBeEntered(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    canPositionBeExited(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    canRefund(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
-      investmentAsset: PromiseOrValue<string>,
-      amountToInvest: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        investmentAsset: PromiseOrValue<string>,
+        amountToInvest: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     exitPosition(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAdmin(overrides?: CallOverrides): Promise<string>;
+        investmentAsset: PromiseOrValue<string>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-    getOperator(overrides?: CallOverrides): Promise<string>;
 
     getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+        underlyingAsset: PromiseOrValue<string>,
+        expirationTimestamp: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides,
     ): Promise<PotionBuyInfoStructOutput>;
 
     getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     getSwapInfo(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      overrides?: CallOverrides
+        inputToken: PromiseOrValue<string>,
+        outputToken: PromiseOrValue<string>,
+        overrides?: CallOverrides,
     ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
     getSwapInputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountOut: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+        inputToken: PromiseOrValue<string>,
+        outputToken: PromiseOrValue<string>,
+        amountOut: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     getSwapOutputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountIn: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+        inputToken: PromiseOrValue<string>,
+        outputToken: PromiseOrValue<string>,
+        amountIn: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
     getUSDC(overrides?: CallOverrides): Promise<string>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    grantRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
     initialize(
-      initParams: PotionBuyAction.PotionBuyInitParamsStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        initParams: PotionBuyAction.PotionBuyInitParamsStruct,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1338,561 +871,670 @@ export interface PotionBuyAction extends BaseContract {
 
     nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     refund(
-      token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        token: PromiseOrValue<string>,
+        amount: PromiseOrValue<BigNumberish>,
+        recipient: PromiseOrValue<string>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     refundETH(
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amount: PromiseOrValue<BigNumberish>,
+        recipient: PromiseOrValue<string>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    renounceRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
 
     setCycleDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        durationSeconds: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setMaxPremiumPercentage(
-      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setMaxSwapDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        durationSeconds: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        info: PotionBuyInfoStruct,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setPremiumSlippage(
-      premiumSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        premiumSlippage_: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setStrikePercentage(
-      strikePercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        strikePercentage_: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setSwapInfo(
-      info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        info: IUniswapV3Oracle.SwapInfoStruct,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     setSwapSlippage(
-      swapSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        swapSlippage_: PromiseOrValue<BigNumberish>,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
     strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
-    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
-  };
-
-  filters: {
-    "ActionPositionEntered(address,uint256)"(
-      investmentAsset?: PromiseOrValue<string> | null,
-      amountToInvest?: null
-    ): ActionPositionEnteredEventFilter;
-    ActionPositionEntered(
-      investmentAsset?: PromiseOrValue<string> | null,
-      amountToInvest?: null
-    ): ActionPositionEnteredEventFilter;
-
-    "ActionPositionExited(address,uint256)"(
-      investmentAsset?: PromiseOrValue<string> | null,
-      amountReturned?: null
-    ): ActionPositionExitedEventFilter;
-    ActionPositionExited(
-      investmentAsset?: PromiseOrValue<string> | null,
-      amountReturned?: null
-    ): ActionPositionExitedEventFilter;
-
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-
-    "CycleDurationChanged(uint256)"(
-      cycleDurationSecs?: null
-    ): CycleDurationChangedEventFilter;
-    CycleDurationChanged(
-      cycleDurationSecs?: null
-    ): CycleDurationChangedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "LifecycleStateChanged(uint8,uint8)"(
-      prevState?: PromiseOrValue<BigNumberish> | null,
-      newState?: PromiseOrValue<BigNumberish> | null
-    ): LifecycleStateChangedEventFilter;
-    LifecycleStateChanged(
-      prevState?: PromiseOrValue<BigNumberish> | null,
-      newState?: PromiseOrValue<BigNumberish> | null
-    ): LifecycleStateChangedEventFilter;
-
-    "MaxPremiumPercentageChanged(uint256)"(
-      maxPremiumPercentage?: null
-    ): MaxPremiumPercentageChangedEventFilter;
-    MaxPremiumPercentageChanged(
-      maxPremiumPercentage?: null
-    ): MaxPremiumPercentageChangedEventFilter;
-
-    "MaxSwapDurationChanged(uint256)"(
-      maxSwapDurationSecs?: null
-    ): MaxSwapDurationChangedEventFilter;
-    MaxSwapDurationChanged(
-      maxSwapDurationSecs?: null
-    ): MaxSwapDurationChangedEventFilter;
-
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "PremiumSlippageChanged(uint256)"(
-      premiumSlippage?: null
-    ): PremiumSlippageChangedEventFilter;
-    PremiumSlippageChanged(
-      premiumSlippage?: null
-    ): PremiumSlippageChangedEventFilter;
-
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-
-    "StrikePercentageChanged(uint256)"(
-      strikePercentage?: null
-    ): StrikePercentageChangedEventFilter;
-    StrikePercentageChanged(
-      strikePercentage?: null
-    ): StrikePercentageChangedEventFilter;
-
-    "SwapSlippageChanged(uint256)"(
-      swapSlippage?: null
-    ): SwapSlippageChangedEventFilter;
-    SwapSlippageChanged(swapSlippage?: null): SwapSlippageChangedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-  };
-
-  estimateGas: {
-    MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    calculateCurrentPayout(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    canPositionBeEntered(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    canPositionBeExited(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    canRefund(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    enterPosition(
-      investmentAsset: PromiseOrValue<string>,
-      amountToInvest: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    exitPosition(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOpynAddressBook(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPotionLiquidityManager(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSwapInfo(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getSwapInputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountOut: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getSwapOutputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountIn: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
-
-    initialize(
-      initParams: PotionBuyAction.PotionBuyInitParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
-
-    refund(
-      token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    refundETH(
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setCycleDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setMaxPremiumPercentage(
-      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setMaxSwapDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPremiumSlippage(
-      premiumSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setStrikePercentage(
-      strikePercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setSwapInfo(
-      info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setSwapSlippage(
-      swapSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+    supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
+    unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
 
-  populateTransaction: {
-    MIN_CYCLE_DURATION(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    callStatic: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    calculateCurrentPayout(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    canPositionBeEntered(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    canPositionBeExited(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    canRefund(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        calculateCurrentPayout(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        canPositionBeEntered(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    enterPosition(
-      investmentAsset: PromiseOrValue<string>,
-      amountToInvest: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    exitPosition(
-      investmentAsset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        enterPosition(
+            investmentAsset: PromiseOrValue<string>,
+            amountToInvest: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<void>;
 
-    getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        exitPosition(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
-    getOpynAddressBook(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PotionBuyInfoStructOutput>;
 
-    getPotionLiquidityManager(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    getSwapInfo(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    getSwapInputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountOut: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    getSwapOutputAmount(
-      inputToken: PromiseOrValue<string>,
-      outputToken: PromiseOrValue<string>,
-      amountIn: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getSwapInfo(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
 
-    getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getSwapInputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountOut: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
 
-    getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getSwapOutputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountIn: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getSwapRouter(overrides?: CallOverrides): Promise<string>;
 
-    initialize(
-      initParams: PotionBuyAction.PotionBuyInitParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        getUSDC(overrides?: CallOverrides): Promise<string>;
 
-    maxPremiumPercentage(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        grantRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
 
-    maxSwapDurationSecs(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
-    nextCycleStartTimestamp(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        initialize(initParams: PotionBuyAction.PotionBuyInitParamsStruct, overrides?: CallOverrides): Promise<void>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
-    premiumSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    refund(
-      token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        pause(overrides?: CallOverrides): Promise<void>;
 
-    refundETH(
-      amount: PromiseOrValue<BigNumberish>,
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        paused(overrides?: CallOverrides): Promise<boolean>;
 
-    setCycleDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setMaxPremiumPercentage(
-      maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        refund(
+            token: PromiseOrValue<string>,
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<void>;
 
-    setMaxSwapDuration(
-      durationSeconds: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        refundETH(
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<void>;
 
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        renounceRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
 
-    setPremiumSlippage(
-      premiumSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        revokeRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
 
-    setStrikePercentage(
-      strikePercentage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        setCycleDuration(durationSeconds: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
 
-    setSwapInfo(
-      info: IUniswapV3Oracle.SwapInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        setMaxPremiumPercentage(
+            maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<void>;
 
-    setSwapSlippage(
-      swapSlippage_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        setMaxSwapDuration(durationSeconds: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
 
-    strikePercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        setPotionBuyInfo(info: PotionBuyInfoStruct, overrides?: CallOverrides): Promise<void>;
 
-    swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        setPremiumSlippage(premiumSlippage_: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
 
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        setStrikePercentage(strikePercentage_: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+
+        setSwapInfo(info: IUniswapV3Oracle.SwapInfoStruct, overrides?: CallOverrides): Promise<void>;
+
+        setSwapSlippage(swapSlippage_: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+
+        strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+        swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        unpause(overrides?: CallOverrides): Promise<void>;
+    };
+
+    filters: {
+        "ActionPositionEntered(address,uint256)"(
+            investmentAsset?: PromiseOrValue<string> | null,
+            amountToInvest?: null,
+        ): ActionPositionEnteredEventFilter;
+        ActionPositionEntered(
+            investmentAsset?: PromiseOrValue<string> | null,
+            amountToInvest?: null,
+        ): ActionPositionEnteredEventFilter;
+
+        "ActionPositionExited(address,uint256)"(
+            investmentAsset?: PromiseOrValue<string> | null,
+            amountReturned?: null,
+        ): ActionPositionExitedEventFilter;
+        ActionPositionExited(
+            investmentAsset?: PromiseOrValue<string> | null,
+            amountReturned?: null,
+        ): ActionPositionExitedEventFilter;
+
+        "CycleDurationChanged(uint256)"(cycleDurationSecs?: null): CycleDurationChangedEventFilter;
+        CycleDurationChanged(cycleDurationSecs?: null): CycleDurationChangedEventFilter;
+
+        "Initialized(uint8)"(version?: null): InitializedEventFilter;
+        Initialized(version?: null): InitializedEventFilter;
+
+        "LifecycleStateChanged(uint8,uint8)"(
+            prevState?: PromiseOrValue<BigNumberish> | null,
+            newState?: PromiseOrValue<BigNumberish> | null,
+        ): LifecycleStateChangedEventFilter;
+        LifecycleStateChanged(
+            prevState?: PromiseOrValue<BigNumberish> | null,
+            newState?: PromiseOrValue<BigNumberish> | null,
+        ): LifecycleStateChangedEventFilter;
+
+        "MaxPremiumPercentageChanged(uint256)"(maxPremiumPercentage?: null): MaxPremiumPercentageChangedEventFilter;
+        MaxPremiumPercentageChanged(maxPremiumPercentage?: null): MaxPremiumPercentageChangedEventFilter;
+
+        "MaxSwapDurationChanged(uint256)"(maxSwapDurationSecs?: null): MaxSwapDurationChangedEventFilter;
+        MaxSwapDurationChanged(maxSwapDurationSecs?: null): MaxSwapDurationChangedEventFilter;
+
+        "Paused(address)"(account?: null): PausedEventFilter;
+        Paused(account?: null): PausedEventFilter;
+
+        "PremiumSlippageChanged(uint256)"(premiumSlippage?: null): PremiumSlippageChangedEventFilter;
+        PremiumSlippageChanged(premiumSlippage?: null): PremiumSlippageChangedEventFilter;
+
+        "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+            role?: BytesLike | null,
+            previousAdminRole?: BytesLike | null,
+            newAdminRole?: BytesLike | null,
+        ): RoleAdminChangedEventFilter;
+        RoleAdminChanged(
+            role?: BytesLike | null,
+            previousAdminRole?: BytesLike | null,
+            newAdminRole?: BytesLike | null,
+        ): RoleAdminChangedEventFilter;
+
+        "RoleGranted(bytes32,address,address)"(
+            role?: BytesLike | null,
+            account?: string | null,
+            sender?: string | null,
+        ): RoleGrantedEventFilter;
+        RoleGranted(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleGrantedEventFilter;
+
+        "RoleRevoked(bytes32,address,address)"(
+            role?: BytesLike | null,
+            account?: string | null,
+            sender?: string | null,
+        ): RoleRevokedEventFilter;
+        RoleRevoked(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleRevokedEventFilter;
+
+        "StrikePercentageChanged(uint256)"(strikePercentage?: null): StrikePercentageChangedEventFilter;
+        StrikePercentageChanged(strikePercentage?: null): StrikePercentageChangedEventFilter;
+
+        "SwapSlippageChanged(uint256)"(swapSlippage?: null): SwapSlippageChangedEventFilter;
+        SwapSlippageChanged(swapSlippage?: null): SwapSlippageChangedEventFilter;
+
+        "Unpaused(address)"(account?: null): UnpausedEventFilter;
+        Unpaused(account?: null): UnpausedEventFilter;
+    };
+
+    estimateGas: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        calculateCurrentPayout(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+
+        canPositionBeEntered(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+
+        canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+
+        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+
+        canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
+
+        cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+        enterPosition(
+            investmentAsset: PromiseOrValue<string>,
+            amountToInvest: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        exitPosition(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
+
+        getOpynAddressBook(overrides?: CallOverrides): Promise<BigNumber>;
+
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
+
+        getPotionLiquidityManager(overrides?: CallOverrides): Promise<BigNumber>;
+
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        getSwapInfo(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
+
+        getSwapInputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountOut: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
+
+        getSwapOutputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountIn: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
+
+        getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
+        getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
+
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+        initialize(
+            initParams: PotionBuyAction.PotionBuyInitParamsStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+        nextCycleStartTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>;
+
+        paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+        premiumSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        refund(
+            token: PromiseOrValue<string>,
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        refundETH(
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        setCycleDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setMaxPremiumPercentage(
+            maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setMaxSwapDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setPremiumSlippage(
+            premiumSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setStrikePercentage(
+            strikePercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setSwapInfo(
+            info: IUniswapV3Oracle.SwapInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        setSwapSlippage(
+            swapSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
+        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>;
+    };
+
+    populateTransaction: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        calculateCurrentPayout(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        canPositionBeEntered(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        canPositionBeExited(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        enterPosition(
+            investmentAsset: PromiseOrValue<string>,
+            amountToInvest: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        exitPosition(
+            investmentAsset: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getOpynAddressBook(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        getPotionLiquidityManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getSwapInfo(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        getSwapInputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountOut: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        getSwapOutputAmount(
+            inputToken: PromiseOrValue<string>,
+            outputToken: PromiseOrValue<string>,
+            amountIn: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        initialize(
+            initParams: PotionBuyAction.PotionBuyInitParamsStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        maxPremiumPercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        maxSwapDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        nextCycleStartTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<PopulatedTransaction>;
+
+        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        premiumSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        refund(
+            token: PromiseOrValue<string>,
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        refundETH(
+            amount: PromiseOrValue<BigNumberish>,
+            recipient: PromiseOrValue<string>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setCycleDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setMaxPremiumPercentage(
+            maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setMaxSwapDuration(
+            durationSeconds: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setPremiumSlippage(
+            premiumSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setStrikePercentage(
+            strikePercentage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setSwapInfo(
+            info: IUniswapV3Oracle.SwapInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setSwapSlippage(
+            swapSlippage_: PromiseOrValue<BigNumberish>,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        strikePercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<PopulatedTransaction>;
+    };
 }

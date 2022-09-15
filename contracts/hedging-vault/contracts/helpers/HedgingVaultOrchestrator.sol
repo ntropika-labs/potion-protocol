@@ -22,16 +22,16 @@ import "../interfaces/IPotionProtocolOracle.sol";
     Uniswap V3 swap and the Potion Protocol buy.
  */
 contract HedgingVaultOrchestrator is Ownable {
-    IVault public immutable hedgingVault;
-    IPotionBuyAction public immutable potionBuyAction;
+    IVault public hedgingVault;
+    IPotionBuyAction public potionBuyAction;
 
     /**
-        @notice Initializes the helper with the vault and the action to be used to enter and exit the position.
+        @notice Sets the addresses of the vault and the action to be used to enter and exit the position.
 
         @param hedgingVault_ The vault to be used to enter and exit the position.
         @param potionBuyAction_ The action to be used to enter and exit the position.
     */
-    constructor(address hedgingVault_, address potionBuyAction_) {
+    function setSystemAddresses(address hedgingVault_, address potionBuyAction_) external onlyOwner {
         hedgingVault = IVault(hedgingVault_);
         potionBuyAction = IPotionBuyAction(potionBuyAction_);
     }

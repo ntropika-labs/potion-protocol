@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 
 import { TestWrapperFeeManager, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { AccessControlMissingRole, Roles } from "hedging-vault-sdk";
 
 describe("FeeManager", function () {
     let ownerAccount: SignerWithAddress;
@@ -54,13 +55,13 @@ describe("FeeManager", function () {
     it("Only admin can change fees and recipient", async function () {
         await expect(
             feeManager.connect(unpriviledgedAccount).setManagementFee(8 * PercentageFactor),
-        ).to.be.revertedWith("Only the Admin can call this function");
+        ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
         await expect(
             feeManager.connect(unpriviledgedAccount).setPerformanceFee(8 * PercentageFactor),
-        ).to.be.revertedWith("Only the Admin can call this function");
+        ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
         await expect(
             feeManager.connect(unpriviledgedAccount).setFeesRecipient(feesRecipientAccount1.address),
-        ).to.be.revertedWith("Only the Admin can call this function");
+        ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
     });
     it("Calculate payments", async function () {
         await feeManager.setManagementFee(8 * PercentageFactor);

@@ -2,564 +2,530 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-  PromiseOrValue,
-} from "../../../common";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "../../../common";
 
 export type PotionBuyInfoStruct = {
-  targetPotionAddress: PromiseOrValue<string>;
-  underlyingAsset: PromiseOrValue<string>;
-  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
-  expirationTimestamp: PromiseOrValue<BigNumberish>;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
-  totalSizeInPotions: PromiseOrValue<BigNumberish>;
+    targetPotionAddress: PromiseOrValue<string>;
+    underlyingAsset: PromiseOrValue<string>;
+    strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+    expirationTimestamp: PromiseOrValue<BigNumberish>;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+    expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
+    totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-  BigNumber,
-  BigNumber
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+    BigNumber,
+    BigNumber,
 ] & {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumber;
-  expirationTimestamp: BigNumber;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-  expectedPremiumInUSDC: BigNumber;
-  totalSizeInPotions: BigNumber;
+    targetPotionAddress: string;
+    underlyingAsset: string;
+    strikePriceInUSDC: BigNumber;
+    expirationTimestamp: BigNumber;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+    expectedPremiumInUSDC: BigNumber;
+    totalSizeInPotions: BigNumber;
 };
 
 export declare namespace ICurveManager {
-  export type CurveStruct = {
-    a_59x18: PromiseOrValue<BigNumberish>;
-    b_59x18: PromiseOrValue<BigNumberish>;
-    c_59x18: PromiseOrValue<BigNumberish>;
-    d_59x18: PromiseOrValue<BigNumberish>;
-    max_util_59x18: PromiseOrValue<BigNumberish>;
-  };
+    export type CurveStruct = {
+        a_59x18: PromiseOrValue<BigNumberish>;
+        b_59x18: PromiseOrValue<BigNumberish>;
+        c_59x18: PromiseOrValue<BigNumberish>;
+        d_59x18: PromiseOrValue<BigNumberish>;
+        max_util_59x18: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CurveStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    a_59x18: BigNumber;
-    b_59x18: BigNumber;
-    c_59x18: BigNumber;
-    d_59x18: BigNumber;
-    max_util_59x18: BigNumber;
-  };
+    export type CurveStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        a_59x18: BigNumber;
+        b_59x18: BigNumber;
+        c_59x18: BigNumber;
+        d_59x18: BigNumber;
+        max_util_59x18: BigNumber;
+    };
 }
 
 export declare namespace ICriteriaManager {
-  export type CriteriaStruct = {
-    underlyingAsset: PromiseOrValue<string>;
-    strikeAsset: PromiseOrValue<string>;
-    isPut: PromiseOrValue<boolean>;
-    maxStrikePercent: PromiseOrValue<BigNumberish>;
-    maxDurationInDays: PromiseOrValue<BigNumberish>;
-  };
+    export type CriteriaStruct = {
+        underlyingAsset: PromiseOrValue<string>;
+        strikeAsset: PromiseOrValue<string>;
+        isPut: PromiseOrValue<boolean>;
+        maxStrikePercent: PromiseOrValue<BigNumberish>;
+        maxDurationInDays: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CriteriaStructOutput = [
-    string,
-    string,
-    boolean,
-    BigNumber,
-    BigNumber
-  ] & {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumber;
-    maxDurationInDays: BigNumber;
-  };
+    export type CriteriaStructOutput = [string, string, boolean, BigNumber, BigNumber] & {
+        underlyingAsset: string;
+        strikeAsset: string;
+        isPut: boolean;
+        maxStrikePercent: BigNumber;
+        maxDurationInDays: BigNumber;
+    };
 }
 
 export declare namespace IPotionLiquidityPool {
-  export type CounterpartyDetailsStruct = {
-    lp: PromiseOrValue<string>;
-    poolId: PromiseOrValue<BigNumberish>;
-    curve: ICurveManager.CurveStruct;
-    criteria: ICriteriaManager.CriteriaStruct;
-    orderSizeInOtokens: PromiseOrValue<BigNumberish>;
-  };
+    export type CounterpartyDetailsStruct = {
+        lp: PromiseOrValue<string>;
+        poolId: PromiseOrValue<BigNumberish>;
+        curve: ICurveManager.CurveStruct;
+        criteria: ICriteriaManager.CriteriaStruct;
+        orderSizeInOtokens: PromiseOrValue<BigNumberish>;
+    };
 
-  export type CounterpartyDetailsStructOutput = [
-    string,
-    BigNumber,
-    ICurveManager.CurveStructOutput,
-    ICriteriaManager.CriteriaStructOutput,
-    BigNumber
-  ] & {
-    lp: string;
-    poolId: BigNumber;
-    curve: ICurveManager.CurveStructOutput;
-    criteria: ICriteriaManager.CriteriaStructOutput;
-    orderSizeInOtokens: BigNumber;
-  };
+    export type CounterpartyDetailsStructOutput = [
+        string,
+        BigNumber,
+        ICurveManager.CurveStructOutput,
+        ICriteriaManager.CriteriaStructOutput,
+        BigNumber,
+    ] & {
+        lp: string;
+        poolId: BigNumber;
+        curve: ICurveManager.CurveStructOutput;
+        criteria: ICriteriaManager.CriteriaStructOutput;
+        orderSizeInOtokens: BigNumber;
+    };
 }
 
-export interface PotionProtocolOracleUpgradeableInterface
-  extends utils.Interface {
-  functions: {
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getOperator()": FunctionFragment;
-    "getPotionBuyInfo(address,uint256)": FunctionFragment;
-    "getStrategist()": FunctionFragment;
-    "getVault()": FunctionFragment;
-    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
-  };
+export interface PotionProtocolOracleUpgradeableInterface extends utils.Interface {
+    functions: {
+        "ADMIN_ROLE()": FunctionFragment;
+        "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+        "INVESTOR_ROLE()": FunctionFragment;
+        "OPERATOR_ROLE()": FunctionFragment;
+        "STRATEGIST_ROLE()": FunctionFragment;
+        "VAULT_ROLE()": FunctionFragment;
+        "getPotionBuyInfo(address,uint256)": FunctionFragment;
+        "getRoleAdmin(bytes32)": FunctionFragment;
+        "getRoleMember(bytes32,uint256)": FunctionFragment;
+        "getRoleMemberCount(bytes32)": FunctionFragment;
+        "grantRole(bytes32,address)": FunctionFragment;
+        "hasRole(bytes32,address)": FunctionFragment;
+        "renounceRole(bytes32,address)": FunctionFragment;
+        "revokeRole(bytes32,address)": FunctionFragment;
+        "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+        "supportsInterface(bytes4)": FunctionFragment;
+    };
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
-      | "getAdmin"
-      | "getOperator"
-      | "getPotionBuyInfo"
-      | "getStrategist"
-      | "getVault"
-      | "setPotionBuyInfo"
-  ): FunctionFragment;
+    getFunction(
+        nameOrSignatureOrTopic:
+            | "ADMIN_ROLE"
+            | "DEFAULT_ADMIN_ROLE"
+            | "INVESTOR_ROLE"
+            | "OPERATOR_ROLE"
+            | "STRATEGIST_ROLE"
+            | "VAULT_ROLE"
+            | "getPotionBuyInfo"
+            | "getRoleAdmin"
+            | "getRoleMember"
+            | "getRoleMemberCount"
+            | "grantRole"
+            | "hasRole"
+            | "renounceRole"
+            | "revokeRole"
+            | "setPotionBuyInfo"
+            | "supportsInterface",
+    ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPotionBuyInfo",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setPotionBuyInfo",
-    values: [PotionBuyInfoStruct]
-  ): string;
+    encodeFunctionData(functionFragment: "ADMIN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "INVESTOR_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "OPERATOR_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "VAULT_ROLE", values?: undefined): string;
+    encodeFunctionData(
+        functionFragment: "getPotionBuyInfo",
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+    ): string;
+    encodeFunctionData(functionFragment: "getRoleAdmin", values: [BytesLike]): string;
+    encodeFunctionData(functionFragment: "getRoleMember", values: [BytesLike, BigNumberish]): string;
+    encodeFunctionData(functionFragment: "getRoleMemberCount", values: [BytesLike]): string;
+    encodeFunctionData(functionFragment: "grantRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "hasRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "renounceRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "revokeRole", values: [BytesLike, string]): string;
+    encodeFunctionData(functionFragment: "setPotionBuyInfo", values: [PotionBuyInfoStruct]): string;
+    encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
 
-  decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPotionBuyInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setPotionBuyInfo",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "INVESTOR_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "OPERATOR_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getPotionBuyInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleMember", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getRoleMemberCount", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setPotionBuyInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
 
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
-  };
+    events: {
+        "Initialized(uint8)": EventFragment;
+        "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+        "RoleGranted(bytes32,address,address)": EventFragment;
+        "RoleRevoked(bytes32,address,address)": EventFragment;
+    };
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
-
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface InitializedEventObject {
-  version: number;
+    version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
+export interface RoleAdminChangedEventObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
 }
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
+export type RoleAdminChangedEvent = TypedEvent<[string, string, string], RoleAdminChangedEventObject>;
 
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleGrantedEventObject {
+    role: string;
+    account: string;
+    sender: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
->;
+export type RoleGrantedEvent = TypedEvent<[string, string, string], RoleGrantedEventObject>;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
+export interface RoleRevokedEventObject {
+    role: string;
+    account: string;
+    sender: string;
 }
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
->;
+export type RoleRevokedEvent = TypedEvent<[string, string, string], RoleRevokedEventObject>;
 
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface PotionProtocolOracleUpgradeable extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    connect(signerOrProvider: Signer | Provider | string): this;
+    attach(addressOrName: string): this;
+    deployed(): Promise<this>;
 
-  interface: PotionProtocolOracleUpgradeableInterface;
+    interface: PotionProtocolOracleUpgradeableInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined,
+    ): Promise<Array<TEvent>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
+    listeners(eventName?: string): Array<Listener>;
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+    removeAllListeners(eventName?: string): this;
+    off: OnEvent<this>;
+    on: OnEvent<this>;
+    once: OnEvent<this>;
+    removeListener: OnEvent<this>;
 
-  functions: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    functions: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
+        VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[PotionBuyInfoStructOutput]>;
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<[PotionBuyInfoStructOutput]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<ContractTransaction>;
 
-  getOperator(overrides?: CallOverrides): Promise<string>;
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+    };
 
-  getPotionBuyInfo(
-    underlyingAsset: PromiseOrValue<string>,
-    expirationTimestamp: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<PotionBuyInfoStructOutput>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  setPotionBuyInfo(
-    info: PotionBuyInfoStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  callStatic: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
-    getOperator(overrides?: CallOverrides): Promise<string>;
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
     getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+        underlyingAsset: PromiseOrValue<string>,
+        expirationTimestamp: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides,
     ): Promise<PotionBuyInfoStructOutput>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+    getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-  filters: {
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
+    grantRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
+    hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
+    renounceRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-  };
-
-  estimateGas: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    revokeRole(
+        role: BytesLike,
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
 
     setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
+        info: PotionBuyInfoStruct,
+        overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
 
-  populateTransaction: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    callStatic: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    getPotionBuyInfo(
-      underlyingAsset: PromiseOrValue<string>,
-      expirationTimestamp: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PotionBuyInfoStructOutput>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    setPotionBuyInfo(
-      info: PotionBuyInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        grantRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
+
+        renounceRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+        revokeRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+        setPotionBuyInfo(info: PotionBuyInfoStruct, overrides?: CallOverrides): Promise<void>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    };
+
+    filters: {
+        "Initialized(uint8)"(version?: null): InitializedEventFilter;
+        Initialized(version?: null): InitializedEventFilter;
+
+        "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+            role?: BytesLike | null,
+            previousAdminRole?: BytesLike | null,
+            newAdminRole?: BytesLike | null,
+        ): RoleAdminChangedEventFilter;
+        RoleAdminChanged(
+            role?: BytesLike | null,
+            previousAdminRole?: BytesLike | null,
+            newAdminRole?: BytesLike | null,
+        ): RoleAdminChangedEventFilter;
+
+        "RoleGranted(bytes32,address,address)"(
+            role?: BytesLike | null,
+            account?: string | null,
+            sender?: string | null,
+        ): RoleGrantedEventFilter;
+        RoleGranted(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleGrantedEventFilter;
+
+        "RoleRevoked(bytes32,address,address)"(
+            role?: BytesLike | null,
+            account?: string | null,
+            sender?: string | null,
+        ): RoleRevokedEventFilter;
+        RoleRevoked(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleRevokedEventFilter;
+    };
+
+    estimateGas: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<BigNumber>;
+
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
+
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<BigNumber>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    };
+
+    populateTransaction: {
+        ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getPotionBuyInfo(
+            underlyingAsset: PromiseOrValue<string>,
+            expirationTimestamp: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides,
+        ): Promise<PopulatedTransaction>;
+
+        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
+
+        setPotionBuyInfo(
+            info: PotionBuyInfoStruct,
+            overrides?: Overrides & { from?: PromiseOrValue<string> },
+        ): Promise<PopulatedTransaction>;
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    };
 }

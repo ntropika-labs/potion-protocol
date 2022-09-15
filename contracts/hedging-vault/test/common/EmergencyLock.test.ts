@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 
 import { TestWrapperEmergencyLock } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { AccessControlMissingRole, Roles } from "hedging-vault-sdk";
 
 /**
     @notice EmergencyLock unit tests    
@@ -39,10 +40,11 @@ describe("EmergencyLock", function () {
     it("Not Admin", async function () {
         // Only admin can pause/unpause the contract
         await expect(emergencyLock.connect(unpriviledgedAccount).pause()).to.be.revertedWith(
-            "Only the Admin can call this function",
+            AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address),
         );
+
         await expect(emergencyLock.connect(unpriviledgedAccount).unpause()).to.be.revertedWith(
-            "Only the Admin can call this function",
+            AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address),
         );
     });
 });

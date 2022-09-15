@@ -16,11 +16,13 @@ import {
     HedgingVaultOrchestrator,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { LifecycleStates } from "../utils/LifecycleStates";
+import { LifecycleStates } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
+import { Roles } from "hedging-vault-sdk";
+
 import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 import { getDeploymentsNetworkName } from "../../scripts/utils/network";
@@ -60,10 +62,14 @@ describe("HedgingVault", function () {
 
     it("Vault Deployment Values", async function () {
         // Roles
-        expect(await vault.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await vault.getOperator()).to.equal(tEnv.hedgingVaultOrchestrator.address);
-        expect(await vault.getStrategist()).to.equal(tEnv.strategistAddress);
-        expect(await vault.getVault()).to.equal("0x0000000000000000000000000000000000000000");
+        expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
+        expect(await vault.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await vault.getRoleMemberCount(Roles.Strategist)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
+        expect(await vault.getRoleMemberCount(Roles.Vault)).to.equal(0);
+        expect(await vault.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Underlying asset and cap
         expect(await vault.asset()).to.equal(tEnv.underlyingAsset.address);
@@ -96,10 +102,15 @@ describe("HedgingVault", function () {
     });
     it("Action Deployment Values", async function () {
         // Roles
-        expect(await action.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await action.getOperator()).to.equal(tEnv.hedgingVaultOrchestrator.address);
-        expect(await action.getStrategist()).to.equal(tEnv.strategistAddress);
-        expect(await action.getVault()).to.equal(vault.address);
+        expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
+        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await action.getRoleMemberCount(Roles.Strategist)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
+        expect(await action.getRoleMemberCount(Roles.Vault)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Vault, 0)).to.equal(vault.address);
+        expect(await action.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Emergency Lock
         expect(await action.paused()).to.equal(false);

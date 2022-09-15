@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { TestWrapperLifecycleStates } from "../../typechain";
-import { LifecycleStates } from "../utils/LifecycleStates";
+import { LifecycleStates } from "hedging-vault-sdk";
 /**
     @notice LifecycleStates unit tests    
     

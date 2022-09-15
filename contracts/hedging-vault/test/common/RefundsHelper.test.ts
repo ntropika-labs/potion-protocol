@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 
 import { TestWrapperRefundsHelper, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { AccessControlMissingRole, Roles } from "hedging-vault-sdk";
 
 /**
     @notice RefundsHelper unit tests    
@@ -87,12 +88,12 @@ describe("RefundsHelper", function () {
                 refundsHelper
                     .connect(unpriviledgedAccount)
                     .refund(erc20D.address, ethers.utils.parseEther("1"), unpriviledgedAccount.address),
-            ).to.be.revertedWith("Only the Admin can call this function");
+            ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
             await expect(
                 refundsHelper
                     .connect(unpriviledgedAccount)
                     .refundETH(ethers.utils.parseEther("1"), unpriviledgedAccount.address),
-            ).to.be.revertedWith("Only the Admin can call this function");
+            ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
         });
     });
 
