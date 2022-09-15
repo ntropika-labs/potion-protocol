@@ -1,6 +1,7 @@
 import kovan from "./kovan.json";
 import ganache from "./ganache.json";
 import mainnet from "./mainnet.json";
+import goerli from "./goerli.json";
 import localhost from "./localhost.json";
 
 export interface Token {
@@ -17,6 +18,7 @@ const getTokenList = (
     | "localhost.goerli"
     | "ganache"
     | "kovan"
+    | "goerli"
     | "mainnet"
 ): Token[] => {
   switch (networkName) {
@@ -28,6 +30,8 @@ const getTokenList = (
       return ganache.tokens;
     case "kovan":
       return kovan.tokens;
+    case "goerli":
+      return goerli.tokens;
     case "mainnet":
       return mainnet.tokens;
     default:

@@ -31,7 +31,7 @@ const getChainId = () => {
 const getUSDCAddress = () => {
   switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
     case "goerli":
-      return "";
+      return "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7";
     default:
       return "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
   }
@@ -40,7 +40,7 @@ const getUSDCAddress = () => {
 const getWETHAddress = () => {
   switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
     case "goerli":
-      return "";
+      return "0x9889DfADE1d68488590DF17bbA882914535a8F92";
     default:
       return "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
   }
