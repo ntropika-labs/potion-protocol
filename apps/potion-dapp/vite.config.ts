@@ -73,6 +73,7 @@ export default defineConfig({
     },
   },
   build: {
+    minify: VITE_MODE !== "debug",
     rollupOptions: {
       plugins: [
         nodePolyfills(),
@@ -84,11 +85,12 @@ export default defineConfig({
             customCompression: (c) => brotliCompressSync(Buffer.from(c)),
             fileName: ".br",
           }),
-        visualizer({
-          filename: "dist/report.html",
-          gzipSize: true,
-          brotliSize: true,
-        }),
+        VITE_MODE === "debug" &&
+          visualizer({
+            filename: "dist/report.html",
+            gzipSize: true,
+            brotliSize: true,
+          }),
       ],
       output: {
         manualChunks: (id) => {
