@@ -74,6 +74,7 @@ export default defineConfig({
   },
   build: {
     minify: VITE_MODE !== "debug",
+    sourcemap: VITE_MODE === "debug",
     rollupOptions: {
       plugins: [
         nodePolyfills(),
