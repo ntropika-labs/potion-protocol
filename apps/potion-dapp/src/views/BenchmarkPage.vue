@@ -13,7 +13,6 @@ import { getTokenList } from "potion-tokenlist";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { alchemyRpcUrl, ankrRpcUrl, infuraRpcUrl } from "@/helpers/constants";
 
-console.log(alchemyRpcUrl, ankrRpcUrl, infuraRpcUrl);
 type OracleEndpoint = "alchemy" | "ankr" | "infura";
 type TokenPriceEndpoint = "coingecko" | OracleEndpoint;
 
@@ -32,6 +31,15 @@ interface BenchmarkDataPoint {
   concurrentRequests: number;
 }
 
+interface PriceDataPoint {
+  timestamp: string;
+  dateTimestamp: string;
+  address: string;
+  name: string;
+  symbol: string;
+  prices: Map<TokenPriceEndpoint, number | string>;
+}
+
 const availabletokensAddresses = getTokenList(
   import.meta.env.VITE_ETHEREUM_NETWORK
 ).map((el) => el.address);
@@ -46,7 +54,10 @@ const oracleEndpointUrl = new Map<OracleEndpoint, string>([
   ["infura", infuraRpcUrl],
 ]);
 
+// Maps a performance timestamp to a data point
 const benchmarks = ref<Map<string, BenchmarkDataPoint>>(new Map());
+// Maps an id in the form of 'performance timestamp@address' to a data point
+const tokenPrices = ref<Map<string, PriceDataPoint>>(new Map());
 const currentBenchmarkTimestamp = ref(0);
 const providers = ref<{ name: TokenPriceEndpoint; selected: boolean }[]>([
   { name: "coingecko", selected: false },
@@ -55,9 +66,6 @@ const providers = ref<{ name: TokenPriceEndpoint; selected: boolean }[]>([
   { name: "infura", selected: false },
 ]);
 const totalConcurrentTests = ref(1);
-const tokenPrices = ref<Map<string, Map<TokenPriceEndpoint, number | string>>>(
-  new Map()
-);
 
 // LOGIC
 const initProvider = (rpcUrl: string): JsonRpcProvider => {
@@ -131,10 +139,16 @@ const toggleToken = async (address: string) => {
   const token = availableTokens.value.find((u) => u.address === address);
   if (token) {
     token.selected = !token.selected;
+    if (token.selected) {
+      selectedTokensAddressesForPrice.value.add(token.address.toLowerCase());
+    } else {
+      selectedTokensAddressesForPrice.value.delete(token.address.toLowerCase());
+    }
   }
 };
-const totalSelectedTokens = computed(() => {
-  return availableTokens.value.filter((t) => t.selected).length;
+
+const selectedTokens = computed(() => {
+  return availableTokens.value.filter((t) => t.selected);
 });
 
 // Prices
@@ -212,8 +226,10 @@ const fetchOracleTokenPrices = async (
 };
 
 // Performance measurements
-const getMarkId = (seed: number | string, provider: TokenPriceEndpoint) =>
-  `${seed}@${provider}`;
+const getMarkId = (
+  seed: number | string,
+  provider: TokenPriceEndpoint | string
+) => `${seed}@${provider}`;
 
 // const updatePerformanceMeasurements = (
 //   timestamp: number,
@@ -260,13 +276,11 @@ const getMarkId = (seed: number | string, provider: TokenPriceEndpoint) =>
 const updateObserverPerformanceMeasurements = (
   observerEntries: PerformanceObserverEntryList
 ) => {
-  console.log(observerEntries);
   const entries = observerEntries
     ? Array.from(observerEntries.getEntries().values())
     : [];
 
   if (!entries || !entries.length) return;
-  console.log(entries);
 
   for (let i = 0; i < entries.length; i++) {
     const perf = entries[i];
@@ -326,10 +340,11 @@ const runBenchmarks = async () => {
 const runBenchmark = async (selectedProviders: Set<TokenPriceEndpoint>) => {
   const tokens = availableTokens.value.filter((t) => t.selected);
   const benchmarkTimestamp = performance.now();
+  const benchmarkDateTimestamp = new Date().toISOString();
 
   currentBenchmarkTimestamp.value = benchmarkTimestamp;
   benchmarks.value.set(benchmarkTimestamp.toString(), {
-    dateTimestamp: new Date().toISOString(),
+    dateTimestamp: benchmarkDateTimestamp,
     timestamp: benchmarkTimestamp.toString(),
     totalTokens: tokens.length,
     measures: new Map(),
@@ -340,20 +355,38 @@ const runBenchmark = async (selectedProviders: Set<TokenPriceEndpoint>) => {
     },
   });
 
+  // Temporary map to match an address to a data point
+  const selectedTokensPrices: Map<string, PriceDataPoint> = tokens.reduce(
+    (prices, t) => {
+      const lcAddress = t.address.toLowerCase();
+      prices.set(lcAddress, {
+        dateTimestamp: benchmarkDateTimestamp,
+        timestamp: benchmarkTimestamp,
+        address: lcAddress,
+        name: t.name,
+        symbol: t.symbol,
+        prices: new Map<TokenPriceEndpoint, number | string>(),
+      });
+
+      return prices;
+    },
+    new Map()
+  );
+
   if (selectedProviders.has("coingecko")) {
     const coingeckoPrices: {
       [address: string]: { [currency: string]: number };
     } = await fetchCoingeckoTokenPrices(benchmarkTimestamp, tokens);
 
-    Object.entries(coingeckoPrices).forEach(
-      ([address, { currency: price }]) => {
-        const addressPrices = tokenPrices.value.get(address);
-        if (!addressPrices) return;
+    Object.entries(coingeckoPrices).forEach(([address, data]) => {
+      const lcAddress = address.toLowerCase();
+      const addressPrices = selectedTokensPrices.get(
+        lcAddress
+      ) as PriceDataPoint;
 
-        addressPrices.set("coingecko", price.toFixed(2));
-        tokenPrices.value.set(address, addressPrices);
-      }
-    );
+      addressPrices.prices.set("coingecko", data[currency].toFixed(2));
+      selectedTokensPrices.set(lcAddress, addressPrices);
+    });
   }
 
   const allProviders = Array.from(selectedProviders.values());
@@ -369,17 +402,22 @@ const runBenchmark = async (selectedProviders: Set<TokenPriceEndpoint>) => {
       benchmarkTimestamp,
       tokens
     );
-
     Object.entries(oraclePrices).forEach(([address, price]) => {
-      const addressPrices = tokenPrices.value.get(address);
-      if (!addressPrices) return;
+      const lcAddress = address.toLowerCase();
+      let addressPrices = selectedTokensPrices.get(lcAddress) as PriceDataPoint;
 
-      addressPrices.set(provider, price.toFixed(2));
-      tokenPrices.value.set(address, addressPrices);
+      addressPrices.prices.set(provider, price.toFixed(2));
+      selectedTokensPrices.set(lcAddress, addressPrices);
     });
   }
 
-  console.log("SELECTED PROV MEAS: ", selectedProviders);
+  // Update main map for tokens prices
+  selectedTokensPrices.forEach((data) => {
+    const id = getMarkId(data.timestamp, data.address);
+
+    tokenPrices.value.set(id, data);
+  });
+
   for (let i = 0; i < allProviders.length; i++) {
     const prov = allProviders[i];
 
@@ -392,14 +430,117 @@ const runBenchmark = async (selectedProviders: Set<TokenPriceEndpoint>) => {
   }
 };
 
-const sortedBenchmarks = computed(() =>
-  Array.from(benchmarks.value.values()).reverse()
-);
+const selectedTokensAddressesForPrice = ref<Set<string>>(new Set());
+const showAllBenchmarkEntries = ref(false);
+const showAllPriceEntries = ref(false);
+
+const sortedBenchmarks = computed(() => {
+  const entries = Array.from(benchmarks.value.values());
+  const entryRange = showAllBenchmarkEntries.value
+    ? entries.reverse()
+    : entries.slice(-totalConcurrentTests.value).reverse();
+
+  return entryRange;
+});
+
+const sortedPrices = computed(() => {
+  let entries = Array.from(tokenPrices.value.entries());
+
+  console.log(selectedTokensAddressesForPrice.value);
+  if (selectedTokensAddressesForPrice.value.size) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    entries = entries.filter(([_, data]) => {
+      return selectedTokensAddressesForPrice.value.has(data.address);
+    });
+  }
+  const entryRange = showAllPriceEntries.value
+    ? entries.reverse()
+    : entries
+        .slice(
+          -totalConcurrentTests.value *
+            selectedTokensAddressesForPrice.value.size
+        )
+        .reverse();
+
+  return entryRange;
+});
 
 const totalSelectedProviders = computed(
   () => providers.value.filter((p) => p.selected).length
 );
-// FEATURES
+
+const toggleTokenPrice = async (address: string) => {
+  const token = availableTokens.value.find((u) => u.address === address);
+
+  if (token) {
+    const lcAddress = token.address.toLowerCase();
+    if (selectedTokensAddressesForPrice.value.has(lcAddress)) {
+      selectedTokensAddressesForPrice.value.delete(lcAddress);
+    } else {
+      selectedTokensAddressesForPrice.value.add(lcAddress);
+    }
+  }
+};
+
+const exportTimings = () => {
+  const benchmarksArray = Array.from(benchmarks.value.entries()).map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ([_, benchmark]) => {
+      const csvRow: Array<number | string> = [
+        benchmark.dateTimestamp,
+        benchmark.totalTokens,
+        benchmark.concurrentRequests,
+        benchmark.bestTime.time,
+      ];
+
+      return csvRow.concat(
+        Array.from(benchmark.measures.values()).map((m) => m.totalTime)
+      );
+    }
+  );
+  let csvContent =
+    "data:text/csv;charset=utf-8," +
+    "Timestamp,Total tokens,Concurrent req.s,Best time\n" +
+    benchmarksArray.map((e) => e.join(",")).join("\n");
+
+  exportData("benchmark_token_performances_", csvContent);
+};
+
+const exportPrices = () => {
+  const pricesArray = Array.from(tokenPrices.value.entries()).map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ([_, benchmark]) => {
+      const csvRow: Array<number | string> = [
+        benchmark.dateTimestamp,
+        `${benchmark.name}(${benchmark.symbol})`,
+      ];
+
+      return csvRow.concat(Array.from(benchmark.prices.values()));
+    }
+  );
+  let header = "Timestamp,Name (symbol),";
+  header = header.concat(providers.value.map((p) => p.name).join(","));
+  header = header.concat("\n");
+  let csvContent =
+    "data:text/csv;charset=utf-8," +
+    header +
+    pricesArray.map((e) => e.join(",")).join("\n");
+
+  exportData("benchmark_token_prices_", csvContent);
+};
+
+const exportData = (name: string, csvContent: string) => {
+  var encodedUri = encodeURI(csvContent);
+  var link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute(
+    "download",
+    name.concat(new Date().toISOString()).concat(".csv")
+  );
+  document.body.appendChild(link); // Required for FF
+
+  link.click();
+};
 </script>
 <template>
   <table class="w-full table-fixed border">
@@ -633,14 +774,6 @@ const totalSelectedProviders = computed(
                     :selected="token.selected"
                     @token-selected="toggleToken(token.address)"
                   />
-                  <small
-                    v-for="[provider, price] in tokenPrices
-                      .get(token.address)
-                      ?.entries()"
-                    :key="provider"
-                    class="pl-2"
-                    >{{ provider.substring(0, 3) }}: {{ price || "-" }}</small
-                  >
                 </div>
               </div>
               <div v-else class="text-center">
@@ -660,11 +793,11 @@ const totalSelectedProviders = computed(
             :inline="true"
             label="Run benchmark"
             :disabled="
-              totalSelectedTokens === 0 || totalSelectedProviders === 0
+              selectedTokens.length === 0 || totalSelectedProviders === 0
             "
             @click="runBenchmarks"
           ></BaseButton>
-          <p v-if="totalSelectedTokens === 0" class="text-secondary-500">
+          <p v-if="selectedTokens.length === 0" class="text-secondary-500">
             Select at list one token
           </p>
           <p v-if="totalSelectedProviders === 0" class="text-secondary-500">
@@ -686,7 +819,26 @@ const totalSelectedProviders = computed(
         </div>
       </div>
     </div>
-    <h4>All benchmarks</h4>
+    <div class="flex flex-row items-center gap-6 mt-8 mb-4">
+      <div>
+        <h4 class="text-xl font-bold mb-2">All benchmarks</h4>
+        <input
+          type="checkbox"
+          class=""
+          @change="(ev) => showAllBenchmarkEntries = (ev.currentTarget as HTMLInputElement).checked"
+        /><label>Show all</label>
+      </div>
+      <BaseButton
+        palette="primary"
+        type="button"
+        size="lg"
+        :inline="true"
+        label="Export"
+        :disabled="benchmarks.size === 0"
+        @click="exportTimings"
+      ></BaseButton>
+    </div>
+
     <table class="w-full table-auto border text-center">
       <thead class="sticky top-0 bg-dark z-30">
         <th class="px-2 py-3"><i class="i-ph-check-circle-fill"> </i></th>
@@ -755,6 +907,102 @@ const totalSelectedProviders = computed(
                   }}</small>
                 </div>
 
+                <!-- <span v-if="!bench.measures.get(provider.name)?.success">
+                  <i class="w6 h-6 i-ph-x-circle-fill text-red-400"> </i
+                ></span> -->
+              </div>
+            </div>
+            <div v-else>-</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="flex flex-row items-center gap-6 mt-8 mb-4">
+      <div>
+        <h4 class="text-xl font-bold mb-2">All prices</h4>
+        <input
+          type="checkbox"
+          class=""
+          @change="(ev) => showAllPriceEntries = (ev.currentTarget as HTMLInputElement).checked"
+        /><label>Show all</label>
+      </div>
+      <BaseButton
+        palette="primary"
+        type="button"
+        size="lg"
+        :inline="true"
+        label="Export"
+        :disabled="tokenPrices.size === 0"
+        @click="exportPrices"
+      ></BaseButton>
+      <div class="self-end">
+        <p>Filter tokens:</p>
+        <div v-if="availableTokens.length > 0" class="flex flex-row gap-6">
+          <div
+            v-for="(token, index) of availableTokens.slice(0, -1)"
+            :key="token.address"
+            :class="[
+              'flex flex-col',
+              index === availableTokens.length - 1
+                ? 'border-red border-3 rounded-3xl'
+                : '',
+            ]"
+          >
+            <TokenCard
+              :symbol="token.symbol"
+              :name="token.name"
+              :address="token.address"
+              :image="token.image"
+              :selected="
+                selectedTokensAddressesForPrice.has(token.address.toLowerCase())
+              "
+              size="sm"
+              class=""
+              @token-selected="toggleTokenPrice(token.address)"
+            />
+          </div>
+        </div>
+        <div v-else class="text-center">
+          <p class="text-white/40 text-3xl uppercase">No token available</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="w-full table-auto border">
+      <thead class="sticky top-0 bg-dark z-30">
+        <th class="px-2 py-3"><i class="i-ph-check-circle-fill"> </i></th>
+        <th class="px-2 py-3 text-left">Performance Timestamp</th>
+        <th class="px-2 py-3 text-left">Name (symbol)</th>
+        <th
+          v-for="(p, index) in providers"
+          :key="index"
+          class="px-2 py-3 text-right"
+        >
+          {{ p.name }}
+        </th>
+      </thead>
+      <tbody>
+        <tr
+          v-for="([id, price], index) in sortedPrices"
+          :key="id"
+          :class="[index % 2 == 0 ? 'bg-slate-800' : 'bg-slate-600']"
+        >
+          <td class="px-2">
+            <!-- <i v-if="price.pending" class="i-eos-icons-loading"> </i>
+            <i v-else class="i-ph-check-circle-fill text-green-400"> </i> -->
+          </td>
+          <td class="px-2 py-3 text-left font-mono">
+            {{ price.dateTimestamp }}
+          </td>
+          <td class="px-2 py-3 text-left">
+            {{ price.name }} ({{ price.symbol }})
+          </td>
+          <td v-for="(provider, j) in providers" :key="j" class="px-2 py-3">
+            <div v-if="price.prices.has(provider.name)">
+              <div
+                class="flex flex-row items-center justify-end gap-2 font-mono"
+              >
+                {{ price.prices.get(provider.name) }}
                 <!-- <span v-if="!bench.measures.get(provider.name)?.success">
                   <i class="w6 h-6 i-ph-x-circle-fill text-red-400"> </i
                 ></span> -->
