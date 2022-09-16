@@ -66,6 +66,12 @@ export default defineConfig({
       assert: "assert",
     },
   },
+  worker: {
+    // format: 'es',
+    rollupOptions: {
+      inlineDynamicImports: true,
+    },
+  },
   build: {
     rollupOptions: {
       plugins: [
