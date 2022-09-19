@@ -5,6 +5,10 @@ import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
+const getFsPath = (path: string) =>
+  //@ts-expect-error import without module in package.json
+  fileURLToPath(new URL(path, import.meta.url));
+
 export default defineConfig({
   test: {
     reporters: ["default", "junit"],
@@ -26,27 +30,22 @@ export default defineConfig({
       "lightweight-charts": path.resolve(
         "../../node_modules/lightweight-charts/dist/lightweight-charts.esm.production.js"
       ),
-      //@ts-expect-error volar giving errors
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-      // "@web-worker": fileURLToPath(
-      //   //@ts-expect-error volar giving errors
-      //   new URL("./src/web-worker/test.ts", import.meta.url)
-      // ),
-      "@onboard-composable": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/composables/useMockedOnboard.ts", import.meta.url)
+      "@": getFsPath("./src"),
+      "@web-worker/alpha-router": getFsPath(
+        "./src/web-worker/__tests__/alpha-router.ts"
       ),
-      "@vault-operator-utils": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/helpers/mockedVaultOperatorUtils.ts", import.meta.url)
+      "@web-worker/potion-router": getFsPath(
+        "./src/web-worker/__tests__/potion-router.ts"
       ),
-      "@premium-swap-router": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/helpers/mockedPremiumSwapRouter.ts", import.meta.url)
+      "@onboard-composable": getFsPath("./src/composables/useMockedOnboard.ts"),
+      "@vault-operator-utils": getFsPath(
+        "./src/helpers/mockedVaultOperatorUtils.ts"
       ),
-      "@coingecko-composable": fileURLToPath(
-        //@ts-expect-error volar giving errors
-        new URL("./src/composables/useMockedCoingecko.ts", import.meta.url)
+      "@premium-swap-router": getFsPath(
+        "./src/helpers/mockedPremiumSwapRouter.ts"
+      ),
+      "@coingecko-composable": getFsPath(
+        "./src/composables/useMockedCoingecko.ts"
       ),
     },
   },

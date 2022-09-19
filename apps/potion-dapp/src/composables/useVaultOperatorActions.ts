@@ -28,7 +28,7 @@ import type {
 } from "./useHedgingVaultOperatorHelperContract";
 import type { ActionPayout } from "./usePotionBuyActionContract";
 
-import { worker } from "@web-worker";
+import { worker } from "@web-worker/alpha-router";
 import { UniswapActionType, type UniswapRouterReturn } from "@/types";
 
 export function useVaultOperatorActions(

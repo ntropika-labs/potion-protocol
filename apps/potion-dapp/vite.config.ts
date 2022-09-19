@@ -42,7 +42,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": getFsPath("./src"),
-      "@web-worker": getFsPath("./src/web-worker"),
+      "@web-worker/alpha-router": getFsPath("./src/web-worker/alpha-router.ts"),
+      "@web-worker/potion-router": getFsPath(
+        "./src/web-worker/potion-router.ts"
+      ),
       "@coingecko-composable": getLibraryPath(
         "./src/composables/useCoinGecko.ts",
         "./src/composables/useMockedCoingecko.ts",
