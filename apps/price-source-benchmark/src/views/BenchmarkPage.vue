@@ -85,6 +85,7 @@ const providers = ref<
   },
 ]);
 const totalConcurrentTests = ref(1);
+const pollingTimer = ref<unknown | null>(null);
 
 // LOGIC
 const initProvider = (rpcUrl: string): JsonRpcProvider => {
@@ -464,7 +465,6 @@ const sortedBenchmarks = computed(() => {
 const sortedPrices = computed(() => {
   let entries = Array.from(tokenPrices.value.entries());
 
-  console.log(selectedTokensAddressesForPrice.value);
   if (selectedTokensAddressesForPrice.value.size) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     entries = entries.filter(([_, data]) => {
@@ -500,6 +500,19 @@ const toggleTokenPrice = async (address: string) => {
   }
 };
 
+const togglePricePolling = () => {
+  if (pollingTimer.value) {
+    clearTimeout(pollingTimer.value as any);
+    pollingTimer.value = null;
+  } else {
+    pollingTimer.value = setInterval(async () => {
+      console.log("running benchmark");
+
+      await runBenchmarks();
+    }, 30000);
+  }
+};
+
 const exportTimings = () => {
   const benchmarksArray = Array.from(benchmarks.value.entries()).map(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -516,9 +529,13 @@ const exportTimings = () => {
       );
     }
   );
+  let header = "Timestamp,Total tokens,Concurrent req.s,Best time,";
+  header = header.concat(providers.value.map((p) => p.name).join(","));
+  header = header.concat("\n");
+
   let csvContent =
     "data:text/csv;charset=utf-8," +
-    "Timestamp,Total tokens,Concurrent req.s,Best time\n" +
+    header +
     benchmarksArray.map((e) => e.join(",")).join("\n");
 
   exportData("benchmark_token_performances_", csvContent);
@@ -804,6 +821,13 @@ const exportData = (name: string, csvContent: string) => {
         </div>
 
         <div class="text-center">
+          <div>
+            <input
+              type="checkbox"
+              class=""
+              @change="togglePricePolling"
+            /><label>Toggle polling</label>
+          </div>
           <BaseButton
             palette="primary"
             type="button"
@@ -953,7 +977,7 @@ const exportData = (name: string, csvContent: string) => {
         :disabled="tokenPrices.size === 0"
         @click="exportPrices"
       ></BaseButton>
-      <div class="self-end">
+      <div class="ml-auto">
         <p>Filter tokens:</p>
         <div v-if="availableTokens.length > 0" class="flex flex-row gap-6">
           <div
