@@ -5,13 +5,12 @@ import { $fetch } from "ohmyfetch";
 import type { SelectableToken } from "dapp-types";
 import { Oracle__factory, type Oracle } from "potion-contracts/typechain";
 
-import { BaseButton, InputNumber } from "potion-ui";
-import TokenCard from "potion-ui/src/components/TokenCard/TokenCard.vue";
+import { BaseButton, InputNumber, TokenCard } from "potion-ui";
 
 import { useTokenList } from "@/composables/useTokenList";
 import { getTokenList } from "potion-tokenlist";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { alchemyRpcUrl, ankrRpcUrl, infuraRpcUrl } from "@/helpers/constants";
+import { alchemyRpcUrl, ankrRpcUrl, infuraRpcUrl } from "@/constants";
 
 type OracleEndpoint = "alchemy" | "ankr" | "infura";
 type TokenPriceEndpoint = "coingecko" | OracleEndpoint;
@@ -59,11 +58,31 @@ const benchmarks = ref<Map<string, BenchmarkDataPoint>>(new Map());
 // Maps an id in the form of 'performance timestamp@address' to a data point
 const tokenPrices = ref<Map<string, PriceDataPoint>>(new Map());
 const currentBenchmarkTimestamp = ref(0);
-const providers = ref<{ name: TokenPriceEndpoint; selected: boolean }[]>([
-  { name: "coingecko", selected: false },
-  { name: "alchemy", selected: false },
-  { name: "ankr", selected: false },
-  { name: "infura", selected: false },
+const providers = ref<
+  { name: TokenPriceEndpoint; selected: boolean; image: string }[]
+>([
+  {
+    name: "coingecko",
+    selected: false,
+    image:
+      "https://static.coingecko.com/s/thumbnail-d5a7c1de76b4bc1332e48227dc1d1582c2c92721b5552aae76664eecb68345c9.png",
+  },
+  {
+    name: "alchemy",
+    selected: false,
+    image:
+      "https://assets-global.website-files.com/5f973c970bea5548ad4287ef/612fbe6536e6150b18b5d1d5_webclip-alchemy.png",
+  },
+  {
+    name: "ankr",
+    selected: false,
+    image: "https://www.ankr.com/static/favicon/apple-touch-icon.png",
+  },
+  {
+    name: "infura",
+    selected: false,
+    image: "https://infura.io/favicon/apple-touch-icon.png",
+  },
 ]);
 const totalConcurrentTests = ref(1);
 
@@ -127,7 +146,6 @@ const fakeToken = {
   decimals: 0,
   name: "Bogus",
   symbol: "FAKE",
-  image: "",
   selected: false,
 };
 const availableTokens = ref(
@@ -740,7 +758,7 @@ const exportData = (name: string, csvContent: string) => {
                   :symbol="provider.name"
                   :name="provider.name"
                   address=""
-                  image=""
+                  :image="provider.image"
                   :selected="provider.selected"
                   @token-selected="
                     () => (provider.selected = !provider.selected)
@@ -798,10 +816,10 @@ const exportData = (name: string, csvContent: string) => {
             @click="runBenchmarks"
           ></BaseButton>
           <p v-if="selectedTokens.length === 0" class="text-secondary-500">
-            Select at list one token
+            Select at least one token
           </p>
           <p v-if="totalSelectedProviders === 0" class="text-secondary-500">
-            Select at list one provider
+            Select at least one provider
           </p>
           <div class="max-w-96 mt-4">
             <InputNumber

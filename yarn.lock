@@ -27860,6 +27860,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"price-source-benchmark@workspace:apps/price-source-benchmark":
+  version: 0.0.0-use.local
+  resolution: "price-source-benchmark@workspace:apps/price-source-benchmark"
+  dependencies:
+    dapp-types: "*"
+    potion-contracts: "*"
+    potion-tokenlist: "*"
+    potion-ui: "*"
+    potion-unocss: "*"
+  languageName: unknown
+  linkType: soft
+
 "prismjs@npm:^1.21.0":
   version: 1.28.0
   resolution: "prismjs@npm:1.28.0"
