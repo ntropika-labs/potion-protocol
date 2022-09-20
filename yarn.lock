@@ -9804,7 +9804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/router-sdk@npm:^1.3.0":
+"@uniswap/router-sdk@npm:1.3.0":
   version: 1.3.0
   resolution: "@uniswap/router-sdk@npm:1.3.0"
   dependencies:
@@ -9814,6 +9814,19 @@ __metadata:
     "@uniswap/v2-sdk": ^3.0.1
     "@uniswap/v3-sdk": ^3.8.3
   checksum: f6bf879c6f34c957f560c13add291f08436a869d51121746a0befdfcbae38757fb9a39d3cf1d9aa82af6746fc8f3ebf836a4842032f29511e800b0a7c17c475e
+  languageName: node
+  linkType: hard
+
+"@uniswap/router-sdk@patch:@uniswap/router-sdk@npm:1.3.0#.yarn/patches/@uniswap-router-sdk-npm-1.3.0-92dc9391c5.patch::locator=potion-protocol%40workspace%3A.":
+  version: 1.3.0
+  resolution: "@uniswap/router-sdk@patch:@uniswap/router-sdk@npm%3A1.3.0#.yarn/patches/@uniswap-router-sdk-npm-1.3.0-92dc9391c5.patch::version=1.3.0&hash=046d5c&locator=potion-protocol%40workspace%3A."
+  dependencies:
+    "@ethersproject/abi": ^5.5.0
+    "@uniswap/sdk-core": ^3.0.1
+    "@uniswap/swap-router-contracts": 1.1.0
+    "@uniswap/v2-sdk": ^3.0.1
+    "@uniswap/v3-sdk": ^3.8.3
+  checksum: 0a62db8035a4661214be1f56ccc3f0120f0ab160f27aadd1ffe1827b6990a0d7a5c7d301d8bbfe1205df4b68851b009e7a8ae2d889c217f018ad57a89de24279
   languageName: node
   linkType: hard
 
