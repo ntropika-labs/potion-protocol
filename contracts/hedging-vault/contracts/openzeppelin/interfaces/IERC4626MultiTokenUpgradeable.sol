@@ -3,16 +3,21 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import "./IERC1155DecimalsUpgradeable.sol";
+import "./IERC1155FullSupplyUpgradeable.sol";
 
 /**
- * @dev Interface of the ERC4626 "Tokenized Vault Standard", modified to emit
- *      ERC-1155 share tokens
+ * @notice Interface of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 share tokens
+ *         When depositing, the user of this contract must indicate for which id they are depositing. The
+ *         emitted ERC-1155 token will be minted used that id, thus generating a receipt for the deposit
  *
  * @dev The `withdraw` function, along with the `previewWithdraw` and `maxWithdraw` functions
  *      have been removed because the only way to implement them is to support enumeration
  *      for the ERC-1155 tokens, which is quite heavy in gas costs.
+ *
+ * @author Roberto Cano <robercano>
  */
-interface IERC4626MultiTokenUpgradeable is IERC1155Upgradeable {
+interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable, IERC1155FullSupplyUpgradeable {
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
     event Withdraw(
@@ -107,7 +112,7 @@ interface IERC4626MultiTokenUpgradeable is IERC1155Upgradeable {
     function previewDeposit(uint256 assets) external view returns (uint256 shares);
 
     /**
-     * @dev Mints shares Vault shares to receiver by depositing exactly amount of underlying tokens.
+     * @dev Mints shares Vault shares with the given id to receiver by depositing exactly amount of underlying tokens.
      *
      * - MUST emit the Deposit event.
      * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the
@@ -117,7 +122,11 @@ interface IERC4626MultiTokenUpgradeable is IERC1155Upgradeable {
      *
      * NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
      */
-    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+    function deposit(
+        uint256 assets,
+        address receiver,
+        uint256 id
+    ) external returns (uint256 shares);
 
     /**
      * @dev Returns the maximum amount of the Vault shares that can be minted for the receiver, through a mint call.
@@ -145,7 +154,7 @@ interface IERC4626MultiTokenUpgradeable is IERC1155Upgradeable {
     function previewMint(uint256 shares) external view returns (uint256 assets);
 
     /**
-     * @dev Mints exactly shares Vault shares to receiver by depositing amount of underlying tokens.
+     * @dev Mints exactly shares Vault shares with the given id to receiver by depositing amount of underlying tokens.
      *
      * - MUST emit the Deposit event.
      * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the mint
@@ -155,7 +164,11 @@ interface IERC4626MultiTokenUpgradeable is IERC1155Upgradeable {
      *
      * NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
      */
-    function mint(uint256 shares, address receiver) external returns (uint256 assets);
+    function mint(
+        uint256 shares,
+        address receiver,
+        uint256 id
+    ) external returns (uint256 assets);
 
     /**
      * @dev Returns the maximum amount of Vault shares that can be redeemed from the owner balance in the Vault,

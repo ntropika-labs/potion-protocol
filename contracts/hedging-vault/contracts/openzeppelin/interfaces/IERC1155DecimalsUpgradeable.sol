@@ -8,8 +8,10 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.so
  *
  * @dev No storage gaps have been added as the functionlity of this contract is considered to be
  *      final and there is no need to add more storage variables
+ *
+ * @author Roberto Cano <robercano>
  */
-interface IERC1155DecimalsUpgradeable is IERC1155Upgradeable {
+interface IERC1155DecimalsUpgradeable {
     /**
      * @dev Returns the number of decimals used to get its user representation.
      *

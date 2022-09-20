@@ -85,7 +85,7 @@ abstract contract BaseVaultUpgradeable is
         address[] memory cannotRefundToken = new address[](1);
         cannotRefundToken[0] = underlyingAsset;
 
-        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
         __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
@@ -93,5 +93,7 @@ abstract contract BaseVaultUpgradeable is
         __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
         __ActionsManager_init_unchained(actions, principalPercentages);
         __ReentrancyGuard_init_unchained();
+
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
     }
 }

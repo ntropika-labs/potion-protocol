@@ -18,26 +18,26 @@ import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "../../../common";
 
 export interface TestWrapperEmergencyLockInterface extends utils.Interface {
-    functions: {
-        "ADMIN_ROLE()": FunctionFragment;
-        "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-        "INVESTOR_ROLE()": FunctionFragment;
-        "OPERATOR_ROLE()": FunctionFragment;
-        "STRATEGIST_ROLE()": FunctionFragment;
-        "VAULT_ROLE()": FunctionFragment;
-        "getRoleAdmin(bytes32)": FunctionFragment;
-        "getRoleMember(bytes32,uint256)": FunctionFragment;
-        "getRoleMemberCount(bytes32)": FunctionFragment;
-        "grantRole(bytes32,address)": FunctionFragment;
-        "hasRole(bytes32,address)": FunctionFragment;
-        "initialize(address,address,address)": FunctionFragment;
-        "pause()": FunctionFragment;
-        "paused()": FunctionFragment;
-        "renounceRole(bytes32,address)": FunctionFragment;
-        "revokeRole(bytes32,address)": FunctionFragment;
-        "supportsInterface(bytes4)": FunctionFragment;
-        "unpause()": FunctionFragment;
-    };
+  functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "unpause()": FunctionFragment;
+  };
 
     getFunction(
         nameOrSignatureOrTopic:
@@ -61,27 +61,69 @@ export interface TestWrapperEmergencyLockInterface extends utils.Interface {
             | "unpause",
     ): FunctionFragment;
 
-    encodeFunctionData(functionFragment: "ADMIN_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "INVESTOR_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "OPERATOR_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "VAULT_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "getRoleAdmin", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "getRoleMember", values: [BytesLike, BigNumberish]): string;
-    encodeFunctionData(functionFragment: "getRoleMemberCount", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "grantRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "hasRole", values: [BytesLike, string]): string;
-    encodeFunctionData(
-        functionFragment: "initialize",
-        values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<string>],
-    ): string;
-    encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-    encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-    encodeFunctionData(functionFragment: "renounceRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "revokeRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
     decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
@@ -216,12 +258,11 @@ export interface TestWrapperEmergencyLock extends BaseContract {
 
         hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-        initialize(
-            adminAddress: PromiseOrValue<string>,
-            strategistAddress: PromiseOrValue<string>,
-            operatorAddress: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<ContractTransaction>;
+    initialize(
+      adminAddress: string,
+      operatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
         pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
 
@@ -244,6 +285,77 @@ export interface TestWrapperEmergencyLock extends BaseContract {
         unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
     };
 
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  getRoleMember(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  initialize(
+    adminAddress: string,
+    operatorAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -271,11 +383,10 @@ export interface TestWrapperEmergencyLock extends BaseContract {
     hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
     initialize(
-        adminAddress: PromiseOrValue<string>,
-        strategistAddress: PromiseOrValue<string>,
-        operatorAddress: PromiseOrValue<string>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+      adminAddress: string,
+      operatorAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
 
@@ -337,8 +448,11 @@ export interface TestWrapperEmergencyLock extends BaseContract {
 
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-        unpause(overrides?: CallOverrides): Promise<void>;
-    };
+    initialize(
+      adminAddress: string,
+      operatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     filters: {
         "Initialized(uint8)"(version?: null): InitializedEventFilter;
@@ -403,12 +517,11 @@ export interface TestWrapperEmergencyLock extends BaseContract {
 
         hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-        initialize(
-            adminAddress: PromiseOrValue<string>,
-            strategistAddress: PromiseOrValue<string>,
-            operatorAddress: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
+    initialize(
+      adminAddress: string,
+      operatorAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
         pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>;
 

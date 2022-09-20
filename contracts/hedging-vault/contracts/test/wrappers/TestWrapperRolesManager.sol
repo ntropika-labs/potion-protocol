@@ -18,11 +18,7 @@ contract TestWrapperRolesManager is RolesManagerUpgradeable {
     /**
         @notice Initializes the contract
      */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress
-    ) external initializer {
-        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+    function initialize(address adminAddress, address operatorAddress) external initializer {
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
     }
 }

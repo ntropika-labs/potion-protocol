@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity 0.8.14;
 
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+
 /**
  * @dev Extension of ERC1155 that adds tracking of total overall supply on top of the
  *      per-id supply tracking of ERC1155SupplyUpgradeable.
  *
  * Used to implement the ERC-4626 tokenized vault with shares tied to investment rounds.
+ *
+ * @author Roberto Cano <robercano>
  */
-interface IERC1155FullSupplyUpgradeable {
+interface IERC1155FullSupplyUpgradeable is IERC1155Upgradeable {
     /**
      * @dev Total amount of tokens in existence.
      */

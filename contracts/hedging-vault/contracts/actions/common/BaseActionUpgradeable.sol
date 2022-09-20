@@ -52,10 +52,12 @@ abstract contract BaseActionUpgradeable is
         address operatorAddress,
         address[] memory cannotRefundTokens
     ) internal onlyInitializing {
-        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundTokens, false);
         __ReentrancyGuard_init_unchained();
+
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
     }
 }

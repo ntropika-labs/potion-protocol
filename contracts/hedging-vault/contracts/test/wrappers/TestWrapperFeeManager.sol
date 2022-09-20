@@ -24,7 +24,7 @@ contract TestWrapperFeeManager is FeeManagerUpgradeable {
         uint256 performanceFee_,
         address payable feeReceipient_
     ) external initializer {
-        __RolesManager_init_unchained(owner, owner, owner);
+        __RolesManager_init_unchained(owner, owner);
         __FeeManager_init_unchained(managementFee_, performanceFee_, feeReceipient_);
     }
 

@@ -15,6 +15,8 @@ import type * as library from "./library";
 export type { library };
 import type * as openzeppelin from "./openzeppelin";
 export type { openzeppelin };
+import type * as rounds from "./rounds";
+export type { rounds };
 import type * as test from "./test";
 export type { test };
 import type * as vault from "./vault";

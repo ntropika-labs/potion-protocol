@@ -95,19 +95,15 @@ contract RolesManagerUpgradeable is AccessControlEnumerableUpgradeable {
         @notice This does not chain the initialization to the parent contract.
         Also this contract does not need to initialize anything itself.
 
+        @param adminAddress The address that will be assigned the Admin role
+        @param operatorAddress The address that will be assigned the Operator role
+
         @dev The Vault role is not initialized here. Instead, the admin must call
              `changeVault` to set the vault role address
      */
     // solhint-disable-next-line func-name-mixedcase
-    function __RolesManager_init_unchained(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress
-    ) internal onlyInitializing {
-        __AccessControlEnumerable_init_unchained();
-
+    function __RolesManager_init_unchained(address adminAddress, address operatorAddress) internal onlyInitializing {
         _grantRole(ADMIN_ROLE, adminAddress);
-        _grantRole(STRATEGIST_ROLE, strategistAddress);
         _grantRole(OPERATOR_ROLE, operatorAddress);
     }
 }

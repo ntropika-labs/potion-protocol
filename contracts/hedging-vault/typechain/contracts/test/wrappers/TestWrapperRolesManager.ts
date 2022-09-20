@@ -30,7 +30,7 @@ export interface TestWrapperRolesManagerInterface extends utils.Interface {
         "getRoleMemberCount(bytes32)": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
-        "initialize(address,address,address)": FunctionFragment;
+        "initialize(address,address)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
@@ -66,10 +66,7 @@ export interface TestWrapperRolesManagerInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "getRoleMemberCount", values: [BytesLike]): string;
     encodeFunctionData(functionFragment: "grantRole", values: [BytesLike, string]): string;
     encodeFunctionData(functionFragment: "hasRole", values: [BytesLike, string]): string;
-    encodeFunctionData(
-        functionFragment: "initialize",
-        values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<string>],
-    ): string;
+    encodeFunctionData(functionFragment: "initialize", values: [string, string]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [BytesLike, string]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [BytesLike, string]): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
@@ -187,10 +184,9 @@ export interface TestWrapperRolesManager extends BaseContract {
         hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
         initialize(
-            adminAddress: PromiseOrValue<string>,
-            strategistAddress: PromiseOrValue<string>,
-            operatorAddress: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
+            adminAddress: string,
+            operatorAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
         ): Promise<ContractTransaction>;
 
         renounceRole(
@@ -235,10 +231,9 @@ export interface TestWrapperRolesManager extends BaseContract {
     hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
     initialize(
-        adminAddress: PromiseOrValue<string>,
-        strategistAddress: PromiseOrValue<string>,
-        operatorAddress: PromiseOrValue<string>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
+        adminAddress: string,
+        operatorAddress: string,
+        overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     renounceRole(
@@ -274,27 +269,72 @@ export interface TestWrapperRolesManager extends BaseContract {
 
         getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-        grantRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+        grantRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
         hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
 
-        initialize(
-            adminAddress: PromiseOrValue<string>,
-            strategistAddress: PromiseOrValue<string>,
-            operatorAddress: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<void>;
+        initialize(adminAddress: string, operatorAddress: string, overrides?: CallOverrides): Promise<void>;
 
-        renounceRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+        renounceRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
-        revokeRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+        revokeRole(
+            role: BytesLike,
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<ContractTransaction>;
 
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
-    };
 
-    filters: {
-        "Initialized(uint8)"(version?: null): InitializedEventFilter;
-        Initialized(version?: null): InitializedEventFilter;
+        callStatic: {
+            ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+            getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+            getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+            getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+            grantRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+            hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
+
+            initialize(
+                adminAddress: PromiseOrValue<string>,
+                strategistAddress: PromiseOrValue<string>,
+                operatorAddress: PromiseOrValue<string>,
+                overrides?: CallOverrides,
+            ): Promise<void>;
+
+            renounceRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+            revokeRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
+
+            supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+        };
+
+        initialize(
+            adminAddress: string,
+            operatorAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<BigNumber>;
 
         "RoleAdminChanged(bytes32,bytes32,bytes32)"(
             role?: BytesLike | null,
@@ -350,11 +390,10 @@ export interface TestWrapperRolesManager extends BaseContract {
         hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
         initialize(
-            adminAddress: PromiseOrValue<string>,
-            strategistAddress: PromiseOrValue<string>,
-            operatorAddress: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
+            adminAddress: string,
+            operatorAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> },
+        ): Promise<PopulatedTransaction>;
 
         renounceRole(
             role: BytesLike,

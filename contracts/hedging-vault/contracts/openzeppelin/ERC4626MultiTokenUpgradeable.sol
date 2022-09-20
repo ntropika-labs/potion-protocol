@@ -6,19 +6,20 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "./presets/ERC1155FullSupplyEnumerableUpgradeable.sol";
 import "./ERC1155DecimalsUpgradeable.sol";
 import "./ERC1155FullSupplyUpgradeable.sol";
 import "./interfaces/IERC4626MultiTokenUpgradeable.sol";
 
 /**
- * @dev Modification of the ERC4626 OpenZeppelin implementation to allow for multi-tokens to be
+   @dev Modification of the ERC4626 OpenZeppelin implementation to allow for multi-tokens to be
         minted for the shares. This multi-tokens are represented by an ERC-1155 token, instead of
         an ERC-20 token.
         
         The vault implements a system of Rounds, where each round is a period of time where the
         investors can deposit funds and the vault will mint shares for them. The ID of the ERC-1155
         token is used to represent the Round number in which the tokens were minted.
+ 
+   @author Roberto Cano <robercano>
  */
 abstract contract ERC4626MultiTokenUpgradeable is
     Initializable,
@@ -29,7 +30,6 @@ abstract contract ERC4626MultiTokenUpgradeable is
     using MathUpgradeable for uint256;
 
     IERC20MetadataUpgradeable private _asset;
-    uint256 private _round; // The current invesment round
 
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
@@ -50,6 +50,19 @@ abstract contract ERC4626MultiTokenUpgradeable is
     /** @dev See {IERC4626MultiToken-totalAssets} */
     function totalAssets() public view virtual override returns (uint256) {
         return _asset.balanceOf(address(this));
+    }
+
+    /** 
+        @inheritdoc ERC1155DecimalsUpgradeable
+    */
+    function decimals()
+        public
+        view
+        virtual
+        override(ERC1155DecimalsUpgradeable, IERC1155DecimalsUpgradeable)
+        returns (uint8)
+    {
+        return _asset.decimals();
     }
 
     /** @dev See {IERC4626MultiToken-convertToShares} */
@@ -74,7 +87,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
 
     /** @dev See {IERC4626MultiToken-maxRedeem} */
     function maxRedeem(address owner) public view virtual override returns (uint256) {
-        return _balanceOfPreviousRounds(owner);
+        return balanceOf(owner);
     }
 
     /** @dev See {IERC4626MultiToken-previewDeposit} */
@@ -93,21 +106,29 @@ abstract contract ERC4626MultiTokenUpgradeable is
     }
 
     /** @dev See {IERC4626MultiToken-deposit} */
-    function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
+    function deposit(
+        uint256 assets,
+        address receiver,
+        uint256 id
+    ) public virtual override returns (uint256) {
         require(assets <= maxDeposit(receiver), "ERC4626MultiToken: deposit more than max");
 
         uint256 shares = previewDeposit(assets);
-        _deposit(_msgSender(), receiver, assets, shares);
+        _deposit(_msgSender(), receiver, assets, shares, id);
 
         return shares;
     }
 
     /** @dev See {IERC4626MultiToken-mint} */
-    function mint(uint256 shares, address receiver) public virtual override returns (uint256) {
+    function mint(
+        uint256 shares,
+        address receiver,
+        uint256 id
+    ) public virtual override returns (uint256) {
         require(shares <= maxMint(receiver), "ERC4626MultiToken: mint more than max");
 
         uint256 assets = previewMint(shares);
-        _deposit(_msgSender(), receiver, assets, shares);
+        _deposit(_msgSender(), receiver, assets, shares, id);
 
         return assets;
     }
@@ -179,7 +200,8 @@ abstract contract ERC4626MultiTokenUpgradeable is
         address caller,
         address receiver,
         uint256 assets,
-        uint256 shares
+        uint256 shares,
+        uint256 round
     ) private {
         // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
         // `tokensToSend` hook. On the other hand, the `tokenReceived` hook, that is triggered after the transfer,
@@ -189,7 +211,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
         // assets are transfered and before the shares are minted, which is a valid state.
         // slither-disable-next-line reentrancy-no-eth
         SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), assets);
-        _mint(receiver, _round, shares, "");
+        _mint(receiver, round, shares, "");
 
         emit Deposit(caller, receiver, assets, shares);
     }
@@ -206,7 +228,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
         uint256 sharesAmount
     ) private {
         if (caller != owner) {
-            isApprovedForAll(owner, caller);
+            require(isApprovedForAll(owner, caller), "ERC4626MultiToken: caller is not owner nor approved");
         }
 
         // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
@@ -247,10 +269,6 @@ abstract contract ERC4626MultiTokenUpgradeable is
 
     function _isVaultCollateralized() private view returns (bool) {
         return totalAssets() > 0 || totalSupply() == 0;
-    }
-
-    function _balanceOfPreviousRounds(address account) private view returns (uint256) {
-        return balanceOf(account) - balanceOf(account, _round);
     }
 
     /**
