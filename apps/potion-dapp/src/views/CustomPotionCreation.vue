@@ -109,6 +109,7 @@ const {
   buyPotionReceipt,
   approveTx,
   approveReceipt,
+  isLoading,
 } = useBuyPotions(
   tokenSelectedAddress,
   strikeSelected,
@@ -212,7 +213,7 @@ watch(buyPotionReceipt, (receipt) => {
       :slippage="premiumSlippage"
       :balance="userCollateralBalance"
       :allowance="userAllowance"
-      :loading="routerRunning"
+      :loading="routerRunning || isLoading"
       @update:current-step="handleChangeStep"
       @buy-potions="handleBuyOrCreatePotions"
     >

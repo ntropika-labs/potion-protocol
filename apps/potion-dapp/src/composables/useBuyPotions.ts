@@ -1,9 +1,12 @@
+import { computed } from "vue";
+
 import { useCollateralTokenContract } from "./useCollateralTokenContract";
 import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
-import type { Ref } from "vue";
-import type { DepthRouterReturn } from "potion-router";
 import { useUserData } from "./useUserData";
 import { useSlippage } from "./useSlippage";
+
+import type { Ref } from "vue";
+import type { DepthRouterReturn } from "potion-router";
 
 export function useBuyPotions(
   tokenSelectedAddress: Ref<string | null>,
@@ -11,12 +14,20 @@ export function useBuyPotions(
   durationSelected: Ref<number>,
   routerResult: Ref<DepthRouterReturn | null>
 ) {
-  const { approveTx, approveReceipt, approveForPotionLiquidityPool } =
-    useCollateralTokenContract();
-  const { buyPotions, buyPotionTx, buyPotionReceipt } =
+  const {
+    approveTx,
+    approveReceipt,
+    approveForPotionLiquidityPool,
+    approveLoading,
+  } = useCollateralTokenContract();
+  const { buyPotions, buyPotionTx, buyPotionReceipt, buyPotionLoading } =
     usePotionLiquidityPoolContract();
   const { fetchUserData, userAllowance } = useUserData();
   const { premiumSlippage } = useSlippage(routerResult);
+
+  const isLoading = computed(
+    () => buyPotionLoading.value || approveLoading.value
+  );
 
   const handleBuyPotions = async () => {
     if (routerResult?.value?.counterparties && tokenSelectedAddress.value) {
@@ -62,5 +73,6 @@ export function useBuyPotions(
     buyPotionReceipt,
     approveTx,
     approveReceipt,
+    isLoading,
   };
 }
