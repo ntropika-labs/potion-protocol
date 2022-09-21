@@ -29533,6 +29533,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"price-source-benchmark@workspace:apps/price-source-benchmark":
+  version: 0.0.0-use.local
+  resolution: "price-source-benchmark@workspace:apps/price-source-benchmark"
+  dependencies:
+    dapp-types: "*"
+    potion-contracts: "*"
+    potion-tokenlist: "*"
+    potion-ui: "*"
+    potion-unocss: "*"
+  languageName: unknown
+  linkType: soft
+
 "private@npm:^0.1.6, private@npm:^0.1.8":
   version: 0.1.8
   resolution: "private@npm:0.1.8"

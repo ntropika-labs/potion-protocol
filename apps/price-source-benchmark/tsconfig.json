@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.vue.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/__tests__/*", "**/*.stories.ts"],
+  "compilerOptions": {
+    "module": "ESNext",
+    "baseUrl": ".",
+    "rootDir": "../../",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "importsNotUsedAsValues": "remove",
+    "types": [
+      "node",
+      "vitest",
+      "jsdom",
+      "vite/client",
+      "vue/macros",
+      "@intlify/vite-plugin-vue-i18n/client"
+    ]
+  }
+}

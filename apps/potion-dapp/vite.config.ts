@@ -47,7 +47,6 @@ export default defineConfig({
               new URL(
                 "./src/composables/useMockedCoingecko.ts",
                 //@ts-expect-errorvolar  giving errors
-
                 import.meta.url
               )
             )
