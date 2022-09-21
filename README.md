@@ -137,7 +137,7 @@ Every time that you do a fast forward remember to update your starting time to r
 ## Testing
 
 ### unit test
-The project implements unit tests for `potion-contracts` with [Hardhat](https://hardhat.org/), `potion-subgraph` with [Matchstick](https://thegraph.com/docs/en/developing/unit-testing-framework/) and [Vitest](https://vitest.dev) for `potion-dapp` and `potion-ui`.
+The project implements unit tests for `@potion-protocol/core` with [Hardhat](https://hardhat.org/), `potion-subgraph` with [Matchstick](https://thegraph.com/docs/en/developing/unit-testing-framework/) and [Vitest](https://vitest.dev) for `potion-dapp` and `potion-ui`.
 Every package has at least one script (eg, `test-unit`) to launch them, for more details check the specific `package.json` of that package.
 
 ### e2e
@@ -237,7 +237,7 @@ This is what happens locally behind the scenes to start and seed the environment
       F([potion-tokenlist]);
       G([potion-unocss]);
       H([subgraph-queries]);
-      I[potion-contracts];
+      I[@potion-protocol/core];
       I --> J;
       I --> K;
       J([contracts-math]);

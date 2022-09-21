@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { $fetch } from "ohmyfetch";
 
 import type { SelectableToken } from "dapp-types";
-import { Oracle__factory, type Oracle } from "potion-contracts/typechain";
+import { Oracle__factory, type Oracle } from "@potion-protocol/core/typechain";
 
 import { BaseButton, InputNumber, TokenCard } from "potion-ui";
 

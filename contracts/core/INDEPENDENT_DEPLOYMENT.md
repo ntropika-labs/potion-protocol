@@ -191,7 +191,7 @@ The autotask will run twice everyday and it will set the price of the Oracle whe
 
 # Running the Autotask locally
 
-If the autotask is not working, you can run it locally to test it. For this you need to setup your API Key and API Secret in the `.env` file in the potion-contracts project. Use the [.env.sample](./.env.sample) file as a template and fill in the `OZ_AUTOTASK_API_KEY` and `OZ_AUTOTASK_API_SECRET` variables to the corresponding values that you got when you created the relayer.
+If the autotask is not working, you can run it locally to test it. For this you need to setup your API Key and API Secret in the `.env` file in the @potion-protocol/core project. Use the [.env.sample](./.env.sample) file as a template and fill in the `OZ_AUTOTASK_API_KEY` and `OZ_AUTOTASK_API_SECRET` variables to the corresponding values that you got when you created the relayer.
 
 Then you can run the bot locally by doing:
 
