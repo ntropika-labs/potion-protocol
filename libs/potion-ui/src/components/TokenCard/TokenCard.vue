@@ -15,8 +15,10 @@ export interface Props {
   name: string;
   symbol: string;
   selected?: boolean;
+  size?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
+  size: "lg",
   selected: false,
   image:
     "https://s.gravatar.com/avatar/da32ff79613d46d206a45e5a3018acf3?size=496&default=retro",
@@ -39,7 +41,12 @@ let color = computed(() =>
     :color="color"
     @click="emit('token-selected', props.address)"
   >
-    <TokenIcon size="lg" :name="props.name" :image="props.image" class="mb-4" />
+    <TokenIcon
+      :size="props.size"
+      :name="props.name"
+      :image="props.image"
+      class="mb-4"
+    />
     <span class="text-sm text-white leading-none">{{ props.symbol }}</span>
   </BaseCard>
 </template>
