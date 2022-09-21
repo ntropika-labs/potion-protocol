@@ -63,12 +63,12 @@ export function createNewPool(
 
 export function createNewTemplate(
   curveHash: Bytes,
-  criteriaSetHash: string,
+  criteriaSetHash: Bytes,
   size: string,
   locked: string,
   lp: Bytes
 ): void {
-  const id = createTemplateId(curveHash, Bytes.fromHexString(criteriaSetHash));
+  const id = createTemplateId(curveHash, criteriaSetHash);
   const template = createTemplate(id, curveHash, criteriaSetHash, lp);
   template.size = BigDecimal.fromString(size);
   template.locked = BigDecimal.fromString(locked);
@@ -105,35 +105,32 @@ export function formatStrike(value: string): BigInt {
 }
 
 export function createNewCriteria(
-  id: string,
-  underlyingAsset: string,
-  strikeAsset: string,
+  id: Bytes,
+  underlyingAsset: Bytes,
+  strikeAsset: Bytes,
   isPut: boolean,
   maxStrikePercent: BigDecimal,
   maxDurationInDays: BigInt
 ): void {
   const criteria = new Criteria(id);
-  criteria.underlyingAsset = Bytes.fromHexString(underlyingAsset);
-  criteria.strikeAsset = Bytes.fromHexString(strikeAsset);
+  criteria.underlyingAsset = underlyingAsset;
+  criteria.strikeAsset = strikeAsset;
   criteria.isPut = isPut;
   criteria.maxStrikePercent = maxStrikePercent;
   criteria.maxDurationInDays = maxDurationInDays;
   criteria.save();
 }
 
-export function createNewCriteriaSet(id: string): void {
+export function createNewCriteriaSet(id: Bytes): void {
   const criteriaSet = new CriteriaSet(id);
   criteriaSet.save();
 }
 
 export function createNewCriteriaJoinedCriteriaSet(
-  criteriaId: string,
-  criteriaSetId: string
+  criteriaId: Bytes,
+  criteriaSetId: Bytes
 ): void {
-  const id = createCriteriaJoinedCriteriaSetId(
-    Bytes.fromHexString(criteriaId),
-    Bytes.fromHexString(criteriaSetId)
-  );
+  const id = createCriteriaJoinedCriteriaSetId(criteriaId, criteriaSetId);
   const criteriaJoinedCriteriaSet = new CriteriaJoinedCriteriaSet(id);
 
   criteriaJoinedCriteriaSet.criteria = criteriaId;
@@ -143,11 +140,11 @@ export function createNewCriteriaJoinedCriteriaSet(
 
 export function createNewOtoken(
   id: Bytes,
-  tokenAddress: string,
-  creator: string,
-  underlyingAsset: string,
-  strikeAsset: string,
-  collateralAsset: string,
+  tokenAddress: Bytes,
+  creator: Bytes,
+  underlyingAsset: Bytes,
+  strikeAsset: Bytes,
+  collateralAsset: Bytes,
   strikePrice: BigDecimal,
   expiry: BigInt,
   isPut: boolean,
@@ -160,11 +157,11 @@ export function createNewOtoken(
   purchasesCount: BigInt
 ): void {
   const otoken = new OToken(id);
-  otoken.tokenAddress = Bytes.fromHexString(tokenAddress);
-  otoken.creator = Bytes.fromHexString(creator);
-  otoken.underlyingAsset = Bytes.fromHexString(underlyingAsset);
-  otoken.strikeAsset = Bytes.fromHexString(strikeAsset);
-  otoken.collateralAsset = Bytes.fromHexString(collateralAsset);
+  otoken.tokenAddress = tokenAddress;
+  otoken.creator = creator;
+  otoken.underlyingAsset = underlyingAsset;
+  otoken.strikeAsset = strikeAsset;
+  otoken.collateralAsset = collateralAsset;
   otoken.strikePrice = strikePrice;
   otoken.expiry = expiry;
   otoken.isPut = isPut;
@@ -180,12 +177,12 @@ export function createNewOtoken(
 }
 
 export function mockTokenCalls(
-  address: string,
+  address: Bytes,
   decimals: string,
   tokenName: string,
   symbol: string
 ): void {
-  log.info("Preparing mocked functions for '{}'", [address]);
+  log.info("Preparing mocked functions for '{}'", [address.toHexString()]);
   log.info("Preparing the mocked decimals function, it will return '{}'", [
     decimals,
   ]);

@@ -1,7 +1,7 @@
 import { test, clearStore } from "matchstick-as/assembly/index";
 import { log } from "matchstick-as/assembly/log";
 import { handleDeposited, createTemplateId } from "../../src/pools";
-import { BigDecimal, Bytes } from "@graphprotocol/graph-ts";
+import { BigDecimal } from "@graphprotocol/graph-ts";
 import { createDeposited } from "../events";
 import {
   assertEntity,
@@ -17,10 +17,6 @@ import {
   MOCKED_CURVE_ID,
   MOCKED_CRITERIA_SET_ID,
 } from "../constants";
-
-function getTemplateId(curveHash: Bytes, criteriaSetHash: string): string {
-  return createTemplateId(curveHash, Bytes.fromHexString(criteriaSetHash));
-}
 
 // template creation
 test("It can create a template", () => {
@@ -55,7 +51,7 @@ test("It can deposit liquidity in an already existing pool with a template", () 
     "0",
     MOCKED_LP
   );
-  const templateId = getTemplateId(MOCKED_CURVE_ID, MOCKED_CRITERIA_SET_ID);
+  const templateId = createTemplateId(MOCKED_CURVE_ID, MOCKED_CRITERIA_SET_ID);
   createNewPool(MOCKED_LP, BIGINT_ZERO, "100", templateId);
   log.info("Stored the pool, proceding with the mocked event", []);
   const mockedEvent = createDeposited(
@@ -90,7 +86,7 @@ test("It can deposit liquidity in an already existing pool with a template that 
     "0",
     MOCKED_LP
   );
-  const templateId = getTemplateId(MOCKED_CURVE_ID, MOCKED_CRITERIA_SET_ID);
+  const templateId = createTemplateId(MOCKED_CURVE_ID, MOCKED_CRITERIA_SET_ID);
   createNewPool(MOCKED_LP, BIGINT_ZERO, "100", templateId);
   log.info(
     "Created a pool with poolId 0, lp '0x0000000000000000000000000000000000000001' and a size of 100",

@@ -7,7 +7,7 @@ import {
   handleDeposited,
   handleWithdrawn,
 } from "../../src/pools";
-import { Bytes, BigDecimal } from "@graphprotocol/graph-ts";
+import { BigDecimal } from "@graphprotocol/graph-ts";
 import {
   createDeposited,
   createWithdrawn,
@@ -271,7 +271,7 @@ test("It can assign an existing criteriaSet to a new pool", () => {
   const mockedEvent = createCriteriaSetSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
+    MOCKED_CRITERIA_SET_ID
   );
   log.info(
     "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
@@ -296,7 +296,7 @@ test("It can assign a new criteriaSet to an existing pool", () => {
   const mockedEvent = createCriteriaSetSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
+    MOCKED_CRITERIA_SET_ID
   );
   log.info(
     "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
@@ -326,7 +326,7 @@ test("It can assign an existing criteriaSet to an exististing pool", () => {
   const mockedEvent = createCriteriaSetSelected(
     MOCKED_LP,
     BIGINT_ZERO,
-    Bytes.fromHexString(MOCKED_CRITERIA_SET_ID)
+    MOCKED_CRITERIA_SET_ID
   );
   log.info(
     "Calling handleCriteriaSetSelected with poolId 0, lp '0x0000000000000000000000000000000000000001' and criteriaSetId '0x00000000000000000000000000000000000001000'",
