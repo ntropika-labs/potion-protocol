@@ -77,7 +77,7 @@ export function createTemplateId(
 export function createTemplate(
   templateId: string,
   curveHash: Bytes,
-  criteriaSetHash: string,
+  criteriaSetHash: Bytes,
   creator: Bytes
 ): Template {
   const template = new Template(templateId);
@@ -127,7 +127,7 @@ function updateConfigPoolTemplate(
   pool: Pool,
   pastTemplate: Template | null,
   curveHash: Bytes,
-  criteriaSetHash: string,
+  criteriaSetHash: Bytes,
   blockHash: Bytes,
   timestamp: BigInt
 ): void {
@@ -135,7 +135,7 @@ function updateConfigPoolTemplate(
   log.info("Updating the pool {} with the following curve {} and criteria {}", [
     pool.id,
     curveHash.toHexString(),
-    criteriaSetHash,
+    criteriaSetHash.toHexString(),
   ]);
   if (pastTemplate != null) {
     log.info("The pastTemplate id is {}", [pastTemplate.id]);
@@ -161,10 +161,7 @@ function updateConfigPoolTemplate(
         log.debug("pastTemplate.criteriaSet != criteriaSetHash", []);
       }
     }
-    const templateId = createTemplateId(
-      curveHash,
-      Bytes.fromHexString(criteriaSetHash) as Bytes
-    );
+    const templateId = createTemplateId(curveHash, criteriaSetHash);
     let template = Template.load(templateId);
     log.info("Loading the template {}", [templateId]);
 
@@ -463,10 +460,9 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const criteriaSetHashId = event.params.criteriaSetHash.toHexString();
   log.info("Setting a criteria for {}, criteria hash id is {}", [
     poolId,
-    criteriaSetHashId,
+    event.params.criteriaSetHash.toHexString(),
   ]);
 
   if (pool.template == null) {
@@ -475,13 +471,13 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
       pool as Pool,
       null,
       Bytes.fromHexString(""),
-      criteriaSetHashId,
+      event.params.criteriaSetHash,
       event.block.hash,
       event.block.timestamp
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.criteriaSet == null) {
+    if (!pastTemplate.criteriaSet) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -490,7 +486,7 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
       pool as Pool,
       pastTemplate as Template,
       pastTemplate.curve as Bytes,
-      criteriaSetHashId,
+      event.params.criteriaSetHash,
       event.block.hash,
       event.block.timestamp
     );
@@ -531,7 +527,7 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       null,
       curveId,
-      "",
+      Bytes.fromHexString(""),
       event.block.hash,
       event.block.timestamp
     );
@@ -546,7 +542,7 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       pastTemplate as Template,
       curveId,
-      pastTemplate.criteriaSet as string,
+      pastTemplate.criteriaSet as Bytes,
       event.block.hash,
       event.block.timestamp
     );

@@ -9,10 +9,6 @@ import {
   CriteriaJoinedCriteriaSet,
 } from "../generated/schema";
 
-export function createCriteriaId(criteriaHash: Bytes): string {
-  return criteriaHash.toHexString();
-}
-
 export function createCriteriaJoinedCriteriaSetId(
   criteriaHash: Bytes,
   criteriaSetHash: Bytes
@@ -25,10 +21,9 @@ export function createCriteriaJoinedCriteriaSetId(
  * @param {CriteriaAdded} event Descriptor of the event emitted.
  */
 export function handleCriteriaAdded(event: CriteriaAdded): void {
-  const criteriaId = createCriteriaId(event.params.criteriaHash);
-  let criteria = Criteria.load(criteriaId);
+  let criteria = Criteria.load(event.params.criteriaHash);
   if (criteria == null) {
-    criteria = new Criteria(criteriaId);
+    criteria = new Criteria(event.params.criteriaHash);
     criteria.underlyingAsset = event.params.criteria.underlyingAsset;
     criteria.strikeAsset = event.params.criteria.strikeAsset;
     criteria.isPut = event.params.criteria.isPut;
@@ -39,7 +34,7 @@ export function handleCriteriaAdded(event: CriteriaAdded): void {
   } else {
     log.warning(
       "Tried to save the same criteria multiple times, criteriaId is {}",
-      [criteriaId]
+      [event.params.criteriaHash.toHexString()]
     );
   }
 }
@@ -49,13 +44,11 @@ export function handleCriteriaAdded(event: CriteriaAdded): void {
  * @param {CriteriaSetAdded} event Descriptor of the event emitted.
  */
 export function handleCriteriaSetAdded(event: CriteriaSetAdded): void {
-  const criteriaSetId = event.params.criteriaSetHash.toHexString();
-  const criteriaSet = new CriteriaSet(criteriaSetId);
+  const criteriaSet = new CriteriaSet(event.params.criteriaSetHash);
   const criteriaHashArray = event.params.criteriaSet;
 
   for (let i = 0; i < criteriaHashArray.length; i++) {
     const criteriaHash = criteriaHashArray[i];
-    const criteriaId = createCriteriaId(criteriaHash);
 
     const criteriaJoinedCriteriaSetId = createCriteriaJoinedCriteriaSetId(
       criteriaHash,
@@ -65,8 +58,8 @@ export function handleCriteriaSetAdded(event: CriteriaSetAdded): void {
       criteriaJoinedCriteriaSetId
     );
 
-    criteriaJoinedCriteriaSet.criteria = criteriaId;
-    criteriaJoinedCriteriaSet.criteriaSet = criteriaSetId;
+    criteriaJoinedCriteriaSet.criteria = criteriaHash;
+    criteriaJoinedCriteriaSet.criteriaSet = event.params.criteriaSetHash;
     criteriaJoinedCriteriaSet.save();
   }
 

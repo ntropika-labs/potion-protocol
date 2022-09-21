@@ -42,7 +42,7 @@ type Template @entity {
 All Criteria's in the registry of criterias.
 """
 type Criteria @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   underlyingAsset: Token!
   strikeAsset: Token!
   isPut: Boolean!
@@ -55,7 +55,7 @@ type Criteria @entity(immutable: true) {
 
 # describes a criteria set
 type CriteriaSet @entity(immutable: true) {
-  id: ID! # hash of the CriteriaSet
+  id: Bytes! # hash of the CriteriaSet
   criterias: [CriteriaJoinedCriteriaSet!]! @derivedFrom(field: "criteriaSet")
   templates: [Template!] @derivedFrom(field: "criteriaSet")
 }
