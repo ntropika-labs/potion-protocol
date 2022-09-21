@@ -26,7 +26,7 @@ import type {
   OnEvent,
 } from "../../../common";
 
-export interface IERC4626MultiTokenUpgradeableInterface
+export interface IERC4626DeferredOperationUpgradeableInterface
   extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
@@ -44,6 +44,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "totalAssets()": FunctionFragment;
+    "vault()": FunctionFragment;
   };
 
   getFunction(
@@ -63,6 +64,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
       | "redeem"
       | "redeemBatch"
       | "totalAssets"
+      | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -110,6 +112,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
     functionFragment: "totalAssets",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(
@@ -147,6 +150,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
     functionFragment: "totalAssets",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "Deposit(address,address,uint256,uint256)": EventFragment;
@@ -202,12 +206,12 @@ export type WithdrawBatchEvent = TypedEvent<
 
 export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
-export interface IERC4626MultiTokenUpgradeable extends BaseContract {
+export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IERC4626MultiTokenUpgradeableInterface;
+  interface: IERC4626DeferredOperationUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -306,6 +310,10 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     totalAssets(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
+
+    vault(
+      overrides?: CallOverrides
+    ): Promise<[string] & { vaultAddress: string }>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -373,6 +381,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
+  vault(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
@@ -438,6 +448,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -554,6 +566,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -630,5 +644,7 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

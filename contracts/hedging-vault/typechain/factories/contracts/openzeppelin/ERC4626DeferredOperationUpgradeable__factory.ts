@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC4626MultiTokenUpgradeable,
-  ERC4626MultiTokenUpgradeableInterface,
-} from "../../../contracts/openzeppelin/ERC4626MultiTokenUpgradeable";
+  ERC4626DeferredOperationUpgradeable,
+  ERC4626DeferredOperationUpgradeableInterface,
+} from "../../../contracts/openzeppelin/ERC4626DeferredOperationUpgradeable";
 
 const _abi = [
   {
@@ -460,7 +460,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "receiver",
         type: "address",
       },
     ],
@@ -479,7 +479,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "receiver",
         type: "address",
       },
     ],
@@ -829,21 +829,36 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [],
+    name: "vault",
+    outputs: [
+      {
+        internalType: "address",
+        name: "vaultAddress",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
-export class ERC4626MultiTokenUpgradeable__factory {
+export class ERC4626DeferredOperationUpgradeable__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC4626MultiTokenUpgradeableInterface {
-    return new utils.Interface(_abi) as ERC4626MultiTokenUpgradeableInterface;
+  static createInterface(): ERC4626DeferredOperationUpgradeableInterface {
+    return new utils.Interface(
+      _abi
+    ) as ERC4626DeferredOperationUpgradeableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC4626MultiTokenUpgradeable {
+  ): ERC4626DeferredOperationUpgradeable {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as ERC4626MultiTokenUpgradeable;
+    ) as ERC4626DeferredOperationUpgradeable;
   }
 }

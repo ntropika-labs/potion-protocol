@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { HedgingVaultOrchestrator__factory } from "./HedgingVaultOrchestrator__factory";
+export { RoundsVaultExchanger__factory } from "./RoundsVaultExchanger__factory";

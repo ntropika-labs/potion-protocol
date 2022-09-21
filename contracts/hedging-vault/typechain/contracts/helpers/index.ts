@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { HedgingVaultOrchestrator } from "./HedgingVaultOrchestrator";
+export type { RoundsVaultExchanger } from "./RoundsVaultExchanger";

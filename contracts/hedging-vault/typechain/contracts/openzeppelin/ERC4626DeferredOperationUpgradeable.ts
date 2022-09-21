@@ -26,7 +26,8 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
+export interface ERC4626DeferredOperationUpgradeableInterface
+  extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
@@ -55,6 +56,7 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
+    "vault()": FunctionFragment;
   };
 
   getFunction(
@@ -86,6 +88,7 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
       | "totalSupply()"
       | "totalSupply(uint256)"
       | "uri"
+      | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -178,6 +181,7 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(
@@ -257,6 +261,7 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
@@ -377,12 +382,12 @@ export type WithdrawBatchEvent = TypedEvent<
 
 export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
-export interface ERC4626MultiTokenUpgradeable extends BaseContract {
+export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC4626MultiTokenUpgradeableInterface;
+  interface: ERC4626DeferredOperationUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -449,9 +454,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxDeposit(
+      receiver: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -531,6 +539,10 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<[BigNumber]>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    vault(
+      overrides?: CallOverrides
+    ): Promise<[string] & { vaultAddress: string }>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -578,9 +590,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -661,6 +673,8 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
   uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  vault(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
@@ -707,9 +721,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -789,6 +803,8 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -936,9 +952,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1018,6 +1034,8 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1070,12 +1088,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      arg0: string,
+      receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxMint(
-      arg0: string,
+      receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1163,5 +1181,7 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -3,6 +3,7 @@
 /* eslint-disable */
 export type { IAction } from "./IAction";
 export type { IActionsManager } from "./IActionsManager";
+export type { IBaseRoundsVaultUpgradeable } from "./IBaseRoundsVaultUpgradeable";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";
 export type { IInvestmentVaultV0 } from "./IInvestmentVaultV0";

@@ -17,7 +17,7 @@ import "./IERC1155FullSupplyUpgradeable.sol";
  *
  * @author Roberto Cano <robercano>
  */
-interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable, IERC1155FullSupplyUpgradeable {
+interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable {
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
     event Withdraw(
@@ -122,11 +122,7 @@ interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable, IERC1155
      *
      * NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
      */
-    function deposit(
-        uint256 assets,
-        address receiver,
-        uint256 id
-    ) external returns (uint256 shares);
+    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
 
     /**
      * @dev Returns the maximum amount of the Vault shares that can be minted for the receiver, through a mint call.
@@ -164,11 +160,7 @@ interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable, IERC1155
      *
      * NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
      */
-    function mint(
-        uint256 shares,
-        address receiver,
-        uint256 id
-    ) external returns (uint256 assets);
+    function mint(uint256 shares, address receiver) external returns (uint256 assets);
 
     /**
      * @dev Returns the maximum amount of Vault shares that can be redeemed from the owner balance in the Vault,

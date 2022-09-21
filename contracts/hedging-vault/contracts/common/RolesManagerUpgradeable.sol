@@ -5,6 +5,8 @@ pragma solidity 0.8.14;
 
 import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 
+import "../interfaces/IRolesManager.sol";
+
 /**
     @title RolesManagerUpgradeable
 
@@ -33,7 +35,7 @@ import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgr
     among different helper contracts that need to scope their functions to the Admin or Keeper role.
  */
 
-contract RolesManagerUpgradeable is AccessControlEnumerableUpgradeable {
+contract RolesManagerUpgradeable is AccessControlEnumerableUpgradeable, IRolesManager {
     // ROLES
     bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;
     bytes32 public constant STRATEGIST_ROLE = keccak256("STRATEGIST_ROLE");

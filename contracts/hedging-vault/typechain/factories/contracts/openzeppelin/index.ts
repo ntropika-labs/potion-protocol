@@ -4,6 +4,6 @@
 export * as interfaces from "./interfaces";
 export { ERC1155DecimalsUpgradeable__factory } from "./ERC1155DecimalsUpgradeable__factory";
 export { ERC1155FullSupplyUpgradeable__factory } from "./ERC1155FullSupplyUpgradeable__factory";
-export { ERC4626DepositsProxyUpgradeable__factory } from "./ERC4626DepositsProxyUpgradeable__factory";
+export { ERC4626DeferredOperationUpgradeable__factory } from "./ERC4626DeferredOperationUpgradeable__factory";
 export { ERC4626MultiTokenUpgradeable__factory } from "./ERC4626MultiTokenUpgradeable__factory";
 export { ERC4626Upgradeable__factory } from "./ERC4626Upgradeable__factory";

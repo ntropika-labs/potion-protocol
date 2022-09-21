@@ -15,7 +15,7 @@ import "./IERC4626MultiTokenUpgradeable.sol";
  *
  * @author Roberto Cano <robercano>
  */
-interface IERC4626DepositsProxyUpgradeable is IERC4626MultiTokenUpgradeable {
+interface IERC4626DeferredOperationUpgradeable is IERC4626MultiTokenUpgradeable {
     /**
      * @dev Returns the target vault for which this vault is accepting deposits
      */

@@ -26,27 +26,51 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
+export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "canRefund(address)": FunctionFragment;
+    "canRefundETH()": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
+    "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "getCurrentRound()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
     "mint(uint256,address)": FunctionFragment;
+    "nextRound()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "previewDeposit(uint256)": FunctionFragment;
     "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
+    "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
+    "redeemExchangeAssetBatch(uint256[],uint256[],address,address)": FunctionFragment;
+    "refund(address,uint256,address)": FunctionFragment;
+    "refundETH(uint256,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -54,30 +78,56 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     "totalAssets()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
+    "vault()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
       | "asset"
       | "balanceOf(address,uint256)"
       | "balanceOf(address)"
       | "balanceOfBatch"
+      | "canRefund"
+      | "canRefundETH"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
       | "deposit"
+      | "exchangeAsset"
       | "exists"
+      | "getCurrentRound"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "grantRole"
+      | "hasRole"
       | "isApprovedForAll"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
       | "mint"
+      | "nextRound"
+      | "pause"
+      | "paused"
       | "previewDeposit"
       | "previewMint"
       | "previewRedeem"
       | "redeem"
       | "redeemBatch"
+      | "redeemExchangeAsset"
+      | "redeemExchangeAssetBatch"
+      | "refund"
+      | "refundETH"
+      | "renounceRole"
+      | "revokeRole"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
@@ -85,9 +135,35 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
       | "totalAssets"
       | "totalSupply()"
       | "totalSupply(uint256)"
+      | "unpause"
       | "uri"
+      | "vault"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf(address,uint256)",
@@ -100,6 +176,11 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
     values: [string[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(functionFragment: "canRefund", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "canRefundETH",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
@@ -115,8 +196,36 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "exchangeAsset",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "exists",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentRound",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -129,6 +238,9 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     functionFragment: "mint",
     values: [BigNumberish, string]
   ): string;
+  encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "previewDeposit",
     values: [BigNumberish]
@@ -148,6 +260,30 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "redeemBatch",
     values: [BigNumberish[], BigNumberish[], string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemExchangeAsset",
+    values: [BigNumberish, BigNumberish, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemExchangeAssetBatch",
+    values: [BigNumberish[], BigNumberish[], string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "refund",
+    values: [string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "refundETH",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -177,8 +313,28 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     functionFragment: "totalSupply(uint256)",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOf(address,uint256)",
@@ -192,6 +348,11 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "canRefund", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "canRefundETH",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
@@ -202,7 +363,29 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "exchangeAsset",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -211,6 +394,9 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "previewDeposit",
     data: BytesLike
@@ -228,6 +414,21 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     functionFragment: "redeemBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemExchangeAsset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemExchangeAssetBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -256,27 +457,45 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     functionFragment: "totalSupply(uint256)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "NextRound(uint256)": EventFragment;
+    "Paused(address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256,uint256)": EventFragment;
     "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
+    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)": EventFragment;
+    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAsset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAssetBatch"): EventFragment;
 }
 
 export interface ApprovalForAllEventObject {
@@ -310,6 +529,57 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface NextRoundEventObject {
+  newRoundNumber: BigNumber;
+}
+export type NextRoundEvent = TypedEvent<[BigNumber], NextRoundEventObject>;
+
+export type NextRoundEventFilter = TypedEventFilter<NextRoundEvent>;
+
+export interface PausedEventObject {
+  account: string;
+}
+export type PausedEvent = TypedEvent<[string], PausedEventObject>;
+
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
+}
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface TransferBatchEventObject {
   operator: string;
@@ -347,6 +617,13 @@ export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
+export interface UnpausedEventObject {
+  account: string;
+}
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+
 export interface WithdrawEventObject {
   caller: string;
   receiver: string;
@@ -377,12 +654,44 @@ export type WithdrawBatchEvent = TypedEvent<
 
 export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
-export interface ERC4626MultiTokenUpgradeable extends BaseContract {
+export interface WithdrawExchangeAssetEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  assets: BigNumber;
+  sharesId: BigNumber;
+  sharesAmount: BigNumber;
+}
+export type WithdrawExchangeAssetEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber, BigNumber],
+  WithdrawExchangeAssetEventObject
+>;
+
+export type WithdrawExchangeAssetEventFilter =
+  TypedEventFilter<WithdrawExchangeAssetEvent>;
+
+export interface WithdrawExchangeAssetBatchEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  assets: BigNumber;
+  sharesIds: BigNumber[];
+  sharesAmounts: BigNumber[];
+}
+export type WithdrawExchangeAssetBatchEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber[], BigNumber[]],
+  WithdrawExchangeAssetBatchEventObject
+>;
+
+export type WithdrawExchangeAssetBatchEventFilter =
+  TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
+
+export interface BaseRoundsVaultUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC4626MultiTokenUpgradeableInterface;
+  interface: BaseRoundsVaultUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -404,6 +713,18 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     asset(overrides?: CallOverrides): Promise<[string]>;
 
     "balanceOf(address,uint256)"(
@@ -423,6 +744,10 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    canRefund(token: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -441,7 +766,36 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<[string]>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isApprovedForAll(
       account: string,
@@ -449,9 +803,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxDeposit(
+      receiver: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -460,6 +817,16 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    nextRound(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     previewDeposit(
       assets: BigNumberish,
@@ -489,6 +856,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       amounts: BigNumberish[],
       receiver: string,
       owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    refund(
+      token: string,
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    refundETH(
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -530,8 +938,28 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    vault(
+      overrides?: CallOverrides
+    ): Promise<[string] & { vaultAddress: string }>;
   };
+
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
   asset(overrides?: CallOverrides): Promise<string>;
 
@@ -552,6 +980,10 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+
+  canRefundETH(overrides?: CallOverrides): Promise<boolean>;
+
   convertToAssets(
     shares: BigNumberish,
     overrides?: CallOverrides
@@ -570,7 +1002,36 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  exchangeAsset(overrides?: CallOverrides): Promise<string>;
+
   exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+  getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  getRoleMember(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isApprovedForAll(
     account: string,
@@ -578,9 +1039,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -589,6 +1050,16 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     receiver: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  nextRound(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
   previewDeposit(
     assets: BigNumberish,
@@ -618,6 +1089,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     amounts: BigNumberish[],
     receiver: string,
     owner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  redeemExchangeAsset(
+    id: BigNumberish,
+    amount: BigNumberish,
+    receiver: string,
+    owner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  redeemExchangeAssetBatch(
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    receiver: string,
+    owner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  refund(
+    token: string,
+    amount: BigNumberish,
+    recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  refundETH(
+    amount: BigNumberish,
+    recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -659,9 +1171,27 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  vault(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
     asset(overrides?: CallOverrides): Promise<string>;
 
     "balanceOf(address,uint256)"(
@@ -681,6 +1211,10 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    canRefund(token: string, overrides?: CallOverrides): Promise<boolean>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<boolean>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -699,7 +1233,36 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<string>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isApprovedForAll(
       account: string,
@@ -707,9 +1270,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -718,6 +1281,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       receiver: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    nextRound(overrides?: CallOverrides): Promise<void>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
 
     previewDeposit(
       assets: BigNumberish,
@@ -749,6 +1318,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
+      receiver: string,
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      receiver: string,
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    refund(
+      token: string,
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    refundETH(
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     safeBatchTransferFrom(
       from: string,
@@ -788,7 +1398,11 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    unpause(overrides?: CallOverrides): Promise<void>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -818,6 +1432,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "NextRound(uint256)"(
+      newRoundNumber?: BigNumberish | null
+    ): NextRoundEventFilter;
+    NextRound(newRoundNumber?: BigNumberish | null): NextRoundEventFilter;
+
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,
@@ -855,6 +1510,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): URIEventFilter;
     URI(value?: null, id?: BigNumberish | null): URIEventFilter;
 
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
+
     "Withdraw(address,address,address,uint256,uint256,uint256)"(
       caller?: string | null,
       receiver?: string | null,
@@ -888,9 +1546,55 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       sharesIds?: null,
       sharesAmounts?: null
     ): WithdrawBatchEventFilter;
+
+    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)"(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesId?: null,
+      sharesAmount?: null
+    ): WithdrawExchangeAssetEventFilter;
+    WithdrawExchangeAsset(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesId?: null,
+      sharesAmount?: null
+    ): WithdrawExchangeAssetEventFilter;
+
+    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])"(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesIds?: null,
+      sharesAmounts?: null
+    ): WithdrawExchangeAssetBatchEventFilter;
+    WithdrawExchangeAssetBatch(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesIds?: null,
+      sharesAmounts?: null
+    ): WithdrawExchangeAssetBatchEventFilter;
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
     "balanceOf(address,uint256)"(
@@ -910,6 +1614,10 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    canRefund(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -928,7 +1636,39 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<BigNumber>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isApprovedForAll(
       account: string,
@@ -936,9 +1676,9 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -947,6 +1687,16 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    nextRound(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     previewDeposit(
       assets: BigNumberish,
@@ -976,6 +1726,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       amounts: BigNumberish[],
       receiver: string,
       owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    refund(
+      token: string,
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    refundETH(
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1017,10 +1808,30 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "balanceOf(address,uint256)"(
@@ -1040,6 +1851,13 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canRefund(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -1058,8 +1876,40 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     exists(
       id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1070,12 +1920,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      arg0: string,
+      receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxMint(
-      arg0: string,
+      receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1089,6 +1939,16 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    nextRound(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     previewDeposit(
       assets: BigNumberish,
@@ -1118,6 +1978,47 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       amounts: BigNumberish[],
       receiver: string,
       owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      receiver: string,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    refund(
+      token: string,
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    refundETH(
+      amount: BigNumberish,
+      recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1159,9 +2060,15 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     uri(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

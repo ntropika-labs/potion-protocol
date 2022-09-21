@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { IAction__factory } from "./IAction__factory";
 export { IActionsManager__factory } from "./IActionsManager__factory";
+export { IBaseRoundsVaultUpgradeable__factory } from "./IBaseRoundsVaultUpgradeable__factory";
 export { IEmergencyLock__factory } from "./IEmergencyLock__factory";
 export { IFeeManager__factory } from "./IFeeManager__factory";
 export { IInvestmentVaultV0__factory } from "./IInvestmentVaultV0__factory";

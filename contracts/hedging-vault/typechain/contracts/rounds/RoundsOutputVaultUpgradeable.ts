@@ -43,8 +43,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
-    "deposit(uint256,address,uint256)": FunctionFragment;
+    "deposit(uint256,address)": FunctionFragment;
+    "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "getCurrentRound()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -55,7 +57,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "mint(uint256,address,uint256)": FunctionFragment;
+    "mint(uint256,address)": FunctionFragment;
     "nextRound()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -64,8 +66,8 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
-    "redeemBatchForUnderlying(uint256[],uint256[],address,address)": FunctionFragment;
-    "redeemForUnderlying(uint256,uint256,address,address)": FunctionFragment;
+    "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
+    "redeemExchangeAssetBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
@@ -100,7 +102,9 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "convertToShares"
       | "decimals"
       | "deposit"
+      | "exchangeAsset"
       | "exists"
+      | "getCurrentRound"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
@@ -120,8 +124,8 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "previewRedeem"
       | "redeem"
       | "redeemBatch"
-      | "redeemBatchForUnderlying"
-      | "redeemForUnderlying"
+      | "redeemExchangeAsset"
+      | "redeemExchangeAssetBatch"
       | "refund"
       | "refundETH"
       | "renounceRole"
@@ -191,11 +195,19 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [BigNumberish, string, BigNumberish]
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exchangeAsset",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "exists",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentRound",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -230,7 +242,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "maxRedeem", values: [string]): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, string, BigNumberish]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -256,12 +268,12 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     values: [BigNumberish[], BigNumberish[], string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "redeemBatchForUnderlying",
-    values: [BigNumberish[], BigNumberish[], string, string]
+    functionFragment: "redeemExchangeAsset",
+    values: [BigNumberish, BigNumberish, string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "redeemForUnderlying",
-    values: [BigNumberish, BigNumberish, string, string]
+    functionFragment: "redeemExchangeAssetBatch",
+    values: [BigNumberish[], BigNumberish[], string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "refund",
@@ -357,7 +369,15 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "exchangeAsset",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentRound",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -402,11 +422,11 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "redeemBatchForUnderlying",
+    functionFragment: "redeemExchangeAsset",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "redeemForUnderlying",
+    functionFragment: "redeemExchangeAssetBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
@@ -463,7 +483,8 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "Unpaused(address)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256,uint256)": EventFragment;
     "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
-    "WithdrawShares(address,address,address,uint256,uint256,uint256)": EventFragment;
+    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)": EventFragment;
+    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
@@ -480,7 +501,8 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawShares"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAsset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAssetBatch"): EventFragment;
 }
 
 export interface ApprovalForAllEventObject {
@@ -639,20 +661,37 @@ export type WithdrawBatchEvent = TypedEvent<
 
 export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
-export interface WithdrawSharesEventObject {
+export interface WithdrawExchangeAssetEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  id: BigNumber;
-  assetsAmount: BigNumber;
+  assets: BigNumber;
+  sharesId: BigNumber;
   sharesAmount: BigNumber;
 }
-export type WithdrawSharesEvent = TypedEvent<
+export type WithdrawExchangeAssetEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber, BigNumber],
-  WithdrawSharesEventObject
+  WithdrawExchangeAssetEventObject
 >;
 
-export type WithdrawSharesEventFilter = TypedEventFilter<WithdrawSharesEvent>;
+export type WithdrawExchangeAssetEventFilter =
+  TypedEventFilter<WithdrawExchangeAssetEvent>;
+
+export interface WithdrawExchangeAssetBatchEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  assets: BigNumber;
+  sharesIds: BigNumber[];
+  sharesAmounts: BigNumber[];
+}
+export type WithdrawExchangeAssetBatchEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber[], BigNumber[]],
+  WithdrawExchangeAssetBatchEventObject
+>;
+
+export type WithdrawExchangeAssetBatchEventFilter =
+  TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
 
 export interface RoundsOutputVaultUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -731,11 +770,14 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     deposit(
       assets: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<[string]>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -788,7 +830,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -833,17 +874,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    redeemBatchForUnderlying(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    redeemForUnderlying(
-      id: BigNumberish,
-      amount: BigNumberish,
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -973,11 +1014,14 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   deposit(
     assets: BigNumberish,
     receiver: string,
-    id: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  exchangeAsset(overrides?: CallOverrides): Promise<string>;
+
   exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+  getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1027,7 +1071,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   mint(
     shares: BigNumberish,
     receiver: string,
-    id: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1072,17 +1115,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  redeemBatchForUnderlying(
-    sharesIds: BigNumberish[],
-    sharesAmounts: BigNumberish[],
+  redeemExchangeAsset(
+    id: BigNumberish,
+    amount: BigNumberish,
     receiver: string,
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  redeemForUnderlying(
-    id: BigNumberish,
-    amount: BigNumberish,
+  redeemExchangeAssetBatch(
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
     receiver: string,
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1210,11 +1253,14 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     deposit(
       assets: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<string>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1264,7 +1310,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1305,17 +1350,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    redeemBatchForUnderlying(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    redeemForUnderlying(
-      id: BigNumberish,
-      amount: BigNumberish,
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: CallOverrides
@@ -1533,22 +1578,39 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       sharesAmounts?: null
     ): WithdrawBatchEventFilter;
 
-    "WithdrawShares(address,address,address,uint256,uint256,uint256)"(
+    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)"(
       caller?: string | null,
       receiver?: string | null,
       owner?: string | null,
-      id?: null,
-      assetsAmount?: null,
+      assets?: null,
+      sharesId?: null,
       sharesAmount?: null
-    ): WithdrawSharesEventFilter;
-    WithdrawShares(
+    ): WithdrawExchangeAssetEventFilter;
+    WithdrawExchangeAsset(
       caller?: string | null,
       receiver?: string | null,
       owner?: string | null,
-      id?: null,
-      assetsAmount?: null,
+      assets?: null,
+      sharesId?: null,
       sharesAmount?: null
-    ): WithdrawSharesEventFilter;
+    ): WithdrawExchangeAssetEventFilter;
+
+    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])"(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesIds?: null,
+      sharesAmounts?: null
+    ): WithdrawExchangeAssetBatchEventFilter;
+    WithdrawExchangeAssetBatch(
+      caller?: string | null,
+      receiver?: string | null,
+      owner?: string | null,
+      assets?: null,
+      sharesIds?: null,
+      sharesAmounts?: null
+    ): WithdrawExchangeAssetBatchEventFilter;
   };
 
   estimateGas: {
@@ -1602,11 +1664,14 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     deposit(
       assets: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    exchangeAsset(overrides?: CallOverrides): Promise<BigNumber>;
+
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1659,7 +1724,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1704,17 +1768,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    redeemBatchForUnderlying(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    redeemForUnderlying(
-      id: BigNumberish,
-      amount: BigNumberish,
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1848,14 +1912,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     deposit(
       assets: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    exchangeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     exists(
       id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1917,7 +1984,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: BigNumberish,
       receiver: string,
-      id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1962,17 +2028,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    redeemBatchForUnderlying(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+    redeemExchangeAsset(
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    redeemForUnderlying(
-      id: BigNumberish,
-      amount: BigNumberish,
+    redeemExchangeAssetBatch(
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
