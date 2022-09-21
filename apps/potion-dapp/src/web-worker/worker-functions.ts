@@ -3,4 +3,6 @@ import {
   runDepthRouter,
 } from "potion-router";
 
-export { getEmergingBondingCurvesFromCriterias, runDepthRouter };
+import { expose } from "comlink";
+
+expose({ getEmergingBondingCurvesFromCriterias, runDepthRouter });

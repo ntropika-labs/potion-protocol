@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface MarginPoolInterfaceInterface extends utils.Interface {
@@ -54,29 +55,52 @@ export interface MarginPoolInterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "batchTransferToPool",
-    values: [string[], string[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "batchTransferToUser",
-    values: [string[], string[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "farm",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "farmer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getStoredBalance",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "setFarmer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setFarmer",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferToPool",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transferToUser",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -140,146 +164,149 @@ export interface MarginPoolInterface extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<[string]>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     farmer(overrides?: CallOverrides): Promise<[string]>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addressBook(overrides?: CallOverrides): Promise<string>;
 
   batchTransferToPool(
-    _asset: string[],
-    _user: string[],
-    _amount: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>[],
+    _user: PromiseOrValue<string>[],
+    _amount: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   batchTransferToUser(
-    _asset: string[],
-    _user: string[],
-    _amount: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>[],
+    _user: PromiseOrValue<string>[],
+    _amount: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   farm(
-    _asset: string,
-    _receiver: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _receiver: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   farmer(overrides?: CallOverrides): Promise<string>;
 
   getStoredBalance(
-    _asset: string,
+    _asset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   setFarmer(
-    _farmer: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _farmer: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferToPool(
-    _asset: string,
-    _user: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _user: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferToUser(
-    _asset: string,
-    _user: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _user: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     addressBook(overrides?: CallOverrides): Promise<string>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     farmer(overrides?: CallOverrides): Promise<string>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setFarmer(_farmer: string, overrides?: CallOverrides): Promise<void>;
+    setFarmer(
+      _farmer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -290,50 +317,50 @@ export interface MarginPoolInterface extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     farmer(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -341,50 +368,50 @@ export interface MarginPoolInterface extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     farmer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

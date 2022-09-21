@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../../common";
 
 export interface ChainLinkPricerInterface extends utils.Interface {
@@ -58,13 +59,13 @@ export interface ChainLinkPricerInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "bot", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getHistoricalPrice",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getPrice", values?: undefined): string;
   encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setExpiryPriceInOracle",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "aggregator", data: BytesLike): Result;
@@ -124,7 +125,7 @@ export interface ChainLinkPricer extends BaseContract {
     bot(overrides?: CallOverrides): Promise<[string]>;
 
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
@@ -133,9 +134,9 @@ export interface ChainLinkPricer extends BaseContract {
     oracle(overrides?: CallOverrides): Promise<[string]>;
 
     setExpiryPriceInOracle(
-      _expiryTimestamp: BigNumberish,
-      _roundId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -148,7 +149,7 @@ export interface ChainLinkPricer extends BaseContract {
   bot(overrides?: CallOverrides): Promise<string>;
 
   getHistoricalPrice(
-    _roundId: BigNumberish,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
@@ -157,9 +158,9 @@ export interface ChainLinkPricer extends BaseContract {
   oracle(overrides?: CallOverrides): Promise<string>;
 
   setExpiryPriceInOracle(
-    _expiryTimestamp: BigNumberish,
-    _roundId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
+    _roundId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -172,7 +173,7 @@ export interface ChainLinkPricer extends BaseContract {
     bot(overrides?: CallOverrides): Promise<string>;
 
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
@@ -181,8 +182,8 @@ export interface ChainLinkPricer extends BaseContract {
     oracle(overrides?: CallOverrides): Promise<string>;
 
     setExpiryPriceInOracle(
-      _expiryTimestamp: BigNumberish,
-      _roundId: BigNumberish,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -199,7 +200,7 @@ export interface ChainLinkPricer extends BaseContract {
     bot(overrides?: CallOverrides): Promise<BigNumber>;
 
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -208,9 +209,9 @@ export interface ChainLinkPricer extends BaseContract {
     oracle(overrides?: CallOverrides): Promise<BigNumber>;
 
     setExpiryPriceInOracle(
-      _expiryTimestamp: BigNumberish,
-      _roundId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -226,7 +227,7 @@ export interface ChainLinkPricer extends BaseContract {
     bot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -235,9 +236,9 @@ export interface ChainLinkPricer extends BaseContract {
     oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setExpiryPriceInOracle(
-      _expiryTimestamp: BigNumberish,
-      _roundId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

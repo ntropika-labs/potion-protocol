@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface OracleInterface extends utils.Interface {
@@ -78,7 +79,11 @@ export interface OracleInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "disputeExpiryPrice",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "endMigration",
@@ -86,7 +91,7 @@ export interface OracleInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getChainlinkRoundData",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getDisputer",
@@ -94,29 +99,39 @@ export interface OracleInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getExpiryPrice",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
-  encodeFunctionData(functionFragment: "getPricer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getPrice",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPricer",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getPricerDisputePeriod",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPricerLockingPeriod",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isDisputePeriodOver",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isLockingPeriodOver",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "migrateOracle",
-    values: [string, BigNumberish[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -125,28 +140,35 @@ export interface OracleInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setAssetPricer",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setDisputePeriod",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "setDisputer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setDisputer",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setExpiryPrice",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setLockingPeriod",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setStablePrice",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -372,270 +394,288 @@ export interface Oracle extends BaseContract {
 
   functions: {
     disputeExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     endMigration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getChainlinkRoundData(
-      _asset: string,
-      _roundId: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
     getDisputer(overrides?: CallOverrides): Promise<[string]>;
 
     getExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean]>;
 
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    getPricer(_asset: string, overrides?: CallOverrides): Promise<[string]>;
+    getPricer(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getPricerDisputePeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPricerLockingPeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     isDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isLockingPeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     migrateOracle(
-      _asset: string,
-      _expiries: BigNumberish[],
-      _prices: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiries: PromiseOrValue<BigNumberish>[],
+      _prices: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setAssetPricer(
-      _asset: string,
-      _pricer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _pricer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setDisputePeriod(
-      _pricer: string,
-      _disputePeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _disputePeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setDisputer(
-      _disputer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _disputer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setLockingPeriod(
-      _pricer: string,
-      _lockingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _lockingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   disputeExpiryPrice(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
-    _price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
+    _price: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   endMigration(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getChainlinkRoundData(
-    _asset: string,
-    _roundId: BigNumberish,
+    _asset: PromiseOrValue<string>,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
   getDisputer(overrides?: CallOverrides): Promise<string>;
 
   getExpiryPrice(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean]>;
 
-  getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getPrice(
+    _asset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  getPricer(_asset: string, overrides?: CallOverrides): Promise<string>;
+  getPricer(
+    _asset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getPricerDisputePeriod(
-    _pricer: string,
+    _pricer: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPricerLockingPeriod(
-    _pricer: string,
+    _pricer: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   isDisputePeriodOver(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isLockingPeriodOver(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   migrateOracle(
-    _asset: string,
-    _expiries: BigNumberish[],
-    _prices: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _expiries: PromiseOrValue<BigNumberish>[],
+    _prices: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setAssetPricer(
-    _asset: string,
-    _pricer: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _pricer: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setDisputePeriod(
-    _pricer: string,
-    _disputePeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _pricer: PromiseOrValue<string>,
+    _disputePeriod: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setDisputer(
-    _disputer: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _disputer: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setExpiryPrice(
-    _asset: string,
-    _expiryTimestamp: BigNumberish,
-    _price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _expiryTimestamp: PromiseOrValue<BigNumberish>,
+    _price: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setLockingPeriod(
-    _pricer: string,
-    _lockingPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _pricer: PromiseOrValue<string>,
+    _lockingPeriod: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setStablePrice(
-    _asset: string,
-    _price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _price: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     disputeExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     endMigration(overrides?: CallOverrides): Promise<void>;
 
     getChainlinkRoundData(
-      _asset: string,
-      _roundId: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
     getDisputer(overrides?: CallOverrides): Promise<string>;
 
     getExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean]>;
 
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getPricer(_asset: string, overrides?: CallOverrides): Promise<string>;
+    getPricer(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getPricerDisputePeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPricerLockingPeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isLockingPeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     migrateOracle(
-      _asset: string,
-      _expiries: BigNumberish[],
-      _prices: BigNumberish[],
+      _asset: PromiseOrValue<string>,
+      _expiries: PromiseOrValue<BigNumberish>[],
+      _prices: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -644,341 +684,352 @@ export interface Oracle extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setAssetPricer(
-      _asset: string,
-      _pricer: string,
+      _asset: PromiseOrValue<string>,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setDisputePeriod(
-      _pricer: string,
-      _disputePeriod: BigNumberish,
+      _pricer: PromiseOrValue<string>,
+      _disputePeriod: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setDisputer(_disputer: string, overrides?: CallOverrides): Promise<void>;
+    setDisputer(
+      _disputer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setLockingPeriod(
-      _pricer: string,
-      _lockingPeriod: BigNumberish,
+      _pricer: PromiseOrValue<string>,
+      _lockingPeriod: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "DisputerUpdated(address)"(
-      newDisputer?: string | null
+      newDisputer?: PromiseOrValue<string> | null
     ): DisputerUpdatedEventFilter;
-    DisputerUpdated(newDisputer?: string | null): DisputerUpdatedEventFilter;
+    DisputerUpdated(
+      newDisputer?: PromiseOrValue<string> | null
+    ): DisputerUpdatedEventFilter;
 
     "ExpiryPriceDisputed(address,uint256,uint256,uint256,uint256)"(
-      asset?: string | null,
-      expiryTimestamp?: BigNumberish | null,
+      asset?: PromiseOrValue<string> | null,
+      expiryTimestamp?: PromiseOrValue<BigNumberish> | null,
       disputedPrice?: null,
       newPrice?: null,
       disputeTimestamp?: null
     ): ExpiryPriceDisputedEventFilter;
     ExpiryPriceDisputed(
-      asset?: string | null,
-      expiryTimestamp?: BigNumberish | null,
+      asset?: PromiseOrValue<string> | null,
+      expiryTimestamp?: PromiseOrValue<BigNumberish> | null,
       disputedPrice?: null,
       newPrice?: null,
       disputeTimestamp?: null
     ): ExpiryPriceDisputedEventFilter;
 
     "ExpiryPriceUpdated(address,uint256,uint256,uint256)"(
-      asset?: string | null,
-      expiryTimestamp?: BigNumberish | null,
+      asset?: PromiseOrValue<string> | null,
+      expiryTimestamp?: PromiseOrValue<BigNumberish> | null,
       price?: null,
       onchainTimestamp?: null
     ): ExpiryPriceUpdatedEventFilter;
     ExpiryPriceUpdated(
-      asset?: string | null,
-      expiryTimestamp?: BigNumberish | null,
+      asset?: PromiseOrValue<string> | null,
+      expiryTimestamp?: PromiseOrValue<BigNumberish> | null,
       price?: null,
       onchainTimestamp?: null
     ): ExpiryPriceUpdatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "PricerDisputePeriodUpdated(address,uint256)"(
-      pricer?: string | null,
+      pricer?: PromiseOrValue<string> | null,
       disputePeriod?: null
     ): PricerDisputePeriodUpdatedEventFilter;
     PricerDisputePeriodUpdated(
-      pricer?: string | null,
+      pricer?: PromiseOrValue<string> | null,
       disputePeriod?: null
     ): PricerDisputePeriodUpdatedEventFilter;
 
     "PricerLockingPeriodUpdated(address,uint256)"(
-      pricer?: string | null,
+      pricer?: PromiseOrValue<string> | null,
       lockingPeriod?: null
     ): PricerLockingPeriodUpdatedEventFilter;
     PricerLockingPeriodUpdated(
-      pricer?: string | null,
+      pricer?: PromiseOrValue<string> | null,
       lockingPeriod?: null
     ): PricerLockingPeriodUpdatedEventFilter;
 
     "PricerUpdated(address,address)"(
-      asset?: string | null,
-      pricer?: string | null
+      asset?: PromiseOrValue<string> | null,
+      pricer?: PromiseOrValue<string> | null
     ): PricerUpdatedEventFilter;
     PricerUpdated(
-      asset?: string | null,
-      pricer?: string | null
+      asset?: PromiseOrValue<string> | null,
+      pricer?: PromiseOrValue<string> | null
     ): PricerUpdatedEventFilter;
 
     "StablePriceUpdated(address,uint256)"(
-      asset?: string | null,
+      asset?: PromiseOrValue<string> | null,
       price?: null
     ): StablePriceUpdatedEventFilter;
     StablePriceUpdated(
-      asset?: string | null,
+      asset?: PromiseOrValue<string> | null,
       price?: null
     ): StablePriceUpdatedEventFilter;
   };
 
   estimateGas: {
     disputeExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     endMigration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getChainlinkRoundData(
-      _asset: string,
-      _roundId: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getDisputer(overrides?: CallOverrides): Promise<BigNumber>;
 
     getExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getPricer(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPricer(
+      _asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPricerDisputePeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPricerLockingPeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isLockingPeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     migrateOracle(
-      _asset: string,
-      _expiries: BigNumberish[],
-      _prices: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiries: PromiseOrValue<BigNumberish>[],
+      _prices: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setAssetPricer(
-      _asset: string,
-      _pricer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _pricer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setDisputePeriod(
-      _pricer: string,
-      _disputePeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _disputePeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setDisputer(
-      _disputer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _disputer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setLockingPeriod(
-      _pricer: string,
-      _lockingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _lockingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     disputeExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     endMigration(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getChainlinkRoundData(
-      _asset: string,
-      _roundId: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getDisputer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPrice(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPricer(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPricerDisputePeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPricerLockingPeriod(
-      _pricer: string,
+      _pricer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isDisputePeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isLockingPeriodOver(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     migrateOracle(
-      _asset: string,
-      _expiries: BigNumberish[],
-      _prices: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiries: PromiseOrValue<BigNumberish>[],
+      _prices: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setAssetPricer(
-      _asset: string,
-      _pricer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _pricer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setDisputePeriod(
-      _pricer: string,
-      _disputePeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _disputePeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setDisputer(
-      _disputer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _disputer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setExpiryPrice(
-      _asset: string,
-      _expiryTimestamp: BigNumberish,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _expiryTimestamp: PromiseOrValue<BigNumberish>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setLockingPeriod(
-      _pricer: string,
-      _lockingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pricer: PromiseOrValue<string>,
+      _lockingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setStablePrice(
-      _asset: string,
-      _price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

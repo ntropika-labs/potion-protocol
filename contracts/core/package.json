@@ -57,7 +57,7 @@
         "report-gas": "GAS_REPORT_FILE=reports/gasCosts.txt ENABLE_GAS_REPORT=true hardhat test",
         "report-coverage": "COVERAGE=1 hardhat coverage --solcoverjs ./.solcover.js --temp artifacts",
         "report-size": "hardhat compile; hardhat size-contracts > reports/contracts-size.txt; cat reports/contracts-size.txt",
-        "docs": "solidity-docgen --solc-module solc-0.8 -e contracts/packages/solcV6OpynContractsForTesting -t ./templates -o reference",
+        "docs": "hardhat docgen",
         "deploy-hardhat": "hardhat --network hardhat run ./scripts/deploy.ts",
         "deploy-local": "hardhat --network localhost run ./scripts/deploy.ts",
         "deploy-local.independent": "INDEPENDENT_DEPLOYMENT=true hardhat --network localhost run ./scripts/deploy.ts",
@@ -70,8 +70,8 @@
         "lint-ts": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --ext .js,.ts .",
         "format": "prettier --config ./.prettierrc.js --write \"**/*.{js,json,md,sol,ts}\"",
         "format-check": "prettier --check --config ./.prettierrc.js \"**/*.{js,json,md,sol,ts}\"",
-        "fast-forward": "yarn run -T hardhat fastForward",
-        "set-price": "yarn run -T hardhat setPrices"
+        "fast-forward": "hardhat fastForward",
+        "set-price": "hardhat setPrices"
     },
     "dependencies": {
         "contracts-math": "workspace:^",

@@ -18,6 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface OpynPricerInterfaceInterface extends utils.Interface {
@@ -32,7 +33,7 @@ export interface OpynPricerInterfaceInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getHistoricalPrice",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getPrice", values?: undefined): string;
 
@@ -73,7 +74,7 @@ export interface OpynPricerInterface extends BaseContract {
 
   functions: {
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
@@ -81,7 +82,7 @@ export interface OpynPricerInterface extends BaseContract {
   };
 
   getHistoricalPrice(
-    _roundId: BigNumberish,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
@@ -89,7 +90,7 @@ export interface OpynPricerInterface extends BaseContract {
 
   callStatic: {
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
@@ -100,7 +101,7 @@ export interface OpynPricerInterface extends BaseContract {
 
   estimateGas: {
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -109,7 +110,7 @@ export interface OpynPricerInterface extends BaseContract {
 
   populateTransaction: {
     getHistoricalPrice(
-      _roundId: BigNumberish,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

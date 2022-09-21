@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface MarginPoolInterface extends utils.Interface {
@@ -64,38 +65,61 @@ export interface MarginPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "batchTransferToPool",
-    values: [string[], string[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "batchTransferToUser",
-    values: [string[], string[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "farm",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "farmer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getStoredBalance",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setFarmer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setFarmer",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferToPool",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transferToUser",
-    values: [string, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -239,152 +263,152 @@ export interface MarginPool extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<[string]>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     farmer(overrides?: CallOverrides): Promise<[string]>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addressBook(overrides?: CallOverrides): Promise<string>;
 
   batchTransferToPool(
-    _asset: string[],
-    _user: string[],
-    _amount: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>[],
+    _user: PromiseOrValue<string>[],
+    _amount: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   batchTransferToUser(
-    _asset: string[],
-    _user: string[],
-    _amount: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>[],
+    _user: PromiseOrValue<string>[],
+    _amount: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   farm(
-    _asset: string,
-    _receiver: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _receiver: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   farmer(overrides?: CallOverrides): Promise<string>;
 
   getStoredBalance(
-    _asset: string,
+    _asset: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setFarmer(
-    _farmer: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _farmer: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferToPool(
-    _asset: string,
-    _user: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _user: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferToUser(
-    _asset: string,
-    _user: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _asset: PromiseOrValue<string>,
+    _user: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     addressBook(overrides?: CallOverrides): Promise<string>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     farmer(overrides?: CallOverrides): Promise<string>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -392,77 +416,80 @@ export interface MarginPool extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setFarmer(_farmer: string, overrides?: CallOverrides): Promise<void>;
+    setFarmer(
+      _farmer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "AssetFarmed(address,address,uint256)"(
-      asset?: string | null,
-      receiver?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       amount?: null
     ): AssetFarmedEventFilter;
     AssetFarmed(
-      asset?: string | null,
-      receiver?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       amount?: null
     ): AssetFarmedEventFilter;
 
     "FarmerUpdated(address,address)"(
-      oldAddress?: string | null,
-      newAddress?: string | null
+      oldAddress?: PromiseOrValue<string> | null,
+      newAddress?: PromiseOrValue<string> | null
     ): FarmerUpdatedEventFilter;
     FarmerUpdated(
-      oldAddress?: string | null,
-      newAddress?: string | null
+      oldAddress?: PromiseOrValue<string> | null,
+      newAddress?: PromiseOrValue<string> | null
     ): FarmerUpdatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "TransferToPool(address,address,uint256)"(
-      asset?: string | null,
-      user?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       amount?: null
     ): TransferToPoolEventFilter;
     TransferToPool(
-      asset?: string | null,
-      user?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       amount?: null
     ): TransferToPoolEventFilter;
 
     "TransferToUser(address,address,uint256)"(
-      asset?: string | null,
-      user?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       amount?: null
     ): TransferToUserEventFilter;
     TransferToUser(
-      asset?: string | null,
-      user?: string | null,
+      asset?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       amount?: null
     ): TransferToUserEventFilter;
   };
@@ -471,61 +498,61 @@ export interface MarginPool extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     farmer(overrides?: CallOverrides): Promise<BigNumber>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -533,61 +560,61 @@ export interface MarginPool extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     batchTransferToPool(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     batchTransferToUser(
-      _asset: string[],
-      _user: string[],
-      _amount: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>[],
+      _user: PromiseOrValue<string>[],
+      _amount: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     farm(
-      _asset: string,
-      _receiver: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _receiver: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     farmer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStoredBalance(
-      _asset: string,
+      _asset: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setFarmer(
-      _farmer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _farmer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferToPool(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferToUser(
-      _asset: string,
-      _user: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _asset: PromiseOrValue<string>,
+      _user: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -1,7 +1,7 @@
 import { fail } from "assert";
 import { expect } from "chai";
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
-import { BigNumber, ContractFactory } from "ethers";
+import { BigNumber, ContractFactory, type Wallet } from "ethers";
 import { ethers, upgrades, waffle } from "hardhat";
 
 import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
@@ -18,14 +18,14 @@ import {
     PotionLiquidityPoolUpgradeTest,
 } from "../typechain";
 import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
-import { deployTestContracts, getTestOtoken, mintTokens, usdcDecimals } from "./helpers/testSetup";
+import { deployTestContracts, getTestOtoken, MintDestination, mintTokens, usdcDecimals } from "./helpers/testSetup";
 
 const provider = waffle.provider;
 
 describe("PotionLiquidityPool - Upgrades", function () {
     const wallets = provider.getWallets();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [owner, potionLp1] = wallets;
+    const [owner, potionLp1] = wallets as [Wallet, Wallet];
     let usdcStartAmount: BigNumber;
 
     let addressBook: AddressBook;
@@ -80,7 +80,7 @@ describe("PotionLiquidityPool - Upgrades", function () {
 
         // mint usdc to users
         usdcStartAmount = createTokenAmount(100000000, usdcDecimals);
-        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount }));
+        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount } as MintDestination));
         await mintTokens(usdc, mintings, potionLiquidityPool.address);
 
         // Deposit some funds

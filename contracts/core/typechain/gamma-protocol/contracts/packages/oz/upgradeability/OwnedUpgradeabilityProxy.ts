@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../../../common";
 
 export interface OwnedUpgradeabilityProxyInterface extends utils.Interface {
@@ -54,12 +55,15 @@ export interface OwnedUpgradeabilityProxyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferProxyOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(
@@ -141,19 +145,19 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
     ): Promise<[string] & { owner: string }>;
 
     transferProxyOwnership(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeTo(
-      _implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeToAndCall(
-      _implementation: string,
-      _data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -162,19 +166,19 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
   proxyOwner(overrides?: CallOverrides): Promise<string>;
 
   transferProxyOwnership(
-    _newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeTo(
-    _implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _implementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeToAndCall(
-    _implementation: string,
-    _data: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    _implementation: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -183,18 +187,18 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
     proxyOwner(overrides?: CallOverrides): Promise<string>;
 
     transferProxyOwnership(
-      _newOwner: string,
+      _newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeTo(
-      _implementation: string,
+      _implementation: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeToAndCall(
-      _implementation: string,
-      _data: BytesLike,
+      _implementation: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -209,8 +213,12 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
       newOwner?: null
     ): ProxyOwnershipTransferredEventFilter;
 
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
+    "Upgraded(address)"(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
   };
 
   estimateGas: {
@@ -219,19 +227,19 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
     proxyOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferProxyOwnership(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeTo(
-      _implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeToAndCall(
-      _implementation: string,
-      _data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -241,19 +249,19 @@ export interface OwnedUpgradeabilityProxy extends BaseContract {
     proxyOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferProxyOwnership(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      _implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeToAndCall(
-      _implementation: string,
-      _data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      _implementation: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

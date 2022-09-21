@@ -23,6 +23,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface WhitelistInterface extends utils.Interface {
@@ -71,35 +72,45 @@ export interface WhitelistInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistCallee",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistCollateral",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistOtoken",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistProduct",
-    values: [string, string, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isWhitelistedCallee",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isWhitelistedCollateral",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isWhitelistedOtoken",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isWhitelistedProduct",
-    values: [string, string, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -108,23 +119,28 @@ export interface WhitelistInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistCallee",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistCollateral",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistOtoken",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistProduct",
-    values: [string, string, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -350,211 +366,214 @@ export interface Whitelist extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<[string]>;
 
     blacklistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     blacklistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     blacklistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     blacklistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isWhitelistedCallee(
-      _callee: string,
+      _callee: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isWhitelistedCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isWhitelistedOtoken(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isWhitelistedProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     whitelistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     whitelistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     whitelistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     whitelistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addressBook(overrides?: CallOverrides): Promise<string>;
 
   blacklistCallee(
-    _callee: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _callee: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   blacklistCollateral(
-    _collateral: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _collateral: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   blacklistOtoken(
-    _otokenAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   blacklistProduct(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isWhitelistedCallee(
-    _callee: string,
+    _callee: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isWhitelistedCollateral(
-    _collateral: string,
+    _collateral: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isWhitelistedOtoken(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isWhitelistedProduct(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   whitelistCallee(
-    _callee: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _callee: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   whitelistCollateral(
-    _collateral: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _collateral: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   whitelistOtoken(
-    _otokenAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _otokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   whitelistProduct(
-    _underlying: string,
-    _strike: string,
-    _collateral: string,
-    _isPut: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlying: PromiseOrValue<string>,
+    _strike: PromiseOrValue<string>,
+    _collateral: PromiseOrValue<string>,
+    _isPut: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     addressBook(overrides?: CallOverrides): Promise<string>;
 
-    blacklistCallee(_callee: string, overrides?: CallOverrides): Promise<void>;
+    blacklistCallee(
+      _callee: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     blacklistCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     blacklistOtoken(
-      _otokenAddress: string,
+      _otokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     blacklistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isWhitelistedCallee(
-      _callee: string,
+      _callee: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isWhitelistedCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isWhitelistedOtoken(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isWhitelistedProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -563,102 +582,113 @@ export interface Whitelist extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    whitelistCallee(_callee: string, overrides?: CallOverrides): Promise<void>;
+    whitelistCallee(
+      _callee: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     whitelistCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     whitelistOtoken(
-      _otokenAddress: string,
+      _otokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     whitelistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
     "CalleeBlacklisted(address)"(
-      _callee?: string | null
+      _callee?: PromiseOrValue<string> | null
     ): CalleeBlacklistedEventFilter;
-    CalleeBlacklisted(_callee?: string | null): CalleeBlacklistedEventFilter;
+    CalleeBlacklisted(
+      _callee?: PromiseOrValue<string> | null
+    ): CalleeBlacklistedEventFilter;
 
     "CalleeWhitelisted(address)"(
-      _callee?: string | null
+      _callee?: PromiseOrValue<string> | null
     ): CalleeWhitelistedEventFilter;
-    CalleeWhitelisted(_callee?: string | null): CalleeWhitelistedEventFilter;
+    CalleeWhitelisted(
+      _callee?: PromiseOrValue<string> | null
+    ): CalleeWhitelistedEventFilter;
 
     "CollateralBlacklisted(address)"(
-      collateral?: string | null
+      collateral?: PromiseOrValue<string> | null
     ): CollateralBlacklistedEventFilter;
     CollateralBlacklisted(
-      collateral?: string | null
+      collateral?: PromiseOrValue<string> | null
     ): CollateralBlacklistedEventFilter;
 
     "CollateralWhitelisted(address)"(
-      collateral?: string | null
+      collateral?: PromiseOrValue<string> | null
     ): CollateralWhitelistedEventFilter;
     CollateralWhitelisted(
-      collateral?: string | null
+      collateral?: PromiseOrValue<string> | null
     ): CollateralWhitelistedEventFilter;
 
     "OtokenBlacklisted(address)"(
-      otoken?: string | null
+      otoken?: PromiseOrValue<string> | null
     ): OtokenBlacklistedEventFilter;
-    OtokenBlacklisted(otoken?: string | null): OtokenBlacklistedEventFilter;
+    OtokenBlacklisted(
+      otoken?: PromiseOrValue<string> | null
+    ): OtokenBlacklistedEventFilter;
 
     "OtokenWhitelisted(address)"(
-      otoken?: string | null
+      otoken?: PromiseOrValue<string> | null
     ): OtokenWhitelistedEventFilter;
-    OtokenWhitelisted(otoken?: string | null): OtokenWhitelistedEventFilter;
+    OtokenWhitelisted(
+      otoken?: PromiseOrValue<string> | null
+    ): OtokenWhitelistedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "ProductBlacklisted(bytes32,address,address,address,bool)"(
       productHash?: null,
-      underlying?: string | null,
-      strike?: string | null,
-      collateral?: string | null,
+      underlying?: PromiseOrValue<string> | null,
+      strike?: PromiseOrValue<string> | null,
+      collateral?: PromiseOrValue<string> | null,
       isPut?: null
     ): ProductBlacklistedEventFilter;
     ProductBlacklisted(
       productHash?: null,
-      underlying?: string | null,
-      strike?: string | null,
-      collateral?: string | null,
+      underlying?: PromiseOrValue<string> | null,
+      strike?: PromiseOrValue<string> | null,
+      collateral?: PromiseOrValue<string> | null,
       isPut?: null
     ): ProductBlacklistedEventFilter;
 
     "ProductWhitelisted(bytes32,address,address,address,bool)"(
       productHash?: null,
-      underlying?: string | null,
-      strike?: string | null,
-      collateral?: string | null,
+      underlying?: PromiseOrValue<string> | null,
+      strike?: PromiseOrValue<string> | null,
+      collateral?: PromiseOrValue<string> | null,
       isPut?: null
     ): ProductWhitelistedEventFilter;
     ProductWhitelisted(
       productHash?: null,
-      underlying?: string | null,
-      strike?: string | null,
-      collateral?: string | null,
+      underlying?: PromiseOrValue<string> | null,
+      strike?: PromiseOrValue<string> | null,
+      collateral?: PromiseOrValue<string> | null,
       isPut?: null
     ): ProductWhitelistedEventFilter;
   };
@@ -667,83 +697,83 @@ export interface Whitelist extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
     blacklistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     blacklistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     blacklistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     blacklistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isWhitelistedCallee(
-      _callee: string,
+      _callee: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isWhitelistedCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isWhitelistedOtoken(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isWhitelistedProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     whitelistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     whitelistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     whitelistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     whitelistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -751,83 +781,83 @@ export interface Whitelist extends BaseContract {
     addressBook(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     blacklistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     blacklistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     blacklistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     blacklistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isWhitelistedCallee(
-      _callee: string,
+      _callee: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isWhitelistedCollateral(
-      _collateral: string,
+      _collateral: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isWhitelistedOtoken(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isWhitelistedProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     whitelistCallee(
-      _callee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _callee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     whitelistCollateral(
-      _collateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _collateral: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     whitelistOtoken(
-      _otokenAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _otokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     whitelistProduct(
-      _underlying: string,
-      _strike: string,
-      _collateral: string,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlying: PromiseOrValue<string>,
+      _strike: PromiseOrValue<string>,
+      _collateral: PromiseOrValue<string>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { CriteriaSet, CurveCriteria, HyperbolicCurve, OrderedCriteria } from "contracts-math";
-import { BigNumber, constants } from "ethers";
+import { BigNumber, constants, type Wallet } from "ethers";
 import { ethers, waffle } from "hardhat";
 
 import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
@@ -20,6 +20,7 @@ import {
     DEFAULT_DURATION_IN_DAYS,
     deployTestContracts,
     getTestOtoken,
+    MintDestination,
     mintTokens,
     usdcDecimals,
 } from "./helpers/testSetup";
@@ -29,7 +30,14 @@ const provider = waffle.provider;
 describe("PotionLiquidityPool - Config tests", function () {
     const wallets = provider.getWallets();
 
-    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets;
+    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets as [
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+    ];
     let usdcStartAmount: BigNumber;
 
     let addressBook: AddressBook;
@@ -79,7 +87,7 @@ describe("PotionLiquidityPool - Config tests", function () {
 
         // mint usdc to users
         usdcStartAmount = createTokenAmount(100000000, usdcDecimals);
-        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount }));
+        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount } as MintDestination));
         await mintTokens(usdc, mintings, potionLiquidityPool.address);
     });
 
@@ -480,7 +488,7 @@ describe("PotionLiquidityPool - Config tests", function () {
 
             // mint usdc to users
             usdcStartAmount = createTokenAmount(100000000, usdcDecimals);
-            const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount }));
+            const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount } as MintDestination));
             await mintTokens(usdc, mintings, potionLiquidityPool.address);
         });
 

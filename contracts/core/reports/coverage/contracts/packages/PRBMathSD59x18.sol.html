@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">57.55% </span>
+        <span class="strong">62.5% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>61/106</span>
+        <span class='fraction'>40/64</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">37.14% </span>
+        <span class="strong">41.11% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>26/70</span>
+        <span class='fraction'>37/90</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">42.31% </span>
@@ -1482,7 +1482,7 @@ library PRBMathSD59x18 {
 <span class="fstat-no" title="function not covered" >    function abs(int256 x) internal pure returns (int256 result) {</span>
         unchecked {
 <span class="cstat-no" title="statement not covered" >            require(x &gt; MIN_SD59x18)</span>;
-<span class="cstat-no" title="statement not covered" >            result = x &lt; 0 ? -x : x</span>;
+            result = x &lt; 0 ? -x : x;
         }
     }
 &nbsp;
@@ -1495,7 +1495,7 @@ library PRBMathSD59x18 {
         unchecked {
             // The last operand checks if both x and y are odd and if that is the case, we add 1 to the result. We need
             // to do this because if both numbers are odd, the 0.5 remainder gets truncated twice.
-<span class="cstat-no" title="statement not covered" >            result = (x &gt;&gt; 1) + (y &gt;&gt; 1) + (x &amp; y &amp; 1)</span>;
+            result = (x &gt;&gt; 1) + (y &gt;&gt; 1) + (x &amp; y &amp; 1);
         }
     }
 &nbsp;
@@ -1514,12 +1514,12 @@ library PRBMathSD59x18 {
         unchecked {
 <span class="cstat-no" title="statement not covered" >            int256 remainder = x % SCALE;</span>
 <span class="cstat-no" title="statement not covered" >            if (remainder == 0) {</span>
-<span class="cstat-no" title="statement not covered" >                result = x</span>;
+                result = x;
             } else {
                 // Solidity uses C fmod style, which returns a modulus with the same sign as x.
-<span class="cstat-no" title="statement not covered" >                result = x - remainder</span>;
+                result = x - remainder;
 <span class="cstat-no" title="statement not covered" >                if (x &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >                    result += SCALE</span>;
+                    result += SCALE;
                 }
             }
         }
@@ -1549,8 +1549,8 @@ library PRBMathSD59x18 {
         uint256 ax;
         uint256 ay;
         unchecked {
-            ax = x &lt; 0 ? uint256(-x) : uint256(x);
-            ay = y &lt; 0 ? uint256(-y) : uint256(y);
+            ax = x &lt; 0 ? <span class="missing-if-branch" title="if path not taken" >I</span>uint256(-x) : uint256(x);
+            ay = y &lt; 0 ? <span class="missing-if-branch" title="if path not taken" >I</span>uint256(-y) : uint256(y);
         }
 &nbsp;
         // Compute the absolute value of (x*SCALE)÷y. The result must fit within int256.
@@ -1567,13 +1567,13 @@ library PRBMathSD59x18 {
 &nbsp;
         // XOR over sx and sy. This is basically checking whether the inputs have the same sign. If yes, the result
         // should be positive. Otherwise, it should be negative.
-        result = sx ^ sy == 1 ? -int256(resultUnsigned) : int256(resultUnsigned);
+        result = sx ^ sy == 1 ? <span class="missing-if-branch" title="if path not taken" >I</span>-int256(resultUnsigned) : int256(resultUnsigned);
     }
 &nbsp;
     /// @notice Returns Euler's number as a signed 59.18-decimal fixed-point number.
     /// @dev See https://en.wikipedia.org/wiki/E_(mathematical_constant).
 <span class="fstat-no" title="function not covered" >    function e() internal pure returns (int256 result) {</span>
-<span class="cstat-no" title="statement not covered" >        result = 2718281828459045235</span>;
+        result = 2718281828459045235;
     }
 &nbsp;
     /// @notice Calculates the natural exponent of x.
@@ -1660,12 +1660,12 @@ library PRBMathSD59x18 {
         unchecked {
 <span class="cstat-no" title="statement not covered" >            int256 remainder = x % SCALE;</span>
 <span class="cstat-no" title="statement not covered" >            if (remainder == 0) {</span>
-<span class="cstat-no" title="statement not covered" >                result = x</span>;
+                result = x;
             } else {
                 // Solidity uses C fmod style, which returns a modulus with the same sign as x.
-<span class="cstat-no" title="statement not covered" >                result = x - remainder</span>;
+                result = x - remainder;
 <span class="cstat-no" title="statement not covered" >                if (x &lt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >                    result -= SCALE</span>;
+                    result -= SCALE;
                 }
             }
         }
@@ -1678,7 +1678,7 @@ library PRBMathSD59x18 {
     /// @param result The fractional part of x as a signed 59.18-decimal fixed-point number.
 <span class="fstat-no" title="function not covered" >    function frac(int256 x) internal pure returns (int256 result) {</span>
         unchecked {
-<span class="cstat-no" title="statement not covered" >            result = x % SCALE</span>;
+            result = x % SCALE;
         }
     }
 &nbsp;
@@ -1721,7 +1721,7 @@ library PRBMathSD59x18 {
 &nbsp;
             // We don't need to multiply by the SCALE here because the x*y product had already picked up a factor of SCALE
             // during multiplication. See the comments within the "sqrt" function.
-<span class="cstat-no" title="statement not covered" >            result = int256(PRBMathCommon.sqrt(uint256(xy)))</span>;
+            result = int256(PRBMathCommon.sqrt(uint256(xy)));
         }
     }
 &nbsp;
@@ -1735,7 +1735,7 @@ library PRBMathSD59x18 {
 <span class="fstat-no" title="function not covered" >    function inv(int256 x) internal pure returns (int256 result) {</span>
         unchecked {
             // 1e36 is SCALE * SCALE.
-<span class="cstat-no" title="statement not covered" >            result = 1e36 / x</span>;
+            result = 1e36 / x;
         }
     }
 &nbsp;
@@ -1865,7 +1865,7 @@ library PRBMathSD59x18 {
 <span class="cstat-no" title="statement not covered" >        if (result == MAX_SD59x18) {</span>
             // Do the fixed-point division inline to save gas. The denominator is log2(10).
             unchecked {
-<span class="cstat-no" title="statement not covered" >                result = (log2(x) * SCALE) / 332192809488736234</span>;
+                result = (log2(x) * SCALE) / 332192809488736234;
             }
         }
     }
@@ -1972,7 +1972,7 @@ library PRBMathSD59x18 {
 &nbsp;
     /// @notice Returns PI as a signed 59.18-decimal fixed-point number.
 <span class="fstat-no" title="function not covered" >    function pi() internal pure returns (int256 result) {</span>
-<span class="cstat-no" title="statement not covered" >        result = 3141592653589793238</span>;
+        result = 3141592653589793238;
     }
 &nbsp;
     /// @notice Raises x to the power of y.
@@ -2022,11 +2022,11 @@ library PRBMathSD59x18 {
 &nbsp;
         // Equivalent to "for(y /= 2; y &gt; 0; y /= 2)" but faster.
 <span class="cstat-no" title="statement not covered" >        for (y &gt;&gt;= 1; y &gt; 0; y &gt;&gt;= 1) {</span>
-<span class="cstat-no" title="statement not covered" >            absX = PRBMathCommon.mulDivFixedPoint(absX, absX)</span>;
+            absX = PRBMathCommon.mulDivFixedPoint(absX, absX);
 &nbsp;
             // Equivalent to "y % 2 == 1" but faster.
 <span class="cstat-no" title="statement not covered" >            if (y &amp; 1 &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >                absResult = PRBMathCommon.mulDivFixedPoint(absResult, absX)</span>;
+                absResult = PRBMathCommon.mulDivFixedPoint(absResult, absX);
             }
         }
 &nbsp;
@@ -2035,12 +2035,12 @@ library PRBMathSD59x18 {
 &nbsp;
         // Is the base negative and the exponent an odd number?
 <span class="cstat-no" title="statement not covered" >        bool isNegative = x &lt; 0 &amp;&amp; y &amp; 1 == 1;</span>
-<span class="cstat-no" title="statement not covered" >        result = isNegative ? -int256(absResult) : int256(absResult)</span>;
+        result = isNegative ? -int256(absResult) : int256(absResult);
     }
 &nbsp;
     /// @notice Returns 1 as a signed 59.18-decimal fixed-point number.
 <span class="fstat-no" title="function not covered" >    function scale() internal pure returns (int256 result) {</span>
-<span class="cstat-no" title="statement not covered" >        result = SCALE</span>;
+        result = SCALE;
     }
 &nbsp;
     /// @notice Calculates the square root of x, rounding down.
@@ -2061,7 +2061,7 @@ library PRBMathSD59x18 {
         unchecked {
             // Multiply x by the SCALE to account for the factor of SCALE that is picked up when multiplying two signed
             // 59.18-decimal fixed-point numbers together (in this case, those two numbers are both the square root).
-<span class="cstat-no" title="statement not covered" >            result = int256(PRBMathCommon.sqrt(uint256(x * SCALE)))</span>;
+            result = int256(PRBMathCommon.sqrt(uint256(x * SCALE)));
         }
     }
 &nbsp;
@@ -2070,7 +2070,7 @@ library PRBMathSD59x18 {
     /// @return result The same number in basic integer form.
 <span class="fstat-no" title="function not covered" >    function toInt(int256 x) internal pure returns (int256 result) {</span>
         unchecked {
-<span class="cstat-no" title="statement not covered" >            result = x / SCALE</span>;
+            result = x / SCALE;
         }
     }
 &nbsp;
@@ -2115,7 +2115,7 @@ library PRBMathSD59x18 {
     /// @param y The subtrahend as a signed 59.18-decimal fixed-point number.
     /// @return result The difference as a signed 59.18-decimal fixed-point number.
 <span class="fstat-no" title="function not covered" >    function sub(int256 x, int256 y) internal pure returns (int256 result) {</span>
-<span class="cstat-no" title="statement not covered" >        result = x - y</span>;
+        result = x - y;
     }
 &nbsp;
     /// @notice Converts a non-negative, signed 59.18-decimal fixed-point number to basic integer form, rounding down in the process.
@@ -2134,7 +2134,7 @@ library PRBMathSD59x18 {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu May 05 2022 11:54:59 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 13 2022 17:37:16 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

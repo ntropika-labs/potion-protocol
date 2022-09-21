@@ -18,16 +18,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export declare namespace MarginVaultInterface {
   export type VaultStruct = {
-    shortOtokens: string[];
-    longOtokens: string[];
-    collateralAssets: string[];
-    shortAmounts: BigNumberish[];
-    longAmounts: BigNumberish[];
-    collateralAmounts: BigNumberish[];
+    shortOtokens: PromiseOrValue<string>[];
+    longOtokens: PromiseOrValue<string>[];
+    collateralAssets: PromiseOrValue<string>[];
+    shortAmounts: PromiseOrValue<BigNumberish>[];
+    longAmounts: PromiseOrValue<BigNumberish>[];
+    collateralAmounts: PromiseOrValue<BigNumberish>[];
   };
 
   export type VaultStructOutput = [
@@ -63,19 +64,19 @@ export interface MarginCalculatorInterfaceInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getExcessCollateral",
-    values: [MarginVaultInterface.VaultStruct, BigNumberish]
+    values: [MarginVaultInterface.VaultStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getExpiredPayoutRate",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isLiquidatable",
     values: [
       MarginVaultInterface.VaultStruct,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
 
@@ -124,64 +125,64 @@ export interface MarginCalculatorInterface extends BaseContract {
   functions: {
     getExcessCollateral(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, boolean] & { netValue: BigNumber; isExcess: boolean }
     >;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     isLiquidatable(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
   };
 
   getExcessCollateral(
     _vault: MarginVaultInterface.VaultStruct,
-    _vaultType: BigNumberish,
+    _vaultType: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean] & { netValue: BigNumber; isExcess: boolean }>;
 
   getExpiredPayoutRate(
-    _otoken: string,
+    _otoken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   isLiquidatable(
     _vault: MarginVaultInterface.VaultStruct,
-    _vaultType: BigNumberish,
-    _vaultLatestUpdate: BigNumberish,
-    _roundId: BigNumberish,
+    _vaultType: PromiseOrValue<BigNumberish>,
+    _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+    _roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber, BigNumber]>;
 
   callStatic: {
     getExcessCollateral(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, boolean] & { netValue: BigNumber; isExcess: boolean }
     >;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isLiquidatable(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, BigNumber, BigNumber]>;
   };
@@ -191,20 +192,20 @@ export interface MarginCalculatorInterface extends BaseContract {
   estimateGas: {
     getExcessCollateral(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isLiquidatable(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -212,20 +213,20 @@ export interface MarginCalculatorInterface extends BaseContract {
   populateTransaction: {
     getExcessCollateral(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getExpiredPayoutRate(
-      _otoken: string,
+      _otoken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isLiquidatable(
       _vault: MarginVaultInterface.VaultStruct,
-      _vaultType: BigNumberish,
-      _vaultLatestUpdate: BigNumberish,
-      _roundId: BigNumberish,
+      _vaultType: PromiseOrValue<BigNumberish>,
+      _vaultLatestUpdate: PromiseOrValue<BigNumberish>,
+      _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

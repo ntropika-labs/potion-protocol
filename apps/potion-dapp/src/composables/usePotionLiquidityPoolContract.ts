@@ -28,7 +28,7 @@ export type PoolIdentifierStruct = PotionLiquidityPool.PoolIdentifierStruct;
 
 export function usePotionLiquidityPoolContract() {
   const { initContract } = useEthersContract();
-  const { PotionLiquidityPool, PotionTestUSD } = contractsAddresses;
+  const { PotionLiquidityPool, USDC } = contractsAddresses;
   const { connectedWallet } = useOnboard();
   const maxCounterparties = 100;
   //Provider initialization
@@ -78,7 +78,7 @@ export function usePotionLiquidityPoolContract() {
       (criteria) =>
         new CurveCriteria(
           criteria.token.address,
-          PotionTestUSD.address,
+          USDC.address,
           true,
           criteria.maxStrike,
           criteria.maxDuration
@@ -316,8 +316,8 @@ export function usePotionLiquidityPoolContract() {
 
   const createAndBuyOtokens = async (
     underlyingAddress: string,
-    strikeAddress = PotionTestUSD.address.toLowerCase(),
-    collateralAddress = PotionTestUSD.address.toLowerCase(),
+    strikeAddress = USDC.address.toLowerCase(),
+    collateralAddress = USDC.address.toLowerCase(),
     strikePrice: number,
     expiry: number,
     isPut: true,
@@ -379,8 +379,8 @@ export function usePotionLiquidityPoolContract() {
     strikePrice?: number,
     duration?: number,
     isPut = true,
-    strikeAddress = PotionTestUSD.address.toLowerCase(),
-    collateralAddress = PotionTestUSD.address.toLowerCase()
+    strikeAddress = USDC.address.toLowerCase(),
+    collateralAddress = USDC.address.toLowerCase()
   ) => {
     const contractSigner = initContractSigner();
     const contractInterface = contractSigner.interface;

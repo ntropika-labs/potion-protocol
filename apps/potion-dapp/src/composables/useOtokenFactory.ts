@@ -8,7 +8,7 @@ import { useEthersContract } from "./useEthersContract";
 import type { OtokenFactory } from "potion-contracts/typechain";
 export function useOtokenFactory() {
   const { initContract } = useEthersContract();
-  const { OtokenFactory, PotionTestUSD } = contractsAddresses;
+  const { OtokenFactory, USDC } = contractsAddresses;
   const initContractProvider = () => {
     return initContract(
       false,
@@ -20,8 +20,8 @@ export function useOtokenFactory() {
 
   const getTargetOtokenAddress = async (
     underlyingAddress: string,
-    strikeAddress = PotionTestUSD.address.toLowerCase(),
-    collateralAddress = PotionTestUSD.address.toLowerCase(),
+    strikeAddress = USDC.address.toLowerCase(),
+    collateralAddress = USDC.address.toLowerCase(),
     strikePrice: number,
     expiry: number,
     isPut = true
@@ -40,8 +40,8 @@ export function useOtokenFactory() {
 
   const getOtoken = async (
     underlyingAddress: string,
-    strikeAddress = PotionTestUSD.address.toLowerCase(),
-    collateralAddress = PotionTestUSD.address.toLowerCase(),
+    strikeAddress = USDC.address.toLowerCase(),
+    collateralAddress = USDC.address.toLowerCase(),
     strikePrice: number,
     expiry: number,
     isPut = true
