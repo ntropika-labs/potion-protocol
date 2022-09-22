@@ -2080,11 +2080,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@defi-wonderland/smock@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@defi-wonderland/smock@npm:2.1.0"
+"@defi-wonderland/smock@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@defi-wonderland/smock@npm:2.3.0"
   dependencies:
-    "@nomiclabs/ethereumjs-vm": ^4.2.2
+    "@nomicfoundation/ethereumjs-evm": ^1.0.0-rc.3
+    "@nomicfoundation/ethereumjs-util": ^8.0.0-rc.3
+    "@nomicfoundation/ethereumjs-vm": ^6.0.0-rc.3
     diff: ^5.0.0
     lodash.isequal: ^4.5.0
     lodash.isequalwith: ^4.4.0
@@ -2097,7 +2099,7 @@ __metadata:
     "@nomiclabs/hardhat-ethers": ^2
     ethers: ^5
     hardhat: ^2
-  checksum: 3a4bccfd0d7c7c9939f87e9c2777891705d98bf07d29be71ac7d1c939c4d68a0470b60bbc4c9f907b6fe467ecc318f197eb9fe0e4f027f211e50c9cd8faee0a8
+  checksum: ae7b5080f3576cf79f87222bf977beca69c8549d049f9954796f088da1182b8206242abd854d63ac87bba11120e73bf23238a476aa22615134854293cb39bbc4
   languageName: node
   linkType: hard
 
@@ -6020,29 +6022,6 @@ __metadata:
     "@nomicfoundation/solidity-analyzer-win32-x64-msvc":
       optional: true
   checksum: dd3e1e6aa75716eb22f256be06d6a4d808ef732f77c26b4489ae8f9508271799d555dff547cf037373b0974d892b4cc7f78bc4ea5027eee8561e4dd394fe61ac
-  languageName: node
-  linkType: hard
-
-"@nomiclabs/ethereumjs-vm@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "@nomiclabs/ethereumjs-vm@npm:4.2.2"
-  dependencies:
-    async: ^2.1.2
-    async-eventemitter: ^0.2.2
-    core-js-pure: ^3.0.1
-    ethereumjs-account: ^3.0.0
-    ethereumjs-block: ^2.2.2
-    ethereumjs-blockchain: ^4.0.3
-    ethereumjs-common: ^1.5.0
-    ethereumjs-tx: ^2.1.2
-    ethereumjs-util: ^6.2.0
-    fake-merkle-patricia-tree: ^1.0.1
-    functional-red-black-tree: ^1.0.1
-    merkle-patricia-tree: 3.0.0
-    rustbn.js: ~0.2.0
-    safe-buffer: ^5.1.1
-    util.promisify: ^1.0.0
-  checksum: 958e003813081947db14579af83f20139dc72c826fc128fade44cb87856eac32b9ff04be7ee20e708aa9ab8f2050df625d8edf298fbed5fbdbcc316c69ddd2fa
   languageName: node
   linkType: hard
 
@@ -31132,7 +31111,7 @@ __metadata:
   resolution: "potion-protocol@workspace:."
   dependencies:
     "@chainlink/contracts": ^0.4.1
-    "@defi-wonderland/smock": ^2.1.0
+    "@defi-wonderland/smock": ^2.3.0
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/address": ^5.7.0
     "@ethersproject/bignumber": ^5.7.0
