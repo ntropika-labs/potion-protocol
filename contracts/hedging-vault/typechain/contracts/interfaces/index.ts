@@ -4,7 +4,6 @@
 export type { IAction } from "./IAction";
 export type { IActionsManager } from "./IActionsManager";
 export type { IBaseRoundsVault } from "./IBaseRoundsVault";
-export type { IBaseRoundsVaultUpgradeable } from "./IBaseRoundsVaultUpgradeable";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";
 export type { IInvestmentVaultV0 } from "./IInvestmentVaultV0";
@@ -21,8 +20,6 @@ export type { IPotionProtocolOracle } from "./IPotionProtocolOracle";
 export type { IRefundsHelper } from "./IRefundsHelper";
 export type { IRolesManager } from "./IRolesManager";
 export type { IRoundsInputVault } from "./IRoundsInputVault";
-export type { IRoundsInputVaultUpgradeable } from "./IRoundsInputVaultUpgradeable";
 export type { IRoundsOutputVault } from "./IRoundsOutputVault";
-export type { IRoundsOutputVaultUpgradeable } from "./IRoundsOutputVaultUpgradeable";
 export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";

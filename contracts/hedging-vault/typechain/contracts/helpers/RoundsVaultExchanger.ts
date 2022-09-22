@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../common";
 
 export interface RoundsVaultExchangerInterface extends utils.Interface {
@@ -36,11 +37,21 @@ export interface RoundsVaultExchangerInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "exchangeInputForOutput",
-    values: [string, string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "exchangeInputForOutputBatch",
-    values: [string, string, BigNumberish[], BigNumberish[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -83,52 +94,52 @@ export interface RoundsVaultExchanger extends BaseContract {
 
   functions: {
     exchangeInputForOutput(
-      inputVault: string,
-      outputVault: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      id: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exchangeInputForOutputBatch(
-      inputVault: string,
-      outputVault: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   exchangeInputForOutput(
-    inputVault: string,
-    outputVault: string,
-    id: BigNumberish,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    inputVault: PromiseOrValue<string>,
+    outputVault: PromiseOrValue<string>,
+    id: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exchangeInputForOutputBatch(
-    inputVault: string,
-    outputVault: string,
-    ids: BigNumberish[],
-    amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    inputVault: PromiseOrValue<string>,
+    outputVault: PromiseOrValue<string>,
+    ids: PromiseOrValue<BigNumberish>[],
+    amounts: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     exchangeInputForOutput(
-      inputVault: string,
-      outputVault: string,
-      id: BigNumberish,
-      amount: BigNumberish,
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      id: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     exchangeInputForOutputBatch(
-      inputVault: string,
-      outputVault: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -137,37 +148,37 @@ export interface RoundsVaultExchanger extends BaseContract {
 
   estimateGas: {
     exchangeInputForOutput(
-      inputVault: string,
-      outputVault: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      id: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exchangeInputForOutputBatch(
-      inputVault: string,
-      outputVault: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     exchangeInputForOutput(
-      inputVault: string,
-      outputVault: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      id: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exchangeInputForOutputBatch(
-      inputVault: string,
-      outputVault: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      inputVault: PromiseOrValue<string>,
+      outputVault: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

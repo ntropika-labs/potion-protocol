@@ -202,7 +202,7 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setSystemAddresses",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -319,9 +319,9 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setSystemAddresses(
-      hedgingVault_: string,
-      potionBuyAction_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      hedgingVault_: PromiseOrValue<string>,
+      potionBuyAction_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
@@ -356,9 +356,9 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setSystemAddresses(
-    hedgingVault_: string,
-    potionBuyAction_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    hedgingVault_: PromiseOrValue<string>,
+    potionBuyAction_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
@@ -391,8 +391,8 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setSystemAddresses(
-      hedgingVault_: string,
-      potionBuyAction_: string,
+      hedgingVault_: PromiseOrValue<string>,
+      potionBuyAction_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -440,9 +440,9 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<BigNumber>;
 
     setSystemAddresses(
-      hedgingVault_: string,
-      potionBuyAction_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      hedgingVault_: PromiseOrValue<string>,
+      potionBuyAction_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -482,9 +482,9 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setSystemAddresses(
-      hedgingVault_: string,
-      potionBuyAction_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      hedgingVault_: PromiseOrValue<string>,
+      potionBuyAction_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

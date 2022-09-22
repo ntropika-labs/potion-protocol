@@ -245,10 +245,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBaseRoundsVault__factory>;
     getContractFactory(
-      name: "IBaseRoundsVaultUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IBaseRoundsVaultUpgradeable__factory>;
-    getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IEmergencyLock__factory>;
@@ -313,17 +309,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoundsInputVault__factory>;
     getContractFactory(
-      name: "IRoundsInputVaultUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IRoundsInputVaultUpgradeable__factory>;
-    getContractFactory(
       name: "IRoundsOutputVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoundsOutputVault__factory>;
-    getContractFactory(
-      name: "IRoundsOutputVaultUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IRoundsOutputVaultUpgradeable__factory>;
     getContractFactory(
       name: "IUniswapV3Oracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -341,41 +329,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TimeUtils__factory>;
     getContractFactory(
-      name: "ERC1155DecimalsUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155DecimalsUpgradeable__factory>;
-    getContractFactory(
-      name: "ERC1155FullSupplyUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155FullSupplyUpgradeable__factory>;
-    getContractFactory(
-      name: "ERC4626DeferredOperationUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC4626DeferredOperationUpgradeable__factory>;
-    getContractFactory(
-      name: "ERC4626MultiTokenUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC4626MultiTokenUpgradeable__factory>;
-    getContractFactory(
       name: "ERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626Upgradeable__factory>;
-    getContractFactory(
-      name: "IERC1155DecimalsUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC1155DecimalsUpgradeable__factory>;
-    getContractFactory(
-      name: "IERC1155FullSupplyUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC1155FullSupplyUpgradeable__factory>;
-    getContractFactory(
-      name: "IERC4626DeferredOperationUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC4626DeferredOperationUpgradeable__factory>;
-    getContractFactory(
-      name: "IERC4626MultiTokenUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC4626MultiTokenUpgradeable__factory>;
     getContractFactory(
       name: "IERC4626Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -776,11 +732,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IBaseRoundsVault>;
     getContractAt(
-      name: "IBaseRoundsVaultUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IBaseRoundsVaultUpgradeable>;
-    getContractAt(
       name: "IEmergencyLock",
       address: string,
       signer?: ethers.Signer
@@ -861,20 +812,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IRoundsInputVault>;
     getContractAt(
-      name: "IRoundsInputVaultUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IRoundsInputVaultUpgradeable>;
-    getContractAt(
       name: "IRoundsOutputVault",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IRoundsOutputVault>;
-    getContractAt(
-      name: "IRoundsOutputVaultUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IRoundsOutputVaultUpgradeable>;
     getContractAt(
       name: "IUniswapV3Oracle",
       address: string,
@@ -896,50 +837,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TimeUtils>;
     getContractAt(
-      name: "ERC1155DecimalsUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155DecimalsUpgradeable>;
-    getContractAt(
-      name: "ERC1155FullSupplyUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155FullSupplyUpgradeable>;
-    getContractAt(
-      name: "ERC4626DeferredOperationUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC4626DeferredOperationUpgradeable>;
-    getContractAt(
-      name: "ERC4626MultiTokenUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC4626MultiTokenUpgradeable>;
-    getContractAt(
       name: "ERC4626Upgradeable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC4626Upgradeable>;
-    getContractAt(
-      name: "IERC1155DecimalsUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC1155DecimalsUpgradeable>;
-    getContractAt(
-      name: "IERC1155FullSupplyUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC1155FullSupplyUpgradeable>;
-    getContractAt(
-      name: "IERC4626DeferredOperationUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC4626DeferredOperationUpgradeable>;
-    getContractAt(
-      name: "IERC4626MultiTokenUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC4626MultiTokenUpgradeable>;
     getContractAt(
       name: "IERC4626Upgradeable",
       address: string,

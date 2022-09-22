@@ -2,349 +2,629 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
-import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "../../../common";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+  PromiseOrValue,
+} from "../../../common";
 
 export interface BaseActionUpgradeableInterface extends utils.Interface {
-    functions: {
-        "ADMIN_ROLE()": FunctionFragment;
-        "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-        "INVESTOR_ROLE()": FunctionFragment;
-        "OPERATOR_ROLE()": FunctionFragment;
-        "STRATEGIST_ROLE()": FunctionFragment;
-        "VAULT_ROLE()": FunctionFragment;
-        "canPositionBeEntered(address)": FunctionFragment;
-        "canPositionBeExited(address)": FunctionFragment;
-        "canRefund(address)": FunctionFragment;
-        "canRefundETH()": FunctionFragment;
-        "enterPosition(address,uint256)": FunctionFragment;
-        "exitPosition(address)": FunctionFragment;
-        "getLifecycleState()": FunctionFragment;
-        "getRoleAdmin(bytes32)": FunctionFragment;
-        "getRoleMember(bytes32,uint256)": FunctionFragment;
-        "getRoleMemberCount(bytes32)": FunctionFragment;
-        "grantRole(bytes32,address)": FunctionFragment;
-        "hasRole(bytes32,address)": FunctionFragment;
-        "pause()": FunctionFragment;
-        "paused()": FunctionFragment;
-        "refund(address,uint256,address)": FunctionFragment;
-        "refundETH(uint256,address)": FunctionFragment;
-        "renounceRole(bytes32,address)": FunctionFragment;
-        "revokeRole(bytes32,address)": FunctionFragment;
-        "supportsInterface(bytes4)": FunctionFragment;
-        "unpause()": FunctionFragment;
-    };
+  functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
+    "canPositionBeEntered(address)": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
+    "canRefund(address)": FunctionFragment;
+    "canRefundETH()": FunctionFragment;
+    "enterPosition(address,uint256)": FunctionFragment;
+    "exitPosition(address)": FunctionFragment;
+    "getLifecycleState()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "refund(address,uint256,address)": FunctionFragment;
+    "refundETH(uint256,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "unpause()": FunctionFragment;
+  };
 
-    getFunction(
-        nameOrSignatureOrTopic:
-            | "ADMIN_ROLE"
-            | "DEFAULT_ADMIN_ROLE"
-            | "INVESTOR_ROLE"
-            | "OPERATOR_ROLE"
-            | "STRATEGIST_ROLE"
-            | "VAULT_ROLE"
-            | "canPositionBeEntered"
-            | "canPositionBeExited"
-            | "canRefund"
-            | "canRefundETH"
-            | "enterPosition"
-            | "exitPosition"
-            | "getLifecycleState"
-            | "getRoleAdmin"
-            | "getRoleMember"
-            | "getRoleMemberCount"
-            | "grantRole"
-            | "hasRole"
-            | "pause"
-            | "paused"
-            | "refund"
-            | "refundETH"
-            | "renounceRole"
-            | "revokeRole"
-            | "supportsInterface"
-            | "unpause",
-    ): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
+      | "canPositionBeEntered"
+      | "canPositionBeExited"
+      | "canRefund"
+      | "canRefundETH"
+      | "enterPosition"
+      | "exitPosition"
+      | "getLifecycleState"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "grantRole"
+      | "hasRole"
+      | "pause"
+      | "paused"
+      | "refund"
+      | "refundETH"
+      | "renounceRole"
+      | "revokeRole"
+      | "supportsInterface"
+      | "unpause"
+  ): FunctionFragment;
 
-    encodeFunctionData(functionFragment: "ADMIN_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "INVESTOR_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "OPERATOR_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "VAULT_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "canPositionBeEntered", values: [PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "canPositionBeExited", values: [PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "canRefund", values: [PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "canRefundETH", values?: undefined): string;
-    encodeFunctionData(
-        functionFragment: "enterPosition",
-        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
-    ): string;
-    encodeFunctionData(functionFragment: "exitPosition", values: [PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "getLifecycleState", values?: undefined): string;
-    encodeFunctionData(functionFragment: "getRoleAdmin", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "getRoleMember", values: [BytesLike, BigNumberish]): string;
-    encodeFunctionData(functionFragment: "getRoleMemberCount", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "grantRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "hasRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-    encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-    encodeFunctionData(
-        functionFragment: "refund",
-        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>, PromiseOrValue<string>],
-    ): string;
-    encodeFunctionData(
-        functionFragment: "refundETH",
-        values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>],
-    ): string;
-    encodeFunctionData(functionFragment: "renounceRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "revokeRole", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
-    encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPositionBeEntered",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPositionBeExited",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canRefund",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canRefundETH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enterPosition",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitPosition",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLifecycleState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "refund",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "refundETH",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
-    decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "INVESTOR_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "OPERATOR_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "canPositionBeEntered", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "canPositionBeExited", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "canRefund", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "canRefundETH", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "enterPosition", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "exitPosition", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "getLifecycleState", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "getRoleMember", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "getRoleMemberCount", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "canPositionBeEntered",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "canPositionBeExited",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "canRefund", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "canRefundETH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enterPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "exitPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLifecycleState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
-    events: {
-        "ActionPositionEntered(address,uint256)": EventFragment;
-        "ActionPositionExited(address,uint256)": EventFragment;
-        "Initialized(uint8)": EventFragment;
-        "LifecycleStateChanged(uint8,uint8)": EventFragment;
-        "Paused(address)": EventFragment;
-        "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-        "RoleGranted(bytes32,address,address)": EventFragment;
-        "RoleRevoked(bytes32,address,address)": EventFragment;
-        "Unpaused(address)": EventFragment;
-    };
+  events: {
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "LifecycleStateChanged(uint8,uint8)": EventFragment;
+    "Paused(address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Unpaused(address)": EventFragment;
+  };
 
-    getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
-    investmentAsset: string;
-    amountToInvest: BigNumber;
+  investmentAsset: string;
+  amountToInvest: BigNumber;
 }
-export type ActionPositionEnteredEvent = TypedEvent<[string, BigNumber], ActionPositionEnteredEventObject>;
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
+>;
 
-export type ActionPositionEnteredEventFilter = TypedEventFilter<ActionPositionEnteredEvent>;
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
 
 export interface ActionPositionExitedEventObject {
-    investmentAsset: string;
-    amountReturned: BigNumber;
+  investmentAsset: string;
+  amountReturned: BigNumber;
 }
-export type ActionPositionExitedEvent = TypedEvent<[string, BigNumber], ActionPositionExitedEventObject>;
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
+>;
 
-export type ActionPositionExitedEventFilter = TypedEventFilter<ActionPositionExitedEvent>;
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
 
 export interface InitializedEventObject {
-    version: number;
+  version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface LifecycleStateChangedEventObject {
-    prevState: number;
-    newState: number;
+  prevState: number;
+  newState: number;
 }
-export type LifecycleStateChangedEvent = TypedEvent<[number, number], LifecycleStateChangedEventObject>;
+export type LifecycleStateChangedEvent = TypedEvent<
+  [number, number],
+  LifecycleStateChangedEventObject
+>;
 
-export type LifecycleStateChangedEventFilter = TypedEventFilter<LifecycleStateChangedEvent>;
+export type LifecycleStateChangedEventFilter =
+  TypedEventFilter<LifecycleStateChangedEvent>;
 
 export interface PausedEventObject {
-    account: string;
+  account: string;
 }
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface RoleAdminChangedEventObject {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<[string, string, string], RoleAdminChangedEventObject>;
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
 
-export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
 export interface RoleGrantedEventObject {
-    role: string;
-    account: string;
-    sender: string;
+  role: string;
+  account: string;
+  sender: string;
 }
-export type RoleGrantedEvent = TypedEvent<[string, string, string], RoleGrantedEventObject>;
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
 
 export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 
 export interface RoleRevokedEventObject {
-    role: string;
-    account: string;
-    sender: string;
+  role: string;
+  account: string;
+  sender: string;
 }
-export type RoleRevokedEvent = TypedEvent<[string, string, string], RoleRevokedEventObject>;
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface UnpausedEventObject {
-    account: string;
+  account: string;
 }
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface BaseActionUpgradeable extends BaseContract {
-    connect(signerOrProvider: Signer | Provider | string): this;
-    attach(addressOrName: string): this;
-    deployed(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: BaseActionUpgradeableInterface;
+  interface: BaseActionUpgradeableInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined,
-    ): Promise<Array<TEvent>>;
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
-    listeners(eventName?: string): Array<Listener>;
-    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
-    removeAllListeners(eventName?: string): this;
-    off: OnEvent<this>;
-    on: OnEvent<this>;
-    once: OnEvent<this>;
-    removeListener: OnEvent<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+  functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-        canPositionBeEntered(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<[boolean] & { canEnter: boolean }>;
+    canPositionBeEntered(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
 
-        canPositionBeExited(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<[boolean] & { canExit: boolean }>;
+    canPositionBeExited(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canExit: boolean }>;
 
-        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-        canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
+    canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
-        enterPosition(
-            investmentAsset: PromiseOrValue<string>,
-            amountToInvest: PromiseOrValue<BigNumberish>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<ContractTransaction>;
+    enterPosition(
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        exitPosition(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<ContractTransaction>;
+    exitPosition(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
+    getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
-        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-        grantRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<ContractTransaction>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<[boolean]>;
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
+    pause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        paused(overrides?: CallOverrides): Promise<[boolean]>;
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-        refund(
-            token: PromiseOrValue<string>,
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<ContractTransaction>;
+    refund(
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        refundETH(
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<ContractTransaction>;
+    refundETH(
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        renounceRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<ContractTransaction>;
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        revokeRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<ContractTransaction>;
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
-    };
+    unpause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+  };
 
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  canPositionBeEntered(
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  canPositionBeExited(
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  canRefund(
+    token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  canRefundETH(overrides?: CallOverrides): Promise<boolean>;
+
+  enterPosition(
+    investmentAsset: PromiseOrValue<string>,
+    amountToInvest: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  exitPosition(
+    investmentAsset: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getLifecycleState(overrides?: CallOverrides): Promise<number>;
+
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  pause(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  refund(
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  refundETH(
+    amount: PromiseOrValue<BigNumberish>,
+    recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  unpause(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -357,371 +637,395 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    canPositionBeEntered(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeEntered(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeExited(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
     enterPosition(
-        investmentAsset: PromiseOrValue<string>,
-        amountToInvest: PromiseOrValue<BigNumberish>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     exitPosition(
-        investmentAsset: PromiseOrValue<string>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     grantRole(
-        role: BytesLike,
-        account: string,
-        overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
+    pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     refund(
-        token: PromiseOrValue<string>,
-        amount: PromiseOrValue<BigNumberish>,
-        recipient: PromiseOrValue<string>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     refundETH(
-        amount: PromiseOrValue<BigNumberish>,
-        recipient: PromiseOrValue<string>,
-        overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
-        role: BytesLike,
-        account: string,
-        overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     revokeRole(
-        role: BytesLike,
-        account: string,
-        overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
-
-    supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
-
-    unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>;
-
-    callStatic: {
-        ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
-
-        canPositionBeEntered(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
-
-        canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
-
-        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
-
-        canRefundETH(overrides?: CallOverrides): Promise<boolean>;
-
-        enterPosition(
-            investmentAsset: PromiseOrValue<string>,
-            amountToInvest: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides,
-        ): Promise<void>;
-
-        exitPosition(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-
-        getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-        grantRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
-
-        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>;
-
-        pause(overrides?: CallOverrides): Promise<void>;
-
-        paused(overrides?: CallOverrides): Promise<boolean>;
-
-        refund(
-            token: PromiseOrValue<string>,
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<void>;
-
-        refundETH(
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<void>;
-
-        renounceRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
-
-        revokeRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<void>;
-
-        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
-
-        unpause(overrides?: CallOverrides): Promise<void>;
-    };
-
-    filters: {
-        "ActionPositionEntered(address,uint256)"(
-            investmentAsset?: PromiseOrValue<string> | null,
-            amountToInvest?: null,
-        ): ActionPositionEnteredEventFilter;
-        ActionPositionEntered(
-            investmentAsset?: PromiseOrValue<string> | null,
-            amountToInvest?: null,
-        ): ActionPositionEnteredEventFilter;
-
-        "ActionPositionExited(address,uint256)"(
-            investmentAsset?: PromiseOrValue<string> | null,
-            amountReturned?: null,
-        ): ActionPositionExitedEventFilter;
-        ActionPositionExited(
-            investmentAsset?: PromiseOrValue<string> | null,
-            amountReturned?: null,
-        ): ActionPositionExitedEventFilter;
-
-        "Initialized(uint8)"(version?: null): InitializedEventFilter;
-        Initialized(version?: null): InitializedEventFilter;
-
-        "LifecycleStateChanged(uint8,uint8)"(
-            prevState?: PromiseOrValue<BigNumberish> | null,
-            newState?: PromiseOrValue<BigNumberish> | null,
-        ): LifecycleStateChangedEventFilter;
-        LifecycleStateChanged(
-            prevState?: PromiseOrValue<BigNumberish> | null,
-            newState?: PromiseOrValue<BigNumberish> | null,
-        ): LifecycleStateChangedEventFilter;
-
-        "Paused(address)"(account?: null): PausedEventFilter;
-        Paused(account?: null): PausedEventFilter;
-
-        "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-            role?: BytesLike | null,
-            previousAdminRole?: BytesLike | null,
-            newAdminRole?: BytesLike | null,
-        ): RoleAdminChangedEventFilter;
-        RoleAdminChanged(
-            role?: BytesLike | null,
-            previousAdminRole?: BytesLike | null,
-            newAdminRole?: BytesLike | null,
-        ): RoleAdminChangedEventFilter;
-
-        "RoleGranted(bytes32,address,address)"(
-            role?: BytesLike | null,
-            account?: string | null,
-            sender?: string | null,
-        ): RoleGrantedEventFilter;
-        RoleGranted(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleGrantedEventFilter;
-
-        "RoleRevoked(bytes32,address,address)"(
-            role?: BytesLike | null,
-            account?: string | null,
-            sender?: string | null,
-        ): RoleRevokedEventFilter;
-        RoleRevoked(role?: BytesLike | null, account?: string | null, sender?: string | null): RoleRevokedEventFilter;
-
-        "Unpaused(address)"(account?: null): UnpausedEventFilter;
-        Unpaused(account?: null): UnpausedEventFilter;
-    };
-
-    estimateGas: {
-        ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-        canPositionBeEntered(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-
-        canPositionBeExited(investmentAsset: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-
-        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-
-        canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
-
-        enterPosition(
-            investmentAsset: PromiseOrValue<string>,
-            amountToInvest: PromiseOrValue<BigNumberish>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
-
-        exitPosition(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
-
-        getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
-
-        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-        grantRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<BigNumber>;
-
-        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>;
-
-        paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-        refund(
-            token: PromiseOrValue<string>,
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
-
-        refundETH(
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<BigNumber>;
-
-        renounceRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<BigNumber>;
-
-        revokeRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<BigNumber>;
-
-        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>;
-    };
-
-    populateTransaction: {
-        ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        canPositionBeEntered(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<PopulatedTransaction>;
-
-        canPositionBeExited(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: CallOverrides,
-        ): Promise<PopulatedTransaction>;
-
-        canRefund(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        enterPosition(
-            investmentAsset: PromiseOrValue<string>,
-            amountToInvest: PromiseOrValue<BigNumberish>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<PopulatedTransaction>;
-
-        exitPosition(
-            investmentAsset: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<PopulatedTransaction>;
-
-        getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        getRoleMember(role: BytesLike, index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        getRoleMemberCount(role: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        grantRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<PopulatedTransaction>;
-
-        hasRole(role: BytesLike, account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        pause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<PopulatedTransaction>;
-
-        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        refund(
-            token: PromiseOrValue<string>,
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<PopulatedTransaction>;
-
-        refundETH(
-            amount: PromiseOrValue<BigNumberish>,
-            recipient: PromiseOrValue<string>,
-            overrides?: Overrides & { from?: PromiseOrValue<string> },
-        ): Promise<PopulatedTransaction>;
-
-        renounceRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<PopulatedTransaction>;
-
-        revokeRole(
-            role: BytesLike,
-            account: string,
-            overrides?: Overrides & { from?: string | Promise<string> },
-        ): Promise<PopulatedTransaction>;
-
-        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-        unpause(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<PopulatedTransaction>;
-    };
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+  };
+
+  filters: {
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "LifecycleStateChanged(uint8,uint8)"(
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
+    ): LifecycleStateChangedEventFilter;
+    LifecycleStateChanged(
+      prevState?: PromiseOrValue<BigNumberish> | null,
+      newState?: PromiseOrValue<BigNumberish> | null
+    ): LifecycleStateChangedEventFilter;
+
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
+  };
+
+  estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canPositionBeEntered(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    canPositionBeExited(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    enterPosition(
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    exitPosition(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    pause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    refund(
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    refundETH(
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    unpause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    canPositionBeEntered(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canPositionBeExited(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canRefund(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    enterPosition(
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    exitPosition(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    refund(
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    refundETH(
+      amount: PromiseOrValue<BigNumberish>,
+      recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }
