@@ -58,8 +58,8 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalAssets()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
     "vault()": FunctionFragment;
   };
 
@@ -94,8 +94,8 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
       | "setApprovalForAll"
       | "supportsInterface"
       | "totalAssets"
-      | "totalSupply()"
-      | "totalSupply(uint256)"
+      | "totalSupply"
+      | "totalSupplyAll"
       | "vault"
   ): FunctionFragment;
 
@@ -239,12 +239,12 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply()",
-    values?: undefined
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
@@ -335,11 +335,11 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply()",
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply(uint256)",
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
@@ -685,12 +685,12 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     vault(
       overrides?: CallOverrides
@@ -852,12 +852,12 @@ export interface IBaseRoundsVault extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply(uint256)"(
+  totalSupply(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   vault(overrides?: CallOverrides): Promise<string>;
 
@@ -1015,12 +1015,12 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<string>;
   };
@@ -1318,12 +1318,12 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -1484,12 +1484,12 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

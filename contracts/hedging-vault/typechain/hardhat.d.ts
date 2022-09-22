@@ -349,6 +349,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RoundsOutputVaultUpgradeable__factory>;
     getContractFactory(
+      name: "ERC1155FullSupplyMockUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155FullSupplyMockUpgradeable__factory>;
+    getContractFactory(
       name: "ERC1155FullSupplyUpgradeableMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155FullSupplyUpgradeableMock__factory>;
@@ -869,6 +873,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.RoundsOutputVaultUpgradeable>;
+    getContractAt(
+      name: "ERC1155FullSupplyMockUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155FullSupplyMockUpgradeable>;
     getContractAt(
       name: "ERC1155FullSupplyUpgradeableMock",
       address: string,

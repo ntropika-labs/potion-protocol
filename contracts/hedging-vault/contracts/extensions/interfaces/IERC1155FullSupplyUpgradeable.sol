@@ -15,7 +15,7 @@ interface IERC1155FullSupplyUpgradeable is IERC1155Upgradeable {
     /**
      * @dev Total amount of tokens in existence for all minted ids
      */
-    function totalSupply() external view returns (uint256);
+    function totalSupplyAll() external view returns (uint256);
 
     /**
      * @dev Total amount of tokens in existence with a given id.

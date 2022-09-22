@@ -991,7 +991,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
     name: "totalSupply",
     outputs: [
       {
@@ -1004,14 +1010,8 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-    ],
-    name: "totalSupply",
+    inputs: [],
+    name: "totalSupplyAll",
     outputs: [
       {
         internalType: "uint256",

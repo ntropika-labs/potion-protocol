@@ -77,8 +77,8 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalAssets()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
     "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
     "vault()": FunctionFragment;
@@ -134,8 +134,8 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
       | "setApprovalForAll"
       | "supportsInterface"
       | "totalAssets"
-      | "totalSupply()"
-      | "totalSupply(uint256)"
+      | "totalSupply"
+      | "totalSupplyAll"
       | "unpause"
       | "uri"
       | "vault"
@@ -355,12 +355,12 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply()",
-    values?: undefined
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
@@ -502,11 +502,11 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply()",
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply(uint256)",
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -998,12 +998,12 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1252,12 +1252,12 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply(uint256)"(
+  totalSupply(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1500,12 +1500,12 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
@@ -1930,12 +1930,12 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2185,12 +2185,12 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

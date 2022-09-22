@@ -180,7 +180,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
      * would represent an infinite amout of shares.
      */
     function _convertToShares(uint256 assets) internal view virtual returns (uint256 shares) {
-        uint256 supply = totalSupply();
+        uint256 supply = totalSupplyAll();
         return
             (assets == 0 || supply == 0)
                 ? (assets * (10**decimals())) / (10**_asset.decimals())
@@ -191,7 +191,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
      * @dev Internal convertion function (from shares to assets) with support for rounding direction
      */
     function _convertToAssets(uint256 shares) internal view virtual returns (uint256 assets) {
-        uint256 supply = totalSupply();
+        uint256 supply = totalSupplyAll();
         return
             (supply == 0) ? (shares * (10**_asset.decimals())) / (10**decimals()) : (shares * totalAssets()) / supply;
     }
@@ -271,7 +271,7 @@ abstract contract ERC4626MultiTokenUpgradeable is
     }
 
     function _isVaultCollateralized() private view returns (bool) {
-        return totalAssets() > 0 || totalSupply() == 0;
+        return totalAssets() > 0 || totalSupplyAll() == 0;
     }
 
     /**

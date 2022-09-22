@@ -53,8 +53,8 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalAssets()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
@@ -84,8 +84,8 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
       | "setApprovalForAll"
       | "supportsInterface"
       | "totalAssets"
-      | "totalSupply()"
-      | "totalSupply(uint256)"
+      | "totalSupply"
+      | "totalSupplyAll"
       | "uri"
   ): FunctionFragment;
 
@@ -202,12 +202,12 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply()",
-    values?: undefined
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "uri",
@@ -284,11 +284,11 @@ export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply()",
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply(uint256)",
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
@@ -570,12 +570,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -714,12 +714,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply(uint256)"(
+  totalSupply(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   uri(
     arg0: PromiseOrValue<BigNumberish>,
@@ -858,12 +858,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1102,12 +1102,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1247,12 +1247,12 @@ export interface ERC4626MultiTokenUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,

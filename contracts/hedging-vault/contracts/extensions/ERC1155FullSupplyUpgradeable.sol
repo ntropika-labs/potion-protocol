@@ -24,7 +24,7 @@ abstract contract ERC1155FullSupplyUpgradeable is Initializable, ERC1155Upgradea
     mapping(uint256 => uint256) private _totalSupplyByID;
     mapping(address => uint256) private _totalSupplyByAccount;
 
-    function totalSupply() public view virtual override returns (uint256) {
+    function totalSupplyAll() public view virtual override returns (uint256) {
         return _totalSupply;
     }
 
@@ -98,5 +98,5 @@ abstract contract ERC1155FullSupplyUpgradeable is Initializable, ERC1155Upgradea
      * variables without shifting down storage in the inheritance chain.
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[49] private __gap;
+    uint256[47] private __gap;
 }

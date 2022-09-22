@@ -54,8 +54,8 @@ export interface IERC4626DeferredOperationUpgradeableInterface
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalAssets()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
     "vault()": FunctionFragment;
   };
 
@@ -85,8 +85,8 @@ export interface IERC4626DeferredOperationUpgradeableInterface
       | "setApprovalForAll"
       | "supportsInterface"
       | "totalAssets"
-      | "totalSupply()"
-      | "totalSupply(uint256)"
+      | "totalSupply"
+      | "totalSupplyAll"
       | "vault"
   ): FunctionFragment;
 
@@ -203,12 +203,12 @@ export interface IERC4626DeferredOperationUpgradeableInterface
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply()",
-    values?: undefined
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
@@ -282,11 +282,11 @@ export interface IERC4626DeferredOperationUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply()",
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply(uint256)",
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
@@ -563,12 +563,12 @@ export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     vault(
       overrides?: CallOverrides
@@ -706,12 +706,12 @@ export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply(uint256)"(
+  totalSupply(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   vault(overrides?: CallOverrides): Promise<string>;
 
@@ -847,12 +847,12 @@ export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<string>;
   };
@@ -1085,12 +1085,12 @@ export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -1227,12 +1227,12 @@ export interface IERC4626DeferredOperationUpgradeable extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

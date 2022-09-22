@@ -39,8 +39,8 @@ export interface IERC1155FullSupplyUpgradeableInterface
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
   };
 
   getFunction(
@@ -54,8 +54,8 @@ export interface IERC1155FullSupplyUpgradeableInterface
       | "safeTransferFrom"
       | "setApprovalForAll"
       | "supportsInterface"
-      | "totalSupply()"
-      | "totalSupply(uint256)"
+      | "totalSupply"
+      | "totalSupplyAll"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -107,12 +107,12 @@ export interface IERC1155FullSupplyUpgradeableInterface
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply()",
-    values?: undefined
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -149,11 +149,11 @@ export interface IERC1155FullSupplyUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply()",
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply(uint256)",
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
 
@@ -302,12 +302,12 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   "balanceOf(address,uint256)"(
@@ -367,12 +367,12 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply(uint256)"(
+  totalSupply(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     "balanceOf(address,uint256)"(
@@ -432,12 +432,12 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -547,12 +547,12 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -613,11 +613,11 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply(uint256)"(
+    totalSupply(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

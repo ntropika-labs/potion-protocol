@@ -11,7 +11,7 @@ chai.use(smock.matchers);
     
     @author Roberto Cano <robercano>
  */
-describe.only("OpynProtocolLib", function () {
+describe("OpynProtocolLib", function () {
     let randomAddress: string;
     let opynProtocolLib: TestWrapperOpynProtocolLib;
     let fakeOpynController: FakeContract<IOpynController>;
