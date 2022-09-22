@@ -22,7 +22,6 @@ import {
 } from "../generated/schema";
 import { calculateAverageCost } from "./curves";
 import {
-  getOTokenIdFromAddress,
   oTokenFixedtoDecimals,
   oTokenIncrementLiquidity,
   oTokenIncrementPurchasesCount,
@@ -77,8 +76,8 @@ export function createTemplateId(
 
 export function createTemplate(
   templateId: string,
-  curveHash: string,
-  criteriaSetHash: string,
+  curveHash: Bytes,
+  criteriaSetHash: Bytes,
   creator: Bytes
 ): Template {
   const template = new Template(templateId);
@@ -95,12 +94,12 @@ export function createTemplate(
   return template;
 }
 
-function createLPRecordID(lp: Bytes, otoken: Bytes): string {
-  return lp.toHexString() + otoken.toHexString();
+function createLPRecordID(lp: Bytes, otoken: Bytes): Bytes {
+  return lp.concat(otoken);
 }
 
-function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): string {
-  return lp.toHexString() + poolId.toHexString() + otoken.toHexString();
+function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): Bytes {
+  return lp.concatI32(poolId.toI32()).concat(otoken);
 }
 
 function getUtilization(size: BigDecimal, locked: BigDecimal): BigDecimal {
@@ -127,16 +126,16 @@ and count of pools.
 function updateConfigPoolTemplate(
   pool: Pool,
   pastTemplate: Template | null,
-  curveHash: string,
-  criteriaSetHash: string,
+  curveHash: Bytes,
+  criteriaSetHash: Bytes,
   blockHash: Bytes,
   timestamp: BigInt
 ): void {
   // Case where the old template was null or different from the current settings
   log.info("Updating the pool {} with the following curve {} and criteria {}", [
     pool.id,
-    curveHash,
-    criteriaSetHash,
+    curveHash.toHexString(),
+    criteriaSetHash.toHexString(),
   ]);
   if (pastTemplate != null) {
     log.info("The pastTemplate id is {}", [pastTemplate.id]);
@@ -162,10 +161,7 @@ function updateConfigPoolTemplate(
         log.debug("pastTemplate.criteriaSet != criteriaSetHash", []);
       }
     }
-    const templateId = createTemplateId(
-      Bytes.fromHexString(curveHash) as Bytes,
-      Bytes.fromHexString(criteriaSetHash) as Bytes
-    );
+    const templateId = createTemplateId(curveHash, criteriaSetHash);
     let template = Template.load(templateId);
     log.info("Loading the template {}", [templateId]);
 
@@ -292,6 +288,14 @@ export function createPool(poolUUID: string, lp: Bytes, poolId: BigInt): Pool {
   return pool;
 }
 
+function createOrderBookEntryID(
+  buyer: Bytes,
+  otoken: Bytes,
+  timestamp: BigInt
+): Bytes {
+  return buyer.concat(otoken).concatI32(timestamp.toI32());
+}
+
 /**
  * Creates an OrderBookEntry from the buyer address, oToken address, and timestamp.
    Modifies Entities: OrderBookEntry
@@ -309,13 +313,11 @@ function createOrderBookEntry(
   tokens: BigDecimal,
   timestamp: BigInt
 ): void {
-  const entryId =
-    buyer.toHexString() + otoken.toHexString() + timestamp.toString();
+  const entryId = createOrderBookEntryID(buyer, otoken, timestamp);
   const entry = new OrderBookEntry(entryId);
 
   entry.buyer = buyer;
-  // to set field to an entity, set to the string of the entity's ID.
-  entry.otoken = getOTokenIdFromAddress(otoken);
+  entry.otoken = otoken;
   entry.premium = premium;
   entry.numberOfOTokens = tokens;
   entry.timestamp = timestamp;
@@ -347,7 +349,7 @@ export function handleDeposited(event: Deposited): void {
       template.save();
       if (template.curve) {
         pool.averageCost = calculateAverageCost(
-          template.curve as string,
+          template.curve as Bytes,
           pool.utilization,
           pool.locked,
           pool.size
@@ -419,7 +421,7 @@ export function handleWithdrawn(event: Withdrawn): void {
         template.save();
         if (template.curve) {
           pool.averageCost = calculateAverageCost(
-            template.curve as string,
+            template.curve as Bytes,
             pool.utilization,
             pool.locked,
             pool.size
@@ -458,10 +460,9 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const criteriaSetHashId = event.params.criteriaSetHash.toHexString();
   log.info("Setting a criteria for {}, criteria hash id is {}", [
     poolId,
-    criteriaSetHashId,
+    event.params.criteriaSetHash.toHexString(),
   ]);
 
   if (pool.template == null) {
@@ -469,14 +470,14 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       null,
-      "",
-      criteriaSetHashId,
+      Bytes.fromHexString(""),
+      event.params.criteriaSetHash,
       event.block.hash,
       event.block.timestamp
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.criteriaSet == null) {
+    if (!pastTemplate.criteriaSet) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -484,8 +485,8 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       pastTemplate as Template,
-      pastTemplate.curve as string,
-      criteriaSetHashId,
+      pastTemplate.curve as Bytes,
+      event.params.criteriaSetHash,
       event.block.hash,
       event.block.timestamp
     );
@@ -514,8 +515,11 @@ export function handleCurveSelected(event: CurveSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const curveId = event.params.curveHash.toHexString();
-  log.info("Setting a curve for {}, curve id is {}", [poolId, curveId]);
+  const curveId = event.params.curveHash;
+  log.info("Setting a curve for {}, curve id is {}", [
+    poolId,
+    curveId.toHexString(),
+  ]);
 
   if (pool.template == null) {
     log.info("pool.template is null, creating a new template", []);
@@ -523,13 +527,13 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       null,
       curveId,
-      "",
+      Bytes.fromHexString(""),
       event.block.hash,
       event.block.timestamp
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.curve == null) {
+    if (!pastTemplate.curve) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -538,7 +542,7 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       pastTemplate as Template,
       curveId,
-      pastTemplate.criteriaSet as string,
+      pastTemplate.criteriaSet as Bytes,
       event.block.hash,
       event.block.timestamp
     );
@@ -563,6 +567,10 @@ export function handleCurveSelected(event: CurveSelected): void {
   );
 }
 
+function createBuyerRecordID(buyer: Bytes, otoken: Bytes): Bytes {
+  return buyer.concat(otoken);
+}
+
 /**
  * Called when a buyer purchases oTokens from at least one LP.
  * Updates the BuyerRecord based on the order.
@@ -571,8 +579,7 @@ export function handleCurveSelected(event: CurveSelected): void {
  * @return {void}
  */
 export function handleOptionsBought(event: OptionsBought): void {
-  const recordID =
-    event.params.buyer.toHexString() + event.params.otoken.toHexString();
+  const recordID = createBuyerRecordID(event.params.buyer, event.params.otoken);
   let record = BuyerRecord.load(recordID);
   const tokenAmount = oTokenFixedtoDecimals(
     event.params.otoken,
@@ -581,7 +588,7 @@ export function handleOptionsBought(event: OptionsBought): void {
   const premiumPaid = collateralToDecimals(event.params.totalPremiumPaid);
 
   if (record == null) {
-    const otokenAddress = getOTokenIdFromAddress(event.params.otoken);
+    const otokenAddress = event.params.otoken;
     const otoken = OToken.load(otokenAddress)!;
     record = new BuyerRecord(recordID);
     record.buyer = event.params.buyer;
@@ -643,7 +650,7 @@ export function handleOptionsSold(event: OptionsSold): void {
 
     if (template && template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size
@@ -666,7 +673,7 @@ export function handleOptionsSold(event: OptionsSold): void {
     if (record == null) {
       record = new LPRecord(recordID);
       record.lp = event.params.lp;
-      record.otoken = getOTokenIdFromAddress(event.params.otoken);
+      record.otoken = event.params.otoken;
       record.numberOfOTokens = BigDecimal.fromString("0");
       record.liquidityCollateralized = BigDecimal.fromString("0");
       record.premiumReceived = BigDecimal.fromString("0");
@@ -689,7 +696,7 @@ export function handleOptionsSold(event: OptionsSold): void {
       poolRecord = new PoolRecord(poolRecordID);
       poolRecord.pool = poolId;
       poolRecord.lpRecord = record.id;
-      poolRecord.otoken = getOTokenIdFromAddress(event.params.otoken);
+      poolRecord.otoken = event.params.otoken;
       poolRecord.collateral = liquidityCollateralized;
       poolRecord.premiumReceived = premiumAmount;
       poolRecord.numberOfOTokens = tokenAmount;
@@ -776,7 +783,7 @@ export function handleOptionSettlementDistributed(
 
     if (template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size

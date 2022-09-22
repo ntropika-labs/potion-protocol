@@ -16,7 +16,7 @@ fragment PoolRecordOtokenInfo on PoolRecord {
 
 query getPoolRecordsByPool(
   $pool: String
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $num: Int = 1000
 ) {
   poolRecords(
