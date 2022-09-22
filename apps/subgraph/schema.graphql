@@ -46,7 +46,7 @@ point in time; precision is one hour
 """
 type HourlyTemplateData @entity {
   id: ID!
-  date: Int!
+  timestamp: Int!
   template: Template!
   liquidity: BigDecimal!
   pnl: BigDecimal!
@@ -59,7 +59,7 @@ point in time; precision is one day
 """
 type DailyTemplateData @entity {
   id: ID!
-  date: Int!
+  timestamp: Int!
   template: Template!
   liquidity: BigDecimal!
   pnl: BigDecimal!
@@ -133,7 +133,7 @@ point in time; precision is one hour
 """
 type HourlyPoolData @entity {
   id: ID!
-  date: Int!
+  timestamp: Int!
   pool: Pool!
   liquidity: BigDecimal!
   pnl: BigDecimal!
@@ -146,7 +146,7 @@ point in time; precision is one day
 """
 type DailyPoolData @entity {
   id: ID!
-  date: Int!
+  timestamp: Int!
   pool: Pool!
   liquidity: BigDecimal!
   pnl: BigDecimal!

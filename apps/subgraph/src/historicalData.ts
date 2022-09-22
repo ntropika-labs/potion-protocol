@@ -19,20 +19,20 @@ function getHourTimestamp(timestamp: BigInt): i32 {
 }
 
 function updateDailyPoolData(pool: Pool, timestamp: BigInt): void {
-  const date = getDayTimestamp(timestamp);
-  log.info("updating the info for pool {} in the date {}", [
+  const dayTimestamp = getDayTimestamp(timestamp);
+  log.info("updating the info for pool {} at {}", [
     pool.id,
-    date.toString(),
+    dayTimestamp.toString(),
   ]);
-  const id = pool.id + date.toString();
+  const id = pool.id + dayTimestamp.toString();
   let dailyPool = DailyPoolData.load(id);
   if (dailyPool == null) {
-    log.info(
-      "pool {} didn't have operations in the date {}, creating new entity",
-      [pool.id, date.toString()]
-    );
+    log.info("pool {} didn't have operations at {}, creating new entity", [
+      pool.id,
+      dayTimestamp.toString(),
+    ]);
     dailyPool = new DailyPoolData(id);
-    dailyPool.date = date;
+    dailyPool.timestamp = dayTimestamp;
     dailyPool.pool = pool.id;
   }
   dailyPool.liquidity = pool.liquidityAtTrades;
@@ -42,20 +42,20 @@ function updateDailyPoolData(pool: Pool, timestamp: BigInt): void {
 }
 
 function updateHourlyPoolData(pool: Pool, timestamp: BigInt): void {
-  const date = getHourTimestamp(timestamp);
-  log.info("updating the info for pool {} in the date {}", [
+  const hourTimestamp = getHourTimestamp(timestamp);
+  log.info("updating the info for pool {} at {}", [
     pool.id,
-    date.toString(),
+    hourTimestamp.toString(),
   ]);
-  const id = pool.id + date.toString();
+  const id = pool.id + hourTimestamp.toString();
   let hourlyPool = HourlyPoolData.load(id);
   if (hourlyPool == null) {
-    log.info(
-      "pool {} didn't have operations in the date {}, creating new entity",
-      [pool.id, date.toString()]
-    );
+    log.info("pool {} didn't have operations at {}, creating new entity", [
+      pool.id,
+      hourTimestamp.toString(),
+    ]);
     hourlyPool = new HourlyPoolData(id);
-    hourlyPool.date = date;
+    hourlyPool.timestamp = hourTimestamp;
     hourlyPool.pool = pool.id;
   }
   hourlyPool.liquidity = pool.liquidityAtTrades;
@@ -70,20 +70,20 @@ function updateHistoricalPoolData(pool: Pool, timestamp: BigInt): void {
 }
 
 function updateDailyTemplateData(template: Template, timestamp: BigInt): void {
-  const date = getDayTimestamp(timestamp);
-  log.info("updating the info for template {} in the date {}", [
+  const dayTimestamp = getDayTimestamp(timestamp);
+  log.info("updating the info for template {} at {}", [
     template.id,
-    date.toString(),
+    dayTimestamp.toString(),
   ]);
-  const id = template.id + date.toString();
+  const id = template.id + dayTimestamp.toString();
   let dailyTemplate = DailyTemplateData.load(id);
   if (dailyTemplate == null) {
-    log.info(
-      "template {} didn't have operations in the date {}, creating new entity",
-      [template.id, date.toString()]
-    );
+    log.info("template {} didn't have operations at {}, creating new entity", [
+      template.id,
+      dayTimestamp.toString(),
+    ]);
     dailyTemplate = new DailyTemplateData(id);
-    dailyTemplate.date = date;
+    dailyTemplate.timestamp = dayTimestamp;
     dailyTemplate.template = template.id;
   }
   dailyTemplate.liquidity = template.liquidityAtTrades;
@@ -93,20 +93,20 @@ function updateDailyTemplateData(template: Template, timestamp: BigInt): void {
 }
 
 function updateHourlyTemplateData(template: Template, timestamp: BigInt): void {
-  const date = getHourTimestamp(timestamp);
-  log.info("updating the info for template {} in the date {}", [
+  const hourTimestamp = getHourTimestamp(timestamp);
+  log.info("updating the info for template {} at {}", [
     template.id,
-    date.toString(),
+    hourTimestamp.toString(),
   ]);
-  const id = template.id + date.toString();
+  const id = template.id + hourTimestamp.toString();
   let hourlyTemplate = HourlyTemplateData.load(id);
   if (hourlyTemplate == null) {
-    log.info(
-      "template {} didn't have operations in the date {}, creating new entity",
-      [template.id, date.toString()]
-    );
+    log.info("template {} didn't have operations at {}, creating new entity", [
+      template.id,
+      hourTimestamp.toString(),
+    ]);
     hourlyTemplate = new HourlyTemplateData(id);
-    hourlyTemplate.date = date;
+    hourlyTemplate.timestamp = hourTimestamp;
     hourlyTemplate.template = template.id;
   }
   hourlyTemplate.liquidity = template.liquidityAtTrades;
