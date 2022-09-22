@@ -5,7 +5,7 @@ pragma solidity 0.8.14;
 
 import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
 import { RolesManagerUpgradeable } from "./RolesManagerUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/security/PausableUpgradeable.sol";
 
 /**
     @title EmergencyLock

@@ -11,7 +11,7 @@ import "../extensions/ERC4626CapUpgradeable.sol";
 import "./FeeManagerUpgradeable.sol";
 import "./ActionsManagerUpgradeable.sol";
 import "../interfaces/IVault.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgradeable.sol";
 
 /**
     @title BaseVaultUpgradeable

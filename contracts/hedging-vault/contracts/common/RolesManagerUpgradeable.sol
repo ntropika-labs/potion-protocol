@@ -3,7 +3,7 @@
  */
 pragma solidity 0.8.14;
 
-import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
+import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/access/AccessControlEnumerableUpgradeable.sol";
 
 import "../interfaces/IRolesManager.sol";
 

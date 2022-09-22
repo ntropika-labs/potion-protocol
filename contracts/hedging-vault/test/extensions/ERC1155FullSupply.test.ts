@@ -7,7 +7,7 @@ chai.use(chai_bn(BN));
 
 const ERC1155FullSupplyMock = artifacts.require("ERC1155FullSupplyUpgradeableMock");
 
-contract.only("ERC1155FullSupply", function (accounts) {
+contract("ERC1155FullSupply", function (accounts) {
     const [holder] = accounts;
 
     const uri = "https://token.com";

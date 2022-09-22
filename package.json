@@ -71,6 +71,7 @@
     "@nrwl/workspace": "14.7.5",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.6.0",
+    "@openzeppelin/contracts-upgradeable-4.7.3": "npm:@openzeppelin/contracts-upgradeable@4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.20.0",
     "@openzeppelin/test-helpers": "^0.5.16",
     "@rollup/plugin-yaml": "^3.1.0",
@@ -208,7 +209,8 @@
     "vue-eslint-parser": "^9.1.0",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.5",
-    "vue-tsc": "^0.40.13"
+    "vue-tsc": "^0.40.13",
+    "web3": "^1.8.0"
   },
   "packageManager": "yarn@3.2.0",
   "resolutions": {

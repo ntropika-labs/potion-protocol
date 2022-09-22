@@ -2,11 +2,10 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
+import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC4626Upgradeable.sol";
 import "./ERC4626MultiTokenUpgradeable.sol";
 import "./interfaces/IERC4626DeferredOperationUpgradeable.sol";
-import "../openzeppelin/interfaces/IERC4626Upgradeable.sol";
 
 /**
     @dev Deferred operations vault that takes care of handling deposits/withdrawals for a target vault.

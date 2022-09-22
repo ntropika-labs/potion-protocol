@@ -5,9 +5,9 @@ pragma solidity 0.8.14;
 
 import { IRefundsHelper } from "../interfaces/IRefundsHelper.sol";
 import { RolesManagerUpgradeable } from "./RolesManagerUpgradeable.sol";
-import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import { AddressUpgradeable as Address } from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/IERC20Upgradeable.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { AddressUpgradeable as Address } from "@openzeppelin/contracts-upgradeable-4.7.3/utils/AddressUpgradeable.sol";
 
 /**
     @title RefundsHelperUpgreadable

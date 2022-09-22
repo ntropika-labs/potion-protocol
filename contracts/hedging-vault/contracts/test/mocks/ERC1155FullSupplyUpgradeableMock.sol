@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "./ERC1155MockUpgradeable.sol";
 import "../../extensions/ERC1155FullSupplyUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 
 contract ERC1155FullSupplyUpgradeableMock is Initializable, ERC1155MockUpgradeable, ERC1155FullSupplyUpgradeable {
     function __ERC1155FullSupplyUpgradeableMock_init(string memory uri) internal onlyInitializing {

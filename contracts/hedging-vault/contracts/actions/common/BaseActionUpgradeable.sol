@@ -8,7 +8,7 @@ import "../../common/EmergencyLockUpgradeable.sol";
 import "../../common/LifecycleStatesUpgradeable.sol";
 import "../../common/RefundsHelperUpgreadable.sol";
 import "../../common/RolesManagerUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgradeable.sol";
 
 /**
     @title BaseVaultUpgradeable

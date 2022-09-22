@@ -29,6 +29,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAccessControlUpgradeable__factory>;
     getContractFactory(
+      name: "IERC4626Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC4626Upgradeable__factory>;
+    getContractFactory(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
@@ -60,6 +64,14 @@ declare module "hardhat/types/runtime" {
       name: "ERC20Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Upgradeable__factory>;
+    getContractFactory(
+      name: "IERC20PermitUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC4626Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC4626Upgradeable__factory>;
     getContractFactory(
       name: "IERC20MetadataUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -329,14 +341,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TimeUtils__factory>;
     getContractFactory(
-      name: "ERC4626Upgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC4626Upgradeable__factory>;
-    getContractFactory(
-      name: "IERC4626Upgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC4626Upgradeable__factory>;
-    getContractFactory(
       name: "BaseRoundsVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BaseRoundsVaultUpgradeable__factory>;
@@ -349,10 +353,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RoundsOutputVaultUpgradeable__factory>;
     getContractFactory(
-      name: "ERC1155FullSupplyMockUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155FullSupplyMockUpgradeable__factory>;
-    getContractFactory(
       name: "ERC1155FullSupplyUpgradeableMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155FullSupplyUpgradeableMock__factory>;
@@ -360,6 +360,14 @@ declare module "hardhat/types/runtime" {
       name: "ERC1155MockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155MockUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC20DecimalsMockUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20DecimalsMockUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC4626MockUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC4626MockUpgradeable__factory>;
     getContractFactory(
       name: "MockERC20PresetMinterPauser",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -474,6 +482,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAccessControlUpgradeable>;
     getContractAt(
+      name: "IERC4626Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC4626Upgradeable>;
+    getContractAt(
       name: "Initializable",
       address: string,
       signer?: ethers.Signer
@@ -513,6 +526,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Upgradeable>;
+    getContractAt(
+      name: "IERC20PermitUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20PermitUpgradeable>;
+    getContractAt(
+      name: "ERC4626Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC4626Upgradeable>;
     getContractAt(
       name: "IERC20MetadataUpgradeable",
       address: string,
@@ -849,16 +872,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TimeUtils>;
     getContractAt(
-      name: "ERC4626Upgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC4626Upgradeable>;
-    getContractAt(
-      name: "IERC4626Upgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC4626Upgradeable>;
-    getContractAt(
       name: "BaseRoundsVaultUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -874,11 +887,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.RoundsOutputVaultUpgradeable>;
     getContractAt(
-      name: "ERC1155FullSupplyMockUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155FullSupplyMockUpgradeable>;
-    getContractAt(
       name: "ERC1155FullSupplyUpgradeableMock",
       address: string,
       signer?: ethers.Signer
@@ -888,6 +896,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155MockUpgradeable>;
+    getContractAt(
+      name: "ERC20DecimalsMockUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20DecimalsMockUpgradeable>;
+    getContractAt(
+      name: "ERC4626MockUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC4626MockUpgradeable>;
     getContractAt(
       name: "MockERC20PresetMinterPauser",
       address: string,

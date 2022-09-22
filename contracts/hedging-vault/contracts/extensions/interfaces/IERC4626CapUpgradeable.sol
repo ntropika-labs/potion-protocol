@@ -4,7 +4,7 @@
 pragma solidity 0.8.14;
 
 import { IRolesManager } from "../../interfaces/IRolesManager.sol";
-import { IERC4626Upgradeable } from "../../openzeppelin/interfaces/IERC4626Upgradeable.sol";
+import { IERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC4626Upgradeable.sol";
 
 /**
     @title IERC4626CapUpgradeable

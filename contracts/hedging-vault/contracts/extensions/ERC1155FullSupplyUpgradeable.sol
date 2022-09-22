@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity 0.8.14;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC1155/ERC1155Upgradeable.sol";
 
 import "./interfaces/IERC1155FullSupplyUpgradeable.sol";
 

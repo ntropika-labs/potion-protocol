@@ -13,7 +13,7 @@ import { IOpynAddressBook } from "../../interfaces/IOpynAddressBook.sol";
 import { IOpynController } from "../../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../../interfaces/IOpynFactory.sol";
 import { IOpynOracle } from "../../interfaces/IOpynOracle.sol";
-import { IERC20Metadata } from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
+import { IERC20MetadataUpgradeable as IERC20Metadata } from "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC20MetadataUpgradeable.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
