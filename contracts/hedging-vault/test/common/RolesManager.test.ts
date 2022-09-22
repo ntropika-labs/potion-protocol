@@ -65,31 +65,30 @@ describe("RolesManager", function () {
         const RolesManagerFactory = await ethers.getContractFactory("TestWrapperRolesManager");
         rolesManager = (await RolesManagerFactory.deploy()) as TestWrapperRolesManager;
 
-        await rolesManager.initialize(adminAccount.address, strategistAccount.address, operatorAccount.address);
+        await rolesManager.initialize(adminAccount.address, operatorAccount.address);
     });
 
     it("Check roles addresses", async function () {
         expect(await rolesManager.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await rolesManager.getRoleMember(Roles.Admin, 0)).to.equal(adminAccount.address);
-        expect(await rolesManager.getRoleMemberCount(Roles.Strategist)).to.equal(1);
-        expect(await rolesManager.getRoleMember(Roles.Strategist, 0)).to.equal(strategistAccount.address);
         expect(await rolesManager.getRoleMemberCount(Roles.Operator)).to.equal(1);
         expect(await rolesManager.getRoleMember(Roles.Operator, 0)).to.equal(operatorAccount.address);
         expect(await rolesManager.getRoleMemberCount(Roles.Vault)).to.equal(0);
         expect(await rolesManager.getRoleMemberCount(Roles.Investor)).to.equal(0);
+        expect(await rolesManager.getRoleMemberCount(Roles.Strategist)).to.equal(0);
     });
     it("Change roles by Admin", async function () {
-        await changeRole(Roles.Strategist, strategistAccount, strategistAccount2, adminAccount);
         await changeRole(Roles.Operator, operatorAccount, operatorAccount2, adminAccount);
         await changeRole(Roles.Vault, undefined, vaultAccount2, adminAccount);
         await changeRole(Roles.Investor, undefined, investorAccount2, adminAccount);
+        await changeRole(Roles.Strategist, undefined, strategistAccount2, adminAccount);
         await changeRole(Roles.Admin, adminAccount, adminAccount2, adminAccount);
 
         // Check that the new admin can change the roles back
-        await changeRole(Roles.Strategist, strategistAccount2, strategistAccount, adminAccount2);
         await changeRole(Roles.Operator, operatorAccount2, operatorAccount, adminAccount2);
         await changeRole(Roles.Vault, vaultAccount2, vaultAccount, adminAccount2);
         await changeRole(Roles.Investor, investorAccount2, investorAccount, adminAccount2);
+        await changeRole(Roles.Strategist, strategistAccount2, strategistAccount, adminAccount2);
         await changeRole(Roles.Admin, adminAccount2, adminAccount, adminAccount2);
     });
     it("Change roles by unpriviledged", async function () {

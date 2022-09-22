@@ -22,7 +22,7 @@ describe("EmergencyLock", function () {
         const EmergencyLockFactory = await ethers.getContractFactory("TestWrapperEmergencyLock");
         emergencyLock = (await EmergencyLockFactory.deploy()) as TestWrapperEmergencyLock;
 
-        await emergencyLock.initialize(ownerAccount.address, ownerAccount.address, ownerAccount.address);
+        await emergencyLock.initialize(ownerAccount.address, ownerAccount.address);
     });
 
     it("Default Value", async function () {

@@ -176,6 +176,12 @@ export type { RoundsInputVaultUpgradeable } from "./contracts/rounds/RoundsInput
 export { RoundsInputVaultUpgradeable__factory } from "./factories/contracts/rounds/RoundsInputVaultUpgradeable__factory";
 export type { RoundsOutputVaultUpgradeable } from "./contracts/rounds/RoundsOutputVaultUpgradeable";
 export { RoundsOutputVaultUpgradeable__factory } from "./factories/contracts/rounds/RoundsOutputVaultUpgradeable__factory";
+export type { ERC1155FullSupplyMockUpgradeable } from "./contracts/test/mocks/ERC1155FullSupplyMockUpgradeable";
+export { ERC1155FullSupplyMockUpgradeable__factory } from "./factories/contracts/test/mocks/ERC1155FullSupplyMockUpgradeable__factory";
+export type { ERC1155FullSupplyUpgradeableMock } from "./contracts/test/mocks/ERC1155FullSupplyUpgradeableMock";
+export { ERC1155FullSupplyUpgradeableMock__factory } from "./factories/contracts/test/mocks/ERC1155FullSupplyUpgradeableMock__factory";
+export type { ERC1155MockUpgradeable } from "./contracts/test/mocks/ERC1155MockUpgradeable";
+export { ERC1155MockUpgradeable__factory } from "./factories/contracts/test/mocks/ERC1155MockUpgradeable__factory";
 export type { MockERC20PresetMinterPauser } from "./contracts/test/mocks/MockERC20MinterPauser.sol/MockERC20PresetMinterPauser";
 export { MockERC20PresetMinterPauser__factory } from "./factories/contracts/test/mocks/MockERC20MinterPauser.sol/MockERC20PresetMinterPauser__factory";
 export type { MockOpynAddressBook } from "./contracts/test/mocks/MockOpynAddressBook";

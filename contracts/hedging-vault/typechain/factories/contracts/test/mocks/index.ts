@@ -2,6 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as mockErc20MinterPauserSol from "./MockERC20MinterPauser.sol";
+export { ERC1155FullSupplyMockUpgradeable__factory } from "./ERC1155FullSupplyMockUpgradeable__factory";
+export { ERC1155FullSupplyUpgradeableMock__factory } from "./ERC1155FullSupplyUpgradeableMock__factory";
+export { ERC1155MockUpgradeable__factory } from "./ERC1155MockUpgradeable__factory";
 export { MockOpynAddressBook__factory } from "./MockOpynAddressBook__factory";
 export { MockOpynController__factory } from "./MockOpynController__factory";
 export { MockOpynFactory__factory } from "./MockOpynFactory__factory";

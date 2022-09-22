@@ -46,7 +46,6 @@ describe("RefundsHelper", function () {
             await refundsHelper.initialize(
                 ownerAccount.address,
                 ownerAccount.address,
-                ownerAccount.address,
                 cannotRefundTokens,
                 cannotRefundETH,
             );
@@ -118,7 +117,6 @@ describe("RefundsHelper", function () {
             cannotRefundETH = false;
 
             await refundsHelper.initialize(
-                ownerAccount.address,
                 ownerAccount.address,
                 ownerAccount.address,
                 cannotRefundTokens,
