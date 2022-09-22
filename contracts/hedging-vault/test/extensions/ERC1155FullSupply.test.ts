@@ -19,7 +19,8 @@ contract("ERC1155FullSupply", function (accounts) {
     const secondTokenAmount = new BN("23");
 
     beforeEach(async function () {
-        this.token = await ERC1155FullSupplyMock.new(uri);
+        this.token = await ERC1155FullSupplyMock.new();
+        await this.token.initialize(uri);
     });
 
     context("before mint", function () {

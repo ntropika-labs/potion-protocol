@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol"
 
 // mock class using ERC20
 contract ERC4626MockUpgradeable is Initializable, ERC4626Upgradeable {
-    function __ERC4626Mock_init(
+    function __ERC4626MockUpgradeable_init(
         IERC20MetadataUpgradeable asset,
         string memory name,
         string memory symbol
@@ -16,11 +16,19 @@ contract ERC4626MockUpgradeable is Initializable, ERC4626Upgradeable {
         __ERC4626_init_unchained(asset);
     }
 
-    function __ERC4626Mock_init_unchained(
+    function __ERC4626MockUpgradeable_init_unchained(
         IERC20MetadataUpgradeable,
         string memory,
         string memory
     ) internal onlyInitializing {}
+
+    function initialize(
+        IERC20MetadataUpgradeable asset,
+        string memory name,
+        string memory symbol
+    ) external initializer {
+        __ERC4626MockUpgradeable_init(asset, name, symbol);
+    }
 
     function mockMint(address account, uint256 amount) public {
         _mint(account, amount);

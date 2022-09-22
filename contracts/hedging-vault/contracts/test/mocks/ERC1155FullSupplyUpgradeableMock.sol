@@ -14,6 +14,10 @@ contract ERC1155FullSupplyUpgradeableMock is Initializable, ERC1155MockUpgradeab
 
     function __ERC1155FullSupplyUpgradeableMock_init_unchained(string memory) internal onlyInitializing {}
 
+    function initialize(string memory uri) external initializer {
+        __ERC1155FullSupplyUpgradeableMock_init(uri);
+    }
+
     function _beforeTokenTransfer(
         address operator,
         address from,

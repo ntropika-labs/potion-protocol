@@ -11,15 +11,17 @@ const ERC4626Mock = artifacts.require("ERC4626MockUpgradeable");
 const parseToken = (token: unknown) => new BN(token).mul(new BN("1000000000000"));
 const parseShare = (share: unknown) => new BN(share).mul(new BN("1000000000000000000"));
 
-contract.skip("ERC4626", function (accounts) {
+contract.only("ERC4626", function (accounts) {
     const [holder, recipient, spender, other, user1, user2] = accounts;
 
     const name = "My Token";
     const symbol = "MTKN";
 
     beforeEach(async function () {
-        this.token = await ERC20DecimalsMock.new(name, symbol, 12);
-        this.vault = await ERC4626Mock.new(this.token.address, name + " Vault", symbol + "V");
+        this.token = await ERC20DecimalsMock.new();
+        await this.token.initialize(name, symbol, 12);
+        this.vault = await ERC4626Mock.new();
+        await this.vault.initialize(this.token.address, name + " Vault", symbol + "V");
 
         await this.token.mint(holder, web3.utils.toWei("100"));
         await this.token.approve(this.vault.address, constants.MAX_UINT256, { from: holder });
@@ -403,8 +405,10 @@ contract.skip("ERC4626", function (accounts) {
     /// https://github.com/Rari-Capital/solmate/blob/main/src/test/ERC4626.t.sol
     it("multiple mint, deposit, redeem & withdrawal", async function () {
         // test designed with both asset using similar decimals
-        this.token = await ERC20DecimalsMock.new(name, symbol, 18);
-        this.vault = await ERC4626Mock.new(this.token.address, name + " Vault", symbol + "V");
+        this.token = await ERC20DecimalsMock.new();
+        await this.token.initialize(name, symbol, 18);
+        this.vault = await ERC4626Mock.new();
+        await this.vault.initialize(this.token.address, name + " Vault", symbol + "V");
 
         await this.token.mint(user1, 4000);
         await this.token.mint(user2, 7001);

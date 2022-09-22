@@ -25,6 +25,14 @@ contract ERC20DecimalsMockUpgradeable is Initializable, ERC20Upgradeable {
         _decimals = decimals_;
     }
 
+    function initialize(
+        string memory name_,
+        string memory symbol_,
+        uint8 decimals_
+    ) external initializer {
+        __ERC20DecimalsMock_init(name_, symbol_, decimals_);
+    }
+
     function decimals() public view virtual override returns (uint8) {
         return _decimals;
     }
