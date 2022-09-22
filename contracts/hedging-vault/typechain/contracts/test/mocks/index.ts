@@ -3,7 +3,6 @@
 /* eslint-disable */
 import type * as mockErc20MinterPauserSol from "./MockERC20MinterPauser.sol";
 export type { mockErc20MinterPauserSol };
-export type { ERC1155FullSupplyMockUpgradeable } from "./ERC1155FullSupplyMockUpgradeable";
 export type { ERC1155FullSupplyUpgradeableMock } from "./ERC1155FullSupplyUpgradeableMock";
 export type { ERC1155MockUpgradeable } from "./ERC1155MockUpgradeable";
 export type { MockOpynAddressBook } from "./MockOpynAddressBook";
