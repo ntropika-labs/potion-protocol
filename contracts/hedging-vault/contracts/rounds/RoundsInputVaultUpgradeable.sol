@@ -3,6 +3,8 @@
  */
 pragma solidity 0.8.14;
 
+import "../interfaces/IRoundsInputVault.sol";
+
 import "./BaseRoundsVaultUpgradeable.sol";
 
 /**
@@ -16,7 +18,7 @@ import "./BaseRoundsVaultUpgradeable.sol";
 
     @author Roberto Cano <robercano>
  */
-contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable {
+contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInputVault {
     // UPGRADEABLE INITIALIZER
 
     /**
@@ -37,29 +39,29 @@ contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable {
     ) external initializer {
         // For the input vault, the exchange asset is the target vault's shares, which are represented
         // by the target vault address itself, and the underlying is the actual underlying of the target vault
-        address exchangeAsset = targetVault;
+        address exchangeAsset_ = targetVault;
         address underlyingAsset = IERC4626Upgradeable(targetVault).asset();
 
         __RolesManager_init_unchained(adminAddress, operatorAddress);
         __ERC1155_init_unchained(receiptsURI);
         __ERC4626_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
         __ERC4626DeferredOperation_init_unchained(targetVault);
-        __BaseRoundsVault_init_unchained(exchangeAsset);
+        __BaseRoundsVault_init_unchained(exchangeAsset_);
     }
 
     // PUBLIC FUNCTIONS
 
     /**
-        @inheritdoc ERC4626DeferredOperationUpgradeable
+        @inheritdoc BaseRoundsVaultUpgradeable
 
         @dev Deposits the available funds into the main vault, receiving back an amount of target vault shares
      */
     function _operate() internal override {
-        uint256 amount = totalAssets();
-        if (amount > 0) {
-            address targetVault = vault();
-            SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(asset()), address(targetVault), amount);
-            IERC4626Upgradeable(targetVault).deposit(amount, address(this));
+        uint256 assets = totalAssets();
+        if (assets > 0) {
+            uint256 shares = _depositOnTarget(assets);
+
+            emit AssetsDeposited(_msgSender(), assets, shares);
         }
     }
 

@@ -11,15 +11,26 @@ import "./ERC1155FullSupplyUpgradeable.sol";
 import "./interfaces/IERC4626MultiTokenUpgradeable.sol";
 
 /**
-   @dev Modification of the ERC4626 OpenZeppelin implementation to allow for multi-tokens to be
-        minted for the shares. This multi-tokens are represented by an ERC-1155 token, instead of
-        an ERC-20 token.
-        
-        The vault implements a system of Rounds, where each round is a period of time where the
-        investors can deposit funds and the vault will mint shares for them. The ID of the ERC-1155
-        token is used to represent the Round number in which the tokens were minted.
- 
-   @author Roberto Cano <robercano>
+    @notice Implementation of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 receipts.
+    When depositing a receipt is generated using an id provided by implementor of this interface.
+    The receipt should contain the deposit amount. The id can be used freely to identify extra information
+    about the deposit.
+    
+    @dev The internal function `_getMintId` is added here so derived contracts can override it to provide
+    the correct id to be used for minting. The function is not marked as `view` to allow for any scheme of
+    ids, including generating a new id on each minting operation
+
+    @dev See { IERC4626MultiTokenUpgradeable }
+    
+    @dev This contract is a copy-paste of OpenZeppelin's `ERC4626Upgradeable.sol` with some modifications to
+    support the ERC-1155 receipts.
+
+    @dev In the original ERC-4626 the caller is checked against the allowance given by the owner in the internal
+    functions `_deposit` and `_withdraw`. In ERC-1155 there is no such concept and the owner just approves the caller
+    for none or all of the tokens in a collection. This is used here to allow for a caller to trade on behalf of the
+    owner of the receipts
+
+    @author Roberto Cano <robercano>
  */
 abstract contract ERC4626MultiTokenUpgradeable is
     Initializable,
@@ -264,11 +275,14 @@ abstract contract ERC4626MultiTokenUpgradeable is
     }
 
     /**
-        @notice Returns the Id to be used for minting the receipts
+        @notice Returns the Id to be used for minting the receipt
 
         @dev This function should be overriden by the child contract to implement any desired strategy
+
+        @dev Not marked as `view` to allow the derived contract to modify the state inside it, in case
+        a different id is desired for each minting operation
      */
-    function _getMintId() internal view virtual returns (uint256) {
+    function _getMintId() internal virtual returns (uint256) {
         return 0;
     }
 

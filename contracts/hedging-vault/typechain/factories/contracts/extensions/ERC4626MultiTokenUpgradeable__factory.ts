@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC4626DeferredOperationUpgradeable,
-  IERC4626DeferredOperationUpgradeableInterface,
-} from "../../../../contracts/openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable";
+  ERC4626MultiTokenUpgradeable,
+  ERC4626MultiTokenUpgradeableInterface,
+} from "../../../contracts/extensions/ERC4626MultiTokenUpgradeable";
 
 const _abi = [
   {
@@ -64,6 +64,19 @@ const _abi = [
       },
     ],
     name: "Deposit",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
     type: "event",
   },
   {
@@ -251,7 +264,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "assetTokenAddress",
+        name: "",
         type: "address",
       },
     ],
@@ -393,7 +406,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -447,7 +460,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "receiver",
+        name: "",
         type: "address",
       },
     ],
@@ -455,7 +468,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "maxAssets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -466,7 +479,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "receiver",
+        name: "",
         type: "address",
       },
     ],
@@ -474,7 +487,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "maxShares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -493,7 +506,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "maxShares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -517,7 +530,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -536,7 +549,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -555,7 +568,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -574,7 +587,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -585,12 +598,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "sharesId",
+        name: "id",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "sharesAmount",
+        name: "amount",
         type: "uint256",
       },
       {
@@ -608,7 +621,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -619,12 +632,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256[]",
-        name: "sharesIds",
+        name: "ids",
         type: "uint256[]",
       },
       {
         internalType: "uint256[]",
-        name: "sharesAmounts",
+        name: "amounts",
         type: "uint256[]",
       },
       {
@@ -642,7 +655,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -758,7 +771,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "totalManagedAssets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -798,13 +811,19 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "vault",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "uri",
     outputs: [
       {
-        internalType: "address",
-        name: "vaultAddress",
-        type: "address",
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -812,21 +831,19 @@ const _abi = [
   },
 ];
 
-export class IERC4626DeferredOperationUpgradeable__factory {
+export class ERC4626MultiTokenUpgradeable__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC4626DeferredOperationUpgradeableInterface {
-    return new utils.Interface(
-      _abi
-    ) as IERC4626DeferredOperationUpgradeableInterface;
+  static createInterface(): ERC4626MultiTokenUpgradeableInterface {
+    return new utils.Interface(_abi) as ERC4626MultiTokenUpgradeableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC4626DeferredOperationUpgradeable {
+  ): ERC4626MultiTokenUpgradeable {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as IERC4626DeferredOperationUpgradeable;
+    ) as ERC4626MultiTokenUpgradeable;
   }
 }

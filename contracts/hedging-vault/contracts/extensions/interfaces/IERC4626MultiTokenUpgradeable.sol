@@ -7,17 +7,24 @@ import "./IERC1155DecimalsUpgradeable.sol";
 import "./IERC1155FullSupplyUpgradeable.sol";
 
 /**
- * @notice Interface of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 share tokens
- *         When depositing, the user of this contract must indicate for which id they are depositing. The
- *         emitted ERC-1155 token will be minted used that id, thus generating a receipt for the deposit
- *
- * @dev The `withdraw` function, along with the `previewWithdraw` and `maxWithdraw` functions
- *      have been removed because the only way to implement them is to support enumeration
- *      for the ERC-1155 tokens, which is quite heavy in gas costs.
- *
- * @author Roberto Cano <robercano>
+    @notice Interface of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 receipts.
+    When depositing a receipt is generated using an id provided by implementor of this interface.
+    The receipt should contain the deposit amount. The id can be used freely to identify extra information
+    about the deposit.
+    
+    @dev The `withdraw` function, along with the `previewWithdraw` and `maxWithdraw` functions
+    have been removed because the only way to implement them is to support enumeration
+    for the ERC-1155 tokens, which is quite heavy in gas costs.
+
+    @dev Although the only withdrawal functions are `redeem` and `reedeemBatch` the events have been
+    kept with the original names `Withdraw` and `WithdrawBatch` for backwards consistency.
+ 
+    @dev This interface is a copy-paste of OpenZeppelin's `IERC4626Upgradeable.sol` with some modifications to
+    support the ERC-1155 receipts.
+
+    @author Roberto Cano <robercano>
  */
-interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable {
+interface IERC4626MultiTokenUpgradeable is IERC1155DecimalsUpgradeable, IERC1155FullSupplyUpgradeable {
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
     event Withdraw(

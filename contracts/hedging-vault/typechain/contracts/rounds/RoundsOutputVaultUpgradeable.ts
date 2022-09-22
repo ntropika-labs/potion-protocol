@@ -477,6 +477,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "SharesRedeemed(address,uint256,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -495,6 +496,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SharesRedeemed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -587,6 +589,18 @@ export type RoleRevokedEvent = TypedEvent<
 >;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface SharesRedeemedEventObject {
+  account: string;
+  shares: BigNumber;
+  assets: BigNumber;
+}
+export type SharesRedeemedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  SharesRedeemedEventObject
+>;
+
+export type SharesRedeemedEventFilter = TypedEventFilter<SharesRedeemedEvent>;
 
 export interface TransferBatchEventObject {
   operator: string;
@@ -1504,6 +1518,17 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       account?: string | null,
       sender?: string | null
     ): RoleRevokedEventFilter;
+
+    "SharesRedeemed(address,uint256,uint256)"(
+      account?: string | null,
+      shares?: null,
+      assets?: null
+    ): SharesRedeemedEventFilter;
+    SharesRedeemed(
+      account?: string | null,
+      shares?: null,
+      assets?: null
+    ): SharesRedeemedEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,

@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC4626DeferredOperationUpgradeable,
-  IERC4626DeferredOperationUpgradeableInterface,
-} from "../../../../contracts/openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable";
+  IERC4626MultiTokenUpgradeable,
+  IERC4626MultiTokenUpgradeableInterface,
+} from "../../../../contracts/extensions/interfaces/IERC4626MultiTokenUpgradeable";
 
 const _abi = [
   {
@@ -797,36 +797,21 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "vault",
-    outputs: [
-      {
-        internalType: "address",
-        name: "vaultAddress",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
 ];
 
-export class IERC4626DeferredOperationUpgradeable__factory {
+export class IERC4626MultiTokenUpgradeable__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC4626DeferredOperationUpgradeableInterface {
-    return new utils.Interface(
-      _abi
-    ) as IERC4626DeferredOperationUpgradeableInterface;
+  static createInterface(): IERC4626MultiTokenUpgradeableInterface {
+    return new utils.Interface(_abi) as IERC4626MultiTokenUpgradeableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC4626DeferredOperationUpgradeable {
+  ): IERC4626MultiTokenUpgradeable {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as IERC4626DeferredOperationUpgradeable;
+    ) as IERC4626MultiTokenUpgradeable;
   }
 }

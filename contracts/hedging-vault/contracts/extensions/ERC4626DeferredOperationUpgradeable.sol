@@ -6,10 +6,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./ERC4626MultiTokenUpgradeable.sol";
 import "./interfaces/IERC4626DeferredOperationUpgradeable.sol";
-import "./interfaces/IERC4626Upgradeable.sol";
+import "../openzeppelin/interfaces/IERC4626Upgradeable.sol";
 
 /**
-    @dev Deferred operations proxy that takes care of handling deposits/withdrawals for a target vault.
+    @dev Deferred operations vault that takes care of handling deposits/withdrawals for a target vault.
     It receives and accumulates deposits and then forwards them to the target vault when the `_operate` function
     is called.
 
@@ -59,7 +59,11 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return address(_proxiedVault);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-convertToShares} */
+    /**
+        @notice Proxies the call to the target vault to get the current underlying-to-shares ratio
+
+        @dev See {IERC4626MultiTokenUpgradeable-convertToShares}
+    */
     function convertToShares(uint256 assets)
         public
         view
@@ -70,7 +74,12 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return _proxiedVault.convertToShares(assets);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-maxDeposit} */
+    /**
+        @notice Proxies the call to the target vault to get the maximum deposit that the
+        target vault accepts
+        
+        @dev See {IERC4626MultiTokenUpgradeable-maxDeposit}
+    */
     function maxDeposit(address receiver)
         public
         view
@@ -81,7 +90,12 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return _proxiedVault.maxDeposit(receiver);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-maxMint} */
+    /**
+        @notice Proxies the call to the target vault to get the maximum mint that the
+        target vault accepts
+
+        @dev See {IERC4626MultiTokenUpgradeable-maxMint}
+    */
     function maxMint(address receiver)
         public
         view
@@ -92,7 +106,12 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return _proxiedVault.maxMint(receiver);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-previewDeposit} */
+    /** 
+        @notice Proxies the call to the target vault to preview how many shares a deposit of underlying
+        would yield
+
+        @dev See {IERC4626MultiTokenUpgradeable-previewDeposit}
+    */
     function previewDeposit(uint256 assets)
         public
         view
@@ -103,7 +122,12 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return _proxiedVault.convertToShares(assets);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-previewMint} */
+    /**
+        @notice Proxies the call to the target vault to preview how much underlying the given minting of
+        shares would yield
+
+        @dev See {IERC4626MultiTokenUpgradeable-previewMint}
+    */
     function previewMint(uint256 shares)
         public
         view
@@ -114,7 +138,12 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         return _proxiedVault.convertToAssets(shares);
     }
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-previewRedeem} */
+    /** 
+        @notice Proxies the call to the target vault to preview how much underlying a withdrawal of shares
+        would yield
+
+        @dev See {IERC4626MultiTokenUpgradeable-previewRedeem}
+    */
     function previewRedeem(uint256 shares)
         public
         view
@@ -126,12 +155,30 @@ abstract contract ERC4626DeferredOperationUpgradeable is
     }
 
     /** 
-        @notice Exchanges the underlying asset for the other asset in the target vault
+        @notice Exchanges the underlying asset for target vault shares
 
-        @dev The implementation is dependent on the derived contract and the specific functionality
-        required
+        @param amount The amount of underlying asset to redeem on the target vault
+
+        @return The amount of target vault shares received
      */
-    function _operate() internal virtual;
+    function _redeemFromTarget(uint256 amount) internal virtual returns (uint256) {
+        SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(_proxiedVault), address(_proxiedVault), amount);
+
+        return IERC4626Upgradeable(_proxiedVault).redeem(amount, address(this), address(this));
+    }
+
+    /** 
+        @notice Exchanges an amount of target vault shares for the underlying asset in the target vault
+
+        @param amount The amount of the other asset to deposit on the target vault
+
+        @return The amount of underlying assets received from the target vault
+     */
+    function _depositOnTarget(uint256 amount) internal returns (uint256) {
+        SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(asset()), address(_proxiedVault), amount);
+
+        return IERC4626Upgradeable(_proxiedVault).deposit(amount, address(this));
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

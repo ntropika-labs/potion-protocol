@@ -7,9 +7,13 @@ import "./interfaces/IERC1155FullSupplyUpgradeable.sol";
 
 /**
  * @dev Extension of ERC1155 that adds tracking of total overall supply on top of the
- *      per-id supply tracking of ERC1155SupplyUpgradeable.
+ * per-id supply tracking of ERC1155SupplyUpgradeable.
  *
- * Used to implement the ERC-4626 tokenized vault with shares tied to investment rounds.
+ * @dev This contract is based on the OpenZeppelin ERC1155SupplyUpgradeable contract, with
+ * added functionality track the full supply of all minted ids plus the balance of all ids
+ * for a given account.
+ *
+ * @author robercano
  */
 abstract contract ERC1155FullSupplyUpgradeable is Initializable, ERC1155Upgradeable, IERC1155FullSupplyUpgradeable {
     function __ERC1155FullSupply_init() internal onlyInitializing {}

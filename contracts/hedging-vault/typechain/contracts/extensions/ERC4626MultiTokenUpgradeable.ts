@@ -24,10 +24,9 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../../../common";
+} from "../../common";
 
-export interface IERC4626MultiTokenUpgradeableInterface
-  extends utils.Interface {
+export interface ERC4626MultiTokenUpgradeableInterface extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
@@ -55,6 +54,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
     "totalAssets()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -85,6 +85,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
       | "totalAssets"
       | "totalSupply()"
       | "totalSupply(uint256)"
+      | "uri"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -176,6 +177,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
     functionFragment: "totalSupply(uint256)",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(
@@ -254,10 +256,12 @@ export interface IERC4626MultiTokenUpgradeableInterface
     functionFragment: "totalSupply(uint256)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -267,6 +271,7 @@ export interface IERC4626MultiTokenUpgradeableInterface
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -298,6 +303,13 @@ export type DepositEvent = TypedEvent<
 >;
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface TransferBatchEventObject {
   operator: string;
@@ -365,12 +377,12 @@ export type WithdrawBatchEvent = TypedEvent<
 
 export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
-export interface IERC4626MultiTokenUpgradeable extends BaseContract {
+export interface ERC4626MultiTokenUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IERC4626MultiTokenUpgradeableInterface;
+  interface: ERC4626MultiTokenUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -392,9 +404,7 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    asset(
-      overrides?: CallOverrides
-    ): Promise<[string] & { assetTokenAddress: string }>;
+    asset(overrides?: CallOverrides): Promise<[string]>;
 
     "balanceOf(address,uint256)"(
       account: string,
@@ -439,20 +449,11 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    maxDeposit(
-      receiver: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxAssets: BigNumber }>;
+    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxMint(
-      receiver: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
+    maxMint(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxRedeem(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
+    maxRedeem(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mint(
       shares: BigNumberish,
@@ -463,29 +464,29 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     previewDeposit(
       assets: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     previewMint(
       shares: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     previewRedeem(
       shares: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     redeem(
-      sharesId: BigNumberish,
-      sharesAmount: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     redeemBatch(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -520,9 +521,7 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    totalAssets(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
+    totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -530,6 +529,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -577,9 +578,9 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+  maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -605,16 +606,16 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
   ): Promise<BigNumber>;
 
   redeem(
-    sharesId: BigNumberish,
-    sharesAmount: BigNumberish,
+    id: BigNumberish,
+    amount: BigNumberish,
     receiver: string,
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   redeemBatch(
-    sharesIds: BigNumberish[],
-    sharesAmounts: BigNumberish[],
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
     receiver: string,
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -657,6 +658,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
@@ -704,9 +707,9 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -732,16 +735,16 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     redeem(
-      sharesId: BigNumberish,
-      sharesAmount: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeemBatch(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: CallOverrides
@@ -784,6 +787,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -810,6 +815,9 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       assets?: null,
       shares?: null
     ): DepositEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,
@@ -928,9 +936,9 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxDeposit(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxMint(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
+    maxMint(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     maxRedeem(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -956,16 +964,16 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     redeem(
-      sharesId: BigNumberish,
-      sharesAmount: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     redeemBatch(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1008,6 +1016,8 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
       id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1060,12 +1070,12 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      receiver: string,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxMint(
-      receiver: string,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1096,16 +1106,16 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     redeem(
-      sharesId: BigNumberish,
-      sharesAmount: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemBatch(
-      sharesIds: BigNumberish[],
-      sharesAmounts: BigNumberish[],
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       receiver: string,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1146,6 +1156,11 @@ export interface IERC4626MultiTokenUpgradeable extends BaseContract {
 
     "totalSupply(uint256)"(
       id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    uri(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

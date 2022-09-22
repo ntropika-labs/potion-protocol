@@ -13,12 +13,12 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.so
  */
 interface IERC1155FullSupplyUpgradeable is IERC1155Upgradeable {
     /**
-     * @dev Total amount of tokens in existence.
+     * @dev Total amount of tokens in existence for all minted ids
      */
     function totalSupply() external view returns (uint256);
 
     /**
-     * @dev Total amount of tokens in with a given id.
+     * @dev Total amount of tokens in existence with a given id.
      */
     function totalSupply(uint256 id) external view returns (uint256);
 

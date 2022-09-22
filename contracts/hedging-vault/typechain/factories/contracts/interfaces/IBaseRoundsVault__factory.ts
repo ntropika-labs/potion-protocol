@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC4626DeferredOperationUpgradeable,
-  IERC4626DeferredOperationUpgradeableInterface,
-} from "../../../../contracts/openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable";
+  IBaseRoundsVault,
+  IBaseRoundsVaultInterface,
+} from "../../../contracts/interfaces/IBaseRoundsVault";
 
 const _abi = [
   {
@@ -64,6 +64,19 @@ const _abi = [
       },
     ],
     name: "Deposit",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "newRoundNumber",
+        type: "uint256",
+      },
+    ],
+    name: "NextRound",
     type: "event",
   },
   {
@@ -246,6 +259,92 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "sharesId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "sharesAmount",
+        type: "uint256",
+      },
+    ],
+    name: "WithdrawExchangeAsset",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "sharesIds",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "sharesAmounts",
+        type: "uint256[]",
+      },
+    ],
+    name: "WithdrawExchangeAssetBatch",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "asset",
     outputs: [
@@ -401,6 +500,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "exchangeAsset",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -414,6 +526,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getCurrentRound",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -521,6 +646,13 @@ const _abi = [
         type: "uint256",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nextRound",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -643,6 +775,74 @@ const _abi = [
       {
         internalType: "uint256",
         name: "assets",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "redeemExchangeAsset",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
+      },
+      {
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "redeemExchangeAssetBatch",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "shares",
         type: "uint256",
       },
     ],
@@ -812,21 +1012,15 @@ const _abi = [
   },
 ];
 
-export class IERC4626DeferredOperationUpgradeable__factory {
+export class IBaseRoundsVault__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC4626DeferredOperationUpgradeableInterface {
-    return new utils.Interface(
-      _abi
-    ) as IERC4626DeferredOperationUpgradeableInterface;
+  static createInterface(): IBaseRoundsVaultInterface {
+    return new utils.Interface(_abi) as IBaseRoundsVaultInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC4626DeferredOperationUpgradeable {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as IERC4626DeferredOperationUpgradeable;
+  ): IBaseRoundsVault {
+    return new Contract(address, _abi, signerOrProvider) as IBaseRoundsVault;
   }
 }

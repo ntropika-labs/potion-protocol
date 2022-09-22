@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   IERC4626DeferredOperationUpgradeable,
   IERC4626DeferredOperationUpgradeableInterface,
-} from "../../../../contracts/openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable";
+} from "../../../../contracts/extensions/interfaces/IERC4626DeferredOperationUpgradeable";
 
 const _abi = [
   {

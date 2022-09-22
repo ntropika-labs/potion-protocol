@@ -7,7 +7,7 @@ import "../interfaces/IEmergencyLock.sol";
 import "../interfaces/IRefundsHelper.sol";
 import "../interfaces/IRolesManager.sol";
 
-import "../openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable.sol";
+import "../extensions/interfaces/IERC4626DeferredOperationUpgradeable.sol";
 
 /**
     @title BaseRoundsVaultUpgradeable
@@ -41,7 +41,7 @@ import "../openzeppelin/interfaces/IERC4626DeferredOperationUpgradeable.sol";
 
 // TODO: We are having hierarchy linearization issues here because of the interfaces. Remove them and
 // TODO: wait for the next release of the compiler to fix it
-interface IBaseRoundsVaultUpgradeable is IERC4626DeferredOperationUpgradeable {
+interface IBaseRoundsVault is IERC4626DeferredOperationUpgradeable {
     // EVENTS
     event NextRound(uint256 indexed newRoundNumber);
     event WithdrawExchangeAsset(

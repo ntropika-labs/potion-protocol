@@ -7,7 +7,7 @@ import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgra
 import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 
-import "../interfaces/IBaseRoundsVaultUpgradeable.sol";
+import "../interfaces/IBaseRoundsVault.sol";
 
 /**
     @notice This helper contract allows the user to exchange a receipt from the RoundsInputVaultUpgradeable
@@ -37,8 +37,8 @@ contract RoundsVaultExchanger is Context {
       @return The amount of shares deposited in the output vault
     */
     function exchangeInputForOutput(
-        IBaseRoundsVaultUpgradeable inputVault,
-        IBaseRoundsVaultUpgradeable outputVault,
+        IBaseRoundsVault inputVault,
+        IBaseRoundsVault outputVault,
         uint256 id,
         uint256 amount
     ) external returns (uint256) {
@@ -66,8 +66,8 @@ contract RoundsVaultExchanger is Context {
       @return The amount of shares deposited in the output vault
     */
     function exchangeInputForOutputBatch(
-        IBaseRoundsVaultUpgradeable inputVault,
-        IBaseRoundsVaultUpgradeable outputVault,
+        IBaseRoundsVault inputVault,
+        IBaseRoundsVault outputVault,
         uint256[] calldata ids,
         uint256[] calldata amounts
     ) external returns (uint256) {

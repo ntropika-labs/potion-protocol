@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import "../interfaces/IRoundsOutputVault.sol";
 import "./BaseRoundsVaultUpgradeable.sol";
 
 /**
@@ -16,7 +17,7 @@ import "./BaseRoundsVaultUpgradeable.sol";
 
     @author Roberto Cano <robercano>
  */
-contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable {
+contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
     // UPGRADEABLE INITIALIZER
 
     /**
@@ -38,29 +39,29 @@ contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable {
         // For the input vault, the exchange asset is the target vault's underlying asset, which
         // are given by the `asset()` function in the ERC4626 vault, and the underlying is the shares
         // token, represented by the target vault address itself
-        address exchangeAsset = IERC4626Upgradeable(targetVault).asset();
+        address exchangeAsset_ = IERC4626Upgradeable(targetVault).asset();
         address underlyingAsset = targetVault;
 
         __RolesManager_init_unchained(adminAddress, operatorAddress);
         __ERC1155_init_unchained(receiptsURI);
         __ERC4626_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
         __ERC4626DeferredOperation_init_unchained(targetVault);
-        __BaseRoundsVault_init_unchained(exchangeAsset);
+        __BaseRoundsVault_init_unchained(exchangeAsset_);
     }
 
     // PUBLIC FUNCTIONS
 
     /**
-        @inheritdoc ERC4626DeferredOperationUpgradeable
+        @inheritdoc BaseRoundsVaultUpgradeable
 
         @dev Deposits the available funds into the main vault, receiving back an amount of target vault shares
      */
     function _operate() internal override {
-        uint256 amount = totalAssets();
-        if (amount > 0) {
-            address targetVault = vault();
-            SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(asset()), targetVault, amount);
-            IERC4626Upgradeable(targetVault).redeem(amount, address(this), address(this));
+        uint256 shares = totalAssets();
+        if (shares > 0) {
+            uint256 assets = _redeemFromTarget(shares);
+
+            emit SharesRedeemed(_msgSender(), shares, assets);
         }
     }
 
@@ -72,18 +73,5 @@ contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable {
      */
     function _getExchangeRate() internal view override returns (uint256) {
         return previewRedeem(10**decimals());
-    }
-
-    /**
-     * @dev Redeems the available shares into the main vault, receiving back an amount
-     *      of underlying tokens
-     */
-    function _redeemTargetShares() internal {
-        uint256 amount = totalAssets();
-        if (amount > 0) {
-            address targetVault = vault();
-            SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(targetVault), targetVault, amount);
-            IERC4626Upgradeable(targetVault).redeem(amount, address(this), address(this));
-        }
     }
 }

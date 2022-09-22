@@ -7,11 +7,11 @@ import "../common/EmergencyLockUpgradeable.sol";
 import "../common/RefundsHelperUpgreadable.sol";
 import "../common/RolesManagerUpgradeable.sol";
 
-import "../openzeppelin/ERC4626DeferredOperationUpgradeable.sol";
+import "../extensions/ERC4626DeferredOperationUpgradeable.sol";
 import "../openzeppelin/interfaces/IERC4626Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../interfaces/IBaseRoundsVaultUpgradeable.sol";
+import "../interfaces/IBaseRoundsVault.sol";
 
 /**
     @title BaseRoundsVaultUpgradeable
@@ -20,25 +20,12 @@ import "../interfaces/IBaseRoundsVaultUpgradeable.sol";
     which the vault is locked. During these locked periods, the vault does not accept deposits, so
     investors need to be on the lookout for the unlocked period to deposit their funds.
 
-    Instead this contract allows investors to deposit their funds at any point in time. In exchange
-    they receive a tokenized receipt that is tied to the investment round and contains the amount of
-    assets deposited.
+    @dev See { IBaseRoundsVault } for more details.
 
-    On each round transition, this contract will use the available funds to deposit them into the
-    target vault, getting an exchange asset in return. This exchange asset is typically the target
-    vault shares when the underlying asset of this vault is the same as the underlying asset of the
-    target vault. Otherwise, the exchange asset is the target vault underlying asset.
-
-    The receipts belonging to the current round can always be redeemed immediately for the underlying
-    token. 
-
-    The user can also decide to exchange the receipts belonging to previous rounds for the ERC-20 exchange
-    asset kept in this contract. The exchange asset can be immediately witdrawn by burning the corresponding
-    receipts.
-
-    This contract tracks the current round and also stores the shares price of the each finished round. This
-    share price is used to calculate the amount of shares that the user will receive when redeeming a receipt
-    for a finished round
+    @dev Here the `_operate` function is defined as a pure virtual function. This is because the
+    specific logic when moving to the next round is left to the derived contracts. Typically they
+    will use the `_redeemFromTarget` or `_depositOnTarget` functions to move the funds in or out
+    of this vault.
             
     @author Roberto Cano <robercano>
  */
@@ -47,7 +34,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     EmergencyLockUpgradeable,
     RefundsHelperUpgreadable,
     ERC4626DeferredOperationUpgradeable,
-    IBaseRoundsVaultUpgradeable
+    IBaseRoundsVault
 {
     using Counters for Counters.Counter;
 
@@ -83,7 +70,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     }
 
     /**
-        @inheritdoc IBaseRoundsVaultUpgradeable
+        @inheritdoc IBaseRoundsVault
      */
     function nextRound() external onlyOperator {
         _exchangeRateByRound[_roundNumber.current()] = _getExchangeRate();
@@ -125,7 +112,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     }
 
     /**
-        @inheritdoc IBaseRoundsVaultUpgradeable
+        @inheritdoc IBaseRoundsVault
      */
     function redeemExchangeAsset(
         uint256 id,
@@ -142,7 +129,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     }
 
     /**
-        @inheritdoc IBaseRoundsVaultUpgradeable
+        @inheritdoc IBaseRoundsVault
      */
     function redeemExchangeAssetBatch(
         uint256[] calldata ids,
@@ -165,14 +152,14 @@ abstract contract BaseRoundsVaultUpgradeable is
     // VIEW FUNCTIONS
 
     /**
-        @inheritdoc IBaseRoundsVaultUpgradeable
+        @inheritdoc IBaseRoundsVault
      */
     function getCurrentRound() external view override returns (uint256) {
         return _roundNumber.current();
     }
 
     /**
-        @inheritdoc IBaseRoundsVaultUpgradeable
+        @inheritdoc IBaseRoundsVault
      */
     function exchangeAsset() external view override returns (address) {
         return _exchangeAsset;
@@ -279,6 +266,16 @@ abstract contract BaseRoundsVaultUpgradeable is
     function _getMintId() internal view virtual override returns (uint256) {
         return _roundNumber.current();
     }
+
+    /**
+        @notice Function to execute the deposit/redeem logic for the current round
+
+        @dev The child contract must implement this function to execute the deposit/redeem logic
+        for the current round. Typically it will call `_redeemFromTarget` or `_depositOnTarget`
+        from the ERC4626DeferredOperationUpgradeable contract, but the logic is left open for
+        other use cases
+     */
+    function _operate() internal virtual;
 
     /**
         @notice Retrieves the exchange rate between the underlying asset and the exchange asset for

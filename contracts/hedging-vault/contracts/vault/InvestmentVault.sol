@@ -131,14 +131,26 @@ contract InvestmentVault is BaseVaultUpgradeable {
     /**
         @inheritdoc ERC4626Upgradeable
      */
-    function deposit(uint256 assets, address receiver) public override onlyUnlocked onlyInvestor returns (uint256) {
+    function deposit(uint256 assets, address receiver)
+        public
+        override(ERC4626Upgradeable, IERC4626Upgradeable)
+        onlyUnlocked
+        onlyInvestor
+        returns (uint256)
+    {
         return super.deposit(assets, receiver);
     }
 
     /**
         @inheritdoc ERC4626Upgradeable
     */
-    function mint(uint256 shares, address receiver) public override onlyUnlocked onlyInvestor returns (uint256) {
+    function mint(uint256 shares, address receiver)
+        public
+        override(ERC4626Upgradeable, IERC4626Upgradeable)
+        onlyUnlocked
+        onlyInvestor
+        returns (uint256)
+    {
         return super.mint(shares, receiver);
     }
 
@@ -149,7 +161,7 @@ contract InvestmentVault is BaseVaultUpgradeable {
         uint256 assets,
         address receiver,
         address owner
-    ) public override onlyUnlocked onlyInvestor returns (uint256) {
+    ) public override(ERC4626Upgradeable, IERC4626Upgradeable) onlyUnlocked onlyInvestor returns (uint256) {
         return super.withdraw(assets, receiver, owner);
     }
 
@@ -160,7 +172,7 @@ contract InvestmentVault is BaseVaultUpgradeable {
         uint256 shares,
         address receiver,
         address owner
-    ) public override onlyUnlocked onlyInvestor returns (uint256) {
+    ) public override(ERC4626Upgradeable, IERC4626Upgradeable) onlyUnlocked onlyInvestor returns (uint256) {
         return super.redeem(shares, receiver, owner);
     }
 }

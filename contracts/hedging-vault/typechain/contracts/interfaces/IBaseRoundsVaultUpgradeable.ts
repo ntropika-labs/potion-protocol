@@ -29,12 +29,17 @@ import type {
 export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
+    "balanceOf(address,uint256)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
+    "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
+    "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -47,19 +52,30 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
     "redeemExchangeAssetBatch(uint256[],uint256[],address,address)": FunctionFragment;
+    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "setApprovalForAll(address,bool)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "totalAssets()": FunctionFragment;
+    "totalSupply()": FunctionFragment;
+    "totalSupply(uint256)": FunctionFragment;
     "vault()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "asset"
+      | "balanceOf(address,uint256)"
+      | "balanceOf(address)"
+      | "balanceOfBatch"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
       | "deposit"
       | "exchangeAsset"
+      | "exists"
       | "getCurrentRound"
+      | "isApprovedForAll"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
@@ -72,11 +88,29 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
       | "redeemBatch"
       | "redeemExchangeAsset"
       | "redeemExchangeAssetBatch"
+      | "safeBatchTransferFrom"
+      | "safeTransferFrom"
+      | "setApprovalForAll"
+      | "supportsInterface"
       | "totalAssets"
+      | "totalSupply()"
+      | "totalSupply(uint256)"
       | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf(address,uint256)",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf(address)",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOfBatch",
+    values: [string[], BigNumberish[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
     values: [BigNumberish]
@@ -95,8 +129,16 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "exists",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getCurrentRound",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isApprovedForAll",
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "maxDeposit", values: [string]): string;
   encodeFunctionData(functionFragment: "maxMint", values: [string]): string;
@@ -135,12 +177,48 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
     values: [BigNumberish[], BigNumberish[], string, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "safeBatchTransferFrom",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeTransferFrom",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setApprovalForAll",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalAssets",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply()",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply(uint256)",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOfBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
@@ -155,8 +233,13 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "exchangeAsset",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
@@ -190,27 +273,71 @@ export interface IBaseRoundsVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "safeBatchTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "totalAssets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply()",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
+    "ApprovalForAll(address,address,bool)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
     "NextRound(uint256)": EventFragment;
+    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
+    "URI(string,uint256)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256,uint256)": EventFragment;
     "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
     "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)": EventFragment;
     "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAsset"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAssetBatch"): EventFragment;
 }
+
+export interface ApprovalForAllEventObject {
+  account: string;
+  operator: string;
+  approved: boolean;
+}
+export type ApprovalForAllEvent = TypedEvent<
+  [string, string, boolean],
+  ApprovalForAllEventObject
+>;
+
+export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface DepositEventObject {
   caller: string;
@@ -231,6 +358,42 @@ export interface NextRoundEventObject {
 export type NextRoundEvent = TypedEvent<[BigNumber], NextRoundEventObject>;
 
 export type NextRoundEventFilter = TypedEventFilter<NextRoundEvent>;
+
+export interface TransferBatchEventObject {
+  operator: string;
+  from: string;
+  to: string;
+  ids: BigNumber[];
+  values: BigNumber[];
+}
+export type TransferBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  TransferBatchEventObject
+>;
+
+export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
+
+export interface TransferSingleEventObject {
+  operator: string;
+  from: string;
+  to: string;
+  id: BigNumber;
+  value: BigNumber;
+}
+export type TransferSingleEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  TransferSingleEventObject
+>;
+
+export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
+
+export interface URIEventObject {
+  value: string;
+  id: BigNumber;
+}
+export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
+
+export type URIEventFilter = TypedEventFilter<URIEvent>;
 
 export interface WithdrawEventObject {
   caller: string;
@@ -325,6 +488,23 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { assetTokenAddress: string }>;
 
+    "balanceOf(address,uint256)"(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -345,7 +525,15 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<[string]>;
 
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+
     getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     maxDeposit(
       receiver: string,
@@ -419,9 +607,45 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    safeBatchTransferFrom(
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     totalAssets(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "totalSupply(uint256)"(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     vault(
       overrides?: CallOverrides
@@ -429,6 +653,23 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
+
+  "balanceOf(address,uint256)"(
+    account: string,
+    id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "balanceOf(address)"(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  balanceOfBatch(
+    accounts: string[],
+    ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   convertToAssets(
     shares: BigNumberish,
@@ -450,7 +691,15 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
 
   exchangeAsset(overrides?: CallOverrides): Promise<string>;
 
+  exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
   getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isApprovedForAll(
+    account: string,
+    operator: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -515,12 +764,65 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  safeBatchTransferFrom(
+    from: string,
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  safeTransferFrom(
+    from: string,
+    to: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setApprovalForAll(
+    operator: string,
+    approved: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "totalSupply(uint256)"(
+    id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   vault(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
+
+    "balanceOf(address,uint256)"(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     convertToAssets(
       shares: BigNumberish,
@@ -542,7 +844,15 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<string>;
 
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -605,12 +915,59 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    safeBatchTransferFrom(
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply(uint256)"(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
+    "ApprovalForAll(address,address,bool)"(
+      account?: string | null,
+      operator?: string | null,
+      approved?: null
+    ): ApprovalForAllEventFilter;
+    ApprovalForAll(
+      account?: string | null,
+      operator?: string | null,
+      approved?: null
+    ): ApprovalForAllEventFilter;
+
     "Deposit(address,address,uint256,uint256)"(
       caller?: string | null,
       owner?: string | null,
@@ -628,6 +985,42 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       newRoundNumber?: BigNumberish | null
     ): NextRoundEventFilter;
     NextRound(newRoundNumber?: BigNumberish | null): NextRoundEventFilter;
+
+    "TransferBatch(address,address,address,uint256[],uint256[])"(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      ids?: null,
+      values?: null
+    ): TransferBatchEventFilter;
+    TransferBatch(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      ids?: null,
+      values?: null
+    ): TransferBatchEventFilter;
+
+    "TransferSingle(address,address,address,uint256,uint256)"(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): TransferSingleEventFilter;
+    TransferSingle(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): TransferSingleEventFilter;
+
+    "URI(string,uint256)"(
+      value?: null,
+      id?: BigNumberish | null
+    ): URIEventFilter;
+    URI(value?: null, id?: BigNumberish | null): URIEventFilter;
 
     "Withdraw(address,address,address,uint256,uint256,uint256)"(
       caller?: string | null,
@@ -701,6 +1094,23 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
   estimateGas: {
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
+    "balanceOf(address,uint256)"(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     convertToAssets(
       shares: BigNumberish,
       overrides?: CallOverrides
@@ -721,7 +1131,15 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<BigNumber>;
 
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxDeposit(receiver: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -786,13 +1204,66 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    safeBatchTransferFrom(
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply(uint256)"(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "balanceOf(address,uint256)"(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     convertToAssets(
       shares: BigNumberish,
@@ -814,7 +1285,18 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    exists(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     maxDeposit(
       receiver: string,
@@ -888,7 +1370,43 @@ export interface IBaseRoundsVaultUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    safeBatchTransferFrom(
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "totalSupply(uint256)"(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

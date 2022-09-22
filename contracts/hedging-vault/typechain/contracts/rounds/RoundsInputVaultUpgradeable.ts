@@ -470,6 +470,7 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "AssetsDeposited(address,uint256,uint256)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "NextRound(uint256)": EventFragment;
@@ -488,6 +489,7 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AssetsDeposited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
@@ -516,6 +518,18 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface AssetsDepositedEventObject {
+  account: string;
+  assets: BigNumber;
+  shares: BigNumber;
+}
+export type AssetsDepositedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  AssetsDepositedEventObject
+>;
+
+export type AssetsDepositedEventFilter = TypedEventFilter<AssetsDepositedEvent>;
 
 export interface DepositEventObject {
   caller: string;
@@ -1447,6 +1461,17 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "AssetsDeposited(address,uint256,uint256)"(
+      account?: string | null,
+      assets?: null,
+      shares?: null
+    ): AssetsDepositedEventFilter;
+    AssetsDeposited(
+      account?: string | null,
+      assets?: null,
+      shares?: null
+    ): AssetsDepositedEventFilter;
 
     "Deposit(address,address,uint256,uint256)"(
       caller?: string | null,
