@@ -27,22 +27,32 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
+export interface TestWrapperVaultDeferredOperationInterface
+  extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "convertToAssets(uint256)": FunctionFragment;
+    "convertToShares(uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
+    "depositOnTarget(uint256)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
-    "initialize(address,string)": FunctionFragment;
+    "initialize(address,address,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
+    "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
+    "mint(uint256,address)": FunctionFragment;
     "mintId()": FunctionFragment;
     "mockSetMintId(uint256)": FunctionFragment;
+    "previewDeposit(uint256)": FunctionFragment;
+    "previewMint(uint256)": FunctionFragment;
+    "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
+    "redeemFromTarget(uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -51,6 +61,7 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     "totalSupply(uint256)": FunctionFragment;
     "totalSupplyAll()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
+    "vault()": FunctionFragment;
   };
 
   getFunction(
@@ -59,16 +70,25 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
       | "balanceOf"
       | "balanceOfAll"
       | "balanceOfBatch"
+      | "convertToAssets"
+      | "convertToShares"
       | "deposit"
+      | "depositOnTarget"
       | "exists"
       | "initialize"
       | "isApprovedForAll"
       | "maxDeposit"
+      | "maxMint"
       | "maxRedeem"
+      | "mint"
       | "mintId"
       | "mockSetMintId"
+      | "previewDeposit"
+      | "previewMint"
+      | "previewRedeem"
       | "redeem"
       | "redeemBatch"
+      | "redeemFromTarget"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
@@ -77,6 +97,7 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
       | "totalSupply"
       | "totalSupplyAll"
       | "uri"
+      | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -93,8 +114,20 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "convertToAssets",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "convertToShares",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositOnTarget",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "exists",
@@ -102,7 +135,11 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -113,12 +150,32 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "maxMint",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "mintId", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mockSetMintId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "previewDeposit",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "previewMint",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "previewRedeem",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -138,6 +195,10 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemFromTarget",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -183,6 +244,7 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     functionFragment: "uri",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -194,7 +256,19 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "convertToAssets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "convertToShares",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositOnTarget",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
@@ -202,15 +276,33 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mockSetMintId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "previewDeposit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "previewMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "previewRedeem",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemFromTarget",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -242,6 +334,7 @@ export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
@@ -362,12 +455,12 @@ export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
-export interface TestWrapperVaultWithReceipts extends BaseContract {
+export interface TestWrapperVaultDeferredOperation extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TestWrapperVaultWithReceiptsInterface;
+  interface: TestWrapperVaultDeferredOperationInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -408,9 +501,24 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    convertToAssets(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { assets: BigNumber }>;
+
+    convertToShares(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { shares: BigNumber }>;
+
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    depositOnTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -420,6 +528,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<[boolean]>;
 
     initialize(
+      targetVault: PromiseOrValue<string>,
       asset: PromiseOrValue<string>,
       uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -432,7 +541,12 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<[boolean]>;
 
     maxDeposit(
-      arg0: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    maxMint(
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -441,12 +555,33 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    mint(
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     mintId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mockSetMintId(
       mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    previewMint(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -461,6 +596,11 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    redeemFromTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -506,6 +646,10 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    vault(
+      overrides?: CallOverrides
+    ): Promise<[string] & { vaultAddress: string }>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -527,9 +671,24 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  convertToAssets(
+    shares: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  convertToShares(
+    assets: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   deposit(
     assets: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  depositOnTarget(
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -539,6 +698,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
   ): Promise<boolean>;
 
   initialize(
+    targetVault: PromiseOrValue<string>,
     asset: PromiseOrValue<string>,
     uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -551,7 +711,12 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
   ): Promise<boolean>;
 
   maxDeposit(
-    arg0: PromiseOrValue<string>,
+    receiver: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  maxMint(
+    receiver: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -560,12 +725,33 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  mint(
+    shares: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   mintId(overrides?: CallOverrides): Promise<BigNumber>;
 
   mockSetMintId(
     mintId_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  previewDeposit(
+    assets: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  previewMint(
+    shares: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  previewRedeem(
+    shares: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   redeem(
     id: PromiseOrValue<BigNumberish>,
@@ -580,6 +766,11 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     amounts: PromiseOrValue<BigNumberish>[],
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  redeemFromTarget(
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -626,6 +817,8 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  vault(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
@@ -646,9 +839,24 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    convertToAssets(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    convertToShares(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    depositOnTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -658,6 +866,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<boolean>;
 
     initialize(
+      targetVault: PromiseOrValue<string>,
       asset: PromiseOrValue<string>,
       uri: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -670,12 +879,23 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<boolean>;
 
     maxDeposit(
-      arg0: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxMint(
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     maxRedeem(
       owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mint(
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -685,6 +905,21 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       mintId_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewMint(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -699,6 +934,11 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    redeemFromTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -744,6 +984,8 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -861,9 +1103,24 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    convertToAssets(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    convertToShares(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    depositOnTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -873,6 +1130,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
+      targetVault: PromiseOrValue<string>,
       asset: PromiseOrValue<string>,
       uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -885,7 +1143,12 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<BigNumber>;
 
     maxDeposit(
-      arg0: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxMint(
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -894,11 +1157,32 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    mint(
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     mintId(overrides?: CallOverrides): Promise<BigNumber>;
 
     mockSetMintId(
       mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewMint(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeem(
@@ -914,6 +1198,11 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    redeemFromTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -959,6 +1248,8 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -981,9 +1272,24 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    convertToAssets(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    convertToShares(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    depositOnTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -993,6 +1299,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
+      targetVault: PromiseOrValue<string>,
       asset: PromiseOrValue<string>,
       uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1005,7 +1312,12 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      arg0: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxMint(
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1014,11 +1326,32 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    mint(
+      shares: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     mintId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mockSetMintId(
       mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    previewMint(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redeem(
@@ -1034,6 +1367,11 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    redeemFromTarget(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1079,5 +1417,7 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

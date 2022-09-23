@@ -44,11 +44,11 @@ abstract contract VaultDeferredOperationUpgradeable is
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
      */
-    function __ERC4626DeferredOperation_init(address proxiedVault) internal onlyInitializing {
-        __ERC4626DeferredOperation_init_unchained(proxiedVault);
+    function __VaultDeferredOperation_init(address proxiedVault) internal onlyInitializing {
+        __VaultDeferredOperation_init_unchained(proxiedVault);
     }
 
-    function __ERC4626DeferredOperation_init_unchained(address proxiedVault) internal onlyInitializing {
+    function __VaultDeferredOperation_init_unchained(address proxiedVault) internal onlyInitializing {
         _proxiedVault = IERC4626Upgradeable(proxiedVault);
     }
 
@@ -150,10 +150,10 @@ abstract contract VaultDeferredOperationUpgradeable is
 
         @return The amount of target vault shares received
      */
-    function _redeemFromTarget(uint256 amount) internal virtual returns (uint256) {
+    function _redeemFromTarget(uint256 amount) internal returns (uint256) {
         SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(_proxiedVault), address(_proxiedVault), amount);
 
-        return IERC4626Upgradeable(_proxiedVault).redeem(amount, address(this), address(this));
+        return _proxiedVault.redeem(amount, address(this), address(this));
     }
 
     /** 
@@ -166,7 +166,7 @@ abstract contract VaultDeferredOperationUpgradeable is
     function _depositOnTarget(uint256 amount) internal returns (uint256) {
         SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(asset()), address(_proxiedVault), amount);
 
-        return IERC4626Upgradeable(_proxiedVault).deposit(amount, address(this));
+        return _proxiedVault.deposit(amount, address(this));
     }
 
     /**

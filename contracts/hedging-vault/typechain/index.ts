@@ -216,6 +216,8 @@ export type { TestWrapperRolesManager } from "./contracts/test/wrappers/TestWrap
 export { TestWrapperRolesManager__factory } from "./factories/contracts/test/wrappers/TestWrapperRolesManager__factory";
 export type { TestWrapperUniswapV3SwapLib } from "./contracts/test/wrappers/TestWrapperUniswapV3SwapLib";
 export { TestWrapperUniswapV3SwapLib__factory } from "./factories/contracts/test/wrappers/TestWrapperUniswapV3SwapLib__factory";
+export type { TestWrapperVaultDeferredOperation } from "./contracts/test/wrappers/TestWrapperVaultDeferredOperation";
+export { TestWrapperVaultDeferredOperation__factory } from "./factories/contracts/test/wrappers/TestWrapperVaultDeferredOperation__factory";
 export type { TestWrapperVaultWithReceipts } from "./contracts/test/wrappers/TestWrapperVaultWithReceipts";
 export { TestWrapperVaultWithReceipts__factory } from "./factories/contracts/test/wrappers/TestWrapperVaultWithReceipts__factory";
 export type { ActionsManagerUpgradeable } from "./contracts/vault/ActionsManagerUpgradeable";

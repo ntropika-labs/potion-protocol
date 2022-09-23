@@ -26,7 +26,7 @@ describe("VaultWithReceipts", function () {
         const VaultWithReceiptsFactory = await ethers.getContractFactory("TestWrapperVaultWithReceipts");
         vaultWithReceipts = (await VaultWithReceiptsFactory.deploy()) as TestWrapperVaultWithReceipts;
 
-        await vaultWithReceipts.initialize(assetToken.address);
+        await vaultWithReceipts.initialize(assetToken.address, "SomeURI");
 
         await assetToken.mint(unpriviledgedAccount.address, ethers.utils.parseEther("1"));
         await assetToken.connect(unpriviledgedAccount).approve(vaultWithReceipts.address, ethers.utils.parseEther("1"));
