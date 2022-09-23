@@ -12,3 +12,4 @@ export type { TestWrapperPriceUtils } from "./TestWrapperPriceUtils";
 export type { TestWrapperRefundsHelper } from "./TestWrapperRefundsHelper";
 export type { TestWrapperRolesManager } from "./TestWrapperRolesManager";
 export type { TestWrapperUniswapV3SwapLib } from "./TestWrapperUniswapV3SwapLib";
+export type { TestWrapperVaultWithReceipts } from "./TestWrapperVaultWithReceipts";

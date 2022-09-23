@@ -25,33 +25,24 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../../../common";
 
-export interface IBaseRoundsVaultInterface extends utils.Interface {
+export interface TestWrapperVaultWithReceiptsInterface extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "convertToAssets(uint256)": FunctionFragment;
-    "convertToShares(uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
-    "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
-    "getCurrentRound()": FunctionFragment;
+    "initialize(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
-    "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "mint(uint256,address)": FunctionFragment;
-    "nextRound()": FunctionFragment;
-    "previewDeposit(uint256)": FunctionFragment;
-    "previewMint(uint256)": FunctionFragment;
-    "previewRedeem(uint256)": FunctionFragment;
+    "mintId()": FunctionFragment;
+    "mockSetMintId(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
-    "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
-    "redeemExchangeAssetBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -59,7 +50,7 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     "totalAssets()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "totalSupplyAll()": FunctionFragment;
-    "vault()": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -68,25 +59,16 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
       | "balanceOf"
       | "balanceOfAll"
       | "balanceOfBatch"
-      | "convertToAssets"
-      | "convertToShares"
       | "deposit"
-      | "exchangeAsset"
       | "exists"
-      | "getCurrentRound"
+      | "initialize"
       | "isApprovedForAll"
       | "maxDeposit"
-      | "maxMint"
       | "maxRedeem"
-      | "mint"
-      | "nextRound"
-      | "previewDeposit"
-      | "previewMint"
-      | "previewRedeem"
+      | "mintId"
+      | "mockSetMintId"
       | "redeem"
       | "redeemBatch"
-      | "redeemExchangeAsset"
-      | "redeemExchangeAssetBatch"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
@@ -94,7 +76,7 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
       | "totalAssets"
       | "totalSupply"
       | "totalSupplyAll"
-      | "vault"
+      | "uri"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -111,28 +93,16 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "convertToAssets",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToShares",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeAsset",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "exists",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getCurrentRound",
-    values?: undefined
+    functionFragment: "initialize",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -143,28 +113,12 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "maxMint",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "mintId", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "mint",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "previewDeposit",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewMint",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewRedeem",
+    functionFragment: "mockSetMintId",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -178,24 +132,6 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "redeemBatch",
-    values: [
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "redeemExchangeAsset",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "redeemExchangeAssetBatch",
     values: [
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[],
@@ -243,7 +179,10 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     functionFragment: "totalSupplyAll",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "uri",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -255,56 +194,23 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToAssets",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToShares",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeAsset",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getCurrentRound",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintId", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "previewDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewMint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewRedeem",
+    functionFragment: "mockSetMintId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "redeemExchangeAsset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "redeemExchangeAssetBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -335,31 +241,27 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
-    "NextRound(uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
-    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)": EventFragment;
-    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DepositWithReceipt"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RedeemReceipt"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RedeemReceiptBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAsset"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAssetBatch"): EventFragment;
 }
 
 export interface ApprovalForAllEventObject {
@@ -388,12 +290,12 @@ export type DepositWithReceiptEvent = TypedEvent<
 export type DepositWithReceiptEventFilter =
   TypedEventFilter<DepositWithReceiptEvent>;
 
-export interface NextRoundEventObject {
-  newRoundNumber: BigNumber;
+export interface InitializedEventObject {
+  version: number;
 }
-export type NextRoundEvent = TypedEvent<[BigNumber], NextRoundEventObject>;
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type NextRoundEventFilter = TypedEventFilter<NextRoundEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface RedeemReceiptEventObject {
   caller: string;
@@ -460,44 +362,12 @@ export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
-export interface WithdrawExchangeAssetEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesId: BigNumber;
-  sharesAmount: BigNumber;
-}
-export type WithdrawExchangeAssetEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, BigNumber],
-  WithdrawExchangeAssetEventObject
->;
-
-export type WithdrawExchangeAssetEventFilter =
-  TypedEventFilter<WithdrawExchangeAssetEvent>;
-
-export interface WithdrawExchangeAssetBatchEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesIds: BigNumber[];
-  sharesAmounts: BigNumber[];
-}
-export type WithdrawExchangeAssetBatchEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber[], BigNumber[]],
-  WithdrawExchangeAssetBatchEventObject
->;
-
-export type WithdrawExchangeAssetBatchEventFilter =
-  TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
-
-export interface IBaseRoundsVault extends BaseContract {
+export interface TestWrapperVaultWithReceipts extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IBaseRoundsVaultInterface;
+  interface: TestWrapperVaultWithReceiptsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -519,9 +389,7 @@ export interface IBaseRoundsVault extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    asset(
-      overrides?: CallOverrides
-    ): Promise<[string] & { assetTokenAddress: string }>;
+    asset(overrides?: CallOverrides): Promise<[string]>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -540,30 +408,21 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    exchangeAsset(overrides?: CallOverrides): Promise<[string]>;
-
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
+    initialize(
+      asset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -572,62 +431,23 @@ export interface IBaseRoundsVault extends BaseContract {
     ): Promise<[boolean]>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxAssets: BigNumber }>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
+    mintId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    mockSetMintId(
+      mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    nextRound(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
 
     redeem(
-      sharesId: PromiseOrValue<BigNumberish>,
-      sharesAmount: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    redeemBatch(
-      sharesIds: PromiseOrValue<BigNumberish>[],
-      sharesAmounts: PromiseOrValue<BigNumberish>[],
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    redeemExchangeAsset(
       id: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -635,7 +455,7 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    redeemExchangeAssetBatch(
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
@@ -672,9 +492,7 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    totalAssets(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
+    totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -683,9 +501,10 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    vault(
+    uri(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string] & { vaultAddress: string }>;
+    ): Promise<[string]>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -707,30 +526,21 @@ export interface IBaseRoundsVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  convertToAssets(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  convertToShares(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   deposit(
     assets: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  exchangeAsset(overrides?: CallOverrides): Promise<string>;
-
   exists(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+  initialize(
+    asset: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   isApprovedForAll(
     account: PromiseOrValue<string>,
@@ -739,12 +549,7 @@ export interface IBaseRoundsVault extends BaseContract {
   ): Promise<boolean>;
 
   maxDeposit(
-    receiver: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxMint(
-    receiver: PromiseOrValue<string>,
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -753,48 +558,14 @@ export interface IBaseRoundsVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  mint(
-    shares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
+  mintId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  mockSetMintId(
+    mintId_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  nextRound(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  previewDeposit(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewMint(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewRedeem(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   redeem(
-    sharesId: PromiseOrValue<BigNumberish>,
-    sharesAmount: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  redeemBatch(
-    sharesIds: PromiseOrValue<BigNumberish>[],
-    sharesAmounts: PromiseOrValue<BigNumberish>[],
-    receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  redeemExchangeAsset(
     id: PromiseOrValue<BigNumberish>,
     amount: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
@@ -802,7 +573,7 @@ export interface IBaseRoundsVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  redeemExchangeAssetBatch(
+  redeemBatch(
     ids: PromiseOrValue<BigNumberish>[],
     amounts: PromiseOrValue<BigNumberish>[],
     receiver: PromiseOrValue<string>,
@@ -848,7 +619,10 @@ export interface IBaseRoundsVault extends BaseContract {
 
   totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
-  vault(overrides?: CallOverrides): Promise<string>;
+  uri(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
@@ -870,30 +644,21 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    exchangeAsset(overrides?: CallOverrides): Promise<string>;
-
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+    initialize(
+      asset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -902,12 +667,7 @@ export interface IBaseRoundsVault extends BaseContract {
     ): Promise<boolean>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -916,46 +676,14 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    mintId(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nextRound(overrides?: CallOverrides): Promise<void>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
+    mockSetMintId(
+      mintId_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     redeem(
-      sharesId: PromiseOrValue<BigNumberish>,
-      sharesAmount: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    redeemBatch(
-      sharesIds: PromiseOrValue<BigNumberish>[],
-      sharesAmounts: PromiseOrValue<BigNumberish>[],
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    redeemExchangeAsset(
       id: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -963,7 +691,7 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    redeemExchangeAssetBatch(
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
@@ -1009,7 +737,10 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
-    vault(overrides?: CallOverrides): Promise<string>;
+    uri(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -1037,12 +768,8 @@ export interface IBaseRoundsVault extends BaseContract {
       assets?: null
     ): DepositWithReceiptEventFilter;
 
-    "NextRound(uint256)"(
-      newRoundNumber?: PromiseOrValue<BigNumberish> | null
-    ): NextRoundEventFilter;
-    NextRound(
-      newRoundNumber?: PromiseOrValue<BigNumberish> | null
-    ): NextRoundEventFilter;
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "RedeemReceipt(address,address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
@@ -1109,40 +836,6 @@ export interface IBaseRoundsVault extends BaseContract {
       id?: PromiseOrValue<BigNumberish> | null
     ): URIEventFilter;
     URI(value?: null, id?: PromiseOrValue<BigNumberish> | null): URIEventFilter;
-
-    "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawExchangeAssetEventFilter;
-    WithdrawExchangeAsset(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawExchangeAssetEventFilter;
-
-    "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawExchangeAssetBatchEventFilter;
-    WithdrawExchangeAssetBatch(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawExchangeAssetBatchEventFilter;
   };
 
   estimateGas: {
@@ -1165,30 +858,21 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    exchangeAsset(overrides?: CallOverrides): Promise<BigNumber>;
-
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+    initialize(
+      asset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -1197,12 +881,7 @@ export interface IBaseRoundsVault extends BaseContract {
     ): Promise<BigNumber>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1211,48 +890,14 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
+    mintId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mockSetMintId(
+      mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    nextRound(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeem(
-      sharesId: PromiseOrValue<BigNumberish>,
-      sharesAmount: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    redeemBatch(
-      sharesIds: PromiseOrValue<BigNumberish>[],
-      sharesAmounts: PromiseOrValue<BigNumberish>[],
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    redeemExchangeAsset(
       id: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1260,7 +905,7 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    redeemExchangeAssetBatch(
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
@@ -1306,7 +951,10 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
-    vault(overrides?: CallOverrides): Promise<BigNumber>;
+    uri(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1329,30 +977,21 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    exchangeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    initialize(
+      asset: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -1361,12 +1000,7 @@ export interface IBaseRoundsVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1375,48 +1009,14 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
+    mintId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mockSetMintId(
+      mintId_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    nextRound(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redeem(
-      sharesId: PromiseOrValue<BigNumberish>,
-      sharesAmount: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    redeemBatch(
-      sharesIds: PromiseOrValue<BigNumberish>[],
-      sharesAmounts: PromiseOrValue<BigNumberish>[],
-      receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    redeemExchangeAsset(
       id: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1424,7 +1024,7 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    redeemExchangeAssetBatch(
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
@@ -1470,6 +1070,9 @@ export interface IBaseRoundsVault extends BaseContract {
 
     totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    uri(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

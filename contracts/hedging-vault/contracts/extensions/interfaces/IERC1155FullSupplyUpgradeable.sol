@@ -25,7 +25,7 @@ interface IERC1155FullSupplyUpgradeable is IERC1155Upgradeable {
     /**
      * @dev Returns the sum of amounts of all ids owned by `account`
      */
-    function balanceOf(address account) external view returns (uint256);
+    function balanceOfAll(address account) external view returns (uint256);
 
     /**
      * @dev Indicates whether any token exist with a given id, or not.

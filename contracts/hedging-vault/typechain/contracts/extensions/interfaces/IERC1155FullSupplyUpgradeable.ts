@@ -31,7 +31,7 @@ export interface IERC1155FullSupplyUpgradeableInterface
   extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -45,8 +45,8 @@ export interface IERC1155FullSupplyUpgradeableInterface
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
       | "exists"
       | "isApprovedForAll"
@@ -59,11 +59,11 @@ export interface IERC1155FullSupplyUpgradeableInterface
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -115,12 +115,9 @@ export interface IERC1155FullSupplyUpgradeableInterface
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,13 +242,13 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -310,13 +307,13 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
     totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -375,13 +372,13 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
   totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -490,13 +487,13 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
   };
 
   estimateGas: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -556,13 +553,13 @@ export interface IERC1155FullSupplyUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

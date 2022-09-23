@@ -32,11 +32,10 @@ export interface IVaultDeferredOperationUpgradeableInterface
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
-    "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -44,6 +43,7 @@ export interface IVaultDeferredOperationUpgradeableInterface
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
     "mint(uint256,address)": FunctionFragment;
+    "previewDeposit(uint256)": FunctionFragment;
     "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
@@ -61,12 +61,11 @@ export interface IVaultDeferredOperationUpgradeableInterface
   getFunction(
     nameOrSignatureOrTopic:
       | "asset"
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
       | "convertToAssets"
       | "convertToShares"
-      | "decimals"
       | "deposit"
       | "exists"
       | "isApprovedForAll"
@@ -74,6 +73,7 @@ export interface IVaultDeferredOperationUpgradeableInterface
       | "maxMint"
       | "maxRedeem"
       | "mint"
+      | "previewDeposit"
       | "previewMint"
       | "previewRedeem"
       | "redeem"
@@ -90,11 +90,11 @@ export interface IVaultDeferredOperationUpgradeableInterface
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -109,7 +109,6 @@ export interface IVaultDeferredOperationUpgradeableInterface
     functionFragment: "convertToShares",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -137,6 +136,10 @@ export interface IVaultDeferredOperationUpgradeableInterface
   encodeFunctionData(
     functionFragment: "mint",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "previewDeposit",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "previewMint",
@@ -207,12 +210,9 @@ export interface IVaultDeferredOperationUpgradeableInterface
   encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -227,7 +227,6 @@ export interface IVaultDeferredOperationUpgradeableInterface
     functionFragment: "convertToShares",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
@@ -238,6 +237,10 @@ export interface IVaultDeferredOperationUpgradeableInterface
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "previewDeposit",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "previewMint",
     data: BytesLike
@@ -315,8 +318,8 @@ export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
-  assets: BigNumber;
   id: BigNumber;
+  assets: BigNumber;
 }
 export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -330,8 +333,8 @@ export interface RedeemReceiptEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amount: BigNumber;
   id: BigNumber;
+  amount: BigNumber;
 }
 export type RedeemReceiptEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
@@ -344,8 +347,8 @@ export interface RedeemReceiptBatchEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amounts: BigNumber[];
   ids: BigNumber[];
+  amounts: BigNumber[];
 }
 export type RedeemReceiptBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -422,13 +425,13 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { assetTokenAddress: string }>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -448,8 +451,6 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -488,6 +489,11 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { shares: BigNumber }>;
 
     previewMint(
       shares: PromiseOrValue<BigNumberish>,
@@ -562,13 +568,13 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
 
   asset(overrides?: CallOverrides): Promise<string>;
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -588,8 +594,6 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
     assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
 
   deposit(
     assets: PromiseOrValue<BigNumberish>,
@@ -628,6 +632,11 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
     receiver: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  previewDeposit(
+    assets: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   previewMint(
     shares: PromiseOrValue<BigNumberish>,
@@ -698,13 +707,13 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -724,8 +733,6 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -762,6 +769,11 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
     mint(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -847,44 +859,44 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
 
     "RedeemReceipt(address,address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
     RedeemReceipt(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
 
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
     RedeemReceiptBatch(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
@@ -927,13 +939,13 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
   estimateGas: {
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -953,8 +965,6 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -992,6 +1002,11 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewMint(
@@ -1064,13 +1079,13 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
   populateTransaction: {
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1090,8 +1105,6 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1129,6 +1142,11 @@ export interface IVaultDeferredOperationUpgradeable extends BaseContract {
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     previewMint(

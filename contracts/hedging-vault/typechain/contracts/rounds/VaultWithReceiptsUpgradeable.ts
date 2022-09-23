@@ -31,15 +31,13 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
@@ -55,16 +53,14 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "asset"
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
-      | "decimals"
       | "deposit"
       | "exists"
       | "isApprovedForAll"
       | "maxDeposit"
       | "maxRedeem"
-      | "previewRedeem"
       | "redeem"
       | "redeemBatch"
       | "safeBatchTransferFrom"
@@ -79,18 +75,17 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -110,10 +105,6 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewRedeem",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
@@ -179,19 +170,15 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
@@ -200,10 +187,6 @@ export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "previewRedeem",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemBatch",
@@ -275,8 +258,8 @@ export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
-  assets: BigNumber;
   id: BigNumber;
+  assets: BigNumber;
 }
 export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -297,8 +280,8 @@ export interface RedeemReceiptEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amount: BigNumber;
   id: BigNumber;
+  amount: BigNumber;
 }
 export type RedeemReceiptEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
@@ -311,8 +294,8 @@ export interface RedeemReceiptBatchEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amounts: BigNumber[];
   ids: BigNumber[];
+  amounts: BigNumber[];
 }
 export type RedeemReceiptBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -387,13 +370,13 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
   functions: {
     asset(overrides?: CallOverrides): Promise<[string]>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -403,8 +386,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -432,11 +413,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -500,13 +476,13 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
 
   asset(overrides?: CallOverrides): Promise<string>;
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -516,8 +492,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
     ids: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
 
   deposit(
     assets: PromiseOrValue<BigNumberish>,
@@ -543,11 +517,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
 
   maxRedeem(
     owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewRedeem(
-    shares: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -613,13 +582,13 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -629,8 +598,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -656,11 +623,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
 
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -739,14 +701,14 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
@@ -756,30 +718,30 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
     RedeemReceipt(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
 
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
     RedeemReceiptBatch(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
@@ -822,13 +784,13 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
   estimateGas: {
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -838,8 +800,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -865,11 +825,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
 
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -936,13 +891,13 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
   populateTransaction: {
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -952,8 +907,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -979,11 +932,6 @@ export interface VaultWithReceiptsUpgradeable extends BaseContract {
 
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

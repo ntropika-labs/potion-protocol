@@ -38,7 +38,7 @@ abstract contract ERC1155FullSupplyUpgradeable is Initializable, ERC1155Upgradea
     /**
      * @inheritdoc IERC1155FullSupplyUpgradeable
      */
-    function balanceOf(address account) public view virtual override returns (uint256) {
+    function balanceOfAll(address account) public view virtual override returns (uint256) {
         return _totalSupplyByAccount[account];
     }
 

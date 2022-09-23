@@ -37,7 +37,7 @@ contract("ERC1155FullSupply", function (accounts) {
         });
 
         it("balanceOf", async function () {
-            expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal("0");
+            expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal("0");
         });
     });
 
@@ -60,7 +60,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal(firstTokenAmount);
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal(firstTokenAmount);
             });
         });
 
@@ -85,7 +85,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal(
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal(
                     firstTokenAmount.add(secondTokenAmount),
                 );
             });
@@ -118,7 +118,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal(
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal(
                     firstTokenAmount.add(secondTokenAmount),
                 );
             });
@@ -145,7 +145,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal("0");
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal("0");
             });
         });
 
@@ -171,7 +171,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal(secondTokenAmount);
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal(secondTokenAmount);
             });
         });
 
@@ -205,7 +205,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal("0");
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal("0");
             });
         });
 
@@ -235,7 +235,7 @@ contract("ERC1155FullSupply", function (accounts) {
             });
 
             it("balanceOf", async function () {
-                expect(await this.token.balanceOf(accounts[0])).to.be.bignumber.equal(firstTokenAmount);
+                expect(await this.token.balanceOfAll(accounts[0])).to.be.bignumber.equal(firstTokenAmount);
             });
         });
     });

@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC1155/IERC1155Upgradeable.sol";
-import "../extensions/interfaces/IERC1155DecimalsUpgradeable.sol";
 import "../extensions/interfaces/IERC1155FullSupplyUpgradeable.sol";
 
 /**
@@ -24,22 +23,22 @@ import "../extensions/interfaces/IERC1155FullSupplyUpgradeable.sol";
 
     @author Roberto Cano <robercano>
  */
-interface IVaultWithReceiptsUpgradeable is IERC1155DecimalsUpgradeable, IERC1155FullSupplyUpgradeable {
-    event DepositWithReceipt(address indexed caller, address indexed owner, uint256 assets, uint256 id);
+interface IVaultWithReceiptsUpgradeable is IERC1155FullSupplyUpgradeable {
+    event DepositWithReceipt(address indexed caller, address indexed owner, uint256 id, uint256 assets);
 
     event RedeemReceipt(
         address indexed caller,
         address indexed receiver,
         address indexed owner,
-        uint256 amount,
-        uint256 id
+        uint256 id,
+        uint256 amount
     );
     event RedeemReceiptBatch(
         address indexed caller,
         address indexed receiver,
         address indexed owner,
-        uint256[] amounts,
-        uint256[] ids
+        uint256[] ids,
+        uint256[] amounts
     );
 
     /**
@@ -91,23 +90,6 @@ interface IVaultWithReceiptsUpgradeable is IERC1155DecimalsUpgradeable, IERC1155
      * - MUST NOT revert.
      */
     function maxRedeem(address owner) external view returns (uint256 maxShares);
-
-    /**
-     * @dev Allows an on-chain or off-chain user to simulate the effects of their redeemption at the current block,
-     * given current on-chain conditions.
-     *
-     * - MUST return as close to and no more than the exact amount of assets that would be withdrawn in a redeem call
-     *   in the same transaction. I.e. redeem should return the same or more assets as previewRedeem if called in the
-     *   same transaction.
-     * - MUST NOT account for redemption limits like those returned from maxRedeem and should always act as though the
-     *   redemption would be accepted, regardless if the user has enough shares, etc.
-     * - MUST be inclusive of withdrawal fees. Integrators should be aware of the existence of withdrawal fees.
-     * - MUST NOT revert.
-     *
-     * NOTE: any unfavorable discrepancy between convertToAssets and previewRedeem SHOULD be considered slippage in
-     * share price or some other type of condition, meaning the depositor will lose assets by redeeming.
-     */
-    function previewRedeem(uint256 shares) external view returns (uint256 assets);
 
     /**
      * @dev Burns exactly shares from owner and sends assets of underlying tokens to receiver.

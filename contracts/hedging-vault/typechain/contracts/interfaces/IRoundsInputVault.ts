@@ -31,11 +31,10 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
-    "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
@@ -46,6 +45,7 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     "maxRedeem(address)": FunctionFragment;
     "mint(uint256,address)": FunctionFragment;
     "nextRound()": FunctionFragment;
+    "previewDeposit(uint256)": FunctionFragment;
     "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
@@ -65,12 +65,11 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "asset"
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
       | "convertToAssets"
       | "convertToShares"
-      | "decimals"
       | "deposit"
       | "exchangeAsset"
       | "exists"
@@ -81,6 +80,7 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
       | "maxRedeem"
       | "mint"
       | "nextRound"
+      | "previewDeposit"
       | "previewMint"
       | "previewRedeem"
       | "redeem"
@@ -99,11 +99,11 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -118,7 +118,6 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     functionFragment: "convertToShares",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -156,6 +155,10 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "previewDeposit",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "previewMint",
     values: [PromiseOrValue<BigNumberish>]
@@ -243,12 +246,9 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -263,7 +263,6 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     functionFragment: "convertToShares",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exchangeAsset",
@@ -283,6 +282,10 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "previewDeposit",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "previewMint",
     data: BytesLike
@@ -388,8 +391,8 @@ export type AssetsDepositedEventFilter = TypedEventFilter<AssetsDepositedEvent>;
 export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
-  assets: BigNumber;
   id: BigNumber;
+  assets: BigNumber;
 }
 export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -410,8 +413,8 @@ export interface RedeemReceiptEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amount: BigNumber;
   id: BigNumber;
+  amount: BigNumber;
 }
 export type RedeemReceiptEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
@@ -424,8 +427,8 @@ export interface RedeemReceiptBatchEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amounts: BigNumber[];
   ids: BigNumber[];
+  amounts: BigNumber[];
 }
 export type RedeemReceiptBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -534,13 +537,13 @@ export interface IRoundsInputVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { assetTokenAddress: string }>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -560,8 +563,6 @@ export interface IRoundsInputVault extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -608,6 +609,11 @@ export interface IRoundsInputVault extends BaseContract {
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { shares: BigNumber }>;
 
     previewMint(
       shares: PromiseOrValue<BigNumberish>,
@@ -698,13 +704,13 @@ export interface IRoundsInputVault extends BaseContract {
 
   asset(overrides?: CallOverrides): Promise<string>;
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -724,8 +730,6 @@ export interface IRoundsInputVault extends BaseContract {
     assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
 
   deposit(
     assets: PromiseOrValue<BigNumberish>,
@@ -772,6 +776,11 @@ export interface IRoundsInputVault extends BaseContract {
   nextRound(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  previewDeposit(
+    assets: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   previewMint(
     shares: PromiseOrValue<BigNumberish>,
@@ -858,13 +867,13 @@ export interface IRoundsInputVault extends BaseContract {
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -884,8 +893,6 @@ export interface IRoundsInputVault extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -930,6 +937,11 @@ export interface IRoundsInputVault extends BaseContract {
     ): Promise<BigNumber>;
 
     nextRound(overrides?: CallOverrides): Promise<void>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     previewMint(
       shares: PromiseOrValue<BigNumberish>,
@@ -1040,14 +1052,14 @@ export interface IRoundsInputVault extends BaseContract {
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
 
     "NextRound(uint256)"(
@@ -1061,30 +1073,30 @@ export interface IRoundsInputVault extends BaseContract {
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
     RedeemReceipt(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
 
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
     RedeemReceiptBatch(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
@@ -1161,13 +1173,13 @@ export interface IRoundsInputVault extends BaseContract {
   estimateGas: {
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1187,8 +1199,6 @@ export interface IRoundsInputVault extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1234,6 +1244,11 @@ export interface IRoundsInputVault extends BaseContract {
 
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     previewMint(
@@ -1322,13 +1337,13 @@ export interface IRoundsInputVault extends BaseContract {
   populateTransaction: {
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1348,8 +1363,6 @@ export interface IRoundsInputVault extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1395,6 +1408,11 @@ export interface IRoundsInputVault extends BaseContract {
 
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    previewDeposit(
+      assets: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     previewMint(

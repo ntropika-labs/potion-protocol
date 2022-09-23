@@ -100,14 +100,10 @@ export type { RefundsHelperUpgreadable } from "./contracts/common/RefundsHelperU
 export { RefundsHelperUpgreadable__factory } from "./factories/contracts/common/RefundsHelperUpgreadable__factory";
 export type { RolesManagerUpgradeable } from "./contracts/common/RolesManagerUpgradeable";
 export { RolesManagerUpgradeable__factory } from "./factories/contracts/common/RolesManagerUpgradeable__factory";
-export type { ERC1155DecimalsUpgradeable } from "./contracts/extensions/ERC1155DecimalsUpgradeable";
-export { ERC1155DecimalsUpgradeable__factory } from "./factories/contracts/extensions/ERC1155DecimalsUpgradeable__factory";
 export type { ERC1155FullSupplyUpgradeable } from "./contracts/extensions/ERC1155FullSupplyUpgradeable";
 export { ERC1155FullSupplyUpgradeable__factory } from "./factories/contracts/extensions/ERC1155FullSupplyUpgradeable__factory";
 export type { ERC4626CapUpgradeable } from "./contracts/extensions/ERC4626CapUpgradeable";
 export { ERC4626CapUpgradeable__factory } from "./factories/contracts/extensions/ERC4626CapUpgradeable__factory";
-export type { IERC1155DecimalsUpgradeable } from "./contracts/extensions/interfaces/IERC1155DecimalsUpgradeable";
-export { IERC1155DecimalsUpgradeable__factory } from "./factories/contracts/extensions/interfaces/IERC1155DecimalsUpgradeable__factory";
 export type { IERC1155FullSupplyUpgradeable } from "./contracts/extensions/interfaces/IERC1155FullSupplyUpgradeable";
 export { IERC1155FullSupplyUpgradeable__factory } from "./factories/contracts/extensions/interfaces/IERC1155FullSupplyUpgradeable__factory";
 export type { IERC4626CapUpgradeable } from "./contracts/extensions/interfaces/IERC4626CapUpgradeable";
@@ -184,8 +180,8 @@ export type { ERC1155UpgradeableMock } from "./contracts/test/mocks/ERC1155Upgra
 export { ERC1155UpgradeableMock__factory } from "./factories/contracts/test/mocks/ERC1155UpgradeableMock__factory";
 export type { ERC20DecimalsUpgradeableMock } from "./contracts/test/mocks/ERC20DecimalsUpgradeableMock";
 export { ERC20DecimalsUpgradeableMock__factory } from "./factories/contracts/test/mocks/ERC20DecimalsUpgradeableMock__factory";
-export type { MockERC20PresetMinterPauser } from "./contracts/test/mocks/MockERC20MinterPauser.sol/MockERC20PresetMinterPauser";
-export { MockERC20PresetMinterPauser__factory } from "./factories/contracts/test/mocks/MockERC20MinterPauser.sol/MockERC20PresetMinterPauser__factory";
+export type { MockERC20PresetMinterPauser } from "./contracts/test/mocks/MockERC20PresetMinterPauser";
+export { MockERC20PresetMinterPauser__factory } from "./factories/contracts/test/mocks/MockERC20PresetMinterPauser__factory";
 export type { MockOpynAddressBook } from "./contracts/test/mocks/MockOpynAddressBook";
 export { MockOpynAddressBook__factory } from "./factories/contracts/test/mocks/MockOpynAddressBook__factory";
 export type { MockOpynController } from "./contracts/test/mocks/MockOpynController";
@@ -220,6 +216,8 @@ export type { TestWrapperRolesManager } from "./contracts/test/wrappers/TestWrap
 export { TestWrapperRolesManager__factory } from "./factories/contracts/test/wrappers/TestWrapperRolesManager__factory";
 export type { TestWrapperUniswapV3SwapLib } from "./contracts/test/wrappers/TestWrapperUniswapV3SwapLib";
 export { TestWrapperUniswapV3SwapLib__factory } from "./factories/contracts/test/wrappers/TestWrapperUniswapV3SwapLib__factory";
+export type { TestWrapperVaultWithReceipts } from "./contracts/test/wrappers/TestWrapperVaultWithReceipts";
+export { TestWrapperVaultWithReceipts__factory } from "./factories/contracts/test/wrappers/TestWrapperVaultWithReceipts__factory";
 export type { ActionsManagerUpgradeable } from "./contracts/vault/ActionsManagerUpgradeable";
 export { ActionsManagerUpgradeable__factory } from "./factories/contracts/vault/ActionsManagerUpgradeable__factory";
 export type { BaseVaultUpgradeable } from "./contracts/vault/BaseVaultUpgradeable";

@@ -44,7 +44,7 @@ contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInput
 
         __RolesManager_init_unchained(adminAddress, operatorAddress);
         __ERC1155_init_unchained(receiptsURI);
-        __ERC4626MultiToken_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
+        __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
         __ERC4626DeferredOperation_init_unchained(targetVault);
         __BaseRoundsVault_init_unchained(exchangeAsset_);
     }
@@ -72,6 +72,7 @@ contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInput
         calculated for 1 full token
      */
     function _getExchangeRate() internal view override returns (uint256) {
-        return previewDeposit(10**decimals());
+        IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
+        return previewDeposit(10**asset_.decimals());
     }
 }

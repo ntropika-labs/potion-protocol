@@ -30,7 +30,7 @@ import type {
 export interface ERC1155FullSupplyUpgradeableInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -45,8 +45,8 @@ export interface ERC1155FullSupplyUpgradeableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
       | "exists"
       | "isApprovedForAll"
@@ -60,11 +60,11 @@ export interface ERC1155FullSupplyUpgradeableInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -120,12 +120,9 @@ export interface ERC1155FullSupplyUpgradeableInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -260,13 +257,13 @@ export interface ERC1155FullSupplyUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -330,13 +327,13 @@ export interface ERC1155FullSupplyUpgradeable extends BaseContract {
     ): Promise<[string]>;
   };
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -400,13 +397,13 @@ export interface ERC1155FullSupplyUpgradeable extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -523,13 +520,13 @@ export interface ERC1155FullSupplyUpgradeable extends BaseContract {
   };
 
   estimateGas: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -594,13 +591,13 @@ export interface ERC1155FullSupplyUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

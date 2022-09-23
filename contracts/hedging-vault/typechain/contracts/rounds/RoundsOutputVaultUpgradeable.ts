@@ -37,13 +37,12 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "VAULT_ROLE()": FunctionFragment;
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
-    "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
@@ -94,14 +93,13 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "STRATEGIST_ROLE"
       | "VAULT_ROLE"
       | "asset"
-      | "balanceOf(address,uint256)"
-      | "balanceOf(address)"
+      | "balanceOf"
+      | "balanceOfAll"
       | "balanceOfBatch"
       | "canRefund"
       | "canRefundETH"
       | "convertToAssets"
       | "convertToShares"
-      | "decimals"
       | "deposit"
       | "exchangeAsset"
       | "exists"
@@ -169,11 +167,11 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address,uint256)",
+    functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -196,7 +194,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "convertToShares",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -399,12 +396,9 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOf(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOf(address)",
+    functionFragment: "balanceOfAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -424,7 +418,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "convertToShares",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exchangeAsset",
@@ -579,8 +572,8 @@ export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
-  assets: BigNumber;
   id: BigNumber;
+  assets: BigNumber;
 }
 export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -615,8 +608,8 @@ export interface RedeemReceiptEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amount: BigNumber;
   id: BigNumber;
+  amount: BigNumber;
 }
 export type RedeemReceiptEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
@@ -629,8 +622,8 @@ export interface RedeemReceiptBatchEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  amounts: BigNumber[];
   ids: BigNumber[];
+  amounts: BigNumber[];
 }
 export type RedeemReceiptBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -805,13 +798,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     asset(overrides?: CallOverrides): Promise<[string]>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -838,8 +831,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1067,13 +1058,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
   asset(overrides?: CallOverrides): Promise<string>;
 
-  "balanceOf(address,uint256)"(
+  balanceOf(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "balanceOf(address)"(
+  balanceOfAll(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1100,8 +1091,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     assets: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
 
   deposit(
     assets: PromiseOrValue<BigNumberish>,
@@ -1327,13 +1316,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     asset(overrides?: CallOverrides): Promise<string>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1360,8 +1349,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1582,14 +1569,14 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      id?: null
+      id?: null,
+      assets?: null
     ): DepositWithReceiptEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
@@ -1609,30 +1596,30 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
     RedeemReceipt(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amount?: null,
-      id?: null
+      id?: null,
+      amount?: null
     ): RedeemReceiptEventFilter;
 
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
     RedeemReceiptBatch(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      amounts?: null,
-      ids?: null
+      ids?: null,
+      amounts?: null
     ): RedeemReceiptBatchEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
@@ -1768,13 +1755,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     asset(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1801,8 +1788,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -2031,13 +2016,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "balanceOf(address,uint256)"(
+    balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "balanceOf(address)"(
+    balanceOfAll(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2064,8 +2049,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,

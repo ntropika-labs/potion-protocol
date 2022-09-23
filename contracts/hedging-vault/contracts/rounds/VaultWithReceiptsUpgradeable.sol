@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "../extensions/ERC1155DecimalsUpgradeable.sol";
 import "../extensions/ERC1155FullSupplyUpgradeable.sol";
 import "../interfaces/IVaultWithReceiptsUpgradeable.sol";
 
@@ -35,7 +34,6 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20M
  */
 abstract contract VaultWithReceiptsUpgradeable is
     Initializable,
-    ERC1155DecimalsUpgradeable,
     ERC1155FullSupplyUpgradeable,
     IVaultWithReceiptsUpgradeable
 {
@@ -46,11 +44,11 @@ abstract contract VaultWithReceiptsUpgradeable is
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
      */
-    function __ERC4626MultiToken_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
-        __ERC4626MultiToken_init_unchained(asset_);
+    function __VaultWithReceipts_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
+        __VaultWithReceipts_init_unchained(asset_);
     }
 
-    function __ERC4626MultiToken_init_unchained(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
+    function __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
         _asset = asset_;
     }
 
@@ -64,19 +62,6 @@ abstract contract VaultWithReceiptsUpgradeable is
         return _asset.balanceOf(address(this));
     }
 
-    /** 
-        @inheritdoc ERC1155DecimalsUpgradeable
-    */
-    function decimals()
-        public
-        view
-        virtual
-        override(ERC1155DecimalsUpgradeable, IERC1155DecimalsUpgradeable)
-        returns (uint8)
-    {
-        return _asset.decimals();
-    }
-
     /** @dev See {IERC4626MultiToken-maxDeposit} */
     function maxDeposit(address) public view virtual override returns (uint256) {
         return _isVaultCollateralized() ? type(uint256).max : 0;
@@ -84,7 +69,7 @@ abstract contract VaultWithReceiptsUpgradeable is
 
     /** @dev See {IERC4626MultiToken-maxRedeem} */
     function maxRedeem(address owner) public view virtual override returns (uint256) {
-        return balanceOf(owner);
+        return balanceOfAll(owner);
     }
 
     /** @dev See {IERC4626MultiToken-deposit} */
@@ -137,7 +122,7 @@ abstract contract VaultWithReceiptsUpgradeable is
     function _deposit(
         address caller,
         address receiver,
-        uint256 assets,
+        uint256 amount,
         uint256 id
     ) private {
         // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
@@ -147,10 +132,10 @@ abstract contract VaultWithReceiptsUpgradeable is
         // Conclusion: we need to do the transfer before we mint so that any reentrancy would happen before the
         // assets are transfered and before the shares are minted, which is a valid state.
         // slither-disable-next-line reentrancy-no-eth
-        SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), assets);
-        _mint(receiver, id, assets, "");
+        SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), amount);
+        _mint(receiver, id, amount, "");
 
-        emit DepositWithReceipt(caller, receiver, assets, id);
+        emit DepositWithReceipt(caller, receiver, id, amount);
     }
 
     /**
@@ -176,7 +161,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         _burn(owner, id, amount);
         SafeERC20Upgradeable.safeTransfer(_asset, receiver, amount);
 
-        emit RedeemReceipt(caller, receiver, owner, amount, id);
+        emit RedeemReceipt(caller, receiver, owner, id, amount);
     }
 
     /**
@@ -203,7 +188,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         _burnBatch(owner, ids, amounts);
         SafeERC20Upgradeable.safeTransfer(_asset, receiver, totalAmount);
 
-        emit RedeemReceiptBatch(caller, receiver, owner, amounts, ids);
+        emit RedeemReceiptBatch(caller, receiver, owner, ids, amounts);
     }
 
     function _isVaultCollateralized() private view returns (bool) {

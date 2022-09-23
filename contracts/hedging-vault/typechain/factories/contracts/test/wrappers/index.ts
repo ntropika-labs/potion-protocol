@@ -12,3 +12,4 @@ export { TestWrapperPriceUtils__factory } from "./TestWrapperPriceUtils__factory
 export { TestWrapperRefundsHelper__factory } from "./TestWrapperRefundsHelper__factory";
 export { TestWrapperRolesManager__factory } from "./TestWrapperRolesManager__factory";
 export { TestWrapperUniswapV3SwapLib__factory } from "./TestWrapperUniswapV3SwapLib__factory";
+export { TestWrapperVaultWithReceipts__factory } from "./TestWrapperVaultWithReceipts__factory";

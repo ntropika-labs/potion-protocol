@@ -53,13 +53,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "assets",
+        name: "id",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "id",
+        name: "assets",
         type: "uint256",
       },
     ],
@@ -90,13 +90,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "id",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "id",
+        name: "amount",
         type: "uint256",
       },
     ],
@@ -127,13 +127,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256[]",
-        name: "amounts",
+        name: "ids",
         type: "uint256[]",
       },
       {
         indexed: false,
         internalType: "uint256[]",
-        name: "ids",
+        name: "amounts",
         type: "uint256[]",
       },
     ],
@@ -278,7 +278,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "balanceOf",
+    name: "balanceOfAll",
     outputs: [
       {
         internalType: "uint256",
@@ -346,19 +346,6 @@ const _abi = [
         internalType: "uint256",
         name: "shares",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "decimals",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -510,6 +497,25 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "assets",
+        type: "uint256",
+      },
+    ],
+    name: "previewDeposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "shares",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

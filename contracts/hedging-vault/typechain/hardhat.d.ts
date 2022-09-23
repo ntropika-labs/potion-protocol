@@ -197,10 +197,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RolesManagerUpgradeable__factory>;
     getContractFactory(
-      name: "ERC1155DecimalsUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155DecimalsUpgradeable__factory>;
-    getContractFactory(
       name: "ERC1155FullSupplyUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155FullSupplyUpgradeable__factory>;
@@ -208,10 +204,6 @@ declare module "hardhat/types/runtime" {
       name: "ERC4626CapUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626CapUpgradeable__factory>;
-    getContractFactory(
-      name: "IERC1155DecimalsUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC1155DecimalsUpgradeable__factory>;
     getContractFactory(
       name: "IERC1155FullSupplyUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -436,6 +428,10 @@ declare module "hardhat/types/runtime" {
       name: "TestWrapperUniswapV3SwapLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
+    getContractFactory(
+      name: "TestWrapperVaultWithReceipts",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperVaultWithReceipts__factory>;
     getContractFactory(
       name: "ActionsManagerUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -688,11 +684,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.RolesManagerUpgradeable>;
     getContractAt(
-      name: "ERC1155DecimalsUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155DecimalsUpgradeable>;
-    getContractAt(
       name: "ERC1155FullSupplyUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -702,11 +693,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC4626CapUpgradeable>;
-    getContractAt(
-      name: "IERC1155DecimalsUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC1155DecimalsUpgradeable>;
     getContractAt(
       name: "IERC1155FullSupplyUpgradeable",
       address: string,
@@ -987,6 +973,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
+    getContractAt(
+      name: "TestWrapperVaultWithReceipts",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperVaultWithReceipts>;
     getContractAt(
       name: "ActionsManagerUpgradeable",
       address: string,
