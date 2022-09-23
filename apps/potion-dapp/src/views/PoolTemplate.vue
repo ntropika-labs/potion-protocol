@@ -23,7 +23,6 @@ import { getEtherscanUrl } from "@/helpers/addresses";
 
 import { useTokenList } from "@/composables/useTokenList";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
-import { useTemplateSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useNotifications } from "@/composables/useNotifications";
 import { useCriteriasTokens } from "@/composables/useCriteriasTokens";
@@ -43,17 +42,10 @@ const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 const { walletAddress, userCollateralBalance } = useUserData();
 
 const { templateId } = useRouteTemplateId(route.params);
-const { template, curve, criterias } = usePoolTemplate(templateId);
+const { template, curve, criterias, dailyData } = usePoolTemplate(templateId);
 
-const { chartData, fetching: loadingSnapshots } = useTemplateSnapshots(
-  templateId.value
-);
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 onMounted(() => getBlock("latest"));
-
-const performanceChartDataReady = computed(
-  () => !(loadingSnapshots.value || loadingBlock.value)
-);
 
 const { tokens, assets, tokenPricesMap } = useCriteriasTokens(criterias);
 
@@ -185,8 +177,8 @@ watch(approveDeployPoolReceipt, (receipt) => {
     <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-3">
       <div class="flex flex-col gap-8 xl:col-span-2">
         <PerformanceCard
-          v-if="performanceChartDataReady"
-          :performance-data="chartData"
+          v-if="!loadingBlock"
+          :performance-data="dailyData"
           :today-timestamp="blockTimestamp"
         >
         </PerformanceCard>

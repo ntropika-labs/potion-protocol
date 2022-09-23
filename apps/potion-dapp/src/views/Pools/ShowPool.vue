@@ -31,11 +31,11 @@ import { useNotifications } from "@/composables/useNotifications";
 import { usePool } from "@/composables/usePool";
 import { usePoolLiquidity } from "@/composables/usePoolLiquidity";
 import { usePoolOtokens } from "@/composables/usePoolOtokens";
-import { usePoolSnapshots } from "@/composables/useSnapshots";
 import { useRoutePoolId } from "@/composables/useRoutePoolId";
 import { useTokenList } from "@/composables/useTokenList";
 import { useUserData } from "@/composables/useUserData";
 import { useWithdraw } from "@/composables/useWithdraw";
+import type { PerformanceData } from "dapp-types";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -46,7 +46,7 @@ const { fetchUserData, userAllowance, userCollateralBalance } = useUserData();
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const { poolId, poolLp, id } = useRoutePoolId(route.params);
-const { pool, curve, criterias, fetching, error } = usePool(id);
+const { pool, curve, criterias, fetching, error, dailyData } = usePool(id);
 
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 
@@ -54,16 +54,6 @@ const { activeOtokens, expiredOtokens, payoutMap } = usePoolOtokens(
   id,
   poolId,
   poolLp
-);
-
-const {
-  chartData,
-  fetching: loadingSnapshots,
-  executeQuery: fetchPoolSnapshots,
-} = usePoolSnapshots(id.value);
-
-const performanceChartDataReady = computed(
-  () => !loadingSnapshots.value && !loadingBlock.value
 );
 
 const { assets, tokens, tokenPricesMap } = useCriteriasTokens(criterias);
@@ -144,8 +134,20 @@ const {
   claimedOtokens,
 } = useClaimCollateral(poolId, poolLp);
 
-onMounted(async () => {
-  await getBlock("latest");
+onMounted(() => getBlock("latest"));
+
+const sessionData = ref<PerformanceData[]>([]);
+const chartData = computed(() => dailyData.value.concat(sessionData.value));
+
+watch(liquidity, () => {
+  if (!loadingBlock.value) {
+    sessionData.value.push({
+      timestamp: blockTimestamp.value,
+      pnl: parseFloat(pnlPercentage.value),
+      liquidity: parseFloat(liquidity.value),
+      utilization: parseFloat(utilizationPercentage.value),
+    });
+  }
 });
 
 const onEditClick = () =>
@@ -157,8 +159,6 @@ const onEditClick = () =>
 const isLoading = computed(
   () => depositLoading.value || withdrawLoading.value || approveLoading.value
 );
-
-watch(liquidity, fetchPoolSnapshots);
 
 /*
  * Toast notifications
@@ -252,7 +252,7 @@ watch(claimCollateralReceipt, (receipt) =>
     <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-3">
       <div class="flex flex-col gap-8 xl:col-span-2">
         <PerformanceCard
-          v-if="performanceChartDataReady"
+          v-if="!loadingBlock"
           :performance-data="chartData"
           :today-timestamp="blockTimestamp"
         >
