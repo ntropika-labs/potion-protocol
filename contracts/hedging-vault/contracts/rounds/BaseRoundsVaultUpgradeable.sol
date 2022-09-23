@@ -10,7 +10,7 @@ import { CountersUpgradeable as Counters } from "@openzeppelin/contracts-upgrade
 import "../common/EmergencyLockUpgradeable.sol";
 import "../common/RefundsHelperUpgreadable.sol";
 import "../common/RolesManagerUpgradeable.sol";
-import "../extensions/ERC4626DeferredOperationUpgradeable.sol";
+import "./VaultDeferredOperationUpgradeable.sol";
 import "../interfaces/IBaseRoundsVault.sol";
 
 /**
@@ -33,7 +33,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     RolesManagerUpgradeable,
     EmergencyLockUpgradeable,
     RefundsHelperUpgreadable,
-    ERC4626DeferredOperationUpgradeable,
+    VaultDeferredOperationUpgradeable,
     IBaseRoundsVault
 {
     using Counters for Counters.Counter;
@@ -82,28 +82,28 @@ abstract contract BaseRoundsVaultUpgradeable is
     }
 
     /**
-        @inheritdoc IERC4626MultiTokenUpgradeable
+        @inheritdoc IVaultWithReceiptsUpgradeable
      */
     function redeem(
         uint256 id,
         uint256 amount,
         address receiver,
         address owner
-    ) public virtual override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable) returns (uint256) {
+    ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256) {
         require(id == _roundNumber.current(), "RoundsInputVaultUpgradeable: can only redeem current round");
 
         return super.redeem(id, amount, receiver, owner);
     }
 
     /**
-        @inheritdoc IERC4626MultiTokenUpgradeable
+        @inheritdoc IVaultWithReceiptsUpgradeable
      */
     function redeemBatch(
         uint256[] memory ids,
         uint256[] memory amounts,
         address receiver,
         address owner
-    ) public virtual override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable) returns (uint256 assets) {
+    ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256 assets) {
         for (uint256 i = 0; i < ids.length; i++) {
             require(ids[i] == _roundNumber.current(), "RoundsInputVaultUpgradeable: can only redeem current round");
         }
@@ -261,7 +261,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     }
 
     /**
-        @inheritdoc ERC4626MultiTokenUpgradeable
+        @inheritdoc VaultWithReceiptsUpgradeable
      */
     function _getMintId() internal view virtual override returns (uint256) {
         return _roundNumber.current();

@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface ERC20DecimalsMockUpgradeableInterface extends utils.Interface {
+export interface ERC20DecimalsUpgradeableMockInterface extends utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -188,12 +188,12 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface ERC20DecimalsMockUpgradeable extends BaseContract {
+export interface ERC20DecimalsUpgradeableMock extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC20DecimalsMockUpgradeableInterface;
+  interface: ERC20DecimalsUpgradeableMockInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

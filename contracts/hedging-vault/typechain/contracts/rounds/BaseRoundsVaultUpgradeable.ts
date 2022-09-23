@@ -515,10 +515,12 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "Deposit(address,address,uint256,uint256)": EventFragment;
+    "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "NextRound(uint256)": EventFragment;
     "Paused(address)": EventFragment;
+    "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -526,17 +528,17 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "Withdraw(address,address,address,uint256,uint256,uint256)": EventFragment;
-    "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
     "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)": EventFragment;
     "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositWithReceipt"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceipt"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceiptBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -544,8 +546,6 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAsset"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawExchangeAssetBatch"): EventFragment;
 }
@@ -562,18 +562,19 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export interface DepositEventObject {
+export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
   assets: BigNumber;
-  shares: BigNumber;
+  id: BigNumber;
 }
-export type DepositEvent = TypedEvent<
+export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
-  DepositEventObject
+  DepositWithReceiptEventObject
 >;
 
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export type DepositWithReceiptEventFilter =
+  TypedEventFilter<DepositWithReceiptEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -595,6 +596,35 @@ export interface PausedEventObject {
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface RedeemReceiptEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amount: BigNumber;
+  id: BigNumber;
+}
+export type RedeemReceiptEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  RedeemReceiptEventObject
+>;
+
+export type RedeemReceiptEventFilter = TypedEventFilter<RedeemReceiptEvent>;
+
+export interface RedeemReceiptBatchEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amounts: BigNumber[];
+  ids: BigNumber[];
+}
+export type RedeemReceiptBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  RedeemReceiptBatchEventObject
+>;
+
+export type RedeemReceiptBatchEventFilter =
+  TypedEventFilter<RedeemReceiptBatchEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -675,36 +705,6 @@ export interface UnpausedEventObject {
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
-
-export interface WithdrawEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesId: BigNumber;
-  sharesAmount: BigNumber;
-}
-export type WithdrawEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, BigNumber],
-  WithdrawEventObject
->;
-
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
-
-export interface WithdrawBatchEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesIds: BigNumber[];
-  sharesAmounts: BigNumber[];
-}
-export type WithdrawBatchEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber[], BigNumber[]],
-  WithdrawBatchEventObject
->;
-
-export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
 
 export interface WithdrawExchangeAssetEventObject {
   caller: string;
@@ -1529,18 +1529,18 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "Deposit(address,address,uint256,uint256)"(
+    "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
-      shares?: null
-    ): DepositEventFilter;
-    Deposit(
+      id?: null
+    ): DepositWithReceiptEventFilter;
+    DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
-      shares?: null
-    ): DepositEventFilter;
+      id?: null
+    ): DepositWithReceiptEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
@@ -1554,6 +1554,36 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "RedeemReceipt(address,address,address,uint256,uint256)"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+    RedeemReceipt(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
+    RedeemReceiptBatch(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1626,40 +1656,6 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
-
-    "Withdraw(address,address,address,uint256,uint256,uint256)"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawEventFilter;
-    Withdraw(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawEventFilter;
-
-    "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawBatchEventFilter;
-    WithdrawBatch(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawBatchEventFilter;
 
     "WithdrawExchangeAsset(address,address,address,uint256,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,

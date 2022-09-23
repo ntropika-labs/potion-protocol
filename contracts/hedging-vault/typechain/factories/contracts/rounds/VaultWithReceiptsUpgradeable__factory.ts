@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC4626DeferredOperationUpgradeable,
-  IERC4626DeferredOperationUpgradeableInterface,
-} from "../../../../contracts/extensions/interfaces/IERC4626DeferredOperationUpgradeable";
+  VaultWithReceiptsUpgradeable,
+  VaultWithReceiptsUpgradeableInterface,
+} from "../../../contracts/rounds/VaultWithReceiptsUpgradeable";
 
 const _abi = [
   {
@@ -59,11 +59,98 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "shares",
+        name: "id",
         type: "uint256",
       },
     ],
-    name: "Deposit",
+    name: "DepositWithReceipt",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    name: "RedeemReceipt",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+    ],
+    name: "RedeemReceiptBatch",
     type: "event",
   },
   {
@@ -160,98 +247,12 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "sharesId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "sharesAmount",
-        type: "uint256",
-      },
-    ],
-    name: "Withdraw",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256[]",
-        name: "sharesIds",
-        type: "uint256[]",
-      },
-      {
-        indexed: false,
-        internalType: "uint256[]",
-        name: "sharesAmounts",
-        type: "uint256[]",
-      },
-    ],
-    name: "WithdrawBatch",
-    type: "event",
-  },
-  {
     inputs: [],
     name: "asset",
     outputs: [
       {
         internalType: "address",
-        name: "assetTokenAddress",
+        name: "",
         type: "address",
       },
     ],
@@ -326,44 +327,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-    ],
-    name: "convertToAssets",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-    ],
-    name: "convertToShares",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "decimals",
     outputs: [
@@ -393,7 +356,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -447,7 +410,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "receiver",
+        name: "",
         type: "address",
       },
     ],
@@ -455,26 +418,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "maxAssets",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-    ],
-    name: "maxMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "maxShares",
+        name: "",
         type: "uint256",
       },
     ],
@@ -493,69 +437,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "maxShares",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-    ],
-    name: "mint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "assets",
-        type: "uint256",
-      },
-    ],
-    name: "previewDeposit",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-    ],
-    name: "previewMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -585,12 +467,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "sharesId",
+        name: "id",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "sharesAmount",
+        name: "amount",
         type: "uint256",
       },
       {
@@ -608,7 +490,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -619,12 +501,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256[]",
-        name: "sharesIds",
+        name: "ids",
         type: "uint256[]",
       },
       {
         internalType: "uint256[]",
-        name: "sharesAmounts",
+        name: "amounts",
         type: "uint256[]",
       },
       {
@@ -642,7 +524,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -758,7 +640,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "totalManagedAssets",
+        name: "",
         type: "uint256",
       },
     ],
@@ -798,13 +680,19 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "vault",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "uri",
     outputs: [
       {
-        internalType: "address",
-        name: "vaultAddress",
-        type: "address",
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -812,21 +700,19 @@ const _abi = [
   },
 ];
 
-export class IERC4626DeferredOperationUpgradeable__factory {
+export class VaultWithReceiptsUpgradeable__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC4626DeferredOperationUpgradeableInterface {
-    return new utils.Interface(
-      _abi
-    ) as IERC4626DeferredOperationUpgradeableInterface;
+  static createInterface(): VaultWithReceiptsUpgradeableInterface {
+    return new utils.Interface(_abi) as VaultWithReceiptsUpgradeableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC4626DeferredOperationUpgradeable {
+  ): VaultWithReceiptsUpgradeable {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as IERC4626DeferredOperationUpgradeable;
+    ) as VaultWithReceiptsUpgradeable;
   }
 }

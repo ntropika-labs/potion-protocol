@@ -6,8 +6,7 @@ pragma solidity 0.8.14;
 import "../interfaces/IEmergencyLock.sol";
 import "../interfaces/IRefundsHelper.sol";
 import "../interfaces/IRolesManager.sol";
-
-import "../extensions/interfaces/IERC4626DeferredOperationUpgradeable.sol";
+import "../interfaces/IVaultDeferredOperationUpgradeable.sol";
 
 /**
     @title BaseRoundsVaultUpgradeable
@@ -41,7 +40,7 @@ import "../extensions/interfaces/IERC4626DeferredOperationUpgradeable.sol";
 
 // TODO: We are having hierarchy linearization issues here because of the interfaces. Remove them and
 // TODO: wait for the next release of the compiler to fix it
-interface IBaseRoundsVault is IERC4626DeferredOperationUpgradeable {
+interface IBaseRoundsVault is IVaultDeferredOperationUpgradeable {
     // EVENTS
     event NextRound(uint256 indexed newRoundNumber);
     event WithdrawExchangeAsset(

@@ -2,13 +2,14 @@
 
 pragma solidity ^0.8.0;
 
+import "../extensions/ERC1155DecimalsUpgradeable.sol";
+import "../extensions/ERC1155FullSupplyUpgradeable.sol";
+import "../interfaces/IVaultWithReceiptsUpgradeable.sol";
+
 import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable-4.7.3/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "./ERC1155DecimalsUpgradeable.sol";
-import "./ERC1155FullSupplyUpgradeable.sol";
-import "./interfaces/IERC4626MultiTokenUpgradeable.sol";
 
 /**
     @notice Implementation of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 receipts.
@@ -32,11 +33,11 @@ import "./interfaces/IERC4626MultiTokenUpgradeable.sol";
 
     @author Roberto Cano <robercano>
  */
-abstract contract ERC4626MultiTokenUpgradeable is
+abstract contract VaultWithReceiptsUpgradeable is
     Initializable,
     ERC1155DecimalsUpgradeable,
     ERC1155FullSupplyUpgradeable,
-    IERC4626MultiTokenUpgradeable
+    IVaultWithReceiptsUpgradeable
 {
     using MathUpgradeable for uint256;
 
@@ -45,11 +46,11 @@ abstract contract ERC4626MultiTokenUpgradeable is
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
      */
-    function __ERC4626_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
-        __ERC4626_init_unchained(asset_);
+    function __ERC4626MultiToken_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
+        __ERC4626MultiToken_init_unchained(asset_);
     }
 
-    function __ERC4626_init_unchained(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
+    function __ERC4626MultiToken_init_unchained(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
         _asset = asset_;
     }
 
@@ -76,24 +77,9 @@ abstract contract ERC4626MultiTokenUpgradeable is
         return _asset.decimals();
     }
 
-    /** @dev See {IERC4626MultiToken-convertToShares} */
-    function convertToShares(uint256 assets) public view virtual override returns (uint256 shares) {
-        return _convertToShares(assets);
-    }
-
-    /** @dev See {IERC4626MultiToken-convertToAssets} */
-    function convertToAssets(uint256 shares) public view virtual override returns (uint256 assets) {
-        return _convertToAssets(shares);
-    }
-
     /** @dev See {IERC4626MultiToken-maxDeposit} */
     function maxDeposit(address) public view virtual override returns (uint256) {
         return _isVaultCollateralized() ? type(uint256).max : 0;
-    }
-
-    /** @dev See {IERC4626MultiToken-maxMint} */
-    function maxMint(address) public view virtual override returns (uint256) {
-        return type(uint256).max;
     }
 
     /** @dev See {IERC4626MultiToken-maxRedeem} */
@@ -101,37 +87,11 @@ abstract contract ERC4626MultiTokenUpgradeable is
         return balanceOf(owner);
     }
 
-    /** @dev See {IERC4626MultiToken-previewDeposit} */
-    function previewDeposit(uint256 assets) public view virtual override returns (uint256) {
-        return _convertToShares(assets);
-    }
-
-    /** @dev See {IERC4626MultiToken-previewMint} */
-    function previewMint(uint256 shares) public view virtual override returns (uint256) {
-        return _convertToAssets(shares);
-    }
-
-    /** @dev See {IERC4626MultiToken-previewRedeem} */
-    function previewRedeem(uint256 shares) public view virtual override returns (uint256) {
-        return _convertToAssets(shares);
-    }
-
     /** @dev See {IERC4626MultiToken-deposit} */
     function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
         require(assets <= maxDeposit(receiver), "ERC4626MultiToken: deposit more than max");
 
-        uint256 shares = previewDeposit(assets);
-        _deposit(_msgSender(), receiver, assets, shares, _getMintId());
-
-        return shares;
-    }
-
-    /** @dev See {IERC4626MultiToken-mint} */
-    function mint(uint256 shares, address receiver) public virtual override returns (uint256) {
-        require(shares <= maxMint(receiver), "ERC4626MultiToken: mint more than max");
-
-        uint256 assets = previewMint(shares);
-        _deposit(_msgSender(), receiver, assets, shares, _getMintId());
+        _deposit(_msgSender(), receiver, assets, _getMintId());
 
         return assets;
     }
@@ -145,10 +105,9 @@ abstract contract ERC4626MultiTokenUpgradeable is
     ) public virtual override returns (uint256) {
         require(amount <= maxRedeem(owner), "ERC4626MultiToken: redeem more than max");
 
-        uint256 assets = previewRedeem(amount);
-        _withdraw(_msgSender(), receiver, owner, assets, id, amount);
+        _redeem(_msgSender(), receiver, owner, amount, id);
 
-        return assets;
+        return amount;
     }
 
     /** @dev See {IERC4626MultiToken-redeemBatch} */
@@ -160,51 +119,26 @@ abstract contract ERC4626MultiTokenUpgradeable is
     ) public virtual override returns (uint256) {
         require(ids.length == amounts.length, "ERC4626MultiToken: mismatch shares ids and amounts lengths");
 
-        uint256 totalShares = 0;
+        uint256 totalAmount = 0;
         for (uint256 i = 0; i < ids.length; i++) {
-            totalShares += amounts[i];
+            totalAmount += amounts[i];
         }
 
-        require(totalShares <= maxRedeem(owner), "ERC4626MultiToken: redeem more than max");
+        require(totalAmount <= maxRedeem(owner), "ERC4626MultiToken: redeem more than max");
 
-        uint256 assets = previewRedeem(totalShares);
-        _withdrawBatch(_msgSender(), receiver, owner, assets, ids, amounts);
+        _redeemBatch(_msgSender(), receiver, owner, totalAmount, ids, amounts);
 
-        return assets;
+        return totalAmount;
     }
 
     /**
-     * @dev Internal convertion function (from assets to shares) with support for rounding direction
-     *
-     * Will revert if assets > 0, totalSupply > 0 and totalAssets = 0. That corresponds to a case where any asset
-     * would represent an infinite amout of shares.
-     */
-    function _convertToShares(uint256 assets) internal view virtual returns (uint256 shares) {
-        uint256 supply = totalSupplyAll();
-        return
-            (assets == 0 || supply == 0)
-                ? (assets * (10**decimals())) / (10**_asset.decimals())
-                : (assets * supply) / totalAssets();
-    }
-
-    /**
-     * @dev Internal convertion function (from shares to assets) with support for rounding direction
-     */
-    function _convertToAssets(uint256 shares) internal view virtual returns (uint256 assets) {
-        uint256 supply = totalSupplyAll();
-        return
-            (supply == 0) ? (shares * (10**_asset.decimals())) / (10**decimals()) : (shares * totalAssets()) / supply;
-    }
-
-    /**
-     * @dev Deposit/mint common workflow
+        @dev Deposit/mint common workflow
      */
     function _deposit(
         address caller,
         address receiver,
         uint256 assets,
-        uint256 amount,
-        uint256 round
+        uint256 id
     ) private {
         // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
         // `tokensToSend` hook. On the other hand, the `tokenReceived` hook, that is triggered after the transfer,
@@ -214,21 +148,20 @@ abstract contract ERC4626MultiTokenUpgradeable is
         // assets are transfered and before the shares are minted, which is a valid state.
         // slither-disable-next-line reentrancy-no-eth
         SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), assets);
-        _mint(receiver, round, amount, "");
+        _mint(receiver, id, assets, "");
 
-        emit Deposit(caller, receiver, assets, amount);
+        emit DepositWithReceipt(caller, receiver, assets, id);
     }
 
     /**
-     * @dev Withdraw/redeem common workflow
+        @dev Redeem workflow
      */
-    function _withdraw(
+    function _redeem(
         address caller,
         address receiver,
         address owner,
-        uint256 assets,
-        uint256 id,
-        uint256 amount
+        uint256 amount,
+        uint256 id
     ) private {
         if (caller != owner) {
             require(isApprovedForAll(owner, caller), "ERC4626MultiToken: caller is not owner nor approved");
@@ -241,16 +174,19 @@ abstract contract ERC4626MultiTokenUpgradeable is
         // Conclusion: we need to do the Setransfer after the burn so that any reentrancy would happen after the
         // shares are burned and after the assets are transfered, which is a valid state.
         _burn(owner, id, amount);
-        SafeERC20Upgradeable.safeTransfer(_asset, receiver, assets);
+        SafeERC20Upgradeable.safeTransfer(_asset, receiver, amount);
 
-        emit Withdraw(caller, receiver, owner, assets, id, amount);
+        emit RedeemReceipt(caller, receiver, owner, amount, id);
     }
 
-    function _withdrawBatch(
+    /**
+        @dev The caller must make sure that totalAmount is the sum of all the amounts in the amounts array
+     */
+    function _redeemBatch(
         address caller,
         address receiver,
         address owner,
-        uint256 assets,
+        uint256 totalAmount,
         uint256[] memory ids,
         uint256[] memory amounts
     ) private {
@@ -265,9 +201,9 @@ abstract contract ERC4626MultiTokenUpgradeable is
         // Conclusion: we need to do the transfer after the burn so that any reentrancy would happen after the
         // shares are burned and after the assets are transfered, which is a valid state.
         _burnBatch(owner, ids, amounts);
-        SafeERC20Upgradeable.safeTransfer(_asset, receiver, assets);
+        SafeERC20Upgradeable.safeTransfer(_asset, receiver, totalAmount);
 
-        emit WithdrawBatch(caller, receiver, owner, assets, ids, amounts);
+        emit RedeemReceiptBatch(caller, receiver, owner, amounts, ids);
     }
 
     function _isVaultCollateralized() private view returns (bool) {

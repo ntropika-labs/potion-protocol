@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 
-contract ERC20DecimalsMockUpgradeable is Initializable, ERC20Upgradeable {
+contract ERC20DecimalsUpgradeableMock is Initializable, ERC20Upgradeable {
     uint8 private _decimals;
 
     function __ERC20DecimalsMock_init(

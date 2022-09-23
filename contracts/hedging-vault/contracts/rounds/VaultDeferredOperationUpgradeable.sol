@@ -2,10 +2,11 @@
 
 pragma solidity ^0.8.0;
 
+import "./VaultWithReceiptsUpgradeable.sol";
+import "../interfaces/IVaultDeferredOperationUpgradeable.sol";
+
 import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC4626Upgradeable.sol";
-import "./ERC4626MultiTokenUpgradeable.sol";
-import "./interfaces/IERC4626DeferredOperationUpgradeable.sol";
 
 /**
     @dev Deferred operations vault that takes care of handling deposits/withdrawals for a target vault.
@@ -30,10 +31,10 @@ import "./interfaces/IERC4626DeferredOperationUpgradeable.sol";
  
     @author Roberto Cano <robercano>
  */
-abstract contract ERC4626DeferredOperationUpgradeable is
+abstract contract VaultDeferredOperationUpgradeable is
     Initializable,
-    ERC4626MultiTokenUpgradeable,
-    IERC4626DeferredOperationUpgradeable
+    VaultWithReceiptsUpgradeable,
+    IVaultDeferredOperationUpgradeable
 {
     // STORAGE
     IERC4626Upgradeable private _proxiedVault;
@@ -53,7 +54,7 @@ abstract contract ERC4626DeferredOperationUpgradeable is
 
     // PUBLIC FUNCTIONS
 
-    /** @dev See {IERC4626MultiTokenUpgradeable-vault} */
+    /** @dev See {IVaultDeferredOperationUpgradeable-vault} */
     function vault() public view returns (address vaultAddress) {
         return address(_proxiedVault);
     }
@@ -61,16 +62,19 @@ abstract contract ERC4626DeferredOperationUpgradeable is
     /**
         @notice Proxies the call to the target vault to get the current underlying-to-shares ratio
 
-        @dev See {IERC4626MultiTokenUpgradeable-convertToShares}
+        @dev See {IVaultDeferredOperationUpgradeable-convertToShares}
     */
-    function convertToShares(uint256 assets)
-        public
-        view
-        virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
-        returns (uint256 shares)
-    {
+    function convertToShares(uint256 assets) public view virtual override returns (uint256 shares) {
         return _proxiedVault.convertToShares(assets);
+    }
+
+    /**
+        @notice Proxies the call to the target vault to get the current shares-to-underlying ratio
+
+        @dev See {IVaultDeferredOperationUpgradeable-convertToAssets}
+     */
+    function convertToAssets(uint256 shares) external view returns (uint256 assets) {
+        return _proxiedVault.convertToAssets(shares);
     }
 
     /**
@@ -83,7 +87,7 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         public
         view
         virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
+        override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable)
         returns (uint256)
     {
         return _proxiedVault.maxDeposit(receiver);
@@ -93,15 +97,9 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         @notice Proxies the call to the target vault to get the maximum mint that the
         target vault accepts
 
-        @dev See {IERC4626MultiTokenUpgradeable-maxMint}
+        @dev See {IVaultDeferredOperationUpgradeable-maxMint}
     */
-    function maxMint(address receiver)
-        public
-        view
-        virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
-        returns (uint256)
-    {
+    function maxMint(address receiver) public view virtual override returns (uint256) {
         return _proxiedVault.maxMint(receiver);
     }
 
@@ -109,15 +107,9 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         @notice Proxies the call to the target vault to preview how many shares a deposit of underlying
         would yield
 
-        @dev See {IERC4626MultiTokenUpgradeable-previewDeposit}
+        @dev See {IVaultDeferredOperationUpgradeable-previewDeposit}
     */
-    function previewDeposit(uint256 assets)
-        public
-        view
-        virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
-        returns (uint256)
-    {
+    function previewDeposit(uint256 assets) public view virtual returns (uint256) {
         return _proxiedVault.convertToShares(assets);
     }
 
@@ -125,15 +117,9 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         @notice Proxies the call to the target vault to preview how much underlying the given minting of
         shares would yield
 
-        @dev See {IERC4626MultiTokenUpgradeable-previewMint}
+        @dev See {IVaultDeferredOperationUpgradeable-previewMint}
     */
-    function previewMint(uint256 shares)
-        public
-        view
-        virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
-        returns (uint256)
-    {
+    function previewMint(uint256 shares) public view virtual override returns (uint256) {
         return _proxiedVault.convertToAssets(shares);
     }
 
@@ -141,16 +127,20 @@ abstract contract ERC4626DeferredOperationUpgradeable is
         @notice Proxies the call to the target vault to preview how much underlying a withdrawal of shares
         would yield
 
-        @dev See {IERC4626MultiTokenUpgradeable-previewRedeem}
+        @dev See {IVaultDeferredOperationUpgradeable-previewRedeem}
     */
-    function previewRedeem(uint256 shares)
-        public
-        view
-        virtual
-        override(ERC4626MultiTokenUpgradeable, IERC4626MultiTokenUpgradeable)
-        returns (uint256)
-    {
+    function previewRedeem(uint256 shares) public view virtual override returns (uint256) {
         return _proxiedVault.convertToAssets(shares);
+    }
+
+    /** @dev See {IVaultDeferredOperationUpgradeable-mint} */
+    function mint(uint256 shares, address receiver) public virtual override returns (uint256) {
+        require(shares <= maxMint(receiver), "ERC4626MultiToken: mint more than max");
+
+        uint256 assets = previewMint(shares);
+        deposit(assets, receiver);
+
+        return assets;
     }
 
     /** 

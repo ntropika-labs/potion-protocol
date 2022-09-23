@@ -4,3 +4,5 @@
 export type { BaseRoundsVaultUpgradeable } from "./BaseRoundsVaultUpgradeable";
 export type { RoundsInputVaultUpgradeable } from "./RoundsInputVaultUpgradeable";
 export type { RoundsOutputVaultUpgradeable } from "./RoundsOutputVaultUpgradeable";
+export type { VaultDeferredOperationUpgradeable } from "./VaultDeferredOperationUpgradeable";
+export type { VaultWithReceiptsUpgradeable } from "./VaultWithReceiptsUpgradeable";

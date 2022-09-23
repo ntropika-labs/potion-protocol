@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol"
  * @title ERC1155Mock
  * This mock just publicizes internal functions for testing purposes
  */
-contract ERC1155MockUpgradeable is Initializable, ERC1155Upgradeable {
+contract ERC1155UpgradeableMock is Initializable, ERC1155Upgradeable {
     function __ERC1155Mock_init(string memory uri) internal onlyInitializing {
         __ERC1155_init_unchained(uri);
     }

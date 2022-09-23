@@ -25,86 +25,112 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../../common";
+} from "../../common";
 
-export interface ERC1155MockUpgradeableInterface extends utils.Interface {
+export interface VaultWithReceiptsUpgradeableInterface extends utils.Interface {
   functions: {
+    "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(address,uint256,uint256)": FunctionFragment;
-    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "deposit(uint256,address)": FunctionFragment;
+    "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address,uint256,uint256,bytes)": FunctionFragment;
-    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
+    "maxDeposit(address)": FunctionFragment;
+    "maxRedeem(address)": FunctionFragment;
+    "previewRedeem(uint256)": FunctionFragment;
+    "redeem(uint256,uint256,address,address)": FunctionFragment;
+    "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "totalAssets()": FunctionFragment;
+    "totalSupply(uint256)": FunctionFragment;
+    "totalSupplyAll()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "balanceOf"
+      | "asset"
+      | "balanceOf(address,uint256)"
+      | "balanceOf(address)"
       | "balanceOfBatch"
-      | "burn"
-      | "burnBatch"
+      | "decimals"
+      | "deposit"
+      | "exists"
       | "isApprovedForAll"
-      | "mint"
-      | "mintBatch"
+      | "maxDeposit"
+      | "maxRedeem"
+      | "previewRedeem"
+      | "redeem"
+      | "redeemBatch"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
-      | "setURI"
       | "supportsInterface"
+      | "totalAssets"
+      | "totalSupply"
+      | "totalSupplyAll"
       | "uri"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf",
+    functionFragment: "balanceOf(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf(address)",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "burn",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    functionFragment: "deposit",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "burnBatch",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    functionFragment: "exists",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint",
+    functionFragment: "maxDeposit",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxRedeem",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "previewRedeem",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeem",
     values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintBatch",
+    functionFragment: "redeemBatch",
     values: [
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -132,31 +158,57 @@ export interface ERC1155MockUpgradeableInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setURI",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalAssets",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupplyAll",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "uri",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf(address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "previewRedeem",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -169,23 +221,40 @@ export interface ERC1155MockUpgradeableInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalAssets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositWithReceipt"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceipt"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceiptBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -203,12 +272,55 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
+export interface DepositWithReceiptEventObject {
+  caller: string;
+  owner: string;
+  assets: BigNumber;
+  id: BigNumber;
+}
+export type DepositWithReceiptEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber],
+  DepositWithReceiptEventObject
+>;
+
+export type DepositWithReceiptEventFilter =
+  TypedEventFilter<DepositWithReceiptEvent>;
+
 export interface InitializedEventObject {
   version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface RedeemReceiptEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amount: BigNumber;
+  id: BigNumber;
+}
+export type RedeemReceiptEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  RedeemReceiptEventObject
+>;
+
+export type RedeemReceiptEventFilter = TypedEventFilter<RedeemReceiptEvent>;
+
+export interface RedeemReceiptBatchEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amounts: BigNumber[];
+  ids: BigNumber[];
+}
+export type RedeemReceiptBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  RedeemReceiptBatchEventObject
+>;
+
+export type RedeemReceiptBatchEventFilter =
+  TypedEventFilter<RedeemReceiptBatchEvent>;
 
 export interface TransferBatchEventObject {
   operator: string;
@@ -246,12 +358,12 @@ export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
-export interface ERC1155MockUpgradeable extends BaseContract {
+export interface VaultWithReceiptsUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC1155MockUpgradeableInterface;
+  interface: VaultWithReceiptsUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -273,9 +385,16 @@ export interface ERC1155MockUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    balanceOf(
+    asset(overrides?: CallOverrides): Promise<[string]>;
+
+    "balanceOf(address,uint256)"(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "balanceOf(address)"(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -285,19 +404,18 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    burn(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+    decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    deposit(
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    burnBatch(
-      owner: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    exists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -305,19 +423,34 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    mint(
-      to: PromiseOrValue<string>,
+    maxDeposit(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { assets: BigNumber }>;
+
+    redeem(
       id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    mintBatch(
-      to: PromiseOrValue<string>,
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      amounts: PromiseOrValue<BigNumberish>[],
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -345,15 +478,19 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setURI(
-      newuri: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    totalSupply(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -361,9 +498,16 @@ export interface ERC1155MockUpgradeable extends BaseContract {
     ): Promise<[string]>;
   };
 
-  balanceOf(
+  asset(overrides?: CallOverrides): Promise<string>;
+
+  "balanceOf(address,uint256)"(
     account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "balanceOf(address)"(
+    account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -373,19 +517,18 @@ export interface ERC1155MockUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  burn(
-    owner: PromiseOrValue<string>,
-    id: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
+  decimals(overrides?: CallOverrides): Promise<number>;
+
+  deposit(
+    assets: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  burnBatch(
-    owner: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  exists(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isApprovedForAll(
     account: PromiseOrValue<string>,
@@ -393,19 +536,34 @@ export interface ERC1155MockUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  mint(
-    to: PromiseOrValue<string>,
+  maxDeposit(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  maxRedeem(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  previewRedeem(
+    shares: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  redeem(
     id: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    data: PromiseOrValue<BytesLike>,
+    amount: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  mintBatch(
-    to: PromiseOrValue<string>,
+  redeemBatch(
     ids: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
-    data: PromiseOrValue<BytesLike>,
+    amounts: PromiseOrValue<BigNumberish>[],
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -433,15 +591,19 @@ export interface ERC1155MockUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setURI(
-    newuri: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   supportsInterface(
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+  totalSupply(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
   uri(
     arg0: PromiseOrValue<BigNumberish>,
@@ -449,9 +611,16 @@ export interface ERC1155MockUpgradeable extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
-    balanceOf(
+    asset(overrides?: CallOverrides): Promise<string>;
+
+    "balanceOf(address,uint256)"(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -461,19 +630,18 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    burn(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    decimals(overrides?: CallOverrides): Promise<number>;
 
-    burnBatch(
-      owner: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+    deposit(
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
+
+    exists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -481,21 +649,36 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint(
-      to: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
+    maxDeposit(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
-    mintBatch(
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+    maxRedeem(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    redeem(
+      id: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    redeemBatch(
+      ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -521,15 +704,19 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setURI(
-      newuri: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalSupply(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -549,8 +736,51 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
+    "DepositWithReceipt(address,address,uint256,uint256)"(
+      caller?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      assets?: null,
+      id?: null
+    ): DepositWithReceiptEventFilter;
+    DepositWithReceipt(
+      caller?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      assets?: null,
+      id?: null
+    ): DepositWithReceiptEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "RedeemReceipt(address,address,address,uint256,uint256)"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+    RedeemReceipt(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
+    RedeemReceiptBatch(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: PromiseOrValue<string> | null,
@@ -590,9 +820,16 @@ export interface ERC1155MockUpgradeable extends BaseContract {
   };
 
   estimateGas: {
-    balanceOf(
+    asset(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balanceOf(address,uint256)"(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -602,18 +839,17 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deposit(
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    burnBatch(
-      owner: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    exists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isApprovedForAll(
@@ -622,19 +858,34 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      to: PromiseOrValue<string>,
+    maxDeposit(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    redeem(
       id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    mintBatch(
-      to: PromiseOrValue<string>,
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      amounts: PromiseOrValue<BigNumberish>[],
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -662,15 +913,19 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setURI(
-      newuri: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalSupply(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,
@@ -679,9 +934,16 @@ export interface ERC1155MockUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
-    balanceOf(
+    asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "balanceOf(address,uint256)"(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balanceOf(address)"(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -691,18 +953,17 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    deposit(
+      assets: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    burnBatch(
-      owner: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    exists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
@@ -711,19 +972,34 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint(
-      to: PromiseOrValue<string>,
+    maxDeposit(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxRedeem(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    previewRedeem(
+      shares: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    redeem(
       id: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    mintBatch(
-      to: PromiseOrValue<string>,
+    redeemBatch(
       ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      amounts: PromiseOrValue<BigNumberish>[],
+      receiver: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -751,15 +1027,19 @@ export interface ERC1155MockUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setURI(
-      newuri: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalSupply(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     uri(
       arg0: PromiseOrValue<BigNumberish>,

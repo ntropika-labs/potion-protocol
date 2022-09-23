@@ -4,5 +4,3 @@
 export { IERC1155DecimalsUpgradeable__factory } from "./IERC1155DecimalsUpgradeable__factory";
 export { IERC1155FullSupplyUpgradeable__factory } from "./IERC1155FullSupplyUpgradeable__factory";
 export { IERC4626CapUpgradeable__factory } from "./IERC4626CapUpgradeable__factory";
-export { IERC4626DeferredOperationUpgradeable__factory } from "./IERC4626DeferredOperationUpgradeable__factory";
-export { IERC4626MultiTokenUpgradeable__factory } from "./IERC4626MultiTokenUpgradeable__factory";

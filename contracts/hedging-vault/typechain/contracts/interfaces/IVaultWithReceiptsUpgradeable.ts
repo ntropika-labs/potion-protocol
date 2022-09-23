@@ -27,25 +27,19 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface ERC4626DeferredOperationUpgradeableInterface
+export interface IVaultWithReceiptsUpgradeableInterface
   extends utils.Interface {
   functions: {
     "asset()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "convertToAssets(uint256)": FunctionFragment;
-    "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
-    "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "mint(uint256,address)": FunctionFragment;
-    "previewDeposit(uint256)": FunctionFragment;
-    "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
@@ -56,8 +50,6 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     "totalAssets()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "totalSupplyAll()": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
-    "vault()": FunctionFragment;
   };
 
   getFunction(
@@ -66,18 +58,12 @@ export interface ERC4626DeferredOperationUpgradeableInterface
       | "balanceOf(address,uint256)"
       | "balanceOf(address)"
       | "balanceOfBatch"
-      | "convertToAssets"
-      | "convertToShares"
       | "decimals"
       | "deposit"
       | "exists"
       | "isApprovedForAll"
       | "maxDeposit"
-      | "maxMint"
       | "maxRedeem"
-      | "mint"
-      | "previewDeposit"
-      | "previewMint"
       | "previewRedeem"
       | "redeem"
       | "redeemBatch"
@@ -88,8 +74,6 @@ export interface ERC4626DeferredOperationUpgradeableInterface
       | "totalAssets"
       | "totalSupply"
       | "totalSupplyAll"
-      | "uri"
-      | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -104,14 +88,6 @@ export interface ERC4626DeferredOperationUpgradeableInterface
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToAssets",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToShares",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
@@ -131,24 +107,8 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "maxMint",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewDeposit",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewMint",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "previewRedeem",
@@ -212,11 +172,6 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     functionFragment: "totalSupplyAll",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "uri",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(
@@ -231,14 +186,6 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToAssets",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToShares",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
@@ -247,17 +194,7 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "previewDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewMint",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "previewRedeem",
     data: BytesLike
@@ -295,28 +232,24 @@ export interface ERC4626DeferredOperationUpgradeableInterface
     functionFragment: "totalSupplyAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "Deposit(address,address,uint256,uint256)": EventFragment;
-    "Initialized(uint8)": EventFragment;
+    "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
+    "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
-    "Withdraw(address,address,address,uint256,uint256,uint256)": EventFragment;
-    "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositWithReceipt"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceipt"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RedeemReceiptBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawBatch"): EventFragment;
 }
 
 export interface ApprovalForAllEventObject {
@@ -331,25 +264,48 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export interface DepositEventObject {
+export interface DepositWithReceiptEventObject {
   caller: string;
   owner: string;
   assets: BigNumber;
-  shares: BigNumber;
+  id: BigNumber;
 }
-export type DepositEvent = TypedEvent<
+export type DepositWithReceiptEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
-  DepositEventObject
+  DepositWithReceiptEventObject
 >;
 
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export type DepositWithReceiptEventFilter =
+  TypedEventFilter<DepositWithReceiptEvent>;
 
-export interface InitializedEventObject {
-  version: number;
+export interface RedeemReceiptEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amount: BigNumber;
+  id: BigNumber;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+export type RedeemReceiptEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  RedeemReceiptEventObject
+>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export type RedeemReceiptEventFilter = TypedEventFilter<RedeemReceiptEvent>;
+
+export interface RedeemReceiptBatchEventObject {
+  caller: string;
+  receiver: string;
+  owner: string;
+  amounts: BigNumber[];
+  ids: BigNumber[];
+}
+export type RedeemReceiptBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  RedeemReceiptBatchEventObject
+>;
+
+export type RedeemReceiptBatchEventFilter =
+  TypedEventFilter<RedeemReceiptBatchEvent>;
 
 export interface TransferBatchEventObject {
   operator: string;
@@ -387,42 +343,12 @@ export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
-export interface WithdrawEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesId: BigNumber;
-  sharesAmount: BigNumber;
-}
-export type WithdrawEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, BigNumber],
-  WithdrawEventObject
->;
-
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
-
-export interface WithdrawBatchEventObject {
-  caller: string;
-  receiver: string;
-  owner: string;
-  assets: BigNumber;
-  sharesIds: BigNumber[];
-  sharesAmounts: BigNumber[];
-}
-export type WithdrawBatchEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber[], BigNumber[]],
-  WithdrawBatchEventObject
->;
-
-export type WithdrawBatchEventFilter = TypedEventFilter<WithdrawBatchEvent>;
-
-export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
+export interface IVaultWithReceiptsUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC4626DeferredOperationUpgradeableInterface;
+  interface: IVaultWithReceiptsUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -444,7 +370,9 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    asset(overrides?: CallOverrides): Promise<[string]>;
+    asset(
+      overrides?: CallOverrides
+    ): Promise<[string] & { assetTokenAddress: string }>;
 
     "balanceOf(address,uint256)"(
       account: PromiseOrValue<string>,
@@ -462,16 +390,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
-
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -495,50 +413,29 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     maxDeposit(
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { maxAssets: BigNumber }>;
 
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
 
     previewRedeem(
       shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { assets: BigNumber }>;
 
     redeem(
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      sharesId: PromiseOrValue<BigNumberish>,
+      sharesAmount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     redeemBatch(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
+      sharesIds: PromiseOrValue<BigNumberish>[],
+      sharesAmounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -573,7 +470,9 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalAssets(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { totalManagedAssets: BigNumber }>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -581,15 +480,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<[BigNumber]>;
 
     totalSupplyAll(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    uri(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    vault(
-      overrides?: CallOverrides
-    ): Promise<[string] & { vaultAddress: string }>;
   };
 
   asset(overrides?: CallOverrides): Promise<string>;
@@ -610,16 +500,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ids: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
-
-  convertToAssets(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  convertToShares(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -645,29 +525,8 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  maxMint(
-    receiver: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   maxRedeem(
     owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  mint(
-    shares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  previewDeposit(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewMint(
-    shares: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -677,16 +536,16 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
   ): Promise<BigNumber>;
 
   redeem(
-    id: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
+    sharesId: PromiseOrValue<BigNumberish>,
+    sharesAmount: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   redeemBatch(
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
+    sharesIds: PromiseOrValue<BigNumberish>[],
+    sharesAmounts: PromiseOrValue<BigNumberish>[],
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -730,13 +589,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
 
   totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
 
-  uri(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  vault(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     asset(overrides?: CallOverrides): Promise<string>;
 
@@ -756,16 +608,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
-
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -791,29 +633,8 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -823,16 +644,16 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     redeem(
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      sharesId: PromiseOrValue<BigNumberish>,
+      sharesAmount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeemBatch(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
+      sharesIds: PromiseOrValue<BigNumberish>[],
+      sharesAmounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -875,13 +696,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
-
-    uri(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -896,21 +710,48 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "Deposit(address,address,uint256,uint256)"(
+    "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
-      shares?: null
-    ): DepositEventFilter;
-    Deposit(
+      id?: null
+    ): DepositWithReceiptEventFilter;
+    DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
-      shares?: null
-    ): DepositEventFilter;
+      id?: null
+    ): DepositWithReceiptEventFilter;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
+    "RedeemReceipt(address,address,address,uint256,uint256)"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+    RedeemReceipt(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amount?: null,
+      id?: null
+    ): RedeemReceiptEventFilter;
+
+    "RedeemReceiptBatch(address,address,address,uint256[],uint256[])"(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
+    RedeemReceiptBatch(
+      caller?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      amounts?: null,
+      ids?: null
+    ): RedeemReceiptBatchEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: PromiseOrValue<string> | null,
@@ -947,40 +788,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       id?: PromiseOrValue<BigNumberish> | null
     ): URIEventFilter;
     URI(value?: null, id?: PromiseOrValue<BigNumberish> | null): URIEventFilter;
-
-    "Withdraw(address,address,address,uint256,uint256,uint256)"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawEventFilter;
-    Withdraw(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
-    ): WithdrawEventFilter;
-
-    "WithdrawBatch(address,address,address,uint256,uint256[],uint256[])"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawBatchEventFilter;
-    WithdrawBatch(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
-    ): WithdrawBatchEventFilter;
   };
 
   estimateGas: {
@@ -1000,16 +807,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     balanceOfBatch(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1037,29 +834,8 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1069,16 +845,16 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     redeem(
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      sharesId: PromiseOrValue<BigNumberish>,
+      sharesAmount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     redeemBatch(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
+      sharesIds: PromiseOrValue<BigNumberish>[],
+      sharesAmounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1121,13 +897,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     totalSupplyAll(overrides?: CallOverrides): Promise<BigNumber>;
-
-    uri(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1147,16 +916,6 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     balanceOfBatch(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1184,29 +943,8 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1216,16 +954,16 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     redeem(
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      sharesId: PromiseOrValue<BigNumberish>,
+      sharesAmount: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemBatch(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
+      sharesIds: PromiseOrValue<BigNumberish>[],
+      sharesAmounts: PromiseOrValue<BigNumberish>[],
       receiver: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1268,12 +1006,5 @@ export interface ERC4626DeferredOperationUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     totalSupplyAll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    uri(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -23,3 +23,5 @@ export type { IRoundsInputVault } from "./IRoundsInputVault";
 export type { IRoundsOutputVault } from "./IRoundsOutputVault";
 export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";
+export type { IVaultDeferredOperationUpgradeable } from "./IVaultDeferredOperationUpgradeable";
+export type { IVaultWithReceiptsUpgradeable } from "./IVaultWithReceiptsUpgradeable";

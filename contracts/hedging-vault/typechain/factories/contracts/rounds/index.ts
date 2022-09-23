@@ -4,3 +4,5 @@
 export { BaseRoundsVaultUpgradeable__factory } from "./BaseRoundsVaultUpgradeable__factory";
 export { RoundsInputVaultUpgradeable__factory } from "./RoundsInputVaultUpgradeable__factory";
 export { RoundsOutputVaultUpgradeable__factory } from "./RoundsOutputVaultUpgradeable__factory";
+export { VaultDeferredOperationUpgradeable__factory } from "./VaultDeferredOperationUpgradeable__factory";
+export { VaultWithReceiptsUpgradeable__factory } from "./VaultWithReceiptsUpgradeable__factory";
