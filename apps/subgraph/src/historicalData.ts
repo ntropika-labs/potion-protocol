@@ -35,7 +35,7 @@ function updateDailyPoolData(pool: Pool, timestamp: BigInt): void {
     dailyPool.timestamp = dayTimestamp;
     dailyPool.pool = pool.id;
   }
-  dailyPool.liquidity = pool.liquidityAtTrades;
+  dailyPool.liquidity = pool.size;
   dailyPool.pnl = pool.pnlPercentage;
   dailyPool.utilization = pool.utilization;
   dailyPool.save();
@@ -58,7 +58,7 @@ function updateHourlyPoolData(pool: Pool, timestamp: BigInt): void {
     hourlyPool.timestamp = hourTimestamp;
     hourlyPool.pool = pool.id;
   }
-  hourlyPool.liquidity = pool.liquidityAtTrades;
+  hourlyPool.liquidity = pool.size;
   hourlyPool.pnl = pool.pnlPercentage;
   hourlyPool.utilization = pool.utilization;
   hourlyPool.save();
@@ -86,7 +86,7 @@ function updateDailyTemplateData(template: Template, timestamp: BigInt): void {
     dailyTemplate.timestamp = dayTimestamp;
     dailyTemplate.template = template.id;
   }
-  dailyTemplate.liquidity = template.liquidityAtTrades;
+  dailyTemplate.liquidity = template.size;
   dailyTemplate.pnl = template.pnlPercentage;
   dailyTemplate.utilization = template.utilization;
   dailyTemplate.save();
@@ -109,7 +109,7 @@ function updateHourlyTemplateData(template: Template, timestamp: BigInt): void {
     hourlyTemplate.timestamp = hourTimestamp;
     hourlyTemplate.template = template.id;
   }
-  hourlyTemplate.liquidity = template.liquidityAtTrades;
+  hourlyTemplate.liquidity = template.size;
   hourlyTemplate.pnl = template.pnlPercentage;
   hourlyTemplate.utilization = template.utilization;
   hourlyTemplate.save();
