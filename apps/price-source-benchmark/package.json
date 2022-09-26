@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-electron": "NODE_ENV=production MODE=production VITE_RUNTIME=electron vite build",
     "preview": "yarn run -T vite preview --port 5050",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
