@@ -1,4 +1,4 @@
-import path from "path";
+import path, { join } from "path";
 import gzipPlugin from "rollup-plugin-gzip";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -14,9 +14,13 @@ import vue from "@vitejs/plugin-vue";
 const MODE = process.env.NODE_ENV;
 const development = MODE === "development";
 const VITE_MODE = process.env.MODE;
+const VITE_RUNTIME = process.env.VITE_RUNTIME;
+const electron = VITE_RUNTIME === "electron";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: electron ? "" : undefined, // empty path is equal to relative, otherwise set it to undefined to keep the default
+  root: electron ? __dirname : undefined, // dirname when electron, otherwise set it to undefined to keep the default
   plugins: [
     vue({ reactivityTransform: true }),
     vueI18n({
@@ -74,6 +78,11 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: electron
+      ? path.resolve(__dirname, "../electron-wrapper/render/dist")
+      : undefined, // path to electron-wrapper project when using electron, otherwise set it to undefined to keep the default
+    emptyOutDir: electron ? true : undefined, // empty dist folder when using electron, otherwise set it to undefined to keep the default
+    assetsDir: electron ? "." : undefined, // relative path when electron, otherwise set i t to undefined to keep the default
     rollupOptions: {
       plugins: [
         nodePolyfills(),
@@ -109,6 +118,7 @@ export default defineConfig({
           }
         },
       },
+      input: electron ? join(__dirname, "index.html") : undefined,
     },
     commonjsOptions: {
       transformMixedEsModules: true,
@@ -116,7 +126,10 @@ export default defineConfig({
   },
   server: {
     fs: {
-      allow: [searchForWorkspaceRoot(process.cwd()), "../../libs"],
+      strict: electron ? true : undefined,
+      allow: electron
+        ? undefined
+        : [searchForWorkspaceRoot(process.cwd()), "../../libs"],
     },
   },
 });
