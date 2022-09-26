@@ -1,0 +1,37 @@
+{
+  "name": "electron-wrapper",
+  "private": true,
+  "version": "0.1.0",
+  "main": "main/dist/index.cjs",
+  "scripts": {
+    "build": "yarn build-main && yarn build-preload",
+    "build-main": "yarn --cwd ./main vite --config main/vite.config.js build",
+    "build-preload": "yarn --cwd ./preload vite --config preload/vite.config.js  build",
+    "compile": "cross-env MODE=production yarn build && electron-builder build --config .electron-builder.config.js --config.asar=false",
+    "compile-test": "cross-env MODE=production yarn build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "test": "npm run test:main && npm run test:preload && npm run test:renderer && npm run test:e2e",
+    "test:e2e": "npm run build && vitest run",
+    "test:main": "vitest run -r packages/main --passWithNoTests",
+    "test:preload": "vitest run -r packages/preload --passWithNoTests",
+    "test:renderer": "vitest run -r packages/renderer --passWithNoTests",
+    "watch": "NODE_ENV=development node scripts/watch.mjs",
+    "lint": "eslint . --ext js,mjs,cjs,ts,mts,cts,vue",
+    "typecheck:main": "tsc --noEmit -p packages/main/tsconfig.json",
+    "typecheck:preload": "tsc --noEmit -p packages/preload/tsconfig.json",
+    "typecheck:renderer": "vue-tsc --noEmit -p packages/renderer/tsconfig.json",
+    "typecheck": "npm run typecheck:main && npm run typecheck:preload && npm run typecheck:renderer",
+    "postinstall": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.mjs",
+    "format": "npx prettier --write \"**/*.{js,mjs,cjs,ts,mts,cts,vue,json}\""
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "20.1.4",
+    "electron-builder": "23.3.3",
+    "happy-dom": "6.0.4",
+    "unplugin-auto-expose": "0.0.3",
+    "vite": "^2.9.6"
+  },
+  "dependencies": {
+    "electron-updater": "5.2.1"
+  }
+}

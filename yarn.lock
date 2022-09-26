@@ -15330,6 +15330,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"electron-wrapper@workspace:apps/electron-wrapper":
+  version: 0.0.0-use.local
+  resolution: "electron-wrapper@workspace:apps/electron-wrapper"
+  dependencies:
+    cross-env: ^7.0.3
+    electron: 20.1.4
+    electron-builder: 23.3.3
+    electron-updater: 5.2.1
+    happy-dom: 6.0.4
+    unplugin-auto-expose: 0.0.3
+    vite: ^2.9.6
+  languageName: unknown
+  linkType: soft
+
 "electron@npm:20.1.4":
   version: 20.1.4
   resolution: "electron@npm:20.1.4"
@@ -28214,20 +28228,6 @@ __metadata:
     potion-ui: "*"
     potion-unocss: "*"
     subgraph-queries: "*"
-  languageName: unknown
-  linkType: soft
-
-"potion-electron-builder@workspace:apps/electron-wrapper":
-  version: 0.0.0-use.local
-  resolution: "potion-electron-builder@workspace:apps/electron-wrapper"
-  dependencies:
-    cross-env: ^7.0.3
-    electron: 20.1.4
-    electron-builder: 23.3.3
-    electron-updater: 5.2.1
-    happy-dom: 6.0.4
-    unplugin-auto-expose: 0.0.3
-    vite: ^2.9.6
   languageName: unknown
   linkType: soft
 

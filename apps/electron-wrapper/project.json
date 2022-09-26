@@ -1,0 +1,23 @@
+{
+  "root": "apps/electron-wrapper/",
+  "sourceRoot": "apps/electron-wrapper/",
+  "projectType": "application",
+  "targets": {
+    "build-dapp": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:build-electron",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run electron-wrapper:build",
+            "forwardAllArgs": true
+          }
+        ],
+        "parallel": false
+      }
+    }
+  }
+}

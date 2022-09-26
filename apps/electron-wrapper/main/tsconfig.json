@@ -1,0 +1,34 @@
+// {
+//   "extends": "../../../tsconfig.vue.json",
+//   "include": ["env.d.ts", "src/**/*"],
+//   "exclude": ["src/**/__tests__/*", "**/*.stories.ts"],
+//   "compilerOptions": {
+//     "module": "ESNext",
+//     "baseUrl": ".",
+//     "rootDir": "../",
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     },
+//     "moduleResolution": "Node",
+//     "importsNotUsedAsValues": "remove",
+//     "types": ["node", "vitest", "jsdom", "vite/client"]
+//   }
+// }
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "sourceMap": false,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "strict": true,
+    "isolatedModules": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "./../**/*.d.ts"],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+}
