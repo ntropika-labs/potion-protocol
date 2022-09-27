@@ -11,6 +11,28 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "x",
+        type: "uint256",
+      },
+    ],
+    name: "PRBMathUD60x18__FromUintOverflow",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "prod1",
+        type: "uint256",
+      },
+    ],
+    name: "PRBMath__MulDivFixedPointOverflow",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -733,6 +755,25 @@ const _abi = [
   {
     inputs: [],
     name: "getCurrentRound",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "round",
+        type: "uint256",
+      },
+    ],
+    name: "getExchangeRate",
     outputs: [
       {
         internalType: "uint256",

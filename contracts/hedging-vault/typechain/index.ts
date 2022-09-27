@@ -196,6 +196,8 @@ export type { MockUniswapV3Router } from "./contracts/test/mocks/MockUniswapV3Ro
 export { MockUniswapV3Router__factory } from "./factories/contracts/test/mocks/MockUniswapV3Router__factory";
 export type { TestWrapperActionsManager } from "./contracts/test/wrappers/TestWrapperActionsManager";
 export { TestWrapperActionsManager__factory } from "./factories/contracts/test/wrappers/TestWrapperActionsManager__factory";
+export type { TestWrapperBaseRoundsVaultUpgradeable } from "./contracts/test/wrappers/TestWrapperBaseRoundsVault.sol/TestWrapperBaseRoundsVaultUpgradeable";
+export { TestWrapperBaseRoundsVaultUpgradeable__factory } from "./factories/contracts/test/wrappers/TestWrapperBaseRoundsVault.sol/TestWrapperBaseRoundsVaultUpgradeable__factory";
 export type { TestWrapperEmergencyLock } from "./contracts/test/wrappers/TestWrapperEmergencyLock";
 export { TestWrapperEmergencyLock__factory } from "./factories/contracts/test/wrappers/TestWrapperEmergencyLock__factory";
 export type { TestWrapperFeeManager } from "./contracts/test/wrappers/TestWrapperFeeManager";

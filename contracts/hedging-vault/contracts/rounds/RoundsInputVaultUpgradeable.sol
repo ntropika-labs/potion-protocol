@@ -3,9 +3,12 @@
  */
 pragma solidity 0.8.14;
 
-import "../interfaces/IRoundsInputVault.sol";
+import "@prb/math/contracts/PRBMathUD60x18.sol";
 
+import "../interfaces/IRoundsInputVault.sol";
 import "./BaseRoundsVaultUpgradeable.sol";
+
+import "hardhat/console.sol";
 
 /**
     @title RoundsInputVaultUpgradeable
@@ -19,6 +22,8 @@ import "./BaseRoundsVaultUpgradeable.sol";
     @author Roberto Cano <robercano>
  */
 contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInputVault {
+    using PRBMathUD60x18 for uint256;
+
     // UPGRADEABLE INITIALIZER
 
     /**
@@ -61,7 +66,7 @@ contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInput
         if (assets > 0) {
             uint256 shares = _depositOnTarget(assets);
 
-            emit AssetsDeposited(_msgSender(), assets, shares);
+            emit AssetsDeposited(getCurrentRound(), _msgSender(), assets, shares);
         }
     }
 
@@ -71,8 +76,12 @@ contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInput
         @dev The exchange rate is given by the `previewDeposit` function on the target vault. The exchange rate is
         calculated for 1 full token
      */
-    function _getExchangeRate() internal view override returns (uint256) {
+    function _getCurrentExchangeRate() internal view override returns (uint256) {
         IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
-        return previewDeposit(10**asset_.decimals());
+
+        uint256 OneAsset = 10**asset_.decimals();
+        uint256 shares = previewDeposit(OneAsset);
+
+        return shares.fromUint().div(OneAsset.fromUint());
     }
 }

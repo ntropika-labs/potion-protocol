@@ -47,6 +47,7 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
+    "getExchangeRate(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -104,6 +105,7 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
       | "exchangeAsset"
       | "exists"
       | "getCurrentRound"
+      | "getExchangeRate"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
@@ -209,6 +211,10 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getCurrentRound",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExchangeRate",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -429,6 +435,10 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getExchangeRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -520,7 +530,7 @@ export interface RoundsInputVaultUpgradeableInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "AssetsDeposited(address,uint256,uint256)": EventFragment;
+    "AssetsDeposited(uint256,address,uint256,uint256)": EventFragment;
     "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "NextRound(uint256)": EventFragment;
@@ -570,12 +580,13 @@ export type ApprovalForAllEvent = TypedEvent<
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface AssetsDepositedEventObject {
+  roundId: BigNumber;
   account: string;
   assets: BigNumber;
   shares: BigNumber;
 }
 export type AssetsDepositedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
+  [BigNumber, string, BigNumber, BigNumber],
   AssetsDepositedEventObject
 >;
 
@@ -847,6 +858,11 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1107,6 +1123,11 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
 
   getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getExchangeRate(
+    round: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -1365,6 +1386,11 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1566,12 +1592,14 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "AssetsDeposited(address,uint256,uint256)"(
+    "AssetsDeposited(uint256,address,uint256,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): AssetsDepositedEventFilter;
     AssetsDeposited(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
@@ -1803,6 +1831,11 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -2064,6 +2097,11 @@ export interface RoundsInputVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,

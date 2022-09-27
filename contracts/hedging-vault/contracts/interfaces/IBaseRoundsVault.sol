@@ -79,12 +79,6 @@ interface IBaseRoundsVault is IVaultDeferredOperationUpgradeable {
         @param amount The amount of the receipt to be redeemed
         @param receiver The address that will receive the target vault shares
         @param owner The address that owns the receipt, in case the caller is not the owner
-
-        @dev The user is prevented from redeeming receipts partially as this could cause a cumulative rounding error
-        in the amount of shares redeemed by the user. If for example the share price is 0.8 shares/asset and the user
-        tries to redeem exactly 1 wei asset, the user would receive 0 shares. Doing this repeatedly would burn away all
-        the receipt unit without ever getting any shares from the target vault. Forcing the user to redeem the full
-        amount ensures that the behaviour is consistent with depositing the shares directly in the target vault
      */
     function redeemExchangeAsset(
         uint256 id,
@@ -114,4 +108,12 @@ interface IBaseRoundsVault is IVaultDeferredOperationUpgradeable {
         @notice Returns the asset used for the exchange
      */
     function exchangeAsset() external view returns (address);
+
+    /**
+        @notice Returns the exchange rate for the underlying to the exchange asset for a given round
+
+        @dev It gives the amount of exchange asset that can be obtained for 1 underlying token, with the
+        exchange asset decimals
+     */
+    function getExchangeRate(uint256 round) external view returns (uint256);
 }

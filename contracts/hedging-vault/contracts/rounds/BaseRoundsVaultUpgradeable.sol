@@ -4,6 +4,7 @@
 pragma solidity 0.8.14;
 
 import "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC4626Upgradeable.sol";
+import "@prb/math/contracts/PRBMathUD60x18.sol";
 
 import { CountersUpgradeable as Counters } from "@openzeppelin/contracts-upgradeable-4.7.3/utils/CountersUpgradeable.sol";
 
@@ -12,6 +13,7 @@ import "../common/RefundsHelperUpgreadable.sol";
 import "../common/RolesManagerUpgradeable.sol";
 import "./VaultDeferredOperationUpgradeable.sol";
 import "../interfaces/IBaseRoundsVault.sol";
+import "../library/PriceUtils.sol";
 
 /**
     @title BaseRoundsVaultUpgradeable
@@ -37,6 +39,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     IBaseRoundsVault
 {
     using Counters for Counters.Counter;
+    using PriceUtils for uint256;
 
     // STORAGE
     Counters.Counter private _roundNumber;
@@ -73,10 +76,11 @@ abstract contract BaseRoundsVaultUpgradeable is
         @inheritdoc IBaseRoundsVault
      */
     function nextRound() external onlyOperator {
-        _exchangeRateByRound[_roundNumber.current()] = _getExchangeRate();
-        _roundNumber.increment();
+        _exchangeRateByRound[_roundNumber.current()] = _getCurrentExchangeRate();
 
         _operate();
+
+        _roundNumber.increment();
 
         emit NextRound(_roundNumber.current());
     }
@@ -90,7 +94,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         address receiver,
         address owner
     ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256) {
-        require(id == _roundNumber.current(), "RoundsInputVaultUpgradeable: can only redeem current round");
+        require(id == _roundNumber.current(), "BaseRoundsVaultUpgradeable: can only redeem current round");
 
         return super.redeem(id, amount, receiver, owner);
     }
@@ -105,7 +109,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         address owner
     ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256 assets) {
         for (uint256 i = 0; i < ids.length; i++) {
-            require(ids[i] == _roundNumber.current(), "RoundsInputVaultUpgradeable: can only redeem current round");
+            require(ids[i] == _roundNumber.current(), "BaseRoundsVaultUpgradeable: can only redeem current round");
         }
 
         return super.redeemBatch(ids, amounts, receiver, owner);
@@ -122,7 +126,7 @@ abstract contract BaseRoundsVaultUpgradeable is
     ) public returns (uint256) {
         require(
             id < _roundNumber.current(),
-            "RoundsInputVaultUpgradeable: exchange asset only available for previous rounds"
+            "BaseRoundsVaultUpgradeable: exchange asset only available for previous rounds"
         );
 
         return _redeemExchangeAsset(_msgSender(), receiver, owner, id, amount);
@@ -130,6 +134,12 @@ abstract contract BaseRoundsVaultUpgradeable is
 
     /**
         @inheritdoc IBaseRoundsVault
+
+        @dev TODO: The user must be prevented from redeeming receipts partially as this could cause a cumulative rounding error
+        in the amount of shares redeemed by the user. If for example the share price is 0.8 shares/asset and the user
+        tries to redeem exactly 1 wei asset, the user would receive 0 shares. Doing this repeatedly would burn away all
+        the receipt unit without ever getting any shares from the target vault. Forcing the user to redeem the full
+        amount ensures that the behaviour is consistent with depositing the shares directly in the target vault
      */
     function redeemExchangeAssetBatch(
         uint256[] calldata ids,
@@ -142,7 +152,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         for (uint256 i = 0; i < ids.length; i++) {
             require(
                 ids[i] < _roundNumber.current(),
-                "RoundsInputVaultUpgradeable: exchange asset only available for previous rounds"
+                "BaseRoundsVaultUpgradeable: exchange asset only available for previous rounds"
             );
         }
 
@@ -154,15 +164,22 @@ abstract contract BaseRoundsVaultUpgradeable is
     /**
         @inheritdoc IBaseRoundsVault
      */
-    function getCurrentRound() external view override returns (uint256) {
+    function getCurrentRound() public view override returns (uint256) {
         return _roundNumber.current();
     }
 
     /**
         @inheritdoc IBaseRoundsVault
      */
-    function exchangeAsset() external view override returns (address) {
+    function exchangeAsset() public view override returns (address) {
         return _exchangeAsset;
+    }
+
+    /**
+        @inheritdoc IBaseRoundsVault
+     */
+    function getExchangeRate(uint256 round) public view returns (uint256) {
+        return _exchangeRateByRound[round];
     }
 
     // INTERNALS
@@ -204,7 +221,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         uint256 amount
     ) private returns (uint256 exchangeAmount) {
         if (caller != owner) {
-            require(isApprovedForAll(owner, caller), "ERC4626MultiToken: caller is not owner nor approved");
+            require(isApprovedForAll(owner, caller), "BaseRoundsVaultUpgradeable: caller is not owner nor approved");
         }
 
         // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
@@ -215,7 +232,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         // shares are burned and after the assets are transfered, which is a valid state.
         _burn(owner, id, amount);
 
-        exchangeAmount = amount * _exchangeRateByRound[id];
+        exchangeAmount = amount.toOutputAmount(_exchangeRateByRound[id]);
 
         SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable(_exchangeAsset), receiver, exchangeAmount);
 
@@ -252,7 +269,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         _burnBatch(owner, ids, amounts);
 
         for (uint256 i = 0; i < ids.length; i++) {
-            exchangeAmount += amounts[i] * _exchangeRateByRound[ids[i]];
+            exchangeAmount += amounts[i].toOutputAmount(_exchangeRateByRound[ids[i]]);
         }
 
         SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable(_exchangeAsset), receiver, exchangeAmount);
@@ -283,5 +300,5 @@ abstract contract BaseRoundsVaultUpgradeable is
         the specific implentation of the derived contract
         
      */
-    function _getExchangeRate() internal view virtual returns (uint256);
+    function _getCurrentExchangeRate() internal view virtual returns (uint256);
 }

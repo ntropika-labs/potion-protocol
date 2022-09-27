@@ -547,6 +547,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "round",
+        type: "uint256",
+      },
+    ],
+    name: "getExchangeRate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "account",
         type: "address",

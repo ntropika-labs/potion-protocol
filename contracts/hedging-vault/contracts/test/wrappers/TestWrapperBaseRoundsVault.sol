@@ -34,7 +34,7 @@ contract TestWrapperBaseRoundsVaultUpgradeable is BaseRoundsVaultUpgradeable {
 
     function _operate() internal virtual override {}
 
-    function _getExchangeRate() internal view virtual override returns (uint256) {
+    function _getCurrentExchangeRate() internal view virtual override returns (uint256) {
         return exchangeRate;
     }
 

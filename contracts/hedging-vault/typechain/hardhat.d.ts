@@ -389,6 +389,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperActionsManager__factory>;
     getContractFactory(
+      name: "TestWrapperBaseRoundsVaultUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperBaseRoundsVaultUpgradeable__factory>;
+    getContractFactory(
       name: "TestWrapperEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperEmergencyLock__factory>;
@@ -927,6 +931,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperActionsManager>;
+    getContractAt(
+      name: "TestWrapperBaseRoundsVaultUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperBaseRoundsVaultUpgradeable>;
     getContractAt(
       name: "TestWrapperEmergencyLock",
       address: string,

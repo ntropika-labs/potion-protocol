@@ -18,5 +18,5 @@ import "./IBaseRoundsVault.sol";
  */
 interface IRoundsInputVault is IBaseRoundsVault {
     // EVENTS
-    event AssetsDeposited(address indexed account, uint256 assets, uint256 shares);
+    event AssetsDeposited(uint256 indexed roundId, address indexed account, uint256 assets, uint256 shares);
 }

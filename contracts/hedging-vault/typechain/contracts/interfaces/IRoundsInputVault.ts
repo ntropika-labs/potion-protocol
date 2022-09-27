@@ -39,6 +39,7 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
+    "getExchangeRate(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
@@ -74,6 +75,7 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
       | "exchangeAsset"
       | "exists"
       | "getCurrentRound"
+      | "getExchangeRate"
       | "isApprovedForAll"
       | "maxDeposit"
       | "maxMint"
@@ -133,6 +135,10 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getCurrentRound",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExchangeRate",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -274,6 +280,10 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getExchangeRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
@@ -339,7 +349,7 @@ export interface IRoundsInputVaultInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "AssetsDeposited(address,uint256,uint256)": EventFragment;
+    "AssetsDeposited(uint256,address,uint256,uint256)": EventFragment;
     "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "NextRound(uint256)": EventFragment;
     "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
@@ -377,12 +387,13 @@ export type ApprovalForAllEvent = TypedEvent<
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface AssetsDepositedEventObject {
+  roundId: BigNumber;
   account: string;
   assets: BigNumber;
   shares: BigNumber;
 }
 export type AssetsDepositedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
+  [BigNumber, string, BigNumber, BigNumber],
   AssetsDepositedEventObject
 >;
 
@@ -579,6 +590,11 @@ export interface IRoundsInputVault extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     isApprovedForAll(
       account: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -746,6 +762,11 @@ export interface IRoundsInputVault extends BaseContract {
 
   getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getExchangeRate(
+    round: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   isApprovedForAll(
     account: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -909,6 +930,11 @@ export interface IRoundsInputVault extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       account: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -1038,12 +1064,14 @@ export interface IRoundsInputVault extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "AssetsDeposited(address,uint256,uint256)"(
+    "AssetsDeposited(uint256,address,uint256,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): AssetsDepositedEventFilter;
     AssetsDeposited(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
@@ -1215,6 +1243,11 @@ export interface IRoundsInputVault extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       account: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -1378,6 +1411,11 @@ export interface IRoundsInputVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,

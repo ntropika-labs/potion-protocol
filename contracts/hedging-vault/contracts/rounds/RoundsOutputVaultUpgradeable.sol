@@ -71,7 +71,7 @@ contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutp
         @dev The exchange rate is given by the `previewRedeem` function on the target vault. The exchange rate is
         calculated for 1 full share
      */
-    function _getExchangeRate() internal view override returns (uint256) {
+    function _getCurrentExchangeRate() internal view override returns (uint256) {
         IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
         return previewRedeem(10**asset_.decimals());
     }

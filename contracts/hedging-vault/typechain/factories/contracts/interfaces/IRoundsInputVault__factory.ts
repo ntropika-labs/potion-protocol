@@ -40,6 +40,12 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "uint256",
+        name: "roundId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
         internalType: "address",
         name: "account",
         type: "address",
@@ -534,6 +540,25 @@ const _abi = [
   {
     inputs: [],
     name: "getCurrentRound",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "round",
+        type: "uint256",
+      },
+    ],
+    name: "getExchangeRate",
     outputs: [
       {
         internalType: "uint256",

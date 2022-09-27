@@ -6,6 +6,8 @@ import { TestWrapperVaultDeferredOperation, IERC4626Upgradeable, IERC4626Upgrade
 import { MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+import { getFakeTargetVault } from "../utils/ERC4626Utils";
+
 /**
     @notice VaultDeferredOperation unit tests    
     
@@ -18,39 +20,6 @@ describe("VaultDeferredOperation", function () {
     let assetTokenMock: MockContract<MockERC20PresetMinterPauser>;
     let fakeTargetVault: FakeContract<IERC4626Upgradeable>;
 
-    async function getFakeTargetVault(): Promise<FakeContract<IERC4626Upgradeable>> {
-        fakeTargetVault = await smock.fake<IERC4626Upgradeable>(IERC4626Upgradeable__factory.abi);
-
-        fakeTargetVault.convertToShares.returns((args: any) => {
-            return args.assets.mul(2);
-        });
-        fakeTargetVault.convertToAssets.returns((args: any) => {
-            return args.shares.div(2);
-        });
-        fakeTargetVault.maxDeposit.returns(ethers.constants.MaxUint256);
-        fakeTargetVault.maxMint.returns(ethers.constants.MaxUint256);
-        fakeTargetVault.previewDeposit.returns((args: any) => {
-            return args.assets.mul(2);
-        });
-        fakeTargetVault.previewMint.returns((args: any) => {
-            return args.shares.div(2);
-        });
-        fakeTargetVault.previewRedeem.returns((args: any) => {
-            return args.shares.div(2);
-        });
-
-        fakeTargetVault.redeem.returns((args: any) => {
-            return args.shares.div(2);
-        });
-        fakeTargetVault.deposit.returns((args: any) => {
-            return args.assets.mul(2);
-        });
-
-        fakeTargetVault.approve.returns(true);
-
-        return fakeTargetVault;
-    }
-
     beforeEach(async function () {
         unpriviledgedAccount = (await ethers.getSigners())[1];
         unpriviledgedAccount2 = (await ethers.getSigners())[2];
@@ -61,7 +30,7 @@ describe("VaultDeferredOperation", function () {
         const VaultDeferredOperationFactory = await ethers.getContractFactory("TestWrapperVaultDeferredOperation");
         vaultDeferredOperation = (await VaultDeferredOperationFactory.deploy()) as TestWrapperVaultDeferredOperation;
 
-        fakeTargetVault = await getFakeTargetVault();
+        fakeTargetVault = await getFakeTargetVault(assetTokenMock.address);
 
         await vaultDeferredOperation.initialize(fakeTargetVault.address, assetTokenMock.address, "SomeURI");
 

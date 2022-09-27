@@ -47,6 +47,7 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
+    "getExchangeRate(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -103,6 +104,7 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
       | "exchangeAsset"
       | "exists"
       | "getCurrentRound"
+      | "getExchangeRate"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
@@ -207,6 +209,10 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getCurrentRound",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExchangeRate",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -415,6 +421,10 @@ export interface BaseRoundsVaultUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExchangeRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -821,6 +831,11 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1073,6 +1088,11 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
   getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getExchangeRate(
+    round: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -1322,6 +1342,11 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
     ): Promise<boolean>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1743,6 +1768,11 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1995,6 +2025,11 @@ export interface BaseRoundsVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,

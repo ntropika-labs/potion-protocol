@@ -39,6 +39,7 @@ export interface IRoundsOutputVaultInterface extends utils.Interface {
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
+    "getExchangeRate(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
@@ -74,6 +75,7 @@ export interface IRoundsOutputVaultInterface extends utils.Interface {
       | "exchangeAsset"
       | "exists"
       | "getCurrentRound"
+      | "getExchangeRate"
       | "isApprovedForAll"
       | "maxDeposit"
       | "maxMint"
@@ -133,6 +135,10 @@ export interface IRoundsOutputVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getCurrentRound",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExchangeRate",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -271,6 +277,10 @@ export interface IRoundsOutputVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExchangeRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -579,6 +589,11 @@ export interface IRoundsOutputVault extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     isApprovedForAll(
       account: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -746,6 +761,11 @@ export interface IRoundsOutputVault extends BaseContract {
 
   getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getExchangeRate(
+    round: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   isApprovedForAll(
     account: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -908,6 +928,11 @@ export interface IRoundsOutputVault extends BaseContract {
     ): Promise<boolean>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,
@@ -1215,6 +1240,11 @@ export interface IRoundsOutputVault extends BaseContract {
 
     getCurrentRound(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       account: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -1378,6 +1408,11 @@ export interface IRoundsOutputVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCurrentRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getExchangeRate(
+      round: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       account: PromiseOrValue<string>,

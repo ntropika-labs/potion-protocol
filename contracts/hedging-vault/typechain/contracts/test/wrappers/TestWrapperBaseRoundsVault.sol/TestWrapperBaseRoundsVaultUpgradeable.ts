@@ -25,9 +25,10 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../../../../common";
 
-export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
+export interface TestWrapperBaseRoundsVaultUpgradeableInterface
+  extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -45,6 +46,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "convertToShares(uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
+    "exchangeRate()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentRound()": FunctionFragment;
     "getExchangeRate(uint256)": FunctionFragment;
@@ -59,6 +61,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
     "mint(uint256,address)": FunctionFragment;
+    "mockSetExchangeRate(uint256)": FunctionFragment;
     "nextRound()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -103,6 +106,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "convertToShares"
       | "deposit"
       | "exchangeAsset"
+      | "exchangeRate"
       | "exists"
       | "getCurrentRound"
       | "getExchangeRate"
@@ -117,6 +121,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "maxMint"
       | "maxRedeem"
       | "mint"
+      | "mockSetExchangeRate"
       | "nextRound"
       | "pause"
       | "paused"
@@ -205,6 +210,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "exchangeRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "exists",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -264,6 +273,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "mint",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mockSetExchangeRate",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -429,6 +442,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "exchangeAsset",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "exchangeRate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentRound",
@@ -461,6 +478,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mockSetExchangeRate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -539,7 +560,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "SharesRedeemed(address,uint256,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -558,7 +578,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SharesRedeemed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -680,18 +699,6 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface SharesRedeemedEventObject {
-  account: string;
-  shares: BigNumber;
-  assets: BigNumber;
-}
-export type SharesRedeemedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  SharesRedeemedEventObject
->;
-
-export type SharesRedeemedEventFilter = TypedEventFilter<SharesRedeemedEvent>;
-
 export interface TransferBatchEventObject {
   operator: string;
   from: string;
@@ -767,12 +774,12 @@ export type WithdrawExchangeAssetBatchEvent = TypedEvent<
 export type WithdrawExchangeAssetBatchEventFilter =
   TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
 
-export interface RoundsOutputVaultUpgradeable extends BaseContract {
+export interface TestWrapperBaseRoundsVaultUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: RoundsOutputVaultUpgradeableInterface;
+  interface: TestWrapperBaseRoundsVaultUpgradeableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -850,6 +857,8 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<[string]>;
 
+    exchangeRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -891,10 +900,10 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<[boolean]>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
       targetVault: PromiseOrValue<string>,
-      receiptsURI: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      exchangeAsset_: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -922,6 +931,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    mockSetExchangeRate(
+      exchangeRate_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1115,6 +1129,8 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
   exchangeAsset(overrides?: CallOverrides): Promise<string>;
 
+  exchangeRate(overrides?: CallOverrides): Promise<BigNumber>;
+
   exists(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1156,10 +1172,10 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   ): Promise<boolean>;
 
   initialize(
-    adminAddress: PromiseOrValue<string>,
-    operatorAddress: PromiseOrValue<string>,
     targetVault: PromiseOrValue<string>,
-    receiptsURI: PromiseOrValue<string>,
+    underlyingAsset: PromiseOrValue<string>,
+    exchangeAsset_: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1187,6 +1203,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   mint(
     shares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  mockSetExchangeRate(
+    exchangeRate_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1378,6 +1399,8 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<string>;
 
+    exchangeRate(overrides?: CallOverrides): Promise<BigNumber>;
+
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1419,10 +1442,10 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<boolean>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
       targetVault: PromiseOrValue<string>,
-      receiptsURI: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      exchangeAsset_: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1452,6 +1475,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    mockSetExchangeRate(
+      exchangeRate_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     nextRound(overrides?: CallOverrides): Promise<void>;
 
@@ -1680,17 +1708,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "SharesRedeemed(address,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      shares?: null,
-      assets?: null
-    ): SharesRedeemedEventFilter;
-    SharesRedeemed(
-      account?: PromiseOrValue<string> | null,
-      shares?: null,
-      assets?: null
-    ): SharesRedeemedEventFilter;
-
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: PromiseOrValue<string> | null,
       from?: PromiseOrValue<string> | null,
@@ -1822,6 +1839,8 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<BigNumber>;
 
+    exchangeRate(overrides?: CallOverrides): Promise<BigNumber>;
+
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1863,10 +1882,10 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
       targetVault: PromiseOrValue<string>,
-      receiptsURI: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      exchangeAsset_: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1894,6 +1913,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    mockSetExchangeRate(
+      exchangeRate_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2088,6 +2112,8 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     exchangeAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    exchangeRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     exists(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2129,10 +2155,10 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
       targetVault: PromiseOrValue<string>,
-      receiptsURI: PromiseOrValue<string>,
+      underlyingAsset: PromiseOrValue<string>,
+      exchangeAsset_: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2160,6 +2186,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     mint(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mockSetExchangeRate(
+      exchangeRate_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
