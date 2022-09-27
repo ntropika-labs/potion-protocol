@@ -1,6 +1,8 @@
 {
     "name": "potion-contracts",
-    "main": "./src/index.ts",
+    "main": "dist/cjs/src/index.js",
+    "module": "dist/mjs/src/index.js",
+    "types": "dist/mjs/src/index.d.ts",
     "version": "0.0.1",
     "private": true,
     "author": "Potion",
@@ -16,6 +18,18 @@
     ],
     "engines": {
         "node": ">=16.11.0"
+    },
+    "exports": {
+        ".": {
+            "types": "dist/mjs/src/index.d.ts",
+            "require": "dist/cjs/src/index.js",
+            "import": "dist/mjs/src/index.js"
+        },
+        "./typechain": {
+            "types": "dist/mjs/typechain/index.d.ts",
+            "require": "dist/cjs/typechain/index.js",
+            "import": "dist/mjs/typechain/index.js"
+        }
     },
     "files": [
         "contracts"
@@ -34,7 +48,6 @@
         "url": "git@github.com:ntropika-labs/potion-protocol.git",
         "type": "git"
     },
-    "types": "./src/index.ts",
     "scripts": {
         "hardhat-localnode": "hardhat node --hostname 0.0.0.0 ",
         "hardhat-accounts": "hardhat accounts",
@@ -71,7 +84,9 @@
         "format": "prettier --config ./.prettierrc.js --write \"**/*.{js,json,md,sol,ts}\"",
         "format-check": "prettier --check --config ./.prettierrc.js \"**/*.{js,json,md,sol,ts}\"",
         "fast-forward": "hardhat fastForward",
-        "set-price": "hardhat setPrices"
+        "set-price": "hardhat setPrices",
+        "tsc": "tsc -p tsconfig-mjs.json && tsc -p tsconfig-cjs.json",
+        "tsc-info": "tsc --showConfig"
     },
     "dependencies": {
         "contracts-math": "workspace:^",

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "declarationMap": false,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "lib": ["ESNext", "dom", "dom.iterable"],
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "sourceMap": false,
+        "strict": true,
+        "types": ["node"],
+        "useDefineForClassFields": true
+    },
+    "exclude": ["node_modules"],
+    "include": ["src/**/*.ts", "typechain/**/*.d.ts", "typechain/**/*.ts", "typescript-defs/**/*.d.ts"]
+}

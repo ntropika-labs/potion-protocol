@@ -1,23 +1,9 @@
 {
+    "extends": "./tsconfig-base.json",
     "compilerOptions": {
-        "declaration": true,
-        "declarationMap": false,
-        "emitDecoratorMetadata": true,
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "lib": ["es6", "dom"],
         "module": "commonjs",
-        "moduleResolution": "node",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "resolveJsonModule": true,
-        "sourceMap": false,
-        "strict": true,
-        "target": "es6",
-        "types": ["node"]
+        "target": "es6"
     },
-    "exclude": ["node_modules"],
     "files": ["./hardhat.config.ts", "hardhat.helpers.ts", "deployments/deploymentConfig.ts"],
     "include": [
         "src/**/*.ts",
