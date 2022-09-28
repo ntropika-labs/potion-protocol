@@ -10,7 +10,7 @@ import "../versioning/PotionBuyActionV0.sol";
 import "../library/PercentageUtils.sol";
 import "../library/OpynProtocolLib.sol";
 import "../library/TimeUtils.sol";
-import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 /**
     @title PotionBuyAction

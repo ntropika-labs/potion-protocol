@@ -8,7 +8,7 @@ import "../../common/EmergencyLockUpgradeable.sol";
 import "../../common/LifecycleStatesUpgradeable.sol";
 import "../../common/RefundsHelperUpgreadable.sol";
 import "../../common/RolesManagerUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgradeable.sol";
 
 /**
     @title BaseVaultUpgradeable
@@ -45,17 +45,19 @@ abstract contract BaseActionUpgradeable is
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __BaseAction_init_chained(
         address adminAddress,
         address strategistAddress,
         address operatorAddress,
         address[] memory cannotRefundTokens
     ) internal onlyInitializing {
-        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundTokens, false);
         __ReentrancyGuard_init_unchained();
+
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
     }
 }

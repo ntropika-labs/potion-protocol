@@ -33,23 +33,22 @@ export interface IVaultInterface extends utils.Interface {
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
     "enterPosition()": FunctionFragment;
     "exitPosition()": FunctionFragment;
-    "getAdmin()": FunctionFragment;
     "getFeesRecipient()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
-    "getOperator()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
-    "getVault()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "pause()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "setFeesRecipient(address)": FunctionFragment;
     "setManagementFee(uint256)": FunctionFragment;
     "setPerformanceFee(uint256)": FunctionFragment;
@@ -62,23 +61,22 @@ export interface IVaultInterface extends utils.Interface {
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
       | "enterPosition"
       | "exitPosition"
-      | "getAdmin"
       | "getFeesRecipient"
       | "getLifecycleState"
       | "getManagementFee"
-      | "getOperator"
       | "getPerformanceFee"
-      | "getStrategist"
-      | "getVault"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "grantRole"
+      | "hasRole"
       | "pause"
       | "refund"
       | "refundETH"
+      | "renounceRole"
+      | "revokeRole"
       | "setFeesRecipient"
       | "setManagementFee"
       | "setPerformanceFee"
@@ -102,22 +100,6 @@ export interface IVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
   ): string;
@@ -125,7 +107,6 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "exitPosition",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getFeesRecipient",
     values?: undefined
@@ -139,18 +120,29 @@ export interface IVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getPerformanceFee",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refund",
@@ -163,6 +155,14 @@ export interface IVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "refundETH",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeesRecipient",
@@ -192,22 +192,6 @@ export interface IVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "enterPosition",
     data: BytesLike
   ): Result;
@@ -215,7 +199,6 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "exitPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getFeesRecipient",
     data: BytesLike
@@ -229,21 +212,31 @@ export interface IVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getPerformanceFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setFeesRecipient",
     data: BytesLike
@@ -259,44 +252,31 @@ export interface IVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
-    "AdminChanged(address,address)": EventFragment;
     "FeesETHSent(address,uint256,uint256)": EventFragment;
     "FeesReceipientChanged(address,address)": EventFragment;
     "FeesSent(address,address,uint256,uint256)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "ManagementFeeChanged(uint256,uint256)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "VaultPositionEntered(uint256,uint256)": EventFragment;
     "VaultPositionExited(uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesETHSent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesReceipientChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesSent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ManagementFeeChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultPositionExited"): EventFragment;
 }
-
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface FeesETHSentEventObject {
   receipient: string;
@@ -359,17 +339,6 @@ export type ManagementFeeChangedEvent = TypedEvent<
 export type ManagementFeeChangedEventFilter =
   TypedEventFilter<ManagementFeeChangedEvent>;
 
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
-
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
-
 export interface PerformanceFeeChangedEventObject {
   oldPerformanceFee: BigNumber;
   newPerformanceFee: BigNumber;
@@ -382,28 +351,42 @@ export type PerformanceFeeChangedEvent = TypedEvent<
 export type PerformanceFeeChangedEventFilter =
   TypedEventFilter<PerformanceFeeChangedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
 >;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
 }
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
 >;
 
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
@@ -470,26 +453,6 @@ export interface IVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     enterPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -498,21 +461,41 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
     getFeesRecipient(overrides?: CallOverrides): Promise<[string]>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
     getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
-
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -528,6 +511,18 @@ export interface IVault extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -562,26 +557,6 @@ export interface IVault extends BaseContract {
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   enterPosition(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -590,21 +565,41 @@ export interface IVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
   getFeesRecipient(overrides?: CallOverrides): Promise<string>;
 
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
   getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getOperator(overrides?: CallOverrides): Promise<string>;
-
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   pause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -620,6 +615,18 @@ export interface IVault extends BaseContract {
   refundETH(
     amount: PromiseOrValue<BigNumberish>,
     recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -654,31 +661,9 @@ export interface IVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     enterPosition(overrides?: CallOverrides): Promise<void>;
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getAdmin(overrides?: CallOverrides): Promise<string>;
 
     getFeesRecipient(overrides?: CallOverrides): Promise<string>;
 
@@ -686,13 +671,35 @@ export interface IVault extends BaseContract {
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOperator(overrides?: CallOverrides): Promise<string>;
-
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -706,6 +713,18 @@ export interface IVault extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -728,15 +747,6 @@ export interface IVault extends BaseContract {
   };
 
   filters: {
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-
     "FeesETHSent(address,uint256,uint256)"(
       receipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
@@ -788,15 +798,6 @@ export interface IVault extends BaseContract {
       newManagementFee?: null
     ): ManagementFeeChangedEventFilter;
 
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-
     "PerformanceFeeChanged(uint256,uint256)"(
       oldPerformanceFee?: null,
       newPerformanceFee?: null
@@ -806,23 +807,38 @@ export interface IVault extends BaseContract {
       newPerformanceFee?: null
     ): PerformanceFeeChangedEventFilter;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
 
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
 
     "VaultPositionEntered(uint256,uint256)"(
       totalPrincipalAmount?: null,
@@ -853,26 +869,6 @@ export interface IVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     enterPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -881,21 +877,41 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
     getFeesRecipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
-
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -911,6 +927,18 @@ export interface IVault extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -950,26 +978,6 @@ export interface IVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     enterPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -978,21 +986,41 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getFeesRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getManagementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1008,6 +1036,18 @@ export interface IVault extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

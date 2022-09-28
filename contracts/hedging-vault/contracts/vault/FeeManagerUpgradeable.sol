@@ -6,9 +6,9 @@ pragma solidity 0.8.14;
 import { IFeeManager } from "../interfaces/IFeeManager.sol";
 import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
 import "../library/PercentageUtils.sol";
-import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import { AddressUpgradeable as Address } from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/IERC20Upgradeable.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { AddressUpgradeable as Address } from "@openzeppelin/contracts-upgradeable-4.7.3/utils/AddressUpgradeable.sol";
 
 /**
     @title FeeManagerUpgradeable
@@ -64,7 +64,7 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize the RolesManagerUpgradeable contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __FeeManager_init_unchained(
         uint256 managementFee_,
         uint256 performanceFee_,

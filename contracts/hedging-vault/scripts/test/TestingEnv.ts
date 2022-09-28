@@ -12,7 +12,7 @@ import {
     IOpynFactory,
     IOpynAddressBook,
     IOpynOracle,
-    HedgingVaultOperatorHelper,
+    HedgingVaultOrchestrator,
     MockOpynOracle,
 } from "../../typechain";
 import {
@@ -35,7 +35,7 @@ export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
-    hedgingVaultOperatorHelper: HedgingVaultOperatorHelper;
+    hedgingVaultOrchestrator: HedgingVaultOrchestrator;
     USDC: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     underlyingAsset: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     potionLiquidityPoolManager: IPotionLiquidityPool | MockContract<IPotionLiquidityPool>;
@@ -72,8 +72,9 @@ function getTokensFromUniswapPath(uniswapPath: string) {
     return { firstToken, secondToken };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
 
@@ -92,6 +93,7 @@ function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
             args.params.amountOutMinimum,
         );
     });
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     asMock(tEnv.uniswapV3SwapRouter)?.exactOutput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
 
@@ -324,11 +326,13 @@ async function prepareTestEnvironment(
     return testingEnvironmentDeployment as TestingEnvironmentDeployment;
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getPotionProtocolDeployments(networkName: string): any {
-    //@ts-expect-error iterator is not defined
+    /* @ts-expect-error iterator is not defined */
     return Deployments[networkName].contracts;
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams, potionProtocolDeployments: any) {
     if (!hedgingVaultConfig.USDC) {
         hedgingVaultConfig.USDC = potionProtocolDeployments.USDC?.address;
@@ -407,11 +411,11 @@ export async function deployTestingEnv(
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
-    const [investmentVault, potionBuyAction, hedgingVaultOperatorHelper] = await deployHedgingVault(deploymentParams);
+    const [investmentVault, potionBuyAction, hedgingVaultOrchestrator] = await deployHedgingVault(deploymentParams);
 
     testEnvDeployment.investmentVault = investmentVault;
     testEnvDeployment.potionBuyAction = potionBuyAction;
-    testEnvDeployment.hedgingVaultOperatorHelper = hedgingVaultOperatorHelper;
+    testEnvDeployment.hedgingVaultOrchestrator = hedgingVaultOrchestrator;
 
     printDeploymentEnvironment(testEnvDeployment);
 
@@ -424,7 +428,7 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
-    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOperatorHelper.address}`);
+    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
     console.log(`------------------------------------------------------`);
     console.log(`  - Underlying Asset: ${testEnvDeployment.underlyingAsset.address}`);
     console.log(`  - USDC: ${testEnvDeployment.USDC.address}`);

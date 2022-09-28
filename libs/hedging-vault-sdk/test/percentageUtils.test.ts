@@ -7,7 +7,7 @@ import {
   applyPercentage,
   fromSolidityPercentage,
   isPercentageInRange,
-  substractPercentage,
+  subtractPercentage,
   toSolidityPercentage,
 } from "../src/percentageUtils";
 
@@ -38,7 +38,7 @@ describe("percentageUtils", () => {
   it("substracts the percentage from the given amount and returns the result", () => {
     const amount = toSolidityPercentage(100);
     const percentage = toSolidityPercentage(10);
-    const result = substractPercentage(amount, percentage);
+    const result = subtractPercentage(amount, percentage);
     const formattedResult = parseFloat(formatUnits(result, 6));
     expect(formattedResult).toEqual(90);
   });

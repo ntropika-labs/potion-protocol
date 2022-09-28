@@ -171,7 +171,7 @@ export function getHardhatChainConfig(): HardhatNetworkUserConfig {
             mnemonic: "test test test test test test test test test test test junk",
             path: "m/44'/60'/0'/0/",
             initialIndex: 0,
-            count: 10,
+            count: 20,
         },
         chainId: ChainIds.hardhat,
     };
@@ -184,7 +184,7 @@ export function getLocalhostChainConfig(): NetworkUserConfig {
             mnemonic: walletSeed,
             path: "m/44'/60'/0'/0/",
             initialIndex: 0,
-            count: 10,
+            count: 20,
         },
     };
 }
@@ -194,7 +194,7 @@ export function getChainConfig(network: NetworksType): NetworkUserConfig {
     const url: string = EndpointURLs[provider][network] + endpointApiKey;
     return {
         accounts: {
-            count: 10,
+            count: 20,
             mnemonic: walletSeed,
             path: "m/44'/60'/0'/0",
         },

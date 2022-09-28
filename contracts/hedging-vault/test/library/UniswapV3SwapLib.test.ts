@@ -33,7 +33,7 @@ describe("UniswapV3SwapLib", function () {
         tokenB = (await ethers.getSigners())[6].address;
     });
 
-    it("Swap input", async function () {
+    it("US0001 - Swap Input", async function () {
         if (network.name !== "hardhat") {
             this.skip();
         }
@@ -60,11 +60,12 @@ describe("UniswapV3SwapLib", function () {
 
         expect(fakeUniswapRouter.exactInput).to.have.been.calledOnce;
 
-        const amountOutMinimum = PercentageUtils.substractPercentage(
+        const amountOutMinimum = PercentageUtils.subtractPercentage(
             swapInputParameter.expectedAmountOut,
             swapInputParameter.slippage,
         );
 
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const exactInputParameters: any = fakeUniswapRouter.exactInput.getCall(0).args[0];
         expect(exactInputParameters.path).to.be.equal(swapInputParameter.swapPath);
         expect(exactInputParameters.recipient).to.be.equal(uniswapV3SwapLib.address);
@@ -73,7 +74,7 @@ describe("UniswapV3SwapLib", function () {
         expect(exactInputParameters.amountOutMinimum).to.be.equal(amountOutMinimum);
     });
 
-    it("Swap output", async function () {
+    it("US0002 - Swap Output", async function () {
         fakeUniswapRouter.exactOutput.returns(2003);
 
         const poolFee = 3000000;
@@ -101,6 +102,7 @@ describe("UniswapV3SwapLib", function () {
             swapOutputParameter.slippage,
         );
 
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const exactInputParameters: any = fakeUniswapRouter.exactOutput.getCall(0).args[0];
         expect(exactInputParameters.path).to.be.equal(swapOutputParameter.swapPath);
         expect(exactInputParameters.recipient).to.be.equal(uniswapV3SwapLib.address);

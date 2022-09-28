@@ -29,52 +29,88 @@ import type {
 
 export interface BaseActionUpgradeableInterface extends utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
     "canPositionBeEntered(address)": FunctionFragment;
     "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
-    "getOperator()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
-    "getVault()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "unpause()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
       | "canPositionBeEntered"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
       | "enterPosition"
       | "exitPosition"
-      | "getAdmin"
       | "getLifecycleState"
-      | "getOperator"
-      | "getStrategist"
-      | "getVault"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "grantRole"
+      | "hasRole"
       | "pause"
       | "paused"
       | "refund"
       | "refundETH"
+      | "renounceRole"
+      | "revokeRole"
+      | "supportsInterface"
       | "unpause"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeEntered",
     values: [PromiseOrValue<string>]
@@ -92,22 +128,6 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "enterPosition",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -115,20 +135,30 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "exitPosition",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -143,8 +173,38 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "refundETH",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "canPositionBeEntered",
     data: BytesLike
@@ -159,22 +219,6 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "enterPosition",
     data: BytesLike
   ): Result;
@@ -182,49 +226,60 @@ export interface BaseActionUpgradeableInterface extends utils.Interface {
     functionFragment: "exitPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getOperator",
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getRoleMember",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "ActionPositionEntered(address,uint256)": EventFragment;
     "ActionPositionExited(address,uint256)": EventFragment;
-    "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
@@ -251,17 +306,6 @@ export type ActionPositionExitedEvent = TypedEvent<
 export type ActionPositionExitedEventFilter =
   TypedEventFilter<ActionPositionExitedEvent>;
 
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
 export interface InitializedEventObject {
   version: number;
 }
@@ -281,17 +325,6 @@ export type LifecycleStateChangedEvent = TypedEvent<
 export type LifecycleStateChangedEventFilter =
   TypedEventFilter<LifecycleStateChangedEvent>;
 
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
-
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
-
 export interface PausedEventObject {
   account: string;
 }
@@ -299,17 +332,42 @@ export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
 >;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface UnpausedEventObject {
   account: string;
@@ -317,17 +375,6 @@ export interface UnpausedEventObject {
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
-
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
-}
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
->;
-
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
 
 export interface BaseActionUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -356,6 +403,18 @@ export interface BaseActionUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     canPositionBeEntered(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -373,26 +432,6 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     enterPosition(
       investmentAsset: PromiseOrValue<string>,
       amountToInvest: PromiseOrValue<BigNumberish>,
@@ -404,15 +443,35 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
 
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -433,10 +492,39 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
   canPositionBeEntered(
     investmentAsset: PromiseOrValue<string>,
@@ -455,26 +543,6 @@ export interface BaseActionUpgradeable extends BaseContract {
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   enterPosition(
     investmentAsset: PromiseOrValue<string>,
     amountToInvest: PromiseOrValue<BigNumberish>,
@@ -486,15 +554,35 @@ export interface BaseActionUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
-  getOperator(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   pause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -515,11 +603,40 @@ export interface BaseActionUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
     canPositionBeEntered(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -537,26 +654,6 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     enterPosition(
       investmentAsset: PromiseOrValue<string>,
       amountToInvest: PromiseOrValue<BigNumberish>,
@@ -568,15 +665,35 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
 
-    getOperator(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -594,6 +711,23 @@ export interface BaseActionUpgradeable extends BaseContract {
       recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
   };
@@ -617,15 +751,6 @@ export interface BaseActionUpgradeable extends BaseContract {
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
 
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
@@ -638,41 +763,59 @@ export interface BaseActionUpgradeable extends BaseContract {
       newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
 
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
-
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     canPositionBeEntered(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -690,26 +833,6 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     enterPosition(
       investmentAsset: PromiseOrValue<string>,
       amountToInvest: PromiseOrValue<BigNumberish>,
@@ -721,15 +844,35 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -750,12 +893,43 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     canPositionBeEntered(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -773,26 +947,6 @@ export interface BaseActionUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     enterPosition(
       investmentAsset: PromiseOrValue<string>,
       amountToInvest: PromiseOrValue<BigNumberish>,
@@ -804,15 +958,35 @@ export interface BaseActionUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -831,6 +1005,23 @@ export interface BaseActionUpgradeable extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     unpause(

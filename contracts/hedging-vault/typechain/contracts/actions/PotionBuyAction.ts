@@ -196,32 +196,35 @@ export declare namespace PotionBuyAction {
 
 export interface PotionBuyActionInterface extends utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
     "MIN_CYCLE_DURATION()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
     "calculateCurrentPayout(address)": FunctionFragment;
     "canPositionBeEntered(address)": FunctionFragment;
     "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
     "cycleDurationSecs()": FunctionFragment;
     "enterPosition(address,uint256)": FunctionFragment;
     "exitPosition(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
-    "getOperator()": FunctionFragment;
     "getOpynAddressBook()": FunctionFragment;
     "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getPotionLiquidityManager()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
     "getSwapInputAmount(address,address,uint256)": FunctionFragment;
     "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
     "getSwapRouter()": FunctionFragment;
     "getUSDC()": FunctionFragment;
-    "getVault()": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
@@ -231,6 +234,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "premiumSlippage()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
@@ -240,38 +245,42 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
     "setSwapSlippage(uint256)": FunctionFragment;
     "strikePercentage()": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "swapSlippage()": FunctionFragment;
     "unpause()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
       | "MIN_CYCLE_DURATION"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
       | "calculateCurrentPayout"
       | "canPositionBeEntered"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
       | "cycleDurationSecs"
       | "enterPosition"
       | "exitPosition"
-      | "getAdmin"
       | "getLifecycleState"
-      | "getOperator"
       | "getOpynAddressBook"
       | "getPotionBuyInfo"
       | "getPotionLiquidityManager"
-      | "getStrategist"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
       | "getSwapInfo"
       | "getSwapInputAmount"
       | "getSwapOutputAmount"
       | "getSwapRouter"
       | "getUSDC"
-      | "getVault"
+      | "grantRole"
+      | "hasRole"
       | "initialize"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
@@ -281,6 +290,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "premiumSlippage"
       | "refund"
       | "refundETH"
+      | "renounceRole"
+      | "revokeRole"
       | "setCycleDuration"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
@@ -290,12 +301,37 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "setSwapInfo"
       | "setSwapSlippage"
       | "strikePercentage"
+      | "supportsInterface"
       | "swapSlippage"
       | "unpause"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "MIN_CYCLE_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -319,22 +355,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "cycleDurationSecs",
     values?: undefined
   ): string;
@@ -346,13 +366,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "exitPosition",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOperator",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -368,8 +383,16 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapInfo",
@@ -396,7 +419,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getUSDC", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PotionBuyAction.PotionBuyInitParamsStruct]
@@ -430,6 +460,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "refundETH",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
@@ -468,15 +506,37 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "swapSlippage",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "MIN_CYCLE_DURATION",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculateCurrentPayout",
     data: BytesLike
@@ -495,22 +555,6 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "cycleDurationSecs",
     data: BytesLike
   ): Result;
@@ -522,13 +566,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
     functionFragment: "exitPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLifecycleState",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOperator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -544,7 +583,15 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -564,7 +611,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
@@ -586,6 +634,11 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCycleDuration",
     data: BytesLike
@@ -623,6 +676,10 @@ export interface PotionBuyActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "swapSlippage",
     data: BytesLike
   ): Result;
@@ -631,25 +688,23 @@ export interface PotionBuyActionInterface extends utils.Interface {
   events: {
     "ActionPositionEntered(address,uint256)": EventFragment;
     "ActionPositionExited(address,uint256)": EventFragment;
-    "AdminChanged(address,address)": EventFragment;
     "CycleDurationChanged(uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "StrikePercentageChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
@@ -657,14 +712,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PremiumSlippageChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StrikePercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
 }
 
 export interface ActionPositionEnteredEventObject {
@@ -690,17 +745,6 @@ export type ActionPositionExitedEvent = TypedEvent<
 
 export type ActionPositionExitedEventFilter =
   TypedEventFilter<ActionPositionExitedEvent>;
-
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface CycleDurationChangedEventObject {
   cycleDurationSecs: BigNumber;
@@ -754,17 +798,6 @@ export type MaxSwapDurationChangedEvent = TypedEvent<
 export type MaxSwapDurationChangedEventFilter =
   TypedEventFilter<MaxSwapDurationChangedEvent>;
 
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
-
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
-
 export interface PausedEventObject {
   account: string;
 }
@@ -783,17 +816,42 @@ export type PremiumSlippageChangedEvent = TypedEvent<
 export type PremiumSlippageChangedEventFilter =
   TypedEventFilter<PremiumSlippageChangedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
 >;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface StrikePercentageChangedEventObject {
   strikePercentage: BigNumber;
@@ -824,17 +882,6 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
-}
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
->;
-
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
-
 export interface PotionBuyAction extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -862,7 +909,19 @@ export interface PotionBuyAction extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
@@ -886,26 +945,6 @@ export interface PotionBuyAction extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     enterPosition(
@@ -919,11 +958,7 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
-
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
 
     getOpynAddressBook(overrides?: CallOverrides): Promise<[string]>;
 
@@ -935,7 +970,21 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionLiquidityManager(overrides?: CallOverrides): Promise<[string]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getSwapInfo(
       inputToken: PromiseOrValue<string>,
@@ -961,7 +1010,17 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<[string]>;
 
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -992,6 +1051,18 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1037,6 +1108,11 @@ export interface PotionBuyAction extends BaseContract {
 
     strikePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     unpause(
@@ -1044,7 +1120,19 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
   MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
   calculateCurrentPayout(
     investmentAsset: PromiseOrValue<string>,
@@ -1068,26 +1156,6 @@ export interface PotionBuyAction extends BaseContract {
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
   enterPosition(
@@ -1101,11 +1169,7 @@ export interface PotionBuyAction extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-  getOperator(overrides?: CallOverrides): Promise<string>;
 
   getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
@@ -1117,7 +1181,21 @@ export interface PotionBuyAction extends BaseContract {
 
   getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getSwapInfo(
     inputToken: PromiseOrValue<string>,
@@ -1143,7 +1221,17 @@ export interface PotionBuyAction extends BaseContract {
 
   getUSDC(overrides?: CallOverrides): Promise<string>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
     initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1174,6 +1262,18 @@ export interface PotionBuyAction extends BaseContract {
   refundETH(
     amount: PromiseOrValue<BigNumberish>,
     recipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1219,6 +1319,11 @@ export interface PotionBuyAction extends BaseContract {
 
   strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
   unpause(
@@ -1226,7 +1331,19 @@ export interface PotionBuyAction extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
@@ -1250,26 +1367,6 @@ export interface PotionBuyAction extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
@@ -1283,11 +1380,7 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-    getOperator(overrides?: CallOverrides): Promise<string>;
 
     getOpynAddressBook(overrides?: CallOverrides): Promise<string>;
 
@@ -1299,7 +1392,21 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionLiquidityManager(overrides?: CallOverrides): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getSwapInfo(
       inputToken: PromiseOrValue<string>,
@@ -1325,7 +1432,17 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<string>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1354,6 +1471,18 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1399,6 +1528,11 @@ export interface PotionBuyAction extends BaseContract {
 
     strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
@@ -1422,15 +1556,6 @@ export interface PotionBuyAction extends BaseContract {
       investmentAsset?: PromiseOrValue<string> | null,
       amountReturned?: null
     ): ActionPositionExitedEventFilter;
-
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
 
     "CycleDurationChanged(uint256)"(
       cycleDurationSecs?: null
@@ -1465,15 +1590,6 @@ export interface PotionBuyAction extends BaseContract {
       maxSwapDurationSecs?: null
     ): MaxSwapDurationChangedEventFilter;
 
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
@@ -1484,14 +1600,38 @@ export interface PotionBuyAction extends BaseContract {
       premiumSlippage?: null
     ): PremiumSlippageChangedEventFilter;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
 
     "StrikePercentageChanged(uint256)"(
       strikePercentage?: null
@@ -1507,19 +1647,22 @@ export interface PotionBuyAction extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
-
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     MIN_CYCLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
@@ -1543,26 +1686,6 @@ export interface PotionBuyAction extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
@@ -1576,11 +1699,7 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOpynAddressBook(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1592,7 +1711,21 @@ export interface PotionBuyAction extends BaseContract {
 
     getPotionLiquidityManager(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getSwapInfo(
       inputToken: PromiseOrValue<string>,
@@ -1618,7 +1751,17 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1649,6 +1792,18 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1694,6 +1849,11 @@ export interface PotionBuyAction extends BaseContract {
 
     strikePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(
@@ -1702,9 +1862,23 @@ export interface PotionBuyAction extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     MIN_CYCLE_DURATION(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
@@ -1728,26 +1902,6 @@ export interface PotionBuyAction extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     enterPosition(
@@ -1761,11 +1915,7 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOpynAddressBook(
       overrides?: CallOverrides
@@ -1781,7 +1931,21 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getSwapInfo(
       inputToken: PromiseOrValue<string>,
@@ -1807,7 +1971,17 @@ export interface PotionBuyAction extends BaseContract {
 
     getUSDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
@@ -1844,6 +2018,18 @@ export interface PotionBuyAction extends BaseContract {
     refundETH(
       amount: PromiseOrValue<BigNumberish>,
       recipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1888,6 +2074,11 @@ export interface PotionBuyAction extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     strikePercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

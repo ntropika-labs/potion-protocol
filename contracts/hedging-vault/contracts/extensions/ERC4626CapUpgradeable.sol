@@ -3,10 +3,12 @@
  */
 pragma solidity 0.8.14;
 
+import "./interfaces/IERC4626CapUpgradeable.sol";
+
 import { RolesManagerUpgradeable } from "../common/RolesManagerUpgradeable.sol";
-import { ERC4626Upgradeable } from "../openzeppelin/ERC4626Upgradeable.sol";
-import { MathUpgradeable as Math } from "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import { ERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/ERC4626Upgradeable.sol";
+import { MathUpgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/utils/math/MathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 /**
     @title ERC4626CapUpgradeable
@@ -24,16 +26,13 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
     final and there is no need to add more storage variables
  */
 
-contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
+contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable, IERC4626CapUpgradeable {
     //STORAGE
 
     /**
         @notice Maximum amount of principal that the vault can manage
      */
     uint256 private _cap;
-
-    // EVENTS
-    event VaultCapChanged(uint256 indexed prevCap, uint256 indexed newCap);
 
     // UPGRADEABLE INITIALIZER
 
@@ -51,7 +50,7 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
         @dev The RolesManager contract MUST BE initialized in the Vault/Action contract as it
         it shared among other helper contracts
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __ERC4626Cap_init_unchained(uint256 cap_, address asset_) internal onlyInitializing {
         __ERC4626_init_unchained(IERC20MetadataUpgradeable(asset_));
 
@@ -92,11 +91,17 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
 
         @dev The only input parameter is unnamed because it is not used in the function
      */
-    function maxDeposit(address receiver) public view virtual override returns (uint256) {
+    function maxDeposit(address receiver)
+        public
+        view
+        virtual
+        override(ERC4626Upgradeable, IERC4626Upgradeable)
+        returns (uint256)
+    {
         // First check if the OZ ERC4626 vault allows deposits at this time. It usually has an edge
         // case in which deposits are disabled and we want to abide by that logic. Getting the minimum here
         // ensures that we get either 0 or the amount defined in principal Cap
-        uint256 currentCap = Math.min(super.maxDeposit(receiver), _cap);
+        uint256 currentCap = MathUpgradeable.min(super.maxDeposit(receiver), _cap);
 
         //
         if (currentCap < totalAssets()) {
@@ -120,14 +125,20 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable {
         than requesting to mint that number of shares will always require an amount equal or less than
         the current existing deposit cap
      */
-    function maxMint(address receiver) public view virtual override returns (uint256) {
+    function maxMint(address receiver)
+        public
+        view
+        virtual
+        override(ERC4626Upgradeable, IERC4626Upgradeable)
+        returns (uint256)
+    {
         if (_cap < totalAssets()) {
             return 0;
         }
 
-        uint256 maxAssetsAmount = Math.min(super.maxMint(receiver), _cap - totalAssets());
+        uint256 maxAssetsAmount = MathUpgradeable.min(super.maxMint(receiver), _cap - totalAssets());
 
-        return _convertToShares(maxAssetsAmount);
+        return _convertToShares(maxAssetsAmount, MathUpgradeable.Rounding.Down);
     }
 
     /// INTERNALS

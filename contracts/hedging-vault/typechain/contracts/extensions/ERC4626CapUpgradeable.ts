@@ -29,24 +29,27 @@ import type {
 
 export interface ERC4626CapUpgradeableInterface extends utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "asset()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
     "convertToAssets(uint256)": FunctionFragment;
     "convertToShares(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getOperator()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
-    "getVault()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
     "getVaultCap()": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
@@ -59,7 +62,10 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     "previewRedeem(uint256)": FunctionFragment;
     "previewWithdraw(uint256)": FunctionFragment;
     "redeem(uint256,address,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "setVaultCap(uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalAssets()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -70,24 +76,27 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
       | "allowance"
       | "approve"
       | "asset"
       | "balanceOf"
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
       | "decreaseAllowance"
       | "deposit"
-      | "getAdmin"
-      | "getOperator"
-      | "getStrategist"
-      | "getVault"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
       | "getVaultCap"
+      | "grantRole"
+      | "hasRole"
       | "increaseAllowance"
       | "maxDeposit"
       | "maxMint"
@@ -100,7 +109,10 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
       | "previewRedeem"
       | "previewWithdraw"
       | "redeem"
+      | "renounceRole"
+      | "revokeRole"
       | "setVaultCap"
+      | "supportsInterface"
       | "symbol"
       | "totalAssets"
       | "totalSupply"
@@ -109,6 +121,30 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
       | "withdraw"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -120,22 +156,6 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeVault",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -155,19 +175,29 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getVaultCap",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
@@ -219,8 +249,20 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setVaultCap",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -252,26 +294,28 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeStrategist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeVault",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
@@ -286,20 +330,24 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getOperator",
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getRoleMember",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getVaultCap",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
     data: BytesLike
@@ -331,7 +379,16 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "setVaultCap",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
@@ -351,40 +408,27 @@ export interface ERC4626CapUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "AdminChanged(address,address)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VaultCapChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
-
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface ApprovalEventObject {
   owner: string;
@@ -418,28 +462,42 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
 >;
 
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
 >;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface TransferEventObject {
   from: string;
@@ -463,17 +521,6 @@ export type VaultCapChangedEvent = TypedEvent<
 >;
 
 export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
-
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
-}
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
->;
-
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
 
 export interface WithdrawEventObject {
   caller: string;
@@ -516,6 +563,18 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -534,26 +593,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     convertToAssets(
       shares: PromiseOrValue<BigNumberish>,
@@ -579,15 +618,35 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
-
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getVaultCap(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     increaseAllowance(
       spender: PromiseOrValue<string>,
@@ -650,10 +709,27 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
@@ -682,6 +758,18 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
   allowance(
     owner: PromiseOrValue<string>,
     spender: PromiseOrValue<string>,
@@ -700,26 +788,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   convertToAssets(
     shares: PromiseOrValue<BigNumberish>,
@@ -745,15 +813,35 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getOperator(overrides?: CallOverrides): Promise<string>;
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
-
-  getVault(overrides?: CallOverrides): Promise<string>;
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   increaseAllowance(
     spender: PromiseOrValue<string>,
@@ -816,10 +904,27 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setVaultCap(
     newCap: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -848,6 +953,18 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -866,26 +983,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     convertToAssets(
       shares: PromiseOrValue<BigNumberish>,
@@ -911,15 +1008,35 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getOperator(overrides?: CallOverrides): Promise<string>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
-
-    getVault(overrides?: CallOverrides): Promise<string>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     increaseAllowance(
       spender: PromiseOrValue<string>,
@@ -982,10 +1099,27 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -1015,15 +1149,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   };
 
   filters: {
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-
     "Approval(address,address,uint256)"(
       owner?: PromiseOrValue<string> | null,
       spender?: PromiseOrValue<string> | null,
@@ -1051,23 +1176,38 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: PromiseOrValue<string> | null,
@@ -1089,15 +1229,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       newCap?: PromiseOrValue<BigNumberish> | null
     ): VaultCapChangedEventFilter;
 
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-
     "Withdraw(address,address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
@@ -1115,6 +1246,18 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -1132,26 +1275,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     convertToAssets(
@@ -1178,15 +1301,35 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     increaseAllowance(
       spender: PromiseOrValue<string>,
@@ -1249,9 +1392,26 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1282,6 +1442,20 @@ export interface ERC4626CapUpgradeable extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -1299,26 +1473,6 @@ export interface ERC4626CapUpgradeable extends BaseContract {
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     convertToAssets(
@@ -1345,15 +1499,35 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getVaultCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     increaseAllowance(
       spender: PromiseOrValue<string>,
@@ -1416,9 +1590,26 @@ export interface ERC4626CapUpgradeable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;

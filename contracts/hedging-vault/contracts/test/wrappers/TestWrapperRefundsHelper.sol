@@ -20,18 +20,17 @@ contract TestWrapperRefundsHelper is RefundsHelperUpgreadable {
      */
     function initialize(
         address adminAddress,
-        address strategistAddress,
         address operatorAddress,
         address[] memory _cannotRefundToken,
         bool cannotRefundETH_
     ) external initializer {
-        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress);
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
         __RefundsHelper_init_unchained(_cannotRefundToken, cannotRefundETH_);
     }
 
     /**
         Default payable function to receive Ether
      */
-    // solhint-disable-next-line no-empty-block
+    /* solhint-disable-next-line no-empty-block */
     receive() external payable {}
 }

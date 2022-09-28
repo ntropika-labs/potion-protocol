@@ -2,6 +2,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
+import "@nomiclabs/hardhat-truffle5";
 import "@typechain/hardhat";
 import "hardhat-abi-exporter";
 import "hardhat-gas-reporter";
@@ -80,7 +81,7 @@ const config: HardhatUserConfig = {
         path: "./abis",
         runOnCompile: true,
         clear: true,
-        flat: true,
+        flat: false,
         only: [],
         spacing: 2,
         pretty: false,

@@ -3,6 +3,7 @@
 /* eslint-disable */
 export type { IAction } from "./IAction";
 export type { IActionsManager } from "./IActionsManager";
+export type { IBaseRoundsVault } from "./IBaseRoundsVault";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";
 export type { IInvestmentVaultV0 } from "./IInvestmentVaultV0";
@@ -18,5 +19,9 @@ export type { IPotionLiquidityPool } from "./IPotionLiquidityPool";
 export type { IPotionProtocolOracle } from "./IPotionProtocolOracle";
 export type { IRefundsHelper } from "./IRefundsHelper";
 export type { IRolesManager } from "./IRolesManager";
+export type { IRoundsInputVault } from "./IRoundsInputVault";
+export type { IRoundsOutputVault } from "./IRoundsOutputVault";
 export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";
+export type { IVaultDeferredOperationUpgradeable } from "./IVaultDeferredOperationUpgradeable";
+export type { IVaultWithReceiptsUpgradeable } from "./IVaultWithReceiptsUpgradeable";

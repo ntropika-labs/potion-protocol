@@ -21,7 +21,7 @@ describe("ActionsManager", function () {
         await actionsContainer.initialize(actions, principalPercentages);
     });
 
-    it("Check getters", async function () {
+    it("AM0001 - Getters", async function () {
         expect(await actionsContainer.getActionsLength()).to.be.equal(3);
 
         for (let i = 0; i < 3; i++) {

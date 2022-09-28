@@ -15,18 +15,24 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "prevAdminAddress",
-        type: "address",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "newAdminAddress",
-        type: "address",
+        internalType: "bytes32",
+        name: "previousAdminRole",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "newAdminRole",
+        type: "bytes32",
       },
     ],
-    name: "AdminChanged",
+    name: "RoleAdminChanged",
     type: "event",
   },
   {
@@ -34,18 +40,24 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
         internalType: "address",
-        name: "prevOperatorAddress",
+        name: "account",
         type: "address",
       },
       {
         indexed: true,
         internalType: "address",
-        name: "newOperatorAddress",
+        name: "sender",
         type: "address",
       },
     ],
-    name: "OperatorChanged",
+    name: "RoleGranted",
     type: "event",
   },
   {
@@ -53,48 +65,102 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
         internalType: "address",
-        name: "prevStrategistAddress",
+        name: "account",
         type: "address",
       },
       {
         indexed: true,
         internalType: "address",
-        name: "newStrategistAddress",
+        name: "sender",
         type: "address",
       },
     ],
-    name: "StrategistChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "prevVaultAddress",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newVaultAddress",
-        type: "address",
-      },
-    ],
-    name: "VaultChanged",
+    name: "RoleRevoked",
     type: "event",
   },
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+    ],
+    name: "getRoleAdmin",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "getRoleMember",
+    outputs: [
+      {
         internalType: "address",
-        name: "newAdminAddress",
+        name: "",
         type: "address",
       },
     ],
-    name: "changeAdmin",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+    ],
+    name: "getRoleMemberCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "grantRole",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -102,12 +168,41 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
         internalType: "address",
-        name: "newOperatorAddress",
+        name: "account",
         type: "address",
       },
     ],
-    name: "changeOperator",
+    name: "hasRole",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "renounceRole",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -115,79 +210,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
         internalType: "address",
-        name: "newStrategistAddress",
+        name: "account",
         type: "address",
       },
     ],
-    name: "changeStrategist",
+    name: "revokeRole",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newVaultAddress",
-        type: "address",
-      },
-    ],
-    name: "changeVault",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getAdmin",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getOperator",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getStrategist",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getVault",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ];

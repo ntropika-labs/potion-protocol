@@ -16,11 +16,11 @@ import "./IPotionProtocolOracle.sol";
     @dev See { PotionBuyActionV0 }
 
     @dev This interface is not inherited by PotionBuyAction itself and only serves to expose the functions
-    that are used by the Operator to configure parameters. In particular it is used by { HedgingVaultOperatorHelper }
+    that are used by the Operator to configure parameters. In particular it is used by { HedgingVaultOrchestrator }
     to aid in the operation of the vault
     
  */
-// solhint-disable-next-line no-empty-blocks
+/* solhint-disable-next-line no-empty-blocks */
 interface IPotionBuyAction is IAction, IUniswapV3Oracle, IPotionProtocolOracle {
     // Empty on purpose
 }

@@ -3,5 +3,5 @@
 /* eslint-disable */
 import type * as contracts from "./contracts";
 export type { contracts };
-import type * as contractsUpgradeable from "./contracts-upgradeable";
-export type { contractsUpgradeable };
+import type * as contractsUpgradeable473 from "./contracts-upgradeable-4.7.3";
+export type { contractsUpgradeable473 };

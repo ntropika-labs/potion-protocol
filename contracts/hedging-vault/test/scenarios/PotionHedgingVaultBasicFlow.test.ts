@@ -13,14 +13,16 @@ import {
     PotionBuyAction,
     IPotionLiquidityPool,
     IUniswapV3Oracle,
-    HedgingVaultOperatorHelper,
+    HedgingVaultOrchestrator,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { LifecycleStates } from "../utils/LifecycleStates";
+import { LifecycleStates } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
+import { Roles } from "hedging-vault-sdk";
+
 import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 import { getDeploymentsNetworkName } from "../../scripts/utils/network";
@@ -37,7 +39,7 @@ describe("HedgingVault", function () {
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
-    let operatorHelper: HedgingVaultOperatorHelper;
+    let operatorHelper: HedgingVaultOrchestrator;
     let tEnv: TestingEnvironmentDeployment;
 
     beforeEach(async function () {
@@ -55,15 +57,19 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
-        operatorHelper = tEnv.hedgingVaultOperatorHelper;
+        operatorHelper = tEnv.hedgingVaultOrchestrator;
     });
 
-    it("Vault Deployment Values", async function () {
+    it("HV0001 - Investment Vault Default Value", async function () {
         // Roles
-        expect(await vault.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await vault.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
-        expect(await vault.getStrategist()).to.equal(tEnv.strategistAddress);
-        expect(await vault.getVault()).to.equal("0x0000000000000000000000000000000000000000");
+        expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
+        expect(await vault.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await vault.getRoleMemberCount(Roles.Strategist)).to.equal(1);
+        expect(await vault.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
+        expect(await vault.getRoleMemberCount(Roles.Vault)).to.equal(0);
+        expect(await vault.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Underlying asset and cap
         expect(await vault.asset()).to.equal(tEnv.underlyingAsset.address);
@@ -94,12 +100,17 @@ describe("HedgingVault", function () {
         expect(principalPercentages[0]).to.equal(tEnv.hedgingPercentage);
         expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
     });
-    it("Action Deployment Values", async function () {
+    it("HV0002 - Potion Buy Action Default Value", async function () {
         // Roles
-        expect(await action.getAdmin()).to.equal(tEnv.adminAddress);
-        expect(await action.getOperator()).to.equal(tEnv.hedgingVaultOperatorHelper.address);
-        expect(await action.getStrategist()).to.equal(tEnv.strategistAddress);
-        expect(await action.getVault()).to.equal(vault.address);
+        expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
+        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await action.getRoleMemberCount(Roles.Strategist)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
+        expect(await action.getRoleMemberCount(Roles.Vault)).to.equal(1);
+        expect(await action.getRoleMember(Roles.Vault, 0)).to.equal(vault.address);
+        expect(await action.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Emergency Lock
         expect(await action.paused()).to.equal(false);
@@ -128,7 +139,7 @@ describe("HedgingVault", function () {
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
     });
 
-    it("Basic Deposit/Redemption", async function () {
+    it("HV0003 - Basic Deposit/Redemption", async function () {
         // Mint and approve
         await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
@@ -148,7 +159,7 @@ describe("HedgingVault", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it("Full cycle (deposit, enter, exit, redeem)", async function () {
+    it("HV0004 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
@@ -344,7 +355,7 @@ describe("HedgingVault", function () {
             .mul(USDCPriceInUSDbn)
             .div(underlyingAssetPriceInUSDbn);
 
-        const uniswapExitPositionOutputAmount = HedgingVaultUtils.substractPercentage(
+        const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
             extraUnderlyingAssetInVaultAfterPayout,
             tEnv.swapSlippage,
         );
@@ -355,6 +366,8 @@ describe("HedgingVault", function () {
             asMock(tEnv.opynController).getPayout.returns(() => {
                 return payoutInUSDC;
             });
+
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             asMock(tEnv.opynController).operate.returns(async (args: any) => {
                 if (args[0][0].actionType !== 8) {
                     return;

@@ -40,7 +40,7 @@ contract UniswapV3OracleUpgradeable is IUniswapV3Oracle, RolesManagerUpgradeable
         @notice This does not chain the initialization to the parent contract.
         Also this contract does not need to initialize anything itself.
      */
-    // solhint-disable-next-line func-name-mixedcase, no-empty-blocks
+    /* solhint-disable-next-line func-name-mixedcase, no-empty-blocks */
     function __UniswapV3Oracle_init_unchained() internal view onlyInitializing {
         // Empty on purpose
     }

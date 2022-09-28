@@ -58,12 +58,12 @@ describe("PotionProtocolLib", function () {
         strikeAsset = (await ethers.getSigners())[8].address;
     });
 
-    it("Buy Potion", async function () {
+    it("PPL0001 - Buy Potion Not Max Slippage", async function () {
         if (network.name !== "hardhat") {
             this.skip();
         }
 
-        // The valut returned by `buyOtokens` must be less than the maximum premium so the ERC20 approve
+        // The value returned by `buyOtokens` must be less than the maximum premium so the ERC20 approve
         // function is called twice
         fakePotionLiquidityPool.buyOtokens.returns(1594);
         fakeOpynFactory.getOtoken.returns(potionAddress);
@@ -122,6 +122,7 @@ describe("PotionProtocolLib", function () {
         expect(fakePotionLiquidityPool.buyOtokens.getCall(0).args[2]).to.be.eq(maxPremium);
 
         // Check the counterparties
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const callCounterparties: any = fakePotionLiquidityPool.buyOtokens.getCall(0).args[1];
         expect(callCounterparties.length).to.be.eq(1);
 
@@ -146,7 +147,7 @@ describe("PotionProtocolLib", function () {
         expect(fakeUSDC.approve.atCall(0)).to.have.been.calledWith(fakePotionLiquidityPool.address, maxPremium);
         expect(fakeUSDC.approve.atCall(1)).to.have.been.calledWith(fakePotionLiquidityPool.address, 0);
     });
-    it("Buy Potion Exact Premium", async function () {
+    it("PPL0002 - Buy Potion Max Slippage", async function () {
         if (network.name !== "hardhat") {
             this.skip();
         }
@@ -209,6 +210,7 @@ describe("PotionProtocolLib", function () {
         expect(fakePotionLiquidityPool.buyOtokens.getCall(0).args[2]).to.be.eq(maxPremium);
 
         // Check the counterparties
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const callCounterparties: any = fakePotionLiquidityPool.buyOtokens.getCall(0).args[1];
         expect(callCounterparties.length).to.be.eq(1);
 
@@ -232,7 +234,7 @@ describe("PotionProtocolLib", function () {
 
         expect(fakeUSDC.approve.atCall(0)).to.have.been.calledWith(fakePotionLiquidityPool.address, maxPremium);
     });
-    it("Redeem Potion", async function () {
+    it("PPL0003 - Redeem Potion", async function () {
         if (network.name !== "hardhat") {
             this.skip();
         }

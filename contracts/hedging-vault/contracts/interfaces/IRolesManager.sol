@@ -3,6 +3,8 @@
  */
 pragma solidity 0.8.14;
 
+import "@openzeppelin/contracts-upgradeable-4.7.3/access/IAccessControlEnumerableUpgradeable.sol";
+
 /**
     @title IRolesManager
 
@@ -23,60 +25,7 @@ pragma solidity 0.8.14;
     respective modifiers `onlyStrategist` and `onlyOperator`.
  */
 
-interface IRolesManager {
-    /// EVENTS
-    event AdminChanged(address indexed prevAdminAddress, address indexed newAdminAddress);
-    event StrategistChanged(address indexed prevStrategistAddress, address indexed newStrategistAddress);
-    event OperatorChanged(address indexed prevOperatorAddress, address indexed newOperatorAddress);
-    event VaultChanged(address indexed prevVaultAddress, address indexed newVaultAddress);
-
-    /// FUNCTIONS
-
-    /**
-        @notice Changes the existing Admin address to a new one
-
-        @dev Only the previous Admin can change the address to a new one
-     */
-    function changeAdmin(address newAdminAddress) external;
-
-    /**
-        @notice Changes the existing Strategist address to a new one
-
-        @dev Only the Admin can change the address to a new one
-     */
-    function changeStrategist(address newStrategistAddress) external;
-
-    /**
-        @notice Changes the existing Operator address to a new one
-
-        @dev Only the Admin can change the address to a new one
-     */
-    function changeOperator(address newOperatorAddress) external;
-
-    /**
-        @notice Changes the existing Vault address to a new one
-
-        @dev Only the Admin can change the address to a new one
-     */
-    function changeVault(address newVaultAddress) external;
-
-    /**
-        @notice Returns the current Admin address
-     */
-    function getAdmin() external view returns (address);
-
-    /**
-        @notice Returns the current Strategist address
-     */
-    function getStrategist() external view returns (address);
-
-    /**
-        @notice Returns the current Operator address
-     */
-    function getOperator() external view returns (address);
-
-    /**
-        @notice Returns the current Vault address
-     */
-    function getVault() external view returns (address);
+/* solhint-disable-next-line no-empty-blocks */
+interface IRolesManager is IAccessControlEnumerableUpgradeable {
+    // Empty on purpose
 }

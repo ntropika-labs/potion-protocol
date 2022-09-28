@@ -28,8 +28,8 @@ contract TestWrapperPercentageUtils {
     /**
         @notice See { PercentageUtils }
      */
-    function substractPercentage(uint256 amount, uint256 percentage) external pure returns (uint256) {
-        return PercentageUtils.substractPercentage(amount, percentage);
+    function subtractPercentage(uint256 amount, uint256 percentage) external pure returns (uint256) {
+        return PercentageUtils.subtractPercentage(amount, percentage);
     }
 
     /**

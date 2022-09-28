@@ -13,6 +13,26 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "AccessControlEnumerableUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControlEnumerableUpgradeable__factory>;
+    getContractFactory(
+      name: "AccessControlUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControlUpgradeable__factory>;
+    getContractFactory(
+      name: "IAccessControlEnumerableUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControlEnumerableUpgradeable__factory>;
+    getContractFactory(
+      name: "IAccessControlUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControlUpgradeable__factory>;
+    getContractFactory(
+      name: "IERC4626Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC4626Upgradeable__factory>;
+    getContractFactory(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
@@ -25,9 +45,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuardUpgradeable__factory>;
     getContractFactory(
+      name: "ERC1155Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155Upgradeable__factory>;
+    getContractFactory(
+      name: "IERC1155MetadataURIUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1155MetadataURIUpgradeable__factory>;
+    getContractFactory(
+      name: "IERC1155ReceiverUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1155ReceiverUpgradeable__factory>;
+    getContractFactory(
+      name: "IERC1155Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1155Upgradeable__factory>;
+    getContractFactory(
       name: "ERC20Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Upgradeable__factory>;
+    getContractFactory(
+      name: "IERC20PermitUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC4626Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC4626Upgradeable__factory>;
     getContractFactory(
       name: "IERC20MetadataUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -40,6 +84,14 @@ declare module "hardhat/types/runtime" {
       name: "ContextUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContextUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC165Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165Upgradeable__factory>;
+    getContractFactory(
+      name: "IERC165Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
       name: "AccessControl",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -145,13 +197,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RolesManagerUpgradeable__factory>;
     getContractFactory(
+      name: "ERC1155FullSupplyUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155FullSupplyUpgradeable__factory>;
+    getContractFactory(
       name: "ERC4626CapUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC4626CapUpgradeable__factory>;
     getContractFactory(
-      name: "HedgingVaultOperatorHelper",
+      name: "IERC1155FullSupplyUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HedgingVaultOperatorHelper__factory>;
+    ): Promise<Contracts.IERC1155FullSupplyUpgradeable__factory>;
+    getContractFactory(
+      name: "IERC4626CapUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC4626CapUpgradeable__factory>;
+    getContractFactory(
+      name: "HedgingVaultOrchestrator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HedgingVaultOrchestrator__factory>;
+    getContractFactory(
+      name: "RoundsVaultExchanger",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RoundsVaultExchanger__factory>;
     getContractFactory(
       name: "IAction",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -160,6 +228,10 @@ declare module "hardhat/types/runtime" {
       name: "IActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IActionsManager__factory>;
+    getContractFactory(
+      name: "IBaseRoundsVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IBaseRoundsVault__factory>;
     getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -221,6 +293,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRolesManager__factory>;
     getContractFactory(
+      name: "IRoundsInputVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRoundsInputVault__factory>;
+    getContractFactory(
+      name: "IRoundsOutputVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRoundsOutputVault__factory>;
+    getContractFactory(
       name: "IUniswapV3Oracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV3Oracle__factory>;
@@ -228,6 +308,14 @@ declare module "hardhat/types/runtime" {
       name: "IVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVault__factory>;
+    getContractFactory(
+      name: "IVaultDeferredOperationUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IVaultDeferredOperationUpgradeable__factory>;
+    getContractFactory(
+      name: "IVaultWithReceiptsUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IVaultWithReceiptsUpgradeable__factory>;
     getContractFactory(
       name: "PercentageUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -237,13 +325,37 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TimeUtils__factory>;
     getContractFactory(
-      name: "ERC4626Upgradeable",
+      name: "BaseRoundsVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC4626Upgradeable__factory>;
+    ): Promise<Contracts.BaseRoundsVaultUpgradeable__factory>;
     getContractFactory(
-      name: "IERC4626Upgradeable",
+      name: "RoundsInputVaultUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC4626Upgradeable__factory>;
+    ): Promise<Contracts.RoundsInputVaultUpgradeable__factory>;
+    getContractFactory(
+      name: "RoundsOutputVaultUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RoundsOutputVaultUpgradeable__factory>;
+    getContractFactory(
+      name: "VaultDeferredOperationUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VaultDeferredOperationUpgradeable__factory>;
+    getContractFactory(
+      name: "VaultWithReceiptsUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VaultWithReceiptsUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC1155FullSupplyUpgradeableMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155FullSupplyUpgradeableMock__factory>;
+    getContractFactory(
+      name: "ERC1155UpgradeableMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155UpgradeableMock__factory>;
+    getContractFactory(
+      name: "ERC20DecimalsUpgradeableMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20DecimalsUpgradeableMock__factory>;
     getContractFactory(
       name: "MockERC20PresetMinterPauser",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -276,6 +388,10 @@ declare module "hardhat/types/runtime" {
       name: "TestWrapperActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperActionsManager__factory>;
+    getContractFactory(
+      name: "TestWrapperBaseRoundsVaultUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperBaseRoundsVaultUpgradeable__factory>;
     getContractFactory(
       name: "TestWrapperEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -317,6 +433,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib__factory>;
     getContractFactory(
+      name: "TestWrapperVaultDeferredOperation",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperVaultDeferredOperation__factory>;
+    getContractFactory(
+      name: "TestWrapperVaultWithReceipts",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestWrapperVaultWithReceipts__factory>;
+    getContractFactory(
       name: "ActionsManagerUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ActionsManagerUpgradeable__factory>;
@@ -338,6 +462,31 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.PotionBuyActionV0__factory>;
 
     getContractAt(
+      name: "AccessControlEnumerableUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControlEnumerableUpgradeable>;
+    getContractAt(
+      name: "AccessControlUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControlUpgradeable>;
+    getContractAt(
+      name: "IAccessControlEnumerableUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControlEnumerableUpgradeable>;
+    getContractAt(
+      name: "IAccessControlUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControlUpgradeable>;
+    getContractAt(
+      name: "IERC4626Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC4626Upgradeable>;
+    getContractAt(
       name: "Initializable",
       address: string,
       signer?: ethers.Signer
@@ -353,10 +502,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ReentrancyGuardUpgradeable>;
     getContractAt(
+      name: "ERC1155Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155Upgradeable>;
+    getContractAt(
+      name: "IERC1155MetadataURIUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1155MetadataURIUpgradeable>;
+    getContractAt(
+      name: "IERC1155ReceiverUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1155ReceiverUpgradeable>;
+    getContractAt(
+      name: "IERC1155Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1155Upgradeable>;
+    getContractAt(
       name: "ERC20Upgradeable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Upgradeable>;
+    getContractAt(
+      name: "IERC20PermitUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20PermitUpgradeable>;
+    getContractAt(
+      name: "ERC4626Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC4626Upgradeable>;
     getContractAt(
       name: "IERC20MetadataUpgradeable",
       address: string,
@@ -372,6 +551,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ContextUpgradeable>;
+    getContractAt(
+      name: "ERC165Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165Upgradeable>;
+    getContractAt(
+      name: "IERC165Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
       name: "AccessControl",
       address: string,
@@ -503,15 +692,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.RolesManagerUpgradeable>;
     getContractAt(
+      name: "ERC1155FullSupplyUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155FullSupplyUpgradeable>;
+    getContractAt(
       name: "ERC4626CapUpgradeable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC4626CapUpgradeable>;
     getContractAt(
-      name: "HedgingVaultOperatorHelper",
+      name: "IERC1155FullSupplyUpgradeable",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HedgingVaultOperatorHelper>;
+    ): Promise<Contracts.IERC1155FullSupplyUpgradeable>;
+    getContractAt(
+      name: "IERC4626CapUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC4626CapUpgradeable>;
+    getContractAt(
+      name: "HedgingVaultOrchestrator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HedgingVaultOrchestrator>;
+    getContractAt(
+      name: "RoundsVaultExchanger",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RoundsVaultExchanger>;
     getContractAt(
       name: "IAction",
       address: string,
@@ -522,6 +731,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IActionsManager>;
+    getContractAt(
+      name: "IBaseRoundsVault",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IBaseRoundsVault>;
     getContractAt(
       name: "IEmergencyLock",
       address: string,
@@ -598,6 +812,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IRolesManager>;
     getContractAt(
+      name: "IRoundsInputVault",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRoundsInputVault>;
+    getContractAt(
+      name: "IRoundsOutputVault",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRoundsOutputVault>;
+    getContractAt(
       name: "IUniswapV3Oracle",
       address: string,
       signer?: ethers.Signer
@@ -607,6 +831,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IVault>;
+    getContractAt(
+      name: "IVaultDeferredOperationUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IVaultDeferredOperationUpgradeable>;
+    getContractAt(
+      name: "IVaultWithReceiptsUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IVaultWithReceiptsUpgradeable>;
     getContractAt(
       name: "PercentageUtils",
       address: string,
@@ -618,15 +852,45 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TimeUtils>;
     getContractAt(
-      name: "ERC4626Upgradeable",
+      name: "BaseRoundsVaultUpgradeable",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC4626Upgradeable>;
+    ): Promise<Contracts.BaseRoundsVaultUpgradeable>;
     getContractAt(
-      name: "IERC4626Upgradeable",
+      name: "RoundsInputVaultUpgradeable",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IERC4626Upgradeable>;
+    ): Promise<Contracts.RoundsInputVaultUpgradeable>;
+    getContractAt(
+      name: "RoundsOutputVaultUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RoundsOutputVaultUpgradeable>;
+    getContractAt(
+      name: "VaultDeferredOperationUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VaultDeferredOperationUpgradeable>;
+    getContractAt(
+      name: "VaultWithReceiptsUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VaultWithReceiptsUpgradeable>;
+    getContractAt(
+      name: "ERC1155FullSupplyUpgradeableMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155FullSupplyUpgradeableMock>;
+    getContractAt(
+      name: "ERC1155UpgradeableMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155UpgradeableMock>;
+    getContractAt(
+      name: "ERC20DecimalsUpgradeableMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20DecimalsUpgradeableMock>;
     getContractAt(
       name: "MockERC20PresetMinterPauser",
       address: string,
@@ -667,6 +931,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperActionsManager>;
+    getContractAt(
+      name: "TestWrapperBaseRoundsVaultUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperBaseRoundsVaultUpgradeable>;
     getContractAt(
       name: "TestWrapperEmergencyLock",
       address: string,
@@ -717,6 +986,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestWrapperUniswapV3SwapLib>;
+    getContractAt(
+      name: "TestWrapperVaultDeferredOperation",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperVaultDeferredOperation>;
+    getContractAt(
+      name: "TestWrapperVaultWithReceipts",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestWrapperVaultWithReceipts>;
     getContractAt(
       name: "ActionsManagerUpgradeable",
       address: string,

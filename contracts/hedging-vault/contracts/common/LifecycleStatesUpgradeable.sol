@@ -4,7 +4,7 @@
 pragma solidity 0.8.14;
 
 import "../interfaces/ILifecycleStates.sol";
-import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { Initializable } from "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 
 /**
     @title LifecycleStatesUpgradeable
@@ -40,7 +40,7 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize the RolesManagerUpgradeable contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __LifecycleStates_init_unchained() internal onlyInitializing {
         _state = LifecycleState.Unlocked;
     }

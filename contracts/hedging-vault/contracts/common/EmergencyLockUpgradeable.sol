@@ -5,7 +5,7 @@ pragma solidity 0.8.14;
 
 import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
 import { RolesManagerUpgradeable } from "./RolesManagerUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable-4.7.3/security/PausableUpgradeable.sol";
 
 /**
     @title EmergencyLock
@@ -36,7 +36,7 @@ contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeabl
         @dev The RolesManager contract MUST BE initialized in the Vault/Action contract as it
         it shared among other helper contracts
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __EmergencyLock_init_unchained() internal onlyInitializing {
         __Pausable_init_unchained();
     }

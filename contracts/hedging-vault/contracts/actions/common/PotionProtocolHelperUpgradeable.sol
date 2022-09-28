@@ -13,7 +13,7 @@ import { IOpynAddressBook } from "../../interfaces/IOpynAddressBook.sol";
 import { IOpynController } from "../../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../../interfaces/IOpynFactory.sol";
 import { IOpynOracle } from "../../interfaces/IOpynOracle.sol";
-import { IERC20Metadata } from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
+import { IERC20MetadataUpgradeable as IERC20Metadata } from "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC20MetadataUpgradeable.sol";
 
 /**
     @title PotionProtocolHelperUpgradeable
@@ -72,7 +72,7 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
         @param USDC The address of the USDC contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __PotionProtocolHelper_init_unchained(
         address potionLiquidityPoolManager,
         address opynAddressBook,

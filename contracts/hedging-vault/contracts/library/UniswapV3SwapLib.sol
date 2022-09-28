@@ -84,7 +84,7 @@ library UniswapV3SwapLib {
         internal
         returns (uint256 amountOut)
     {
-        uint256 amountOutMinimum = parameters.expectedAmountOut.substractPercentage(parameters.slippage);
+        uint256 amountOutMinimum = parameters.expectedAmountOut.subtractPercentage(parameters.slippage);
 
         TransferHelper.safeApprove(parameters.inputToken, address(swapRouter), parameters.exactAmountIn);
 

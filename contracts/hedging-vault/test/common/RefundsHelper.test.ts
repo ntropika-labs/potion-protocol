@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 
 import { TestWrapperRefundsHelper, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { AccessControlMissingRole, Roles } from "hedging-vault-sdk";
 
 /**
     @notice RefundsHelper unit tests    
@@ -45,30 +46,29 @@ describe("RefundsHelper", function () {
             await refundsHelper.initialize(
                 ownerAccount.address,
                 ownerAccount.address,
-                ownerAccount.address,
                 cannotRefundTokens,
                 cannotRefundETH,
             );
         });
 
-        it("Check initialization", async function () {
+        it("RH0001 - Default Value", async function () {
             expect(await refundsHelper.canRefundETH()).to.be.false;
 
             for (const tokenAddress of cannotRefundTokens) {
                 expect(await refundsHelper.canRefund(tokenAddress)).to.be.false;
             }
         });
-        it("Check other tokens", async function () {
+        it("RH0002 - Check Refundable Token", async function () {
             expect(await refundsHelper.canRefund(erc20D.address)).to.be.true;
         });
-        it("Transfer forbidden tokens", async function () {
+        it("RH0003 - Refund Non-Refundable Tokens", async function () {
             for (const tokenAddress of cannotRefundTokens) {
                 await expect(
                     refundsHelper.refund(tokenAddress, ethers.utils.parseEther("1"), unpriviledgedAccount.address),
                 ).to.be.revertedWith("Token cannot be refunded");
             }
         });
-        it("Transfer valid tokens", async function () {
+        it("RH0004 - Refund Refundable Tokens", async function () {
             await erc20D.mint(refundsHelper.address, ethers.utils.parseEther("1"));
             expect(await erc20D.balanceOf(refundsHelper.address)).to.eq(ethers.utils.parseEther("1"));
             expect(await erc20D.balanceOf(unpriviledgedAccount.address)).to.eq(ethers.utils.parseEther("0"));
@@ -77,22 +77,22 @@ describe("RefundsHelper", function () {
             expect(await erc20D.balanceOf(refundsHelper.address)).to.eq(ethers.utils.parseEther("0"));
             expect(await erc20D.balanceOf(unpriviledgedAccount.address)).to.eq(ethers.utils.parseEther("1"));
         });
-        it("Recipient cannot be null", async function () {
+        it("RH0005 - Recipient Not Zero Address", async function () {
             await expect(
                 refundsHelper.refund(erc20D.address, ethers.utils.parseEther("1"), zeroAddress),
             ).to.be.revertedWith("Recipient address cannot be the null address");
         });
-        it("Only Admin can transfer", async function () {
+        it("RH0006 - Only Admin", async function () {
             await expect(
                 refundsHelper
                     .connect(unpriviledgedAccount)
                     .refund(erc20D.address, ethers.utils.parseEther("1"), unpriviledgedAccount.address),
-            ).to.be.revertedWith("Only the Admin can call this function");
+            ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
             await expect(
                 refundsHelper
                     .connect(unpriviledgedAccount)
                     .refundETH(ethers.utils.parseEther("1"), unpriviledgedAccount.address),
-            ).to.be.revertedWith("Only the Admin can call this function");
+            ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
         });
     });
 
@@ -119,20 +119,19 @@ describe("RefundsHelper", function () {
             await refundsHelper.initialize(
                 ownerAccount.address,
                 ownerAccount.address,
-                ownerAccount.address,
                 cannotRefundTokens,
                 cannotRefundETH,
             );
         });
 
-        it("Check initialization", async function () {
+        it("RH0007 - Default Value", async function () {
             expect(await refundsHelper.canRefundETH()).to.be.true;
 
             for (const tokenAddress of cannotRefundTokens) {
                 expect(await refundsHelper.canRefund(tokenAddress)).to.be.false;
             }
         });
-        it("Refund ETH", async function () {
+        it("RH0008 - Refund ETH", async function () {
             await ownerAccount.sendTransaction({
                 to: refundsHelper.address,
                 value: ethers.utils.parseEther("1"),

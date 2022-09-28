@@ -29,57 +29,77 @@ import type {
 
 export interface TestWrapperActionsManagerInterface extends utils.Interface {
   functions: {
-    "changeAdmin(address)": FunctionFragment;
-    "changeOperator(address)": FunctionFragment;
-    "changeStrategist(address)": FunctionFragment;
-    "changeVault(address)": FunctionFragment;
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getOperator()": FunctionFragment;
     "getPrincipalPercentage(uint256)": FunctionFragment;
     "getPrincipalPercentages()": FunctionFragment;
-    "getStrategist()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
     "getTotalPrincipalPercentages()": FunctionFragment;
-    "getVault()": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address[],uint256[])": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "setPrincipalPercentages(uint256[])": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "changeAdmin"
-      | "changeOperator"
-      | "changeStrategist"
-      | "changeVault"
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "VAULT_ROLE"
       | "getAction"
       | "getActionsLength"
-      | "getAdmin"
-      | "getOperator"
       | "getPrincipalPercentage"
       | "getPrincipalPercentages"
-      | "getStrategist"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
       | "getTotalPrincipalPercentages"
-      | "getVault"
+      | "grantRole"
+      | "hasRole"
       | "initialize"
+      | "renounceRole"
+      | "revokeRole"
       | "setPrincipalPercentages"
+      | "supportsInterface"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeOperator",
-    values: [PromiseOrValue<string>]
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeStrategist",
-    values: [PromiseOrValue<string>]
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeVault",
-    values: [PromiseOrValue<string>]
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getAction",
@@ -89,11 +109,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     functionFragment: "getActionsLength",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getOperator",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "getPrincipalPercentage",
     values: [PromiseOrValue<BigNumberish>]
@@ -103,47 +118,71 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getStrategist",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalPrincipalPercentages",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPrincipalPercentages",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "changeAdmin",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeOperator",
+    functionFragment: "INVESTOR_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeStrategist",
+    functionFragment: "OPERATOR_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeVault",
+    functionFragment: "STRATEGIST_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAction", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getActionsLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getOperator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -155,39 +194,55 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStrategist",
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTotalPrincipalPercentages",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "setPrincipalPercentages",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
 
   events: {
     "ActionsAdded(address[])": EventFragment;
-    "AdminChanged(address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "OperatorChanged(address,address)": EventFragment;
     "PrincipalPercentagesUpdated(uint256[])": EventFragment;
-    "StrategistChanged(address,address)": EventFragment;
-    "VaultChanged(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionsAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorChanged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
   ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StrategistChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
 
 export interface ActionsAddedEventObject {
@@ -197,34 +252,12 @@ export type ActionsAddedEvent = TypedEvent<[string[]], ActionsAddedEventObject>;
 
 export type ActionsAddedEventFilter = TypedEventFilter<ActionsAddedEvent>;
 
-export interface AdminChangedEventObject {
-  prevAdminAddress: string;
-  newAdminAddress: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
 export interface InitializedEventObject {
   version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface OperatorChangedEventObject {
-  prevOperatorAddress: string;
-  newOperatorAddress: string;
-}
-export type OperatorChangedEvent = TypedEvent<
-  [string, string],
-  OperatorChangedEventObject
->;
-
-export type OperatorChangedEventFilter = TypedEventFilter<OperatorChangedEvent>;
 
 export interface PrincipalPercentagesUpdatedEventObject {
   _principalPercentages: BigNumber[];
@@ -237,28 +270,42 @@ export type PrincipalPercentagesUpdatedEvent = TypedEvent<
 export type PrincipalPercentagesUpdatedEventFilter =
   TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
 
-export interface StrategistChangedEventObject {
-  prevStrategistAddress: string;
-  newStrategistAddress: string;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
-export type StrategistChangedEvent = TypedEvent<
-  [string, string],
-  StrategistChangedEventObject
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
 >;
 
-export type StrategistChangedEventFilter =
-  TypedEventFilter<StrategistChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
-export interface VaultChangedEventObject {
-  prevVaultAddress: string;
-  newVaultAddress: string;
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
 }
-export type VaultChangedEvent = TypedEvent<
-  [string, string],
-  VaultChangedEventObject
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
 >;
 
-export type VaultChangedEventFilter = TypedEventFilter<VaultChangedEvent>;
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface TestWrapperActionsManager extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -287,25 +334,17 @@ export interface TestWrapperActionsManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     getAction(
       index: PromiseOrValue<BigNumberish>,
@@ -314,10 +353,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
-    getOperator(overrides?: CallOverrides): Promise<[string]>;
-
     getPrincipalPercentage(
       actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -325,13 +360,37 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getVault(overrides?: CallOverrides): Promise<[string]>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
       actions: PromiseOrValue<string>[],
@@ -339,31 +398,40 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  changeAdmin(
-    newAdminAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  changeOperator(
-    newOperatorAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  changeStrategist(
-    newStrategistAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  changeVault(
-    newVaultAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
   getAction(
     index: PromiseOrValue<BigNumberish>,
@@ -372,10 +440,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
-  getOperator(overrides?: CallOverrides): Promise<string>;
-
   getPrincipalPercentage(
     actionIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -383,15 +447,51 @@ export interface TestWrapperActionsManager extends BaseContract {
 
   getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  getStrategist(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getVault(overrides?: CallOverrides): Promise<string>;
+  grantRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
     actions: PromiseOrValue<string>[],
     principalPercentages: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -400,26 +500,23 @@ export interface TestWrapperActionsManager extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
 
     getAction(
       index: PromiseOrValue<BigNumberish>,
@@ -428,10 +525,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
-    getOperator(overrides?: CallOverrides): Promise<string>;
-
     getPrincipalPercentage(
       actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -439,11 +532,35 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getStrategist(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<string>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     initialize(
       actions: PromiseOrValue<string>[],
@@ -451,36 +568,35 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
     "ActionsAdded(address[])"(actions?: null): ActionsAddedEventFilter;
     ActionsAdded(actions?: null): ActionsAddedEventFilter;
 
-    "AdminChanged(address,address)"(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      prevAdminAddress?: PromiseOrValue<string> | null,
-      newAdminAddress?: PromiseOrValue<string> | null
-    ): AdminChangedEventFilter;
-
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "OperatorChanged(address,address)"(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
-    OperatorChanged(
-      prevOperatorAddress?: PromiseOrValue<string> | null,
-      newOperatorAddress?: PromiseOrValue<string> | null
-    ): OperatorChangedEventFilter;
 
     "PrincipalPercentagesUpdated(uint256[])"(
       _principalPercentages?: null
@@ -489,45 +605,52 @@ export interface TestWrapperActionsManager extends BaseContract {
       _principalPercentages?: null
     ): PrincipalPercentagesUpdatedEventFilter;
 
-    "StrategistChanged(address,address)"(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
-    StrategistChanged(
-      prevStrategistAddress?: PromiseOrValue<string> | null,
-      newStrategistAddress?: PromiseOrValue<string> | null
-    ): StrategistChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
+    ): RoleAdminChangedEventFilter;
 
-    "VaultChanged(address,address)"(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
-    VaultChanged(
-      prevVaultAddress?: PromiseOrValue<string> | null,
-      newVaultAddress?: PromiseOrValue<string> | null
-    ): VaultChangedEventFilter;
+    "RoleGranted(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
+    ): RoleRevokedEventFilter;
   };
 
   estimateGas: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAction(
       index: PromiseOrValue<BigNumberish>,
@@ -536,10 +659,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperator(overrides?: CallOverrides): Promise<BigNumber>;
-
     getPrincipalPercentage(
       actionIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -547,11 +666,35 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStrategist(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getVault(overrides?: CallOverrides): Promise<BigNumber>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(
       actions: PromiseOrValue<string>[],
@@ -559,32 +702,43 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    changeAdmin(
-      newAdminAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    changeOperator(
-      newOperatorAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    changeStrategist(
-      newStrategistAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    changeVault(
-      newVaultAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAction(
       index: PromiseOrValue<BigNumberish>,
@@ -592,10 +746,6 @@ export interface TestWrapperActionsManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getActionsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPrincipalPercentage(
       actionIndex: PromiseOrValue<BigNumberish>,
@@ -606,13 +756,37 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getStrategist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    grantRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     initialize(
       actions: PromiseOrValue<string>[],
@@ -620,9 +794,26 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setPrincipalPercentages(
       newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

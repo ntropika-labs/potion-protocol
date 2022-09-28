@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { IAction__factory } from "./IAction__factory";
 export { IActionsManager__factory } from "./IActionsManager__factory";
+export { IBaseRoundsVault__factory } from "./IBaseRoundsVault__factory";
 export { IEmergencyLock__factory } from "./IEmergencyLock__factory";
 export { IFeeManager__factory } from "./IFeeManager__factory";
 export { IInvestmentVaultV0__factory } from "./IInvestmentVaultV0__factory";
@@ -18,5 +19,9 @@ export { IPotionLiquidityPool__factory } from "./IPotionLiquidityPool__factory";
 export { IPotionProtocolOracle__factory } from "./IPotionProtocolOracle__factory";
 export { IRefundsHelper__factory } from "./IRefundsHelper__factory";
 export { IRolesManager__factory } from "./IRolesManager__factory";
+export { IRoundsInputVault__factory } from "./IRoundsInputVault__factory";
+export { IRoundsOutputVault__factory } from "./IRoundsOutputVault__factory";
 export { IUniswapV3Oracle__factory } from "./IUniswapV3Oracle__factory";
 export { IVault__factory } from "./IVault__factory";
+export { IVaultDeferredOperationUpgradeable__factory } from "./IVaultDeferredOperationUpgradeable__factory";
+export { IVaultWithReceiptsUpgradeable__factory } from "./IVaultWithReceiptsUpgradeable__factory";

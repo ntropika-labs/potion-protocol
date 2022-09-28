@@ -1,8 +1,9 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
-import { HedgingVaultOperatorHelperDeployParams, deployHedgingVaultHelper } from "../common/deployHedgingVaultHelper";
-import { HedgingVaultOperatorHelper, InvestmentVault, PotionBuyAction } from "../../typechain";
+import { deployHedgingVaultOrchestrator } from "../common/deployHedgingVaultOrchestrator";
+import { HedgingVaultOrchestrator, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { BigNumber } from "ethers";
+import { Roles } from "hedging-vault-sdk";
 
 export interface HedgingVaultDeployParams {
     // Roles
@@ -66,13 +67,15 @@ function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
 
 export async function deployHedgingVault(
     parameters: HedgingVaultDeployParams,
-): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOperatorHelper]> {
+): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOrchestrator]> {
     printHedgingVaultDeployParams(parameters);
+
+    const hedgingVaultOrchestrator = await deployHedgingVaultOrchestrator();
 
     const potionBuyParams: PotionBuyActionDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
-        operatorAddress: parameters.operatorAddress,
+        operatorAddress: hedgingVaultOrchestrator.address,
         investmentAsset: parameters.underlyingAsset,
         USDC: parameters.USDC,
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
@@ -91,7 +94,7 @@ export async function deployHedgingVault(
     const investmentVaultParams: InvestmentVaultDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
-        operatorAddress: parameters.operatorAddress,
+        operatorAddress: hedgingVaultOrchestrator.address,
         underlyingAsset: parameters.underlyingAsset,
         underlyingAssetCap: parameters.underlyingAssetCap,
         managementFee: parameters.managementFee,
@@ -105,26 +108,27 @@ export async function deployHedgingVault(
 
     // Set the vault as the managing vault for the action
     console.log(`- Setting ${investmentVaultContract.address} as the managing vault for ${potionBuyContract.address}`);
-    let tx = await potionBuyContract.changeVault(investmentVaultContract.address);
+    let tx = await potionBuyContract.grantRole(Roles.Vault, investmentVaultContract.address);
     await tx.wait();
 
-    const hedgingVaultOperatorHelperParams: HedgingVaultOperatorHelperDeployParams = {
-        vaultAddress: investmentVaultContract.address,
-        potionBuyActionAddress: potionBuyContract.address,
-    };
-
-    const hedgingVaultOperatorHelper = await deployHedgingVaultHelper(hedgingVaultOperatorHelperParams);
-
-    // Set the operator helper as the operator of the action and the vault
-    console.log(`- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${potionBuyContract.address}`);
-    tx = await potionBuyContract.changeOperator(hedgingVaultOperatorHelper.address);
+    // Set the vault and action addresses in the orchestrator
+    console.log(
+        `- Setting vault=${investmentVaultContract.address} and action=${potionBuyContract.address} in the orchestrator (${hedgingVaultOrchestrator.address})`,
+    );
+    tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
     await tx.wait();
 
     console.log(
-        `- Setting ${hedgingVaultOperatorHelper.address} as the operator of ${investmentVaultContract.address}`,
+        `- Setting Vault and action as system addresses for the orchestrator (${hedgingVaultOrchestrator.address})`,
     );
-    tx = await investmentVaultContract.changeOperator(hedgingVaultOperatorHelper.address);
+    tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
     await tx.wait();
 
-    return [investmentVaultContract, potionBuyContract, hedgingVaultOperatorHelper];
+    console.log(
+        `- Setting ${parameters.operatorAddress} as the operator for the orchestrator (${hedgingVaultOrchestrator.address})`,
+    );
+    tx = await hedgingVaultOrchestrator.transferOwnership(parameters.operatorAddress);
+    await tx.wait();
+
+    return [investmentVaultContract, potionBuyContract, hedgingVaultOrchestrator];
 }

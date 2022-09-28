@@ -25,7 +25,7 @@ import type { Token } from "dapp-types";
 import type {
   UniSwapInfo,
   Sellers,
-} from "./useHedgingVaultOperatorHelperContract";
+} from "./useHedgingVaultOrchestratorContract";
 import type { ActionPayout } from "./usePotionBuyActionContract";
 
 import { worker } from "@web-worker/alpha-router";

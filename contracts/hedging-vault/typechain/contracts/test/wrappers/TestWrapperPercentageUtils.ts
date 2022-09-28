@@ -29,7 +29,7 @@ export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
     "addPercentage(uint256,uint256)": FunctionFragment;
     "applyPercentage(uint256,uint256)": FunctionFragment;
     "isPercentageInRange(uint256)": FunctionFragment;
-    "substractPercentage(uint256,uint256)": FunctionFragment;
+    "subtractPercentage(uint256,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -40,7 +40,7 @@ export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
       | "addPercentage"
       | "applyPercentage"
       | "isPercentageInRange"
-      | "substractPercentage"
+      | "subtractPercentage"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -68,7 +68,7 @@ export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "substractPercentage",
+    functionFragment: "subtractPercentage",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
@@ -97,7 +97,7 @@ export interface TestWrapperPercentageUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "substractPercentage",
+    functionFragment: "subtractPercentage",
     data: BytesLike
   ): Result;
 
@@ -154,7 +154,7 @@ export interface TestWrapperPercentageUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    substractPercentage(
+    subtractPercentage(
       amount: PromiseOrValue<BigNumberish>,
       percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -184,7 +184,7 @@ export interface TestWrapperPercentageUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  substractPercentage(
+  subtractPercentage(
     amount: PromiseOrValue<BigNumberish>,
     percentage: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -214,7 +214,7 @@ export interface TestWrapperPercentageUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    substractPercentage(
+    subtractPercentage(
       amount: PromiseOrValue<BigNumberish>,
       percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -247,7 +247,7 @@ export interface TestWrapperPercentageUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    substractPercentage(
+    subtractPercentage(
       amount: PromiseOrValue<BigNumberish>,
       percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -280,7 +280,7 @@ export interface TestWrapperPercentageUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    substractPercentage(
+    subtractPercentage(
       amount: PromiseOrValue<BigNumberish>,
       percentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
