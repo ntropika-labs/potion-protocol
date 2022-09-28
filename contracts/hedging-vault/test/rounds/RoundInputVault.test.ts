@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { FakeContract, MockContract, smock } from "@defi-wonderland/smock";
 
-import { RoundsInputVaultUpgradeable, IERC4626Upgradeable } from "../../typechain";
+import { RoundsInputVault, IERC4626Upgradeable } from "../../typechain";
 import { MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -17,7 +17,7 @@ describe("RoundsInputVault", function () {
     let adminAccount: SignerWithAddress;
     let operatorAccount: SignerWithAddress;
     let unpriviledgedAccount: SignerWithAddress;
-    let roundsInputVault: RoundsInputVaultUpgradeable;
+    let roundsInputVault: RoundsInputVault;
     let assetTokenMock: MockContract<MockERC20PresetMinterPauser>;
     let fakeTargetVault: FakeContract<IERC4626Upgradeable>;
 
@@ -29,8 +29,8 @@ describe("RoundsInputVault", function () {
         const ERC20MockFactory = await smock.mock("MockERC20PresetMinterPauser");
         assetTokenMock = (await ERC20MockFactory.deploy()) as unknown as MockContract<MockERC20PresetMinterPauser>;
 
-        const RoundsInputVaultFactory = await ethers.getContractFactory("RoundsInputVaultUpgradeable");
-        roundsInputVault = (await RoundsInputVaultFactory.deploy()) as RoundsInputVaultUpgradeable;
+        const RoundsInputVaultFactory = await ethers.getContractFactory("RoundsInputVault");
+        roundsInputVault = (await RoundsInputVaultFactory.deploy()) as RoundsInputVault;
 
         fakeTargetVault = await getFakeTargetVault(assetTokenMock);
 

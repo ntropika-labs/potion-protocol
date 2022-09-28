@@ -11,9 +11,9 @@ import "./BaseRoundsVaultUpgradeable.sol";
 import "hardhat/console.sol";
 
 /**
-    @title RoundsInputVaultUpgradeable
+    @title RoundsInputVault
 
-    @notice The RoundsInputVaultUpgradeable contract allows users to deposit funds into this contract while the
+    @notice The RoundsInputVault contract allows users to deposit funds into this contract while the
     target vault is locked, and receipts are minted to the users for this deposits. Upon round completion, the
     funds are transferred to the target vault and the corresponding shares are collected.
 
@@ -21,7 +21,7 @@ import "hardhat/console.sol";
 
     @author Roberto Cano <robercano>
  */
-contract RoundsInputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsInputVault {
+contract RoundsInputVault is BaseRoundsVaultUpgradeable, IRoundsInputVault {
     using PRBMathUD60x18 for uint256;
 
     // UPGRADEABLE INITIALIZER

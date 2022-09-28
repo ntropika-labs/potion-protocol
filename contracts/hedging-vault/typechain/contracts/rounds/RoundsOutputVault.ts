@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
+export interface RoundsOutputVaultInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -768,12 +768,12 @@ export type WithdrawExchangeAssetBatchEvent = TypedEvent<
 export type WithdrawExchangeAssetBatchEventFilter =
   TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
 
-export interface RoundsOutputVaultUpgradeable extends BaseContract {
+export interface RoundsOutputVault extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: RoundsOutputVaultUpgradeableInterface;
+  interface: RoundsOutputVaultInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

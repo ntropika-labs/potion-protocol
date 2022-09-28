@@ -329,13 +329,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BaseRoundsVaultUpgradeable__factory>;
     getContractFactory(
-      name: "RoundsInputVaultUpgradeable",
+      name: "RoundsInputVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RoundsInputVaultUpgradeable__factory>;
+    ): Promise<Contracts.RoundsInputVault__factory>;
     getContractFactory(
-      name: "RoundsOutputVaultUpgradeable",
+      name: "RoundsOutputVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RoundsOutputVaultUpgradeable__factory>;
+    ): Promise<Contracts.RoundsOutputVault__factory>;
     getContractFactory(
       name: "VaultDeferredOperationUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -857,15 +857,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BaseRoundsVaultUpgradeable>;
     getContractAt(
-      name: "RoundsInputVaultUpgradeable",
+      name: "RoundsInputVault",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.RoundsInputVaultUpgradeable>;
+    ): Promise<Contracts.RoundsInputVault>;
     getContractAt(
-      name: "RoundsOutputVaultUpgradeable",
+      name: "RoundsOutputVault",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.RoundsOutputVaultUpgradeable>;
+    ): Promise<Contracts.RoundsOutputVault>;
     getContractAt(
       name: "VaultDeferredOperationUpgradeable",
       address: string,

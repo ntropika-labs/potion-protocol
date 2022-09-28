@@ -10,10 +10,10 @@ import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 import "../interfaces/IBaseRoundsVault.sol";
 
 /**
-    @notice This helper contract allows the user to exchange a receipt from the RoundsInputVaultUpgradeable
-    for a ticket from the RoundsOutputVaultUpgradeable. This is done by burning the receipt in exchange
-    for the corresponding amount of the main vault shares in the RoundsInputVaultUpgradeable, and then
-    depositing this shares into the RoundsOutputVaultUpgradeable, which will mint the corresponding
+    @notice This helper contract allows the user to exchange a receipt from the RoundsInputVault
+    for a ticket from the RoundsOutputVault. This is done by burning the receipt in exchange
+    for the corresponding amount of the main vault shares in the RoundsInputVault, and then
+    depositing this shares into the RoundsOutputVault, which will mint the corresponding
     receipt to the user.
 
     After this operation is completed, the user has a receipt that can be exchanged for the main vaults
@@ -21,13 +21,13 @@ import "../interfaces/IBaseRoundsVault.sol";
  */
 contract RoundsVaultExchanger is Context {
     /**
-      @notice Exchanges a receipt from the RoundsInputVaultUpgradeable for a receipt from
-      the RoundsOutputVaultUpgradeable by redeeming the input receipt in the input vault for
+      @notice Exchanges a receipt from the RoundsInputVault for a receipt from
+      the RoundsOutputVault by redeeming the input receipt in the input vault for
       shares and then depositing these shares into the output vault in exchange for an output
       receipt
 
-      @param inputVault The address of the RoundsInputVaultUpgradeable
-      @param outputVault The address of the RoundsOutputVaultUpgradeable
+      @param inputVault The address of the RoundsInputVault
+      @param outputVault The address of the RoundsOutputVault
       @param id The id of the receipt to exchange
       @param amount The amount of the receipt to exchange
 
@@ -50,13 +50,13 @@ contract RoundsVaultExchanger is Context {
     }
 
     /**
-      @notice Exchanges a list of receipts from the RoundsInputVaultUpgradeable for a receipt from
-      the RoundsOutputVaultUpgradeable by redeeming the input receipts in the input vault for
+      @notice Exchanges a list of receipts from the RoundsInputVault for a receipt from
+      the RoundsOutputVault by redeeming the input receipts in the input vault for
       shares and then depositing these shares into the output vault in exchange for an output
       receipt
 
-      @param inputVault The address of the RoundsInputVaultUpgradeable
-      @param outputVault The address of the RoundsOutputVaultUpgradeable
+      @param inputVault The address of the RoundsInputVault
+      @param outputVault The address of the RoundsOutputVault
       @param ids The ids of the receipts to exchange
       @param amounts The amounts of the receipts to exchange
 

@@ -8,9 +8,9 @@ import "../interfaces/IRoundsOutputVault.sol";
 import "./BaseRoundsVaultUpgradeable.sol";
 
 /**
-    @title RoundsOutputVaultUpgradeable
+    @title RoundsOutputVault
 
-    @notice The RoundsOutputVaultUpgradeable contract allows users to deposit shares from the target vault into
+    @notice The RoundsOutputVault contract allows users to deposit shares from the target vault into
     this contract while the  target vault is locked, and receipts are minted to the users for this deposits. Upon
     round completion, the shares are redeemed in the target vault and the corresponding funds are collected.
 
@@ -18,7 +18,7 @@ import "./BaseRoundsVaultUpgradeable.sol";
 
     @author Roberto Cano <robercano>
  */
-contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
+contract RoundsOutputVault is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
     using PRBMathUD60x18 for uint256;
 
     // UPGRADEABLE INITIALIZER

@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BaseRoundsVaultUpgradeable } from "./BaseRoundsVaultUpgradeable";
-export type { RoundsInputVaultUpgradeable } from "./RoundsInputVaultUpgradeable";
-export type { RoundsOutputVaultUpgradeable } from "./RoundsOutputVaultUpgradeable";
+export type { RoundsInputVault } from "./RoundsInputVault";
+export type { RoundsOutputVault } from "./RoundsOutputVault";
 export type { VaultDeferredOperationUpgradeable } from "./VaultDeferredOperationUpgradeable";
 export type { VaultWithReceiptsUpgradeable } from "./VaultWithReceiptsUpgradeable";
