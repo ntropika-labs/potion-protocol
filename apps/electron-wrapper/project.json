@@ -14,6 +14,10 @@
           {
             "command": "yarn nx run electron-wrapper:build",
             "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run electron-wrapper:compile",
+            "forwardAllArgs": true
           }
         ],
         "parallel": false
