@@ -44,7 +44,6 @@ async function createWindow() {
   ) {
     await browserWindow.loadURL(import.meta.env.VITE_DEV_SERVER_URL);
   } else {
-    console.log(join(__dirname, "../../render/dist/index.html"));
     await browserWindow.loadFile(
       join(__dirname, "../../render/dist/index.html")
     );

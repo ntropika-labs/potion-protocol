@@ -7,7 +7,7 @@
     "build": "yarn build-main && yarn build-preload",
     "build-main": "yarn --cwd ./main vite --config main/vite.config.js build",
     "build-preload": "yarn --cwd ./preload vite --config preload/vite.config.js  build",
-    "compile": "cross-env MODE=production yarn build && electron-builder build --config .electron-builder.config.js --config.asar=false",
+    "compile": "cross-env MODE=production yarn build && electron-builder build --config .electron-builder.config.js",
     "compile-test": "cross-env MODE=production yarn build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
     "test": "npm run test:main && npm run test:preload && npm run test:renderer && npm run test:e2e",
     "test:e2e": "npm run build && vitest run",

@@ -16,9 +16,9 @@ const logLevel = "warn";
  * @param {import('vite').ViteDevServer} watchServer Renderer watch server instance.
  * Needs to set up `VITE_DEV_SERVER_URL` environment variable from {@link import('vite').ViteDevServer.resolvedUrls}
  */
-function setupMainPackageWatcher({ resolvedUrls }) {
-  process.env.VITE_DEV_SERVER_URL = resolvedUrls.local[0];
-
+//function setupMainPackageWatcher({ resolvedUrls }) {
+// process.env.VITE_DEV_SERVER_URL = resolvedUrls.local[0];
+function setupMainPackageWatcher() {
   /** @type {ChildProcess | null} */
   let electronApp = null;
 
@@ -100,9 +100,5 @@ function setupPreloadPackageWatcher({ ws }) {
 //   configFile: "renderer/vite.config.js",
 // }).then((s) => s.listen());
 
-await setupPreloadPackageWatcher({
-  resolvedUrls: { local: ["http://localhost:3000"] },
-});
-await setupMainPackageWatcher({
-  resolvedUrls: { local: ["http://localhost:3000"] },
-});
+await setupPreloadPackageWatcher();
+await setupMainPackageWatcher();

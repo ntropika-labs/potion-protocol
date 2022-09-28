@@ -82,7 +82,7 @@ export default defineConfig({
       ? path.resolve(__dirname, "../electron-wrapper/render/dist")
       : undefined, // path to electron-wrapper project when using electron, otherwise set it to undefined to keep the default
     emptyOutDir: electron ? true : undefined, // empty dist folder when using electron, otherwise set it to undefined to keep the default
-    assetsDir: electron ? "." : undefined, // relative path when electron, otherwise set i t to undefined to keep the default
+    assetsDir: electron ? "." : undefined, // relative path when electron, otherwise set it to undefined to keep the default
     rollupOptions: {
       plugins: [
         nodePolyfills(),
