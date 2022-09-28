@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.14;
 
 import "../extensions/ERC1155FullSupplyUpgradeable.sol";
 import "../interfaces/IVaultWithReceiptsUpgradeable.sol";
@@ -44,10 +44,12 @@ abstract contract VaultWithReceiptsUpgradeable is
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
      */
+    /* solhint-disable-next-line func-name-mixedcase */
     function __VaultWithReceipts_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
         __VaultWithReceipts_init_unchained(asset_);
     }
 
+    /* solhint-disable-next-line func-name-mixedcase */
     function __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable asset_) internal onlyInitializing {
         _asset = asset_;
     }

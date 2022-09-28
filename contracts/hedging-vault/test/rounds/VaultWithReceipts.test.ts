@@ -37,14 +37,14 @@ describe("VaultWithReceipts", function () {
             .approve(vaultWithReceipts.address, ethers.utils.parseEther("1"));
     });
 
-    it("Default Values", async function () {
+    it("VWR0001 - Default Value", async function () {
         expect(await vaultWithReceipts.asset()).to.equal(assetToken.address);
         expect(await vaultWithReceipts.totalAssets()).to.equal(0);
         expect(await vaultWithReceipts.maxDeposit(unpriviledgedAccount.address)).to.equal(ethers.constants.MaxUint256);
         expect(await vaultWithReceipts.maxRedeem(unpriviledgedAccount.address)).to.equal(0);
     });
 
-    it("Deposit", async function () {
+    it("VWR0002 - Deposit", async function () {
         await expect(
             vaultWithReceipts
                 .connect(unpriviledgedAccount)
@@ -74,7 +74,7 @@ describe("VaultWithReceipts", function () {
         );
     });
 
-    it("Redeem", async function () {
+    it("VWR0003 - Redeem", async function () {
         await vaultWithReceipts
             .connect(unpriviledgedAccount)
             .deposit(ethers.utils.parseEther("0.5"), unpriviledgedAccount.address);
@@ -105,7 +105,7 @@ describe("VaultWithReceipts", function () {
         expect(await vaultWithReceipts.balanceOf(unpriviledgedAccount.address, 0)).to.equal(0);
     });
 
-    it("Redeem Batch", async function () {
+    it("VWR0004 - Redeem Batch", async function () {
         await vaultWithReceipts
             .connect(unpriviledgedAccount)
             .deposit(ethers.utils.parseEther("0.2"), unpriviledgedAccount.address);
@@ -163,7 +163,7 @@ describe("VaultWithReceipts", function () {
         expect(await vaultWithReceipts.balanceOf(unpriviledgedAccount.address, 2)).to.equal(0);
     });
 
-    it("Redeem Partial", async function () {
+    it("VWR0005 - Redeem Partial", async function () {
         await vaultWithReceipts
             .connect(unpriviledgedAccount)
             .deposit(ethers.utils.parseEther("0.5"), unpriviledgedAccount.address);
@@ -198,7 +198,7 @@ describe("VaultWithReceipts", function () {
         );
     });
 
-    it("Redeem Partial Batch", async function () {
+    it("VWR0006 - Redeem Partial Batch", async function () {
         await vaultWithReceipts
             .connect(unpriviledgedAccount)
             .deposit(ethers.utils.parseEther("0.3"), unpriviledgedAccount.address);
@@ -262,7 +262,7 @@ describe("VaultWithReceipts", function () {
         expect(await vaultWithReceipts.balanceOf(unpriviledgedAccount.address, 2)).to.equal(0);
     });
 
-    it("Two Participants", async function () {
+    it("VWR0007 - Two Participants", async function () {
         await vaultWithReceipts
             .connect(unpriviledgedAccount)
             .deposit(ethers.utils.parseEther("0.3"), unpriviledgedAccount.address);

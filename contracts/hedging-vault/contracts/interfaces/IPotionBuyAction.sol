@@ -20,7 +20,7 @@ import "./IPotionProtocolOracle.sol";
     to aid in the operation of the vault
     
  */
-// solhint-disable-next-line no-empty-blocks
+/* solhint-disable-next-line no-empty-blocks */
 interface IPotionBuyAction is IAction, IUniswapV3Oracle, IPotionProtocolOracle {
     // Empty on purpose
 }

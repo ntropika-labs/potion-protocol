@@ -60,7 +60,7 @@ contract RefundsHelperUpgreadable is RolesManagerUpgradeable, IRefundsHelper {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize the RolesManagerUpgradeable contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __RefundsHelper_init_unchained(address[] memory _cannotRefundToken, bool cannotRefundETH_)
         internal
         onlyInitializing

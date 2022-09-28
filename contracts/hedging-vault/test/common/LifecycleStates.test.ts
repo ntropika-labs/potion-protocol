@@ -18,10 +18,10 @@ describe("LifecycleStates", function () {
         await lifecycleStates.initialize();
     });
 
-    it("Default Value", async function () {
+    it("LS0001 - Default Value", async function () {
         expect(await lifecycleStates.getLifecycleState()).to.be.equal(LifecycleStates.Unlocked);
     });
-    it("Change state", async function () {
+    it("LS0002 - Change state", async function () {
         // Unlocked->Committed
         await expect(lifecycleStates.setLifecycleState(LifecycleStates.Committed))
             .to.emit(lifecycleStates, "LifecycleStateChanged")

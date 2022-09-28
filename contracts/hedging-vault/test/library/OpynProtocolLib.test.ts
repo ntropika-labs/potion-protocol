@@ -29,7 +29,7 @@ describe("OpynProtocolLib", function () {
         randomAddress = (await ethers.getSigners())[5].address;
     });
 
-    it("Should call Opyn controller", async function () {
+    it("OC0001 - Is Potion Redeemable", async function () {
         if (network.name !== "hardhat") {
             this.skip();
         }

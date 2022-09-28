@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.14;
 
 import "./VaultWithReceiptsUpgradeable.sol";
 import "../interfaces/IVaultDeferredOperationUpgradeable.sol";
@@ -44,10 +44,12 @@ abstract contract VaultDeferredOperationUpgradeable is
     /**
      * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
      */
+    /* solhint-disable-next-line func-name-mixedcase */
     function __VaultDeferredOperation_init(address proxiedVault) internal onlyInitializing {
         __VaultDeferredOperation_init_unchained(proxiedVault);
     }
 
+    /* solhint-disable-next-line func-name-mixedcase */
     function __VaultDeferredOperation_init_unchained(address proxiedVault) internal onlyInitializing {
         _proxiedVault = IERC4626Upgradeable(proxiedVault);
     }

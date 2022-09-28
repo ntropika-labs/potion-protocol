@@ -3,8 +3,9 @@ import { ethers } from "hardhat";
 import { IERC4626Upgradeable, IERC4626Upgradeable__factory } from "../../typechain";
 import { MockERC20PresetMinterPauser } from "../../typechain";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export async function getFakeTargetVault(
-    underlyingAsset: string | undefined = undefined,
+    underlyingAsset: MockContract<MockERC20PresetMinterPauser>,
 ): Promise<FakeContract<IERC4626Upgradeable>> {
     const fakeTargetVault = await smock.fake<IERC4626Upgradeable>(IERC4626Upgradeable__factory.abi);
 
@@ -35,15 +36,10 @@ export async function getFakeTargetVault(
 
     fakeTargetVault.approve.returns(true);
     fakeTargetVault.transfer.returns(true);
+    fakeTargetVault.transferFrom.returns(true);
 
-    if (underlyingAsset) {
-        fakeTargetVault.asset.returns(underlyingAsset);
-    } else {
-        const ERC20MockFactory = await smock.mock("MockERC20PresetMinterPauser");
-        const assetTokenMock =
-            (await ERC20MockFactory.deploy()) as unknown as MockContract<MockERC20PresetMinterPauser>;
-        fakeTargetVault.asset.returns(assetTokenMock.address);
-    }
+    fakeTargetVault.asset.returns(underlyingAsset.address);
+    fakeTargetVault.decimals.returns(18);
 
     return fakeTargetVault;
 }

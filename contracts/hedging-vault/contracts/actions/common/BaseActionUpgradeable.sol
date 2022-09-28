@@ -45,7 +45,7 @@ abstract contract BaseActionUpgradeable is
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __BaseAction_init_chained(
         address adminAddress,
         address strategistAddress,

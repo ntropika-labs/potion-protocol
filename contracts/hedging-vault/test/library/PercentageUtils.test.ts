@@ -24,28 +24,28 @@ describe("PercentageUtils", function () {
         Percentage100 = await percentageUtils.PERCENTAGE_100();
     });
 
-    it("Check constants", async function () {
+    it("PU0001 - Check Constants", async function () {
         expect(PercentageDecimals).to.be.eq(6);
         expect(PercentageFactor).to.be.eq(10 ** 6);
         expect(Percentage100).to.be.eq(PercentageFactor.mul(100));
     });
-    it("Percentage range", async function () {
+    it("PU0002 - Percentage Range", async function () {
         expect(await percentageUtils.isPercentageInRange(0)).to.be.true;
         expect(await percentageUtils.isPercentageInRange(Percentage100)).to.be.true;
         expect(await percentageUtils.isPercentageInRange(PercentageFactor.mul(101))).to.be.false;
         expect(await percentageUtils.isPercentageInRange(PercentageFactor.mul(1000))).to.be.false;
     });
-    it("Add percentage", async function () {
+    it("PU0003 - Add Percentage", async function () {
         expect(await percentageUtils.addPercentage(1000, PercentageFactor.mul(10))).to.be.eq(1100);
         expect(await percentageUtils.addPercentage(10, PercentageFactor.mul(50))).to.be.eq(15);
         expect(await percentageUtils.addPercentage(0, PercentageFactor.mul(30))).to.be.eq(0);
     });
-    it("Substract percentage", async function () {
-        expect(await percentageUtils.substractPercentage(1000, PercentageFactor.mul(10))).to.be.eq(900);
-        expect(await percentageUtils.substractPercentage(10, PercentageFactor.mul(50))).to.be.eq(5);
-        expect(await percentageUtils.substractPercentage(0, PercentageFactor.mul(30))).to.be.eq(0);
+    it("PU0004 - Subtract Percentage", async function () {
+        expect(await percentageUtils.subtractPercentage(1000, PercentageFactor.mul(10))).to.be.eq(900);
+        expect(await percentageUtils.subtractPercentage(10, PercentageFactor.mul(50))).to.be.eq(5);
+        expect(await percentageUtils.subtractPercentage(0, PercentageFactor.mul(30))).to.be.eq(0);
     });
-    it("Apply percentage", async function () {
+    it("PU0005 - Apply Percentage", async function () {
         expect(await percentageUtils.applyPercentage(1000, PercentageFactor.mul(10))).to.be.eq(100);
         expect(await percentageUtils.applyPercentage(10, PercentageFactor.mul(40))).to.be.eq(4);
         expect(await percentageUtils.applyPercentage(0, PercentageFactor.mul(30))).to.be.eq(0);

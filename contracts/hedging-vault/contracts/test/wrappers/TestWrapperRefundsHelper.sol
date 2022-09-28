@@ -31,6 +31,6 @@ contract TestWrapperRefundsHelper is RefundsHelperUpgreadable {
     /**
         Default payable function to receive Ether
      */
-    // solhint-disable-next-line no-empty-block
+    /* solhint-disable-next-line no-empty-block */
     receive() external payable {}
 }

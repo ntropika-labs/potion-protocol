@@ -103,7 +103,7 @@ contract RolesManagerUpgradeable is AccessControlEnumerableUpgradeable, IRolesMa
         @dev The Vault role is not initialized here. Instead, the admin must call
              `changeVault` to set the vault role address
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __RolesManager_init_unchained(address adminAddress, address operatorAddress) internal onlyInitializing {
         _grantRole(ADMIN_ROLE, adminAddress);
         _grantRole(OPERATOR_ROLE, operatorAddress);

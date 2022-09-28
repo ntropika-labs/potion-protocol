@@ -668,13 +668,13 @@ end_of_record
 TN:
 SF:/home/rcano/Development/thesolidchain/ntropika/potion-protocol/contracts/hedging-vault/contracts/library/PercentageUtils.sol
 FN:38,addPercentage
-FN:50,substractPercentage
+FN:50,subtractPercentage
 FN:62,applyPercentage
 FN:74,isPercentageInRange
 FNF:4
 FNH:4
 FNDA:6,addPercentage
-FNDA:4,substractPercentage
+FNDA:4,subtractPercentage
 FNDA:23,applyPercentage
 FNDA:20,isPercentageInRange
 DA:39,6

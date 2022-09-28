@@ -25,6 +25,7 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/access/IAccessControlEnumerabl
     respective modifiers `onlyStrategist` and `onlyOperator`.
  */
 
+/* solhint-disable-next-line no-empty-blocks */
 interface IRolesManager is IAccessControlEnumerableUpgradeable {
     // Empty on purpose
 }

@@ -64,7 +64,7 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize the RolesManagerUpgradeable contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __FeeManager_init_unchained(
         uint256 managementFee_,
         uint256 performanceFee_,

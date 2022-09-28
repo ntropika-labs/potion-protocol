@@ -37,12 +37,12 @@ describe("FeeManager", function () {
         );
     });
 
-    it("Check getters", async function () {
+    it("FM0001 - Getters", async function () {
         expect(await feeManager.getManagementFee()).to.be.equal(4 * PercentageFactor);
         expect(await feeManager.getPerformanceFee()).to.be.equal(6 * PercentageFactor);
         expect(await feeManager.getFeesRecipient()).to.be.equal(feesRecipientAccount1.address);
     });
-    it("Change fees and recipient", async function () {
+    it("FM0002 - Setters", async function () {
         await feeManager.setManagementFee(8 * PercentageFactor);
         expect(await feeManager.getManagementFee()).to.be.equal(8 * PercentageFactor);
 
@@ -52,7 +52,7 @@ describe("FeeManager", function () {
         await feeManager.setFeesRecipient(feesRecipientAccount2.address);
         expect(await feeManager.getFeesRecipient()).to.be.equal(feesRecipientAccount2.address);
     });
-    it("Only admin can change fees and recipient", async function () {
+    it("FM0003 - Setters Only Admin", async function () {
         await expect(
             feeManager.connect(unpriviledgedAccount).setManagementFee(8 * PercentageFactor),
         ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
@@ -63,7 +63,7 @@ describe("FeeManager", function () {
             feeManager.connect(unpriviledgedAccount).setFeesRecipient(feesRecipientAccount1.address),
         ).to.be.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));
     });
-    it("Calculate payments", async function () {
+    it("FM0004 - Payment Calculation", async function () {
         await feeManager.setManagementFee(8 * PercentageFactor);
         await feeManager.setPerformanceFee(2 * PercentageFactor);
 
@@ -75,7 +75,7 @@ describe("FeeManager", function () {
         expect(await feeManager.calculatePerformancePayment(0)).to.be.equal(0);
         expect(await feeManager.calculatePerformancePayment(133)).to.be.equal(2);
     });
-    it("Send token payments", async function () {
+    it("FM0005 - Token Fees Payments", async function () {
         await erc20.mint(feeManager.address, 100000);
         await feeManager.setManagementFee(8 * PercentageFactor);
         await feeManager.setPerformanceFee(2 * PercentageFactor);
@@ -89,7 +89,7 @@ describe("FeeManager", function () {
         expect(await erc20.balanceOf(feesRecipientAccount1.address)).to.be.equal(71 + 19);
         expect(await erc20.balanceOf(feeManager.address)).to.be.equal(100000 - (71 + 19));
     });
-    it("Send ETH payments", async function () {
+    it("FM0006 - ETH Fees Payments", async function () {
         await ownerAccount.sendTransaction({
             to: feeManager.address,
             value: ethers.utils.parseEther("1"),
@@ -109,7 +109,7 @@ describe("FeeManager", function () {
             ethers.utils.parseEther("1").sub(71 + 19),
         );
     });
-    it("Fees percentages must be in range", async function () {
+    it("FM0007 - Fees percentages must be in range", async function () {
         await expect(feeManager.setManagementFee(99 * PercentageFactor)).to.be.not.reverted;
         await expect(feeManager.setManagementFee(100 * PercentageFactor)).to.be.not.reverted;
         await expect(feeManager.setManagementFee(100 * PercentageFactor + 1)).to.be.revertedWith(
@@ -122,7 +122,7 @@ describe("FeeManager", function () {
             "Performance fee must be less than or equal to 100",
         );
     });
-    it("Setting the same fee recipient", async function () {
+    it("FM0008 - Same Fee Recipient", async function () {
         await expect(feeManager.setFeesRecipient(feesRecipientAccount3.address)).to.be.not.reverted;
         await expect(feeManager.setFeesRecipient(feesRecipientAccount3.address)).to.be.revertedWith(
             "Fees recipient is the same as before",

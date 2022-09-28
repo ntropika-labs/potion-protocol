@@ -37,7 +37,7 @@ contract UniswapV3HelperUpgradeable is UniswapV3OracleUpgradeable {
         are quite coupled and `UniswapV3OracleUpgradeable` MUST not be used anywhere else in
         the inheritance chain.
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __UniswapV3Helper_init_unchained(address swapRouter) internal onlyInitializing {
         __UniswapV3Oracle_init_unchained();
 

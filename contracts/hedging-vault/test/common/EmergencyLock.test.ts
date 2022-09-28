@@ -25,10 +25,10 @@ describe("EmergencyLock", function () {
         await emergencyLock.initialize(ownerAccount.address, ownerAccount.address);
     });
 
-    it("Default Value", async function () {
+    it("EL0001 - Default Value", async function () {
         expect(await emergencyLock.paused()).to.be.false;
     });
-    it("Pause/Unpause", async function () {
+    it("EL0002 - Pause/Unpause", async function () {
         // Pause the contract
         await expect(emergencyLock.pause()).to.emit(emergencyLock, "Paused");
         expect(await emergencyLock.paused()).to.be.true;
@@ -37,7 +37,7 @@ describe("EmergencyLock", function () {
         await expect(emergencyLock.unpause()).to.emit(emergencyLock, "Unpaused");
         expect(await emergencyLock.paused()).to.be.false;
     });
-    it("Not Admin", async function () {
+    it("EL0003 - Not Admin", async function () {
         // Only admin can pause/unpause the contract
         await expect(emergencyLock.connect(unpriviledgedAccount).pause()).to.be.revertedWith(
             AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address),

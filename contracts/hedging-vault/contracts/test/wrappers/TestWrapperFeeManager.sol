@@ -63,6 +63,6 @@ contract TestWrapperFeeManager is FeeManagerUpgradeable {
     /**
         @notice Enable reception of Ether
     */
-    // solhint-disable-next-line no-empty-blocks
+    /* solhint-disable-next-line no-empty-blocks */
     receive() external payable {}
 }

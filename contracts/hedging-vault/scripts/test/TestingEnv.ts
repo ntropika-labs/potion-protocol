@@ -72,8 +72,9 @@ function getTokensFromUniswapPath(uniswapPath: string) {
     return { firstToken, secondToken };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
 
@@ -92,6 +93,7 @@ function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
             args.params.amountOutMinimum,
         );
     });
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     asMock(tEnv.uniswapV3SwapRouter)?.exactOutput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
 
@@ -324,11 +326,13 @@ async function prepareTestEnvironment(
     return testingEnvironmentDeployment as TestingEnvironmentDeployment;
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getPotionProtocolDeployments(networkName: string): any {
-    //@ts-expect-error iterator is not defined
+    /* @ts-expect-error iterator is not defined */
     return Deployments[networkName].contracts;
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams, potionProtocolDeployments: any) {
     if (!hedgingVaultConfig.USDC) {
         hedgingVaultConfig.USDC = potionProtocolDeployments.USDC?.address;

@@ -68,7 +68,7 @@ describe("RolesManager", function () {
         await rolesManager.initialize(adminAccount.address, operatorAccount.address);
     });
 
-    it("Check roles addresses", async function () {
+    it("RM0001 - Default Values", async function () {
         expect(await rolesManager.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await rolesManager.getRoleMember(Roles.Admin, 0)).to.equal(adminAccount.address);
         expect(await rolesManager.getRoleMemberCount(Roles.Operator)).to.equal(1);
@@ -77,7 +77,7 @@ describe("RolesManager", function () {
         expect(await rolesManager.getRoleMemberCount(Roles.Investor)).to.equal(0);
         expect(await rolesManager.getRoleMemberCount(Roles.Strategist)).to.equal(0);
     });
-    it("Change roles by Admin", async function () {
+    it("RM0002 - Change Roles Admin", async function () {
         await changeRole(Roles.Operator, operatorAccount, operatorAccount2, adminAccount);
         await changeRole(Roles.Vault, undefined, vaultAccount2, adminAccount);
         await changeRole(Roles.Investor, undefined, investorAccount2, adminAccount);
@@ -91,7 +91,7 @@ describe("RolesManager", function () {
         await changeRole(Roles.Strategist, strategistAccount2, strategistAccount, adminAccount2);
         await changeRole(Roles.Admin, adminAccount2, adminAccount, adminAccount2);
     });
-    it("Change roles by unpriviledged", async function () {
+    it("RM0003 - Change Roles Non-Admin", async function () {
         await expect(
             rolesManager.connect(unpriviledgedAccount).grantRole(Roles.Admin, unpriviledgedAccount.address),
         ).to.revertedWith(AccessControlMissingRole(Roles.Admin, unpriviledgedAccount.address));

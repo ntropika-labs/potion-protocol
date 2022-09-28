@@ -47,7 +47,7 @@ export function addPercentage(
     @dev It performs the following operation:
         (100.0 - percentage) * amount / 100.0
 */
-export function substractPercentage(
+export function subtractPercentage(
   amount: BigNumber,
   percentage: BigNumber
 ): BigNumber {

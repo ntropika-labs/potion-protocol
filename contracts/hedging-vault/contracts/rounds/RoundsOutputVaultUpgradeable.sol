@@ -3,6 +3,7 @@
  */
 pragma solidity 0.8.14;
 
+import "@prb/math/contracts/PRBMathUD60x18.sol";
 import "../interfaces/IRoundsOutputVault.sol";
 import "./BaseRoundsVaultUpgradeable.sol";
 
@@ -18,6 +19,8 @@ import "./BaseRoundsVaultUpgradeable.sol";
     @author Roberto Cano <robercano>
  */
 contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
+    using PRBMathUD60x18 for uint256;
+
     // UPGRADEABLE INITIALIZER
 
     /**
@@ -61,7 +64,7 @@ contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutp
         if (shares > 0) {
             uint256 assets = _redeemFromTarget(shares);
 
-            emit SharesRedeemed(_msgSender(), shares, assets);
+            emit SharesRedeemed(getCurrentRound(), _msgSender(), shares, assets);
         }
     }
 
@@ -73,6 +76,10 @@ contract RoundsOutputVaultUpgradeable is BaseRoundsVaultUpgradeable, IRoundsOutp
      */
     function _getCurrentExchangeRate() internal view override returns (uint256) {
         IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
-        return previewRedeem(10**asset_.decimals());
+
+        uint256 OneAsset = 10**asset_.decimals();
+        uint256 shares = previewRedeem(OneAsset);
+
+        return shares.fromUint().div(OneAsset.fromUint());
     }
 }

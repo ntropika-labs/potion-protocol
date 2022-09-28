@@ -158,6 +158,12 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "uint256",
+        name: "roundId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
         internalType: "address",
         name: "account",
         type: "address",

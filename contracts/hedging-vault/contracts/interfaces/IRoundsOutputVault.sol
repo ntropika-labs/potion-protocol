@@ -18,5 +18,5 @@ import "./IBaseRoundsVault.sol";
  */
 interface IRoundsOutputVault is IBaseRoundsVault {
     // EVENTS
-    event SharesRedeemed(address indexed account, uint256 shares, uint256 assets);
+    event SharesRedeemed(uint256 indexed roundId, address indexed account, uint256 shares, uint256 assets);
 }

@@ -60,7 +60,7 @@ describe("HedgingVault", function () {
         operatorHelper = tEnv.hedgingVaultOrchestrator;
     });
 
-    it("Vault Deployment Values", async function () {
+    it("HV0001 - Investment Vault Default Value", async function () {
         // Roles
         expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -100,7 +100,7 @@ describe("HedgingVault", function () {
         expect(principalPercentages[0]).to.equal(tEnv.hedgingPercentage);
         expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
     });
-    it("Action Deployment Values", async function () {
+    it("HV0002 - Potion Buy Action Default Value", async function () {
         // Roles
         expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -139,7 +139,7 @@ describe("HedgingVault", function () {
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
     });
 
-    it("Basic Deposit/Redemption", async function () {
+    it("HV0003 - Basic Deposit/Redemption", async function () {
         // Mint and approve
         await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
@@ -159,7 +159,7 @@ describe("HedgingVault", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it("Full cycle (deposit, enter, exit, redeem)", async function () {
+    it("HV0004 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
@@ -355,7 +355,7 @@ describe("HedgingVault", function () {
             .mul(USDCPriceInUSDbn)
             .div(underlyingAssetPriceInUSDbn);
 
-        const uniswapExitPositionOutputAmount = HedgingVaultUtils.substractPercentage(
+        const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
             extraUnderlyingAssetInVaultAfterPayout,
             tEnv.swapSlippage,
         );
@@ -366,6 +366,8 @@ describe("HedgingVault", function () {
             asMock(tEnv.opynController).getPayout.returns(() => {
                 return payoutInUSDC;
             });
+
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             asMock(tEnv.opynController).operate.returns(async (args: any) => {
                 if (args[0][0].actionType !== 8) {
                     return;

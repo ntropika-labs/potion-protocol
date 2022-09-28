@@ -47,7 +47,7 @@ describe("VaultDeferredOperation", function () {
         assetTokenMock.approve.reset();
     });
 
-    it("Default Values", async function () {
+    it("VDO0001 - Default Value", async function () {
         expect(await vaultDeferredOperation.vault()).to.equal(fakeTargetVault.address);
         expect(await vaultDeferredOperation.asset()).to.equal(assetTokenMock.address);
         expect(await vaultDeferredOperation.convertToShares(1)).to.equal(2);
@@ -63,7 +63,7 @@ describe("VaultDeferredOperation", function () {
         expect(await vaultDeferredOperation.previewRedeem(200)).to.equal(100);
     });
 
-    it("Mint", async function () {
+    it("VDO0002 - Mint", async function () {
         const shares = ethers.utils.parseEther("0.2");
         const assets = await vaultDeferredOperation.convertToAssets(shares);
 
@@ -75,7 +75,7 @@ describe("VaultDeferredOperation", function () {
         expect(await vaultDeferredOperation.balanceOfAll(unpriviledgedAccount.address)).to.equal(assets);
     });
 
-    it("Deposit From Target", async function () {
+    it("VDO0003 - Deposit On Target", async function () {
         const shares = ethers.utils.parseEther("0.2");
         const assets = await vaultDeferredOperation.convertToAssets(shares);
 
@@ -86,7 +86,7 @@ describe("VaultDeferredOperation", function () {
         expect(assetTokenMock.approve).to.be.calledOnceWith(fakeTargetVault.address, assets);
     });
 
-    it("Redeem On Target", async function () {
+    it("VDO0004 - Redeem From Target", async function () {
         const shares = ethers.utils.parseEther("0.2");
         const assets = await vaultDeferredOperation.convertToAssets(shares);
 

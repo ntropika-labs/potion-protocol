@@ -72,7 +72,7 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
         @param USDC The address of the USDC contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __PotionProtocolHelper_init_unchained(
         address potionLiquidityPoolManager,
         address opynAddressBook,

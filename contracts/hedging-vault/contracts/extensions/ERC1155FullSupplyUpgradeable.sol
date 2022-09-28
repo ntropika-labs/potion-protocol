@@ -16,8 +16,10 @@ import "./interfaces/IERC1155FullSupplyUpgradeable.sol";
  * @author robercano
  */
 abstract contract ERC1155FullSupplyUpgradeable is Initializable, ERC1155Upgradeable, IERC1155FullSupplyUpgradeable {
+    /* solhint-disable-next-line func-name-mixedcase, no-empty-blocks */
     function __ERC1155FullSupply_init() internal onlyInitializing {}
 
+    /* solhint-disable-next-line func-name-mixedcase, no-empty-blocks */
     function __ERC1155FullSupply_init_unchained() internal onlyInitializing {}
 
     uint256 private _totalSupply;

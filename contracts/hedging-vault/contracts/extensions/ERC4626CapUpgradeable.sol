@@ -50,7 +50,7 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable, I
         @dev The RolesManager contract MUST BE initialized in the Vault/Action contract as it
         it shared among other helper contracts
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __ERC4626Cap_init_unchained(uint256 cap_, address asset_) internal onlyInitializing {
         __ERC4626_init_unchained(IERC20MetadataUpgradeable(asset_));
 

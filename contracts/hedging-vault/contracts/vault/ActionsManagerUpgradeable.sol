@@ -56,7 +56,7 @@ contract ActionsManagerUpgradeable is RolesManagerUpgradeable, IActionsManager {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize any other contract
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __ActionsManager_init_unchained(IAction[] calldata actions, uint256[] calldata principalPercentages)
         internal
         onlyInitializing

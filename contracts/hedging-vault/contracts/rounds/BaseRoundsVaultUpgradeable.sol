@@ -47,10 +47,13 @@ abstract contract BaseRoundsVaultUpgradeable is
     address private _exchangeAsset;
 
     // UPGRADABLE INITIALIZERS
+
+    /* solhint-disable-next-line func-name-mixedcase */
     function __BaseRoundsVault_init(address exchangeAsset_) internal onlyInitializing {
         __BaseRoundsVault_init_unchained(exchangeAsset_);
     }
 
+    /* solhint-disable-next-line func-name-mixedcase */
     function __BaseRoundsVault_init_unchained(address exchangeAsset_) internal onlyInitializing {
         _exchangeAsset = exchangeAsset_;
     }
@@ -94,13 +97,16 @@ abstract contract BaseRoundsVaultUpgradeable is
         address receiver,
         address owner
     ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256) {
-        require(id == _roundNumber.current(), "BaseRoundsVaultUpgradeable: can only redeem current round");
+        require(id == _roundNumber.current(), "Can only redeem current round");
 
         return super.redeem(id, amount, receiver, owner);
     }
 
     /**
         @inheritdoc IVaultWithReceiptsUpgradeable
+
+        @dev Left for completion and compatibility with the IVaultWithReceipts contract, but it is not possible
+        to redeem receipts for different rounds here, only for the current round.
      */
     function redeemBatch(
         uint256[] memory ids,
@@ -109,7 +115,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         address owner
     ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256 assets) {
         for (uint256 i = 0; i < ids.length; i++) {
-            require(ids[i] == _roundNumber.current(), "BaseRoundsVaultUpgradeable: can only redeem current round");
+            require(ids[i] == _roundNumber.current(), "Can only redeem current round");
         }
 
         return super.redeemBatch(ids, amounts, receiver, owner);
@@ -124,10 +130,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         address receiver,
         address owner
     ) public returns (uint256) {
-        require(
-            id < _roundNumber.current(),
-            "BaseRoundsVaultUpgradeable: exchange asset only available for previous rounds"
-        );
+        require(id < _roundNumber.current(), "Exchange asset only available for previous rounds");
 
         return _redeemExchangeAsset(_msgSender(), receiver, owner, id, amount);
     }
@@ -147,13 +150,10 @@ abstract contract BaseRoundsVaultUpgradeable is
         address receiver,
         address owner
     ) public returns (uint256 shares) {
-        require(ids.length == amounts.length, "BaseRoundsVaultUpgradeable: mismatch shares ids and amounts lengths");
+        require(ids.length == amounts.length, "Mismatch shares ids and amounts lengths");
 
         for (uint256 i = 0; i < ids.length; i++) {
-            require(
-                ids[i] < _roundNumber.current(),
-                "BaseRoundsVaultUpgradeable: exchange asset only available for previous rounds"
-            );
+            require(ids[i] < _roundNumber.current(), "Exchange asset only available for previous rounds");
         }
 
         return _redeemExchangeAssetBatch(_msgSender(), receiver, owner, ids, amounts);
@@ -199,7 +199,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         address receiver,
         address owner
     ) internal returns (uint256) {
-        require(id == _roundNumber.current(), "RoundsInputVaultUpgradeable: can only redeem current round");
+        require(id == _roundNumber.current(), "Can only redeem current round");
 
         return super.redeem(id, amount, receiver, owner);
     }
@@ -221,7 +221,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         uint256 amount
     ) private returns (uint256 exchangeAmount) {
         if (caller != owner) {
-            require(isApprovedForAll(owner, caller), "BaseRoundsVaultUpgradeable: caller is not owner nor approved");
+            require(isApprovedForAll(owner, caller), "Caller is not owner nor approved");
         }
 
         // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the

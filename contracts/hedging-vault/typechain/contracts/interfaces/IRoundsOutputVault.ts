@@ -353,7 +353,7 @@ export interface IRoundsOutputVaultInterface extends utils.Interface {
     "NextRound(uint256)": EventFragment;
     "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "SharesRedeemed(address,uint256,uint256)": EventFragment;
+    "SharesRedeemed(uint256,address,uint256,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -437,12 +437,13 @@ export type RedeemReceiptBatchEventFilter =
   TypedEventFilter<RedeemReceiptBatchEvent>;
 
 export interface SharesRedeemedEventObject {
+  roundId: BigNumber;
   account: string;
   shares: BigNumber;
   assets: BigNumber;
 }
 export type SharesRedeemedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
+  [BigNumber, string, BigNumber, BigNumber],
   SharesRedeemedEventObject
 >;
 
@@ -1113,12 +1114,14 @@ export interface IRoundsOutputVault extends BaseContract {
       amounts?: null
     ): RedeemReceiptBatchEventFilter;
 
-    "SharesRedeemed(address,uint256,uint256)"(
+    "SharesRedeemed(uint256,address,uint256,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       shares?: null,
       assets?: null
     ): SharesRedeemedEventFilter;
     SharesRedeemed(
+      roundId?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       shares?: null,
       assets?: null

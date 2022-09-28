@@ -1424,7 +1424,7 @@
                 "loc": { "start": { "line": 38, "column": 4 }, "end": { "line": 40, "column": 4 } }
             },
             "2": {
-                "name": "substractPercentage",
+                "name": "subtractPercentage",
                 "line": 50,
                 "loc": { "start": { "line": 50, "column": 4 }, "end": { "line": 52, "column": 4 } }
             },

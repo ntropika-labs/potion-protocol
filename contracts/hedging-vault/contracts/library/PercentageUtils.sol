@@ -47,7 +47,7 @@ library PercentageUtils {
         @dev It performs the following operation:
             (100.0 - percentage) * amount
      */
-    function substractPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
+    function subtractPercentage(uint256 amount, uint256 percentage) internal pure returns (uint256) {
         return applyPercentage(amount, PERCENTAGE_100 - percentage);
     }
 

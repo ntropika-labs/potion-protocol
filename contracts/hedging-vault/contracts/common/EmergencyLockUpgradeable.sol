@@ -36,7 +36,7 @@ contract EmergencyLockUpgradeable is RolesManagerUpgradeable, PausableUpgradeabl
         @dev The RolesManager contract MUST BE initialized in the Vault/Action contract as it
         it shared among other helper contracts
      */
-    // solhint-disable-next-line func-name-mixedcase
+    /* solhint-disable-next-line func-name-mixedcase */
     function __EmergencyLock_init_unchained() internal onlyInitializing {
         __Pausable_init_unchained();
     }
