@@ -34,28 +34,8 @@ export const Deployments = {
                 address: "0x5fea417c193828eCF578933121De0B943E356a92",
                 blockNumber: 7498271,
             },
-        },
-    },
-    goerli: {
-        contracts: {
-            WETH: {
-                address: "0x9889DfADE1d68488590DF17bbA882914535a8F92",
-                blockNumber: 7498251,
-            },
-            WBTC: {
-                address: "0x667c04420C2B8D319ac24f6E605dCC28759C55f4",
-                blockNumber: 7498257,
-            },
-            USDC: {
-                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
-                blockNumber: 7498264,
-            },
-            ChainlinkAggregatorUSDC: {
-                address: "0x5fea417c193828eCF578933121De0B943E356a92",
-                blockNumber: 7498271,
-            },
             PotionLiquidityPool: {
-                address: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+                address: "0x49f957b11d1c8159a490f3cf4df95110d0630a41",
                 blockNumber: 7516604,
             },
             CurveManager: {
@@ -74,6 +54,12 @@ export const Deployments = {
                 address: "0x8a97ef0A5b4AD17DbE509c2fd0F68879aa9904ad",
                 blockNumber: 7516553,
             },
+        },
+    },
+    goerli: {
+        timestamp: 1662129986,
+        network: "goerli",
+        contracts: {
             AddressBook: {
                 address: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
                 blockNumber: 7516512,
@@ -90,6 +76,14 @@ export const Deployments = {
                 address: "0x008b8Dd774ac74dde38ea49ade5298282A9b107D",
                 blockNumber: 7516539,
             },
+            OtokenFactory: {
+                address: "0x41D4Fe19c8C41Dc60638B5d12Cf32d59CFbac73a",
+                blockNumber: 7516546,
+            },
+            Whitelist: {
+                address: "0x8a97ef0A5b4AD17DbE509c2fd0F68879aa9904ad",
+                blockNumber: 7516553,
+            },
             MarginPool: {
                 address: "0xaF520C36AB5a88f305F36D0c7Fa36483e52a402C",
                 blockNumber: 7516561,
@@ -99,7 +93,24 @@ export const Deployments = {
                 blockNumber: 7516568,
             },
             Controller: {
-                address: "0x540135Aa6aB61D6201c60d0F10A7626038Bd7d99",
+                address: "0x06fcDD279c3A297864C93f45d34ffcDBD834f3D9",
+                blockNumber: 7516577,
+            },
+            USDC: {
+                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                blockNumber: 0,
+            },
+            CurveManager: {
+                address: "0x809Ce01AD915685878649E5201808af6AE01CDc4",
+                blockNumber: 7516589,
+            },
+            CriteriaManager: {
+                address: "0xD77399aEf4d4c7A54eA20eF0943b9e722dEf1339",
+                blockNumber: 7516597,
+            },
+            PotionLiquidityPool: {
+                address: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+                blockNumber: 7516607,
             },
             ChainLinkPricerWETH: {
                 address: "0x54235B44Ebb8F8Bf1bc248339ebAF06f7829307C",
@@ -115,7 +126,6 @@ export const Deployments = {
             },
         },
     },
-
     "kovan.demo": {
         collateralTokenAddress: "0x7e6edA50d1c833bE936492BF42C1BF376239E9e2",
         opynAddressBookAddress: "0x8812f219f507e8cfe9d2f1e790164714c5e06a73",
@@ -220,7 +230,7 @@ export const Deployments = {
         },
     },
     "localhost.hedging": {
-        timestamp: 1663227711,
+        timestamp: 1664356112,
         network: "localhost",
         contracts: {
             AddressBook: {

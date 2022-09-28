@@ -1,6 +1,6 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
-import { deployHedgingVaultHelper } from "../common/deployHedgingVaultHelper";
+import { deployHedgingVaultOrchestrator } from "../common/deployHedgingVaultOrchestrator";
 import { HedgingVaultOrchestrator, InvestmentVault, PotionBuyAction } from "../../typechain";
 import { BigNumber } from "ethers";
 import { Roles } from "hedging-vault-sdk";
@@ -70,7 +70,7 @@ export async function deployHedgingVault(
 ): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOrchestrator]> {
     printHedgingVaultDeployParams(parameters);
 
-    const hedgingVaultOrchestrator = await deployHedgingVaultHelper();
+    const hedgingVaultOrchestrator = await deployHedgingVaultOrchestrator();
 
     const potionBuyParams: PotionBuyActionDeployParams = {
         adminAddress: parameters.adminAddress,
@@ -114,6 +114,12 @@ export async function deployHedgingVault(
     // Set the vault and action addresses in the orchestrator
     console.log(
         `- Setting vault=${investmentVaultContract.address} and action=${potionBuyContract.address} in the orchestrator (${hedgingVaultOrchestrator.address})`,
+    );
+    tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
+    await tx.wait();
+
+    console.log(
+        `- Setting Vault and action as system addresses for the orchestrator (${hedgingVaultOrchestrator.address})`,
     );
     tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
     await tx.wait();
