@@ -41,6 +41,9 @@ export const onboardOptions = {
     desktop: {
       enabled: false,
     },
+    mobile: {
+      enabled: false,
+    },
   },
   wallets: [walletConnect, injected],
   chains: chains,

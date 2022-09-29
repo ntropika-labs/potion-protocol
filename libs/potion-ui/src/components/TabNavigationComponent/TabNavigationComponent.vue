@@ -97,10 +97,10 @@ const cardColor = computed(() => (props.tabs ? "glass" : "clean"));
       >
         {{ props.tabs[props.defaultIndex].subtitle }}
       </p>
-      <template v-if="props.tabs[props.defaultIndex].cta">
+      <template v-if="props.tabs[props.defaultIndex]?.cta?.url">
         <router-link
           v-if="!props.tabs[props.defaultIndex].cta?.externalUrl"
-          :to="props.tabs[props.defaultIndex].cta?.url"
+          :to="props.tabs[props.defaultIndex].cta?.url ?? ''"
           class="text-center text-sm text-secondary-500 uppercase mb-4"
           >{{ props.tabs[props.defaultIndex].cta?.label }}</router-link
         >

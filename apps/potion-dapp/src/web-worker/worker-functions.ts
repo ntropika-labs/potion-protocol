@@ -5,4 +5,9 @@ import {
 
 import { expose } from "comlink";
 
+export interface PotionWorker {
+  runDepthRouter: typeof runDepthRouter;
+  getEmergingBondingCurvesFromCriterias: typeof getEmergingBondingCurvesFromCriterias;
+}
+
 expose({ getEmergingBondingCurvesFromCriterias, runDepthRouter });

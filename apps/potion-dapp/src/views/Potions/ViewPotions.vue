@@ -12,6 +12,7 @@ import { useControllerContract } from "@/composables/useControllerContract";
 import { useOracleContract } from "@/composables/useOracleContract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useErc20UpgradeableContract } from "@/composables/useErc20UpgradeableContract";
+import { getTokenFromAddress } from "@/helpers/tokens";
 
 const { connectedWallet } = useOnboard();
 const { getTokensBalance } = useErc20UpgradeableContract();
@@ -216,7 +217,9 @@ watch(redeemReceipt, (receipt) =>
               :expiry="potion.expiry"
               :is-expired="false"
               :is-withdraw-enabled="false"
-              :token="potion.otoken.underlyingAsset"
+              :token="
+                getTokenFromAddress(potion.otoken.underlyingAsset.address)
+              "
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
               :current-payout="getActivePotionPayout(potion.otoken.id)"
@@ -268,7 +271,9 @@ watch(redeemReceipt, (receipt) =>
               :expiry="potion.expiry"
               :is-expired="true"
               :is-withdraw-enabled="isSameUserConnected && !redeemLoading"
-              :token="potion.otoken.underlyingAsset"
+              :token="
+                getTokenFromAddress(potion.otoken.underlyingAsset.address)
+              "
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
               :current-payout="getExpiredPotionPayout(potion.otoken.id)"

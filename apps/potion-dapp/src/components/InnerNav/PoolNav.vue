@@ -14,7 +14,6 @@ const routes = computed(() => [
     name: "discover-templates",
     label: t("discover_templates"),
     enabled: true,
-    params: {},
   },
   {
     name: "liquidity-provider",

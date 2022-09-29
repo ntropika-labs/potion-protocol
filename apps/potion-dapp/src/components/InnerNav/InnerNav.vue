@@ -25,15 +25,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { RouteRecordName } from "vue-router";
+import type { RouteRecordName, RouteParams } from "vue-router";
+
+interface InnerNavRoute {
+  enabled: boolean;
+  label: string;
+  name: string;
+  params?: RouteParams;
+}
+
 interface Props {
   currentRoute: RouteRecordName | string | null | undefined;
-  routes: {
-    enabled: boolean;
-    label: string;
-    name: string;
-    params: unknown;
-  }[];
+  routes: InnerNavRoute[];
 }
 const props = defineProps<Props>();
 </script>

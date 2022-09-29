@@ -55,7 +55,7 @@ const setUnderlying = (key: string, value: boolean) =>
   selectedUnderlyings.value.set(key, value);
 const toggleUnderlying = (key: string) =>
   setUnderlying(key, !selectedUnderlyings.value.get(key));
-const isActive = (key: string) => selectedUnderlyings.value.get(key);
+const isActive = (key: string) => selectedUnderlyings.value.get(key) ?? false;
 
 // bulk operations
 const setAllUnderlyings = (v: boolean) =>

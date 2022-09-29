@@ -14,7 +14,6 @@ const routes = computed(() => [
     name: "discover-potions",
     label: t("discover_potions"),
     enabled: true,
-    params: {},
   },
   {
     name: "buyer",
