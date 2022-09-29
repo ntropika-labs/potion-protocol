@@ -1,0 +1,50 @@
+diff --git a/dist/codegen/index.js b/dist/codegen/index.js
+index 94e34bdd472b649244fb13e9b6f674638ec5eca5..2f87cf450ea3745b79b2bb09cadbc55fc90d049d 100644
+--- a/dist/codegen/index.js
++++ b/dist/codegen/index.js
+@@ -91,18 +91,15 @@ function codegenContractTypings(contract, codegenConfig) {
+         ? `${new Array(contract.path.length).fill('..').join('/')}/common`
+         : './common';
+     const imports = (0, typechain_1.createImportsForUsedIdentifiers)({
++        ethers: ['BaseContract', 'BigNumber', 'Signer', 'utils'],
+         'type ethers': [
+-            'BaseContract',
+-            'BigNumber',
+-            'BigNumberish',
+-            'BytesLike',
+-            'CallOverrides',
+-            'ContractTransaction',
+-            'Overrides',
+-            'PayableOverrides',
+-            'PopulatedTransaction',
+-            'Signer',
+-            'utils',
++          'BigNumberish',
++          'BytesLike',
++          'CallOverrides',
++          'ContractTransaction',
++          'Overrides',
++          'PayableOverrides',
++          'PopulatedTransaction',
+         ],
+         'type @ethersproject/abi': ['FunctionFragment', 'Result', 'EventFragment'],
+         'type @ethersproject/providers': ['Listener', 'Provider'],
+@@ -159,16 +156,8 @@ function codegenContractFactory(codegenConfig, contract, abi, bytecode) {
+   `;
+     const commonPath = `${new Array(contract.path.length + 1).fill('..').join('/')}/common`;
+     const imports = (0, typechain_1.createImportsForUsedIdentifiers)({
+-        ethers: [
+-            'Signer',
+-            'utils',
+-            'Contract',
+-            'ContractFactory',
+-            'PayableOverrides',
+-            'BytesLike',
+-            'BigNumberish',
+-            'Overrides',
+-        ],
++        ethers: ['Signer', 'utils', 'Contract', 'ContractFactory'],
++        'type ethers': ['PayableOverrides', 'BytesLike', 'BigNumberish', 'Overrides'],
+         'type @ethersproject/providers': ['Provider', 'TransactionRequest'],
+     }, source) +
+         '\n' +
