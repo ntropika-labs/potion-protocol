@@ -28,6 +28,10 @@ import {
   oTokenSettled,
 } from "./otoken";
 import { collateralToDecimals } from "./token";
+import {
+  updateHistoricalPoolData,
+  updateHistoricalTemplateData,
+} from "./historicalData";
 import { Actions } from "./enums";
 
 const ZERO_BIGDECIMAL = BigDecimal.fromString("0");
@@ -211,6 +215,8 @@ function updateConfigPoolTemplate(
       );
     }
     pool.save();
+    updateHistoricalPoolData(pool, timestamp);
+    updateHistoricalTemplateData(template, timestamp);
   }
 }
 
@@ -366,12 +372,15 @@ export function handleDeposited(event: Deposited): void {
         pool.template as string,
         template as Template
       );
+      updateHistoricalPoolData(pool, event.block.timestamp);
+      updateHistoricalTemplateData(template, event.block.timestamp);
     } else {
       log.warning("Deposited {} in the pool {} that doesn't have a template", [
         tokenAmount.toString(),
         poolId,
       ]);
       pool.save();
+      updateHistoricalPoolData(pool, event.block.timestamp);
     }
   } else {
     log.error(
@@ -438,12 +447,15 @@ export function handleWithdrawn(event: Withdrawn): void {
           pool.template as string,
           template as Template
         );
+        updateHistoricalPoolData(pool, event.block.timestamp);
+        updateHistoricalTemplateData(template, event.block.timestamp);
       } else {
         log.warning("Withdrawn {} from pool {} that is missing a template", [
           withdrawalAmount.toString(),
           poolId,
         ]);
         pool.save();
+        updateHistoricalPoolData(pool, event.block.timestamp);
       }
     }
   }
@@ -667,6 +679,8 @@ export function handleOptionsSold(event: OptionsSold): void {
       pool.template as string,
       template as Template
     );
+    updateHistoricalPoolData(pool, event.block.timestamp);
+    updateHistoricalTemplateData(template as Template, event.block.timestamp);
 
     const recordID = createLPRecordID(event.params.lp, event.params.otoken);
     let record = LPRecord.load(recordID);
@@ -801,6 +815,8 @@ export function handleOptionSettlementDistributed(
       pool.template as string,
       template as Template
     );
+    updateHistoricalPoolData(pool, event.block.timestamp);
+    updateHistoricalTemplateData(template, event.block.timestamp);
   }
 }
 

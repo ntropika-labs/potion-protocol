@@ -29,11 +29,24 @@ export function usePool(id: Ref<string> | ComputedRef<string>) {
       })) ?? []
   );
 
+  const dailyData = computed(
+    () =>
+      pool?.value?.dailyData?.map(
+        ({ timestamp, pnl, liquidity, utilization }) => ({
+          timestamp,
+          pnl: parseFloat(pnl),
+          liquidity: parseFloat(liquidity),
+          utilization: parseFloat(utilization),
+        })
+      ) ?? []
+  );
+
   return {
     error,
     fetching,
     pool,
     curve,
     criterias,
+    dailyData,
   };
 }

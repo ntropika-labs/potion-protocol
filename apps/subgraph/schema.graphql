@@ -36,6 +36,34 @@ type Template @entity {
   # the cumulative liquidity at the pool associated with a template at the time of each trade
   liquidityAtTrades: BigDecimal!
   pools: [Pool!] @derivedFrom(field: "template")
+  hourlyData: [HourlyTemplateData!] @derivedFrom(field: "template")
+  dailyData: [DailyTemplateData!] @derivedFrom(field: "template")
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Template at a specific
+point in time; precision is one hour
+"""
+type HourlyTemplateData @entity {
+  id: ID!
+  timestamp: Int!
+  template: Template!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Template at a specific
+point in time; precision is one day
+"""
+type DailyTemplateData @entity {
+  id: ID!
+  timestamp: Int!
+  template: Template!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
 }
 
 """
@@ -95,6 +123,34 @@ type Pool @entity {
   initialBalance: BigDecimal
   snapshots: [PoolSnapshot!] @derivedFrom(field: "currentPool")
   poolRecords: [PoolRecord!] @derivedFrom(field: "pool")
+  hourlyData: [HourlyPoolData!] @derivedFrom(field: "pool")
+  dailyData: [DailyPoolData!] @derivedFrom(field: "pool")
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Pool at a specific
+point in time; precision is one hour
+"""
+type HourlyPoolData @entity {
+  id: ID!
+  timestamp: Int!
+  pool: Pool!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Pool at a specific
+point in time; precision is one day
+"""
+type DailyPoolData @entity {
+  id: ID!
+  timestamp: Int!
+  pool: Pool!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
 }
 
 """
