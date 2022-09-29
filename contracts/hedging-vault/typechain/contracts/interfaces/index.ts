@@ -6,6 +6,7 @@ export type { IActionsManager } from "./IActionsManager";
 export type { IBaseRoundsVault } from "./IBaseRoundsVault";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";
+export type { IHedgingVaultOrchestrator } from "./IHedgingVaultOrchestrator";
 export type { IInvestmentVaultV0 } from "./IInvestmentVaultV0";
 export type { ILifecycleStates } from "./ILifecycleStates";
 export type { IOpynAddressBook } from "./IOpynAddressBook";

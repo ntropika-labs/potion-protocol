@@ -122,6 +122,8 @@ export type { IEmergencyLock } from "./contracts/interfaces/IEmergencyLock";
 export { IEmergencyLock__factory } from "./factories/contracts/interfaces/IEmergencyLock__factory";
 export type { IFeeManager } from "./contracts/interfaces/IFeeManager";
 export { IFeeManager__factory } from "./factories/contracts/interfaces/IFeeManager__factory";
+export type { IHedgingVaultOrchestrator } from "./contracts/interfaces/IHedgingVaultOrchestrator";
+export { IHedgingVaultOrchestrator__factory } from "./factories/contracts/interfaces/IHedgingVaultOrchestrator__factory";
 export type { IInvestmentVaultV0 } from "./contracts/interfaces/IInvestmentVaultV0";
 export { IInvestmentVaultV0__factory } from "./factories/contracts/interfaces/IInvestmentVaultV0__factory";
 export type { ILifecycleStates } from "./contracts/interfaces/ILifecycleStates";

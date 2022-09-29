@@ -13,11 +13,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -143,40 +139,22 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
-export interface HedgingVaultOrchestratorInterface extends utils.Interface {
+export interface IHedgingVaultOrchestratorInterface extends utils.Interface {
   functions: {
     "canEnterNextRound()": FunctionFragment;
-    "hedgingVault()": FunctionFragment;
     "nextRound((address,address,uint256,bytes),(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256),(address,address,uint256,bytes))": FunctionFragment;
-    "owner()": FunctionFragment;
-    "potionBuyAction()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "roundsInputVault()": FunctionFragment;
-    "roundsOutputVault()": FunctionFragment;
     "setSystemAddresses(address,address,address,address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "canEnterNextRound"
-      | "hedgingVault"
       | "nextRound"
-      | "owner"
-      | "potionBuyAction"
-      | "renounceOwnership"
-      | "roundsInputVault"
-      | "roundsOutputVault"
       | "setSystemAddresses"
-      | "transferOwnership"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "canEnterNextRound",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hedgingVault",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -187,23 +165,6 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
       IUniswapV3Oracle.SwapInfoStruct
     ]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "potionBuyAction",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "roundsInputVault",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "roundsOutputVault",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "setSystemAddresses",
     values: [
@@ -213,71 +174,26 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "canEnterNextRound",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "hedgingVault",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "potionBuyAction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "roundsInputVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "roundsOutputVault",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setSystemAddresses",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
 
-  events: {
-    "OwnershipTransferred(address,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  events: {};
 }
 
-export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
-}
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface HedgingVaultOrchestrator extends BaseContract {
+export interface IHedgingVaultOrchestrator extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HedgingVaultOrchestratorInterface;
+  interface: IHedgingVaultOrchestratorInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -301,8 +217,6 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   functions: {
     canEnterNextRound(overrides?: CallOverrides): Promise<[boolean]>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<[string]>;
-
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       nextRoundPotionBuyInfo: PotionBuyInfoStruct,
@@ -310,35 +224,16 @@ export interface HedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    potionBuyAction(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    roundsInputVault(overrides?: CallOverrides): Promise<[string]>;
-
-    roundsOutputVault(overrides?: CallOverrides): Promise<[string]>;
-
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
-      potionBuyAction_: PromiseOrValue<string>,
-      roundsInputVault_: PromiseOrValue<string>,
-      roundsOutputVault_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      hedgingVault: PromiseOrValue<string>,
+      potionBuyAction: PromiseOrValue<string>,
+      roundsInputVault: PromiseOrValue<string>,
+      roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
-
-  hedgingVault(overrides?: CallOverrides): Promise<string>;
 
   nextRound(
     prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -347,36 +242,17 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  potionBuyAction(overrides?: CallOverrides): Promise<string>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  roundsInputVault(overrides?: CallOverrides): Promise<string>;
-
-  roundsOutputVault(overrides?: CallOverrides): Promise<string>;
-
   setSystemAddresses(
-    hedgingVault_: PromiseOrValue<string>,
-    potionBuyAction_: PromiseOrValue<string>,
-    roundsInputVault_: PromiseOrValue<string>,
-    roundsOutputVault_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
+    hedgingVault: PromiseOrValue<string>,
+    potionBuyAction: PromiseOrValue<string>,
+    roundsInputVault: PromiseOrValue<string>,
+    roundsOutputVault: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<string>;
-
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       nextRoundPotionBuyInfo: PotionBuyInfoStruct,
@@ -384,46 +260,20 @@ export interface HedgingVaultOrchestrator extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    potionBuyAction(overrides?: CallOverrides): Promise<string>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    roundsInputVault(overrides?: CallOverrides): Promise<string>;
-
-    roundsOutputVault(overrides?: CallOverrides): Promise<string>;
-
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
-      potionBuyAction_: PromiseOrValue<string>,
-      roundsInputVault_: PromiseOrValue<string>,
-      roundsOutputVault_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      hedgingVault: PromiseOrValue<string>,
+      potionBuyAction: PromiseOrValue<string>,
+      roundsInputVault: PromiseOrValue<string>,
+      roundsOutputVault: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
-  filters: {
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     canEnterNextRound(overrides?: CallOverrides): Promise<BigNumber>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<BigNumber>;
-
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       nextRoundPotionBuyInfo: PotionBuyInfoStruct,
@@ -431,28 +281,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    potionBuyAction(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    roundsInputVault(overrides?: CallOverrides): Promise<BigNumber>;
-
-    roundsOutputVault(overrides?: CallOverrides): Promise<BigNumber>;
-
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
-      potionBuyAction_: PromiseOrValue<string>,
-      roundsInputVault_: PromiseOrValue<string>,
-      roundsOutputVault_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      hedgingVault: PromiseOrValue<string>,
+      potionBuyAction: PromiseOrValue<string>,
+      roundsInputVault: PromiseOrValue<string>,
+      roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -460,8 +293,6 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   populateTransaction: {
     canEnterNextRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       nextRoundPotionBuyInfo: PotionBuyInfoStruct,
@@ -469,28 +300,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    potionBuyAction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    roundsInputVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    roundsOutputVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
-      potionBuyAction_: PromiseOrValue<string>,
-      roundsInputVault_: PromiseOrValue<string>,
-      roundsOutputVault_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      hedgingVault: PromiseOrValue<string>,
+      potionBuyAction: PromiseOrValue<string>,
+      roundsInputVault: PromiseOrValue<string>,
+      roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

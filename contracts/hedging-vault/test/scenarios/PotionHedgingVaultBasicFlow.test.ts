@@ -8,17 +8,11 @@ import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
-import {
-    InvestmentVault,
-    PotionBuyAction,
-    IPotionLiquidityPool,
-    IUniswapV3Oracle,
-    HedgingVaultOrchestrator,
-} from "../../typechain";
+import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS, getNextTimestamp } from "../utils/BlockchainUtils";
+import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
@@ -39,7 +33,6 @@ describe("HedgingVault", function () {
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
-    let operatorHelper: HedgingVaultOrchestrator;
     let tEnv: TestingEnvironmentDeployment;
 
     beforeEach(async function () {
@@ -57,19 +50,27 @@ describe("HedgingVault", function () {
 
         vault = tEnv.investmentVault;
         action = tEnv.potionBuyAction;
-        operatorHelper = tEnv.hedgingVaultOrchestrator;
+
+        // To be able to test the hedging vault without the rounds vaults we need to add
+        // the investor account as a whitelisted address for the investment vault
+        await vault.grantRole(Roles.Investor, investorAccount.address);
+
+        // Also we need to add the owner account as Operator of both the vault and the action,
+        // as we won't be using the orchestrator
+        await vault.grantRole(Roles.Operator, ownerAccount.address);
+        await action.grantRole(Roles.Operator, ownerAccount.address);
     });
 
     it("HV0001 - Investment Vault Default Value", async function () {
         // Roles
         expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
-        expect(await vault.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await vault.getRoleMemberCount(Roles.Operator)).to.equal(2);
         expect(await vault.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
         expect(await vault.getRoleMemberCount(Roles.Strategist)).to.equal(1);
         expect(await vault.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
         expect(await vault.getRoleMemberCount(Roles.Vault)).to.equal(0);
-        expect(await vault.getRoleMemberCount(Roles.Investor)).to.equal(0);
+        expect(await vault.getRoleMemberCount(Roles.Investor)).to.equal(3);
 
         // Underlying asset and cap
         expect(await vault.asset()).to.equal(tEnv.underlyingAsset.address);
@@ -104,7 +105,7 @@ describe("HedgingVault", function () {
         // Roles
         expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
-        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(2);
         expect(await action.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
         expect(await action.getRoleMemberCount(Roles.Strategist)).to.equal(1);
         expect(await action.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
@@ -301,9 +302,14 @@ describe("HedgingVault", function () {
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
 
-        const cycleStartTimestamp = await getNextTimestamp();
+        // Emulate what the orchestrator is doing to enter a position
+        await action.connect(ownerAccount).setPotionBuyInfo(potionBuyInfo);
+        await action.connect(ownerAccount).setSwapInfo(swapInfoEnterPosition);
+        await vault.connect(ownerAccount).enterPosition();
 
-        await operatorHelper.connect(ownerAccount).enterPosition(swapInfoEnterPosition, potionBuyInfo);
+        // For some reason 2 blocks are mined with the last transaction, so we need to
+        // substract 1 from the current block
+        const cycleStartTimestamp = (await getCurrentTimestamp()) - 1;
 
         // Check that the helper set the correct info in the action
         const currentPotionBuyInfo = await action.getPotionBuyInfo(tEnv.underlyingAsset.address, expirationTimestamp);
@@ -397,9 +403,11 @@ describe("HedgingVault", function () {
         // Exit the position
         await fastForwardChain(DAY_IN_SECONDS);
 
-        const cycleEndTimestamp = await getNextTimestamp();
+        // Emulate what the orchestrator is doing
+        await action.connect(ownerAccount).setSwapInfo(swapInfoExitPosition);
+        await vault.connect(ownerAccount).exitPosition();
 
-        await operatorHelper.connect(ownerAccount).exitPosition(swapInfoExitPosition);
+        const cycleEndTimestamp = await getCurrentTimestamp();
 
         // Check that the operator helper set the uniswap info correctly
         currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);

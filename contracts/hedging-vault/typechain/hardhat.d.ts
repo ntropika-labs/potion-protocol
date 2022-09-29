@@ -241,6 +241,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IFeeManager__factory>;
     getContractFactory(
+      name: "IHedgingVaultOrchestrator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IHedgingVaultOrchestrator__factory>;
+    getContractFactory(
       name: "IInvestmentVaultV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IInvestmentVaultV0__factory>;
@@ -746,6 +750,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IFeeManager>;
+    getContractAt(
+      name: "IHedgingVaultOrchestrator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IHedgingVaultOrchestrator>;
     getContractAt(
       name: "IInvestmentVaultV0",
       address: string,

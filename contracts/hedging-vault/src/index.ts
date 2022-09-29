@@ -20,7 +20,7 @@ export const Deployments = {
         },
     },
     hardhat: {
-        timestamp: 1664430568,
+        timestamp: 1664434269,
         network: "hardhat",
         contracts: {},
     },

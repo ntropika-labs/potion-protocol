@@ -175,7 +175,12 @@ async function configureContracts(parameters: HedgingVaultDeployParams, deployme
     console.log(
         `- Setting vault=${deployment.vault.address} and action=${deployment.potionBuyAction.address} in the orchestrator (${deployment.orchestrator.address})`,
     );
-    tx = await deployment.orchestrator.setSystemAddresses(deployment.vault.address, deployment.potionBuyAction.address);
+    tx = await deployment.orchestrator.setSystemAddresses(
+        deployment.vault.address,
+        deployment.potionBuyAction.address,
+        deployment.roundsInputVault.address,
+        deployment.roundsOutputVault.address,
+    );
     await tx.wait();
 
     /* Set the Rounds Input Vault as Investor of the Investment Vault */
