@@ -1,9 +1,19 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
 import { deployHedgingVaultOrchestrator } from "../common/deployHedgingVaultOrchestrator";
-import { HedgingVaultOrchestrator, InvestmentVault, PotionBuyAction } from "../../typechain";
+import {
+    HedgingVaultOrchestrator,
+    InvestmentVault,
+    PotionBuyAction,
+    RoundsInputVault,
+    RoundsOutputVault,
+    RoundsVaultExchanger,
+} from "../../typechain";
 import { BigNumber } from "ethers";
 import { Roles } from "hedging-vault-sdk";
+import { deployRoundsInputVault, RoundsInputVaultDeployParams } from "../common/deployRoundsInputVault";
+import { deployRoundsOutputVault } from "../common/deployRoundsOutputVault";
+import { deployRoundsVaultExchanger } from "../common/deployRoundsVaultExchanger";
 
 export interface HedgingVaultDeployParams {
     // Roles
@@ -30,10 +40,22 @@ export interface HedgingVaultDeployParams {
     performanceFee: BigNumber;
     feesRecipient: string;
 
+    // Deposits receipts URI
+    receiptsURI: string;
+
     // Third-party dependencies
     uniswapV3SwapRouter: string;
     potionLiquidityPoolManager: string;
     opynAddressBook: string;
+}
+
+export interface HedgingVaultDeploymentResult {
+    vault: InvestmentVault;
+    potionBuyAction: PotionBuyAction;
+    orchestrator: HedgingVaultOrchestrator;
+    roundsInputVault: RoundsInputVault;
+    roundsOutputVault: RoundsOutputVault;
+    roundsVaultExchanger: RoundsVaultExchanger;
 }
 
 function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
@@ -59,19 +81,19 @@ function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
     console.log(` performanceFee: ${deployParams.performanceFee}`);
     console.log(` feesRecipient: ${deployParams.feesRecipient}`);
     console.log(`--------------------------------------`);
+    console.log(` receiptsURI: ${deployParams.receiptsURI}`);
+    console.log(`--------------------------------------`);
     console.log(` uniswapV3SwapRouter: ${deployParams.uniswapV3SwapRouter}`);
     console.log(` potionLiquidityPoolManager: ${deployParams.potionLiquidityPoolManager}`);
     console.log(` opynAddressBook: ${deployParams.opynAddressBook}`);
     console.log(`--------------------------------------\n`);
 }
 
-export async function deployHedgingVault(
-    parameters: HedgingVaultDeployParams,
-): Promise<[InvestmentVault, PotionBuyAction, HedgingVaultOrchestrator]> {
-    printHedgingVaultDeployParams(parameters);
-
+async function deployContracts(parameters: HedgingVaultDeployParams): Promise<HedgingVaultDeploymentResult> {
+    /* Orchestrator */
     const hedgingVaultOrchestrator = await deployHedgingVaultOrchestrator();
 
+    /* Potion Buy Action */
     const potionBuyParams: PotionBuyActionDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
@@ -91,6 +113,7 @@ export async function deployHedgingVault(
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);
 
+    /* Investment Vault */
     const investmentVaultParams: InvestmentVaultDeployParams = {
         adminAddress: parameters.adminAddress,
         strategistAddress: parameters.strategistAddress,
@@ -106,29 +129,81 @@ export async function deployHedgingVault(
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);
 
-    // Set the vault as the managing vault for the action
-    console.log(`- Setting ${investmentVaultContract.address} as the managing vault for ${potionBuyContract.address}`);
-    let tx = await potionBuyContract.grantRole(Roles.Vault, investmentVaultContract.address);
-    await tx.wait();
+    /* Rounds Input Vault */
+    const roundsInputVaultParams: RoundsInputVaultDeployParams = {
+        adminAddress: parameters.adminAddress,
+        operatorAddress: hedgingVaultOrchestrator.address,
+        investmentVault: investmentVaultContract.address,
+        receiptsURI: parameters.receiptsURI,
+    };
 
-    // Set the vault and action addresses in the orchestrator
+    const roundsInputVaultContract: RoundsInputVault = await deployRoundsInputVault(roundsInputVaultParams);
+
+    /* Rounds Output Vault */
+    const roundsOutputVaultParams: RoundsInputVaultDeployParams = {
+        adminAddress: parameters.adminAddress,
+        operatorAddress: hedgingVaultOrchestrator.address,
+        investmentVault: investmentVaultContract.address,
+        receiptsURI: parameters.receiptsURI,
+    };
+
+    const roundsOutputVaultContract: RoundsOutputVault = await deployRoundsOutputVault(roundsOutputVaultParams);
+
+    /* Rounds Vault Exchanger */
+    const roundsVaultExchanger: RoundsVaultExchanger = await deployRoundsVaultExchanger();
+
+    return {
+        vault: investmentVaultContract,
+        potionBuyAction: potionBuyContract,
+        orchestrator: hedgingVaultOrchestrator,
+        roundsInputVault: roundsInputVaultContract,
+        roundsOutputVault: roundsOutputVaultContract,
+        roundsVaultExchanger: roundsVaultExchanger,
+    };
+}
+
+async function configureContracts(parameters: HedgingVaultDeployParams, deployment: HedgingVaultDeploymentResult) {
+    /* InvestmentVault has the Vault Role for the Potion Buy Action */
+
     console.log(
-        `- Setting vault=${investmentVaultContract.address} and action=${potionBuyContract.address} in the orchestrator (${hedgingVaultOrchestrator.address})`,
+        `- Setting ${deployment.vault.address} as the managing vault for ${deployment.potionBuyAction.address}`,
     );
-    tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
+    let tx = await deployment.potionBuyAction.grantRole(Roles.Vault, deployment.vault.address);
     await tx.wait();
 
+    /* Configure the Investment Vault and the Potion Buy Action in the Orchestrator */
     console.log(
-        `- Setting Vault and action as system addresses for the orchestrator (${hedgingVaultOrchestrator.address})`,
+        `- Setting vault=${deployment.vault.address} and action=${deployment.potionBuyAction.address} in the orchestrator (${deployment.orchestrator.address})`,
     );
-    tx = await hedgingVaultOrchestrator.setSystemAddresses(investmentVaultContract.address, potionBuyContract.address);
+    tx = await deployment.orchestrator.setSystemAddresses(deployment.vault.address, deployment.potionBuyAction.address);
     await tx.wait();
 
+    /* Set the Rounds Input Vault as Investor of the Investment Vault */
+    console.log(`- Setting ${deployment.roundsInputVault.address} as the investor of ${deployment.vault.address}`);
+    tx = await deployment.vault.grantRole(Roles.Investor, deployment.roundsInputVault.address);
+    await tx.wait();
+
+    /* Set the Rounds Output Vault as Investor of the Investment Vault */
+    console.log(`- Setting ${deployment.roundsOutputVault.address} as the investor of ${deployment.vault.address}`);
+    tx = await deployment.vault.grantRole(Roles.Investor, deployment.roundsOutputVault.address);
+    await tx.wait();
+
+    /* Configure the Operator as the Owner of the Orchestrator */
     console.log(
-        `- Setting ${parameters.operatorAddress} as the operator for the orchestrator (${hedgingVaultOrchestrator.address})`,
+        `- Setting ${parameters.operatorAddress} as the operator for the orchestrator (${deployment.orchestrator.address})`,
     );
-    tx = await hedgingVaultOrchestrator.transferOwnership(parameters.operatorAddress);
+    tx = await deployment.orchestrator.transferOwnership(parameters.operatorAddress);
     await tx.wait();
+}
 
-    return [investmentVaultContract, potionBuyContract, hedgingVaultOrchestrator];
+export async function deployHedgingVault(parameters: HedgingVaultDeployParams): Promise<HedgingVaultDeploymentResult> {
+    printHedgingVaultDeployParams(parameters);
+
+    const deploymentResult: HedgingVaultDeploymentResult = await deployContracts(parameters);
+
+    await configureContracts(parameters, deploymentResult);
+
+    // TODO: verify deployment
+
+    return deploymentResult;
 }

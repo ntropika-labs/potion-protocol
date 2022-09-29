@@ -46,6 +46,9 @@ export interface PotionHedgingVaultConfigParams {
     performanceFee: BigNumber;
     feesRecipient?: string;
 
+    // Rounds Vault Receipts URI
+    receiptsURI?: string;
+
     // Third-party dependencies
     //
     // If uniswapV3SwapRouter is not provided, then a mock uniswapV3SwapRouter is deployed and used
