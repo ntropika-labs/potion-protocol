@@ -2,20 +2,22 @@
   "name": "potion-router",
   "private": true,
   "version": "0.0.1",
-  "main": "dist/src/index.js",
-  "module": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "types": "dist/src/index.d.ts",
-      "import": "dist/src/index.js"
+      "types": "dist/index.d.ts",
+      "import": "dist/index.mjs",
+      "require": "dist/index.cjs"
     }
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "rollup": "rollup -c"
   },
   "dependencies": {
     "contracts-math": "*",
