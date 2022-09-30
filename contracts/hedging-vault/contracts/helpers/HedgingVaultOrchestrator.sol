@@ -26,7 +26,7 @@ import { IHedgingVaultOrchestrator } from "../interfaces/IHedgingVaultOrchestrat
     Uniswap V3 swap and the Potion Protocol buy.
  */
 contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
-    IVault public hedgingVault;
+    IVault public investmentVault;
     IPotionBuyAction public potionBuyAction;
     IRoundsInputVault public roundsInputVault;
     IRoundsOutputVault public roundsOutputVault;
@@ -34,16 +34,18 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
     /**
         @notice Sets the addresses of the vault and the action to be used to enter and exit the position.
 
-        @param hedgingVault_ The vault to be used to enter and exit the position.
+        @param investmentVault_ The vault to be used to enter and exit the position.
         @param potionBuyAction_ The action to be used to enter and exit the position.
+        @param roundsInputVault_ The vault that accepts input deposits on behalf of the investment vault.
+        @param roundsOutputVault_ The vault that accepts output withdrawals on behalf of the investment vault.
     */
     function setSystemAddresses(
-        address hedgingVault_,
+        address investmentVault_,
         address potionBuyAction_,
         address roundsInputVault_,
         address roundsOutputVault_
     ) external onlyOwner {
-        hedgingVault = IVault(hedgingVault_);
+        investmentVault = IVault(investmentVault_);
         potionBuyAction = IPotionBuyAction(potionBuyAction_);
         roundsInputVault = IRoundsInputVault(roundsInputVault_);
         roundsOutputVault = IRoundsOutputVault(roundsOutputVault_);
@@ -67,16 +69,23 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
         PotionBuyInfo calldata nextRoundPotionBuyInfo,
         IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo
     ) external onlyOwner {
-        ILifecycleStates.LifecycleState vaultState = hedgingVault.getLifecycleState();
+        ILifecycleStates.LifecycleState vaultState = investmentVault.getLifecycleState();
 
         if (vaultState == ILifecycleStates.LifecycleState.Locked) {
+            // Exit position
             potionBuyAction.setSwapInfo(prevRoundExitSwapInfo);
-            hedgingVault.exitPosition();
+            investmentVault.exitPosition();
         }
 
+        // The order of operation here should not be of importance: the ratio of
+        // assets/shares remains the same after either of these operations
+        roundsInputVault.nextRound();
+        roundsOutputVault.nextRound();
+
+        // Enter position
         potionBuyAction.setPotionBuyInfo(nextRoundPotionBuyInfo);
         potionBuyAction.setSwapInfo(nextRoundEnterSwapInfo);
-        hedgingVault.enterPosition();
+        investmentVault.enterPosition();
     }
 
     /**
@@ -86,6 +95,6 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
         to be entered as this information is not made available until the position is exited
      */
     function canEnterNextRound() external view returns (bool) {
-        return hedgingVault.canPositionBeExited();
+        return investmentVault.canPositionBeExited();
     }
 }

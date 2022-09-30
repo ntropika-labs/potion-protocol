@@ -79,4 +79,19 @@ describe("PRBMathUtils", () => {
 
     expect(priceRateUD60x18).toEqual(toBn(String(32.4)));
   });
+  it("bignumber with less than 18 decimals", () => {
+    const inputTokenPriceInUSD = toBn("64.8", 6); // USD/DAI
+    const outputTokenPriceInUSD = toBn("2.0", 6); // USD/WETH
+    const inputTokenDecimals = 6;
+    const outputTokenDecimals = 6;
+
+    const priceRateUD60x18 = getRateInUD60x18(
+      inputTokenPriceInUSD,
+      outputTokenPriceInUSD,
+      inputTokenDecimals,
+      outputTokenDecimals
+    );
+
+    expect(priceRateUD60x18).toEqual(toBn(String(32.4)));
+  });
 });

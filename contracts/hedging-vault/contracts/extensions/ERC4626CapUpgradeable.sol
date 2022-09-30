@@ -103,7 +103,6 @@ contract ERC4626CapUpgradeable is ERC4626Upgradeable, RolesManagerUpgradeable, I
         // ensures that we get either 0 or the amount defined in principal Cap
         uint256 currentCap = MathUpgradeable.min(super.maxDeposit(receiver), _cap);
 
-        //
         if (currentCap < totalAssets()) {
             return 0;
         }

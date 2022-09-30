@@ -91,12 +91,31 @@ abstract contract BaseRoundsVaultUpgradeable is
     /**
         @inheritdoc IVaultWithReceiptsUpgradeable
      */
+    function deposit(uint256 assets, address receiver)
+        public
+        virtual
+        override(VaultWithReceiptsUpgradeable, IVaultWithReceiptsUpgradeable)
+        onlyInvestor
+        returns (uint256)
+    {
+        return super.deposit(assets, receiver);
+    }
+
+    /**
+        @inheritdoc IVaultWithReceiptsUpgradeable
+     */
     function redeem(
         uint256 id,
         uint256 amount,
         address receiver,
         address owner
-    ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256) {
+    )
+        public
+        virtual
+        override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable)
+        onlyInvestor
+        returns (uint256)
+    {
         require(id == _roundNumber.current(), "Can only redeem current round");
 
         return super.redeem(id, amount, receiver, owner);
@@ -113,7 +132,13 @@ abstract contract BaseRoundsVaultUpgradeable is
         uint256[] memory amounts,
         address receiver,
         address owner
-    ) public virtual override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable) returns (uint256 assets) {
+    )
+        public
+        virtual
+        override(IVaultWithReceiptsUpgradeable, VaultWithReceiptsUpgradeable)
+        onlyInvestor
+        returns (uint256 assets)
+    {
         for (uint256 i = 0; i < ids.length; i++) {
             require(ids[i] == _roundNumber.current(), "Can only redeem current round");
         }
@@ -129,7 +154,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         uint256 amount,
         address receiver,
         address owner
-    ) public returns (uint256) {
+    ) public onlyInvestor returns (uint256) {
         require(id < _roundNumber.current(), "Exchange asset only available for previous rounds");
 
         return _redeemExchangeAsset(_msgSender(), receiver, owner, id, amount);
@@ -149,7 +174,7 @@ abstract contract BaseRoundsVaultUpgradeable is
         uint256[] calldata amounts,
         address receiver,
         address owner
-    ) public returns (uint256 shares) {
+    ) public onlyInvestor returns (uint256 shares) {
         require(ids.length == amounts.length, "Mismatch shares ids and amounts lengths");
 
         for (uint256 i = 0; i < ids.length; i++) {
@@ -185,24 +210,31 @@ abstract contract BaseRoundsVaultUpgradeable is
     // INTERNALS
 
     /**
-        @notice Checks if the receipt corresponds to the current round, and if so, it calls the parent function
-                to redeem the receipt for the underlying tokens
-
-        @param id The id of the receipt to be redeemed
-        @param amount The amount of the receipt to be redeemed
-        @param receiver The address that will receive the underlying tokens
-        @param owner The address that owns the receipt, in case the caller is not the owner
+        @inheritdoc VaultWithReceiptsUpgradeable
      */
-    function _redeemCurrentRound(
-        uint256 id,
-        uint256 amount,
-        address receiver,
-        address owner
-    ) internal returns (uint256) {
-        require(id == _roundNumber.current(), "Can only redeem current round");
-
-        return super.redeem(id, amount, receiver, owner);
+    function _getMintId() internal view virtual override returns (uint256) {
+        return _roundNumber.current();
     }
+
+    /**
+        @notice Function to execute the deposit/redeem logic for the current round
+
+        @dev The child contract must implement this function to execute the deposit/redeem logic
+        for the current round. Typically it will call `_redeemFromTarget` or `_depositOnTarget`
+        from the ERC4626DeferredOperationUpgradeable contract, but the logic is left open for
+        other use cases
+     */
+    function _operate() internal virtual;
+
+    /**
+        @notice Retrieves the exchange rate between the underlying asset and the exchange asset for
+        the current round. Whether the rate is underlying/exchange or exchange/underlying depends on
+        the specific implentation of the derived contract
+        
+     */
+    function _getCurrentExchangeRate() internal view virtual returns (uint256);
+
+    // PRIVATES
 
     /**
         @notice Checks if the receipt corresponds to any previous round, and if so, it calculates how many shares
@@ -276,29 +308,4 @@ abstract contract BaseRoundsVaultUpgradeable is
 
         emit WithdrawExchangeAssetBatch(caller, receiver, owner, exchangeAmount, ids, amounts);
     }
-
-    /**
-        @inheritdoc VaultWithReceiptsUpgradeable
-     */
-    function _getMintId() internal view virtual override returns (uint256) {
-        return _roundNumber.current();
-    }
-
-    /**
-        @notice Function to execute the deposit/redeem logic for the current round
-
-        @dev The child contract must implement this function to execute the deposit/redeem logic
-        for the current round. Typically it will call `_redeemFromTarget` or `_depositOnTarget`
-        from the ERC4626DeferredOperationUpgradeable contract, but the logic is left open for
-        other use cases
-     */
-    function _operate() internal virtual;
-
-    /**
-        @notice Retrieves the exchange rate between the underlying asset and the exchange asset for
-        the current round. Whether the rate is underlying/exchange or exchange/underlying depends on
-        the specific implentation of the derived contract
-        
-     */
-    function _getCurrentExchangeRate() internal view virtual returns (uint256);
 }

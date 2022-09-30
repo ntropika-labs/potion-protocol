@@ -57,7 +57,7 @@ describe("RoundsInputVault", function () {
 
     it("RIV0002 - Deposit Round 0", async function () {
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
         const currentRound = await roundsInputVault.getCurrentRound();
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
@@ -71,7 +71,7 @@ describe("RoundsInputVault", function () {
 
     it("RIV0003 - Next Round", async function () {
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
         const currentRound = await roundsInputVault.getCurrentRound();
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
@@ -93,7 +93,7 @@ describe("RoundsInputVault", function () {
         expect(currentRound).to.equal(1);
 
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
 
@@ -112,7 +112,7 @@ describe("RoundsInputVault", function () {
         expect(currentRound).to.equal(2);
 
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
 
@@ -145,7 +145,7 @@ describe("RoundsInputVault", function () {
         expect(currentRound).to.equal(2);
 
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
 
@@ -182,7 +182,7 @@ describe("RoundsInputVault", function () {
         expect(currentRound).to.equal(1);
 
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
 
@@ -221,10 +221,9 @@ describe("RoundsInputVault", function () {
         expect(currentRound).to.equal(1);
 
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await roundsInputVault.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await roundsInputVault.connect(unpriviledgedAccount).deposit(assets.div(2), unpriviledgedAccount.address);
-
         await roundsInputVault.connect(operatorAccount).nextRound();
 
         // TODO: Need to spend the allowance manually until Smock fixes their async returns issue

@@ -47,7 +47,8 @@ export interface PotionHedgingVaultConfigParams {
     feesRecipient?: string;
 
     // Rounds Vault Receipts URI
-    receiptsURI?: string;
+    inputReceiptsURI?: string;
+    outputReceiptsURI?: string;
 
     // Third-party dependencies
     //

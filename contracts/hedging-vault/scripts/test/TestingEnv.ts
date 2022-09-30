@@ -72,7 +72,8 @@ export interface TestingEnvironmentDeployment {
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
-    receiptsURI: string;
+    inputReceiptsURI: string;
+    outputReceiptsURI: string;
 }
 
 function getTokensFromUniswapPath(uniswapPath: string) {
@@ -308,8 +309,10 @@ async function prepareTestEnvironment(
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
-    testingEnvironmentDeployment.receiptsURI =
-        deploymentConfig.receiptsURI || "https://potion.finance/receipts/{id}.json";
+    testingEnvironmentDeployment.inputReceiptsURI =
+        deploymentConfig.inputReceiptsURI || "https://potion.finance/receipts/in-{id}.json";
+    testingEnvironmentDeployment.outputReceiptsURI =
+        deploymentConfig.outputReceiptsURI || "https://potion.finance/receipts/out-{id}.json";
 
     // Check if the deployment is valid
     if (!testingEnvironmentDeployment.USDC) {
@@ -422,7 +425,8 @@ export async function deployTestingEnv(
         feesRecipient: testEnvDeployment.feesRecipient,
 
         // Receipt URI
-        receiptsURI: testEnvDeployment.receiptsURI,
+        inputReceiptsURI: testEnvDeployment.inputReceiptsURI,
+        outputReceiptsURI: testEnvDeployment.outputReceiptsURI,
 
         // Third-party dependencies
         uniswapV3SwapRouter: testEnvDeployment.uniswapV3SwapRouter.address,
@@ -466,10 +470,10 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
     console.log(`  - Opyn Swap Router: ${testEnvDeployment.uniswapV3SwapRouter.address}`);
     console.log(`------------------------------------------------------`);
-    console.log(`  - Admin address: ${testEnvDeployment.adminAddress.toString()}`);
-    console.log(`  - Strategist address: ${testEnvDeployment.strategistAddress.toString()}`);
-    console.log(`  - Operator address: ${testEnvDeployment.operatorAddress.toString()}`);
-    console.log(`  - Underlying Asset cap: ${testEnvDeployment.underlyingAssetCap.toString()}`);
+    console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
+    console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
+    console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
+    console.log(`  - Underlying Asset Cap: ${ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)}`);
     console.log(`  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()}`);
     console.log(`  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()}`);
     console.log(`  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()}`);

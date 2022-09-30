@@ -101,6 +101,7 @@ describe("HedgingVault", function () {
         expect(principalPercentages[0]).to.equal(tEnv.hedgingPercentage);
         expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
     });
+
     it("HV0002 - Potion Buy Action Default Value", async function () {
         // Roles
         expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
@@ -299,6 +300,8 @@ describe("HedgingVault", function () {
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
+        console.log("expectedPriceRate", swapInfoEnterPosition.expectedPriceRate.toString());
+
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
 
@@ -331,6 +334,9 @@ describe("HedgingVault", function () {
         expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
             amountToBeInvested.sub(uniswapEnterPositionInputAmount),
         );
+
+        console.log("OTHER", uniswapEnterPositionInputAmount);
+        console.log("OTHER", (await tEnv.underlyingAsset.balanceOf(action.address)).toString());
 
         /*
             EXIT POSITION

@@ -30,7 +30,7 @@ describe("VaultDeferredOperation", function () {
         const VaultDeferredOperationFactory = await ethers.getContractFactory("TestWrapperVaultDeferredOperation");
         vaultDeferredOperation = (await VaultDeferredOperationFactory.deploy()) as TestWrapperVaultDeferredOperation;
 
-        fakeTargetVault = await getFakeTargetVault(assetTokenMock.address);
+        fakeTargetVault = await getFakeTargetVault(assetTokenMock);
 
         await vaultDeferredOperation.initialize(fakeTargetVault.address, assetTokenMock.address, "SomeURI");
 
@@ -50,34 +50,11 @@ describe("VaultDeferredOperation", function () {
     it("VDO0001 - Default Value", async function () {
         expect(await vaultDeferredOperation.vault()).to.equal(fakeTargetVault.address);
         expect(await vaultDeferredOperation.asset()).to.equal(assetTokenMock.address);
-        expect(await vaultDeferredOperation.convertToShares(1)).to.equal(2);
-        expect(await vaultDeferredOperation.convertToAssets(2)).to.equal(1);
-        expect(await vaultDeferredOperation.maxDeposit(unpriviledgedAccount.address)).to.equal(
-            ethers.constants.MaxUint256,
-        );
-        expect(await vaultDeferredOperation.maxMint(unpriviledgedAccount.address)).to.equal(
-            ethers.constants.MaxUint256,
-        );
-        expect(await vaultDeferredOperation.previewDeposit(100)).to.equal(200);
-        expect(await vaultDeferredOperation.previewMint(100)).to.equal(50);
-        expect(await vaultDeferredOperation.previewRedeem(200)).to.equal(100);
     });
 
-    it("VDO0002 - Mint", async function () {
+    it("VDO0002 - Deposit On Target", async function () {
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await vaultDeferredOperation.convertToAssets(shares);
-
-        await vaultDeferredOperation.connect(unpriviledgedAccount).mint(shares, unpriviledgedAccount.address);
-
-        expect(await assetTokenMock.balanceOf(unpriviledgedAccount.address)).to.equal(
-            ethers.utils.parseEther("1.0").sub(assets),
-        );
-        expect(await vaultDeferredOperation.balanceOfAll(unpriviledgedAccount.address)).to.equal(assets);
-    });
-
-    it("VDO0003 - Deposit On Target", async function () {
-        const shares = ethers.utils.parseEther("0.2");
-        const assets = await vaultDeferredOperation.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await vaultDeferredOperation.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
         await vaultDeferredOperation.connect(unpriviledgedAccount).depositOnTarget(assets);
@@ -86,9 +63,9 @@ describe("VaultDeferredOperation", function () {
         expect(assetTokenMock.approve).to.be.calledOnceWith(fakeTargetVault.address, assets);
     });
 
-    it("VDO0004 - Redeem From Target", async function () {
+    it("VDO0003 - Redeem From Target", async function () {
         const shares = ethers.utils.parseEther("0.2");
-        const assets = await vaultDeferredOperation.convertToAssets(shares);
+        const assets = await fakeTargetVault.convertToAssets(shares);
 
         await vaultDeferredOperation.connect(unpriviledgedAccount).deposit(assets, unpriviledgedAccount.address);
         await vaultDeferredOperation.connect(unpriviledgedAccount).redeemFromTarget(shares);

@@ -40,8 +40,9 @@ export interface HedgingVaultDeployParams {
     performanceFee: BigNumber;
     feesRecipient: string;
 
-    // Deposits receipts URI
-    receiptsURI: string;
+    // Deposits and withdrawals receipts URI
+    inputReceiptsURI: string;
+    outputReceiptsURI: string;
 
     // Third-party dependencies
     uniswapV3SwapRouter: string;
@@ -81,7 +82,8 @@ function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
     console.log(` performanceFee: ${deployParams.performanceFee}`);
     console.log(` feesRecipient: ${deployParams.feesRecipient}`);
     console.log(`--------------------------------------`);
-    console.log(` receiptsURI: ${deployParams.receiptsURI}`);
+    console.log(` inputReceiptsURI: ${deployParams.inputReceiptsURI}`);
+    console.log(` outputReceiptsURI: ${deployParams.outputReceiptsURI}`);
     console.log(`--------------------------------------`);
     console.log(` uniswapV3SwapRouter: ${deployParams.uniswapV3SwapRouter}`);
     console.log(` potionLiquidityPoolManager: ${deployParams.potionLiquidityPoolManager}`);
@@ -134,7 +136,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         adminAddress: parameters.adminAddress,
         operatorAddress: hedgingVaultOrchestrator.address,
         investmentVault: investmentVaultContract.address,
-        receiptsURI: parameters.receiptsURI,
+        receiptsURI: parameters.inputReceiptsURI,
     };
 
     const roundsInputVaultContract: RoundsInputVault = await deployRoundsInputVault(roundsInputVaultParams);
@@ -144,7 +146,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         adminAddress: parameters.adminAddress,
         operatorAddress: hedgingVaultOrchestrator.address,
         investmentVault: investmentVaultContract.address,
-        receiptsURI: parameters.receiptsURI,
+        receiptsURI: parameters.outputReceiptsURI,
     };
 
     const roundsOutputVaultContract: RoundsOutputVault = await deployRoundsOutputVault(roundsOutputVaultParams);

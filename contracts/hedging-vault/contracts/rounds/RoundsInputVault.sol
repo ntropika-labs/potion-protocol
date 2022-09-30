@@ -8,8 +8,6 @@ import "@prb/math/contracts/PRBMathUD60x18.sol";
 import "../interfaces/IRoundsInputVault.sol";
 import "./BaseRoundsVaultUpgradeable.sol";
 
-import "hardhat/console.sol";
-
 /**
     @title RoundsInputVault
 
@@ -47,7 +45,12 @@ contract RoundsInputVault is BaseRoundsVaultUpgradeable, IRoundsInputVault {
         address exchangeAsset_ = targetVault;
         address underlyingAsset = IERC4626Upgradeable(targetVault).asset();
 
+        address[] memory cannotRefundToken = new address[](2);
+        cannotRefundToken[0] = underlyingAsset;
+        cannotRefundToken[1] = exchangeAsset_;
+
         __RolesManager_init_unchained(adminAddress, operatorAddress);
+        __RefundsHelper_init_unchained(cannotRefundToken, false);
         __ERC1155_init_unchained(receiptsURI);
         __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
         __VaultDeferredOperation_init_unchained(targetVault);
@@ -75,12 +78,14 @@ contract RoundsInputVault is BaseRoundsVaultUpgradeable, IRoundsInputVault {
 
         @dev The exchange rate is given by the `previewDeposit` function on the target vault. The exchange rate is
         calculated for 1 full token
+
+        @dev This function can only be called while the target vault is unlocked
      */
     function _getCurrentExchangeRate() internal view override returns (uint256) {
         IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
 
         uint256 OneAsset = 10**asset_.decimals();
-        uint256 shares = previewDeposit(OneAsset);
+        uint256 shares = IERC4626Upgradeable(vault()).previewDeposit(OneAsset);
 
         return shares.fromUint().div(OneAsset.fromUint());
     }

@@ -146,7 +146,7 @@ export declare namespace IPotionLiquidityPool {
 export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   functions: {
     "canEnterNextRound()": FunctionFragment;
-    "hedgingVault()": FunctionFragment;
+    "investmentVault()": FunctionFragment;
     "nextRound((address,address,uint256,bytes),(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256),(address,address,uint256,bytes))": FunctionFragment;
     "owner()": FunctionFragment;
     "potionBuyAction()": FunctionFragment;
@@ -160,7 +160,7 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "canEnterNextRound"
-      | "hedgingVault"
+      | "investmentVault"
       | "nextRound"
       | "owner"
       | "potionBuyAction"
@@ -176,7 +176,7 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "hedgingVault",
+    functionFragment: "investmentVault",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -223,7 +223,7 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "hedgingVault",
+    functionFragment: "investmentVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
@@ -301,7 +301,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   functions: {
     canEnterNextRound(overrides?: CallOverrides): Promise<[boolean]>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<[string]>;
+    investmentVault(overrides?: CallOverrides): Promise<[string]>;
 
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -323,7 +323,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     roundsOutputVault(overrides?: CallOverrides): Promise<[string]>;
 
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
+      investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
@@ -338,7 +338,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
   canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
 
-  hedgingVault(overrides?: CallOverrides): Promise<string>;
+  investmentVault(overrides?: CallOverrides): Promise<string>;
 
   nextRound(
     prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -360,7 +360,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   roundsOutputVault(overrides?: CallOverrides): Promise<string>;
 
   setSystemAddresses(
-    hedgingVault_: PromiseOrValue<string>,
+    investmentVault_: PromiseOrValue<string>,
     potionBuyAction_: PromiseOrValue<string>,
     roundsInputVault_: PromiseOrValue<string>,
     roundsOutputVault_: PromiseOrValue<string>,
@@ -375,7 +375,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   callStatic: {
     canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<string>;
+    investmentVault(overrides?: CallOverrides): Promise<string>;
 
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -395,7 +395,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     roundsOutputVault(overrides?: CallOverrides): Promise<string>;
 
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
+      investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
@@ -422,7 +422,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   estimateGas: {
     canEnterNextRound(overrides?: CallOverrides): Promise<BigNumber>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<BigNumber>;
+    investmentVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -444,7 +444,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     roundsOutputVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
+      investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
@@ -460,7 +460,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   populateTransaction: {
     canEnterNextRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    hedgingVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    investmentVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextRound(
       prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
@@ -482,7 +482,7 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     roundsOutputVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setSystemAddresses(
-      hedgingVault_: PromiseOrValue<string>,
+      investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,

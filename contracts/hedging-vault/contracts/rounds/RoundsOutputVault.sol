@@ -45,7 +45,12 @@ contract RoundsOutputVault is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
         address exchangeAsset_ = IERC4626Upgradeable(targetVault).asset();
         address underlyingAsset = targetVault;
 
+        address[] memory cannotRefundToken = new address[](2);
+        cannotRefundToken[0] = underlyingAsset;
+        cannotRefundToken[1] = exchangeAsset_;
+
         __RolesManager_init_unchained(adminAddress, operatorAddress);
+        __RefundsHelper_init_unchained(cannotRefundToken, false);
         __ERC1155_init_unchained(receiptsURI);
         __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
         __VaultDeferredOperation_init_unchained(targetVault);
@@ -73,12 +78,14 @@ contract RoundsOutputVault is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
 
         @dev The exchange rate is given by the `previewRedeem` function on the target vault. The exchange rate is
         calculated for 1 full share
+
+        @dev This function can only be called while the target vault is unlocked
      */
     function _getCurrentExchangeRate() internal view override returns (uint256) {
         IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
 
         uint256 OneAsset = 10**asset_.decimals();
-        uint256 shares = previewRedeem(OneAsset);
+        uint256 shares = IERC4626Upgradeable(vault()).previewRedeem(OneAsset);
 
         return shares.fromUint().div(OneAsset.fromUint());
     }

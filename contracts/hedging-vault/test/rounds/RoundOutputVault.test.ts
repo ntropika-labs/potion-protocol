@@ -51,7 +51,7 @@ describe("RoundsOutputVault", function () {
 
     it("ROV0002 - Deposit Round 0", async function () {
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
         const currentRound = await roundsOutputVault.getCurrentRound();
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
@@ -68,7 +68,7 @@ describe("RoundsOutputVault", function () {
 
     it("ROV0003 - Next Round", async function () {
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
         const currentRound = await roundsOutputVault.getCurrentRound();
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
@@ -99,7 +99,7 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
@@ -121,7 +121,7 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(2);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
@@ -158,7 +158,7 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(2);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
@@ -199,7 +199,7 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
@@ -241,7 +241,7 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await roundsOutputVault.convertToShares(assets);
+        const shares = await fakeTargetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares.div(2), unpriviledgedAccount.address);
 
