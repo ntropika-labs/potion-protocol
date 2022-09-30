@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
     gasReporter: {
         currency: "USD",
         coinmarketcap: `${process.env.COINMARKETCAP_API_KEY}`,
-        enabled: !!(process.env.GAS_REPORT_FILE && process.env.GAS_REPORT_FILE != "false"),
+        enabled: process.env.ENABLE_GAS_REPORT === "true",
         excludeContracts: [],
         src: "./contracts",
         outputFile: process.env.GAS_REPORT_FILE,
