@@ -265,7 +265,7 @@ async function setupTestConditions(
     
     @author Roberto Cano <robercano>
  */
-describe("HedgingVaultFullSystem", function () {
+describe("DeferredDepositsWithdrawals", function () {
     let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
@@ -299,7 +299,7 @@ describe("HedgingVaultFullSystem", function () {
         roundsExchanger = tEnv.roundsVaultExchanger;
     });
 
-    it("HVFS0001 - Investment Vault Default Value", async function () {
+    it("DDW0001 - Investment Vault Default Value", async function () {
         // Roles
         expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -344,7 +344,7 @@ describe("HedgingVaultFullSystem", function () {
         expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
     });
 
-    it("HVFS0002 - Potion Buy Action Default Value", async function () {
+    it("DDW0002 - Potion Buy Action Default Value", async function () {
         // Roles
         expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -384,7 +384,7 @@ describe("HedgingVaultFullSystem", function () {
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
     });
 
-    it("HVFS0003 - Rounds Input Vault Default Value", async function () {
+    it("DDW0003 - Rounds Input Vault Default Value", async function () {
         // Roles
         expect(await roundsInputVault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await roundsInputVault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -415,7 +415,7 @@ describe("HedgingVaultFullSystem", function () {
         expect(await roundsInputVault.getExchangeRate(0)).to.equal(0);
     });
 
-    it("HVFS0004 - Rounds Output Vault Default Value", async function () {
+    it("DDW0004 - Rounds Output Vault Default Value", async function () {
         // Roles
         expect(await roundsOutputVault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await roundsOutputVault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -448,7 +448,7 @@ describe("HedgingVaultFullSystem", function () {
         expect(await roundsOutputVault.getExchangeRate(0)).to.equal(0);
     });
 
-    it("HVFS0005 - Orchestrator Default Value", async function () {
+    it("DDW0005 - Orchestrator Default Value", async function () {
         // System Addresses
         expect(await orchestrator.investmentVault()).to.equal(tEnv.investmentVault.address);
         expect(await orchestrator.potionBuyAction()).to.equal(tEnv.potionBuyAction.address);
@@ -456,10 +456,10 @@ describe("HedgingVaultFullSystem", function () {
         expect(await orchestrator.roundsOutputVault()).to.equal(tEnv.roundsOutputVault.address);
     });
 
-    it("HVFS0006 - Simple Deposit", async function () {
+    it("DDW0006 - Simple Deposit", async function () {
         // Test Settings
-        const underlyingAssetPriceInUSD = 1000.0;
-        const USDCPriceInUSD = 1.0;
+        const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
+        const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
 
         const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
@@ -539,7 +539,7 @@ describe("HedgingVaultFullSystem", function () {
         expect(currentRound).to.equal(1);
     });
 
-    it.only("HVFS0007 - Single Cycle", async function () {
+    it("DDW0007 - Single Cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
@@ -633,8 +633,8 @@ describe("HedgingVaultFullSystem", function () {
                 investorAccount.address,
                 investorAccount.address,
                 investorAccount.address,
-                previousRound,
                 amountToBeInvested,
+                previousRound,
                 amountToBeInvested,
             );
         expect(await vault.balanceOf(roundsInputVault.address)).to.equal(0);
@@ -681,346 +681,41 @@ describe("HedgingVaultFullSystem", function () {
         tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, nextPotionBuyInfo, tCond.swapInfoEnterPosition);
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
+        const amountAfterProfitLoss = amountToBeInvested
+            .sub(tCond.uniswapEnterPositionInputAmount)
+            .add(tCond.uniswapExitPositionOutputAmount);
         currentRound = await tEnv.roundsOutputVault.getCurrentRound();
         previousRound = currentRound.sub(1);
 
         expect(await roundsOutputVault.balanceOf(investorAccount.address, previousRound)).to.equal(amountToBeInvested);
-        expect(await tEnv.underlyingAsset.balanceOf(roundsOutputVault.address)).to.equal(
-            amountToBeInvested.sub(tCond.uniswapEnterPositionInputAmount).add(tCond.uniswapExitPositionOutputAmount),
-        );
+        expect(await tEnv.underlyingAsset.balanceOf(roundsOutputVault.address)).to.equal(amountAfterProfitLoss);
         expect(await vault.balanceOf(roundsOutputVault.address)).to.equal(0);
 
         /*
             WITHDRAW ASSETS
         */
-    });
+        tx = await roundsOutputVault
+            .connect(investorAccount)
+            .redeemExchangeAsset(previousRound, amountToBeInvested, investorAccount.address, investorAccount.address);
 
-    it.skip("HVS0004 - Full cycle", async function () {
-        // Test Settings
-        const underlyingAssetPriceInUSD = 1000.0;
-        const USDCPriceInUSD = 1.0;
-
-        const underlyingAssetPriceInUSDbn = ethers.utils.parseUnits(String(underlyingAssetPriceInUSD), 8); // 1000 USDC with 8 decimals
-        const USDCPriceInUSDbn = ethers.utils.parseUnits(String(USDCPriceInUSD), 8); // 1 USDC with 8 decimals
-
-        const amountToBeInvested = ethers.utils.parseEther("20");
-        const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
-
-        /*
-            COLLATERAL
-        */
-        const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
-        const amountProtectedInUSDC = amountProtected
-            .mul(underlyingAssetPriceInUSDbn)
-            .div(USDCPriceInUSDbn)
-            .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
-
-        const collateralRequiredInUSDC = HedgingVaultUtils.applyPercentage(
-            amountProtectedInUSDC,
-            tEnv.strikePercentage,
-        );
-
-        const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
-        const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
-
-        const lpAddress = (await ethers.getSigners())[0].address;
-        const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
-        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
-
-        const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(
-            expectedPremiumInUSDC,
-            tEnv.premiumSlippage,
-        );
-        const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
-        const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
-        const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
-
-        const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
-            maxPremiumWithSlippageInUSDC
-                .mul(BigNumber.from(1000000000000))
-                .mul(USDCPriceInUSDbn)
-                .div(underlyingAssetPriceInUSDbn),
-            tEnv.swapSlippage,
-        );
-
-        const potionOtokenAddress = await tEnv.opynFactory.getTargetOtokenAddress(
-            tEnv.underlyingAsset.address,
-            tEnv.USDC.address,
-            tEnv.USDC.address,
-            strikePriceInUSDC,
-            expirationTimestamp,
-            true,
-        );
-
-        // Configure mock and fake contracts
-        ifMocksEnabled(() => {
-            asMock(tEnv.potionLiquidityPoolManager).buyOtokens.returns(async () => {
-                // Transfer
-                await tEnv.USDC.connect(asMock(tEnv.potionLiquidityPoolManager).wallet).transferFrom(
-                    action.address,
-                    tEnv.potionLiquidityPoolManager.address,
-                    expectedPremiumInUSDC,
-                );
-                return expectedPremiumInUSDC;
-            });
-            asMock(tEnv.opynController).isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(false);
-            asMock(tEnv.USDC).approve.reset();
-            asMock(tEnv.USDC).approve.returns(true);
-            asMock(tEnv.underlyingAsset).approve.reset();
-            asMock(tEnv.underlyingAsset).approve.returns(true);
-        });
-
-        // Mint and approve
-        let prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await tEnv.underlyingAsset.mint(investorAccount.address, amountToBeInvested);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(
-            prevBalance.add(amountToBeInvested),
-        );
-        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, amountToBeInvested);
-        expect(
-            await tEnv.underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
-        ).to.equal(amountToBeInvested);
-
-        /*
-            DEPOSIT
-        */
-        prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
-        await vault.connect(investorAccount).deposit(amountToBeInvested, investorAccount.address);
-        expect(await vault.balanceOf(investorAccount.address)).to.equal(amountToBeInvested);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(
-            prevBalance.sub(amountToBeInvested),
-        );
-
-        /*
-            ENTER POSITION
-        */
-
-        // POTION BUY INFO
-
-        // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
-        // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
-        // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
-        const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
-            {
-                lp: lpAddress,
-                poolId: 0,
-                curve: curve.asSolidityStruct(),
-                criteria: criteria,
-                orderSizeInOtokens: otokensAmount,
-            },
-        ];
-
-        const potionBuyInfo: PotionBuyInfoStruct = {
-            targetPotionAddress: potionOtokenAddress,
-            underlyingAsset: tEnv.underlyingAsset.address,
-            strikePriceInUSDC: strikePriceInUSDC,
-            expirationTimestamp: expirationTimestamp,
-            sellers: counterparties,
-            expectedPremiumInUSDC: expectedPremiumInUSDC,
-            totalSizeInPotions: otokensAmount,
-        };
-
-        // UNISWAP INFO
-
-        // Set the Opyn oracle asset price for the underlying asset
-        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSDbn);
-        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSDbn);
-
-        // Set the Uniswap route info
-        const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
-            inputToken: tEnv.underlyingAsset.address,
-            outputToken: tEnv.USDC.address,
-            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(underlyingAssetPriceInUSD, USDCPriceInUSD, 18, 6),
-            swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
-        };
-
-        // Enter the position
-        await fastForwardChain(DAY_IN_SECONDS);
-
-        // Emulate what the orchestrator is doing to enter a position
-        await action.connect(ownerAccount).setPotionBuyInfo(potionBuyInfo);
-        await action.connect(ownerAccount).setSwapInfo(swapInfoEnterPosition);
-        await vault.connect(ownerAccount).enterPosition();
-
-        // For some reason 2 blocks are mined with the last transaction, so we need to
-        // substract 1 from the current block
-        const cycleStartTimestamp = (await getCurrentTimestamp()) - 1;
-
-        // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(tEnv.underlyingAsset.address, expirationTimestamp);
-
-        expectSolidityDeepCompare(potionBuyInfo, currentPotionBuyInfo);
-
-        let currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
-
-        expectSolidityDeepCompare(swapInfoEnterPosition, currentSwapInfo);
-
-        // Check the new state of the system
-        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
-
-        // These balances will not be valid if the real Uniswap and Potion protocol are used.
-        // As of now, the asset is not really swapped, so the only movement in balances is from
-        // the vault to the action
-        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
-            amountToBeInvested.sub(uniswapEnterPositionInputAmount),
-        );
-
-        /*
-            EXIT POSITION
-        */
-
-        // Use the strike percent and reduce it by 10% to get the exit price
-        const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
-        const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
-        const underlyingAssetExitPriceInUSDbn = HedgingVaultUtils.applyPercentage(
-            underlyingAssetPriceInUSDbn,
-            underlyingAssetPricePercentage,
-        );
-        const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
-
-        // TODO: When using the mocked version of the Potion Liquidity manager the premium is not transferred from the
-        // TODO: action contract to the Potion Liquidity Manager contract. In the same way, the Opyn Controller mock is
-        // TODO: not transferring the payout to the action contract when exiting the position. In the lines below we
-        // TODO: account for this to know how much USDC will be in the action after the payout
-        let totalUSDCInActionAfterPayout: BigNumber;
-        if (network.name === "hardhat") {
-            totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC);
-        } else {
-            totalUSDCInActionAfterPayout = payoutInUSDC.add(maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC));
-        }
-
-        const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout
-            .mul(BigNumber.from(1000000000000))
-            .mul(USDCPriceInUSDbn)
-            .div(underlyingAssetPriceInUSDbn);
-
-        const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
-            extraUnderlyingAssetInVaultAfterPayout,
-            tEnv.swapSlippage,
-        );
-
-        // Setup the mocks
-        ifMocksEnabled(() => {
-            asMock(tEnv.opynController).isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(true);
-            asMock(tEnv.opynController).getPayout.returns(() => {
-                return payoutInUSDC;
-            });
-
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            asMock(tEnv.opynController).operate.returns(async (args: any) => {
-                if (args[0][0].actionType !== 8) {
-                    return;
-                }
-                // TODO: This is failing and I'm not sure if it is a Smock problem or a logic
-                // TODO: problem in the tests. Talking to the smock team it seems likely that it
-                // TODO: is a problem with the smock library and calling the EVM from an async callback
-                // await tEnv.USDC.connect(ownerAccount).mint(action.address, payoutInUSDC);
-            });
-        });
-
-        // Set the Uniswap route info
-        const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
-            inputToken: tEnv.USDC.address,
-            outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingAssetPriceInUSD, 6, 18),
-            swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
-        };
-
-        // Set the Opyn oracle asset price for the underlying asset
-        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSDbn);
-
-        // Set the dispute period as over, this only works with the mock contract
-        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, expirationTimestamp, true);
-        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.USDC.address, expirationTimestamp, true);
-
-        // Exit the position
-        await fastForwardChain(DAY_IN_SECONDS);
-
-        // Emulate what the orchestrator is doing
-        await action.connect(ownerAccount).setSwapInfo(swapInfoExitPosition);
-        await vault.connect(ownerAccount).exitPosition();
-
-        const cycleEndTimestamp = await getCurrentTimestamp();
-
-        // Check that the operator helper set the uniswap info correctly
-        currentSwapInfo = await action.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
-
-        expectSolidityDeepCompare(swapInfoExitPosition, currentSwapInfo);
-
-        // Check the new state of the system
-        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
-
-        // Assets balances
-        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(
-            amountToBeInvested.sub(uniswapEnterPositionInputAmount).add(uniswapExitPositionOutputAmount),
-        );
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(0);
-        expect(await tEnv.USDC.balanceOf(action.address)).to.equal(0);
-
-        /**
-         * MOCKS CHECKS
-         */
-        ifMocksEnabled(() => {
-            // USDC calls
-            expect(asMock(tEnv.USDC).approve).to.have.callCount(2);
-            expect(asMock(tEnv.USDC).approve.atCall(0)).to.have.been.calledWith(
-                tEnv.potionLiquidityPoolManager.address,
-                maxPremiumWithSlippageInUSDC,
-            );
-            expect(asMock(tEnv.USDC).approve.atCall(1)).to.have.been.calledWith(
-                tEnv.uniswapV3SwapRouter.address,
-                totalUSDCInActionAfterPayout,
-            );
-
-            // Underlying Asset calls
-            expect(asMock(tEnv.underlyingAsset).approve).to.have.callCount(4);
-            expect(asMock(tEnv.underlyingAsset).approve.atCall(1)).to.have.been.calledWith(
-                action.address,
+        expect(tx)
+            .to.emit(roundsOutputVault, "WithdrawExchangeAsset")
+            .withArgs(
+                investorAccount.address,
+                investorAccount.address,
+                investorAccount.address,
+                amountAfterProfitLoss,
+                previousRound,
                 amountToBeInvested,
             );
-            expect(asMock(tEnv.underlyingAsset).approve.atCall(2)).to.have.been.calledWith(
-                tEnv.uniswapV3SwapRouter.address,
-                uniswapEnterPositionInputAmount,
-            );
-            expect(asMock(tEnv.underlyingAsset).approve.atCall(3)).to.have.been.calledWith(action.address, 0);
 
-            // Uniswap V3 Router calls
-            expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput).to.have.been.calledOnce;
-            expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput.getCall(0).args[0]).to.be.deep.equal([
-                swapInfoEnterPosition.swapPath,
-                action.address,
-                tEnv.maxSwapDurationSecs.add(cycleStartTimestamp),
-                BigNumber.from(maxPremiumWithSlippageInUSDC),
-                BigNumber.from(uniswapEnterPositionInputAmount),
-            ]);
-            expect(asMock(tEnv.uniswapV3SwapRouter).exactInput).to.have.been.calledOnce;
-            expect(asMock(tEnv.uniswapV3SwapRouter).exactInput.getCall(0).args[0]).to.be.deep.equal([
-                swapInfoExitPosition.swapPath,
-                action.address,
-                tEnv.maxSwapDurationSecs.add(cycleEndTimestamp),
-                totalUSDCInActionAfterPayout,
-                uniswapExitPositionOutputAmount,
-            ]);
+        expect(await tEnv.underlyingAsset.balanceOf(roundsOutputVault.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(amountAfterProfitLoss);
+        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
+        expect(await roundsOutputVault.balanceOf(investorAccount.address, previousRound)).to.equal(0);
+        expect(await roundsOutputVault.balanceOfAll(investorAccount.address)).to.equal(0);
 
-            // Potion Liquidity Manager calls
-            expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[0]).to.be.equal(
-                potionOtokenAddress,
-            );
-            expectSolidityDeepCompare(
-                counterparties,
-                asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[1],
-            );
-            expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[2]).to.be.equal(
-                maxPremiumWithSlippageInUSDC,
-            );
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry.getCall(0).args[0]).to.be.equal(
-                potionOtokenAddress,
-            );
-        });
+        expect(await vault.totalSupply()).to.equal(0);
+        expect(await vault.totalAssets()).to.equal(0);
     });
 });

@@ -268,7 +268,7 @@ abstract contract BaseRoundsVaultUpgradeable is
 
         SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable(_exchangeAsset), receiver, exchangeAmount);
 
-        emit WithdrawExchangeAsset(_msgSender(), receiver, owner, id, amount, exchangeAmount);
+        emit WithdrawExchangeAsset(_msgSender(), receiver, owner, exchangeAmount, id, amount);
     }
 
     /**

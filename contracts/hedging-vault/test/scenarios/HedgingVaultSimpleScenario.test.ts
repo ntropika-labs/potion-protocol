@@ -26,7 +26,7 @@ import { getDeploymentsNetworkName } from "../../scripts/utils/network";
     
     @author Roberto Cano <robercano>
  */
-describe("HedgingVault", function () {
+describe("HedgingVaultBasic", function () {
     let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
@@ -61,7 +61,7 @@ describe("HedgingVault", function () {
         await action.grantRole(Roles.Operator, ownerAccount.address);
     });
 
-    it("HV0001 - Investment Vault Default Value", async function () {
+    it("HVB0001 - Investment Vault Default Value", async function () {
         // Roles
         expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -102,7 +102,7 @@ describe("HedgingVault", function () {
         expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
     });
 
-    it("HV0002 - Potion Buy Action Default Value", async function () {
+    it("HVB0002 - Potion Buy Action Default Value", async function () {
         // Roles
         expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
         expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
@@ -141,7 +141,7 @@ describe("HedgingVault", function () {
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
     });
 
-    it("HV0003 - Basic Deposit/Redemption", async function () {
+    it("HVB0003 - Basic Deposit/Redemption", async function () {
         // Mint and approve
         await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
@@ -161,7 +161,7 @@ describe("HedgingVault", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it("HV0004 - Full cycle", async function () {
+    it("HVB0004 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
