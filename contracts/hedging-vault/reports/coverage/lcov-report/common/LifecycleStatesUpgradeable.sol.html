@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">62.5% </span>
+        <span class="strong">83.33% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>5/8</span>
+        <span class='fraction'>5/6</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">37.5% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/6</span>
+        <span class='fraction'>3/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">83.33% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>3/6</span>
+        <span class='fraction'>5/6</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">45.45% </span>
+        <span class="strong">81.82% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>5/11</span>
+        <span class='fraction'>9/11</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -181,7 +181,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">67×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -190,16 +190,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">14×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -208,9 +200,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -218,9 +207,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,7 +214,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -237,7 +237,7 @@
 pragma solidity 0.8.14;
 &nbsp;
 import "../interfaces/ILifecycleStates.sol";
-import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { Initializable } from "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
 &nbsp;
 /**
     @title LifecycleStatesUpgradeable
@@ -273,8 +273,8 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @dev The name of the init function is marked as `_unchained` because it does not
         initialize the RolesManagerUpgradeable contract
      */
-    // solhint-disable-next-line func-name-mixedcase
-    function __LifecycleStates_init_unchained() internal onlyInitializing {
+    /* solhint-disable-next-line func-name-mixedcase */
+    function __LifecycleStates_init_unchained() internal <span class="missing-if-branch" title="else path not taken" >E</span>onlyInitializing {
         _state = LifecycleState.Unlocked;
     }
 &nbsp;
@@ -283,8 +283,8 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
     /**
         @notice Modifier to scope functions to only be accessible when the state is Unlocked
      */
-<span class="fstat-no" title="function not covered" >    modifier onlyUnlocked() {</span>
-<span class="cstat-no" title="statement not covered" >        require(_state == LifecycleState.Unlocked, "Vault is not unlocked")</span>;
+    modifier onlyUnlocked() {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_state == LifecycleState.Unlocked, "State is not Unlocked");
         _;
     }
 &nbsp;
@@ -292,15 +292,15 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
         @notice Modifier to scope functions to only be accessible when the state is Committed
      */
 <span class="fstat-no" title="function not covered" >    modifier onlyCommitted() {</span>
-<span class="cstat-no" title="statement not covered" >        require(_state == LifecycleState.Committed, "Vault is not commited")</span>;
+<span class="cstat-no" title="statement not covered" >        require(_state == LifecycleState.Committed, "State is not Commited")</span>;
         _;
     }
 &nbsp;
     /**
         @notice Modifier to scope functions to only be accessible when the state is Locked
      */
-<span class="fstat-no" title="function not covered" >    modifier onlyLocked() {</span>
-<span class="cstat-no" title="statement not covered" >        require(_state == LifecycleState.Locked, "Vault is not locked")</span>;
+    modifier onlyLocked() {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_state == LifecycleState.Locked, "State is not Locked");
         _;
     }
 &nbsp;
@@ -331,7 +331,7 @@ contract LifecycleStatesUpgradeable is Initializable, ILifecycleStates {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 30 2022 15:29:33 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

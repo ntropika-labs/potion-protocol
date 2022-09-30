@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for rounds/RoundsOutputVault.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">rounds/</a> RoundsOutputVault.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>17/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>3/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>3/3</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>19/19</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import "@prb/math/contracts/PRBMathUD60x18.sol";
+import "../interfaces/IRoundsOutputVault.sol";
+import "./BaseRoundsVaultUpgradeable.sol";
+&nbsp;
+/**
+    @title RoundsOutputVault
+&nbsp;
+    @notice The RoundsOutputVault contract allows users to deposit shares from the target vault into
+    this contract while the  target vault is locked, and receipts are minted to the users for this deposits. Upon
+    round completion, the shares are redeemed in the target vault and the corresponding funds are collected.
+&nbsp;
+    Users can then exchange their receipts from previous rounds for the corresponding funds held in this vault.
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+ */
+contract RoundsOutputVault is BaseRoundsVaultUpgradeable, IRoundsOutputVault {
+    using PRBMathUD60x18 for uint256;
+&nbsp;
+    // UPGRADEABLE INITIALIZER
+&nbsp;
+    /**
+        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+                to the hierarchy will require to review this function to make sure that no initializer
+                is called twice, and most importantly, that all initializers are called here
+&nbsp;
+        @param adminAddress The address of the admin of this vault
+        @param operatorAddress The address of the operator of this vault
+        @param targetVault The vault address for which this input vault is managing deposits
+        @param receiptsURI The URI of the ERC-1155 receipts that will be emitted when depositing the underlying
+     */
+    function initialize(
+        address adminAddress,
+        address operatorAddress,
+        address targetVault,
+        string calldata receiptsURI
+    ) external <span class="missing-if-branch" title="else path not taken" >E</span>initializer {
+        // For the input vault, the exchange asset is the target vault's underlying asset, which
+        // are given by the `asset()` function in the ERC4626 vault, and the underlying is the shares
+        // token, represented by the target vault address itself
+        address exchangeAsset_ = IERC4626Upgradeable(targetVault).asset();
+        address underlyingAsset = targetVault;
+&nbsp;
+        address[] memory cannotRefundToken = new address[](2);
+        cannotRefundToken[0] = underlyingAsset;
+        cannotRefundToken[1] = exchangeAsset_;
+&nbsp;
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
+        __RefundsHelper_init_unchained(cannotRefundToken, false);
+        __ERC1155_init_unchained(receiptsURI);
+        __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable(underlyingAsset));
+        __VaultDeferredOperation_init_unchained(targetVault);
+        __BaseRoundsVault_init_unchained(exchangeAsset_);
+    }
+&nbsp;
+    // PUBLIC FUNCTIONS
+&nbsp;
+    /**
+        @inheritdoc BaseRoundsVaultUpgradeable
+&nbsp;
+        @dev Deposits the available funds into the main vault, receiving back an amount of target vault shares
+     */
+    function _operate() internal override {
+        uint256 shares = totalAssets();
+        if (shares &gt; 0) {
+            uint256 assets = _redeemFromTarget(shares);
+&nbsp;
+            emit SharesRedeemed(getCurrentRound(), _msgSender(), shares, assets);
+        }
+    }
+&nbsp;
+    /**
+        @inheritdoc BaseRoundsVaultUpgradeable
+&nbsp;
+        @dev The exchange rate is given by the `previewRedeem` function on the target vault. The exchange rate is
+        calculated for 1 full share
+&nbsp;
+        @dev This function can only be called while the target vault is unlocked
+     */
+    function _getCurrentExchangeRate() internal view override returns (uint256) {
+        IERC20MetadataUpgradeable asset_ = IERC20MetadataUpgradeable(asset());
+&nbsp;
+        uint256 OneAsset = 10**asset_.decimals();
+        uint256 shares = IERC4626Upgradeable(vault()).previewRedeem(OneAsset);
+&nbsp;
+        return shares.fromUint().div(OneAsset.fromUint());
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 30 2022 15:29:33 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

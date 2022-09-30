@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/2</span>
+        <span class='fraction'>4/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>2/4</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
-        <span class="quiet">Branches</span>
-        <span class='fraction'>0/0</span>
-      </div>
-      <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/3</span>
+        <span class='fraction'>4/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/2</span>
+        <span class='fraction'>5/5</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -103,7 +103,27 @@
 58
 59
 60
-61</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,14 +173,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -169,6 +209,8 @@
 pragma solidity 0.8.14;
 &nbsp;
 import "../../interfaces/IPotionProtocolOracle.sol";
+import "../../interfaces/IOtoken.sol";
+import { PotionBuyInfo } from "../../interfaces/IPotionBuyInfo.sol";
 import "../../common/RolesManagerUpgradeable.sol";
 &nbsp;
 /**
@@ -194,7 +236,7 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
 &nbsp;
         @dev potion =&gt; PotionBuyInfo
     */
-    mapping(address =&gt; PotionBuyInfo) private _potionBuyInfo;
+    mapping(bytes32 =&gt; PotionBuyInfo) private _potionBuyInfo;
 &nbsp;
     /// UPGRADEABLE INITIALIZERS
 &nbsp;
@@ -202,8 +244,8 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
         @notice This does not chain the initialization to the parent contract.
         Also this contract does not need to initialize anything itself.
      */
-    // solhint-disable-next-line func-name-mixedcase, no-empty-blocks
-<span class="fstat-no" title="function not covered" >    function __PotionProtocolOracle_init_unchained() internal view onlyInitializing {</span>
+    /* solhint-disable-next-line func-name-mixedcase, no-empty-blocks */
+    function __PotionProtocolOracle_init_unchained() internal view <span class="missing-if-branch" title="else path not taken" >E</span>onlyInitializing {
         // Empty on purpose
     }
 &nbsp;
@@ -212,15 +254,33 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
     /**
         @inheritdoc IPotionProtocolOracle
      */
-<span class="fstat-no" title="function not covered" >    function setPotionBuyInfo(PotionBuyInfo calldata info) external onlyOperator {</span>
-<span class="cstat-no" title="statement not covered" >        _potionBuyInfo[info.potion] = info</span>;
+    function setPotionBuyInfo(PotionBuyInfo calldata info) external <span class="missing-if-branch" title="else path not taken" >E</span>onlyOperator {
+        bytes32 id = _getPotionId(info.underlyingAsset, info.expirationTimestamp);
+        _potionBuyInfo[id] = info;
     }
 &nbsp;
     /**
         @inheritdoc IPotionProtocolOracle
      */
-<span class="fstat-no" title="function not covered" >    function getPotionBuyInfo(address potion) public view returns (PotionBuyInfo memory) {</span>
-<span class="cstat-no" title="statement not covered" >        return _potionBuyInfo[potion];</span>
+    function getPotionBuyInfo(address underlyingAsset, uint256 expirationTimestamp)
+        public
+        view
+        returns (PotionBuyInfo memory)
+    {
+        bytes32 id = _getPotionId(underlyingAsset, expirationTimestamp);
+        return _potionBuyInfo[id];
+    }
+&nbsp;
+    /**
+        @notice Calculates the unique ID for a potion
+&nbsp;
+        @param underlyingAsset The address of the underlying token of the potion
+        @param expirationTimestamp The timestamp when the potion expires
+&nbsp;
+        @return The unique ID for the potion
+     */
+    function _getPotionId(address underlyingAsset, uint256 expirationTimestamp) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(underlyingAsset, expirationTimestamp));
     }
 }
 &nbsp;</pre></td></tr>
@@ -229,7 +289,7 @@ contract PotionProtocolOracleUpgradeable is IPotionProtocolOracle, RolesManagerU
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 30 2022 15:29:33 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

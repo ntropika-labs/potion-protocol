@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/6</span>
+        <span class='fraction'>6/6</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>1/2</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
-        <span class="quiet">Branches</span>
-        <span class='fraction'>0/0</span>
-      </div>
-      <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/1</span>
+        <span class='fraction'>1/1</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/6</span>
+        <span class='fraction'>6/6</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -105,7 +105,8 @@
 60
 61
 62
-63</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+63
+64</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -159,12 +160,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">33×</span>
+<span class="cline-any cline-yes">33×</span>
+<span class="cline-any cline-yes">33×</span>
+<span class="cline-any cline-yes">33×</span>
+<span class="cline-any cline-yes">33×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -177,7 +179,7 @@ import "../../common/EmergencyLockUpgradeable.sol";
 import "../../common/LifecycleStatesUpgradeable.sol";
 import "../../common/RefundsHelperUpgreadable.sol";
 import "../../common/RolesManagerUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgradeable.sol";
 &nbsp;
 /**
     @title BaseVaultUpgradeable
@@ -214,19 +216,20 @@ abstract contract BaseActionUpgradeable is
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
      */
-    // solhint-disable-next-line func-name-mixedcase
-<span class="fstat-no" title="function not covered" >    function __BaseAction_init_chained(</span>
+    /* solhint-disable-next-line func-name-mixedcase */
+    function __BaseAction_init_chained(
         address adminAddress,
         address strategistAddress,
         address operatorAddress,
         address[] memory cannotRefundTokens
-    ) internal onlyInitializing {
-<span class="cstat-no" title="statement not covered" >        __RolesManager_init_unchained(adminAddress, strategistAddress, operatorAddress)</span>;
-<span class="cstat-no" title="statement not covered" >        __EmergencyLock_init_unchained()</span>;
-<span class="cstat-no" title="statement not covered" >        __EmergencyLock_init_unchained()</span>;
-<span class="cstat-no" title="statement not covered" >        __LifecycleStates_init_unchained()</span>;
-<span class="cstat-no" title="statement not covered" >        __RefundsHelper_init_unchained(cannotRefundTokens, false)</span>;
-<span class="cstat-no" title="statement not covered" >        __ReentrancyGuard_init_unchained()</span>;
+    ) internal <span class="missing-if-branch" title="else path not taken" >E</span>onlyInitializing {
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
+        __EmergencyLock_init_unchained();
+        __LifecycleStates_init_unchained();
+        __RefundsHelper_init_unchained(cannotRefundTokens, false);
+        __ReentrancyGuard_init_unchained();
+&nbsp;
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
     }
 }
 &nbsp;</pre></td></tr>
@@ -235,7 +238,7 @@ abstract contract BaseActionUpgradeable is
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 30 2022 15:29:33 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>
