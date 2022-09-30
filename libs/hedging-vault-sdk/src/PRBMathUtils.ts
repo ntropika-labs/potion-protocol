@@ -1,5 +1,6 @@
 import { toBn } from "evm-bn";
 import { BigNumber } from "@ethersproject/bignumber";
+import { ethers } from "ethers";
 
 /**
      @title PRBMathUtils
@@ -59,11 +60,30 @@ import { BigNumber } from "@ethersproject/bignumber";
             UD60x18 rate 32400000000000.000000000000000000
 */
 export function getRateInUD60x18(
-  fpInputTokenPriceInUSD: number,
-  fpOutputTokenPriceInUSD: number,
+  inputTokenPriceInUSD: number | BigNumber,
+  outputTokenPriceInUSD: number | BigNumber,
   inputTokenDecimals = 18,
   outputTokenDecimals = 18
 ): BigNumber {
+  let fpInputTokenPriceInUSD;
+  let fpOutputTokenPriceInUSD;
+
+  if (typeof inputTokenPriceInUSD === "number") {
+    fpInputTokenPriceInUSD = inputTokenPriceInUSD;
+  } else {
+    fpInputTokenPriceInUSD = Number(
+      ethers.utils.formatUnits(inputTokenPriceInUSD, inputTokenDecimals)
+    );
+  }
+
+  if (typeof outputTokenPriceInUSD === "number") {
+    fpOutputTokenPriceInUSD = outputTokenPriceInUSD;
+  } else {
+    fpOutputTokenPriceInUSD = Number(
+      ethers.utils.formatUnits(outputTokenPriceInUSD, outputTokenDecimals)
+    );
+  }
+
   if (inputTokenDecimals === outputTokenDecimals) {
     return toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
   } else if (inputTokenDecimals > outputTokenDecimals) {

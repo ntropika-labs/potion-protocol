@@ -64,4 +64,19 @@ describe("PRBMathUtils", () => {
 
     expect(priceRateUD60x18).toEqual(toBn(String(32400000000000)));
   });
+  it("bignumber is supported", () => {
+    const inputTokenPriceInUSD = toBn("64.8"); // USD/DAI
+    const outputTokenPriceInUSD = toBn("2.0"); // USD/WETH
+    const inputTokenDecimals = 18;
+    const outputTokenDecimals = 18;
+
+    const priceRateUD60x18 = getRateInUD60x18(
+      inputTokenPriceInUSD,
+      outputTokenPriceInUSD,
+      inputTokenDecimals,
+      outputTokenDecimals
+    );
+
+    expect(priceRateUD60x18).toEqual(toBn(String(32.4)));
+  });
 });
