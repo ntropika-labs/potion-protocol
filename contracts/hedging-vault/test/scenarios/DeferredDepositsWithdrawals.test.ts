@@ -21,7 +21,7 @@ import {
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/BlockchainUtils";
+import { fastForwardChain, DAY_IN_SECONDS } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
@@ -266,7 +266,7 @@ async function setupTestConditions(
     @author Roberto Cano <robercano>
  */
 describe("DeferredDepositsWithdrawals", function () {
-    let ownerAccount: SignerWithAddress;
+    // let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
     let deploymentConfig: PotionHedgingVaultConfigParams;
@@ -279,7 +279,7 @@ describe("DeferredDepositsWithdrawals", function () {
     let tEnv: TestingEnvironmentDeployment;
 
     beforeEach(async function () {
-        ownerAccount = (await ethers.getSigners())[0];
+        // ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
         const deploymentNetworkName = getDeploymentsNetworkName();
@@ -655,6 +655,184 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await roundsOutputVault.balanceOf(investorAccount.address, currentRound)).to.equal(amountToBeInvested);
         expect(await vault.balanceOf(roundsOutputVault.address)).to.equal(amountToBeInvested);
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
+
+        /*
+            POTION SETTLEMENT
+        */
+        // Set the Opyn oracle asset price for the underlying asset
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, tCond.underlyingAssetExitPriceInUSD);
+
+        // Set the dispute period as over, this only works with the mock contract
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, tCond.expirationTimestamp, true);
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.USDC.address, tCond.expirationTimestamp, true);
+
+        /*
+            NEXT ROUND
+        */
+        await fastForwardChain(DAY_IN_SECONDS);
+
+        const { potionBuyInfo: nextPotionBuyInfo } = await getPotionBuyInfo(
+            tEnv,
+            BigNumber.from(0),
+            underlyingAssetPriceInUSD,
+            USDCPriceInUSD,
+        );
+
+        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, nextPotionBuyInfo, tCond.swapInfoEnterPosition);
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+
+        const amountAfterProfitLoss = amountToBeInvested
+            .sub(tCond.uniswapEnterPositionInputAmount)
+            .add(tCond.uniswapExitPositionOutputAmount);
+        currentRound = await tEnv.roundsOutputVault.getCurrentRound();
+        previousRound = currentRound.sub(1);
+
+        expect(await roundsOutputVault.balanceOf(investorAccount.address, previousRound)).to.equal(amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(roundsOutputVault.address)).to.equal(amountAfterProfitLoss);
+        expect(await vault.balanceOf(roundsOutputVault.address)).to.equal(0);
+
+        /*
+            WITHDRAW ASSETS
+        */
+        tx = await roundsOutputVault
+            .connect(investorAccount)
+            .redeemExchangeAsset(previousRound, amountToBeInvested, investorAccount.address, investorAccount.address);
+
+        expect(tx)
+            .to.emit(roundsOutputVault, "WithdrawExchangeAsset")
+            .withArgs(
+                investorAccount.address,
+                investorAccount.address,
+                investorAccount.address,
+                amountAfterProfitLoss,
+                previousRound,
+                amountToBeInvested,
+            );
+
+        expect(await tEnv.underlyingAsset.balanceOf(roundsOutputVault.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(amountAfterProfitLoss);
+        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
+        expect(await roundsOutputVault.balanceOf(investorAccount.address, previousRound)).to.equal(0);
+        expect(await roundsOutputVault.balanceOfAll(investorAccount.address)).to.equal(0);
+
+        expect(await vault.totalSupply()).to.equal(0);
+        expect(await vault.totalAssets()).to.equal(0);
+    });
+
+    it.only("DDW0008 - Single Cycle With Rounds Exchanger", async function () {
+        // Test Settings
+        const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
+        const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
+        const amountToBeInvested = ethers.utils.parseEther("20");
+
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+
+        let currentRound = await tEnv.roundsInputVault.getCurrentRound();
+
+        /*
+            MINT
+        */
+        const prevBalance = await tEnv.underlyingAsset.balanceOf(investorAccount.address);
+        await tEnv.underlyingAsset.mint(investorAccount.address, amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(
+            prevBalance.add(amountToBeInvested),
+        );
+        await tEnv.underlyingAsset.connect(investorAccount).approve(roundsInputVault.address, amountToBeInvested);
+        expect(
+            await tEnv.underlyingAsset
+                .connect(investorAccount)
+                .allowance(investorAccount.address, roundsInputVault.address),
+        ).to.equal(amountToBeInvested);
+
+        /*
+            DEPOSIT ASSETS
+        */
+        let tx = await roundsInputVault.connect(investorAccount).deposit(amountToBeInvested, investorAccount.address);
+        expect(tx)
+            .to.emit(roundsInputVault, "DepositWithReceipt")
+            .withArgs(investorAccount.address, investorAccount.address, currentRound, amountToBeInvested);
+
+        expect(await roundsInputVault.balanceOf(investorAccount.address, currentRound)).to.equal(amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(roundsInputVault.address)).to.equal(amountToBeInvested);
+        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
+
+        /*
+            ENTER POSITION
+        */
+
+        // Enter the position
+        await fastForwardChain(DAY_IN_SECONDS);
+        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, tCond.potionBuyInfo, tCond.swapInfoEnterPosition);
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+
+        // Check that the helper set the correct info in the action
+        const currentPotionBuyInfo = await action.getPotionBuyInfo(
+            tEnv.underlyingAsset.address,
+            tCond.expirationTimestamp,
+        );
+
+        expectSolidityDeepCompare(tCond.potionBuyInfo, currentPotionBuyInfo);
+
+        const currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+
+        expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
+
+        // Check the new state of the system
+        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
+        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
+
+        // Check balances
+        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
+            amountToBeInvested.sub(tCond.uniswapEnterPositionInputAmount),
+        );
+
+        // Rounds Input Vault
+        expect(await tEnv.underlyingAsset.balanceOf(roundsInputVault.address)).to.equal(0);
+        expect(await vault.balanceOf(roundsInputVault.address)).to.equal(amountToBeInvested);
+
+        currentRound = await tEnv.roundsInputVault.getCurrentRound();
+        expect(currentRound).to.equal(1);
+
+        /*
+            EXCHANGE INPUT RECEIPT FOR OUTPUT RECEIPT
+        */
+        let previousRound = currentRound.sub(1);
+
+        await roundsInputVault.connect(investorAccount).setApprovalForAll(roundsExchanger.address, true);
+
+        tx = await roundsExchanger
+            .connect(investorAccount)
+            .exchangeInputForOutput(
+                roundsInputVault.address,
+                roundsOutputVault.address,
+                previousRound,
+                amountToBeInvested,
+            );
+
+        expect(tx)
+            .to.emit(roundsInputVault, "WithdrawExchangeAsset")
+            .withArgs(
+                investorAccount.address,
+                investorAccount.address,
+                investorAccount.address,
+                amountToBeInvested,
+                previousRound,
+                amountToBeInvested,
+            );
+        expect(tx)
+            .to.emit(roundsOutputVault, "DepositWithReceipt")
+            .withArgs(investorAccount.address, investorAccount.address, currentRound, amountToBeInvested);
+
+        expect(await vault.balanceOf(roundsInputVault.address)).to.equal(0);
+        expect(await vault.balanceOf(roundsOutputVault.address)).to.equal(amountToBeInvested);
+        expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
+
+        expect(await roundsInputVault.balanceOf(investorAccount.address, previousRound)).to.equal(0);
+        expect(await roundsInputVault.balanceOfAll(investorAccount.address)).to.equal(0);
+
+        expect(await roundsOutputVault.balanceOf(investorAccount.address, currentRound)).to.equal(amountToBeInvested);
+        expect(await roundsOutputVault.balanceOfAll(investorAccount.address)).to.equal(amountToBeInvested);
 
         /*
             POTION SETTLEMENT
