@@ -719,7 +719,7 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await vault.totalAssets()).to.equal(0);
     });
 
-    it.only("DDW0008 - Single Cycle With Rounds Exchanger", async function () {
+    it("DDW0008 - Single Cycle With Rounds Exchanger", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
