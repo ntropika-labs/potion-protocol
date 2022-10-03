@@ -78,7 +78,7 @@ abstract contract VaultWithReceiptsUpgradeable is
 
     /** @dev See {IVaultWithReceiptsUpgradeable-deposit} */
     function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
-        require(assets <= maxDeposit(receiver), "VaultWithReceiptsUpgradeable: deposit more than max");
+        require(assets <= maxDeposit(receiver), "deposit more than max");
 
         _deposit(_msgSender(), receiver, assets, _getMintId());
 
@@ -92,7 +92,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         address receiver,
         address owner
     ) public virtual override returns (uint256) {
-        require(amount <= maxRedeem(owner), "VaultWithReceiptsUpgradeable: redeem more than max");
+        require(amount <= maxRedeem(owner), "redeem more than max");
 
         _redeem(_msgSender(), receiver, owner, amount, id);
 
@@ -106,14 +106,14 @@ abstract contract VaultWithReceiptsUpgradeable is
         address receiver,
         address owner
     ) public virtual override returns (uint256) {
-        require(ids.length == amounts.length, "VaultWithReceiptsUpgradeable: mismatch shares ids and amounts lengths");
+        require(ids.length == amounts.length, "mismatch shares ids and amounts lengths");
 
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < ids.length; i++) {
             totalAmount += amounts[i];
         }
 
-        require(totalAmount <= maxRedeem(owner), "VaultWithReceiptsUpgradeable: redeem more than max");
+        require(totalAmount <= maxRedeem(owner), "redeem more than max");
 
         _redeemBatch(_msgSender(), receiver, owner, totalAmount, ids, amounts);
 
@@ -153,7 +153,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         uint256 id
     ) private {
         if (caller != owner) {
-            require(isApprovedForAll(owner, caller), "VaultWithReceiptsUpgradeable: caller is not owner nor approved");
+            require(isApprovedForAll(owner, caller), "caller is not owner nor approved");
         }
 
         // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
