@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BaseRoundsVaultUpgradeable__factory } from "./BaseRoundsVaultUpgradeable__factory";
-export { RoundsInputVaultUpgradeable__factory } from "./RoundsInputVaultUpgradeable__factory";
-export { RoundsOutputVaultUpgradeable__factory } from "./RoundsOutputVaultUpgradeable__factory";
+export { RoundsInputVault__factory } from "./RoundsInputVault__factory";
+export { RoundsOutputVault__factory } from "./RoundsOutputVault__factory";
 export { VaultDeferredOperationUpgradeable__factory } from "./VaultDeferredOperationUpgradeable__factory";
 export { VaultWithReceiptsUpgradeable__factory } from "./VaultWithReceiptsUpgradeable__factory";

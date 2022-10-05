@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">85.71% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>2/2</span>
+        <span class='fraction'>6/7</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">75% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/0</span>
+        <span class='fraction'>3/4</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>2/2</span>
+        <span class='fraction'>3/3</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">77.78% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>2/2</span>
+        <span class='fraction'>7/9</span>
       </div>
     </div>
   </div>
@@ -95,7 +95,42 @@
 50
 51
 52
-53</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,7 +166,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -144,7 +183,38 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -154,17 +224,19 @@ pragma solidity 0.8.14;
 &nbsp;
 import "@prb/math/contracts/PRBMathUD60x18.sol";
 &nbsp;
+import { IERC20MetadataUpgradeable as IERC20Metadata } from "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC20MetadataUpgradeable.sol";
+&nbsp;
 /**
     @title PriceUtils
 &nbsp;
     @author Roberto Cano &lt;robercano&gt;
     
     @notice Utility library to convert an input amount into an output amount using
-    the given price as the conversion factor
+    the given priceNumerator as the conversion factor
  */
 library PriceUtils {
     /**
-    @notice Type for the swap price configured by the Keeper
+    @notice Type for the swap priceNumerator configured by the Keeper
 &nbsp;
     @dev Internally it is represented by a PRBMathUD60x18 fixed point number
     */
@@ -173,11 +245,13 @@ library PriceUtils {
 &nbsp;
     using PRBMathUD60x18 for uint256;
 &nbsp;
+    uint256 internal constant PRICE_RATE_DECIMALS = 8;
+&nbsp;
     /**
         @notice Given an amount of input asset it calculates how much amount of the output 
-        asset will be received at the given price rate
+        asset will be received at the given priceNumerator rate
 &nbsp;
-        @param priceRate The price rate of as output/input in PRBMathUD60x18 format
+        @param priceRate The priceNumerator rate of as output/input in PRBMathUD60x18 format
         @param inputAmount The amount of input asset to convert, as a uint256
 &nbsp;
         @return The amount of output asset that will be received
@@ -188,15 +262,46 @@ library PriceUtils {
 &nbsp;
     /**
         @notice Given a desired output amount it calculates how much input asset is needed
-        at the current price rate
+        at the current priceNumerator rate
 &nbsp;
-        @param priceRate The price rate of as input/output in PRBMathUD60x18 format
+        @param priceRate The priceNumerator rate of as input/output in PRBMathUD60x18 format
         @param outputAmount The desired amount of output asset, as a uint256
 &nbsp;
         @return The amount of input asset that will be received
      */
     function toInputAmount(uint256 priceRate, uint256 outputAmount) internal pure returns (uint256) {
         return PRBMathUD60x18.fromUint(outputAmount).div(priceRate).toUint();
+    }
+&nbsp;
+    /**
+        @notice Converts an amount of input token to an amount of output token using the given price rate
+&nbsp;
+        @param inputTokenDecimals The number of decimals of the input token
+        @param outputTokenDecimals The number of decimals of the output token
+        @param amount The amount of the input token to convert
+        @param priceNumerator The numerator of the price rate
+        @param priceDenominator The denominator of the price rate
+&nbsp;
+        @return outputAmount The output amount denominated in the output token
+     */
+    function convertAmount(
+        uint256 inputTokenDecimals,
+        uint256 outputTokenDecimals,
+        uint256 amount,
+        uint256 priceNumerator,
+        uint256 priceDenominator
+    ) internal pure returns (uint256 outputAmount) {
+        if (inputTokenDecimals == outputTokenDecimals) {
+            outputAmount = (amount * priceNumerator) / priceDenominator;
+        } else <span class="missing-if-branch" title="else path not taken" >E</span>if (inputTokenDecimals &gt; outputTokenDecimals) {
+            uint256 exp = inputTokenDecimals - outputTokenDecimals;
+            outputAmount = (amount * priceNumerator) / priceDenominator / (10**exp);
+        } else {
+<span class="cstat-no" title="statement not covered" >            uint256 exp = outputTokenDecimals - inputTokenDecimals;</span>
+            outputAmount = (amount * priceNumerator * (10**exp)) / priceDenominator;
+        }
+&nbsp;
+        return outputAmount;
     }
 }
 &nbsp;</pre></td></tr>
@@ -205,7 +310,7 @@ library PriceUtils {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jun 28 2022 16:25:47 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

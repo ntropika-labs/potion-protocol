@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for rounds/VaultWithReceiptsUpgradeable.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">rounds/</a> VaultWithReceiptsUpgradeable.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">87.1% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>27/31</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">38.89% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>7/18</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">84.62% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>11/13</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">87.88% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>29/33</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">98×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
+&nbsp;
+pragma solidity 0.8.14;
+&nbsp;
+import "../extensions/ERC1155FullSupplyUpgradeable.sol";
+import "../interfaces/IVaultWithReceiptsUpgradeable.sol";
+&nbsp;
+import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/utils/math/MathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+&nbsp;
+/**
+    @notice Implementation of the ERC4626 "Tokenized Vault Standard", modified to emit ERC-1155 receipts.
+    When depositing a receipt is generated using an id provided by implementor of this interface.
+    The receipt should contain the deposit amount. The id can be used freely to identify extra information
+    about the deposit.
+    
+    @dev The internal function `_getMintId` is added here so derived contracts can override it to provide
+    the correct id to be used for minting. The function is not marked as `view` to allow for any scheme of
+    ids, including generating a new id on each minting operation
+&nbsp;
+    @dev See { IERC4626MultiTokenUpgradeable }
+    
+    @dev This contract is a copy-paste of OpenZeppelin's `ERC4626Upgradeable.sol` with some modifications to
+    support the ERC-1155 receipts.
+&nbsp;
+    @dev In the original ERC-4626 the caller is checked against the allowance given by the owner in the internal
+    functions `_deposit` and `_withdraw`. In ERC-1155 there is no such concept and the owner just approves the caller
+    for none or all of the tokens in a collection. This is used here to allow for a caller to trade on behalf of the
+    owner of the receipts
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+ */
+import "hardhat/console.sol";
+&nbsp;
+abstract contract VaultWithReceiptsUpgradeable is
+    Initializable,
+    ERC1155FullSupplyUpgradeable,
+    IVaultWithReceiptsUpgradeable
+{
+    using MathUpgradeable for uint256;
+&nbsp;
+    IERC20MetadataUpgradeable private _asset;
+&nbsp;
+    /**
+     * @dev Set the underlying asset contract. This must be an ERC20-compatible contract (ERC20 or ERC777).
+     */
+    /* solhint-disable-next-line func-name-mixedcase */
+<span class="fstat-no" title="function not covered" >    function __VaultWithReceipts_init(IERC20MetadataUpgradeable asset_) internal onlyInitializing {</span>
+<span class="cstat-no" title="statement not covered" >        __VaultWithReceipts_init_unchained(asset_)</span>;
+    }
+&nbsp;
+    /* solhint-disable-next-line func-name-mixedcase */
+    function __VaultWithReceipts_init_unchained(IERC20MetadataUpgradeable asset_) internal <span class="missing-if-branch" title="else path not taken" >E</span>onlyInitializing {
+        _asset = asset_;
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-asset} */
+    function asset() public view virtual override returns (address) {
+        return address(_asset);
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-totalAssets} */
+    function totalAssets() public view virtual override returns (uint256) {
+        return _asset.balanceOf(address(this));
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-maxDeposit} */
+    function maxDeposit(address) public view virtual override returns (uint256) {
+        return type(uint256).max;
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-maxRedeem} */
+    function maxRedeem(address owner) public view virtual override returns (uint256) {
+        return balanceOfAll(owner);
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-deposit} */
+    function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(assets &lt;= maxDeposit(receiver), "VaultWithReceiptsUpgradeable: deposit more than max");
+&nbsp;
+        _deposit(_msgSender(), receiver, assets, _getMintId());
+&nbsp;
+        return assets;
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-redeem} */
+    function redeem(
+        uint256 id,
+        uint256 amount,
+        address receiver,
+        address owner
+    ) public virtual override returns (uint256) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(amount &lt;= maxRedeem(owner), "VaultWithReceiptsUpgradeable: redeem more than max");
+&nbsp;
+        _redeem(_msgSender(), receiver, owner, amount, id);
+&nbsp;
+        return amount;
+    }
+&nbsp;
+    /** @dev See {IVaultWithReceiptsUpgradeable-redeemBatch} */
+    function redeemBatch(
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        address receiver,
+        address owner
+    ) public virtual override returns (uint256) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(ids.length == amounts.length, "VaultWithReceiptsUpgradeable: mismatch shares ids and amounts lengths");
+&nbsp;
+        uint256 totalAmount = 0;
+        for (uint256 i = 0; i &lt; ids.length; i++) {
+            totalAmount += amounts[i];
+        }
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(totalAmount &lt;= maxRedeem(owner), "VaultWithReceiptsUpgradeable: redeem more than max");
+&nbsp;
+        _redeemBatch(_msgSender(), receiver, owner, totalAmount, ids, amounts);
+&nbsp;
+        return totalAmount;
+    }
+&nbsp;
+    /**
+        @dev Deposit/mint common workflow
+     */
+    function _deposit(
+        address caller,
+        address receiver,
+        uint256 amount,
+        uint256 id
+    ) private {
+        // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
+        // `tokensToSend` hook. On the other hand, the `tokenReceived` hook, that is triggered after the transfer,
+        // calls the vault, which is assumed not malicious.
+        //
+        // Conclusion: we need to do the transfer before we mint so that any reentrancy would happen before the
+        // assets are transfered and before the shares are minted, which is a valid state.
+        // slither-disable-next-line reentrancy-no-eth
+        SafeERC20Upgradeable.safeTransferFrom(_asset, caller, address(this), amount);
+        _mint(receiver, id, amount, "");
+&nbsp;
+        emit DepositWithReceipt(caller, receiver, id, amount);
+    }
+&nbsp;
+    /**
+        @dev Redeem workflow
+     */
+    function _redeem(
+        address caller,
+        address receiver,
+        address owner,
+        uint256 amount,
+        uint256 id
+    ) private {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (caller != owner) {
+<span class="cstat-no" title="statement not covered" >            require(isApprovedForAll(owner, caller), "VaultWithReceiptsUpgradeable: caller is not owner nor approved")</span>;
+        }
+&nbsp;
+        // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
+        // `tokensReceived` hook. On the other hand, the `tokensToSend` hook, that is triggered before the transfer,
+        // calls the vault, which is assumed not malicious.
+        //
+        // Conclusion: we need to do the Setransfer after the burn so that any reentrancy would happen after the
+        // shares are burned and after the assets are transfered, which is a valid state.
+        _burn(owner, id, amount);
+        SafeERC20Upgradeable.safeTransfer(_asset, receiver, amount);
+&nbsp;
+        emit RedeemReceipt(caller, receiver, owner, id, amount);
+    }
+&nbsp;
+    /**
+        @dev The caller must make sure that totalAmount is the sum of all the amounts in the amounts array
+     */
+    function _redeemBatch(
+        address caller,
+        address receiver,
+        address owner,
+        uint256 totalAmount,
+        uint256[] memory ids,
+        uint256[] memory amounts
+    ) private {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (caller != owner) {
+<span class="cstat-no" title="statement not covered" >            isApprovedForAll(owner, caller)</span>;
+        }
+&nbsp;
+        // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
+        // `tokensReceived` hook. On the other hand, the `tokensToSend` hook, that is triggered before the transfer,
+        // calls the vault, which is assumed not malicious.
+        //
+        // Conclusion: we need to do the transfer after the burn so that any reentrancy would happen after the
+        // shares are burned and after the assets are transfered, which is a valid state.
+        _burnBatch(owner, ids, amounts);
+        SafeERC20Upgradeable.safeTransfer(_asset, receiver, totalAmount);
+&nbsp;
+        emit RedeemReceiptBatch(caller, receiver, owner, ids, amounts);
+    }
+&nbsp;
+    /**
+        @notice Returns the Id to be used for minting the receipt
+&nbsp;
+        @dev This function should be overriden by the child contract to implement any desired strategy
+&nbsp;
+        @dev Not marked as `view` to allow the derived contract to modify the state inside it, in case
+        a different id is desired for each minting operation
+     */
+<span class="fstat-no" title="function not covered" >    function _getMintId() internal virtual returns (uint256) {</span>
+<span class="cstat-no" title="statement not covered" >        return 0;</span>
+    }
+&nbsp;
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

@@ -1,5 +1,13 @@
 import { toBn } from "evm-bn";
+import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
+import type { BigNumberish } from "@ethersproject/bignumber";
+
+function toNumber(value: BigNumberish, decimals: number) {
+  return typeof value === "number"
+    ? value
+    : Number(formatUnits(value, decimals));
+}
 
 /**
      @title PRBMathUtils
@@ -12,10 +20,10 @@ import { BigNumber } from "@ethersproject/bignumber";
 /**
     @notice Takes a rational floating point number and returns the same number as a PRB Math UD60x18 fixed point number
 
-    @param fpInputTokenPriceInUSD  The floating point numerator of the rate
-    @param fpOutputTokenPriceInUSD  The floating point denominator of the rate
-    @param inputDecimals The number of decimal positions of the numerator for the price rate
-    @param outputDecimals The number of decimal positions of the denominator for the price rate
+    @param inputTokenPriceInUSD  The floating point numerator of the rate
+    @param outputTokenPriceInUSD  The floating point denominator of the rate
+    @param inputTokenDecimals The number of decimal positions of the numerator for the price rate
+    @param outputTokenDecimals The number of decimal positions of the denominator for the price rate
 
     @return The price rate in PRB Math UD60x18 format compensated for the numeratorDecimals and denominatorDecimals
 
@@ -59,20 +67,27 @@ import { BigNumber } from "@ethersproject/bignumber";
             UD60x18 rate 32400000000000.000000000000000000
 */
 export function getRateInUD60x18(
-  fpInputTokenPriceInUSD: number,
-  fpOutputTokenPriceInUSD: number,
+  inputTokenPriceInUSD: BigNumberish,
+  outputTokenPriceInUSD: BigNumberish,
   inputTokenDecimals = 18,
   outputTokenDecimals = 18
 ): BigNumber {
+  const fpInputTokenPriceInUSD = toNumber(
+    inputTokenPriceInUSD,
+    inputTokenDecimals
+  );
+  const fpOutputTokenPriceInUSD = toNumber(
+    outputTokenPriceInUSD,
+    outputTokenDecimals
+  );
+  const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
+
   if (inputTokenDecimals === outputTokenDecimals) {
-    return toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
-  } else if (inputTokenDecimals > outputTokenDecimals) {
-    return toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD)).div(
-      BigNumber.from(10).pow(inputTokenDecimals - outputTokenDecimals)
-    );
-  } else {
-    return toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD)).mul(
-      BigNumber.from(10).pow(outputTokenDecimals - inputTokenDecimals)
-    );
+    return rate;
   }
+
+  const tenBn = BigNumber.from(10);
+  return inputTokenDecimals > outputTokenDecimals
+    ? rate.div(tenBn.pow(inputTokenDecimals - outputTokenDecimals))
+    : rate.mul(tenBn.pow(outputTokenDecimals - inputTokenDecimals));
 }

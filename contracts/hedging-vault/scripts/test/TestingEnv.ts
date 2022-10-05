@@ -14,6 +14,9 @@ import {
     IOpynOracle,
     HedgingVaultOrchestrator,
     MockOpynOracle,
+    RoundsInputVault,
+    RoundsOutputVault,
+    RoundsVaultExchanger,
 } from "../../typechain";
 import {
     mockERC20,
@@ -26,7 +29,11 @@ import {
     asMock,
 } from "./MocksLibrary";
 import { attachContract } from "../utils/deployment";
-import { deployHedgingVault, HedgingVaultDeployParams } from "../hedging-vault/deployPotionHedgingVault";
+import {
+    deployHedgingVault,
+    HedgingVaultDeploymentResult,
+    HedgingVaultDeployParams,
+} from "../hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -36,6 +43,10 @@ export interface TestingEnvironmentDeployment {
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
     hedgingVaultOrchestrator: HedgingVaultOrchestrator;
+    roundsInputVault: RoundsInputVault;
+    roundsOutputVault: RoundsOutputVault;
+    roundsVaultExchanger: RoundsVaultExchanger;
+
     USDC: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     underlyingAsset: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     potionLiquidityPoolManager: IPotionLiquidityPool | MockContract<IPotionLiquidityPool>;
@@ -61,6 +72,8 @@ export interface TestingEnvironmentDeployment {
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
+    inputReceiptsURI: string;
+    outputReceiptsURI: string;
 }
 
 function getTokensFromUniswapPath(uniswapPath: string) {
@@ -296,6 +309,10 @@ async function prepareTestEnvironment(
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
+    testingEnvironmentDeployment.inputReceiptsURI =
+        deploymentConfig.inputReceiptsURI || "https://potion.finance/receipts/in-{id}.json";
+    testingEnvironmentDeployment.outputReceiptsURI =
+        deploymentConfig.outputReceiptsURI || "https://potion.finance/receipts/out-{id}.json";
 
     // Check if the deployment is valid
     if (!testingEnvironmentDeployment.USDC) {
@@ -337,9 +354,11 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     if (!hedgingVaultConfig.USDC) {
         hedgingVaultConfig.USDC = potionProtocolDeployments.USDC?.address;
     }
+
     if (!hedgingVaultConfig.underlyingAsset) {
         hedgingVaultConfig.underlyingAsset = potionProtocolDeployments.SampleUnderlyingToken?.address;
     }
+
     if (!hedgingVaultConfig.potionLiquidityPoolManager) {
         hedgingVaultConfig.potionLiquidityPoolManager = potionProtocolDeployments.PotionLiquidityPool?.address;
     }
@@ -405,17 +424,24 @@ export async function deployTestingEnv(
         performanceFee: testEnvDeployment.performanceFee,
         feesRecipient: testEnvDeployment.feesRecipient,
 
+        // Receipt URI
+        inputReceiptsURI: testEnvDeployment.inputReceiptsURI,
+        outputReceiptsURI: testEnvDeployment.outputReceiptsURI,
+
         // Third-party dependencies
         uniswapV3SwapRouter: testEnvDeployment.uniswapV3SwapRouter.address,
         potionLiquidityPoolManager: testEnvDeployment.potionLiquidityPoolManager.address,
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
-    const [investmentVault, potionBuyAction, hedgingVaultOrchestrator] = await deployHedgingVault(deploymentParams);
+    const deployment: HedgingVaultDeploymentResult = await deployHedgingVault(deploymentParams);
 
-    testEnvDeployment.investmentVault = investmentVault;
-    testEnvDeployment.potionBuyAction = potionBuyAction;
-    testEnvDeployment.hedgingVaultOrchestrator = hedgingVaultOrchestrator;
+    testEnvDeployment.investmentVault = deployment.vault;
+    testEnvDeployment.potionBuyAction = deployment.potionBuyAction;
+    testEnvDeployment.hedgingVaultOrchestrator = deployment.orchestrator;
+    testEnvDeployment.roundsInputVault = deployment.roundsInputVault;
+    testEnvDeployment.roundsOutputVault = deployment.roundsOutputVault;
+    testEnvDeployment.roundsVaultExchanger = deployment.roundsVaultExchanger;
 
     printDeploymentEnvironment(testEnvDeployment);
 
@@ -428,7 +454,10 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
-    console.log(`  - Operator Helper: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
+    console.log(`  - Orchestrator: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
+    console.log(`  - Rounds Input Vault: ${testEnvDeployment.roundsInputVault.address}`);
+    console.log(`  - Rounds Output Vault: ${testEnvDeployment.roundsOutputVault.address}`);
+    console.log(`  - Rounds Vault Exchanger: ${testEnvDeployment.roundsVaultExchanger.address}`);
     console.log(`------------------------------------------------------`);
     console.log(`  - Underlying Asset: ${testEnvDeployment.underlyingAsset.address}`);
     console.log(`  - USDC: ${testEnvDeployment.USDC.address}`);
@@ -441,10 +470,10 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
     console.log(`  - Opyn Swap Router: ${testEnvDeployment.uniswapV3SwapRouter.address}`);
     console.log(`------------------------------------------------------`);
-    console.log(`  - Admin address: ${testEnvDeployment.adminAddress.toString()}`);
-    console.log(`  - Strategist address: ${testEnvDeployment.strategistAddress.toString()}`);
-    console.log(`  - Operator address: ${testEnvDeployment.operatorAddress.toString()}`);
-    console.log(`  - Underlying Asset cap: ${testEnvDeployment.underlyingAssetCap.toString()}`);
+    console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
+    console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
+    console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
+    console.log(`  - Underlying Asset Cap: ${ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)}`);
     console.log(`  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()}`);
     console.log(`  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()}`);
     console.log(`  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()}`);

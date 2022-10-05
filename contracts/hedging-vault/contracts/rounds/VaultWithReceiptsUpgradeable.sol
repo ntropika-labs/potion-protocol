@@ -32,6 +32,8 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20M
 
     @author Roberto Cano <robercano>
  */
+import "hardhat/console.sol";
+
 abstract contract VaultWithReceiptsUpgradeable is
     Initializable,
     ERC1155FullSupplyUpgradeable,
@@ -54,64 +56,64 @@ abstract contract VaultWithReceiptsUpgradeable is
         _asset = asset_;
     }
 
-    /** @dev See {IERC4262-asset} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-asset} */
     function asset() public view virtual override returns (address) {
         return address(_asset);
     }
 
-    /** @dev See {IERC4626MultiToken-totalAssets} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-totalAssets} */
     function totalAssets() public view virtual override returns (uint256) {
         return _asset.balanceOf(address(this));
     }
 
-    /** @dev See {IERC4626MultiToken-maxDeposit} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-maxDeposit} */
     function maxDeposit(address) public view virtual override returns (uint256) {
-        return _isVaultCollateralized() ? type(uint256).max : 0;
+        return type(uint256).max;
     }
 
-    /** @dev See {IERC4626MultiToken-maxRedeem} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-maxRedeem} */
     function maxRedeem(address owner) public view virtual override returns (uint256) {
         return balanceOfAll(owner);
     }
 
-    /** @dev See {IERC4626MultiToken-deposit} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-deposit} */
     function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
-        require(assets <= maxDeposit(receiver), "ERC4626MultiToken: deposit more than max");
+        require(assets <= maxDeposit(receiver), "deposit more than max");
 
         _deposit(_msgSender(), receiver, assets, _getMintId());
 
         return assets;
     }
 
-    /** @dev See {IERC4626MultiToken-redeem} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-redeem} */
     function redeem(
         uint256 id,
         uint256 amount,
         address receiver,
         address owner
     ) public virtual override returns (uint256) {
-        require(amount <= maxRedeem(owner), "ERC4626MultiToken: redeem more than max");
+        require(amount <= maxRedeem(owner), "redeem more than max");
 
         _redeem(_msgSender(), receiver, owner, amount, id);
 
         return amount;
     }
 
-    /** @dev See {IERC4626MultiToken-redeemBatch} */
+    /** @dev See {IVaultWithReceiptsUpgradeable-redeemBatch} */
     function redeemBatch(
         uint256[] memory ids,
         uint256[] memory amounts,
         address receiver,
         address owner
     ) public virtual override returns (uint256) {
-        require(ids.length == amounts.length, "ERC4626MultiToken: mismatch shares ids and amounts lengths");
+        require(ids.length == amounts.length, "mismatch shares ids and amounts lengths");
 
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < ids.length; i++) {
             totalAmount += amounts[i];
         }
 
-        require(totalAmount <= maxRedeem(owner), "ERC4626MultiToken: redeem more than max");
+        require(totalAmount <= maxRedeem(owner), "redeem more than max");
 
         _redeemBatch(_msgSender(), receiver, owner, totalAmount, ids, amounts);
 
@@ -151,7 +153,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         uint256 id
     ) private {
         if (caller != owner) {
-            require(isApprovedForAll(owner, caller), "ERC4626MultiToken: caller is not owner nor approved");
+            require(isApprovedForAll(owner, caller), "caller is not owner nor approved");
         }
 
         // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
@@ -191,10 +193,6 @@ abstract contract VaultWithReceiptsUpgradeable is
         SafeERC20Upgradeable.safeTransfer(_asset, receiver, totalAmount);
 
         emit RedeemReceiptBatch(caller, receiver, owner, ids, amounts);
-    }
-
-    function _isVaultCollateralized() private view returns (bool) {
-        return totalAssets() > 0 || totalSupplyAll() == 0;
     }
 
     /**

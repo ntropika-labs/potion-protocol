@@ -33,8 +33,6 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfAll(address)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "convertToAssets(uint256)": FunctionFragment;
-    "convertToShares(uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
@@ -42,13 +40,8 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     "getExchangeRate(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
-    "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "mint(uint256,address)": FunctionFragment;
     "nextRound()": FunctionFragment;
-    "previewDeposit(uint256)": FunctionFragment;
-    "previewMint(uint256)": FunctionFragment;
-    "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
@@ -69,8 +62,6 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
       | "balanceOf"
       | "balanceOfAll"
       | "balanceOfBatch"
-      | "convertToAssets"
-      | "convertToShares"
       | "deposit"
       | "exchangeAsset"
       | "exists"
@@ -78,13 +69,8 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
       | "getExchangeRate"
       | "isApprovedForAll"
       | "maxDeposit"
-      | "maxMint"
       | "maxRedeem"
-      | "mint"
       | "nextRound"
-      | "previewDeposit"
-      | "previewMint"
-      | "previewRedeem"
       | "redeem"
       | "redeemBatch"
       | "redeemExchangeAsset"
@@ -111,14 +97,6 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToAssets",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToShares",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
@@ -149,30 +127,10 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "maxMint",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "previewDeposit",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewMint",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewRedeem",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "redeem",
     values: [
@@ -261,14 +219,6 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToAssets",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToShares",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exchangeAsset",
@@ -288,22 +238,8 @@ export interface IBaseRoundsVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "previewDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewMint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewRedeem",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemBatch",
@@ -550,16 +486,6 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -591,40 +517,14 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { maxAssets: BigNumber }>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { maxShares: BigNumber }>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { maxShares: BigNumber }>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
 
     redeem(
       sharesId: PromiseOrValue<BigNumberish>,
@@ -722,16 +622,6 @@ export interface IBaseRoundsVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  convertToAssets(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  convertToShares(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   deposit(
     assets: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
@@ -763,40 +653,14 @@ export interface IBaseRoundsVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  maxMint(
-    receiver: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   maxRedeem(
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  mint(
-    shares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   nextRound(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  previewDeposit(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewMint(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewRedeem(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   redeem(
     sharesId: PromiseOrValue<BigNumberish>,
@@ -890,16 +754,6 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -931,38 +785,12 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     nextRound(overrides?: CallOverrides): Promise<void>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     redeem(
       sharesId: PromiseOrValue<BigNumberish>,
@@ -1190,16 +1018,6 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1231,39 +1049,13 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeem(
@@ -1359,16 +1151,6 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1400,39 +1182,13 @@ export interface IBaseRoundsVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    maxMint(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     redeem(

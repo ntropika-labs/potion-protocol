@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
+export interface RoundsInputVaultInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -41,8 +41,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
-    "convertToAssets(uint256)": FunctionFragment;
-    "convertToShares(uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "exchangeAsset()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
@@ -56,15 +54,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "initialize(address,address,address,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
-    "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
-    "mint(uint256,address)": FunctionFragment;
     "nextRound()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "previewDeposit(uint256)": FunctionFragment;
-    "previewMint(uint256)": FunctionFragment;
-    "previewRedeem(uint256)": FunctionFragment;
     "redeem(uint256,uint256,address,address)": FunctionFragment;
     "redeemBatch(uint256[],uint256[],address,address)": FunctionFragment;
     "redeemExchangeAsset(uint256,uint256,address,address)": FunctionFragment;
@@ -99,8 +92,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "balanceOfBatch"
       | "canRefund"
       | "canRefundETH"
-      | "convertToAssets"
-      | "convertToShares"
       | "deposit"
       | "exchangeAsset"
       | "exists"
@@ -114,15 +105,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
       | "initialize"
       | "isApprovedForAll"
       | "maxDeposit"
-      | "maxMint"
       | "maxRedeem"
-      | "mint"
       | "nextRound"
       | "pause"
       | "paused"
-      | "previewDeposit"
-      | "previewMint"
-      | "previewRedeem"
       | "redeem"
       | "redeemBatch"
       | "redeemExchangeAsset"
@@ -189,14 +175,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "convertToAssets",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertToShares",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
@@ -254,32 +232,12 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "maxMint",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxRedeem",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "nextRound", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "previewDeposit",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewMint",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "previewRedeem",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "redeem",
     values: [
@@ -416,14 +374,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "canRefundETH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToAssets",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertToShares",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exchangeAsset",
@@ -458,24 +408,10 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "previewDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewMint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "previewRedeem",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemBatch",
@@ -530,6 +466,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "AssetsDeposited(uint256,address,uint256,uint256)": EventFragment;
     "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "NextRound(uint256)": EventFragment;
@@ -539,7 +476,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "SharesRedeemed(uint256,address,uint256,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -549,6 +485,7 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AssetsDeposited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DepositWithReceipt"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NextRound"): EventFragment;
@@ -558,7 +495,6 @@ export interface RoundsOutputVaultUpgradeableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SharesRedeemed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -578,6 +514,19 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface AssetsDepositedEventObject {
+  roundId: BigNumber;
+  account: string;
+  assets: BigNumber;
+  shares: BigNumber;
+}
+export type AssetsDepositedEvent = TypedEvent<
+  [BigNumber, string, BigNumber, BigNumber],
+  AssetsDepositedEventObject
+>;
+
+export type AssetsDepositedEventFilter = TypedEventFilter<AssetsDepositedEvent>;
 
 export interface DepositWithReceiptEventObject {
   caller: string;
@@ -680,19 +629,6 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface SharesRedeemedEventObject {
-  roundId: BigNumber;
-  account: string;
-  shares: BigNumber;
-  assets: BigNumber;
-}
-export type SharesRedeemedEvent = TypedEvent<
-  [BigNumber, string, BigNumber, BigNumber],
-  SharesRedeemedEventObject
->;
-
-export type SharesRedeemedEventFilter = TypedEventFilter<SharesRedeemedEvent>;
-
 export interface TransferBatchEventObject {
   operator: string;
   from: string;
@@ -768,12 +704,12 @@ export type WithdrawExchangeAssetBatchEvent = TypedEvent<
 export type WithdrawExchangeAssetBatchEventFilter =
   TypedEventFilter<WithdrawExchangeAssetBatchEvent>;
 
-export interface RoundsOutputVaultUpgradeable extends BaseContract {
+export interface RoundsInputVault extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: RoundsOutputVaultUpgradeableInterface;
+  interface: RoundsInputVaultInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -832,16 +768,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<[boolean]>;
 
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
-
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { assets: BigNumber }>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { shares: BigNumber }>;
 
     deposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -906,12 +832,7 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<[boolean]>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -919,12 +840,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     nextRound(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -935,21 +850,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -1098,16 +998,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-  convertToAssets(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  convertToShares(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   deposit(
     assets: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
@@ -1171,12 +1061,7 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   ): Promise<boolean>;
 
   maxDeposit(
-    receiver: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxMint(
-    receiver: PromiseOrValue<string>,
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1184,12 +1069,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  mint(
-    shares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   nextRound(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1200,21 +1079,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
-
-  previewDeposit(
-    assets: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewMint(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  previewRedeem(
-    shares: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   redeem(
     id: PromiseOrValue<BigNumberish>,
@@ -1361,16 +1225,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1434,12 +1288,7 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<boolean>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1448,32 +1297,11 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     nextRound(overrides?: CallOverrides): Promise<void>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -1592,6 +1420,19 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
+    "AssetsDeposited(uint256,address,uint256,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      account?: PromiseOrValue<string> | null,
+      assets?: null,
+      shares?: null
+    ): AssetsDepositedEventFilter;
+    AssetsDeposited(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      account?: PromiseOrValue<string> | null,
+      assets?: null,
+      shares?: null
+    ): AssetsDepositedEventFilter;
+
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
@@ -1680,19 +1521,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
-
-    "SharesRedeemed(uint256,address,uint256,uint256)"(
-      roundId?: PromiseOrValue<BigNumberish> | null,
-      account?: PromiseOrValue<string> | null,
-      shares?: null,
-      assets?: null
-    ): SharesRedeemedEventFilter;
-    SharesRedeemed(
-      roundId?: PromiseOrValue<BigNumberish> | null,
-      account?: PromiseOrValue<string> | null,
-      shares?: null,
-      assets?: null
-    ): SharesRedeemedEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: PromiseOrValue<string> | null,
@@ -1807,16 +1635,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -1880,24 +1698,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     nextRound(
@@ -1909,21 +1716,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,
@@ -2073,16 +1865,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    convertToAssets(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertToShares(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     deposit(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
@@ -2146,24 +1928,13 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxDeposit(
-      receiver: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxMint(
-      receiver: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxRedeem(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mint(
-      shares: PromiseOrValue<BigNumberish>,
-      receiver: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     nextRound(
@@ -2175,21 +1946,6 @@ export interface RoundsOutputVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    previewDeposit(
-      assets: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewMint(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    previewRedeem(
-      shares: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     redeem(
       id: PromiseOrValue<BigNumberish>,

@@ -6,6 +6,7 @@ export { IActionsManager__factory } from "./IActionsManager__factory";
 export { IBaseRoundsVault__factory } from "./IBaseRoundsVault__factory";
 export { IEmergencyLock__factory } from "./IEmergencyLock__factory";
 export { IFeeManager__factory } from "./IFeeManager__factory";
+export { IHedgingVaultOrchestrator__factory } from "./IHedgingVaultOrchestrator__factory";
 export { IInvestmentVaultV0__factory } from "./IInvestmentVaultV0__factory";
 export { ILifecycleStates__factory } from "./ILifecycleStates__factory";
 export { IOpynAddressBook__factory } from "./IOpynAddressBook__factory";

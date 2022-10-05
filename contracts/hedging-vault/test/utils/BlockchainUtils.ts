@@ -21,6 +21,10 @@ export async function getNextTimestamp() {
     return (await getCurrentTimestamp()) + 1;
 }
 
+export async function getLastTimestamp() {
+    return (await getCurrentTimestamp()) - 1;
+}
+
 export async function prepareNextTimestamp(): Promise<number> {
     const currentTimestamp = await getCurrentTimestamp();
 

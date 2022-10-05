@@ -19,6 +19,11 @@ export const Deployments = {
             },
         },
     },
+    hardhat: {
+        timestamp: 1664457604,
+        network: "hardhat",
+        contracts: {},
+    },
     "localhost.goerli": {
         timestamp: 1662461323,
         network: "localhost",
@@ -70,22 +75,9 @@ export const Deployments = {
         },
     },
     "localhost.hedging": {
-        timestamp: 1664356149,
+        timestamp: 1664373194,
         network: "localhost",
-        contracts: {
-            HedgingVaultOrchestrator: {
-                address: "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07",
-                blockNumber: 73,
-            },
-            PotionBuyAction: {
-                address: "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
-                blockNumber: 76,
-            },
-            InvestmentVault: {
-                address: "0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6",
-                blockNumber: 78,
-            },
-        },
+        contracts: {},
     },
     localhost: {
         timestamp: 1662028169,
