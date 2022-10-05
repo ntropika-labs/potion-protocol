@@ -6590,6 +6590,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts-4.7.3@npm:@openzeppelin/contracts@4.7.3":
+  version: 4.7.3
+  resolution: "@openzeppelin/contracts@npm:4.7.3"
+  checksum: 18382fcacf7cfd652f5dd0e70c08f08ea74eaa8ff11e9f9850639ada70198ae01a3f9493d89a52d724f2db394e9616bf6258017804612ba273167cf657fbb073
+  languageName: node
+  linkType: hard
+
 "@openzeppelin/contracts-upgradeable-4.7.3@npm:@openzeppelin/contracts-upgradeable@4.7.3":
   version: 4.7.3
   resolution: "@openzeppelin/contracts-upgradeable@npm:4.7.3"
@@ -31150,6 +31157,7 @@ __metadata:
     "@nrwl/cli": 14.7.5
     "@nrwl/workspace": 14.7.5
     "@openzeppelin/contracts": ^4.6.0
+    "@openzeppelin/contracts-4.7.3": "npm:@openzeppelin/contracts@4.7.3"
     "@openzeppelin/contracts-upgradeable": ^4.6.0
     "@openzeppelin/contracts-upgradeable-4.7.3": "npm:@openzeppelin/contracts-upgradeable@4.7.3"
     "@openzeppelin/hardhat-upgrades": ^1.20.0

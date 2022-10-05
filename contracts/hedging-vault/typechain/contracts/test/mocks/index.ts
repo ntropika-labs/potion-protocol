@@ -5,6 +5,7 @@ export type { ERC1155FullSupplyUpgradeableMock } from "./ERC1155FullSupplyUpgrad
 export type { ERC1155UpgradeableMock } from "./ERC1155UpgradeableMock";
 export type { ERC20DecimalsUpgradeableMock } from "./ERC20DecimalsUpgradeableMock";
 export type { MockERC20PresetMinterPauser } from "./MockERC20PresetMinterPauser";
+export type { MockERC4626 } from "./MockERC4626";
 export type { MockOpynAddressBook } from "./MockOpynAddressBook";
 export type { MockOpynController } from "./MockOpynController";
 export type { MockOpynFactory } from "./MockOpynFactory";

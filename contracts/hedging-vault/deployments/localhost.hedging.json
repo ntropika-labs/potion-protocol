@@ -1,5 +1,30 @@
 {
-  "timestamp": 1664373194,
+  "timestamp": 1664973064,
   "network": "localhost",
-  "contracts": {}
+  "contracts": {
+    "HedgingVaultOrchestrator": {
+      "address": "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07",
+      "blockNumber": 73
+    },
+    "PotionBuyAction": {
+      "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
+      "blockNumber": 76
+    },
+    "InvestmentVault": {
+      "address": "0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6",
+      "blockNumber": 78
+    },
+    "RoundsInputVault": {
+      "address": "0x4C4a2f8c81640e47606d3fd77B353E87Ba015584",
+      "blockNumber": 80
+    },
+    "RoundsOutputVault": {
+      "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+      "blockNumber": 82
+    },
+    "RoundsVaultExchanger": {
+      "address": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
+      "blockNumber": 83
+    }
+  }
 }
