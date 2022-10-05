@@ -5,6 +5,7 @@ export { ERC1155FullSupplyUpgradeableMock__factory } from "./ERC1155FullSupplyUp
 export { ERC1155UpgradeableMock__factory } from "./ERC1155UpgradeableMock__factory";
 export { ERC20DecimalsUpgradeableMock__factory } from "./ERC20DecimalsUpgradeableMock__factory";
 export { MockERC20PresetMinterPauser__factory } from "./MockERC20PresetMinterPauser__factory";
+export { MockERC4626__factory } from "./MockERC4626__factory";
 export { MockOpynAddressBook__factory } from "./MockOpynAddressBook__factory";
 export { MockOpynController__factory } from "./MockOpynController__factory";
 export { MockOpynFactory__factory } from "./MockOpynFactory__factory";

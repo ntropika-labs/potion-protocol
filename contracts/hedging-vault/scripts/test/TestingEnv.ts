@@ -144,7 +144,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
-        const mockingResult = await mockERC20(deploymentConfig, "USDC");
+        const mockingResult = await mockERC20(deploymentConfig.networkName, "USDC");
         testingEnvironmentDeployment.USDC = mockingResult.softMock ? mockingResult.softMock : mockingResult.hardMock;
     } else {
         testingEnvironmentDeployment.USDC = await attachContract<ERC20PresetMinterPauser>(
@@ -158,7 +158,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock underlying asset
     if (!deploymentConfig.underlyingAsset) {
-        const mockingResult = await mockERC20(deploymentConfig, "UnderlyingAsset");
+        const mockingResult = await mockERC20(deploymentConfig.networkName, "UnderlyingAsset");
         testingEnvironmentDeployment.underlyingAsset = mockingResult.softMock
             ? mockingResult.softMock
             : mockingResult.hardMock;
@@ -174,7 +174,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock PotionProtocol
     if (!deploymentConfig.potionLiquidityPoolManager) {
-        const mockingResult = await mockPotionLiquidityPoolManager(deploymentConfig);
+        const mockingResult = await mockPotionLiquidityPoolManager(deploymentConfig.networkName);
         testingEnvironmentDeployment.potionLiquidityPoolManager = mockingResult.softMock
             ? mockingResult.softMock
             : mockingResult.hardMock;
@@ -189,9 +189,9 @@ async function mockContractsIfNeeded(
     }
 
     if (!deploymentConfig.opynAddressBook) {
-        const opynController = await mockOpynController(deploymentConfig);
-        const opynFactory = await mockOpynFactory(deploymentConfig);
-        const opynOracle = await mockOpynOracle(deploymentConfig);
+        const opynController = await mockOpynController(deploymentConfig.networkName);
+        const opynFactory = await mockOpynFactory(deploymentConfig.networkName);
+        const opynOracle = await mockOpynOracle(deploymentConfig.networkName);
 
         testingEnvironmentDeployment.opynController = opynController.softMock
             ? opynController.softMock
@@ -201,7 +201,7 @@ async function mockContractsIfNeeded(
         testingEnvironmentDeployment.opynMockOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
 
         const mockingResult = await mockOpynAddressBook(
-            deploymentConfig,
+            deploymentConfig.networkName,
             testingEnvironmentDeployment.opynController.address,
             testingEnvironmentDeployment.opynFactory.address,
             testingEnvironmentDeployment.opynOracle.address,
@@ -256,7 +256,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig, [
+        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig.networkName, [
             testingEnvironmentDeployment.USDC.address,
             testingEnvironmentDeployment.underlyingAsset.address,
         ]);

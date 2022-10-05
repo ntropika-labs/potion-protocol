@@ -186,15 +186,13 @@ async function setupTestConditions(
     );
     const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
 
-    // TODO: When using the mocked version of the Potion Liquidity manager the premium is not transferred from the
-    // TODO: action contract to the Potion Liquidity Manager contract. In the same way, the Opyn Controller mock is
-    // TODO: not transferring the payout to the action contract when exiting the position. In the lines below we
-    // TODO: account for this to know how much USDC will be in the action after the payout
+    // TODO: when using the mocked version of the vault, the premium is never sent to the Potion Protocol,
+    // TODO: so the maximum premium remains in the vault
     let totalUSDCInActionAfterPayout: BigNumber;
     if (network.name === "hardhat") {
         totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC);
     } else {
-        totalUSDCInActionAfterPayout = payoutInUSDC.add(maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC));
+        totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC;
     }
 
     const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout

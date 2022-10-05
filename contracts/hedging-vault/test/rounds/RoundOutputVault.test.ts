@@ -1,13 +1,13 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { FakeContract, MockContract, smock } from "@defi-wonderland/smock";
+import { ethers, network } from "hardhat";
+import { MockContract } from "@defi-wonderland/smock";
 
-import { RoundsOutputVault, IERC4626Upgradeable } from "../../typechain";
-import { MockERC20PresetMinterPauser } from "../../typechain";
+import { RoundsOutputVault, ERC4626, MockERC20PresetMinterPauser } from "../../typechain";
+
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-import { getFakeTargetVault } from "../utils/ERC4626Utils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import { mockERC4626, mockERC20, ifMocksEnabled, asMock } from "../../scripts/test/MocksLibrary";
 
 /**
     @notice VaultDeferredOperation unit tests    
@@ -19,48 +19,58 @@ describe("RoundsOutputVault", function () {
     let operatorAccount: SignerWithAddress;
     let unpriviledgedAccount: SignerWithAddress;
     let roundsOutputVault: RoundsOutputVault;
-    let assetTokenMock: MockContract<MockERC20PresetMinterPauser>;
-    let fakeTargetVault: FakeContract<IERC4626Upgradeable>;
+    let assetToken: MockERC20PresetMinterPauser | MockContract<MockERC20PresetMinterPauser>;
+    let targetVault: ERC4626 | MockContract<ERC4626>;
 
     beforeEach(async function () {
         adminAccount = (await ethers.getSigners())[0];
         operatorAccount = (await ethers.getSigners())[1];
         unpriviledgedAccount = (await ethers.getSigners())[2];
 
-        const ERC20MockFactory = await smock.mock("MockERC20PresetMinterPauser");
-        assetTokenMock = (await ERC20MockFactory.deploy()) as unknown as MockContract<MockERC20PresetMinterPauser>;
+        const mockERC20Result = await mockERC20(network.name, "AssetToken");
+        assetToken = mockERC20Result.softMock ? mockERC20Result.softMock : mockERC20Result.hardMock;
 
         const RoundsOutputVaultFactory = await ethers.getContractFactory("RoundsOutputVault");
         roundsOutputVault = (await RoundsOutputVaultFactory.deploy()) as RoundsOutputVault;
 
-        fakeTargetVault = await getFakeTargetVault(assetTokenMock);
+        const mockERC4626Result = await mockERC4626(
+            network.name,
+            "TestVault",
+            "TSTV",
+            assetToken.address,
+            "InvestmentVault",
+        );
+
+        targetVault = mockERC4626Result.softMock ? mockERC4626Result.softMock : mockERC4626Result.hardMock;
 
         await roundsOutputVault.initialize(
             adminAccount.address,
             operatorAccount.address,
-            fakeTargetVault.address,
+            targetVault.address,
             "SomeURI",
         );
     });
 
     it("ROV0001 - Default Value", async function () {
         expect(await roundsOutputVault.getCurrentRound()).to.equal(0);
-        expect(await roundsOutputVault.exchangeAsset()).to.equal(assetTokenMock.address);
+        expect(await roundsOutputVault.exchangeAsset()).to.equal(assetToken.address);
         expect(await roundsOutputVault.getExchangeRate(0)).to.equal(0);
     });
 
     it("ROV0002 - Deposit Round 0", async function () {
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
         const currentRound = await roundsOutputVault.getCurrentRound();
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(shares);
@@ -68,19 +78,21 @@ describe("RoundsOutputVault", function () {
 
     it("ROV0003 - Next Round", async function () {
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
         const currentRound = await roundsOutputVault.getCurrentRound();
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         // TODO: Need to return some balance here because the shares were not actually transferred
-        fakeTargetVault.balanceOf.returns(shares);
+        await targetVault.mockSetBalanceOf(shares);
 
         const tx = roundsOutputVault.connect(operatorAccount).nextRound();
         await expect(tx)
@@ -99,15 +111,17 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(shares);
@@ -121,15 +135,17 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(2);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(shares);
@@ -144,7 +160,9 @@ describe("RoundsOutputVault", function () {
             .connect(unpriviledgedAccount)
             .redeem(currentRound, shares, unpriviledgedAccount.address, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transfer).to.have.been.calledOnceWith(unpriviledgedAccount.address, shares);
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transfer).to.have.been.calledOnceWith(unpriviledgedAccount.address, shares);
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(0);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(0);
@@ -158,15 +176,17 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(2);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(shares);
@@ -186,7 +206,9 @@ describe("RoundsOutputVault", function () {
                 unpriviledgedAccount.address,
             );
 
-        expect(fakeTargetVault.transfer).to.have.been.calledOnceWith(unpriviledgedAccount.address, shares);
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transfer).to.have.been.calledOnceWith(unpriviledgedAccount.address, shares);
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(0);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(0);
@@ -199,15 +221,17 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares,
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(shares);
@@ -216,7 +240,7 @@ describe("RoundsOutputVault", function () {
         await roundsOutputVault.connect(operatorAccount).nextRound();
 
         // TODO: minting because the fake vault cannot transfer assets back
-        await assetTokenMock.mint(roundsOutputVault.address, assets);
+        await assetToken.mint(roundsOutputVault.address, assets);
 
         await expect(
             roundsOutputVault
@@ -228,7 +252,7 @@ describe("RoundsOutputVault", function () {
             .connect(unpriviledgedAccount)
             .redeemExchangeAsset(currentRound, shares, unpriviledgedAccount.address, unpriviledgedAccount.address);
 
-        expect(await assetTokenMock.balanceOf(unpriviledgedAccount.address)).to.equal(assets);
+        expect(await assetToken.balanceOf(unpriviledgedAccount.address)).to.equal(assets);
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(0);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(0);
@@ -241,32 +265,36 @@ describe("RoundsOutputVault", function () {
         expect(currentRound).to.equal(1);
 
         const assets = ethers.utils.parseEther("0.1");
-        const shares = await fakeTargetVault.convertToShares(assets);
+        const shares = await targetVault.convertToShares(assets);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares.div(2), unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledOnceWith(
-            unpriviledgedAccount.address,
-            roundsOutputVault.address,
-            shares.div(2),
-        );
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledOnceWith(
+                unpriviledgedAccount.address,
+                roundsOutputVault.address,
+                shares.div(2),
+            );
+        });
 
         await roundsOutputVault.connect(operatorAccount).nextRound();
 
         // TODO: minting because the fake vault cannot transfer assets back
-        await assetTokenMock.mint(roundsOutputVault.address, assets.div(2));
+        await assetToken.mint(roundsOutputVault.address, assets.div(2));
 
         currentRound = await roundsOutputVault.getCurrentRound();
         expect(currentRound).to.equal(2);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares.div(2), unpriviledgedAccount.address);
 
-        expect(fakeTargetVault.transferFrom).to.have.been.calledTwice;
+        ifMocksEnabled(() => {
+            expect(asMock(targetVault).transferFrom).to.have.been.calledTwice;
 
-        expectSolidityDeepCompare(
-            [unpriviledgedAccount.address, roundsOutputVault.address, shares.div(2)],
-            fakeTargetVault.transferFrom.getCall(1).args,
-        );
+            expectSolidityDeepCompare(
+                [unpriviledgedAccount.address, roundsOutputVault.address, shares.div(2)],
+                asMock(targetVault).transferFrom.getCall(1).args,
+            );
+        });
 
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(shares);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound.sub(1))).to.equal(
@@ -278,7 +306,7 @@ describe("RoundsOutputVault", function () {
         await roundsOutputVault.connect(operatorAccount).nextRound();
 
         // TODO: minting because the fake vault cannot transfer assets back
-        await assetTokenMock.mint(roundsOutputVault.address, assets.div(2));
+        await assetToken.mint(roundsOutputVault.address, assets.div(2));
 
         currentRound = await roundsOutputVault.getCurrentRound();
         expect(currentRound).to.equal(3);
@@ -298,7 +326,7 @@ describe("RoundsOutputVault", function () {
                 unpriviledgedAccount.address,
             );
 
-        expect(await assetTokenMock.balanceOf(unpriviledgedAccount.address)).to.equal(assets);
+        expect(await assetToken.balanceOf(unpriviledgedAccount.address)).to.equal(assets);
         expect(await roundsOutputVault.balanceOfAll(unpriviledgedAccount.address)).to.equal(0);
         expect(await roundsOutputVault.balanceOf(unpriviledgedAccount.address, currentRound)).to.equal(0);
     });
