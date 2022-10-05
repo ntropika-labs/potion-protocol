@@ -82,6 +82,20 @@ jobs:
 
       - name: Math library unit test
         run: yarn nx run contracts-math:test-unit
+  
+  run-unit-test-hedging-vault-sdk:
+    name: Run unit tests (hedging-vault-sdk)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Hedgin vault SDK unit test
+        run: yarn nx run hedging-vault-sdk:test-unit
 
   run-unit-test-dapp:
     name: Run unit tests (dapp)
