@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parsePercentage, parsePriceInUSDC, parseAmount, convertAmountToUSDC } from "../src/utils";
 import { BigNumber } from "ethers";
 
-describe.only("utils", () => {
+describe("utils", () => {
     // parsePercentage
     it("parse percentage number", () => {
         expect(parsePercentage(0.5).toString()).toBe("500000");
