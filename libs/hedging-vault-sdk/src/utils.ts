@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { parseUnits } from "@ethersproject/units";
+import { parseUnits, formatUnits } from "@ethersproject/units";
 import { toSolidityPercentage } from "./percentageUtils";
 import type { BigNumberish } from "@ethersproject/bignumber";
 
@@ -71,4 +71,18 @@ export function convertAmountToUSDC(
     const amountDecimalsFactor = BigNumber.from(10).pow(decimals);
 
     return amount.mul(priceInUSDC).div(amountDecimalsFactor);
+}
+
+/**
+    @notice Parses a BigNumberish value and returns it as a Number formatting it with decimals if it is required
+
+    @param value The value to parse, as a number, a string or a BigNumber. If it is a
+                 BigNumber, it is assumed it is already in the right format
+    @param decimals The number of decimals of the value
+
+    @return The value as a Number
+ */
+
+export function toNumber(value: BigNumberish, decimals: BigNumberish) {
+    return typeof value === "number" ? value : Number(formatUnits(value, decimals));
 }

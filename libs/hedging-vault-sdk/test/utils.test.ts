@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parsePercentage, parsePriceInUSDC, parseAmount, convertAmountToUSDC } from "../src/utils";
+import { parsePercentage, parsePriceInUSDC, parseAmount, convertAmountToUSDC, toNumber } from "../src/utils";
 import { BigNumber } from "ethers";
 
 describe("utils", () => {
@@ -81,5 +81,25 @@ describe("utils", () => {
         expect(
             convertAmountToUSDC(BigNumber.from(648000), BigNumber.from(4), BigNumber.from(321000000)).toString(),
         ).toBe("20800800000");
+    });
+
+    // toNumber
+    it("to number number", () => {
+        expect(toNumber(0.5, 6)).toBe(0.5);
+        expect(toNumber(3.5, 12)).toBe(3.5);
+        expect(toNumber(64.8, "18")).toBe(64.8);
+        expect(toNumber(64.8, BigNumber.from(4))).toBe(64.8);
+    });
+    it("to number string", () => {
+        expect(toNumber("500000", 6)).toBe(0.5);
+        expect(toNumber("3500000000000", 12)).toBe(3.5);
+        expect(toNumber("64800000000000000000", "18")).toBe(64.8);
+        expect(toNumber("648000", BigNumber.from(4))).toBe(64.8);
+    });
+    it("to number bignumber", () => {
+        expect(toNumber(BigNumber.from(500000), 6)).toBe(0.5);
+        expect(toNumber(BigNumber.from(3500000000000), 12)).toBe(3.5);
+        expect(toNumber(BigNumber.from("64800000000000000000"), "18")).toBe(64.8);
+        expect(toNumber(BigNumber.from(648000), BigNumber.from(4))).toBe(64.8);
     });
 });

@@ -1,13 +1,7 @@
 import { toBn } from "evm-bn";
-import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
+import { toNumber } from "./utils";
 import type { BigNumberish } from "@ethersproject/bignumber";
-
-function toNumber(value: BigNumberish, decimals: number) {
-  return typeof value === "number"
-    ? value
-    : Number(formatUnits(value, decimals));
-}
 
 /**
      @title PRBMathUtils
@@ -67,27 +61,21 @@ function toNumber(value: BigNumberish, decimals: number) {
             UD60x18 rate 32400000000000.000000000000000000
 */
 export function getRateInUD60x18(
-  inputTokenPriceInUSD: BigNumberish,
-  outputTokenPriceInUSD: BigNumberish,
-  inputTokenDecimals = 18,
-  outputTokenDecimals = 18
+    inputTokenPriceInUSD: BigNumberish,
+    outputTokenPriceInUSD: BigNumberish,
+    inputTokenDecimals = 18,
+    outputTokenDecimals = 18,
 ): BigNumber {
-  const fpInputTokenPriceInUSD = toNumber(
-    inputTokenPriceInUSD,
-    inputTokenDecimals
-  );
-  const fpOutputTokenPriceInUSD = toNumber(
-    outputTokenPriceInUSD,
-    outputTokenDecimals
-  );
-  const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
+    const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals);
+    const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals);
+    const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
 
-  if (inputTokenDecimals === outputTokenDecimals) {
-    return rate;
-  }
+    if (inputTokenDecimals === outputTokenDecimals) {
+        return rate;
+    }
 
-  const tenBn = BigNumber.from(10);
-  return inputTokenDecimals > outputTokenDecimals
-    ? rate.div(tenBn.pow(inputTokenDecimals - outputTokenDecimals))
-    : rate.mul(tenBn.pow(outputTokenDecimals - inputTokenDecimals));
+    const tenBn = BigNumber.from(10);
+    return inputTokenDecimals > outputTokenDecimals
+        ? rate.div(tenBn.pow(inputTokenDecimals - outputTokenDecimals))
+        : rate.mul(tenBn.pow(outputTokenDecimals - inputTokenDecimals));
 }
