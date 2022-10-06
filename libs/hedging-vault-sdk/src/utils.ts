@@ -74,12 +74,4 @@ export function convertAmountToUSDC(
     const amountDecimalsFactor = BigNumber.from(10).pow(decimals);
 
     return amount.mul(priceInUSDC).div(amountDecimalsFactor);
-
-    // if (decimals.gt(USDC_DECIMALS)) {
-    //     const decimalsFactor = BigNumber.from(10).pow(decimals.sub(USDC_DECIMALS));
-    //     amountInUSDC = amountInUSDC.div(decimalsFactor);
-    // } else if (decimals.lt(USDC_DECIMALS)) {
-    //     const decimalsFactor = BigNumber.from(10).pow(USDC_DECIMALS.sub(decimals));
-    //     amountInUSDC = amountInUSDC.mul(decimalsFactor);
-    // }
 }
