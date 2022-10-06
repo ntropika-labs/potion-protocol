@@ -1,70 +1,66 @@
 {
-  "timestamp": 1665066043,
+  "timestamp": 1665067766,
   "network": "localhost",
   "contracts": {
     "AddressBook": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "blockNumber": 1
+      "address": "0x2b5A4e5493d4a54E717057B127cf0C000C876f9B",
+      "blockNumber": 221
     },
     "Otoken": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "blockNumber": 2
+      "address": "0x413b1AfCa96a3df5A686d8BFBF93d30688a7f7D9",
+      "blockNumber": 222
     },
     "Oracle": {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "blockNumber": 3
+      "address": "0x02df3a3F960393F5B349E40A599FEda91a7cc1A7",
+      "blockNumber": 223
     },
     "MarginCalculator": {
-      "address": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-      "blockNumber": 67
+      "address": "0x9Fcca440F19c62CDF7f973eB6DDF218B15d4C71D",
+      "blockNumber": 315
     },
     "OtokenFactory": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "blockNumber": 5
+      "address": "0x1780bCf4103D3F501463AD3414c7f4b654bb7aFd",
+      "blockNumber": 225
     },
     "Whitelist": {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "blockNumber": 6
+      "address": "0x5133BBdfCCa3Eb4F739D599ee4eC45cBCD0E16c5",
+      "blockNumber": 226
     },
     "MarginPool": {
-      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "blockNumber": 7
+      "address": "0x71089Ba41e478702e1904692385Be3972B2cBf9e",
+      "blockNumber": 227
     },
     "MarginVault": {
-      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "blockNumber": 8
-    },
-    "Controller": {
-      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "blockNumber": 10
+      "address": "0x8F4ec854Dd12F1fe79500a1f53D0cbB30f9b6134",
+      "blockNumber": 228
     },
     "PotionTestUSD": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "blockNumber": 18
+      "address": "0x54B8d8E2455946f2A5B8982283f2359812e815ce",
+      "blockNumber": 238
     },
     "USDC": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+      "address": "0x54B8d8E2455946f2A5B8982283f2359812e815ce",
       "blockNumber": 0
     },
     "CurveManager": {
-      "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
-      "blockNumber": 19
+      "address": "0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128",
+      "blockNumber": 239
     },
     "CriteriaManager": {
-      "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-      "blockNumber": 20
+      "address": "0xd9140951d8aE6E5F625a02F5908535e16e3af964",
+      "blockNumber": 240
     },
     "PotionLiquidityPool": {
-      "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
-      "blockNumber": 23
+      "address": "0x56D13Eb21a625EdA8438F55DF2C31dC3632034f5",
+      "blockNumber": 241
     },
     "SampleUnderlyingToken": {
-      "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-      "blockNumber": 25
+      "address": "0xe039608E695D21aB11675EBBA00261A0e750526c",
+      "blockNumber": 243
     },
     "MockOracle": {
-      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-      "blockNumber": 63
+      "address": "0x71a0b8A2245A9770A4D887cE1E4eCc6C1d4FF28c",
+      "blockNumber": 311
     }
   }
 }

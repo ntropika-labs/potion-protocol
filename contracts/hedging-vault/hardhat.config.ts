@@ -4,9 +4,8 @@ import { getHardhatConfig } from "hardhat-helpers";
 import "./tasks/accounts";
 import "./tasks/clean";
 import "./tasks/fast-forward";
-import "./tasks/set-prices";
 
-const config: HardhatUserConfig = {
+const userConfig: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
@@ -26,4 +25,4 @@ const config: HardhatUserConfig = {
     },
 };
 
-export default getHardhatConfig(config);
+export default getHardhatConfig(userConfig);

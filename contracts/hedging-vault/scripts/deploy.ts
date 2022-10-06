@@ -25,7 +25,7 @@ async function main() {
     const deploymentNetworkName = getDeploymentsNetworkName();
 
     await initDeployment({
-        options: DeploymentOptions.Deploy,
+        options: DeploymentOptions.DeployAndExport,
         deploymentsDir: resolve(__dirname, "../deployments"),
         indexDir: resolve(__dirname, "../src"),
     });

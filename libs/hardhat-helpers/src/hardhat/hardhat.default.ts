@@ -8,6 +8,7 @@ import "hardhat-abi-exporter";
 import "hardhat-gas-reporter";
 import "hardhat-contract-sizer";
 import "solidity-coverage";
+import "solidity-docgen";
 
 import type { HardhatUserConfig } from "hardhat/config";
 
@@ -77,6 +78,10 @@ export const DefaultHardhatConfig: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: getEtherscanApiKey(),
+  },
+  docgen: {
+    outputDir: "reference",
+    templates: "templates",
   },
 };
 

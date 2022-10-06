@@ -26,9 +26,8 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
 
-import { ifMocksEnabled, asMock } from "contracts-utils";
+import { ifMocksEnabled, asMock, getDeploymentsNetworkName } from "contracts-utils";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
-import { getDeploymentsNetworkName } from "../../scripts/utils/network";
 
 interface TestConditions {
     uniswapEnterPositionInputAmount: BigNumber;

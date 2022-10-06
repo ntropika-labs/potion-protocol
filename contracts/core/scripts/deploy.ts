@@ -6,8 +6,15 @@ import { Deployment } from "../deployments/deploymentConfig";
 import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import { deploy, deployUpgrade, initDeployment, exportDeployments, exportContract } from "./utils/deployment";
-import { getDeploymentsNetworkName } from "./utils/network";
+import {
+    deploy,
+    deployUpgrade,
+    initDeployment,
+    exportDeployments,
+    exportContract,
+    getDeploymentsNetworkName,
+    DeploymentOptions,
+} from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -37,7 +44,11 @@ const CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM = [
 const contractAddresses = new Map();
 
 async function init() {
-    await initDeployment();
+    await initDeployment({
+        options: DeploymentOptions.DeployAndExport,
+        deploymentsDir: resolve(__dirname, "../deployments"),
+        indexDir: resolve(__dirname, "../src"),
+    });
 
     const deployer = (await ethers.provider.listAccounts())[0];
 

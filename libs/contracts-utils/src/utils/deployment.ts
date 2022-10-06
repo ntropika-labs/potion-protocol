@@ -2,7 +2,7 @@ import { config as dotenvConfig } from "dotenv";
 import type { Contract, Signer, BaseContract } from "ethers";
 import fs from "fs";
 import hre, { ethers, upgrades } from "hardhat";
-import type { FactoryOptions } from "hardhat/types";
+import type { FactoryOptions } from "@nomiclabs/hardhat-ethers/types";
 import { resolve } from "path";
 import { smock } from "@defi-wonderland/smock";
 import type { MockContract } from "@defi-wonderland/smock";
@@ -29,7 +29,7 @@ export enum DeploymentOptions {
     DeploymentFlags.Verify,
 }
 
-let GlobalDefaultDeploymentOptions: DeploymentParams = {
+let GlobalDefaultDeploymentOptions = {
   options: DeploymentOptions.Deploy,
   deploymentsDir: resolve(__dirname, "../../deployments"),
   indexDir: resolve(__dirname, "../../src"),
@@ -39,8 +39,6 @@ export interface DeploymentParams extends FactoryOptions {
   options?: DeploymentOptions;
   alias?: string; // The deployed contract will be exported in the JSON file with this alias
   contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
-  deploymentsDir: string; // Path to the deployments directory
-  indexDir: string; // Path to the index directory
 }
 
 export function isDeploymentParams(
