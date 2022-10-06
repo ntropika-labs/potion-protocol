@@ -5,7 +5,8 @@ import { MockContract } from "@defi-wonderland/smock";
 import { RoundsInputVault, ERC4626, MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-import { mockERC4626, mockERC20, ifMocksEnabled, asMock } from "../../scripts/test/MocksLibrary";
+import { mockERC4626, mockERC20 } from "../../scripts/test/contractsMocks";
+import { ifMocksEnabled, asMock } from "contracts-utils";
 
 /**
     @notice VaultDeferredOperation unit tests    

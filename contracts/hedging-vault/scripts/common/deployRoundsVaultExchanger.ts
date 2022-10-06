@@ -1,5 +1,5 @@
 import { RoundsVaultExchanger } from "../../typechain";
-import { deploy } from "../utils/deployment";
+import { deploy } from "contracts-utils";
 
 export async function deployRoundsVaultExchanger(): Promise<RoundsVaultExchanger> {
     console.log("- Deploying RoundsVaultExchanger...");

@@ -1,9 +1,7 @@
-export type {
+export type { DeploymentParams } from "./utils/deployment";
+export {
   DeploymentFlags,
   DeploymentOptions,
-  DeploymentParams,
-} from "./utils/deployment";
-export {
   isDeploymentParams,
   initDeployment,
   exportDeployments,

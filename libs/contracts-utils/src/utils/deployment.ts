@@ -12,9 +12,6 @@ import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
 const NUM_CONFIRMATIONS_WAIT = 5;
-const deploymentsDir = resolve(__dirname, "../../deployments");
-const indexDir = resolve(__dirname, "../../src");
-
 const DEPLOYMENTS_INDEX_FILE = "index.ts";
 
 export enum DeploymentFlags {
@@ -32,12 +29,18 @@ export enum DeploymentOptions {
     DeploymentFlags.Verify,
 }
 
-let GlobalDefaultDeploymentOptions = { options: DeploymentOptions.Deploy };
+let GlobalDefaultDeploymentOptions: DeploymentParams = {
+  options: DeploymentOptions.Deploy,
+  deploymentsDir: resolve(__dirname, "../../deployments"),
+  indexDir: resolve(__dirname, "../../src"),
+};
 
 export interface DeploymentParams extends FactoryOptions {
   options?: DeploymentOptions;
   alias?: string; // The deployed contract will be exported in the JSON file with this alias
   contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
+  deploymentsDir: string; // Path to the deployments directory
+  indexDir: string; // Path to the index directory
 }
 
 export function isDeploymentParams(
@@ -53,25 +56,27 @@ export function isDeploymentParams(
 export async function initDeployment(
   defaultDeploymentOptions = {
     options: DeploymentOptions.DeployAndExportAndVerify,
+    deploymentsDir: resolve(__dirname, "../../deployments"),
+    indexDir: resolve(__dirname, "../../src"),
   }
 ) {
   GlobalDefaultDeploymentOptions = defaultDeploymentOptions;
 
   const deploymentNetworkName = getDeploymentsNetworkName();
-  const hardatNetworkName = getHardhatNetworkName();
+  const hardhatNetworkName = getHardhatNetworkName();
 
   // Initialize deployment info
   const latestDeploymentFilename = deploymentNetworkName + ".json";
   const latestDeploymentPath = resolve(
-    deploymentsDir,
+    GlobalDefaultDeploymentOptions.deploymentsDir,
     latestDeploymentFilename
   );
 
   // Cycle the previous deployment info to keep a history of deployments. When deploying to localhost
   // only the latest deployment is kept.
   if (
-    hardatNetworkName !== "localhost" &&
-    hardatNetworkName !== "hardhat" &&
+    hardhatNetworkName !== "localhost" &&
+    hardhatNetworkName !== "hardhat" &&
     fs.existsSync(latestDeploymentPath)
   ) {
     const latestDeployment = JSON.parse(
@@ -80,7 +85,7 @@ export async function initDeployment(
     const timestamp = latestDeployment.timestamp;
 
     const newDeploymentPath = resolve(
-      deploymentsDir,
+      GlobalDefaultDeploymentOptions.deploymentsDir,
       deploymentNetworkName + "-" + timestamp + ".json"
     );
     fs.renameSync(latestDeploymentPath, newDeploymentPath);
@@ -88,7 +93,7 @@ export async function initDeployment(
 
   const deploymentsObject = {
     timestamp: Math.floor(new Date().getTime() / 1000),
-    network: hardatNetworkName,
+    network: hardhatNetworkName,
     contracts: {},
   };
 
@@ -99,14 +104,19 @@ export async function initDeployment(
 }
 
 export async function exportDeployments() {
-  const allDeploymentFiles = fs.readdirSync(deploymentsDir);
+  const allDeploymentFiles = fs.readdirSync(
+    GlobalDefaultDeploymentOptions.deploymentsDir
+  );
 
   // Filter out all deployment files that have a timestamp in them
   const latestDeploymentFiles = allDeploymentFiles.filter(
     (fileName) => fileName.endsWith(".json") && !/\d/.test(fileName)
   );
 
-  const indexFilePath = resolve(indexDir, DEPLOYMENTS_INDEX_FILE);
+  const indexFilePath = resolve(
+    GlobalDefaultDeploymentOptions.indexDir,
+    DEPLOYMENTS_INDEX_FILE
+  );
 
   // Not using a stream write here because it simplifies the code and there are only
   // 3 writes in total
@@ -125,7 +135,10 @@ export async function exportDeployments() {
 
   latestDeploymentFiles.forEach((file) => {
     const deployment = JSON.parse(
-      fs.readFileSync(resolve(deploymentsDir, file), "utf8")
+      fs.readFileSync(
+        resolve(GlobalDefaultDeploymentOptions.deploymentsDir, file),
+        "utf8"
+      )
     );
     const deploymentName = file.replace(".json", "");
 
@@ -149,7 +162,7 @@ export async function exportContract(
   // Export deployment info
   const latestDeploymentFilename = networkName + ".json";
   const latestDeploymentPath = resolve(
-    deploymentsDir,
+    GlobalDefaultDeploymentOptions.deploymentsDir,
     latestDeploymentFilename
   );
 

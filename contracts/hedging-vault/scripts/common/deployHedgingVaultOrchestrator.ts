@@ -1,5 +1,5 @@
 import { HedgingVaultOrchestrator } from "../../typechain";
-import { deploy } from "../utils/deployment";
+import { deploy } from "contracts-utils";
 
 export async function deployHedgingVaultOrchestrator(): Promise<HedgingVaultOrchestrator> {
     console.log("- Deploying HedgingVaultOrchestrator...");

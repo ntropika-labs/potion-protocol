@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber } from "ethers";
+import { BigNumber, Signer } from "ethers";
 
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
@@ -17,7 +17,7 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
 
-import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
+import { ifMocksEnabled, asMock } from "contracts-utils";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 import { getDeploymentsNetworkName } from "../../scripts/utils/network";
 
@@ -222,11 +222,9 @@ describe("HedgingVaultBasic", function () {
         ifMocksEnabled(() => {
             asMock(tEnv.potionLiquidityPoolManager).buyOtokens.returns(async () => {
                 // Transfer
-                await tEnv.USDC.connect(asMock(tEnv.potionLiquidityPoolManager).wallet).transferFrom(
-                    action.address,
-                    tEnv.potionLiquidityPoolManager.address,
-                    expectedPremiumInUSDC,
-                );
+                await tEnv.USDC.connect(
+                    asMock(tEnv.potionLiquidityPoolManager).wallet as unknown as Signer,
+                ).transferFrom(action.address, tEnv.potionLiquidityPoolManager.address, expectedPremiumInUSDC);
                 return expectedPremiumInUSDC;
             });
             asMock(tEnv.opynController).isSettlementAllowed.whenCalledWith(potionOtokenAddress).returns(false);
