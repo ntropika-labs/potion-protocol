@@ -3,7 +3,7 @@ import { calculateOrderSize } from "../src/vaultCollateralization";
 import { toSolidityPercentage } from "../src/percentageUtils";
 import { parseUnits } from "ethers/lib/utils";
 
-describe.only("vault collaterization", () => {
+describe("vault collaterization", () => {
     it("calculate order size number", () => {
         expect(calculateOrderSize(1000, 18, 90.0, 100.0, 500, 100.0)).toBe(762.7118644067797);
         expect(calculateOrderSize(1035.98, 18, 90.5, 80.0, 590, 120.55)).toBe(951.9250780096808);
