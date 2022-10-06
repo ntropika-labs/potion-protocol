@@ -1,6 +1,7 @@
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
 import { toSolidityPercentage } from "./percentageUtils";
+import type { BigNumberish } from "@ethersproject/bignumber";
 
 const USDC_DECIMALS = BigNumber.from(6);
 
@@ -18,22 +19,6 @@ export function parsePercentage(percentage: BigNumberish): BigNumber {
         return toSolidityPercentage(Number(percentage));
     } else {
         return BigNumber.from(percentage);
-    }
-}
-
-/**
-    @notice Parses a price in USDC and returns the corresponding price in USDC with 6 decimals
-
-    @param price The price to parse, as a number, a string or a BigNumber. If it is a
-                 BigNumber, it is assumed it is already in the right USDC format with 6 decimals
-
-    @return The percentage as a BigNumber with 6 decimals
- */
-export function parsePriceInUSDC(price: BigNumberish): BigNumber {
-    if (typeof price === "number" || typeof price === "string") {
-        return parseUnits(String(price), USDC_DECIMALS);
-    } else {
-        return BigNumber.from(price);
     }
 }
 
@@ -57,10 +42,22 @@ export function parseAmount(amount: BigNumberish, decimals: BigNumberish): BigNu
 }
 
 /**
+    @notice Parses a price in USDC and returns the corresponding price in USDC with 6 decimals
+
+    @param price The price to parse, as a number, a string or a BigNumber. If it is a
+                 BigNumber, it is assumed it is already in the right USDC format with 6 decimals
+
+    @return The percentage as a BigNumber with 6 decimals
+ */
+export function parsePriceInUSDC(price: BigNumberish): BigNumber {
+    return parseAmount(price, USDC_DECIMALS);
+}
+
+/**
     @notice Converts an amount in the underlying asset to an amount in USDC, taking into account the
             underlying asset's decimals and the spot price in USDC
 
-    @param amount The amount to convert, in the underlying asset's decimals if it is a BigNumber
+    @param amount_ The amount to convert, in the underlying asset's decimals if it is a BigNumber
 */
 export function convertAmountToUSDC(
     amount_: BigNumberish,
