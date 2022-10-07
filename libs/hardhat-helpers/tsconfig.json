@@ -6,7 +6,9 @@
     "outDir": "./dist",
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "./dist/types"
+    "declarationDir": "./dist/types",
+    "target": "es6"
   },
+  "files": ["src/hardhat/hardhat.default.ts"],
   "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
