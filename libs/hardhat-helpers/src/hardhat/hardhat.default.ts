@@ -51,6 +51,7 @@ export const DefaultHardhatConfig: HardhatUserConfig = {
     localhost: getLocalhostChainConfig(),
     hardhat: getHardhatChainConfig(),
     goerli: getChainConfig("goerli"),
+    sepolia: getChainConfig("sepolia"),
     "arb-mainnet": getChainConfig("arb-mainnet"),
     "arb-rinkeby": getChainConfig("arb-rinkeby"),
     "ply-mainnet": getChainConfig("ply-mainnet"),
