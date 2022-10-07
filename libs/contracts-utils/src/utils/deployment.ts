@@ -1,3 +1,6 @@
+import "@nomiclabs/hardhat-ethers";
+import "@openzeppelin/hardhat-upgrades";
+
 import { config as dotenvConfig } from "dotenv";
 import type { Contract, Signer, BaseContract } from "ethers";
 import fs from "fs";
