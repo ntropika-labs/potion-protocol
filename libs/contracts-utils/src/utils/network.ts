@@ -10,7 +10,7 @@ dotenvConfig({ path: resolve(__dirname, "../../.env") });
  * @returns {string} The network name
  *
  * @dev The network name is the vanilla version of the network, this is something like
- * "hardhat", "localhost", "ropsten" or "rinkeby", and it is the one used by the `hardhat.config.ts`
+ * "hardhat", "localhost", "goerli" or "sepolia", and it is the one used by the `hardhat.config.ts`
  *  and `hardhat.helpers.ts` files
  */
 export function getHardhatNetworkName() {

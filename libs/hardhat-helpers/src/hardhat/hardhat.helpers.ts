@@ -11,10 +11,8 @@ dotenvConfig({ path: resolve(__dirname, "./.env") });
 export type AutoOptions = {
   goerli: "auto" | number;
   hardhat: "auto" | number;
-  kovan: "auto" | number;
   mainnet: "auto" | number;
-  rinkeby: "auto" | number;
-  ropsten: "auto" | number;
+  sepolia: "auto" | number;
   "arb-mainnet": "auto" | number;
   "arb-rinkeby": "auto" | number;
   "ply-mainnet": "auto" | number;
@@ -34,10 +32,8 @@ export type EndpointsConfig = {
   [key in EndpointProvider]: {
     goerli: string;
     hardhat: string;
-    kovan: string;
     mainnet: string;
-    rinkeby: string;
-    ropsten: string;
+    sepolia: string;
     "arb-mainnet": string;
     "arb-rinkeby": string;
     "ply-mainnet": string;
@@ -52,10 +48,8 @@ export type EndpointsConfig = {
 export const ChainIds = {
   goerli: 5,
   hardhat: 31337,
-  kovan: 42,
   mainnet: 1,
-  rinkeby: 4,
-  ropsten: 3,
+  sepolia: 11155111,
   "arb-rinkeby": 421611,
   "arb-mainnet": 42161,
   "ply-mainnet": 137,
@@ -69,10 +63,8 @@ export const ChainIds = {
 export const GasPrice: AutoOptions = {
   goerli: "auto",
   hardhat: "auto",
-  kovan: "auto",
   mainnet: "auto",
-  rinkeby: "auto",
-  ropsten: "auto",
+  sepolia: "auto",
   "arb-rinkeby": "auto",
   "arb-mainnet": "auto",
   "ply-mainnet": "auto",
@@ -86,10 +78,8 @@ export const GasPrice: AutoOptions = {
 export const Gas: AutoOptions = {
   goerli: "auto",
   hardhat: "auto",
-  kovan: "auto",
   mainnet: "auto",
-  rinkeby: "auto",
-  ropsten: "auto",
+  sepolia: "auto",
   "arb-rinkeby": 1287983320,
   "arb-mainnet": "auto",
   "ply-mainnet": "auto",
@@ -104,10 +94,8 @@ export const EndpointURLs: EndpointsConfig = {
   infura: {
     goerli: "https://goerli.infura.io/v3/",
     hardhat: "https://mainnet.infura.io/v3/",
-    kovan: "https://kovan.infura.io/v3/",
     mainnet: "https://mainnet.infura.io/v3/",
-    rinkeby: "https://rinkeby.infura.io/v3/",
-    ropsten: "https://ropsten.infura.io/v3/",
+    sepolia: "https://sepolia.infura.io/v3/",
     "arb-mainnet": "https://arbitrum-mainnet.infura.io/v3/",
     "arb-rinkeby": "https://arbitrum-rinkeby.infura.io/v3/",
     "ply-mainnet": "https://polygon-mainnet.infura.io/v3/",
@@ -120,10 +108,8 @@ export const EndpointURLs: EndpointsConfig = {
   alchemy: {
     goerli: "https://eth-goerli.alchemyapi.io/v2/",
     hardhat: "https://eth-mainnet.alchemyapi.io/v2/",
-    kovan: "https://eth-kovan.alchemyapi.io/v2/",
     mainnet: "https://eth-mainnet.alchemyapi.io/v2/",
-    rinkeby: "https://eth-rinkeby.alchemyapi.io/v2/",
-    ropsten: "https://eth-ropsten.alchemyapi.io/v2/",
+    sepolia: "https://eth-sepolia.alchemyapi.io/v2/",
     "arb-mainnet": "https://arb-mainnet.alchemyapi.io/v2/",
     "arb-rinkeby": "https://arb-rinkeby.alchemyapi.io/v2/",
     "ply-mainnet": "https://polygon-mainnet.alchemyapi.io/v2/",
