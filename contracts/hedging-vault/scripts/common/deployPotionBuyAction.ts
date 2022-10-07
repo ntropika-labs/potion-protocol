@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { PotionBuyAction } from "../../typechain";
-import { deployUpgrade } from "contracts-utils";
+import { DeploymentFlags, Deployments } from "contracts-utils";
 
 export interface PotionBuyActionDeployParams {
     adminAddress: string;
@@ -21,7 +21,9 @@ export interface PotionBuyActionDeployParams {
 
 export async function deployPotionBuyAction(parameters: PotionBuyActionDeployParams): Promise<PotionBuyAction> {
     console.log("- Deploying PotionBuyAction...");
-    const potionBuyAction = (await deployUpgrade("PotionBuyAction", [parameters])) as PotionBuyAction;
+    const potionBuyAction = (await Deployments.Get().deploy("PotionBuyAction", [parameters], {
+        options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
+    })) as PotionBuyAction;
     console.log(`    ...deployed to: ${potionBuyAction.address}`);
     return potionBuyAction;
 }
