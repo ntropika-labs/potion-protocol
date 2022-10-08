@@ -24,6 +24,20 @@ export enum DeploymentFlags {
   Mock = 1 << 4,
 }
 
+export enum DirectoryFilterType {
+  None,
+  Include,
+  Exclude,
+}
+
+export interface DeploymentExportPair {
+  name: string;
+  value: string;
+}
+export interface ImportPair {
+  name: string;
+  path: string;
+}
 export interface DeploymentInitParams {
   type: DeploymentType;
   options: DeploymentOptions;
