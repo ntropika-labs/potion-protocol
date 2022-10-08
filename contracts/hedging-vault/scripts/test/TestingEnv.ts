@@ -29,8 +29,10 @@ import {
 } from "./contractsMocks";
 import { asMock, Deployments, ProviderTypes } from "contracts-utils";
 import type { DeploymentType } from "contracts-utils";
+import { fromSolidityPercentage } from "hedging-vault-sdk";
 import {
     deployHedgingVault,
+    printHedgingVaultDeployParams,
     HedgingVaultDeploymentResult,
     HedgingVaultDeployParams,
 } from "../hedging-vault/deployPotionHedgingVault";
@@ -422,6 +424,12 @@ export async function deployTestingEnv(
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
+    printHedgingVaultDeployParams(deploymentParams);
+
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`                           DEPLOYMENT ACTIONS`);
+    console.log(`--------------------------------------------------------------------------------`);
+
     const deployment: HedgingVaultDeploymentResult = await deployHedgingVault(deploymentParams);
 
     testEnvDeployment.investmentVault = deployment.vault;
@@ -431,15 +439,19 @@ export async function deployTestingEnv(
     testEnvDeployment.roundsOutputVault = deployment.roundsOutputVault;
     testEnvDeployment.roundsVaultExchanger = deployment.roundsVaultExchanger;
 
+    console.log(`--------------------------------------------------------------------------------\n`);
+
     printDeploymentEnvironment(testEnvDeployment);
+
+    Deployments.Get().persist(true);
 
     return testEnvDeployment;
 }
 
 export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvironmentDeployment) {
-    console.log(`------------------------------------------------------`);
-    console.log(`                 DEPLOYMENT ENVIRONMENT`);
-    console.log(`------------------------------------------------------`);
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`                         DEPLOYMENT ENVIRONMENT`);
+    console.log(`--------------------------------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
     console.log(`  - Orchestrator: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
@@ -461,16 +473,54 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
     console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
     console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
-    console.log(`  - Underlying Asset Cap: ${ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)}`);
-    console.log(`  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()}`);
-    console.log(`  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()}`);
-    console.log(`  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()}`);
-    console.log(`  - Max Swap Duration (secs): ${testEnvDeployment.maxSwapDurationSecs.toString()}`);
-    console.log(`  - Cycle Duration (secs): ${testEnvDeployment.cycleDurationSecs.toString()}`);
-    console.log(`  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()}`);
-    console.log(`  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()}`);
-    console.log(`  - Management Fee: ${testEnvDeployment.managementFee.toString()}`);
-    console.log(`  - Performance Fee: ${testEnvDeployment.performanceFee.toString()}`);
+    console.log(
+        `  - Underlying Asset Cap: ${
+            testEnvDeployment.underlyingAssetCap.eq(ethers.constants.MaxUint256)
+                ? "Maximum (uint256)"
+                : ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)
+        }`,
+    );
+    console.log(
+        `  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.maxPremiumPercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.premiumSlippage,
+        )}%)`,
+    );
+    console.log(
+        `  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.swapSlippage,
+        )}%)`,
+    );
+    console.log(`  - Max Swap Duration: ${testEnvDeployment.maxSwapDurationSecs.toString()} seconds`);
+    console.log(
+        `  - Cycle Duration: ${testEnvDeployment.cycleDurationSecs.toString()} seconds (${testEnvDeployment.cycleDurationSecs
+            .div(BigNumber.from(3600))
+            .toString()} hours, ${testEnvDeployment.cycleDurationSecs.div(BigNumber.from(86400)).toString()} days)`,
+    );
+    console.log(
+        `  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.strikePercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.hedgingPercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Management Fee: ${testEnvDeployment.managementFee.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.managementFee,
+        )}%)`,
+    );
+    console.log(
+        `  - Performance Fee: ${testEnvDeployment.performanceFee.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.performanceFee,
+        )}%)`,
+    );
     console.log(`  - Fees Recipient: ${testEnvDeployment.feesRecipient}`);
-    console.log(`------------------------------------------------------`);
+    console.log(`--------------------------------------------------------------------------------\n`);
 }

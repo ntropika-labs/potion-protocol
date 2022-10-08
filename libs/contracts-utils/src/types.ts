@@ -17,6 +17,7 @@ export enum DeploymentNetwork {
 }
 
 export enum DeploymentFlags {
+  None = 0,
   Export = 1 << 1,
   Verify = 1 << 2,
   Upgradeable = 1 << 3,
@@ -65,7 +66,7 @@ export interface DeploymentParams extends FactoryOptions {
   contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
 }
 
-export interface DeployedContract {
+export interface Deployment {
   contract: Contract | MockContract<Contract>;
   name: string;
   receipt?: TransactionReceipt;

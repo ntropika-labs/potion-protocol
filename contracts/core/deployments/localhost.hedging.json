@@ -1,66 +1,66 @@
 {
-  "timestamp": 1665124046,
-  "network": "localhost",
+  "timestamp": 1665223975,
+  "network": "develop",
   "contracts": {
     "AddressBook": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "blockNumber": 1
-    },
-    "Otoken": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "blockNumber": 2
-    },
-    "Oracle": {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "blockNumber": 3
-    },
-    "MarginCalculator": {
-      "address": "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7",
-      "blockNumber": 97
-    },
-    "OtokenFactory": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "blockNumber": 5
-    },
-    "Whitelist": {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "blockNumber": 6
-    },
-    "MarginPool": {
-      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "blockNumber": 7
-    },
-    "MarginVault": {
-      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "blockNumber": 8
-    },
-    "PotionTestUSD": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "blockNumber": 18
-    },
-    "USDC": {
-      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+      "address": "0x9849832a1d8274aaeDb1112ad9686413461e7101",
       "blockNumber": 0
     },
+    "Otoken": {
+      "address": "0xa4E00CB342B36eC9fDc4B50b3d527c3643D4C49e",
+      "blockNumber": 392
+    },
+    "Oracle": {
+      "address": "0x8ac5eE52F70AE01dB914bE459D8B3d50126fd6aE",
+      "blockNumber": 393
+    },
+    "MarginCalculator": {
+      "address": "0x398E4948e373Db819606A459456176D31C3B1F91",
+      "blockNumber": 485
+    },
+    "OtokenFactory": {
+      "address": "0x4eaB29997D332A666c3C366217Ab177cF9A7C436",
+      "blockNumber": 395
+    },
+    "Whitelist": {
+      "address": "0x5Ffe31E4676D3466268e28a75E51d1eFa4298620",
+      "blockNumber": 396
+    },
+    "MarginPool": {
+      "address": "0x627b9A657eac8c3463AD17009a424dFE3FDbd0b1",
+      "blockNumber": 397
+    },
+    "MarginVault": {
+      "address": "0xa62835D1A6bf5f521C4e2746E1F51c923b8f3483",
+      "blockNumber": 398
+    },
+    "Controller": {
+      "address": "0xBEe6FFc1E8627F51CcDF0b4399a1e1abc5165f15",
+      "blockNumber": 400
+    },
+    "USDC": {
+      "address": "0xAD2935E147b61175D5dc3A9e7bDa93B0975A43BA",
+      "blockNumber": 408
+    },
     "CurveManager": {
-      "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
-      "blockNumber": 19
+      "address": "0x00CAC06Dd0BB4103f8b62D280fE9BCEE8f26fD59",
+      "blockNumber": 409
     },
     "CriteriaManager": {
-      "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-      "blockNumber": 20
+      "address": "0x4951A1C579039EbfCBA0BE33D2cd3A6D30b0f802",
+      "blockNumber": 410
     },
     "PotionLiquidityPool": {
-      "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
-      "blockNumber": 23
+      "address": "0x2e8880cAdC08E9B438c6052F5ce3869FBd6cE513",
+      "blockNumber": 411
     },
     "SampleUnderlyingToken": {
-      "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-      "blockNumber": 25
+      "address": "0x6b39b761b1b64C8C095BF0e3Bb0c6a74705b4788",
+      "blockNumber": 413
     },
     "MockOracle": {
-      "address": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-      "blockNumber": 93
+      "address": "0x0F527785e39B22911946feDf580d87a4E00465f0",
+      "blockNumber": 481
     }
   }
 }

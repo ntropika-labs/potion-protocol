@@ -59,10 +59,10 @@ export interface HedgingVaultDeploymentResult {
     roundsVaultExchanger: RoundsVaultExchanger;
 }
 
-function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
-    console.log(`--------------------------------------`);
-    console.log(` HedgingVaultDeployParams Params`);
-    console.log(`--------------------------------------`);
+export function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`                                DEPLOY CONFIG`);
+    console.log(`--------------------------------------------------------------------------------`);
     console.log(` adminAddress: ${deployParams.adminAddress}`);
     console.log(` strategistAddress: ${deployParams.strategistAddress}`);
     console.log(` operatorAddress: ${deployParams.operatorAddress}`);
@@ -88,7 +88,7 @@ function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployParams) {
     console.log(` uniswapV3SwapRouter: ${deployParams.uniswapV3SwapRouter}`);
     console.log(` potionLiquidityPoolManager: ${deployParams.potionLiquidityPoolManager}`);
     console.log(` opynAddressBook: ${deployParams.opynAddressBook}`);
-    console.log(`--------------------------------------\n`);
+    console.log(`--------------------------------------------------------------------------------\n`);
 }
 
 async function deployContracts(parameters: HedgingVaultDeployParams): Promise<HedgingVaultDeploymentResult> {
@@ -204,8 +204,6 @@ async function configureContracts(parameters: HedgingVaultDeployParams, deployme
 }
 
 export async function deployHedgingVault(parameters: HedgingVaultDeployParams): Promise<HedgingVaultDeploymentResult> {
-    printHedgingVaultDeployParams(parameters);
-
     const deploymentResult: HedgingVaultDeploymentResult = await deployContracts(parameters);
 
     await configureContracts(parameters, deploymentResult);

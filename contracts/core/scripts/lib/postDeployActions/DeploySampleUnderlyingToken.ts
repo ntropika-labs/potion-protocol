@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployActionsResults } from "../postDeploy";
-import { deploy, DeploymentOptions } from "contracts-utils";
+import { DeploymentFlags, Deployments } from "contracts-utils";
 
 export class DeploySampleUnderlyingToken {
     public constructor(public tokenSymbol = "UNDRLYNG") {}
@@ -16,10 +16,10 @@ export class DeploySampleUnderlyingToken {
 
         printProgress &&
             process.stdout.write(`Deploying & whitelisting sample underlying token (${this.tokenSymbol})... `);
-        const token = await deploy(
+        const token = await Deployments.Get().deploy(
             "SampleUnderlyingToken",
             [this.tokenSymbol],
-            isFirstToken ? { options: DeploymentOptions.DeployAndExport } : { options: DeploymentOptions.Deploy },
+            isFirstToken ? { options: DeploymentFlags.Export } : { options: DeploymentFlags.None },
         );
         printProgress && console.log(`deployed at ${token.address}`);
 

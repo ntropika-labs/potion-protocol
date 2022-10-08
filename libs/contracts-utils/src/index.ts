@@ -3,7 +3,8 @@ export type {
   DeploymentObjectLegacy,
   DeploymentObject,
   DeploymentParams,
-  DeployedContract,
+  Deployment,
+  DeploymentContract,
 } from "./deployment";
 export { Deployments } from "./deployment";
 export { asMock, ifMocksEnabled } from "./test/mocks";

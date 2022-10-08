@@ -16,7 +16,7 @@ import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 import type {
   DeploymentInitParams,
-  DeployedContract,
+  Deployment,
   DeploymentParams,
   DeploymentObject,
   DeploymentObjectLegacy,
@@ -34,7 +34,6 @@ import {
   isNetwork,
 } from "./types";
 import { verify } from "./utils/hardhat";
-
 export class Deployments {
   private static DeploymentsSingleton: Deployments | undefined;
 
@@ -43,7 +42,7 @@ export class Deployments {
   public readonly deploymentsDir: string;
   public readonly indexDir: string;
 
-  public readonly deployments: DeployedContract[] = [];
+  public readonly deployments: Deployment[] = [];
 
   private static readonly NumConfirmationsWait = 5;
   private static readonly DeploymentsIndexFileName = "index.ts";
@@ -110,7 +109,7 @@ export class Deployments {
       alias = overrides.alias;
     }
 
-    let deployment: DeployedContract;
+    let deployment: Deployment;
     if (this._hasMockOption(options) && this._isInternalProvider()) {
       deployment = await this._deployMock(contractName, args, alias, overrides);
     } else {
@@ -282,16 +281,21 @@ export class Deployments {
     const deploymentExtension = Deployments.LegacyDeploymentFileExtension;
 
     let deploymentsPath = "";
-    if (this.type.network === DeploymentNetwork.Develop) {
-      if (this.type.provider === ProviderTypes.Internal) {
-        deploymentsPath = "hardhat";
-      } else {
-        deploymentsPath = this.type.provider;
-      }
+    if (
+      this.type.network === DeploymentNetwork.Develop &&
+      this.type.provider === ProviderTypes.Internal
+    ) {
+      deploymentsPath = "hardhat";
     } else if (this.type.provider === ProviderTypes.Remote) {
-      deploymentsPath = this.type.network;
+      deploymentsPath =
+        this.type.network +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
     } else {
-      deploymentsPath = `localhost.${this.type.network}`;
+      deploymentsPath =
+        `localhost` +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
     }
 
     if (timestamp) {
@@ -404,7 +408,7 @@ export class Deployments {
     options: DeploymentOptions,
     alias?: string,
     overrides: (Signer | FactoryOptions) | undefined = undefined
-  ): Promise<DeployedContract> {
+  ): Promise<Deployment> {
     let contract: Contract;
     let receipt: TransactionReceipt;
 
@@ -436,7 +440,7 @@ export class Deployments {
     args: unknown[] = [],
     alias?: string,
     overrides: (Signer | FactoryOptions) | undefined = undefined
-  ): Promise<DeployedContract> {
+  ): Promise<Deployment> {
     let contract: MockContract<Contract>;
     let receipt: TransactionReceipt;
 
@@ -466,7 +470,7 @@ export class Deployments {
   }
 
   async _verify(
-    deployment: DeployedContract,
+    deployment: Deployment,
     args: unknown[],
     options: DeploymentOptions
   ) {
