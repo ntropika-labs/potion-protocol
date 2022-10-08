@@ -2,7 +2,14 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { MockContract } from "@defi-wonderland/smock";
 import { mockERC20, mockERC4626 } from "../../scripts/test/contractsMocks";
-import { ifMocksEnabled, asMock } from "contracts-utils";
+import {
+    ifMocksEnabled,
+    asMock,
+    Deployments,
+    ProviderTypes,
+    DeploymentNetwork,
+    DeploymentFlags,
+} from "contracts-utils";
 
 import { TestWrapperVaultDeferredOperation, ERC4626, ERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -19,25 +26,27 @@ describe("VaultDeferredOperation", function () {
     let assetToken: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     let targetVault: ERC4626 | MockContract<ERC4626>;
 
+    before(function () {
+        Deployments.Init({
+            type: {
+                provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
+                network: DeploymentNetwork.Develop,
+                config: "test",
+            },
+            options: DeploymentFlags.None,
+        });
+    });
+
     beforeEach(async function () {
         unpriviledgedAccount = (await ethers.getSigners())[1];
         unpriviledgedAccount2 = (await ethers.getSigners())[2];
 
-        const mockERC20Result = await mockERC20(network.name, "AssetToken");
-
-        assetToken = mockERC20Result.softMock ? mockERC20Result.softMock : mockERC20Result.hardMock;
+        assetToken = await mockERC20("AssetToken");
 
         const VaultDeferredOperationFactory = await ethers.getContractFactory("TestWrapperVaultDeferredOperation");
         vaultDeferredOperation = (await VaultDeferredOperationFactory.deploy()) as TestWrapperVaultDeferredOperation;
 
-        const mockERC4626Result = await mockERC4626(
-            network.name,
-            "TestVault",
-            "TSTV",
-            assetToken.address,
-            "InvestmentVault",
-        );
-        targetVault = mockERC4626Result.softMock ? mockERC4626Result.softMock : mockERC4626Result.hardMock;
+        targetVault = await mockERC4626("TestVault", "TSTV", assetToken.address, "InvestmentVault");
 
         await vaultDeferredOperation.initialize(targetVault.address, assetToken.address, "SomeURI");
 

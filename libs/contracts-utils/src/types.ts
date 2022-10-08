@@ -27,8 +27,8 @@ export enum DeploymentFlags {
 export interface DeploymentInitParams {
   type: DeploymentType;
   options: DeploymentOptions;
-  deploymentsDir: string;
-  indexDir: string;
+  deploymentsDir?: string;
+  indexDir?: string;
 }
 
 export interface DeploymentObjectLegacy {

@@ -1,9 +1,12 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { TestWrapperVaultWithReceipts } from "../../typechain";
 import { MockERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Deployments, ProviderTypes, showConsoleLogs, DeploymentNetwork, DeploymentFlags } from "contracts-utils";
+import { mockERC20 } from "../../scripts/test/contractsMocks";
+import { MockContract } from "@defi-wonderland/smock";
 
 /**
     @notice VaultWithReceipts unit tests    
@@ -14,17 +17,28 @@ describe("VaultWithReceipts", function () {
     let unpriviledgedAccount: SignerWithAddress;
     let unpriviledgedAccount2: SignerWithAddress;
     let vaultWithReceipts: TestWrapperVaultWithReceipts;
-    let assetToken: MockERC20PresetMinterPauser;
+    let assetToken: MockERC20PresetMinterPauser | MockContract<MockERC20PresetMinterPauser>;
+    let depl: Deployments;
+
+    before(function () {
+        showConsoleLogs(false);
+        depl = Deployments.Init({
+            type: {
+                provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
+                network: DeploymentNetwork.Develop,
+                config: "test",
+            },
+            options: DeploymentFlags.None,
+        });
+    });
 
     beforeEach(async function () {
         unpriviledgedAccount = (await ethers.getSigners())[1];
         unpriviledgedAccount2 = (await ethers.getSigners())[2];
 
-        const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
-        assetToken = (await ERC20Factory.deploy()) as MockERC20PresetMinterPauser;
+        assetToken = await mockERC20("AssetToken");
 
-        const VaultWithReceiptsFactory = await ethers.getContractFactory("TestWrapperVaultWithReceipts");
-        vaultWithReceipts = (await VaultWithReceiptsFactory.deploy()) as TestWrapperVaultWithReceipts;
+        vaultWithReceipts = (await depl.deploy("TestWrapperVaultWithReceipts", [])) as TestWrapperVaultWithReceipts;
 
         await vaultWithReceipts.initialize(assetToken.address, "SomeURI");
 

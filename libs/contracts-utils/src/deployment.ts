@@ -39,8 +39,8 @@ export class Deployments {
 
   public readonly type: DeploymentType;
   public readonly options: DeploymentOptions;
-  public readonly deploymentsDir: string;
-  public readonly indexDir: string;
+  public readonly deploymentsDir?: string;
+  public readonly indexDir?: string;
 
   public readonly deployments: Deployment[] = [];
 
@@ -49,6 +49,15 @@ export class Deployments {
   private static readonly DeploymentTypeSeparator = ".";
   private static readonly DeploymentFileExtension = ".json";
   private static readonly LegacyDeploymentFileExtension = ".json";
+
+  private static readonly DefaultParams: DeploymentInitParams = {
+    type: {
+      provider: ProviderTypes.Internal,
+      network: DeploymentNetwork.Develop,
+      config: "test",
+    },
+    options: DeploymentFlags.None,
+  };
 
   constructor(params: DeploymentInitParams) {
     Deployments.ValidateParams(params);
@@ -62,11 +71,9 @@ export class Deployments {
   /**
     SINGLETON
   */
-  static Init(params: DeploymentInitParams): Deployments {
-    if (this.DeploymentsSingleton) {
-      throw new Error("Deployments already initialized");
-    }
-
+  static Init(
+    params: DeploymentInitParams = Deployments.DefaultParams
+  ): Deployments {
     this.DeploymentsSingleton = new Deployments(params);
 
     return this.DeploymentsSingleton;
@@ -152,6 +159,10 @@ export class Deployments {
   }
 
   persist(includeLegacy = false): void {
+    if (this._isInternalProvider()) {
+      return;
+    }
+
     // Cycle the previous deployment info to keep a history of deployments.
     // When deploying to develop only the latest deployment is kept.
     if (this._isDevelopNetwork() === false) {
@@ -247,11 +258,11 @@ export class Deployments {
     return this.options;
   }
 
-  public getDeploymentsDir(): string {
+  public getDeploymentsDir(): string | undefined {
     return this.deploymentsDir;
   }
 
-  public getIndexDir(): string {
+  public getIndexDir(): string | undefined {
     return this.indexDir;
   }
 
@@ -268,7 +279,11 @@ export class Deployments {
   }
 
   public getDeploymentsPath(timestamp: number | undefined = undefined): string {
-    const deploymentsDir = this.getDeploymentsDir();
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
     const providerDir = `${this.type.provider}`;
     const deploymentsFileName = this.getDeploymentsName(timestamp);
 
@@ -309,13 +324,23 @@ export class Deployments {
   public getLegacyDeploymentsPath(
     timestamp: number | undefined = undefined
   ): string {
-    const deploymentsDir = this.getDeploymentsDir();
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
     const deploymentsFileName = this.getLegacyDeploymentsName(timestamp);
 
     return resolve(deploymentsDir, deploymentsFileName);
   }
 
   public rebuildIndex(includeLegacy = false): void {
+    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
+      return;
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const indexDir = this.indexDir;
     let deploymentsIndex = {};
 
     // Loop through all the inner directories
@@ -328,7 +353,7 @@ export class Deployments {
 
     // Read the contents of the each directory
     deploymentDirs.forEach((deploymentDir) => {
-      const deploymentDirPath = resolve(this.deploymentsDir, deploymentDir);
+      const deploymentDirPath = resolve(deploymentsDir, deploymentDir);
       const deploymentFiles = fs
         .readdirSync(deploymentDirPath)
         .filter(
@@ -354,7 +379,7 @@ export class Deployments {
 
     if (includeLegacy) {
       const legacyFiles = fs
-        .readdirSync(this.deploymentsDir)
+        .readdirSync(deploymentsDir)
         .filter(
           (fileName) =>
             fileName.endsWith(Deployments.LegacyDeploymentFileExtension) &&
@@ -362,7 +387,7 @@ export class Deployments {
         );
 
       legacyFiles.forEach((legacyFile) => {
-        const legacyFilePath = resolve(this.deploymentsDir, legacyFile);
+        const legacyFilePath = resolve(deploymentsDir, legacyFile);
         const legacyDeploymentJSON = fs.readFileSync(legacyFilePath, "utf8");
         const legacyDeployment = JSON.parse(legacyDeploymentJSON);
 
@@ -378,7 +403,7 @@ export class Deployments {
 
     // Write the index file
     const indexFilePath = resolve(
-      this.indexDir,
+      indexDir,
       Deployments.DeploymentsIndexFileName
     );
 

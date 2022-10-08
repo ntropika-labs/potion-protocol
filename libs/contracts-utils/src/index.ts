@@ -3,7 +3,6 @@ export type {
   DeploymentObjectLegacy,
   DeploymentObject,
   DeploymentParams,
-  Deployment,
   DeploymentContract,
 } from "./deployment";
 export { Deployments } from "./deployment";
@@ -15,6 +14,8 @@ export {
   ProviderTypes,
   DeploymentFlags,
   DeploymentOptions,
+  DeploymentNetwork,
   isProvider,
   isNetwork,
 } from "./types";
+export { showConsoleLogs } from "./test/console";

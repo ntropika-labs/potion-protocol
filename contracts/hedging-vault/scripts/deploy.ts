@@ -12,7 +12,7 @@ dotenvConfig({ path: resolve(__dirname, "./.env") });
 async function main() {
     const deploymentType: DeploymentType = getDeploymentType();
 
-    Deployments.Init({
+    const depl = Deployments.Init({
         type: deploymentType,
         options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
@@ -37,7 +37,9 @@ async function main() {
         );
     }
 
-    await deployTestingEnv(deploymentConfig, true);
+    await deployTestingEnv(deploymentConfig);
+
+    depl.persist();
 
     console.log("\n[DEPLOYMENT COMPLETE]\n");
 }

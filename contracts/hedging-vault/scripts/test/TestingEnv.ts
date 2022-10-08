@@ -377,14 +377,7 @@ export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgi
 
 export async function deployTestingEnv(
     deploymentConfig: PotionHedgingVaultConfigParams,
-    showLogs: boolean = false,
 ): Promise<TestingEnvironmentDeployment> {
-    if (!showLogs) {
-        console.log = function () {
-            /* empty on purpose */
-        };
-    }
-
     const deployer = (await ethers.getSigners())[0];
 
     const testEnvDeployment: TestingEnvironmentDeployment = await prepareTestEnvironment(deployer, deploymentConfig);
@@ -442,8 +435,6 @@ export async function deployTestingEnv(
     console.log(`--------------------------------------------------------------------------------\n`);
 
     printDeploymentEnvironment(testEnvDeployment);
-
-    Deployments.Get().persist(true);
 
     return testEnvDeployment;
 }
