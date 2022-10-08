@@ -3,7 +3,7 @@ import { MockOracle, MarginCalculator } from "../../../typechain";
 import { createScaledNumber as scaleNum } from "../../../test/helpers/OpynUtils";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployAction, PostDeployActionsResults } from "../postDeploy";
-import { deploy } from "../../utils/deployment";
+import { deploy } from "contracts-utils";
 
 export class InitializeMockOracle implements PostDeployAction {
     public constructor(public initialEthPriceInDollars: number) {}

@@ -230,7 +230,7 @@ export const Deployments = {
         },
     },
     "localhost.hedging": {
-        timestamp: 1664973047,
+        timestamp: 1665124046,
         network: "localhost",
         contracts: {
             AddressBook: {
@@ -246,8 +246,8 @@ export const Deployments = {
                 blockNumber: 3,
             },
             MarginCalculator: {
-                address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-                blockNumber: 67,
+                address: "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7",
+                blockNumber: 97,
             },
             OtokenFactory: {
                 address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
@@ -264,10 +264,6 @@ export const Deployments = {
             MarginVault: {
                 address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
                 blockNumber: 8,
-            },
-            Controller: {
-                address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-                blockNumber: 10,
             },
             PotionTestUSD: {
                 address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
@@ -294,8 +290,8 @@ export const Deployments = {
                 blockNumber: 25,
             },
             MockOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-                blockNumber: 63,
+                address: "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
+                blockNumber: 93,
             },
         },
     },

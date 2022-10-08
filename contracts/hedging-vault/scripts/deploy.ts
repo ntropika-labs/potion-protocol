@@ -5,8 +5,13 @@ import { getDeploymentConfig, deployTestingEnv } from "./test/TestingEnv";
 
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import { initDeployment, exportDeployments } from "./utils/deployment";
-import { getDeploymentsNetworkName, getHardhatNetworkName } from "./utils/network";
+import {
+    initDeployment,
+    exportDeployments,
+    DeploymentOptions,
+    getDeploymentsNetworkName,
+    getHardhatNetworkName,
+} from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -19,7 +24,11 @@ async function main() {
     const networkName = getHardhatNetworkName();
     const deploymentNetworkName = getDeploymentsNetworkName();
 
-    await initDeployment();
+    await initDeployment({
+        options: DeploymentOptions.DeployAndExport,
+        deploymentsDir: resolve(__dirname, "../deployments"),
+        indexDir: resolve(__dirname, "../src"),
+    });
 
     const deployer = (await ethers.provider.listAccounts())[0];
 

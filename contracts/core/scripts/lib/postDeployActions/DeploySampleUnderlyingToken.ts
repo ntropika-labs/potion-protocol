@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployActionsResults } from "../postDeploy";
-import { deploy, DeploymentOptions } from "../../utils/deployment";
+import { deploy, DeploymentOptions } from "contracts-utils";
 
 export class DeploySampleUnderlyingToken {
     public constructor(public tokenSymbol = "UNDRLYNG") {}

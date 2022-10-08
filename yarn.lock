@@ -16084,6 +16084,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"contracts-utils@workspace:libs/contracts-utils":
+  version: 0.0.0-use.local
+  resolution: "contracts-utils@workspace:libs/contracts-utils"
+  languageName: unknown
+  linkType: soft
+
 "conventional-changelog-angular@npm:^5.0.0":
   version: 5.0.13
   resolution: "conventional-changelog-angular@npm:5.0.13"
@@ -22481,6 +22487,12 @@ __metadata:
   checksum: 1a23008cbda8275eac740876cd212474220b5c77995a7357191d6880a15e8f9beb91c68dc42873f119625bafba195917ecd3b2228be72a4aa5dee01d239267d2
   languageName: node
   linkType: hard
+
+"hardhat-helpers@workspace:libs/hardhat-helpers":
+  version: 0.0.0-use.local
+  resolution: "hardhat-helpers@workspace:libs/hardhat-helpers"
+  languageName: unknown
+  linkType: soft
 
 "hardhat-watcher@npm:^2.1.1":
   version: 2.3.0

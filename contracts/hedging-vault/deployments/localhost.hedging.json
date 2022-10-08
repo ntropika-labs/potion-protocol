@@ -1,30 +1,30 @@
 {
-  "timestamp": 1664973064,
+  "timestamp": 1665124084,
   "network": "localhost",
   "contracts": {
     "HedgingVaultOrchestrator": {
-      "address": "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07",
-      "blockNumber": 73
+      "address": "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25",
+      "blockNumber": 103
     },
     "PotionBuyAction": {
-      "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
-      "blockNumber": 76
+      "address": "0xfbC22278A96299D91d41C453234d97b4F5Eb9B2d",
+      "blockNumber": 106
     },
     "InvestmentVault": {
-      "address": "0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6",
-      "blockNumber": 78
+      "address": "0xC9a43158891282A2B1475592D5719c001986Aaec",
+      "blockNumber": 108
     },
     "RoundsInputVault": {
-      "address": "0x4C4a2f8c81640e47606d3fd77B353E87Ba015584",
-      "blockNumber": 80
+      "address": "0x367761085BF3C12e5DA2Df99AC6E1a824612b8fb",
+      "blockNumber": 110
     },
     "RoundsOutputVault": {
-      "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
-      "blockNumber": 82
+      "address": "0x7A9Ec1d04904907De0ED7b6839CcdD59c3716AC9",
+      "blockNumber": 112
     },
     "RoundsVaultExchanger": {
-      "address": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-      "blockNumber": 83
+      "address": "0x49fd2BE640DB2910c2fAb69bB8531Ab6E76127ff",
+      "blockNumber": 113
     }
   }
 }

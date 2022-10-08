@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { InvestmentVault } from "../../typechain";
-import { deployUpgrade } from "../utils/deployment";
+import { deployUpgrade } from "contracts-utils";
 
 export interface InvestmentVaultDeployParams {
     adminAddress: string;

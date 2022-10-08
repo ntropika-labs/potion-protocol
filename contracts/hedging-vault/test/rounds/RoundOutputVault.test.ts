@@ -2,12 +2,13 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { MockContract } from "@defi-wonderland/smock";
 
-import { RoundsOutputVault, ERC4626, MockERC20PresetMinterPauser } from "../../typechain";
+import { RoundsOutputVault, ERC4626, MockERC20PresetMinterPauser, MockERC4626 } from "../../typechain";
 
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
-import { mockERC4626, mockERC20, ifMocksEnabled, asMock } from "../../scripts/test/MocksLibrary";
+import { mockERC4626, mockERC20 } from "../../scripts/test/contractsMocks";
+import { ifMocksEnabled, asMock } from "contracts-utils";
 
 /**
     @notice VaultDeferredOperation unit tests    
@@ -92,7 +93,7 @@ describe("RoundsOutputVault", function () {
         });
 
         // TODO: Need to return some balance here because the shares were not actually transferred
-        await targetVault.mockSetBalanceOf(shares);
+        await (targetVault as unknown as MockERC4626).mockSetBalanceOf(shares);
 
         const tx = roundsOutputVault.connect(operatorAccount).nextRound();
         await expect(tx)

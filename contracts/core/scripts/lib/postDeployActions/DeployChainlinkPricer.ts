@@ -1,6 +1,6 @@
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployAction, PostDeployActionsResults } from "../postDeploy";
-import { deploy, DeploymentOptions } from "../../utils/deployment";
+import { deploy, DeploymentOptions } from "contracts-utils";
 
 export interface PricerConfig {
     assetName: string;

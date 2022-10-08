@@ -26,9 +26,9 @@ import {
     mockOpynFactory,
     mockOpynOracle,
     mockOpynAddressBook,
-    asMock,
-} from "./MocksLibrary";
-import { attachContract } from "../utils/deployment";
+} from "./contractsMocks";
+import { asMock } from "contracts-utils";
+import { attachContract } from "contracts-utils";
 import {
     deployHedgingVault,
     HedgingVaultDeploymentResult,

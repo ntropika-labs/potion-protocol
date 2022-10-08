@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { MockContract } from "@defi-wonderland/smock";
-import { asMock, ifMocksEnabled, mockERC20, mockERC4626 } from "../../scripts/test/MocksLibrary";
+import { mockERC20, mockERC4626 } from "../../scripts/test/contractsMocks";
+import { ifMocksEnabled, asMock } from "contracts-utils";
 
 import { TestWrapperVaultDeferredOperation, ERC4626, ERC20PresetMinterPauser } from "../../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";

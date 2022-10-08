@@ -47,6 +47,12 @@
     },
     {
       "path": "libs/hedging-vault-sdk"
+    },
+    {
+      "path": "libs/contracts-utils"
+    },
+    {
+      "path": "libs/hardhat-helpers"
     }
   ],
   "exclude": ["node_modules", "tmp", "dist"]

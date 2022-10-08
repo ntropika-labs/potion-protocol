@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber } from "ethers";
+import { BigNumber, Signer } from "ethers";
 
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
@@ -26,9 +26,8 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
 
-import { asMock, ifMocksEnabled } from "../../scripts/test/MocksLibrary";
+import { ifMocksEnabled, asMock, getDeploymentsNetworkName } from "contracts-utils";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
-import { getDeploymentsNetworkName } from "../../scripts/utils/network";
 
 interface TestConditions {
     uniswapEnterPositionInputAmount: BigNumber;
@@ -213,7 +212,7 @@ async function setupTestConditions(
     ifMocksEnabled(() => {
         asMock(tEnv.potionLiquidityPoolManager).buyOtokens.returns(async () => {
             // Transfer
-            await tEnv.USDC.connect(asMock(tEnv.potionLiquidityPoolManager).wallet).transferFrom(
+            await tEnv.USDC.connect(asMock(tEnv.potionLiquidityPoolManager).wallet as unknown as Signer).transferFrom(
                 tEnv.potionBuyAction.address,
                 tEnv.potionLiquidityPoolManager.address,
                 expectedPremiumInUSDC,
