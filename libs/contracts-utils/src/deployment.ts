@@ -609,7 +609,7 @@ export class Deployments {
           const importName = toCamelCase(
             deploymentTypeName,
             this.DeploymentTypeSeparator
-          );
+          ).replace("-", "");
 
           indexImports.push({
             name: importName,
