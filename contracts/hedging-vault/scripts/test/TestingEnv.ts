@@ -312,7 +312,13 @@ async function prepareTestEnvironment(
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getPotionProtocolDeployments(networkName: string): any {
     /* @ts-expect-error iterator is not defined */
-    return PotionDeployments[networkName].contracts;
+    const deployment = PotionDeployments[networkName];
+
+    if (deployment === undefined) {
+        return undefined;
+    }
+
+    return deployment.contracts;
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -340,20 +346,34 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
 
 export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
     const deploymentTypeName = Deployments.GetDeploymentNameFromType(deploymentType);
+    const legacyDeploymentTypeName = Deployments.GetLegacyDeploymentNameFromType(deploymentType);
     const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
 
-    if (deploymentType.provider !== ProviderTypes.Hardhat && deploymentType.config !== "test") {
-        const potionProtocolDeployments = getPotionProtocolDeployments(deploymentTypeName);
+    let potionProtocolDeployments;
+    if (deploymentType.provider !== ProviderTypes.Internal && deploymentType.config !== "test") {
+        potionProtocolDeployments = getPotionProtocolDeployments(deploymentTypeName);
+
+        if (potionProtocolDeployments === undefined) {
+            potionProtocolDeployments = getPotionProtocolDeployments(legacyDeploymentTypeName);
+        }
+
         if (potionProtocolDeployments !== undefined) {
             usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
         }
+    }
+
+    if (potionProtocolDeployments !== undefined) {
+        console.log("[Using potion protocol deployments]\n");
+    } else {
+        console.log(
+            `[Not using potion protocol deployments, couldn't find ${deploymentTypeName} or ${legacyDeploymentTypeName} deployments]\n`,
+        );
     }
 
     return hedgingVaultConfig;
 }
 
 export async function deployTestingEnv(
-    deployments: Deployments,
     deploymentConfig: PotionHedgingVaultConfigParams,
     showLogs: boolean = false,
 ): Promise<TestingEnvironmentDeployment> {

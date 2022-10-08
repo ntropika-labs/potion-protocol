@@ -39,11 +39,13 @@ async function main() {
 
     const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(deploymentType);
     if (!deploymentConfig) {
-        throw new Error(`No deploy config found for network '${deploymentType.network}'`);
+        throw new Error(
+            `No deploy config found for deployment type '${Deployments.GetDeploymentNameFromType(deploymentType)}'`,
+        );
     }
 
-    await deployTestingEnv(deployments, deploymentConfig, true);
-    deployments.persist();
+    await deployTestingEnv(deploymentConfig, true);
+    deployments.persist(true);
 
     console.log("Deployment complete");
 }

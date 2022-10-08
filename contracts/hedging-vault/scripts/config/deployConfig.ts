@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { NetworksType } from "../../hardhat.helpers";
+import { NetworksType } from "hardhat-helpers";
 import * as PercentageUtils from "hedging-vault-sdk";
 
 /**
@@ -96,6 +96,22 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
     },
     "localhost.hedging": {
+        networkName: "localhost",
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                       1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
+    },
+    "internal.develop.hedging": {
         networkName: "localhost",
 
         // Investment configuration
