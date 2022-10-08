@@ -18,58 +18,15 @@ import type { DeploymentType, Provider, Network, ConfigName } from "./types";
 import {
   DeploymentFlags,
   DeploymentOptions,
+  DeploymentInitParams,
+  DeployedContract,
+  DeploymentParams,
+  DeploymentObject,
+  DeploymentObjectLegacy,
   isProvider,
   isNetwork,
 } from "./types";
 import { verify } from "./utils/hardhat";
-
-export interface DeploymentInitParams {
-  type: DeploymentType;
-  options: DeploymentOptions;
-  deploymentsDir: string;
-  indexDir: string;
-}
-
-export interface DeploymentObjectLegacy {
-  timestamp: number;
-  network: Network;
-  contracts: {
-    [contractName: string]: {
-      address: string;
-      blockNumber: number;
-    };
-  };
-}
-
-export interface DeploymentObject {
-  timestamp: number;
-  provider: Provider;
-  network: Network;
-  config: ConfigName;
-  contracts: {
-    [contractName: string]: {
-      address: string;
-      blockNumber: number;
-    };
-  };
-  dependencies: {
-    [dependencyName: string]: {
-      address: string;
-    };
-  };
-}
-
-export interface DeploymentParams extends FactoryOptions {
-  options?: DeploymentOptions;
-  alias?: string; // The deployed contract will be exported in the JSON file with this alias
-  contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
-}
-
-export interface DeployedContract {
-  contract: Contract | MockContract<Contract>;
-  name: string;
-  receipt?: TransactionReceipt;
-}
 
 export class Deployments {
   private static DeploymentsSingleton: Deployments | undefined;

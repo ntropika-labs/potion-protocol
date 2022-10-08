@@ -1,5 +1,9 @@
+import type { Contract } from "ethers";
 import type { NetworksType } from "hardhat-helpers";
 import { Networks } from "hardhat-helpers";
+import type { FactoryOptions } from "@nomiclabs/hardhat-ethers/types";
+import { TransactionReceipt } from "@ethersproject/providers";
+import type { MockContract } from "@defi-wonderland/smock";
 
 export enum ProviderTypes {
   Internal = "internal",
@@ -17,6 +21,54 @@ export enum DeploymentFlags {
   Verify = 1 << 2,
   Upgradeable = 1 << 3,
   Mock = 1 << 4,
+}
+
+export interface DeploymentInitParams {
+  type: DeploymentType;
+  options: DeploymentOptions;
+  deploymentsDir: string;
+  indexDir: string;
+}
+
+export interface DeploymentObjectLegacy {
+  timestamp: number;
+  network: Network;
+  contracts: {
+    [contractName: string]: {
+      address: string;
+      blockNumber: number;
+    };
+  };
+}
+
+export interface DeploymentObject {
+  timestamp: number;
+  provider: Provider;
+  network: Network;
+  config: ConfigName;
+  contracts: {
+    [contractName: string]: {
+      address: string;
+      blockNumber: number;
+    };
+  };
+  dependencies: {
+    [dependencyName: string]: {
+      address: string;
+    };
+  };
+}
+
+export interface DeploymentParams extends FactoryOptions {
+  options?: DeploymentOptions;
+  alias?: string; // The deployed contract will be exported in the JSON file with this alias
+  contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
+}
+
+export interface DeployedContract {
+  contract: Contract | MockContract<Contract>;
+  name: string;
+  receipt?: TransactionReceipt;
 }
 
 export type DeploymentOptions = DeploymentFlags;
