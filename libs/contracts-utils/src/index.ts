@@ -1,20 +1,19 @@
-export type { DeploymentParams } from "./utils/deployment";
+export type {
+  DeploymentInitParams,
+  DeploymentObjectLegacy,
+  DeploymentObject,
+  DeploymentParams,
+  DeployedContract,
+} from "./deployment";
+export { Deployments } from "./deployment";
+export { asMock, ifMocksEnabled } from "./test/mocks";
+export type { MockOrContract } from "./test/mocks";
+export { getDeploymentType, parseDeploymentName } from "./config";
+export type { Provider, Network, ConfigName, DeploymentType } from "./types";
 export {
+  ProviderTypes,
   DeploymentFlags,
   DeploymentOptions,
-  isDeploymentParams,
-  initDeployment,
-  exportDeployments,
-  exportContract,
-  verify,
-  deploy,
-  deployUpgrade,
-  deployMock,
-  attachContract,
-} from "./utils/deployment";
-export {
-  getHardhatNetworkName,
-  getDeploymentsNetworkName,
-} from "./utils/network";
-export { mockContract, asMock, ifMocksEnabled } from "./test/mocks";
-export type { MockOrContract } from "./test/mocks";
+  isProvider,
+  isNetwork,
+} from "./types";

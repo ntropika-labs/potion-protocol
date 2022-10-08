@@ -2,16 +2,12 @@ import { network, ethers } from "hardhat";
 import { Deployments as PotionProtocolDeployments } from "@potion-protocol/core";
 import { PotionHedgingVaultConfigParams } from "./config/deployConfig";
 import { getDeploymentConfig, deployTestingEnv } from "./test/TestingEnv";
+import { getDeploymentType } from "contracts-utils";
+import type { DeploymentType } from "contracts-utils";
 
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import {
-    initDeployment,
-    exportDeployments,
-    DeploymentOptions,
-    getDeploymentsNetworkName,
-    getHardhatNetworkName,
-} from "contracts-utils";
+import { DeploymentFlags, Deployments } from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -21,11 +17,11 @@ if (!potionProtocolDeployment) {
 }
 
 async function main() {
-    const networkName = getHardhatNetworkName();
-    const deploymentNetworkName = getDeploymentsNetworkName();
+    const deploymentType: DeploymentType = getDeploymentType();
 
-    await initDeployment({
-        options: DeploymentOptions.DeployAndExport,
+    const deployments = Deployments.Init({
+        type: deploymentType,
+        options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
         indexDir: resolve(__dirname, "../src"),
     });
@@ -35,18 +31,19 @@ async function main() {
     console.log(`---------------------------------------------------`);
     console.log(` Hedging Vault Deployment Script`);
     console.log(`---------------------------------------------------`);
-    console.log(`- Network ${networkName}`);
-    console.log(`- Deployment Config '${deploymentNetworkName}'`);
+    console.log(`- Provider: ${deploymentType.provider}`);
+    console.log(`- Network: ${deploymentType.network}`);
+    console.log(`- Config: ${deploymentType.config}`);
     console.log(`- Deployer: ${deployer}`);
     console.log(`---------------------------------------------------\n`);
 
-    const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(deploymentNetworkName);
+    const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(deploymentType);
     if (!deploymentConfig) {
-        throw new Error(`No deploy config found for network '${networkName}'`);
+        throw new Error(`No deploy config found for network '${deploymentType.network}'`);
     }
 
-    await deployTestingEnv(deploymentConfig, true);
-    await exportDeployments();
+    await deployTestingEnv(deployments, deploymentConfig, true);
+    deployments.persist();
 
     console.log("Deployment complete");
 }

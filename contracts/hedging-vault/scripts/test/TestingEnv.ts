@@ -27,8 +27,8 @@ import {
     mockOpynOracle,
     mockOpynAddressBook,
 } from "./contractsMocks";
-import { asMock } from "contracts-utils";
-import { attachContract } from "contracts-utils";
+import { asMock, Deployments, ProviderTypes } from "contracts-utils";
+import type { DeploymentType } from "contracts-utils";
 import {
     deployHedgingVault,
     HedgingVaultDeploymentResult,
@@ -37,7 +37,8 @@ import {
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-import { Deployments } from "@potion-protocol/core";
+import { Deployments as PotionDeployments } from "@potion-protocol/core";
+
 export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
@@ -140,130 +141,97 @@ function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
 async function mockContractsIfNeeded(
     deploymentConfig: PotionHedgingVaultConfigParams,
 ): Promise<Partial<TestingEnvironmentDeployment>> {
+    const depl = Deployments.Get();
+
     const testingEnvironmentDeployment: Partial<TestingEnvironmentDeployment> = {};
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
-        const mockingResult = await mockERC20(deploymentConfig.networkName, "USDC");
-        testingEnvironmentDeployment.USDC = mockingResult.softMock ? mockingResult.softMock : mockingResult.hardMock;
+        testingEnvironmentDeployment.USDC = await mockERC20("USDC");
     } else {
-        testingEnvironmentDeployment.USDC = await attachContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.USDC = await depl.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.USDC,
-            {
-                alias: "USDC",
-            },
+            "USDC",
         );
     }
 
     // Check if need to mock underlying asset
     if (!deploymentConfig.underlyingAsset) {
-        const mockingResult = await mockERC20(deploymentConfig.networkName, "UnderlyingAsset");
-        testingEnvironmentDeployment.underlyingAsset = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
+        testingEnvironmentDeployment.underlyingAsset = await mockERC20("UnderlyingAsset");
     } else {
-        testingEnvironmentDeployment.underlyingAsset = await attachContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.underlyingAsset = await depl.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.underlyingAsset,
-            {
-                alias: "UnderlyingAsset",
-            },
+            "UnderlyingAsset",
         );
     }
 
     // Check if need to mock PotionProtocol
     if (!deploymentConfig.potionLiquidityPoolManager) {
-        const mockingResult = await mockPotionLiquidityPoolManager(deploymentConfig.networkName);
-        testingEnvironmentDeployment.potionLiquidityPoolManager = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await mockPotionLiquidityPoolManager();
     } else {
-        testingEnvironmentDeployment.potionLiquidityPoolManager = await attachContract<IPotionLiquidityPool>(
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await depl.attach<IPotionLiquidityPool>(
             "IPotionLiquidityPool",
             deploymentConfig.potionLiquidityPoolManager,
-            {
-                alias: "PotionLiquidityPool",
-            },
+            "PotionLiquidityPool",
         );
     }
 
     if (!deploymentConfig.opynAddressBook) {
-        const opynController = await mockOpynController(deploymentConfig.networkName);
-        const opynFactory = await mockOpynFactory(deploymentConfig.networkName);
-        const opynOracle = await mockOpynOracle(deploymentConfig.networkName);
+        testingEnvironmentDeployment.opynController = await mockOpynController();
+        testingEnvironmentDeployment.opynFactory = await mockOpynFactory();
+        const opynOracle = await mockOpynOracle();
 
-        testingEnvironmentDeployment.opynController = opynController.softMock
-            ? opynController.softMock
-            : opynController.hardMock;
-        testingEnvironmentDeployment.opynFactory = opynFactory.softMock ? opynFactory.softMock : opynFactory.hardMock;
-        testingEnvironmentDeployment.opynOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
-        testingEnvironmentDeployment.opynMockOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
+        testingEnvironmentDeployment.opynOracle = opynOracle;
+        testingEnvironmentDeployment.opynMockOracle = opynOracle;
 
-        const mockingResult = await mockOpynAddressBook(
-            deploymentConfig.networkName,
+        testingEnvironmentDeployment.opynAddressBook = await mockOpynAddressBook(
             testingEnvironmentDeployment.opynController.address,
             testingEnvironmentDeployment.opynFactory.address,
             testingEnvironmentDeployment.opynOracle.address,
         );
-        testingEnvironmentDeployment.opynAddressBook = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynAddressBook = await attachContract<IOpynAddressBook>(
+        testingEnvironmentDeployment.opynAddressBook = await depl.attach<IOpynAddressBook>(
             "IOpynAddressBook",
             deploymentConfig.opynAddressBook,
-            {
-                alias: "OpynAddressBook",
-            },
+            "OpynAddressBook",
         );
 
-        testingEnvironmentDeployment.opynController = await attachContract<IOpynController>(
+        testingEnvironmentDeployment.opynController = await depl.attach<IOpynController>(
             "IOpynController",
             await testingEnvironmentDeployment.opynAddressBook.getController(),
-            {
-                alias: "OpynController",
-            },
+            "OpynController",
         );
 
-        testingEnvironmentDeployment.opynFactory = await attachContract<IOpynFactory>(
+        testingEnvironmentDeployment.opynFactory = await depl.attach<IOpynFactory>(
             "IOpynFactory",
             await testingEnvironmentDeployment.opynAddressBook.getOtokenFactory(),
-            {
-                alias: "OpynFactory",
-            },
+            "OpynFactory",
         );
 
-        testingEnvironmentDeployment.opynOracle = await attachContract<IOpynOracle>(
+        testingEnvironmentDeployment.opynOracle = await depl.attach<IOpynOracle>(
             "IOpynOracle",
             await testingEnvironmentDeployment.opynAddressBook.getOracle(),
-            {
-                alias: "OpynOracle",
-            },
+            "OpynOracle",
         );
 
         // TODO: Is this still needed?
         if (deploymentConfig.opynMockOracle) {
-            testingEnvironmentDeployment.opynMockOracle = await attachContract<MockOpynOracle>(
+            testingEnvironmentDeployment.opynMockOracle = await depl.attach<MockOpynOracle>(
                 "MockOpynOracle",
                 deploymentConfig.opynMockOracle,
-                {
-                    alias: "MockOpynOracle",
-                },
+                "MockOpynOracle",
             );
         }
     }
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig.networkName, [
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouter([
             testingEnvironmentDeployment.USDC.address,
             testingEnvironmentDeployment.underlyingAsset.address,
         ]);
-
-        testingEnvironmentDeployment.uniswapV3SwapRouter = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
 
         // Mint some tokens to the Uniswap Router
         await testingEnvironmentDeployment.USDC.mint(
@@ -275,12 +243,10 @@ async function mockContractsIfNeeded(
             ethers.utils.parseEther("10000000"),
         );
     } else {
-        testingEnvironmentDeployment.uniswapV3SwapRouter = await attachContract<ISwapRouter>(
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await depl.attach<ISwapRouter>(
             "ISwapRouter",
             deploymentConfig.uniswapV3SwapRouter,
-            {
-                alias: "SwapRouter",
-            },
+            "SwapRouter",
         );
     }
 
@@ -346,7 +312,7 @@ async function prepareTestEnvironment(
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getPotionProtocolDeployments(networkName: string): any {
     /* @ts-expect-error iterator is not defined */
-    return Deployments[networkName].contracts;
+    return PotionDeployments[networkName].contracts;
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -372,11 +338,12 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     }
 }
 
-export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
-    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
+export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
+    const deploymentTypeName = Deployments.GetDeploymentNameFromType(deploymentType);
+    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
 
-    if (networkName !== "hardhat" && networkName !== "localhost.test") {
-        const potionProtocolDeployments = getPotionProtocolDeployments(networkName);
+    if (deploymentType.provider !== ProviderTypes.Hardhat && deploymentType.config !== "test") {
+        const potionProtocolDeployments = getPotionProtocolDeployments(deploymentTypeName);
         if (potionProtocolDeployments !== undefined) {
             usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
         }
@@ -386,6 +353,7 @@ export function getDeploymentConfig(networkName: string): PotionHedgingVaultConf
 }
 
 export async function deployTestingEnv(
+    deployments: Deployments,
     deploymentConfig: PotionHedgingVaultConfigParams,
     showLogs: boolean = false,
 ): Promise<TestingEnvironmentDeployment> {
