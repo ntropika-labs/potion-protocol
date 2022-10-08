@@ -39,7 +39,7 @@ async function main() {
 
     await deployTestingEnv(deploymentConfig);
 
-    depl.persist();
+    depl.persist(true);
 
     console.log("\n[DEPLOYMENT COMPLETE]\n");
 }
