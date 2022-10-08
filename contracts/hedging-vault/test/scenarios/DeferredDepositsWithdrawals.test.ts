@@ -282,11 +282,10 @@ describe("DeferredDepositsWithdrawals", function () {
     let orchestrator: HedgingVaultOrchestrator;
     let roundsExchanger: RoundsVaultExchanger;
     let tEnv: TestingEnvironmentDeployment;
-    let depl: Deployments;
 
     before(function () {
         showConsoleLogs(false);
-        depl = Deployments.Init({
+        Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
                 network: DeploymentNetwork.Develop,
@@ -300,7 +299,7 @@ describe("DeferredDepositsWithdrawals", function () {
         // ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
-        const deploymentType = depl.getType();
+        const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
         tEnv = await deployTestingEnv(deploymentConfig);

@@ -23,7 +23,7 @@ describe("RoundsInputVault", function () {
     let targetVault: ERC4626 | MockContract<ERC4626>;
 
     before(function () {
-        Deployments.Init({
+        Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
                 network: DeploymentNetwork.Develop,

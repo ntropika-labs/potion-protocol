@@ -20,7 +20,7 @@ async function mockContract<T extends Contract>(
     args: unknown[] = [],
     alias?: string,
 ): Promise<T | MockContract<T>> {
-    return Deployments.Get().deploy<T>(contractName, args, {
+    return Deployments.deploy<T>(contractName, args, {
         options: MockOptions,
         alias,
     });

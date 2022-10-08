@@ -12,7 +12,7 @@ dotenvConfig({ path: resolve(__dirname, "./.env") });
 async function main() {
     const deploymentType: DeploymentType = getDeploymentType();
 
-    const depl = Deployments.Init({
+    Deployments.initialize({
         type: deploymentType,
         options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
@@ -33,13 +33,13 @@ async function main() {
     const deploymentConfig: PotionHedgingVaultConfigParams = getDeploymentConfig(deploymentType);
     if (!deploymentConfig) {
         throw new Error(
-            `No deploy config found for deployment type '${Deployments.GetDeploymentNameFromType(deploymentType)}'`,
+            `No deploy config found for deployment type '${Deployments.getDeploymentNameFromType(deploymentType)}'`,
         );
     }
 
     await deployTestingEnv(deploymentConfig);
 
-    depl.persist(true);
+    Deployments.persist(true);
 
     console.log("\n[DEPLOYMENT COMPLETE]\n");
 }

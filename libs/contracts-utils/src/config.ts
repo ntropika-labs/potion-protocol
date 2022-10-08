@@ -26,5 +26,5 @@ export function getDeploymentType(): DeploymentType {
     throw new Error("DEPLOYMENT_TYPE environment variable is not set");
   }
 
-  return Deployments.GetDeploymentTypeFromName(deploymentName);
+  return Deployments.getDeploymentTypeFromName(deploymentName);
 }

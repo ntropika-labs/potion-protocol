@@ -22,7 +22,7 @@ export class DeployChainlinkPricer implements PostDeployAction {
 
         const oracle = await depl.oracle();
 
-        const pricer = await Deployments.Get().deploy(
+        const pricer = await Deployments.deploy(
             "ChainLinkPricer",
             [
                 this.config.relayerAddress,

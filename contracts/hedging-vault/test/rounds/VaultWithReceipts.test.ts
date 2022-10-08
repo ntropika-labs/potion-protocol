@@ -18,11 +18,10 @@ describe("VaultWithReceipts", function () {
     let unpriviledgedAccount2: SignerWithAddress;
     let vaultWithReceipts: TestWrapperVaultWithReceipts;
     let assetToken: MockERC20PresetMinterPauser | MockContract<MockERC20PresetMinterPauser>;
-    let depl: Deployments;
 
     before(function () {
         showConsoleLogs(false);
-        depl = Deployments.Init({
+        Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
                 network: DeploymentNetwork.Develop,
@@ -38,7 +37,10 @@ describe("VaultWithReceipts", function () {
 
         assetToken = await mockERC20("AssetToken");
 
-        vaultWithReceipts = (await depl.deploy("TestWrapperVaultWithReceipts", [])) as TestWrapperVaultWithReceipts;
+        vaultWithReceipts = (await Deployments.deploy(
+            "TestWrapperVaultWithReceipts",
+            [],
+        )) as TestWrapperVaultWithReceipts;
 
         await vaultWithReceipts.initialize(assetToken.address, "SomeURI");
 

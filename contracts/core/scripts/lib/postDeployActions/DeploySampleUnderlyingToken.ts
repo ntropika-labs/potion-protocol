@@ -16,7 +16,7 @@ export class DeploySampleUnderlyingToken {
 
         printProgress &&
             process.stdout.write(`Deploying & whitelisting sample underlying token (${this.tokenSymbol})... `);
-        const token = await Deployments.Get().deploy(
+        const token = await Deployments.deploy(
             "SampleUnderlyingToken",
             [this.tokenSymbol],
             isFirstToken ? { options: DeploymentFlags.Export } : { options: DeploymentFlags.None },

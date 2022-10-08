@@ -41,11 +41,10 @@ describe("HedgingVaultBasic", function () {
     let vault: InvestmentVault;
     let action: PotionBuyAction;
     let tEnv: TestingEnvironmentDeployment;
-    let depl: Deployments;
 
     before(function () {
         showConsoleLogs(false);
-        depl = Deployments.Init({
+        Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
                 network: DeploymentNetwork.Develop,
@@ -59,7 +58,7 @@ describe("HedgingVaultBasic", function () {
         ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
-        const deploymentType = depl.getType();
+        const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
         tEnv = await deployTestingEnv(deploymentConfig);

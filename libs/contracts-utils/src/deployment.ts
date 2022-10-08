@@ -35,14 +35,12 @@ import {
 } from "./types";
 import { verify } from "./utils/hardhat";
 export class Deployments {
-  private static DeploymentsSingleton: Deployments | undefined;
+  private static type: DeploymentType;
+  private static options: DeploymentOptions;
+  private static deploymentsDir?: string;
+  private static indexDir?: string;
 
-  public readonly type: DeploymentType;
-  public readonly options: DeploymentOptions;
-  public readonly deploymentsDir?: string;
-  public readonly indexDir?: string;
-
-  public readonly deployments: Deployment[] = [];
+  private static deployments: Deployment[] = [];
 
   private static readonly NumConfirmationsWait = 5;
   private static readonly RemoteExportsFileName = "index.ts";
@@ -62,8 +60,13 @@ export class Deployments {
     options: DeploymentFlags.None,
   };
 
-  constructor(params: DeploymentInitParams) {
-    Deployments.ValidateParams(params);
+  /**
+    PUBLIC
+  */
+  public static initialize(
+    params: DeploymentInitParams = Deployments.DefaultParams
+  ) {
+    Deployments.validateParams(params);
 
     this.type = params.type;
     this.options = params.options;
@@ -71,26 +74,7 @@ export class Deployments {
     this.indexDir = params.indexDir;
   }
 
-  /**
-    SINGLETON
-  */
-  static Init(
-    params: DeploymentInitParams = Deployments.DefaultParams
-  ): Deployments {
-    this.DeploymentsSingleton = new Deployments(params);
-
-    return this.DeploymentsSingleton;
-  }
-
-  static Get(): Deployments {
-    if (!this.DeploymentsSingleton) {
-      throw new Error("Deployments not initialized");
-    }
-
-    return this.DeploymentsSingleton;
-  }
-
-  static ValidateParams(params: DeploymentInitParams): void {
+  public static validateParams(params: DeploymentInitParams): void {
     if (
       (params.type.network === DeploymentNetwork.Develop &&
         params.type.provider === ProviderTypes.Remote) ||
@@ -103,10 +87,7 @@ export class Deployments {
     }
   }
 
-  /**
-    PUBLIC
-  */
-  async deploy<T extends Contract>(
+  public static async deploy<T extends Contract>(
     contractName: string,
     args: unknown[] = [],
     overrides: (Signer | DeploymentParams) | undefined = undefined
@@ -145,7 +126,7 @@ export class Deployments {
     }
   }
 
-  async attach<T extends Contract>(
+  public static async attach<T extends Contract>(
     contractName: string,
     contractAddress: string,
     alias?: string
@@ -161,7 +142,7 @@ export class Deployments {
     return contract.deployed() as Promise<T>;
   }
 
-  persist(includeLegacy = false): void {
+  public static persist(includeLegacy = false): void {
     if (this._isInternalProvider()) {
       return;
     }
@@ -212,147 +193,7 @@ export class Deployments {
     this.rebuildIndex(includeLegacy);
   }
 
-  /**
-    PUBLIC GETTERS
-   */
-  public static GetDeploymentTypeFromName(name: string): DeploymentType {
-    const [provider, network, config] = name.split(
-      Deployments.DeploymentTypeSeparator
-    );
-
-    if (!isProvider(provider)) {
-      throw new Error(`Invalid provider in deployment type: ${provider}`);
-    }
-    if (!isNetwork(network)) {
-      throw new Error(`Invalid network in deployment type: ${network}`);
-    }
-
-    return {
-      provider: provider as Provider,
-      network: network as Network,
-      config: config as ConfigName,
-    };
-  }
-
-  public static GetDeploymentNameFromType(type: DeploymentType): string {
-    return `${type.provider}${Deployments.DeploymentTypeSeparator}${type.network}${Deployments.DeploymentTypeSeparator}${type.config}`;
-  }
-
-  public static GetLegacyDeploymentNameFromType(type: DeploymentType): string {
-    let deploymentName = "";
-
-    if (type.provider === ProviderTypes.Remote) {
-      deploymentName =
-        type.network + Deployments.DeploymentTypeSeparator + type.config;
-    } else if (type.provider === ProviderTypes.Internal) {
-      deploymentName = "hardhat";
-    } else {
-      deploymentName =
-        "localhost" + Deployments.DeploymentTypeSeparator + type.config;
-    }
-    return deploymentName;
-  }
-
-  public getType(): DeploymentType {
-    return this.type;
-  }
-
-  public getOptions(): DeploymentOptions {
-    return this.options;
-  }
-
-  public getDeploymentsDir(): string | undefined {
-    return this.deploymentsDir;
-  }
-
-  public getIndexDir(): string | undefined {
-    return this.indexDir;
-  }
-
-  public getIndexFileName(): string | undefined {
-    if (this.type.config.includes(Deployments.DbSeedsConfigString)) {
-      return Deployments.DbSeedsExportsFileName;
-    } else if (this.type.provider === ProviderTypes.Remote) {
-      return Deployments.RemoteExportsFileName;
-    } else if (
-      this.type.provider === ProviderTypes.Hardhat ||
-      this.type.provider === ProviderTypes.Ganache
-    ) {
-      return Deployments.LocalExportsFileName;
-    } else {
-      return undefined;
-    }
-  }
-
-  public getDeploymentsName(timestamp: number | undefined = undefined): string {
-    let deploymentsFileName = Deployments.GetDeploymentNameFromType(this.type);
-    const deploymentExtension = Deployments.DeploymentFileExtension;
-
-    if (timestamp) {
-      deploymentsFileName +=
-        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
-    }
-
-    return deploymentsFileName + deploymentExtension;
-  }
-
-  public getDeploymentsPath(timestamp: number | undefined = undefined): string {
-    if (this.deploymentsDir === undefined) {
-      return "";
-    }
-
-    const deploymentsDir = this.deploymentsDir;
-    const providerDir = `${this.type.provider}`;
-    const deploymentsFileName = this.getDeploymentsName(timestamp);
-
-    return resolve(deploymentsDir, providerDir, deploymentsFileName);
-  }
-
-  public getLegacyDeploymentsName(
-    timestamp: number | undefined = undefined
-  ): string {
-    const deploymentExtension = Deployments.LegacyDeploymentFileExtension;
-
-    let deploymentsPath = "";
-    if (
-      this.type.network === DeploymentNetwork.Develop &&
-      this.type.provider === ProviderTypes.Internal
-    ) {
-      deploymentsPath = "hardhat";
-    } else if (this.type.provider === ProviderTypes.Remote) {
-      deploymentsPath =
-        this.type.network +
-        Deployments.DeploymentTypeSeparator +
-        `${this.type.config}`;
-    } else {
-      deploymentsPath =
-        `localhost` +
-        Deployments.DeploymentTypeSeparator +
-        `${this.type.config}`;
-    }
-
-    if (timestamp) {
-      deploymentsPath +=
-        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
-    }
-
-    return deploymentsPath + deploymentExtension;
-  }
-
-  public getLegacyDeploymentsPath(
-    timestamp: number | undefined = undefined
-  ): string {
-    if (this.deploymentsDir === undefined) {
-      return "";
-    }
-
-    const deploymentsDir = this.deploymentsDir;
-    const deploymentsFileName = this.getLegacyDeploymentsName(timestamp);
-
-    return resolve(deploymentsDir, deploymentsFileName);
-  }
-
-  public rebuildIndex(includeLegacy = false): void {
+  public static rebuildIndex(includeLegacy = false): void {
     if (this.deploymentsDir === undefined || this.indexDir === undefined) {
       return;
     }
@@ -394,7 +235,7 @@ export class Deployments {
         const deployment: DeploymentObject = JSON.parse(deploymentJSON);
 
         const deploymentTypeName =
-          Deployments.GetDeploymentNameFromType(deployment);
+          Deployments.getDeploymentNameFromType(deployment);
 
         if (deployment.config.includes(Deployments.DbSeedsConfigString)) {
           dbSeedsDeploymentsIndex = Object.assign(dbSeedsDeploymentsIndex, {
@@ -453,7 +294,158 @@ export class Deployments {
     );
   }
 
-  private _writeIndex(
+  /**
+    GETTERS
+   */
+  public static getDeployments(): Deployment[] {
+    return this.deployments;
+  }
+
+  public static getDeploymentTypeFromName(name: string): DeploymentType {
+    const [provider, network, config] = name.split(
+      Deployments.DeploymentTypeSeparator
+    );
+
+    if (!isProvider(provider)) {
+      throw new Error(`Invalid provider in deployment type: ${provider}`);
+    }
+    if (!isNetwork(network)) {
+      throw new Error(`Invalid network in deployment type: ${network}`);
+    }
+
+    return {
+      provider: provider as Provider,
+      network: network as Network,
+      config: config as ConfigName,
+    };
+  }
+
+  public static getDeploymentNameFromType(type: DeploymentType): string {
+    return `${type.provider}${Deployments.DeploymentTypeSeparator}${type.network}${Deployments.DeploymentTypeSeparator}${type.config}`;
+  }
+
+  public static getLegacyDeploymentNameFromType(type: DeploymentType): string {
+    let deploymentName = "";
+
+    if (type.provider === ProviderTypes.Remote) {
+      deploymentName =
+        type.network + Deployments.DeploymentTypeSeparator + type.config;
+    } else if (type.provider === ProviderTypes.Internal) {
+      deploymentName = "hardhat";
+    } else {
+      deploymentName =
+        "localhost" + Deployments.DeploymentTypeSeparator + type.config;
+    }
+    return deploymentName;
+  }
+
+  public static getType(): DeploymentType {
+    return this.type;
+  }
+
+  public static getOptions(): DeploymentOptions {
+    return this.options;
+  }
+
+  public static getDeploymentsDir(): string | undefined {
+    return this.deploymentsDir;
+  }
+
+  public static getIndexDir(): string | undefined {
+    return this.indexDir;
+  }
+
+  public static getIndexFileName(): string | undefined {
+    if (this.type.config.includes(Deployments.DbSeedsConfigString)) {
+      return Deployments.DbSeedsExportsFileName;
+    } else if (this.type.provider === ProviderTypes.Remote) {
+      return Deployments.RemoteExportsFileName;
+    } else if (
+      this.type.provider === ProviderTypes.Hardhat ||
+      this.type.provider === ProviderTypes.Ganache
+    ) {
+      return Deployments.LocalExportsFileName;
+    } else {
+      return undefined;
+    }
+  }
+
+  public static getDeploymentsName(
+    timestamp: number | undefined = undefined
+  ): string {
+    let deploymentsFileName = Deployments.getDeploymentNameFromType(this.type);
+    const deploymentExtension = Deployments.DeploymentFileExtension;
+
+    if (timestamp) {
+      deploymentsFileName +=
+        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
+    }
+
+    return deploymentsFileName + deploymentExtension;
+  }
+
+  public static getDeploymentsPath(
+    timestamp: number | undefined = undefined
+  ): string {
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const providerDir = `${this.type.provider}`;
+    const deploymentsFileName = this.getDeploymentsName(timestamp);
+
+    return resolve(deploymentsDir, providerDir, deploymentsFileName);
+  }
+
+  public static getLegacyDeploymentsName(
+    timestamp: number | undefined = undefined
+  ): string {
+    const deploymentExtension = Deployments.LegacyDeploymentFileExtension;
+
+    let deploymentsPath = "";
+    if (
+      this.type.network === DeploymentNetwork.Develop &&
+      this.type.provider === ProviderTypes.Internal
+    ) {
+      deploymentsPath = "hardhat";
+    } else if (this.type.provider === ProviderTypes.Remote) {
+      deploymentsPath =
+        this.type.network +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
+    } else {
+      deploymentsPath =
+        `localhost` +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
+    }
+
+    if (timestamp) {
+      deploymentsPath +=
+        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
+    }
+
+    return deploymentsPath + deploymentExtension;
+  }
+
+  public static getLegacyDeploymentsPath(
+    timestamp: number | undefined = undefined
+  ): string {
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const deploymentsFileName = this.getLegacyDeploymentsName(timestamp);
+
+    return resolve(deploymentsDir, deploymentsFileName);
+  }
+
+  /**
+    PRIVATE
+   */
+  private static _writeIndex(
     indexDir: string,
     indexFileName: string,
     remoteDeploymentsIndex: unknown
@@ -477,10 +469,7 @@ export class Deployments {
     );
   }
 
-  /**
-    PRIVATE
-   */
-  async _deploy(
+  private static async _deploy(
     contractName: string,
     args: unknown[] = [],
     options: DeploymentOptions,
@@ -513,7 +502,7 @@ export class Deployments {
     };
   }
 
-  async _deployMock(
+  private static async _deployMock(
     contractName: string,
     args: unknown[] = [],
     alias?: string,
@@ -547,7 +536,7 @@ export class Deployments {
     };
   }
 
-  async _verify(
+  private static async _verify(
     deployment: Deployment,
     args: unknown[],
     options: DeploymentOptions
@@ -577,7 +566,7 @@ export class Deployments {
     }
   }
 
-  private _cycleDeploymentFile(): void {
+  private static _cycleDeploymentFile(): void {
     const deploymentFile = this.getDeploymentsPath();
 
     if (!fs.existsSync(deploymentFile)) {
@@ -594,7 +583,7 @@ export class Deployments {
     fs.renameSync(deploymentFile, timestamDeploymentFile);
   }
 
-  private _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {
+  private static _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {
     return {
       timestamp: this._getNowTimestamp(),
       network: this.type.network,
@@ -602,7 +591,7 @@ export class Deployments {
     };
   }
 
-  private _getDeploymentObjectTemplate(): DeploymentObject {
+  private static _getDeploymentObjectTemplate(): DeploymentObject {
     return {
       timestamp: this._getNowTimestamp(),
       provider: this.type.provider,
@@ -613,7 +602,9 @@ export class Deployments {
     };
   }
 
-  private _getDeploymentType(deployment: DeploymentObject): DeploymentType {
+  private static _getDeploymentType(
+    deployment: DeploymentObject
+  ): DeploymentType {
     return {
       provider: deployment.provider,
       network: deployment.network,
@@ -621,23 +612,23 @@ export class Deployments {
     };
   }
 
-  private _getNowTimestamp(): number {
+  private static _getNowTimestamp(): number {
     return Math.floor(new Date().getTime() / 1000);
   }
 
-  private _hasVerifyOption(options?: DeploymentOptions): boolean {
+  private static _hasVerifyOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Verify ? true : false;
   }
 
-  private _hasUpgradeableOption(options?: DeploymentOptions): boolean {
+  private static _hasUpgradeableOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Upgradeable ? true : false;
   }
 
-  private _hasMockOption(options?: DeploymentOptions): boolean {
+  private static _hasMockOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Mock ? true : false;
   }
 
-  private _isDeploymentParams(
+  private static _isDeploymentParams(
     options: Signer | DeploymentParams | undefined
   ): options is DeploymentParams {
     return (
@@ -647,11 +638,11 @@ export class Deployments {
     );
   }
 
-  private _isDevelopNetwork(): boolean {
+  private static _isDevelopNetwork(): boolean {
     return this.type.network === DeploymentNetwork.Develop;
   }
 
-  private _isInternalProvider(): boolean {
+  private static _isInternalProvider(): boolean {
     return this.type.provider === ProviderTypes.Internal;
   }
 }

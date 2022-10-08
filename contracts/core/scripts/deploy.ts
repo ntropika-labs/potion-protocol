@@ -31,18 +31,18 @@ const contractAddresses = new Map();
 
 let deployConfig: NetworkDeployConfig;
 
-async function init(): Promise<Deployments> {
+async function init() {
     const deploymentType = getDeploymentType();
 
-    const depl = Deployments.Init({
+    Deployments.initialize({
         type: deploymentType,
         options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
         indexDir: resolve(__dirname, "../src"),
     });
 
-    const deploymentTypeName = Deployments.GetDeploymentNameFromType(deploymentType);
-    const legacyDeploymentTypeName = Deployments.GetLegacyDeploymentNameFromType(deploymentType);
+    const deploymentTypeName = Deployments.getDeploymentNameFromType(deploymentType);
+    const legacyDeploymentTypeName = Deployments.getLegacyDeploymentNameFromType(deploymentType);
 
     deployConfig = deployConfiguration[deploymentTypeName];
 
@@ -66,14 +66,12 @@ async function init(): Promise<Deployments> {
     console.log(`- Config: ${deploymentType.config}`);
     console.log(`- Deployer: ${deployer}`);
     console.log(`---------------------------------------------------\n`);
-
-    return depl;
 }
 
 // Deploys a faucet token for use as test collateral, and returns its address
 async function deployCollateralToken(): Promise<string> {
     process.stdout.write(`Deploying test collateral token (PUSDC)...`);
-    const token = await Deployments.Get().deploy("PotionTestUSD", [], { alias: "USDC" });
+    const token = await Deployments.deploy("PotionTestUSD", [], { alias: "USDC" });
 
     console.log(` deployed at ${token.address}`);
     return token.address;
@@ -106,33 +104,31 @@ async function updateAddressBook(addressbook: DeploymentContract) {
 
 // Deploys all of the Opyn contracts and returns the address of the addressbook contract
 async function deployOpynContracts(): Promise<string> {
-    const depl = Deployments.Get();
-
     console.log("Deploying Opyn Gamma protocol...");
 
     // Deploy the address book and other Opyn contracts
-    const addressbook = await depl.deploy(ADDRESS_BOOK_CONTRACT_NAME);
+    const addressbook = await Deployments.deploy(ADDRESS_BOOK_CONTRACT_NAME);
 
     // Deploy contracts that take no constructor params
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_NO_PARAM) {
-        const deployedContract = await depl.deploy(contractName);
+        const deployedContract = await Deployments.deploy(contractName);
         contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy contracts that take the oracle as a constructor param
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_ORACLE_PARAM) {
-        const deployedContract = await depl.deploy(contractName, [contractAddresses.get(ORACLE_CONTRACT_NAME)]);
+        const deployedContract = await Deployments.deploy(contractName, [contractAddresses.get(ORACLE_CONTRACT_NAME)]);
         contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy contracts that take the address book as a constructor param
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_ADDRESSBOOK_PARAM) {
-        const deployedContract = await depl.deploy(contractName, [addressbook.address]);
+        const deployedContract = await Deployments.deploy(contractName, [addressbook.address]);
         contractAddresses.set(contractName, deployedContract.address);
     }
 
     // Deploy Controller including linked library
-    const marginVaultLib = await depl.deploy("MarginVault");
+    const marginVaultLib = await Deployments.deploy("MarginVault");
     contractAddresses.set(MARGIN_VAULT_LIB_NAME, marginVaultLib.address);
 
     // TODO: Check this double deployment, it does not look good
@@ -144,7 +140,7 @@ async function deployOpynContracts(): Promise<string> {
     const controllerDeployTrx = await ControllerFactory.deploy();
     await controllerDeployTrx.deployed();
 
-    const controller = await depl.deploy(CONTROLLER_CONTRACT_NAME, [], {
+    const controller = await Deployments.deploy(CONTROLLER_CONTRACT_NAME, [], {
         libraries: {
             MarginVault: marginVaultLib.address,
         },
@@ -157,31 +153,31 @@ async function deployOpynContracts(): Promise<string> {
 }
 
 async function main() {
-    const depl = await init();
+    await init();
 
     if (!deployConfig.opynAddressBook) {
         deployConfig.opynAddressBook = await deployOpynContracts();
     }
-    const addressBook = await depl.attach("AddressBook", deployConfig.opynAddressBook);
+    const addressBook = await Deployments.attach("AddressBook", deployConfig.opynAddressBook);
     const otokenFactoryAddress = await addressBook.getOtokenFactory();
     const whitelistAddress = await addressBook.getWhitelist();
 
     if (!deployConfig.collateralToken) {
         deployConfig.collateralToken = await deployCollateralToken();
     } else {
-        depl.attach("ERC20", deployConfig.collateralToken, "USDC");
+        Deployments.attach("ERC20", deployConfig.collateralToken, "USDC");
     }
 
     process.stdout.write(`Deploying CurveManager... `);
-    const curveManager = await depl.deploy("CurveManager");
+    const curveManager = await Deployments.deploy("CurveManager");
     console.log(`deployed at ${curveManager.address}`);
 
     process.stdout.write(`Deploying CriteriaManager... `);
-    const criteriaManager = await depl.deploy("CriteriaManager");
+    const criteriaManager = await Deployments.deploy("CriteriaManager");
     console.log(`deployed at ${criteriaManager.address}`);
 
     process.stdout.write(`Deploying PotionLiquidityPool... `);
-    const potionLiquidityPool = (await depl.deploy(
+    const potionLiquidityPool = (await Deployments.deploy(
         "PotionLiquidityPool",
         [deployConfig.opynAddressBook, deployConfig.collateralToken, curveManager.address, criteriaManager.address],
         {
@@ -206,7 +202,7 @@ async function main() {
         await executePostDeployActions(deployConfig.postDeployActions, deployment, true);
     }
 
-    depl.persist(true);
+    Deployments.persist(true);
 }
 
 main()

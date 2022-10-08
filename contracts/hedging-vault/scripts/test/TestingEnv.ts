@@ -143,15 +143,13 @@ function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
 async function mockContractsIfNeeded(
     deploymentConfig: PotionHedgingVaultConfigParams,
 ): Promise<Partial<TestingEnvironmentDeployment>> {
-    const depl = Deployments.Get();
-
     const testingEnvironmentDeployment: Partial<TestingEnvironmentDeployment> = {};
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
         testingEnvironmentDeployment.USDC = await mockERC20("USDC");
     } else {
-        testingEnvironmentDeployment.USDC = await depl.attach<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.USDC = await Deployments.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.USDC,
             "USDC",
@@ -162,7 +160,7 @@ async function mockContractsIfNeeded(
     if (!deploymentConfig.underlyingAsset) {
         testingEnvironmentDeployment.underlyingAsset = await mockERC20("UnderlyingAsset");
     } else {
-        testingEnvironmentDeployment.underlyingAsset = await depl.attach<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.underlyingAsset = await Deployments.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.underlyingAsset,
             "UnderlyingAsset",
@@ -173,7 +171,7 @@ async function mockContractsIfNeeded(
     if (!deploymentConfig.potionLiquidityPoolManager) {
         testingEnvironmentDeployment.potionLiquidityPoolManager = await mockPotionLiquidityPoolManager();
     } else {
-        testingEnvironmentDeployment.potionLiquidityPoolManager = await depl.attach<IPotionLiquidityPool>(
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await Deployments.attach<IPotionLiquidityPool>(
             "IPotionLiquidityPool",
             deploymentConfig.potionLiquidityPoolManager,
             "PotionLiquidityPool",
@@ -194,25 +192,25 @@ async function mockContractsIfNeeded(
             testingEnvironmentDeployment.opynOracle.address,
         );
     } else {
-        testingEnvironmentDeployment.opynAddressBook = await depl.attach<IOpynAddressBook>(
+        testingEnvironmentDeployment.opynAddressBook = await Deployments.attach<IOpynAddressBook>(
             "IOpynAddressBook",
             deploymentConfig.opynAddressBook,
             "OpynAddressBook",
         );
 
-        testingEnvironmentDeployment.opynController = await depl.attach<IOpynController>(
+        testingEnvironmentDeployment.opynController = await Deployments.attach<IOpynController>(
             "IOpynController",
             await testingEnvironmentDeployment.opynAddressBook.getController(),
             "OpynController",
         );
 
-        testingEnvironmentDeployment.opynFactory = await depl.attach<IOpynFactory>(
+        testingEnvironmentDeployment.opynFactory = await Deployments.attach<IOpynFactory>(
             "IOpynFactory",
             await testingEnvironmentDeployment.opynAddressBook.getOtokenFactory(),
             "OpynFactory",
         );
 
-        testingEnvironmentDeployment.opynOracle = await depl.attach<IOpynOracle>(
+        testingEnvironmentDeployment.opynOracle = await Deployments.attach<IOpynOracle>(
             "IOpynOracle",
             await testingEnvironmentDeployment.opynAddressBook.getOracle(),
             "OpynOracle",
@@ -220,7 +218,7 @@ async function mockContractsIfNeeded(
 
         // TODO: Is this still needed?
         if (deploymentConfig.opynMockOracle) {
-            testingEnvironmentDeployment.opynMockOracle = await depl.attach<MockOpynOracle>(
+            testingEnvironmentDeployment.opynMockOracle = await Deployments.attach<MockOpynOracle>(
                 "MockOpynOracle",
                 deploymentConfig.opynMockOracle,
                 "MockOpynOracle",
@@ -245,7 +243,7 @@ async function mockContractsIfNeeded(
             ethers.utils.parseEther("10000000"),
         );
     } else {
-        testingEnvironmentDeployment.uniswapV3SwapRouter = await depl.attach<ISwapRouter>(
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await Deployments.attach<ISwapRouter>(
             "ISwapRouter",
             deploymentConfig.uniswapV3SwapRouter,
             "SwapRouter",
@@ -347,8 +345,8 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
 }
 
 export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
-    const deploymentTypeName = Deployments.GetDeploymentNameFromType(deploymentType);
-    const legacyDeploymentTypeName = Deployments.GetLegacyDeploymentNameFromType(deploymentType);
+    const deploymentTypeName = Deployments.getDeploymentNameFromType(deploymentType);
+    const legacyDeploymentTypeName = Deployments.getLegacyDeploymentNameFromType(deploymentType);
     const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
 
     let potionProtocolDeployments;
@@ -365,7 +363,7 @@ export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgi
     }
 
     if (potionProtocolDeployments !== undefined) {
-        console.log("[Using potion protocol deployments]\n");
+        console.log("[Using Potion Protocol deployments]\n");
     } else {
         console.log(
             `[Not using potion protocol deployments, couldn't find ${deploymentTypeName} or ${legacyDeploymentTypeName} deployments]\n`,
