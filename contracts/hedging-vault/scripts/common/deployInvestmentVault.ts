@@ -17,7 +17,7 @@ export interface InvestmentVaultDeployParams {
 
 export async function deployInvestmentVault(parameters: InvestmentVaultDeployParams): Promise<InvestmentVault> {
     console.log("- Deploying InvestmentVault...");
-    const investmentVault = (await Deployments.Get().deploy(
+    const investmentVault = (await Deployments.deploy(
         "InvestmentVault",
         [
             parameters.adminAddress,

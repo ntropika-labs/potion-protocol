@@ -10,7 +10,7 @@ export interface RoundsOutputVaultDeployParams {
 
 export async function deployRoundsOutputVault(parameters: RoundsOutputVaultDeployParams): Promise<RoundsOutputVault> {
     console.log("- Deploying RoundsOutputVault...");
-    const roundsOutputVault = (await Deployments.Get().deploy(
+    const roundsOutputVault = (await Deployments.deploy(
         "RoundsOutputVault",
         [parameters.adminAddress, parameters.operatorAddress, parameters.investmentVault, parameters.receiptsURI],
         {

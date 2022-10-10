@@ -26,7 +26,15 @@ import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
 
-import { ifMocksEnabled, asMock, getDeploymentsNetworkName } from "contracts-utils";
+import {
+    ifMocksEnabled,
+    asMock,
+    Deployments,
+    showConsoleLogs,
+    ProviderTypes,
+    DeploymentNetwork,
+    DeploymentFlags,
+} from "contracts-utils";
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 
 interface TestConditions {
@@ -275,13 +283,24 @@ describe("DeferredDepositsWithdrawals", function () {
     let roundsExchanger: RoundsVaultExchanger;
     let tEnv: TestingEnvironmentDeployment;
 
+    before(function () {
+        showConsoleLogs(false);
+        Deployments.initialize({
+            type: {
+                provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
+                network: DeploymentNetwork.Develop,
+                config: "test",
+            },
+            options: DeploymentFlags.None,
+        });
+    });
+
     beforeEach(async function () {
         // ownerAccount = (await ethers.getSigners())[0];
         investorAccount = (await ethers.getSigners())[1];
 
-        const deploymentNetworkName = getDeploymentsNetworkName();
-
-        deploymentConfig = getDeploymentConfig(deploymentNetworkName);
+        const deploymentType = Deployments.getType();
+        deploymentConfig = getDeploymentConfig(deploymentType);
 
         tEnv = await deployTestingEnv(deploymentConfig);
 

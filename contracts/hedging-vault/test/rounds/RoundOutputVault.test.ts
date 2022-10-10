@@ -8,7 +8,14 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import { mockERC4626, mockERC20 } from "../../scripts/test/contractsMocks";
-import { ifMocksEnabled, asMock } from "contracts-utils";
+import {
+    ifMocksEnabled,
+    asMock,
+    Deployments,
+    ProviderTypes,
+    DeploymentFlags,
+    DeploymentNetwork,
+} from "contracts-utils";
 
 /**
     @notice VaultDeferredOperation unit tests    
@@ -23,26 +30,28 @@ describe("RoundsOutputVault", function () {
     let assetToken: MockERC20PresetMinterPauser | MockContract<MockERC20PresetMinterPauser>;
     let targetVault: ERC4626 | MockContract<ERC4626>;
 
+    before(function () {
+        Deployments.initialize({
+            type: {
+                provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
+                network: DeploymentNetwork.Develop,
+                config: "test",
+            },
+            options: DeploymentFlags.None,
+        });
+    });
+
     beforeEach(async function () {
         adminAccount = (await ethers.getSigners())[0];
         operatorAccount = (await ethers.getSigners())[1];
         unpriviledgedAccount = (await ethers.getSigners())[2];
 
-        const mockERC20Result = await mockERC20(network.name, "AssetToken");
-        assetToken = mockERC20Result.softMock ? mockERC20Result.softMock : mockERC20Result.hardMock;
+        assetToken = await mockERC20("AssetToken");
 
         const RoundsOutputVaultFactory = await ethers.getContractFactory("RoundsOutputVault");
         roundsOutputVault = (await RoundsOutputVaultFactory.deploy()) as RoundsOutputVault;
 
-        const mockERC4626Result = await mockERC4626(
-            network.name,
-            "TestVault",
-            "TSTV",
-            assetToken.address,
-            "InvestmentVault",
-        );
-
-        targetVault = mockERC4626Result.softMock ? mockERC4626Result.softMock : mockERC4626Result.hardMock;
+        targetVault = await mockERC4626("TestVault", "TSTV", assetToken.address, "InvestmentVault");
 
         await roundsOutputVault.initialize(
             adminAccount.address,

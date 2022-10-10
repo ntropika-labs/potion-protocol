@@ -1,6 +1,6 @@
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployAction, PostDeployActionsResults } from "../postDeploy";
-import { deploy, DeploymentOptions } from "contracts-utils";
+import { Deployments } from "contracts-utils";
 
 export interface PricerConfig {
     assetName: string;
@@ -22,7 +22,7 @@ export class DeployChainlinkPricer implements PostDeployAction {
 
         const oracle = await depl.oracle();
 
-        const pricer = await deploy(
+        const pricer = await Deployments.deploy(
             "ChainLinkPricer",
             [
                 this.config.relayerAddress,
@@ -32,7 +32,6 @@ export class DeployChainlinkPricer implements PostDeployAction {
             ],
             {
                 alias: "ChainLinkPricer" + this.config.assetName,
-                options: DeploymentOptions.DeployAndExportAndVerify,
             },
         );
 

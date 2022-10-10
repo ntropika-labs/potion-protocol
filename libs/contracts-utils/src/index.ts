@@ -3,7 +3,7 @@ export type {
   DeploymentObjectLegacy,
   DeploymentObject,
   DeploymentParams,
-  DeployedContract,
+  DeploymentContract,
 } from "./deployment";
 export { Deployments } from "./deployment";
 export { asMock, ifMocksEnabled } from "./test/mocks";
@@ -14,6 +14,8 @@ export {
   ProviderTypes,
   DeploymentFlags,
   DeploymentOptions,
+  DeploymentNetwork,
   isProvider,
   isNetwork,
 } from "./types";
+export { showConsoleLogs } from "./test/console";

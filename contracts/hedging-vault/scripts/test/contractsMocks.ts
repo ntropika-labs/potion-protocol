@@ -16,11 +16,11 @@ import { Contract } from "ethers";
 const MockOptions = DeploymentFlags.Export | DeploymentFlags.Mock;
 
 async function mockContract<T extends Contract>(
-    networkName: string,
+    contractName: string,
     args: unknown[] = [],
     alias?: string,
 ): Promise<T | MockContract<T>> {
-    return Deployments.Get().deploy<T>(networkName, args, {
+    return Deployments.deploy<T>(contractName, args, {
         options: MockOptions,
         alias,
     });

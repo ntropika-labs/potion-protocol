@@ -17,17 +17,32 @@ export enum DeploymentNetwork {
 }
 
 export enum DeploymentFlags {
+  None = 0,
   Export = 1 << 1,
   Verify = 1 << 2,
   Upgradeable = 1 << 3,
   Mock = 1 << 4,
 }
 
+export enum DirectoryFilterType {
+  None,
+  Include,
+  Exclude,
+}
+
+export interface DeploymentExportPair {
+  name: string;
+  value: string;
+}
+export interface ImportPair {
+  name: string;
+  path: string;
+}
 export interface DeploymentInitParams {
   type: DeploymentType;
   options: DeploymentOptions;
-  deploymentsDir: string;
-  indexDir: string;
+  deploymentsDir?: string;
+  indexDir?: string;
 }
 
 export interface DeploymentObjectLegacy {
@@ -65,7 +80,7 @@ export interface DeploymentParams extends FactoryOptions {
   contract?: string; // Path and name of the contract to be verified i.e.: contracts/Example.sol:ExampleContract
 }
 
-export interface DeployedContract {
+export interface Deployment {
   contract: Contract | MockContract<Contract>;
   name: string;
   receipt?: TransactionReceipt;

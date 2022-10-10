@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@openzeppelin/hardhat-upgrades";
 import { ethers, upgrades } from "hardhat";
 import type { FactoryOptions } from "@nomiclabs/hardhat-ethers/types";
+import type { DeployProxyOptions } from "@openzeppelin/hardhat-upgrades/src/utils/options";
 
 import type { Contract, Signer } from "ethers";
 import { TransactionReceipt } from "@ethersproject/providers";
@@ -14,69 +15,89 @@ import type { MockContract } from "@defi-wonderland/smock";
 
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
-import type { DeploymentType, Provider, Network, ConfigName } from "./types";
-import {
-  DeploymentFlags,
-  DeploymentOptions,
+import type {
   DeploymentInitParams,
-  DeployedContract,
+  Deployment,
   DeploymentParams,
   DeploymentObject,
   DeploymentObjectLegacy,
+  DeploymentType,
+  Provider,
+  Network,
+  ConfigName,
+  ImportPair,
+  DeploymentExportPair,
+} from "./types";
+import {
+  DeploymentFlags,
+  DeploymentOptions,
+  DeploymentNetwork,
+  ProviderTypes,
+  DirectoryFilterType,
   isProvider,
   isNetwork,
 } from "./types";
 import { verify } from "./utils/hardhat";
+import { toCamelCase } from "./utils/camelCase";
 
 export class Deployments {
-  private static DeploymentsSingleton: Deployments | undefined;
+  private static type: DeploymentType;
+  private static options: DeploymentOptions;
+  private static deploymentsDir?: string;
+  private static indexDir?: string;
 
-  public readonly type: DeploymentType;
-  public readonly options: DeploymentOptions;
-  public readonly deploymentsDir: string;
-  public readonly indexDir: string;
-
-  public readonly deployments: DeployedContract[] = [];
+  private static deployments: Deployment[] = [];
 
   private static readonly NumConfirmationsWait = 5;
-  private static readonly DeploymentsIndexFileName = "index.ts";
+  private static readonly RemoteExportsFileName = "index.ts";
+  private static readonly LocalExportsFileName = "local.ts";
+  private static readonly DbSeedsExportsFileName = "db-seeds.ts";
+  private static readonly DbSeedsConfigString = "db-seeds";
   private static readonly DeploymentTypeSeparator = ".";
+  private static readonly DeploymentFileExtension = ".json";
+  private static readonly LegacyDeploymentFileExtension = ".json";
 
-  constructor(params: DeploymentInitParams) {
+  private static readonly DefaultParams: DeploymentInitParams = {
+    type: {
+      provider: ProviderTypes.Internal,
+      network: DeploymentNetwork.Develop,
+      config: "test",
+    },
+    options: DeploymentFlags.None,
+  };
+
+  /**
+    PUBLIC
+  */
+  public static initialize(
+    params: DeploymentInitParams = Deployments.DefaultParams
+  ) {
+    Deployments.validateParams(params);
+
     this.type = params.type;
     this.options = params.options;
     this.deploymentsDir = params.deploymentsDir;
     this.indexDir = params.indexDir;
   }
 
-  /**
-    SINGLETON
-  */
-  static Init(params: DeploymentInitParams): Deployments {
-    if (this.DeploymentsSingleton) {
-      throw new Error("Deployments already initialized");
+  public static validateParams(params: DeploymentInitParams): void {
+    if (
+      (params.type.network === DeploymentNetwork.Develop &&
+        params.type.provider === ProviderTypes.Remote) ||
+      (params.type.provider === ProviderTypes.Internal &&
+        params.type.network !== DeploymentNetwork.Develop)
+    ) {
+      throw new Error(
+        `Provider ${params.type.provider} is not supported for network ${params.type.network}`
+      );
     }
-
-    this.DeploymentsSingleton = new Deployments(params);
-
-    return this.DeploymentsSingleton;
   }
 
-  static Get(): Deployments {
-    if (!this.DeploymentsSingleton) {
-      throw new Error("Deployments not initialized");
-    }
-
-    return this.DeploymentsSingleton;
-  }
-
-  /**
-    PUBLIC
-  */
-  async deploy<T extends Contract>(
+  public static async deploy<T extends Contract>(
     contractName: string,
     args: unknown[] = [],
-    overrides: (Signer | DeploymentParams) | undefined = undefined
+    overrides: (Signer | DeploymentParams) | undefined = undefined,
+    proxyOptions?: DeployProxyOptions
   ): Promise<T | MockContract<T>> {
     let options = this.options;
     let alias = undefined;
@@ -86,8 +107,8 @@ export class Deployments {
       alias = overrides.alias;
     }
 
-    let deployment: DeployedContract;
-    if (this._hasMockOption(options) && this._isHardhatNetwork()) {
+    let deployment: Deployment;
+    if (this._hasMockOption(options) && this._isInternalProvider()) {
       deployment = await this._deployMock(contractName, args, alias, overrides);
     } else {
       deployment = await this._deploy(
@@ -95,7 +116,8 @@ export class Deployments {
         args,
         options,
         alias,
-        overrides
+        overrides,
+        proxyOptions
       );
     }
 
@@ -112,7 +134,7 @@ export class Deployments {
     }
   }
 
-  async attach<T extends Contract>(
+  public static async attach<T extends Contract>(
     contractName: string,
     contractAddress: string,
     alias?: string
@@ -128,7 +150,11 @@ export class Deployments {
     return contract.deployed() as Promise<T>;
   }
 
-  persist() {
+  public static persist(includeLegacy = false): void {
+    if (this._isInternalProvider()) {
+      return;
+    }
+
     // Cycle the previous deployment info to keep a history of deployments.
     // When deploying to develop only the latest deployment is kept.
     if (this._isDevelopNetwork() === false) {
@@ -136,6 +162,7 @@ export class Deployments {
     }
 
     const deployments = this._getDeploymentObjectTemplate();
+    const legacyDeployments = this._getLegacyDeploymentObjectTemplate();
 
     this.deployments.forEach((deployment) => {
       // If there is a receipt then the contract was deployed, otherwise
@@ -150,6 +177,11 @@ export class Deployments {
           address: deployment.contract.address,
         };
       }
+
+      legacyDeployments.contracts[deployment.name] = {
+        address: deployment.contract.address,
+        blockNumber: deployment.receipt?.blockNumber || 0,
+      };
     });
 
     const deploymentFile = this.getDeploymentsPath();
@@ -158,13 +190,67 @@ export class Deployments {
     fs.mkdirSync(dirName, { recursive: true });
     fs.writeFileSync(deploymentFile, JSON.stringify(deployments, null, 2));
 
-    this._rebuildIndex();
+    if (includeLegacy) {
+      const legacyDeploymentFile = this.getLegacyDeploymentsPath();
+      fs.writeFileSync(
+        legacyDeploymentFile,
+        JSON.stringify(legacyDeployments, null, 2)
+      );
+    }
+
+    this.rebuildIndex(includeLegacy);
+  }
+
+  public static rebuildIndex(includeLegacy = false): void {
+    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
+      return;
+    }
+
+    const indexFileName = this.getIndexFileName();
+    if (indexFileName === undefined) {
+      return;
+    }
+
+    // Legacy Index
+    let legacyIndex = undefined;
+    if (includeLegacy) {
+      legacyIndex = this._buildLegacyIndex(this.deploymentsDir);
+    }
+
+    // Remote Index
+    this._rebuildIndex(
+      this.RemoteExportsFileName,
+      [ProviderTypes.Hardhat, ProviderTypes.Ganache],
+      DirectoryFilterType.Exclude,
+      (deployment) => !deployment.config.includes(this.DbSeedsConfigString),
+      legacyIndex
+    );
+
+    // Local Index
+    this._rebuildIndex(
+      this.LocalExportsFileName,
+      [ProviderTypes.Hardhat, ProviderTypes.Ganache],
+      DirectoryFilterType.Include,
+      (deployment) => !deployment.config.includes(this.DbSeedsConfigString)
+    );
+
+    // DbSeeds Index
+    this._rebuildIndex(
+      this.DbSeedsExportsFileName,
+      [],
+      DirectoryFilterType.None,
+      (deployment) => deployment.config.includes(this.DbSeedsConfigString)
+    );
   }
 
   /**
-    PUBLIC GETTERS
+    GETTERS
    */
-  public static GetDeploymentTypeFromName(name: string): DeploymentType {
+  public static getDeployments(): Deployment[] {
+    return this.deployments;
+  }
+
+  public static getDeploymentTypeFromName(name: string): DeploymentType {
     const [provider, network, config] = name.split(
       Deployments.DeploymentTypeSeparator
     );
@@ -183,60 +269,185 @@ export class Deployments {
     };
   }
 
-  public static GetDeploymentNameFromType(type: DeploymentType): string {
+  public static getDeploymentNameFromType(type: DeploymentType): string {
     return `${type.provider}${Deployments.DeploymentTypeSeparator}${type.network}${Deployments.DeploymentTypeSeparator}${type.config}`;
   }
 
-  public getType(): DeploymentType {
+  public static getLegacyDeploymentNameFromType(type: DeploymentType): string {
+    let deploymentName = "";
+
+    if (type.provider === ProviderTypes.Remote) {
+      deploymentName =
+        type.network + Deployments.DeploymentTypeSeparator + type.config;
+    } else if (type.provider === ProviderTypes.Internal) {
+      deploymentName = "hardhat";
+    } else {
+      deploymentName =
+        "localhost" + Deployments.DeploymentTypeSeparator + type.config;
+    }
+    return deploymentName;
+  }
+
+  public static getType(): DeploymentType {
     return this.type;
   }
 
-  public getOptions(): DeploymentOptions {
+  public static getOptions(): DeploymentOptions {
     return this.options;
   }
 
-  public getDeploymentsDir(): string {
+  public static getDeploymentsDir(): string | undefined {
     return this.deploymentsDir;
   }
 
-  public getIndexDir(): string {
+  public static getIndexDir(): string | undefined {
     return this.indexDir;
   }
 
-  public getDeploymentsPath(timestamp: number | undefined = undefined): string {
-    const deploymentsDir = this.getDeploymentsDir();
-    const providerDir = `${this.type.provider}`;
-    const deploymentsFileName = Deployments.GetDeploymentNameFromType(
-      this.type
-    );
-    const deploymentExtension = ".json";
+  public static getIndexFileName(): string | undefined {
+    if (this.type.config.includes(Deployments.DbSeedsConfigString)) {
+      return Deployments.DbSeedsExportsFileName;
+    } else if (this.type.provider === ProviderTypes.Remote) {
+      return Deployments.RemoteExportsFileName;
+    } else if (
+      this.type.provider === ProviderTypes.Hardhat ||
+      this.type.provider === ProviderTypes.Ganache
+    ) {
+      return Deployments.LocalExportsFileName;
+    } else {
+      return undefined;
+    }
+  }
 
-    let deploymentsPath = resolve(
-      deploymentsDir,
-      providerDir,
-      deploymentsFileName
-    );
+  public static getDeploymentsName(
+    timestamp: number | undefined = undefined
+  ): string {
+    let deploymentsFileName = Deployments.getDeploymentNameFromType(this.type);
+    const deploymentExtension = Deployments.DeploymentFileExtension;
 
     if (timestamp) {
-      deploymentsPath = resolve(
-        deploymentsPath,
-        `${Deployments.DeploymentTypeSeparator}` + String(timestamp)
-      );
+      deploymentsFileName +=
+        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
+    }
+
+    return deploymentsFileName + deploymentExtension;
+  }
+
+  public static getDeploymentsPath(
+    timestamp: number | undefined = undefined
+  ): string {
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const providerDir = `${this.type.provider}`;
+    const deploymentsFileName = this.getDeploymentsName(timestamp);
+
+    return resolve(deploymentsDir, providerDir, deploymentsFileName);
+  }
+
+  public static getLegacyDeploymentsName(
+    timestamp: number | undefined = undefined
+  ): string {
+    const deploymentExtension = Deployments.LegacyDeploymentFileExtension;
+
+    let deploymentsPath = "";
+    if (
+      this.type.network === DeploymentNetwork.Develop &&
+      this.type.provider === ProviderTypes.Internal
+    ) {
+      deploymentsPath = "hardhat";
+    } else if (this.type.provider === ProviderTypes.Remote) {
+      deploymentsPath =
+        this.type.network +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
+    } else {
+      deploymentsPath =
+        `localhost` +
+        Deployments.DeploymentTypeSeparator +
+        `${this.type.config}`;
+    }
+
+    if (timestamp) {
+      deploymentsPath +=
+        `${Deployments.DeploymentTypeSeparator}` + String(timestamp);
     }
 
     return deploymentsPath + deploymentExtension;
   }
 
+  public static getLegacyDeploymentsPath(
+    timestamp: number | undefined = undefined
+  ): string {
+    if (this.deploymentsDir === undefined) {
+      return "";
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const deploymentsFileName = this.getLegacyDeploymentsName(timestamp);
+
+    return resolve(deploymentsDir, deploymentsFileName);
+  }
+
   /**
     PRIVATE
    */
-  async _deploy(
+  private static _writeIndex(
+    indexDir: string,
+    indexFileName: string,
+    imports: ImportPair[],
+    indexObject: DeploymentExportPair[],
+    legacyIndex?: unknown
+  ) {
+    const indexFilePath = resolve(indexDir, indexFileName);
+
+    fs.writeFileSync(
+      indexFilePath,
+      `// Autogenerated by the deployments script\n`,
+      "utf8"
+    );
+
+    imports.forEach((importStatement) => {
+      fs.appendFileSync(
+        indexFilePath,
+        `import ${importStatement.name} from "${importStatement.path}";\n`,
+        "utf8"
+      );
+    });
+
+    fs.appendFileSync(indexFilePath, `\nexport const Deployments = {`, "utf8");
+
+    indexObject.forEach((deploymentExport) => {
+      fs.appendFileSync(
+        indexFilePath,
+        `\n    "${deploymentExport.name}": ${deploymentExport.value},`,
+        "utf8"
+      );
+    });
+
+    if (legacyIndex) {
+      const objectString = JSON.stringify(legacyIndex, null, 2);
+
+      fs.appendFileSync(
+        indexFilePath,
+        `\n    ${objectString.slice(2, -2)},`,
+        "utf8"
+      );
+    }
+
+    fs.appendFileSync(indexFilePath, `\n};\n`, "utf8");
+  }
+
+  private static async _deploy(
     contractName: string,
     args: unknown[] = [],
     options: DeploymentOptions,
     alias?: string,
-    overrides: (Signer | FactoryOptions) | undefined = undefined
-  ): Promise<DeployedContract> {
+    overrides: (Signer | FactoryOptions) | undefined = undefined,
+    proxyOptions: DeployProxyOptions | undefined = undefined
+  ): Promise<Deployment> {
     let contract: Contract;
     let receipt: TransactionReceipt;
 
@@ -246,7 +457,11 @@ export class Deployments {
         overrides
       );
       if (this._hasUpgradeableOption(options)) {
-        contract = await upgrades.deployProxy(contractFactory, args);
+        contract = await upgrades.deployProxy(
+          contractFactory,
+          args,
+          proxyOptions
+        );
       } else {
         contract = await contractFactory.deploy(...args);
       }
@@ -263,12 +478,12 @@ export class Deployments {
     };
   }
 
-  async _deployMock(
+  private static async _deployMock(
     contractName: string,
     args: unknown[] = [],
     alias?: string,
     overrides: (Signer | FactoryOptions) | undefined = undefined
-  ): Promise<DeployedContract> {
+  ): Promise<Deployment> {
     let contract: MockContract<Contract>;
     let receipt: TransactionReceipt;
 
@@ -297,8 +512,8 @@ export class Deployments {
     };
   }
 
-  async _verify(
-    deployment: DeployedContract,
+  private static async _verify(
+    deployment: Deployment,
     args: unknown[],
     options: DeploymentOptions
   ) {
@@ -327,7 +542,7 @@ export class Deployments {
     }
   }
 
-  private _cycleDeploymentFile(): void {
+  private static _cycleDeploymentFile(): void {
     const deploymentFile = this.getDeploymentsPath();
 
     if (!fs.existsSync(deploymentFile)) {
@@ -344,8 +559,22 @@ export class Deployments {
     fs.renameSync(deploymentFile, timestamDeploymentFile);
   }
 
-  _rebuildIndex() {
-    let deploymentsIndex = {};
+  private static _rebuildIndex(
+    indexFileName: string,
+    directoriesList: string[],
+    filterType: DirectoryFilterType,
+    canInclude: (deployment: DeploymentObject) => boolean,
+    extraIndex: unknown = undefined
+  ): void {
+    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
+      return;
+    }
+
+    const deploymentsDir = this.deploymentsDir;
+    const indexDir = this.indexDir;
+
+    const indexImports: ImportPair[] = [];
+    const deploymentsIndex: DeploymentExportPair[] = [];
 
     // Loop through all the inner directories
     const deploymentDirs = fs
@@ -355,13 +584,24 @@ export class Deployments {
       .filter((dirent) => dirent.isDirectory())
       .map((dirent) => dirent.name);
 
-    // Read the contents of the each directory
     deploymentDirs.forEach((deploymentDir) => {
-      const deploymentDirPath = resolve(this.deploymentsDir, deploymentDir);
+      // Filter out non-required directories
+      if (
+        (filterType === DirectoryFilterType.Include &&
+          !directoriesList.includes(deploymentDir)) ||
+        (filterType === DirectoryFilterType.Exclude &&
+          directoriesList.includes(deploymentDir))
+      ) {
+        return;
+      }
+
+      const deploymentDirPath = resolve(deploymentsDir, deploymentDir);
       const deploymentFiles = fs
         .readdirSync(deploymentDirPath)
         .filter(
-          (fileName) => fileName.endsWith(".json") && !/\d/.test(fileName)
+          (fileName) =>
+            fileName.endsWith(Deployments.DeploymentFileExtension) &&
+            !/\d/.test(fileName)
         );
 
       // Read the contents of each file
@@ -371,38 +611,65 @@ export class Deployments {
         const deployment: DeploymentObject = JSON.parse(deploymentJSON);
 
         const deploymentTypeName =
-          Deployments.GetDeploymentNameFromType(deployment);
+          Deployments.getDeploymentNameFromType(deployment);
 
-        deploymentsIndex = Object.assign(deploymentsIndex, {
-          [deploymentTypeName]: deployment,
-        });
+        if (canInclude(deployment)) {
+          const importName = toCamelCase(
+            deploymentTypeName,
+            this.DeploymentTypeSeparator
+          ).replace("-", "");
+
+          indexImports.push({
+            name: importName,
+            path: path.relative(indexDir, deploymentFilePath),
+          });
+
+          deploymentsIndex.push({
+            name: `${deployment.network}${this.DeploymentTypeSeparator}${deployment.config}`,
+            value: importName,
+          });
+        }
       });
     });
 
-    // Write the index file
-    const indexFilePath = resolve(
-      this.indexDir,
-      Deployments.DeploymentsIndexFileName
-    );
-
-    fs.writeFileSync(
-      indexFilePath,
-      `// Autogenerated by the deployments script\n`,
-      "utf8"
-    );
-
-    fs.appendFileSync(
-      indexFilePath,
-      `\nexport const Deployments = ${JSON.stringify(
-        deploymentsIndex,
-        null,
-        2
-      )}`,
-      "utf8"
+    this._writeIndex(
+      indexDir,
+      indexFileName,
+      indexImports,
+      deploymentsIndex,
+      extraIndex
     );
   }
 
-  private _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {
+  private static _buildLegacyIndex(deploymentsDir: string): unknown {
+    let legacyIndex = {};
+
+    const legacyFiles = fs
+      .readdirSync(deploymentsDir)
+      .filter(
+        (fileName) =>
+          fileName.endsWith(Deployments.LegacyDeploymentFileExtension) &&
+          !/\d/.test(fileName)
+      );
+
+    legacyFiles.forEach((legacyFile) => {
+      const legacyFilePath = resolve(deploymentsDir, legacyFile);
+      const legacyDeploymentJSON = fs.readFileSync(legacyFilePath, "utf8");
+      const legacyDeployment = JSON.parse(legacyDeploymentJSON);
+
+      const legacyTypeName = path
+        .basename(legacyFilePath)
+        .replace(Deployments.LegacyDeploymentFileExtension, "");
+
+      legacyIndex = Object.assign(legacyIndex, {
+        [legacyTypeName]: legacyDeployment,
+      });
+    });
+
+    return legacyIndex;
+  }
+
+  private static _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {
     return {
       timestamp: this._getNowTimestamp(),
       network: this.type.network,
@@ -410,7 +677,7 @@ export class Deployments {
     };
   }
 
-  private _getDeploymentObjectTemplate(): DeploymentObject {
+  private static _getDeploymentObjectTemplate(): DeploymentObject {
     return {
       timestamp: this._getNowTimestamp(),
       provider: this.type.provider,
@@ -421,7 +688,9 @@ export class Deployments {
     };
   }
 
-  private _getDeploymentType(deployment: DeploymentObject): DeploymentType {
+  private static _getDeploymentType(
+    deployment: DeploymentObject
+  ): DeploymentType {
     return {
       provider: deployment.provider,
       network: deployment.network,
@@ -429,24 +698,24 @@ export class Deployments {
     };
   }
 
-  private _getNowTimestamp(): number {
+  private static _getNowTimestamp(): number {
     return Math.floor(new Date().getTime() / 1000);
   }
 
-  private _hasVerifyOption(options?: DeploymentOptions): boolean {
+  private static _hasVerifyOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Verify ? true : false;
   }
 
-  private _hasUpgradeableOption(options?: DeploymentOptions): boolean {
+  private static _hasUpgradeableOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Upgradeable ? true : false;
   }
 
-  private _hasMockOption(options?: DeploymentOptions): boolean {
+  private static _hasMockOption(options?: DeploymentOptions): boolean {
     return options && options & DeploymentFlags.Mock ? true : false;
   }
 
-  private _isDeploymentParams(
-    options: Signer | DeploymentParams | undefined
+  private static _isDeploymentParams(
+    options: Signer | DeploymentParams | DeployProxyOptions | undefined
   ): options is DeploymentParams {
     return (
       options !== undefined &&
@@ -455,11 +724,11 @@ export class Deployments {
     );
   }
 
-  private _isDevelopNetwork(): boolean {
-    return this.type.network === "develop";
+  private static _isDevelopNetwork(): boolean {
+    return this.type.network === DeploymentNetwork.Develop;
   }
 
-  private _isHardhatNetwork(): boolean {
-    return this.type.provider === "hardhat";
+  private static _isInternalProvider(): boolean {
+    return this.type.provider === ProviderTypes.Internal;
   }
 }
