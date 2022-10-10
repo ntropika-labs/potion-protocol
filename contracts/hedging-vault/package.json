@@ -14,7 +14,9 @@
         "node": ">=16.11.0"
     },
     "files": [
-        "contracts"
+        "contracts",
+        "typechain/**/*.ts",
+        "typechain/**/*.d.ts"
     ],
     "keywords": [
         "blockchain",
