@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@openzeppelin/hardhat-upgrades";
 import { ethers, upgrades } from "hardhat";
 import type { FactoryOptions } from "@nomiclabs/hardhat-ethers/types";
+import type { DeployProxyOptions } from "@openzeppelin/hardhat-upgrades/src/utils/options";
 
 import type { Contract, Signer } from "ethers";
 import { TransactionReceipt } from "@ethersproject/providers";
@@ -95,7 +96,8 @@ export class Deployments {
   public static async deploy<T extends Contract>(
     contractName: string,
     args: unknown[] = [],
-    overrides: (Signer | DeploymentParams) | undefined = undefined
+    overrides: (Signer | DeploymentParams) | undefined = undefined,
+    proxyOptions?: DeployProxyOptions
   ): Promise<T | MockContract<T>> {
     let options = this.options;
     let alias = undefined;
@@ -114,7 +116,8 @@ export class Deployments {
         args,
         options,
         alias,
-        overrides
+        overrides,
+        proxyOptions
       );
     }
 
@@ -419,7 +422,7 @@ export class Deployments {
     indexObject.forEach((deploymentExport) => {
       fs.appendFileSync(
         indexFilePath,
-        `\n  "${deploymentExport.name}": ${deploymentExport.value},`,
+        `\n    "${deploymentExport.name}": ${deploymentExport.value},`,
         "utf8"
       );
     });
@@ -429,7 +432,7 @@ export class Deployments {
 
       fs.appendFileSync(
         indexFilePath,
-        `\n  ${objectString.slice(2, -2)},`,
+        `\n    ${objectString.slice(2, -2)},`,
         "utf8"
       );
     }
@@ -442,7 +445,8 @@ export class Deployments {
     args: unknown[] = [],
     options: DeploymentOptions,
     alias?: string,
-    overrides: (Signer | FactoryOptions) | undefined = undefined
+    overrides: (Signer | FactoryOptions) | undefined = undefined,
+    proxyOptions: DeployProxyOptions | undefined = undefined
   ): Promise<Deployment> {
     let contract: Contract;
     let receipt: TransactionReceipt;
@@ -453,7 +457,11 @@ export class Deployments {
         overrides
       );
       if (this._hasUpgradeableOption(options)) {
-        contract = await upgrades.deployProxy(contractFactory, args);
+        contract = await upgrades.deployProxy(
+          contractFactory,
+          args,
+          proxyOptions
+        );
       } else {
         contract = await contractFactory.deploy(...args);
       }
@@ -707,7 +715,7 @@ export class Deployments {
   }
 
   private static _isDeploymentParams(
-    options: Signer | DeploymentParams | undefined
+    options: Signer | DeploymentParams | DeployProxyOptions | undefined
   ): options is DeploymentParams {
     return (
       options !== undefined &&
