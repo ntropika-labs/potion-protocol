@@ -27,6 +27,9 @@ yarn-debug.log*
 yarn-error.log*
 # deployments/localhost.json
 # deployments/hardhat.json
+deployments/hardhat/**/*.json
+deployments/ganache/**/*.json
+src/local.ts
 
 # Swap the comments on the following lines if you don't wish to use zero-installs
 # Documentation here: https://yarnpkg.com/features/zero-installs

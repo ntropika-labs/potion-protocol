@@ -1,15 +1,25 @@
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import { deploy, initDeployment, exportDeployments, DeploymentOptions } from "./utils/deployment";
-import { getHardhatNetworkName, getDeploymentsNetworkName } from "./utils/network";
+import {
+    deploy,
+    initDeployment,
+    exportDeployments,
+    DeploymentOptions,
+    getHardhatNetworkName,
+    getDeploymentsNetworkName,
+} from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 const networkName = getDeploymentsNetworkName();
 
 async function init() {
-    await initDeployment();
+    await initDeployment({
+        options: DeploymentOptions.DeployAndExport,
+        deploymentsDir: resolve(__dirname, "../deployments"),
+        indexDir: resolve(__dirname, "../src"),
+    });
 
     const deployer = (await ethers.provider.listAccounts())[0];
 

@@ -18,7 +18,6 @@
         "types": ["node"]
     },
     "exclude": ["node_modules"],
-    "files": ["./hardhat.config.ts", "hardhat.helpers.ts"],
     "include": [
         "src/**/*.ts",
         "scripts/**/*.ts",
@@ -28,7 +27,6 @@
         "test/**/*.ts",
         "typechain/**/*.d.ts",
         "typechain/**/*.ts",
-        "hardhat.helpers.ts",
         "typescript-defs/**/*.d.ts"
     ]
 }

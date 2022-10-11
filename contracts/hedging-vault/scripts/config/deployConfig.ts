@@ -1,5 +1,4 @@
 import { BigNumber } from "ethers";
-import { NetworksType } from "../../hardhat.helpers";
 import * as PercentageUtils from "hedging-vault-sdk";
 
 /**
@@ -9,8 +8,6 @@ import * as PercentageUtils from "hedging-vault-sdk";
  * These are used to populate the { HedgingVaultDeploymentConfig } object in order to deploy the contracts
  */
 export interface PotionHedgingVaultConfigParams {
-    networkName: NetworksType | "localhost";
-
     // Roles
     //
     // - Admin address is the deployer itself
@@ -62,58 +59,30 @@ export interface PotionHedgingVaultConfigParams {
     opynMockOracle?: string;
 }
 
+const DefaultConfig: PotionHedgingVaultConfigParams = {
+    // Investment configuration
+    maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
+    premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
+    swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
+    maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
+    cycleDurationSecs: BigNumber.from(86400), //                       1 day
+    strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
+    hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+
+    // Fees configuration
+    managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
+    performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
+};
+
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
-    hardhat: {
-        networkName: "hardhat",
-
-        // Investment configuration
-        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //                       1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
-
-        // Fees configuration
-        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
-        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
-    },
-    "localhost.test": {
-        networkName: "localhost",
-
-        // Investment configuration
-        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //                       1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
-
-        // Fees configuration
-        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
-        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
-    },
-    "localhost.hedging": {
-        networkName: "localhost",
-
-        // Investment configuration
-        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //                       1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
-
-        // Fees configuration
-        managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
-        performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
-    },
+    hardhat: DefaultConfig,
+    "localhost.test": DefaultConfig,
+    "localhost.hedging": DefaultConfig,
+    "internal.develop.hedging": DefaultConfig,
+    "hardhat.develop.hedging": DefaultConfig,
+    "internal.develop.test": DefaultConfig,
+    "hardhat.develop.test": DefaultConfig,
     "localhost.goerli": {
-        networkName: "localhost",
-
         // Asset address
         USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
         underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
@@ -137,8 +106,6 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
     },
     goerli: {
-        networkName: "goerli",
-
         // Asset address
         USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
         underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH

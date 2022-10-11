@@ -1,0 +1,12 @@
+{
+  "name": "hardhat-helpers",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "ganache-localnode": "ts-node src/utils/run-ganache.ts --network localhost",
+    "ganache-goerli": "ts-node src/utils/run-ganache.ts --network goerli --blocktime 3",
+    "ganache-mainnet": "ts-node src/utils/run-ganache.ts --network mainnet --blocktime 3"
+  }
+}
