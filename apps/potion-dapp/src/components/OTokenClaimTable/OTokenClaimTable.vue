@@ -32,15 +32,21 @@ const emits = defineEmits<{
 const { t } = useI18n();
 
 const activeTab = ref(tabs.expired);
-const selectedUnderlyings = ref<Map<string, boolean>>(new Map());
-const totalSelectedUnderlyings = computed(
-  () => Array.from(selectedUnderlyings.value.values()).filter(Boolean).length
-);
+const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
+const selectedUnderlyings = ref<Set<string>>(new Set());
 
-const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) =>
-  otokens.filter(({ otoken }) =>
-    selectedUnderlyings.value.get(otoken.underlyingAsset.address)
-  );
+const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) => {
+  if (
+    selectedUnderlyings.value.size > 0 &&
+    selectedUnderlyings.value.size < uniqueUnderlyings.value.length
+  ) {
+    return otokens.filter(({ otoken }) =>
+      selectedUnderlyings.value.has(otoken.underlyingAsset.address)
+    );
+  } else {
+    return otokens;
+  }
+};
 
 const filteredActiveOtokens = computed(() =>
   filterOtokens(props.activeOtokens)
@@ -49,22 +55,30 @@ const filteredExpiredOtokens = computed(() =>
   filterOtokens(props.expiredOtokens)
 );
 
-const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
-
-const setUnderlying = (key: string, value: boolean) =>
-  selectedUnderlyings.value.set(key, value);
+const setUnderlying = (key: string, state: boolean) => {
+  if (state === true) {
+    selectedUnderlyings.value.add(key);
+  } else {
+    selectedUnderlyings.value.delete(key);
+  }
+};
 const toggleUnderlying = (key: string) =>
-  setUnderlying(key, !selectedUnderlyings.value.get(key));
-const isActive = (key: string) => selectedUnderlyings.value.get(key);
+  setUnderlying(key, !selectedUnderlyings.value.has(key));
+const isActive = (key: string) => selectedUnderlyings.value.has(key);
 
 // bulk operations
-const setAllUnderlyings = (v: boolean) =>
-  uniqueUnderlyings.value.forEach(({ address }) => setUnderlying(address, v));
+const setAllUnderlyings = (desiredState: boolean) => {
+  if (desiredState === true)
+    selectedUnderlyings.value = new Set(
+      uniqueUnderlyings.value.map((u) => u.address)
+    );
+  else selectedUnderlyings.value.clear();
+};
 const selectAllUnderlyings = () => setAllUnderlyings(true);
 const deselectAllUnderlyings = () => setAllUnderlyings(false);
 
 const toggleAllUnderlyings = () => {
-  if (totalSelectedUnderlyings.value === 0) {
+  if (selectedUnderlyings.value.size === 0) {
     selectAllUnderlyings();
   } else {
     deselectAllUnderlyings();
@@ -123,7 +137,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
             size="xs"
             class="!capitalize"
             test-claim-table-toggle-all-button
-            :palette="getButtonColor(totalSelectedUnderlyings === 0)"
+            :palette="getButtonColor(selectedUnderlyings.size === 0)"
             @click="toggleAllUnderlyings"
           />
           <BaseButton

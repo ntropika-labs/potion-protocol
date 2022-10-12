@@ -144,7 +144,7 @@ watch(liquidity, () => {
     sessionData.value.push({
       timestamp: blockTimestamp.value,
       pnl: parseFloat(pnlPercentage.value),
-      liquidity: parseFloat(liquidity.value),
+      liquidity: liquidity.value,
       utilization: parseFloat(utilizationPercentage.value),
     });
   }
