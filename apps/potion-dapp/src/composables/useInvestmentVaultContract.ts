@@ -1,7 +1,7 @@
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 import { formatUnits } from "@ethersproject/units";
 
-import { LifecycleStates } from "hedging-vault-sdk";
+import { LifecycleStates, Roles } from "hedging-vault-sdk";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "@/composables/useEthersContract";
@@ -51,7 +51,7 @@ export function useInvestmentVaultContract(
     try {
       operatorLoading.value = true;
       const contract = initContractProvider();
-      operator.value = await contract.getOperator();
+      operator.value = await contract.getRoleMember(Roles.Operator, 0);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`cannot get the operator: ${error.message}`);
@@ -69,7 +69,7 @@ export function useInvestmentVaultContract(
     try {
       adminLoading.value = true;
       const contract = initContractProvider();
-      admin.value = await contract.getAdmin();
+      admin.value = await contract.getRoleMember(Roles.Admin, 0);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`cannot get the admin: ${error.message}`);
@@ -87,7 +87,7 @@ export function useInvestmentVaultContract(
     try {
       strategistLoading.value = true;
       const contract = initContractProvider();
-      strategist.value = await contract.getStrategist();
+      strategist.value = await contract.getRoleMember(Roles.Strategist, 0);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`cannot get the strategist: ${error.message}`);
