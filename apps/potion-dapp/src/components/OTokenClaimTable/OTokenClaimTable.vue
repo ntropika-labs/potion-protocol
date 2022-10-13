@@ -33,20 +33,14 @@ const { t } = useI18n();
 
 const activeTab = ref(tabs.expired);
 const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
-const selectedUnderlyings = ref<Set<string>>(new Set());
+const selectedUnderlyings = ref<Set<string>>(
+  new Set(uniqueUnderlyings.value.map(({ address }) => address))
+);
 
-const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) => {
-  if (
-    selectedUnderlyings.value.size > 0 &&
-    selectedUnderlyings.value.size < uniqueUnderlyings.value.length
-  ) {
-    return otokens.filter(({ otoken }) =>
-      selectedUnderlyings.value.has(otoken.underlyingAsset.address)
-    );
-  } else {
-    return otokens;
-  }
-};
+const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) =>
+  otokens.filter(({ otoken }) =>
+    selectedUnderlyings.value.has(otoken.underlyingAsset.address)
+  );
 
 const filteredActiveOtokens = computed(() =>
   filterOtokens(props.activeOtokens)
@@ -78,10 +72,10 @@ const selectAllUnderlyings = () => setAllUnderlyings(true);
 const deselectAllUnderlyings = () => setAllUnderlyings(false);
 
 const toggleAllUnderlyings = () => {
-  if (selectedUnderlyings.value.size === 0) {
-    selectAllUnderlyings();
-  } else {
+  if (selectedUnderlyings.value.size === uniqueUnderlyings.value.length) {
     deselectAllUnderlyings();
+  } else {
+    selectAllUnderlyings();
   }
 };
 
@@ -137,7 +131,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
             size="xs"
             class="!capitalize"
             test-claim-table-toggle-all-button
-            :palette="getButtonColor(selectedUnderlyings.size === 0)"
+            palette="secondary"
             @click="toggleAllUnderlyings"
           />
           <BaseButton
