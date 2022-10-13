@@ -120,54 +120,7 @@ const newSelfContainedEcosystemConfig = {
 };
 
 export const config: NetworkDeployConfigMap = {
-    // The default kovan network deploys Potion on top of contracts that were deployed and are controlled by Opyn
-    kovan: {
-        collateralToken: "0x7e6edA50d1c833bE936492BF42C1BF376239E9e2",
-        opynAddressBook: "0x8812f219f507e8cfe9d2f1e790164714c5e06a73",
-        postDeployActions: [
-            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
-            new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000"), false),
-            new WhitelistUnderlying("0x50570256f0da172a1908207aAf0c80d4b279f303"),
-        ],
-    },
-    // Added to keep the previous independent deployment post-deploy actions in case we need to
-    // deploy a similar scenario
-    "rinkeby.independent": {
-        postDeployActions: [
-            new WhitelistCollateral(),
-            new DeploySampleUnderlyingToken("PTNETH"),
-            new DeploySampleUnderlyingToken("PTNUNI"),
-            new DeploySampleUnderlyingToken("PTNLINK"),
-            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
-            new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000")),
-            new DeployCurves(),
-            new DeployCriteriaAndCriteriaSets(),
-            new InitializeMockOracle(1500),
-            new InitializeSamplePoolsOfCapital(),
-            new UpdateMockOraclePrices(1400),
-        ],
-    },
-
-    // The kovan.independent deployment deploys Opyn and Potion from the ground up, so that we control even the Opyn contracts
-    "kovan.independent": {
-        postDeployActions: [
-            new WhitelistCollateral(),
-            new DeploySampleUnderlyingToken("PTNETH"),
-            new DeploySampleUnderlyingToken("PTNUNI"),
-            new DeploySampleUnderlyingToken("PTNLINK"),
-            new AllocateCollateralTokensFromFaucet(EXTERNAL_COLLATERAL_ALLOCATIONS),
-            new AllocateCollateralTokensToWalletsFromFaucet(parseUsdcAmount("1000000")),
-            new DeployCurves(),
-            new DeployCriteriaAndCriteriaSets(),
-            new InitializeSamplePoolsOfCapital(),
-            new DeployChainlinkPricer({
-                assetName: "WETH",
-                relayerAddress: "0xba6b224398fc87abced124ba3b34fb2a83c13cec", // OZ Relayer
-                assetAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
-                chainlinkAggregatorAddress: "0x9326BFA02ADD2366b30bacB125260Af641031331", // ETH/USD aggregator
-            }),
-        ],
-    },
+    // The default goerli network deploys Potion on top of contracts that were deployed and are controlled by Opyn
     goerli: {
         collateralToken: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
         sampleUnderlyingToken: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH

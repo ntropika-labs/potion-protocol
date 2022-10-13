@@ -3,7 +3,7 @@ import { MockOracle, MarginCalculator } from "../../../typechain";
 import { createScaledNumber as scaleNum } from "../../../test/helpers/OpynUtils";
 import { Deployment } from "../../../deployments/deploymentConfig";
 import { PostDeployAction, PostDeployActionsResults } from "../postDeploy";
-import { deploy } from "../../utils/deployment";
+import { Deployments } from "contracts-utils";
 
 export class InitializeMockOracle implements PostDeployAction {
     public constructor(public initialEthPriceInDollars: number) {}
@@ -18,7 +18,7 @@ export class InitializeMockOracle implements PostDeployAction {
             throw new Error("Cannot mock prices in oracle without sample underlying token address");
         }
         // Deploy a mock oracle and set asset prices (without prices, purchases cannot be made)
-        const mockOracle = (await deploy("MockOracle")) as MockOracle;
+        const mockOracle = (await Deployments.deploy("MockOracle")) as MockOracle;
         const addressbook = await depl.addressBook();
         let trx = await addressbook.setOracle(mockOracle.address);
         await trx.wait();
@@ -32,7 +32,9 @@ export class InitializeMockOracle implements PostDeployAction {
         await trx.wait();
 
         // After deploying any new Oracle, we must redeploy a new MarginCalculator
-        const marginCalculator = (await deploy("MarginCalculator", [mockOracle.address])) as MarginCalculator;
+        const marginCalculator = (await Deployments.deploy("MarginCalculator", [
+            mockOracle.address,
+        ])) as MarginCalculator;
         trx = await addressbook.setMarginCalculator(marginCalculator.address);
         await trx.wait();
 

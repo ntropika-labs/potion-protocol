@@ -1,5 +1,5 @@
 import { RoundsOutputVault } from "../../typechain";
-import { deployUpgrade } from "../utils/deployment";
+import { DeploymentFlags, Deployments } from "contracts-utils";
 
 export interface RoundsOutputVaultDeployParams {
     adminAddress: string;
@@ -10,12 +10,13 @@ export interface RoundsOutputVaultDeployParams {
 
 export async function deployRoundsOutputVault(parameters: RoundsOutputVaultDeployParams): Promise<RoundsOutputVault> {
     console.log("- Deploying RoundsOutputVault...");
-    const roundsOutputVault = (await deployUpgrade("RoundsOutputVault", [
-        parameters.adminAddress,
-        parameters.operatorAddress,
-        parameters.investmentVault,
-        parameters.receiptsURI,
-    ])) as RoundsOutputVault;
+    const roundsOutputVault = (await Deployments.deploy(
+        "RoundsOutputVault",
+        [parameters.adminAddress, parameters.operatorAddress, parameters.investmentVault, parameters.receiptsURI],
+        {
+            options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
+        },
+    )) as RoundsOutputVault;
     console.log(`    ...deployed to: ${roundsOutputVault.address}`);
     return roundsOutputVault;
 }

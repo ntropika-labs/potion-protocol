@@ -26,18 +26,21 @@ import {
     mockOpynFactory,
     mockOpynOracle,
     mockOpynAddressBook,
-    asMock,
-} from "./MocksLibrary";
-import { attachContract } from "../utils/deployment";
+} from "./contractsMocks";
+import { asMock, Deployments, ProviderTypes } from "contracts-utils";
+import type { DeploymentType } from "contracts-utils";
+import { fromSolidityPercentage } from "hedging-vault-sdk";
 import {
     deployHedgingVault,
+    printHedgingVaultDeployParams,
     HedgingVaultDeploymentResult,
     HedgingVaultDeployParams,
 } from "../hedging-vault/deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-import { Deployments } from "@potion-protocol/core";
+import { Deployments as PotionDeployments } from "@potion-protocol/core";
+
 export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
@@ -144,126 +147,91 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
-        const mockingResult = await mockERC20(deploymentConfig.networkName, "USDC");
-        testingEnvironmentDeployment.USDC = mockingResult.softMock ? mockingResult.softMock : mockingResult.hardMock;
+        testingEnvironmentDeployment.USDC = await mockERC20("USDC");
     } else {
-        testingEnvironmentDeployment.USDC = await attachContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.USDC = await Deployments.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.USDC,
-            {
-                alias: "USDC",
-            },
+            "USDC",
         );
     }
 
     // Check if need to mock underlying asset
     if (!deploymentConfig.underlyingAsset) {
-        const mockingResult = await mockERC20(deploymentConfig.networkName, "UnderlyingAsset");
-        testingEnvironmentDeployment.underlyingAsset = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
+        testingEnvironmentDeployment.underlyingAsset = await mockERC20("UnderlyingAsset");
     } else {
-        testingEnvironmentDeployment.underlyingAsset = await attachContract<ERC20PresetMinterPauser>(
+        testingEnvironmentDeployment.underlyingAsset = await Deployments.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",
             deploymentConfig.underlyingAsset,
-            {
-                alias: "UnderlyingAsset",
-            },
+            "UnderlyingAsset",
         );
     }
 
     // Check if need to mock PotionProtocol
     if (!deploymentConfig.potionLiquidityPoolManager) {
-        const mockingResult = await mockPotionLiquidityPoolManager(deploymentConfig.networkName);
-        testingEnvironmentDeployment.potionLiquidityPoolManager = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await mockPotionLiquidityPoolManager();
     } else {
-        testingEnvironmentDeployment.potionLiquidityPoolManager = await attachContract<IPotionLiquidityPool>(
+        testingEnvironmentDeployment.potionLiquidityPoolManager = await Deployments.attach<IPotionLiquidityPool>(
             "IPotionLiquidityPool",
             deploymentConfig.potionLiquidityPoolManager,
-            {
-                alias: "PotionLiquidityPool",
-            },
+            "PotionLiquidityPool",
         );
     }
 
     if (!deploymentConfig.opynAddressBook) {
-        const opynController = await mockOpynController(deploymentConfig.networkName);
-        const opynFactory = await mockOpynFactory(deploymentConfig.networkName);
-        const opynOracle = await mockOpynOracle(deploymentConfig.networkName);
+        testingEnvironmentDeployment.opynController = await mockOpynController();
+        testingEnvironmentDeployment.opynFactory = await mockOpynFactory();
+        const opynOracle = await mockOpynOracle();
 
-        testingEnvironmentDeployment.opynController = opynController.softMock
-            ? opynController.softMock
-            : opynController.hardMock;
-        testingEnvironmentDeployment.opynFactory = opynFactory.softMock ? opynFactory.softMock : opynFactory.hardMock;
-        testingEnvironmentDeployment.opynOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
-        testingEnvironmentDeployment.opynMockOracle = opynOracle.softMock ? opynOracle.softMock : opynOracle.hardMock;
+        testingEnvironmentDeployment.opynOracle = opynOracle;
+        testingEnvironmentDeployment.opynMockOracle = opynOracle;
 
-        const mockingResult = await mockOpynAddressBook(
-            deploymentConfig.networkName,
+        testingEnvironmentDeployment.opynAddressBook = await mockOpynAddressBook(
             testingEnvironmentDeployment.opynController.address,
             testingEnvironmentDeployment.opynFactory.address,
             testingEnvironmentDeployment.opynOracle.address,
         );
-        testingEnvironmentDeployment.opynAddressBook = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
     } else {
-        testingEnvironmentDeployment.opynAddressBook = await attachContract<IOpynAddressBook>(
+        testingEnvironmentDeployment.opynAddressBook = await Deployments.attach<IOpynAddressBook>(
             "IOpynAddressBook",
             deploymentConfig.opynAddressBook,
-            {
-                alias: "OpynAddressBook",
-            },
+            "OpynAddressBook",
         );
 
-        testingEnvironmentDeployment.opynController = await attachContract<IOpynController>(
+        testingEnvironmentDeployment.opynController = await Deployments.attach<IOpynController>(
             "IOpynController",
             await testingEnvironmentDeployment.opynAddressBook.getController(),
-            {
-                alias: "OpynController",
-            },
+            "OpynController",
         );
 
-        testingEnvironmentDeployment.opynFactory = await attachContract<IOpynFactory>(
+        testingEnvironmentDeployment.opynFactory = await Deployments.attach<IOpynFactory>(
             "IOpynFactory",
             await testingEnvironmentDeployment.opynAddressBook.getOtokenFactory(),
-            {
-                alias: "OpynFactory",
-            },
+            "OpynFactory",
         );
 
-        testingEnvironmentDeployment.opynOracle = await attachContract<IOpynOracle>(
+        testingEnvironmentDeployment.opynOracle = await Deployments.attach<IOpynOracle>(
             "IOpynOracle",
             await testingEnvironmentDeployment.opynAddressBook.getOracle(),
-            {
-                alias: "OpynOracle",
-            },
+            "OpynOracle",
         );
 
         // TODO: Is this still needed?
         if (deploymentConfig.opynMockOracle) {
-            testingEnvironmentDeployment.opynMockOracle = await attachContract<MockOpynOracle>(
+            testingEnvironmentDeployment.opynMockOracle = await Deployments.attach<MockOpynOracle>(
                 "MockOpynOracle",
                 deploymentConfig.opynMockOracle,
-                {
-                    alias: "MockOpynOracle",
-                },
+                "MockOpynOracle",
             );
         }
     }
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        const mockingResult = await mockUniswapV3SwapRouter(deploymentConfig.networkName, [
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouter([
             testingEnvironmentDeployment.USDC.address,
             testingEnvironmentDeployment.underlyingAsset.address,
         ]);
-
-        testingEnvironmentDeployment.uniswapV3SwapRouter = mockingResult.softMock
-            ? mockingResult.softMock
-            : mockingResult.hardMock;
 
         // Mint some tokens to the Uniswap Router
         await testingEnvironmentDeployment.USDC.mint(
@@ -275,12 +243,10 @@ async function mockContractsIfNeeded(
             ethers.utils.parseEther("10000000"),
         );
     } else {
-        testingEnvironmentDeployment.uniswapV3SwapRouter = await attachContract<ISwapRouter>(
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await Deployments.attach<ISwapRouter>(
             "ISwapRouter",
             deploymentConfig.uniswapV3SwapRouter,
-            {
-                alias: "SwapRouter",
-            },
+            "SwapRouter",
         );
     }
 
@@ -346,7 +312,13 @@ async function prepareTestEnvironment(
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getPotionProtocolDeployments(networkName: string): any {
     /* @ts-expect-error iterator is not defined */
-    return Deployments[networkName].contracts;
+    const deployment = PotionDeployments[networkName];
+
+    if (deployment === undefined) {
+        return undefined;
+    }
+
+    return deployment.contracts;
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -372,14 +344,30 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     }
 }
 
-export function getDeploymentConfig(networkName: string): PotionHedgingVaultConfigParams {
-    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[networkName];
+export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
+    const deploymentTypeName = Deployments.getDeploymentNameFromType(deploymentType);
+    const legacyDeploymentTypeName = Deployments.getLegacyDeploymentNameFromType(deploymentType);
+    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
 
-    if (networkName !== "hardhat" && networkName !== "localhost.test") {
-        const potionProtocolDeployments = getPotionProtocolDeployments(networkName);
+    let potionProtocolDeployments;
+    if (deploymentType.provider !== ProviderTypes.Internal && deploymentType.config !== "test") {
+        potionProtocolDeployments = getPotionProtocolDeployments(deploymentTypeName);
+
+        if (potionProtocolDeployments === undefined) {
+            potionProtocolDeployments = getPotionProtocolDeployments(legacyDeploymentTypeName);
+        }
+
         if (potionProtocolDeployments !== undefined) {
             usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
         }
+    }
+
+    if (potionProtocolDeployments !== undefined) {
+        console.log("[Using Potion Protocol deployments]\n");
+    } else {
+        console.log(
+            `[Not using potion protocol deployments, couldn't find ${deploymentTypeName} or ${legacyDeploymentTypeName} deployments]\n`,
+        );
     }
 
     return hedgingVaultConfig;
@@ -387,14 +375,7 @@ export function getDeploymentConfig(networkName: string): PotionHedgingVaultConf
 
 export async function deployTestingEnv(
     deploymentConfig: PotionHedgingVaultConfigParams,
-    showLogs: boolean = false,
 ): Promise<TestingEnvironmentDeployment> {
-    if (!showLogs) {
-        console.log = function () {
-            /* empty on purpose */
-        };
-    }
-
     const deployer = (await ethers.getSigners())[0];
 
     const testEnvDeployment: TestingEnvironmentDeployment = await prepareTestEnvironment(deployer, deploymentConfig);
@@ -434,6 +415,12 @@ export async function deployTestingEnv(
         opynAddressBook: testEnvDeployment.opynAddressBook.address,
     };
 
+    printHedgingVaultDeployParams(deploymentParams);
+
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`                           DEPLOYMENT ACTIONS`);
+    console.log(`--------------------------------------------------------------------------------`);
+
     const deployment: HedgingVaultDeploymentResult = await deployHedgingVault(deploymentParams);
 
     testEnvDeployment.investmentVault = deployment.vault;
@@ -443,15 +430,17 @@ export async function deployTestingEnv(
     testEnvDeployment.roundsOutputVault = deployment.roundsOutputVault;
     testEnvDeployment.roundsVaultExchanger = deployment.roundsVaultExchanger;
 
+    console.log(`--------------------------------------------------------------------------------\n`);
+
     printDeploymentEnvironment(testEnvDeployment);
 
     return testEnvDeployment;
 }
 
 export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvironmentDeployment) {
-    console.log(`------------------------------------------------------`);
-    console.log(`                 DEPLOYMENT ENVIRONMENT`);
-    console.log(`------------------------------------------------------`);
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`                         DEPLOYMENT ENVIRONMENT`);
+    console.log(`--------------------------------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
     console.log(`  - Orchestrator: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
@@ -473,16 +462,54 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
     console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
     console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
-    console.log(`  - Underlying Asset Cap: ${ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)}`);
-    console.log(`  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()}`);
-    console.log(`  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()}`);
-    console.log(`  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()}`);
-    console.log(`  - Max Swap Duration (secs): ${testEnvDeployment.maxSwapDurationSecs.toString()}`);
-    console.log(`  - Cycle Duration (secs): ${testEnvDeployment.cycleDurationSecs.toString()}`);
-    console.log(`  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()}`);
-    console.log(`  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()}`);
-    console.log(`  - Management Fee: ${testEnvDeployment.managementFee.toString()}`);
-    console.log(`  - Performance Fee: ${testEnvDeployment.performanceFee.toString()}`);
+    console.log(
+        `  - Underlying Asset Cap: ${
+            testEnvDeployment.underlyingAssetCap.eq(ethers.constants.MaxUint256)
+                ? "Maximum (uint256)"
+                : ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)
+        }`,
+    );
+    console.log(
+        `  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.maxPremiumPercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.premiumSlippage,
+        )}%)`,
+    );
+    console.log(
+        `  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.swapSlippage,
+        )}%)`,
+    );
+    console.log(`  - Max Swap Duration: ${testEnvDeployment.maxSwapDurationSecs.toString()} seconds`);
+    console.log(
+        `  - Cycle Duration: ${testEnvDeployment.cycleDurationSecs.toString()} seconds (${testEnvDeployment.cycleDurationSecs
+            .div(BigNumber.from(3600))
+            .toString()} hours, ${testEnvDeployment.cycleDurationSecs.div(BigNumber.from(86400)).toString()} days)`,
+    );
+    console.log(
+        `  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.strikePercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.hedgingPercentage,
+        )}%)`,
+    );
+    console.log(
+        `  - Management Fee: ${testEnvDeployment.managementFee.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.managementFee,
+        )}%)`,
+    );
+    console.log(
+        `  - Performance Fee: ${testEnvDeployment.performanceFee.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.performanceFee,
+        )}%)`,
+    );
     console.log(`  - Fees Recipient: ${testEnvDeployment.feesRecipient}`);
-    console.log(`------------------------------------------------------`);
+    console.log(`--------------------------------------------------------------------------------\n`);
 }
