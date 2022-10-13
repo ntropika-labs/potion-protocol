@@ -38,6 +38,7 @@ import Tooltip from "./components/Tooltip/Tooltip.vue";
 import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
 import TimeTag from "./components/TimeTag/TimeTag.vue";
 import TokenCard from "./components/TokenCard/TokenCard.vue";
+import VaultCard from "./components/VaultCard/VaultCard.vue";
 
 export type {
   IconStrokeWeight,
@@ -90,4 +91,5 @@ export {
   SidebarLink,
   TimeTag,
   TokenCard,
+  VaultCard,
 };
