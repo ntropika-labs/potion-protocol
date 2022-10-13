@@ -18,6 +18,7 @@ interface IPotionBuyActionV0 {
     event MaxSwapDurationChanged(uint256 maxSwapDurationSecs);
     event CycleDurationChanged(uint256 cycleDurationSecs);
     event StrikePercentageChanged(uint256 strikePercentage);
+    event HedgingRateChanged(uint256 hedgingRate);
 
     /// ERRORS
     error MaxPremiumPercentageOutOfRange(uint256 maxPremiumPercentage);
@@ -25,6 +26,7 @@ interface IPotionBuyActionV0 {
     error SwapSlippageOutOfRange(uint256 swapSlippage);
     error CycleDurationTooShort(uint256 cycleDurationSecs, uint256 minCycleDurationSecs);
     error StrikePercentageIsZero();
+    error HedgingRateIsZero();
 
     /// SETTERS
 
@@ -64,6 +66,11 @@ interface IPotionBuyActionV0 {
         @notice Sets strike percentage as a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
     function setStrikePercentage(uint256 strikePercentage) external;
+
+    /**
+        @notice Sets the hedging rate as a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+     */
+    function setHedgingRate(uint256 hedgingRate_) external;
 
     /// GETTERS
 

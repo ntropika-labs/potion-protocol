@@ -10,7 +10,7 @@ import {
     RoundsVaultExchanger,
 } from "../../typechain";
 import { BigNumber } from "ethers";
-import { Roles } from "hedging-vault-sdk";
+import { PERCENTAGE_100_BN, Roles } from "hedging-vault-sdk";
 import { deployRoundsInputVault, RoundsInputVaultDeployParams } from "../common/deployRoundsInputVault";
 import { deployRoundsOutputVault } from "../common/deployRoundsOutputVault";
 import { deployRoundsVaultExchanger } from "../common/deployRoundsVaultExchanger";
@@ -111,6 +111,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         maxSwapDurationSecs: parameters.maxSwapDurationSecs,
         cycleDurationSecs: parameters.cycleDurationSecs,
         strikePercentage: parameters.strikePercentage,
+        hedgingRate: parameters.hedgingPercentage,
     };
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);
@@ -126,7 +127,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         performanceFee: parameters.performanceFee,
         feesRecipient: parameters.feesRecipient,
         actions: [potionBuyContract.address],
-        principalPercentages: [parameters.hedgingPercentage],
+        principalPercentages: [PERCENTAGE_100_BN],
     };
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);

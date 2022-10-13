@@ -60,6 +60,8 @@ contract PotionBuyAction is
         @param cycleDurationSecs The duration of the investment cycle in seconds
         @param strikePercentage The strike percentage on the price of the hedged asset, as a uint256
                with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+        @param hedgingRate The hedging rate to be applied to the received assets, as a uint256 with
+              `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
     struct PotionBuyInitParams {
         address adminAddress;
@@ -76,6 +78,7 @@ contract PotionBuyAction is
         uint256 maxSwapDurationSecs;
         uint256 cycleDurationSecs;
         uint256 strikePercentage;
+        uint256 hedgingRate;
     }
 
     /// INITIALIZERS
@@ -250,6 +253,13 @@ contract PotionBuyAction is
         _setStrikePercentage(strikePercentage_);
     }
 
+    /**
+        @inheritdoc IPotionBuyActionV0
+     */
+    function setHedgingRate(uint256 hedgingRate_) external override onlyStrategist {
+        _setHedgingRate(hedgingRate_);
+    }
+
     // GETTERS
 
     /**
@@ -352,6 +362,19 @@ contract PotionBuyAction is
         strikePercentage = strikePercentage_;
 
         emit StrikePercentageChanged(strikePercentage_);
+    }
+
+    /**
+        @dev See { setStrikePercentage }
+     */
+    function _setHedgingRate(uint256 hedgingRate_) internal {
+        if (hedgingRate_ == 0) {
+            revert HedgingRateIsZero();
+        }
+
+        hedgingRate = hedgingRate_;
+
+        emit HedgingRateChanged(hedgingRate_);
     }
 
     /**

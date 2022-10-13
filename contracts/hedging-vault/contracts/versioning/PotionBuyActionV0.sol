@@ -66,6 +66,12 @@ abstract contract PotionBuyActionV0 is IPotionBuyActionV0 {
      */
     uint256 public strikePercentage;
 
+    /**
+        @notice The hedging rate to be applied to the received assets, as a uint256 with
+                `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+     */
+    uint256 public hedgingRate;
+
     /// MODIFIERS
 
     /**

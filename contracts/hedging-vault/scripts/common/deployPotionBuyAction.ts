@@ -17,6 +17,7 @@ export interface PotionBuyActionDeployParams {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber; // 6 decimals
+    hedgingRate: BigNumber; // 6 decimals
 }
 
 export async function deployPotionBuyAction(parameters: PotionBuyActionDeployParams): Promise<PotionBuyAction> {
