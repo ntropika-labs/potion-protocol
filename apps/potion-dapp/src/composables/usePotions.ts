@@ -120,12 +120,12 @@ export const usePotions = (
   };
 
   if (isRef(underlyings) && isRef(timestamp)) {
-    watch([timestamp, underlyings], async ([time, unders]) => {
-      await cleanLoad(time, unders);
+    watch([timestamp, underlyings], ([time, unders]) => {
+      cleanLoad(time, unders);
     });
-  } else {
-    onMounted(() => cleanLoad(deepUnref(timestamp), deepUnref(underlyings)));
   }
+
+  onMounted(() => cleanLoad(deepUnref(timestamp), deepUnref(underlyings)));
 
   return {
     canLoadMoreCollateralized,
