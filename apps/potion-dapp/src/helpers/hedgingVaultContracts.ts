@@ -5,6 +5,7 @@ import { ethereumNetwork } from "./";
 //@ts-expect-error iterator is not defined
 export const contractsAddresses = Deployments[ethereumNetwork].contracts;
 
+// TODO: we will need to change the format to include also the contracts for deferred deposit and withdraw
 export const multiVaultAddresses = [
   {
     vault: contractsAddresses.InvestmentVault.address.toLowerCase(),
