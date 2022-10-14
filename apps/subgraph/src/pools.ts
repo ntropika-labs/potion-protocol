@@ -185,8 +185,8 @@ function updateConfigPoolTemplate(
       template,
       pool.size,
       pool.locked,
-      pool.liquidityAtTrades,
-      pool.pnlTotal
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
     );
     // Set the pool to use the new / loaded template
     pool.template = template.id;
@@ -206,8 +206,8 @@ function updateConfigPoolTemplate(
         pastTemplate,
         pool.size,
         pool.locked,
-        pool.liquidityAtTrades,
-        pool.pnlTotal
+        ZERO_BIGDECIMAL,
+        ZERO_BIGDECIMAL
       );
       log.info("Updated the pastTemplate {}, size is {} and numPools is {}", [
         pastTemplate.id,
@@ -832,7 +832,7 @@ export function handleOptionSettlementDistributed(
       template,
       deltaCollateralizedAndReturned,
       poolTotalCollateralized,
-      BigDecimal.fromString("0"),
+      ZERO_BIGDECIMAL,
       deltaCollateralizedAndReturned
     );
 
