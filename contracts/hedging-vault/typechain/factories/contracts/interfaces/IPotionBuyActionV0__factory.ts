@@ -27,6 +27,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "HedgingRateIsZero",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -75,6 +80,19 @@ const _abi = [
       },
     ],
     name: "CycleDurationChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "hedgingRate",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateChanged",
     type: "event",
   },
   {
@@ -162,6 +180,11 @@ const _abi = [
         name: "payout",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "orderSize",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -175,6 +198,19 @@ const _abi = [
       },
     ],
     name: "setCycleDuration",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "hedgingRate_",
+        type: "uint256",
+      },
+    ],
+    name: "setHedgingRate",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

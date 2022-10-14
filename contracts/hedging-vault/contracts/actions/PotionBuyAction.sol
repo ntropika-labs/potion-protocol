@@ -153,30 +153,32 @@ contract PotionBuyAction is
         _updateNextCycleStart();
         _setLifecycleState(LifecycleState.Locked);
 
-        // TODO: We could calculate the amount of USDC that will be needed to buy the potion and just
-        // TODO: transfer enough asset needed to swap for that. However it is simpler to transfer everything for now
+        require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
 
         // The caller is the operator, so we can trust doing this external call first
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        bool isValid;
-        uint256 maxPremiumNeededInUSDC;
+        uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
+            investmentAsset,
+            nextCycleStartTimestamp,
+            premiumSlippage
+        );
 
-        (isValid, maxPremiumNeededInUSDC) = _calculatePotionMaxPremium(
+        _swapOutput(investmentAsset, address(getUSDC()), premiumWithSlippageInUSDC, swapSlippage, maxSwapDurationSecs);
+        (, uint256 actualPremiumInUSDC) = _buyPotions(
             investmentAsset,
             nextCycleStartTimestamp,
             amountToInvest,
-            premiumSlippage
+            strikePercentage,
+            hedgingRate,
+            premiumWithSlippageInUSDC
         );
-        require(isValid, "Cannot calculate the required premium");
 
+        // Check max premium
         uint256 maxPremiumAllowedInAsset = amountToInvest.applyPercentage(maxPremiumPercentage);
         uint256 maxPremiumAllowedInUSDC = _calculateAssetValueInUSDC(investmentAsset, maxPremiumAllowedInAsset);
 
-        require(maxPremiumNeededInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
-
-        _swapOutput(investmentAsset, address(getUSDC()), maxPremiumNeededInUSDC, swapSlippage, maxSwapDurationSecs);
-        _buyPotions(investmentAsset, nextCycleStartTimestamp, amountToInvest, premiumSlippage);
+        require(actualPremiumInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -284,7 +286,15 @@ contract PotionBuyAction is
     /**
         @inheritdoc IPotionBuyActionV0
     */
-    function calculateCurrentPayout(address investmentAsset) external view returns (bool isFinal, uint256 payout) {
+    function calculateCurrentPayout(address investmentAsset)
+        external
+        view
+        returns (
+            bool isFinal,
+            uint256 payout,
+            uint256 orderSize
+        )
+    {
         return _calculateCurrentPayout(investmentAsset, nextCycleStartTimestamp);
     }
 

@@ -102,7 +102,6 @@ async function getPotionBuyInfo(
         expirationTimestamp: expirationTimestamp,
         sellers: counterparties,
         expectedPremiumInUSDC: expectedPremiumInUSDC,
-        totalSizeInPotions: otokensAmount,
     };
 
     return { potionBuyInfo, expectedPremiumInUSDC };

@@ -37,63 +37,64 @@ library PotionProtocolLib {
         @notice Buys the specified amount of potions with the given parameters
 
         @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
-        @param buyInfo The information required to buy a specific potion with a specific maximum premium requirement
-        @param slippage Slippage to apply to the premium to calculate the maximum premium allowed
+        @param opynFactory Address of the Opyn Factory
+        @param underlyingAsset Address of the underlying asset of the potion to buy
+        @param strikePriceInUSDC Strike price of the potion to buy, in USDC, with 6 decimals
+        @param expirationTimestamp Expiration timestamp of the potion to buy
+        @param maxPremiumInUSDC Maximum premium to pay for the potion, in USDC
+        @param targetPotionAddress Address of the potion to buy
+        @param sellers List of liquidity providers to use to buy the potion
+        @param USDC Address of the USDC token
 
-        @return actualPremium The actual premium paid for the purchase of potions
-
-        @dev Convenience function that calculates the slippage on the premium and calls the
-        pool manager. Abstracted here in case it is needed to expand the logic in the future.
+        @return actualPremiumInUSDC The actual premium paid for the purchase of potions
      */
-
     function buyPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
         IOpynFactory opynFactory,
-        PotionBuyInfo memory buyInfo,
-        uint256 slippage,
+        address underlyingAsset,
+        uint256 strikePriceInUSDC,
+        uint256 expirationTimestamp,
+        uint256 maxPremiumInUSDC,
+        address targetPotionAddress,
+        IPotionLiquidityPool.CounterpartyDetails[] memory sellers,
         IERC20 USDC
-    ) internal returns (uint256 actualPremium) {
-        uint256 maxPremium = buyInfo.expectedPremiumInUSDC.addPercentage(slippage);
-
-        SafeERC20.safeApprove(USDC, address(potionLiquidityPoolManager), maxPremium);
+    ) internal returns (uint256 actualPremiumInUSDC) {
+        SafeERC20.safeApprove(USDC, address(potionLiquidityPoolManager), maxPremiumInUSDC);
 
         address oToken = opynFactory.getExistingOtoken(
-            buyInfo.underlyingAsset,
+            underlyingAsset,
             address(USDC),
-            buyInfo.strikePriceInUSDC,
-            buyInfo.expirationTimestamp
+            strikePriceInUSDC,
+            expirationTimestamp
         );
 
         if (oToken == address(0)) {
             address targetOToken = opynFactory.getTargetOtoken(
-                buyInfo.underlyingAsset,
+                underlyingAsset,
                 address(USDC),
-                buyInfo.strikePriceInUSDC,
-                buyInfo.expirationTimestamp
+                strikePriceInUSDC,
+                expirationTimestamp
             );
 
-            require(
-                targetOToken == buyInfo.targetPotionAddress,
-                "Otoken does not exist and target address does not match"
-            );
+            require(targetOToken == targetPotionAddress, "Otoken does not exist and target address does not match");
 
-            actualPremium = potionLiquidityPoolManager.createAndBuyOtokens(
-                buyInfo.underlyingAsset,
+            actualPremiumInUSDC = potionLiquidityPoolManager.createAndBuyOtokens(
+                underlyingAsset,
                 address(USDC),
                 address(USDC),
-                buyInfo.strikePriceInUSDC,
-                buyInfo.expirationTimestamp,
+                strikePriceInUSDC,
+                expirationTimestamp,
                 true,
-                buyInfo.sellers,
-                maxPremium
+                sellers,
+                maxPremiumInUSDC
             );
         } else {
-            require(oToken == buyInfo.targetPotionAddress, "Otoken does exist but target address does not match");
+            require(oToken == targetPotionAddress, "Otoken does exist but target address does not match");
 
-            actualPremium = potionLiquidityPoolManager.buyOtokens(IOtoken(oToken), buyInfo.sellers, maxPremium);
+            actualPremiumInUSDC = potionLiquidityPoolManager.buyOtokens(IOtoken(oToken), sellers, maxPremiumInUSDC);
         }
 
-        if (actualPremium < maxPremium) {
+        if (actualPremiumInUSDC < maxPremiumInUSDC) {
             SafeERC20.safeApprove(USDC, address(potionLiquidityPoolManager), 0);
         }
     }
@@ -114,7 +115,8 @@ library PotionProtocolLib {
 
         @param potionLiquidityPoolManager Address of the Potion Protocol liquidity manager
         @param opynController Address of the Opyn controller to claim the payout
-        @param buyInfo The information used to previously purchase the potions
+        @param targetPotionAddress Address of the potion to redeem
+        @param totalSizeInPotions The total amount of potions to redeem
         
         @dev The settlement will send back the proceeds of the expired potion to this contract
 
@@ -123,17 +125,16 @@ library PotionProtocolLib {
     function redeemPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
         IOpynController opynController,
-        PotionBuyInfo memory buyInfo
+        address targetPotionAddress,
+        uint256 totalSizeInPotions
     ) internal {
-        IOtoken potion = IOtoken(buyInfo.targetPotionAddress);
-
-        uint256 potionVaultId = potionLiquidityPoolManager.getVaultId(potion);
+        uint256 potionVaultId = potionLiquidityPoolManager.getVaultId(IOtoken(targetPotionAddress));
 
         IOpynController.ActionArgs[] memory redeemArgs = _getRedeemPotionAction(
             address(this),
-            address(potion),
+            targetPotionAddress,
             potionVaultId,
-            buyInfo.totalSizeInPotions
+            totalSizeInPotions
         );
 
         opynController.operate(redeemArgs);
@@ -154,21 +155,6 @@ library PotionProtocolLib {
         uint256 amount
     ) internal view returns (uint256 payout) {
         payout = opynController.getPayout(potion, amount);
-    }
-
-    /**
-        @notice Gets the amount of potions required to cover the specified amount of the hedged asset
-
-        @param hedgedAsset The asset being hedged by the potions
-        @param amount The amount of the hedged asset to be covered by the potions
-
-        @return The amount of potions required to cover the specified amount of the hedged asset
-     */
-    function getPotionsAmount(address hedgedAsset, uint256 amount) internal view returns (uint256) {
-        uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
-
-        // Convert with a 1:1 ratio, just adjust the decimals
-        return PriceUtils.convertAmount(hedgedAssetDecimals, OTOKEN_DECIMALS, amount, 1, 1);
     }
 
     /**

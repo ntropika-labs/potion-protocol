@@ -43,7 +43,7 @@ describe("HedgingVaultBasic", function () {
     let tEnv: TestingEnvironmentDeployment;
 
     before(function () {
-        showConsoleLogs(false);
+        showConsoleLogs(true);
         Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,
@@ -215,6 +215,7 @@ describe("HedgingVaultBasic", function () {
             expectedPremiumInUSDC,
             tEnv.premiumSlippage,
         );
+
         const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
         const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
@@ -299,7 +300,6 @@ describe("HedgingVaultBasic", function () {
             expirationTimestamp: expirationTimestamp,
             sellers: counterparties,
             expectedPremiumInUSDC: expectedPremiumInUSDC,
-            totalSizeInPotions: otokensAmount,
         };
 
         // UNISWAP INFO

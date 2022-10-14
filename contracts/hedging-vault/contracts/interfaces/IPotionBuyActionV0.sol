@@ -81,6 +81,15 @@ interface IPotionBuyActionV0 {
         
         @return isFinal Whether the payout is final or not. If the payout is final it won't change anymore. If it
                 is not final it means that the potion has not expired yet and the payout may change in the future.
+        @return payout The payout in the investment asset
+        @return orderSize The order size in the investment asset
     */
-    function calculateCurrentPayout(address investmentAsset) external view returns (bool isFinal, uint256 payout);
+    function calculateCurrentPayout(address investmentAsset)
+        external
+        view
+        returns (
+            bool isFinal,
+            uint256 payout,
+            uint256 orderSize
+        );
 }
