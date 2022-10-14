@@ -21,6 +21,11 @@ interface VaultData {
   strikePercentage: number;
 }
 
+interface PromiseFulfilledResult<T> {
+  status: "fulfilled";
+  value: T;
+}
+
 const { t } = useI18n();
 const router = useRouter();
 
@@ -59,7 +64,10 @@ onMounted(async () => {
       };
     }
   );
-  vaultData.value = await Promise.all(promises);
+  const fulfilled = (await Promise.allSettled(promises)).filter(
+    (r) => r.status === "fulfilled"
+  ) as PromiseFulfilledResult<VaultData>[];
+  vaultData.value = fulfilled.map((r) => r.value);
 });
 
 const toVault = (id: string) => {
