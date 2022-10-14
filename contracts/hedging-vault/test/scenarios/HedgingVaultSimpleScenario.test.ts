@@ -43,7 +43,7 @@ describe("HedgingVaultBasic", function () {
     let tEnv: TestingEnvironmentDeployment;
 
     before(function () {
-        showConsoleLogs(true);
+        showConsoleLogs(false);
         Deployments.initialize({
             type: {
                 provider: network.name === "localhost" ? ProviderTypes.Hardhat : ProviderTypes.Internal,

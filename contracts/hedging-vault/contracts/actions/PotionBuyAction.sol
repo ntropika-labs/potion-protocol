@@ -79,6 +79,7 @@ contract PotionBuyAction is
         uint256 cycleDurationSecs;
         uint256 strikePercentage;
         uint256 hedgingRate;
+        //uint256 hedgingRateSlippage;
     }
 
     /// INITIALIZERS
@@ -165,20 +166,14 @@ contract PotionBuyAction is
         );
 
         _swapOutput(investmentAsset, address(getUSDC()), premiumWithSlippageInUSDC, swapSlippage, maxSwapDurationSecs);
-        (, uint256 actualPremiumInUSDC) = _buyPotions(
+        (uint256 amountPotionsInAssets, uint256 actualPremiumInUSDC) = _buyPotions(
             investmentAsset,
             nextCycleStartTimestamp,
-            amountToInvest,
-            strikePercentage,
-            hedgingRate,
             premiumWithSlippageInUSDC
         );
 
-        // Check max premium
-        uint256 maxPremiumAllowedInAsset = amountToInvest.applyPercentage(maxPremiumPercentage);
-        uint256 maxPremiumAllowedInUSDC = _calculateAssetValueInUSDC(investmentAsset, maxPremiumAllowedInAsset);
-
-        require(actualPremiumInUSDC <= maxPremiumAllowedInUSDC, "The premium needed is too high");
+        _validateMaxPremium(investmentAsset, amountToInvest, actualPremiumInUSDC);
+        _validateHedgingRate(investmentAsset, amountToInvest, amountPotionsInAssets, actualPremiumInUSDC);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -411,5 +406,56 @@ contract PotionBuyAction is
         uint256 lastCycleExpectedStart = block.timestamp - currentCycleOffset;
 
         nextCycleStartTimestamp = lastCycleExpectedStart + cycleDurationSecs;
+    }
+
+    /**
+        @notice Validates that the actual premium being paid does not exceed the maximum allowed
+
+        @param investmentAsset The asset to be invested
+        @param amountToInvest The amount of assets to be invested, with `investmentAsset` decimals
+        @param actualPremiumInUSDC The actual premium being paid, with 6 decimals
+     */
+    function _validateMaxPremium(
+        address investmentAsset,
+        uint256 amountToInvest,
+        uint256 actualPremiumInUSDC
+    ) private view {
+        uint256 maxPremiumAllowedInAsset = amountToInvest.applyPercentage(maxPremiumPercentage);
+        uint256 maxPremiumAllowedInUSDC = _convertAssetToUSDCOnLivePrice(investmentAsset, maxPremiumAllowedInAsset);
+
+        if (actualPremiumInUSDC > maxPremiumAllowedInUSDC) {
+            revert PremiumExceedsMaxPremium(actualPremiumInUSDC, maxPremiumAllowedInUSDC);
+        }
+    }
+
+    /**
+        @notice Validates that the effective hedging rate is in range with the expected one
+
+        @param investmentAsset The asset to be invested
+        @param amountToInvestInAssets The amount of assets to be invested, with `investmentAsset` decimals
+        @param amountPotionsInAssets The amount of potions that were bought, with `investmentAsset` decimals
+        @param actualPremiumInUSDC The actual premium being paid, with 6 decimals
+
+        @dev If this cycle there were no assets in the vault, skip the check
+     */
+    function _validateHedgingRate(
+        address investmentAsset,
+        uint256 amountToInvestInAssets,
+        uint256 amountPotionsInAssets,
+        uint256 actualPremiumInUSDC
+    ) private view {
+        if (amountToInvestInAssets == 0) {
+            return;
+        }
+
+        uint256 actualPremiumInAsset = _convertUSDCToAssetOnLivePrice(investmentAsset, actualPremiumInUSDC);
+
+        uint256 actualHedgedAmountInAssets = amountToInvestInAssets - actualPremiumInAsset;
+
+        uint256 actualHedgingRate = PercentageUtils.toPercentage(amountPotionsInAssets, actualHedgedAmountInAssets);
+
+        if (actualHedgingRate < hedgingRate) {
+            revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate);
+        }
     }
 }

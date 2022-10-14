@@ -29,7 +29,7 @@ library PotionProtocolLib {
     using OpynProtocolLib for IOpynFactory;
 
     /// CONSTANTS
-    uint256 private constant OTOKEN_DECIMALS = 8;
+    uint256 public constant OTOKEN_DECIMALS = 8;
 
     /// FUNCTIONS
 

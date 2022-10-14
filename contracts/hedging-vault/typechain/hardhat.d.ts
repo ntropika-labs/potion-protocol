@@ -349,6 +349,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PercentageUtils__factory>;
     getContractFactory(
+      name: "PotionProtocolLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PotionProtocolLib__factory>;
+    getContractFactory(
       name: "TimeUtils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TimeUtils__factory>;
@@ -913,6 +917,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PercentageUtils>;
+    getContractAt(
+      name: "PotionProtocolLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PotionProtocolLib>;
     getContractAt(
       name: "TimeUtils",
       address: string,

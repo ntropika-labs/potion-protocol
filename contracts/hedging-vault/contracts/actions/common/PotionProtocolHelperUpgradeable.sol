@@ -129,27 +129,19 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
         @param hedgedAsset The address of the asset to be hedged, used to get the associated potion information
         @param expirationTimestamp The timestamp when the potion expires
-        @param hedgedAssetAmount The amount of assets for the hedged asset
-        @param strikePercentage The percentage of the spot price to be used as strike price
-        @param hedgingRate The percentage of the hedged asset amount to be hedged
         @param premiumWithSlippageInUSDC The premium to be paid to buy the potions plus slippage, with 6 decimals
 
-        @return amountPotions The amount of potions bought
-        @return actualPremium The actual premium used to buy the potions
+        @return amountPotionsInAssets The amount of potions bought, with `hedgedAsset` decimals
+        @return actualPremiumInUSDC The actual premium used to buy the potions
      */
     function _buyPotions(
         address hedgedAsset,
         uint256 expirationTimestamp,
-        uint256 hedgedAssetAmount,
-        uint256 strikePercentage,
-        uint256 hedgingRate,
         uint256 premiumWithSlippageInUSDC
-    ) internal returns (uint256 amountPotions, uint256 actualPremium) {
+    ) internal returns (uint256 amountPotionsInAssets, uint256 actualPremiumInUSDC) {
         PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
 
-        amountPotions = _calculateOrderSize(buyInfo);
-
-        actualPremium = _potionLiquidityPoolManager.buyPotion(
+        actualPremiumInUSDC = _potionLiquidityPoolManager.buyPotion(
             IOpynFactory(_opynAddressBook.getOtokenFactory()),
             hedgedAsset,
             buyInfo.strikePriceInUSDC,
@@ -160,10 +152,15 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
             getUSDC()
         );
 
-        // TODO: check that the hedging rate matches
-        hedgedAssetAmount;
-        strikePercentage;
-        hedgingRate;
+        uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
+
+        amountPotionsInAssets = PriceUtils.convertAmount(
+            PotionProtocolLib.OTOKEN_DECIMALS,
+            hedgedAssetDecimals,
+            _calculateOrderSize(buyInfo),
+            1,
+            1
+        );
     }
 
     /**
@@ -255,17 +252,21 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     /// GETTERS
 
     /**
-        @notice Retrieves the given asset price in USDC from the Opyn Oracle
+        @notice Converts the given amount of assets to USDC by using the live price from the Opyn oracle
 
         @param hedgedAsset The address of the asset to be hedged, used to get the price from the Opyn Oracle
-        @param amount The amount of asset to be converted to USDC
+        @param amountInAsset The amount of asset to be converted to USDC, in `hedgedAsset` decimals
 
-        @return The amount of USDC equivalent to the given amount of assets, with 8 decimals
+        @return amountInUSDC The amount of USDC equivalent to the given amount of assets, with 6 decimals
 
         @dev This function calls the Opyn Oracle to get the price of the asset, so its value might
              change if called in different blocks.
      */
-    function _calculateAssetValueInUSDC(address hedgedAsset, uint256 amount) internal view returns (uint256) {
+    function _convertAssetToUSDCOnLivePrice(address hedgedAsset, uint256 amountInAsset)
+        internal
+        view
+        returns (uint256 amountInUSDC)
+    {
         IOpynOracle opynOracle = IOpynOracle(_opynAddressBook.getOracle());
 
         uint256 assetPriceInUSD = opynOracle.getPrice(address(hedgedAsset));
@@ -274,7 +275,47 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
         uint256 USDCDecimals = IERC20Metadata(address(_USDC)).decimals();
 
-        return PriceUtils.convertAmount(hedgedAssetDecimals, USDCDecimals, amount, assetPriceInUSD, USDCPriceInUSD);
+        amountInUSDC = PriceUtils.convertAmount(
+            hedgedAssetDecimals,
+            USDCDecimals,
+            amountInAsset,
+            assetPriceInUSD,
+            USDCPriceInUSD
+        );
+    }
+
+    /**
+        @notice Converts the given amount of USDC into the equivalent amount of assets by using the live price from the Opyn oracle
+
+        @param hedgedAsset The address of the asset to be hedged, used to get the price from the Opyn Oracle
+        @param amountInUSDC The amount in USDC to be converted to the equivalent amount of assets, with 6 decimals
+
+        @return amountInAsset The amount of assets equivalent to the given amount of USDC, in `hedgedAsset` decimals
+
+        @dev This function calls the Opyn Oracle to get the price of the asset, so its value might
+             change if called in different blocks.
+     */
+
+    function _convertUSDCToAssetOnLivePrice(address hedgedAsset, uint256 amountInUSDC)
+        internal
+        view
+        returns (uint256 amountInAsset)
+    {
+        IOpynOracle opynOracle = IOpynOracle(_opynAddressBook.getOracle());
+
+        uint256 assetPriceInUSD = opynOracle.getPrice(address(hedgedAsset));
+        uint256 USDCPriceInUSD = opynOracle.getPrice(address(_USDC));
+
+        uint256 hedgedAssetDecimals = IERC20Metadata(hedgedAsset).decimals();
+        uint256 USDCDecimals = IERC20Metadata(address(_USDC)).decimals();
+
+        amountInAsset = PriceUtils.convertAmount(
+            USDCDecimals,
+            hedgedAssetDecimals,
+            amountInUSDC,
+            USDCPriceInUSD,
+            assetPriceInUSD
+        );
     }
 
     /**

@@ -28,6 +28,9 @@ interface IPotionBuyActionV0 {
     error StrikePercentageIsZero();
     error HedgingRateIsZero();
 
+    error PremiumExceedsMaxPremium(uint256 premium, uint256 maxPremium);
+    error HedgingRateOutOfRange(uint256 expectedHedgingRate, uint256 actualHedgingRate);
+
     /// SETTERS
 
     /**

@@ -35,11 +35,43 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "expectedHedgingRate",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "actualHedgingRate",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "maxPremiumPercentage",
         type: "uint256",
       },
     ],
     name: "MaxPremiumPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "premium",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxPremium",
+        type: "uint256",
+      },
+    ],
+    name: "PremiumExceedsMaxPremium",
     type: "error",
   },
   {
