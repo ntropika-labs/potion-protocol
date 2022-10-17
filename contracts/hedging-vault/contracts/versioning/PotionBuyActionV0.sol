@@ -72,6 +72,13 @@ abstract contract PotionBuyActionV0 is IPotionBuyActionV0 {
      */
     uint256 public hedgingRate;
 
+    /**
+        @notice The allowed hedging rate slippage from the intented hedging rate calculated by the
+                operator to the actual one achieved in the current block conditions, as a uint256 with
+                `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+     */
+    uint256 public hedgingRateSlippage;
+
     /// MODIFIERS
 
     /**

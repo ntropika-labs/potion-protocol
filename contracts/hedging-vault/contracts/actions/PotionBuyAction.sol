@@ -79,7 +79,7 @@ contract PotionBuyAction is
         uint256 cycleDurationSecs;
         uint256 strikePercentage;
         uint256 hedgingRate;
-        //uint256 hedgingRateSlippage;
+        uint256 hedgingRateSlippage;
     }
 
     /// INITIALIZERS
@@ -257,6 +257,13 @@ contract PotionBuyAction is
         _setHedgingRate(hedgingRate_);
     }
 
+    /**
+        @inheritdoc IPotionBuyActionV0
+     */
+    function setHedgingRateSlippage(uint256 hedgingRateSlippage_) external override onlyStrategist {
+        _setHedgingRateSlippage(hedgingRateSlippage_);
+    }
+
     // GETTERS
 
     /**
@@ -383,6 +390,15 @@ contract PotionBuyAction is
     }
 
     /**
+        @dev See { setStrikePercentage }
+     */
+    function _setHedgingRateSlippage(uint256 hedgingRateSlippage_) internal {
+        hedgingRateSlippage = hedgingRateSlippage_;
+
+        emit HedgingRateSlippageChanged(hedgingRateSlippage_);
+    }
+
+    /**
         @notice Checks if the next cycle has already started or not
 
         @return True if the next cycle has already started, false otherwise
@@ -454,8 +470,10 @@ contract PotionBuyAction is
 
         uint256 actualHedgingRate = PercentageUtils.toPercentage(amountPotionsInAssets, actualHedgedAmountInAssets);
 
-        if (actualHedgingRate < hedgingRate) {
-            revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate);
+        uint256 hedgingRateWithSlippage = hedgingRate.applyPercentage(hedgingRateSlippage);
+
+        if (actualHedgingRate < hedgingRateWithSlippage) {
+            revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate, hedgingRateSlippage);
         }
     }
 }

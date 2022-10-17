@@ -116,8 +116,8 @@ describe("HedgingVaultBasic", function () {
         // Principal Percentages
         const principalPercentages = await vault.getPrincipalPercentages();
         expect(principalPercentages.length).to.equal(1);
-        expect(principalPercentages[0]).to.equal(tEnv.hedgingPercentage);
-        expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
+        expect(principalPercentages[0]).to.equal(100000000);
+        expect(await vault.getPrincipalPercentage(0)).to.equal(100000000);
     });
 
     it("HVB0002 - Potion Buy Action Default Value", async function () {
@@ -193,7 +193,7 @@ describe("HedgingVaultBasic", function () {
         /*
             COLLATERAL
         */
-        const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
+        const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
         const amountProtectedInUSDC = amountProtected
             .mul(underlyingAssetPriceInUSDbn)
             .div(USDCPriceInUSDbn)

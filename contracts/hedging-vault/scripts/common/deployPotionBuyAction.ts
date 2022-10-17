@@ -18,6 +18,7 @@ export interface PotionBuyActionDeployParams {
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber; // 6 decimals
     hedgingRate: BigNumber; // 6 decimals
+    hedgingRateSlippage: BigNumber; // 6 decimals
 }
 
 export async function deployPotionBuyAction(parameters: PotionBuyActionDeployParams): Promise<PotionBuyAction> {

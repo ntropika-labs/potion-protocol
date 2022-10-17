@@ -32,6 +32,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     "calculateCurrentPayout(address)": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
     "setHedgingRate(uint256)": FunctionFragment;
+    "setHedgingRateSlippage(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
@@ -44,6 +45,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
       | "calculateCurrentPayout"
       | "setCycleDuration"
       | "setHedgingRate"
+      | "setHedgingRateSlippage"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
@@ -61,6 +63,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setHedgingRate",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRateSlippage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -94,6 +100,10 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setHedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRateSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -120,6 +130,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   events: {
     "CycleDurationChanged(uint256)": EventFragment;
     "HedgingRateChanged(uint256)": EventFragment;
+    "HedgingRateSlippageChanged(uint256)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
@@ -129,6 +140,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
@@ -159,6 +171,17 @@ export type HedgingRateChangedEvent = TypedEvent<
 
 export type HedgingRateChangedEventFilter =
   TypedEventFilter<HedgingRateChangedEvent>;
+
+export interface HedgingRateSlippageChangedEventObject {
+  hedgingRateSlippage: BigNumber;
+}
+export type HedgingRateSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateSlippageChangedEventObject
+>;
+
+export type HedgingRateSlippageChangedEventFilter =
+  TypedEventFilter<HedgingRateSlippageChangedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
   maxPremiumPercentage: BigNumber;
@@ -259,7 +282,12 @@ export interface IPotionBuyActionV0 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setHedgingRate(
-      hedgingRate_: PromiseOrValue<BigNumberish>,
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -306,7 +334,12 @@ export interface IPotionBuyActionV0 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setHedgingRate(
-    hedgingRate_: PromiseOrValue<BigNumberish>,
+    hedgingRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRateSlippage(
+    hedgingRateSlippage: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -353,7 +386,12 @@ export interface IPotionBuyActionV0 extends BaseContract {
     ): Promise<void>;
 
     setHedgingRate(
-      hedgingRate_: PromiseOrValue<BigNumberish>,
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -395,6 +433,13 @@ export interface IPotionBuyActionV0 extends BaseContract {
       hedgingRate?: null
     ): HedgingRateChangedEventFilter;
     HedgingRateChanged(hedgingRate?: null): HedgingRateChangedEventFilter;
+
+    "HedgingRateSlippageChanged(uint256)"(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
+    HedgingRateSlippageChanged(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
 
     "MaxPremiumPercentageChanged(uint256)"(
       maxPremiumPercentage?: null
@@ -442,7 +487,12 @@ export interface IPotionBuyActionV0 extends BaseContract {
     ): Promise<BigNumber>;
 
     setHedgingRate(
-      hedgingRate_: PromiseOrValue<BigNumberish>,
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -484,7 +534,12 @@ export interface IPotionBuyActionV0 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setHedgingRate(
-      hedgingRate_: PromiseOrValue<BigNumberish>,
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

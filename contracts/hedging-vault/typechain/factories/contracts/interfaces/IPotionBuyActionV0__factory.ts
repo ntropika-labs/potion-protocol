@@ -43,6 +43,11 @@ const _abi = [
         name: "actualHedgingRate",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
     ],
     name: "HedgingRateOutOfRange",
     type: "error",
@@ -125,6 +130,19 @@ const _abi = [
       },
     ],
     name: "HedgingRateChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateSlippageChanged",
     type: "event",
   },
   {
@@ -238,11 +256,24 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "hedgingRate_",
+        name: "hedgingRate",
         type: "uint256",
       },
     ],
     name: "setHedgingRate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "setHedgingRateSlippage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -33,7 +33,8 @@ export interface PotionHedgingVaultConfigParams {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber; // 6 decimals
-    hedgingPercentage: BigNumber; // 6 decimals
+    hedgingRate: BigNumber; // 6 decimals
+    hedgingRateSlippage: BigNumber; // 6 decimals
 
     // Fees configuration
     //
@@ -61,17 +62,18 @@ export interface PotionHedgingVaultConfigParams {
 
 const DefaultConfig: PotionHedgingVaultConfigParams = {
     // Investment configuration
-    maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-    premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-    swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-    maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-    cycleDurationSecs: BigNumber.from(86400), //                       1 day
-    strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-    hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+    maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+    premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+    swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+    maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+    cycleDurationSecs: BigNumber.from(86400), //                            1 day
+    strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+    hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+    hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
 
     // Fees configuration
-    managementFee: PercentageUtils.toSolidityPercentage(3), //         3%
-    performanceFee: PercentageUtils.toSolidityPercentage(3), //        3%
+    managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
+    performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
 };
 
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
@@ -88,17 +90,18 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
 
         // Investment configuration
-        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //                       1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
 
         // Fees configuration
-        managementFee: PercentageUtils.toSolidityPercentage(0), //         0%
-        performanceFee: PercentageUtils.toSolidityPercentage(0), //        0%
+        managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
 
         // Third-party dependencies
         uniswapV3SwapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
@@ -111,17 +114,18 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         underlyingAsset: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
 
         // Investment configuration
-        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), // 15%
-        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //       2%
-        swapSlippage: PercentageUtils.toSolidityPercentage(2), //          2%
-        maxSwapDurationSecs: BigNumber.from(60), //                        1 minute
-        cycleDurationSecs: BigNumber.from(86400), //                       1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //     80%
-        hedgingPercentage: PercentageUtils.toSolidityPercentage(100), //   100%
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
 
         // Fees configuration
-        managementFee: PercentageUtils.toSolidityPercentage(0), //         0%
-        performanceFee: PercentageUtils.toSolidityPercentage(0), //        0%
+        managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
 
         // Third-party dependencies
         uniswapV3SwapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
