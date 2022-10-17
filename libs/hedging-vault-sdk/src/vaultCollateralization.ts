@@ -5,8 +5,8 @@ import { applyPercentage, fromFraction, PERCENTAGE_100_BN, divByPercentage } fro
 const OTOKEN_DECIMALS = BigNumber.from(8);
 
 /**
-    @notice Calculates the actual order size to cover the given vault size, taking into account the
-    that part of that vault size will be used to pay for the premium
+    @notice Calculates the actual order size to cover the given vault size, taking into account
+    that part of the vault size will be used to pay for the premium
 
     @param vaultSize The current size of the vault in number of underlying tokens (`underlyingDecimals_` decimals)
     @param underlyingDecimals_ The number of decimals of the underlying token (integer number)
