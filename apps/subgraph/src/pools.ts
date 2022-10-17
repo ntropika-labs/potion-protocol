@@ -695,7 +695,7 @@ export function handleOptionsSold(event: OptionsSold): void {
     );
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string);
+    const template = Template.load(pool.template as string)!;
     if (template) {
       increaseTemplate(
         template,
@@ -763,6 +763,7 @@ export function handleOptionsSold(event: OptionsSold): void {
       // The oToken (and record) has not received liquidity from this pool
       poolRecord = new PoolRecord(poolRecordID);
       poolRecord.pool = poolId;
+      poolRecord.template = template.id;
       poolRecord.lpRecord = record.id;
       poolRecord.otoken = event.params.otoken;
       poolRecord.collateral = liquidityCollateralized;
@@ -827,14 +828,32 @@ export function handleOptionSettlementDistributed(
       poolTotalCollateralized.minus(collateralReturned);
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string)!;
+    // because the template of the pool could have been changed in the meantmime we need to load
+    // both the current template to update liquidity and utilization
+    // and the template at the moment of the PoolRecord creation to update the PnL
+    const currentTemplate = Template.load(pool.template as string)!;
+
+    // update template liquidity and utilization
     decreaseTemplate(
-      template,
+      currentTemplate,
       deltaCollateralizedAndReturned,
       poolTotalCollateralized,
       ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
+    );
+
+    const pnlTemplate = Template.load(poolRecord.template as string)!;
+    // update template PnL
+    decreaseTemplate(
+      pnlTemplate,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
       deltaCollateralizedAndReturned
     );
+
+    // load the updated template
+    const template = Template.load(pool.template as string)!;
 
     // Update the pool
     pool.size = pool.size.minus(deltaCollateralizedAndReturned);

@@ -247,6 +247,7 @@ The lpRecord field is used to join with LPRecord.
 type PoolRecord @entity {
   id: Bytes!
   pool: Pool!
+  template: Template!
   lpRecord: LPRecord!
   otoken: OToken!
   collateral: BigDecimal!
