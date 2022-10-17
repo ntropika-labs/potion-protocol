@@ -74,4 +74,16 @@ library PercentageUtils {
     function isPercentageInRange(uint256 percentage) internal pure returns (bool) {
         return percentage <= PERCENTAGE_100;
     }
+
+    /**
+        @notice Converts the given fraction into a percentage with the right number of decimals
+
+        @param numerator The numerator of the fraction
+        @param denominator The denominator of the fraction
+
+        @return The percentage with `PERCENTAGE_DECIMALS` decimals
+    */
+    function toPercentage(uint256 numerator, uint256 denominator) internal pure returns (uint256) {
+        return (numerator * PERCENTAGE_FACTOR) / denominator;
+    }
 }

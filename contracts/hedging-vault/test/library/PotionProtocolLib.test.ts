@@ -14,8 +14,6 @@ import {
     IERC20__factory,
 } from "../../typechain";
 
-import { PotionBuyInfoStruct } from "../../typechain/contracts/test/wrappers/TestWrapperPotionProtocolLib";
-
 import * as PercentageUtils from "hedging-vault-sdk";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
 import { BigNumber } from "ethers";
@@ -94,28 +92,25 @@ describe("PotionProtocolLib", function () {
         ];
 
         const expectedPremium = BigNumber.from(2567);
+        const maxPremium = PercentageUtils.addPercentage(expectedPremium, slippage);
 
-        const buyInfo: PotionBuyInfoStruct = {
-            targetPotionAddress: potionAddress,
-            underlyingAsset: underlyingAsset,
+        const buyPotionParams: TestWrapperPotionProtocolLib.BuyPotionParamsStruct = {
+            underlyingAsset,
             strikePriceInUSDC: BigNumber.from("100000000000"),
             expirationTimestamp: BigNumber.from("100000000000"), // Not important
+            maxPremiumInUSDC: maxPremium,
+            targetPotionAddress: potionAddress,
             sellers: counterparties,
-            expectedPremiumInUSDC: expectedPremium,
-            totalSizeInPotions: 3001,
+            USDC: fakeUSDC.address,
         };
 
         expect(
             await potionProtocolLib.callStatic.buyPotion(
                 fakePotionLiquidityPool.address,
                 fakeOpynFactory.address,
-                buyInfo,
-                slippage,
-                fakeUSDC.address,
+                buyPotionParams,
             ),
         ).to.be.eq(1594);
-
-        const maxPremium = PercentageUtils.addPercentage(expectedPremium, slippage);
 
         expect(fakePotionLiquidityPool.buyOtokens).to.have.been.calledOnce;
         expect(fakePotionLiquidityPool.buyOtokens.getCall(0).args[0]).to.be.eq(potionAddress);
@@ -182,28 +177,25 @@ describe("PotionProtocolLib", function () {
         ];
 
         const expectedPremium = BigNumber.from(2567);
+        const maxPremium = PercentageUtils.addPercentage(expectedPremium, slippage);
 
-        const buyInfo: PotionBuyInfoStruct = {
-            targetPotionAddress: potionAddress,
-            underlyingAsset: underlyingAsset,
+        const buyPotionParams: TestWrapperPotionProtocolLib.BuyPotionParamsStruct = {
+            underlyingAsset,
             strikePriceInUSDC: BigNumber.from("100000000000"),
             expirationTimestamp: BigNumber.from("100000000000"), // Not important
+            maxPremiumInUSDC: maxPremium,
+            targetPotionAddress: potionAddress,
             sellers: counterparties,
-            expectedPremiumInUSDC: expectedPremium,
-            totalSizeInPotions: 3001,
+            USDC: fakeUSDC.address,
         };
 
         expect(
             await potionProtocolLib.callStatic.buyPotion(
                 fakePotionLiquidityPool.address,
                 fakeOpynFactory.address,
-                buyInfo,
-                slippage,
-                fakeUSDC.address,
+                buyPotionParams,
             ),
         ).to.be.eq(2618);
-
-        const maxPremium = PercentageUtils.addPercentage(expectedPremium, slippage);
 
         expect(fakePotionLiquidityPool.buyOtokens).to.have.been.calledOnce;
         expect(fakePotionLiquidityPool.buyOtokens.getCall(0).args[0]).to.be.eq(potionAddress);
@@ -240,44 +232,13 @@ describe("PotionProtocolLib", function () {
         }
         fakePotionLiquidityPool.settleAfterExpiry.returns(true);
 
-        const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
-            {
-                lp: randomAddress,
-                poolId: 55,
-                curve: {
-                    a_59x18: 1,
-                    b_59x18: 2,
-                    c_59x18: 3,
-                    d_59x18: 4,
-                    max_util_59x18: 5,
-                },
-                criteria: {
-                    underlyingAsset: underlyingAsset,
-                    strikeAsset: strikeAsset,
-                    isPut: true,
-                    maxStrikePercent: 99,
-                    maxDurationInDays: 59,
-                },
-                orderSizeInOtokens: 3001,
-            },
-        ];
-
-        const expectedPremium = BigNumber.from(2567);
-
-        const buyInfo: PotionBuyInfoStruct = {
-            targetPotionAddress: potionAddress,
-            underlyingAsset: underlyingAsset,
-            strikePriceInUSDC: BigNumber.from("100000000000"),
-            expirationTimestamp: BigNumber.from("100000000000"), // Not important
-            sellers: counterparties,
-            expectedPremiumInUSDC: expectedPremium,
-            totalSizeInPotions: 3001,
-        };
+        const totalSizeInPotions = 3001;
 
         await potionProtocolLib.callStatic.redeemPotion(
             fakePotionLiquidityPool.address,
             fakeOpynController.address,
-            buyInfo,
+            potionAddress,
+            3001,
         );
 
         expect(fakeOpynController.operate).to.have.been.calledOnce;
@@ -287,9 +248,9 @@ describe("PotionProtocolLib", function () {
                 actionType: 8,
                 owner: potionProtocolLib.address,
                 secondAddress: potionProtocolLib.address,
-                asset: buyInfo.targetPotionAddress,
+                asset: potionAddress,
                 vaultId: 0,
-                amount: buyInfo.totalSizeInPotions,
+                amount: totalSizeInPotions,
                 index: 0,
                 data: "0x",
             },

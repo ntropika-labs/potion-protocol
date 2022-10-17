@@ -28,26 +28,6 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address",
-            name: "targetPotionAddress",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "underlyingAsset",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "strikePriceInUSDC",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "expirationTimestamp",
-            type: "uint256",
-          },
-          {
             components: [
               {
                 internalType: "address",
@@ -134,13 +114,28 @@ const _abi = [
             type: "tuple[]",
           },
           {
+            internalType: "address",
+            name: "targetPotionAddress",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "underlyingAsset",
+            type: "address",
+          },
+          {
             internalType: "uint256",
-            name: "expectedPremiumInUSDC",
+            name: "strikePriceInUSDC",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "totalSizeInPotions",
+            name: "expirationTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expectedPremiumInUSDC",
             type: "uint256",
           },
         ],
@@ -157,26 +152,6 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address",
-            name: "targetPotionAddress",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "underlyingAsset",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "strikePriceInUSDC",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "expirationTimestamp",
-            type: "uint256",
-          },
-          {
             components: [
               {
                 internalType: "address",
@@ -263,13 +238,28 @@ const _abi = [
             type: "tuple[]",
           },
           {
+            internalType: "address",
+            name: "targetPotionAddress",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "underlyingAsset",
+            type: "address",
+          },
+          {
             internalType: "uint256",
-            name: "expectedPremiumInUSDC",
+            name: "strikePriceInUSDC",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "totalSizeInPotions",
+            name: "expirationTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expectedPremiumInUSDC",
             type: "uint256",
           },
         ],

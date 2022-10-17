@@ -170,6 +170,8 @@ export type { IVaultWithReceiptsUpgradeable } from "./contracts/interfaces/IVaul
 export { IVaultWithReceiptsUpgradeable__factory } from "./factories/contracts/interfaces/IVaultWithReceiptsUpgradeable__factory";
 export type { PercentageUtils } from "./contracts/library/PercentageUtils";
 export { PercentageUtils__factory } from "./factories/contracts/library/PercentageUtils__factory";
+export type { PotionProtocolLib } from "./contracts/library/PotionProtocolLib";
+export { PotionProtocolLib__factory } from "./factories/contracts/library/PotionProtocolLib__factory";
 export type { TimeUtils } from "./contracts/library/TimeUtils";
 export { TimeUtils__factory } from "./factories/contracts/library/TimeUtils__factory";
 export type { BaseRoundsVaultUpgradeable } from "./contracts/rounds/BaseRoundsVaultUpgradeable";

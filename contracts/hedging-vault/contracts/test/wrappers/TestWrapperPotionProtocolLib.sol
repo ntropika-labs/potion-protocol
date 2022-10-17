@@ -16,17 +16,36 @@ import "../../library/PotionProtocolLib.sol";
 contract TestWrapperPotionProtocolLib {
     /// FUNCTIONS
 
+    struct BuyPotionParams {
+        address underlyingAsset;
+        uint256 strikePriceInUSDC;
+        uint256 expirationTimestamp;
+        uint256 maxPremiumInUSDC;
+        address targetPotionAddress;
+        IPotionLiquidityPool.CounterpartyDetails[] sellers;
+        IERC20 USDC;
+    }
+
     /**
         @notice See { PotionProtocolLib }
      */
     function buyPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
         IOpynFactory opynFactory,
-        PotionBuyInfo calldata buyInfo,
-        uint256 slippage,
-        IERC20 USDC
-    ) external returns (uint256 actualPremium) {
-        return PotionProtocolLib.buyPotion(potionLiquidityPoolManager, opynFactory, buyInfo, slippage, USDC);
+        BuyPotionParams calldata params
+    ) external returns (uint256 actualPremiumInUSDC) {
+        return
+            PotionProtocolLib.buyPotion(
+                potionLiquidityPoolManager,
+                opynFactory,
+                params.underlyingAsset,
+                params.strikePriceInUSDC,
+                params.expirationTimestamp,
+                params.maxPremiumInUSDC,
+                params.targetPotionAddress,
+                params.sellers,
+                params.USDC
+            );
     }
 
     /**
@@ -35,8 +54,14 @@ contract TestWrapperPotionProtocolLib {
     function redeemPotion(
         IPotionLiquidityPool potionLiquidityPoolManager,
         IOpynController opynController,
-        PotionBuyInfo calldata buyInfo
+        address targetPotionAddress,
+        uint256 totalSizeInPotions
     ) external {
-        PotionProtocolLib.redeemPotion(potionLiquidityPoolManager, opynController, buyInfo);
+        PotionProtocolLib.redeemPotion(
+            potionLiquidityPoolManager,
+            opynController,
+            targetPotionAddress,
+            totalSizeInPotions
+        );
     }
 }

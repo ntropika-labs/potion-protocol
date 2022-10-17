@@ -31,6 +31,8 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   functions: {
     "calculateCurrentPayout(address)": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
+    "setHedgingRate(uint256)": FunctionFragment;
+    "setHedgingRateSlippage(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
@@ -42,6 +44,8 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "calculateCurrentPayout"
       | "setCycleDuration"
+      | "setHedgingRate"
+      | "setHedgingRateSlippage"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
@@ -55,6 +59,14 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRate",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRateSlippage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -84,6 +96,14 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRateSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -109,6 +129,8 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
 
   events: {
     "CycleDurationChanged(uint256)": EventFragment;
+    "HedgingRateChanged(uint256)": EventFragment;
+    "HedgingRateSlippageChanged(uint256)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
@@ -117,6 +139,8 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
@@ -136,6 +160,28 @@ export type CycleDurationChangedEvent = TypedEvent<
 
 export type CycleDurationChangedEventFilter =
   TypedEventFilter<CycleDurationChangedEvent>;
+
+export interface HedgingRateChangedEventObject {
+  hedgingRate: BigNumber;
+}
+export type HedgingRateChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateChangedEventObject
+>;
+
+export type HedgingRateChangedEventFilter =
+  TypedEventFilter<HedgingRateChangedEvent>;
+
+export interface HedgingRateSlippageChangedEventObject {
+  hedgingRateSlippage: BigNumber;
+}
+export type HedgingRateSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateSlippageChangedEventObject
+>;
+
+export type HedgingRateSlippageChangedEventFilter =
+  TypedEventFilter<HedgingRateSlippageChangedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
   maxPremiumPercentage: BigNumber;
@@ -222,10 +268,26 @@ export interface IPotionBuyActionV0 extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -258,10 +320,26 @@ export interface IPotionBuyActionV0 extends BaseContract {
   calculateCurrentPayout(
     investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+  ): Promise<
+    [boolean, BigNumber, BigNumber] & {
+      isFinal: boolean;
+      payout: BigNumber;
+      orderSize: BigNumber;
+    }
+  >;
 
   setCycleDuration(
     durationSeconds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRate(
+    hedgingRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRateSlippage(
+    hedgingRateSlippage: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -294,10 +372,26 @@ export interface IPotionBuyActionV0 extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -334,6 +428,18 @@ export interface IPotionBuyActionV0 extends BaseContract {
     CycleDurationChanged(
       cycleDurationSecs?: null
     ): CycleDurationChangedEventFilter;
+
+    "HedgingRateChanged(uint256)"(
+      hedgingRate?: null
+    ): HedgingRateChangedEventFilter;
+    HedgingRateChanged(hedgingRate?: null): HedgingRateChangedEventFilter;
+
+    "HedgingRateSlippageChanged(uint256)"(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
+    HedgingRateSlippageChanged(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
 
     "MaxPremiumPercentageChanged(uint256)"(
       maxPremiumPercentage?: null
@@ -380,6 +486,16 @@ export interface IPotionBuyActionV0 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setMaxPremiumPercentage(
       maxPremiumPercentage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -414,6 +530,16 @@ export interface IPotionBuyActionV0 extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -57,7 +57,7 @@ async function getPotionBuyInfo(
     // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
     // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
 
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
+    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
     const amountProtectedInUSDC = amountProtected
         .mul(underlyingAssetPriceInUSD)
         .div(USDCPriceInUSD)
@@ -102,7 +102,6 @@ async function getPotionBuyInfo(
         expirationTimestamp: expirationTimestamp,
         sellers: counterparties,
         expectedPremiumInUSDC: expectedPremiumInUSDC,
-        totalSizeInPotions: otokensAmount,
     };
 
     return { potionBuyInfo, expectedPremiumInUSDC };
@@ -167,7 +166,7 @@ async function setupTestConditions(
     /*
         COLLATERAL
     */
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingPercentage);
+    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
     const amountProtectedInUSDC = amountProtected
         .mul(underlyingAssetPriceInUSD)
         .div(USDCPriceInUSD)
@@ -356,8 +355,8 @@ describe("DeferredDepositsWithdrawals", function () {
         // Principal Percentages
         const principalPercentages = await vault.getPrincipalPercentages();
         expect(principalPercentages.length).to.equal(1);
-        expect(principalPercentages[0]).to.equal(tEnv.hedgingPercentage);
-        expect(await vault.getPrincipalPercentage(0)).to.equal(tEnv.hedgingPercentage);
+        expect(principalPercentages[0]).to.equal(100000000);
+        expect(await vault.getPrincipalPercentage(0)).to.equal(100000000);
     });
 
     it("DDW0002 - Potion Buy Action Default Value", async function () {

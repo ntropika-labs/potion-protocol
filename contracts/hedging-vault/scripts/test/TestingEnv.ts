@@ -71,7 +71,8 @@ export interface TestingEnvironmentDeployment {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber;
-    hedgingPercentage: BigNumber;
+    hedgingRate: BigNumber;
+    hedgingRateSlippage: BigNumber;
     managementFee: BigNumber;
     performanceFee: BigNumber;
     feesRecipient: string;
@@ -271,7 +272,8 @@ async function prepareTestEnvironment(
     testingEnvironmentDeployment.maxSwapDurationSecs = deploymentConfig.maxSwapDurationSecs;
     testingEnvironmentDeployment.cycleDurationSecs = deploymentConfig.cycleDurationSecs;
     testingEnvironmentDeployment.strikePercentage = deploymentConfig.strikePercentage;
-    testingEnvironmentDeployment.hedgingPercentage = deploymentConfig.hedgingPercentage;
+    testingEnvironmentDeployment.hedgingRate = deploymentConfig.hedgingRate;
+    testingEnvironmentDeployment.hedgingRateSlippage = deploymentConfig.hedgingRateSlippage;
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
@@ -398,7 +400,8 @@ export async function deployTestingEnv(
         maxSwapDurationSecs: testEnvDeployment.maxSwapDurationSecs,
         cycleDurationSecs: testEnvDeployment.cycleDurationSecs,
         strikePercentage: testEnvDeployment.strikePercentage,
-        hedgingPercentage: testEnvDeployment.hedgingPercentage,
+        hedgingRate: testEnvDeployment.hedgingRate,
+        hedgingRateSlippage: testEnvDeployment.hedgingRateSlippage,
 
         // Fees configuration
         managementFee: testEnvDeployment.managementFee,
@@ -496,8 +499,8 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
         )}%)`,
     );
     console.log(
-        `  - Hedging Percentage: ${testEnvDeployment.hedgingPercentage.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.hedgingPercentage,
+        `  - Hedging Percentage: ${testEnvDeployment.hedgingRate.toString()} (${fromSolidityPercentage(
+            testEnvDeployment.hedgingRate,
         )}%)`,
     );
     console.log(

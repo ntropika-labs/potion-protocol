@@ -28,31 +28,28 @@ import type {
 } from "../../common";
 
 export type PotionBuyInfoStruct = {
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
   targetPotionAddress: PromiseOrValue<string>;
   underlyingAsset: PromiseOrValue<string>;
   strikePriceInUSDC: PromiseOrValue<BigNumberish>;
   expirationTimestamp: PromiseOrValue<BigNumberish>;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
   expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
-  totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
   IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  string,
+  string,
+  BigNumber,
   BigNumber,
   BigNumber
 ] & {
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
   targetPotionAddress: string;
   underlyingAsset: string;
   strikePriceInUSDC: BigNumber;
   expirationTimestamp: BigNumber;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
   expectedPremiumInUSDC: BigNumber;
-  totalSizeInPotions: BigNumber;
 };
 
 export declare namespace ICurveManager {
@@ -151,7 +148,7 @@ export interface IPotionBuyActionInterface extends utils.Interface {
     "exitPosition(address)": FunctionFragment;
     "getPotionBuyInfo(address,uint256)": FunctionFragment;
     "getSwapInfo(address,address)": FunctionFragment;
-    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "setPotionBuyInfo(((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256))": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
   };
 

@@ -32,11 +32,15 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     "MIN_CYCLE_DURATION()": FunctionFragment;
     "calculateCurrentPayout(address)": FunctionFragment;
     "cycleDurationSecs()": FunctionFragment;
+    "hedgingRate()": FunctionFragment;
+    "hedgingRateSlippage()": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "nextCycleStartTimestamp()": FunctionFragment;
     "premiumSlippage()": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
+    "setHedgingRate(uint256)": FunctionFragment;
+    "setHedgingRateSlippage(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
@@ -51,11 +55,15 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
       | "MIN_CYCLE_DURATION"
       | "calculateCurrentPayout"
       | "cycleDurationSecs"
+      | "hedgingRate"
+      | "hedgingRateSlippage"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
       | "nextCycleStartTimestamp"
       | "premiumSlippage"
       | "setCycleDuration"
+      | "setHedgingRate"
+      | "setHedgingRateSlippage"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPremiumSlippage"
@@ -78,6 +86,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "hedgingRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hedgingRateSlippage",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "maxPremiumPercentage",
     values?: undefined
   ): string;
@@ -95,6 +111,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRate",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRateSlippage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -139,6 +163,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "hedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hedgingRateSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
     data: BytesLike
   ): Result;
@@ -156,6 +188,14 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRateSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -189,6 +229,8 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
 
   events: {
     "CycleDurationChanged(uint256)": EventFragment;
+    "HedgingRateChanged(uint256)": EventFragment;
+    "HedgingRateSlippageChanged(uint256)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
@@ -197,6 +239,8 @@ export interface PotionBuyActionV0Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
@@ -216,6 +260,28 @@ export type CycleDurationChangedEvent = TypedEvent<
 
 export type CycleDurationChangedEventFilter =
   TypedEventFilter<CycleDurationChangedEvent>;
+
+export interface HedgingRateChangedEventObject {
+  hedgingRate: BigNumber;
+}
+export type HedgingRateChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateChangedEventObject
+>;
+
+export type HedgingRateChangedEventFilter =
+  TypedEventFilter<HedgingRateChangedEvent>;
+
+export interface HedgingRateSlippageChangedEventObject {
+  hedgingRateSlippage: BigNumber;
+}
+export type HedgingRateSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateSlippageChangedEventObject
+>;
+
+export type HedgingRateSlippageChangedEventFilter =
+  TypedEventFilter<HedgingRateSlippageChangedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
   maxPremiumPercentage: BigNumber;
@@ -304,9 +370,19 @@ export interface PotionBuyActionV0 extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    hedgingRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -318,6 +394,16 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -356,9 +442,19 @@ export interface PotionBuyActionV0 extends BaseContract {
   calculateCurrentPayout(
     investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+  ): Promise<
+    [boolean, BigNumber, BigNumber] & {
+      isFinal: boolean;
+      payout: BigNumber;
+      orderSize: BigNumber;
+    }
+  >;
 
   cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+  hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -370,6 +466,16 @@ export interface PotionBuyActionV0 extends BaseContract {
 
   setCycleDuration(
     durationSeconds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRate(
+    hedgingRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRateSlippage(
+    hedgingRateSlippage: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -408,9 +514,19 @@ export interface PotionBuyActionV0 extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -422,6 +538,16 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -462,6 +588,18 @@ export interface PotionBuyActionV0 extends BaseContract {
     CycleDurationChanged(
       cycleDurationSecs?: null
     ): CycleDurationChangedEventFilter;
+
+    "HedgingRateChanged(uint256)"(
+      hedgingRate?: null
+    ): HedgingRateChangedEventFilter;
+    HedgingRateChanged(hedgingRate?: null): HedgingRateChangedEventFilter;
+
+    "HedgingRateSlippageChanged(uint256)"(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
+    HedgingRateSlippageChanged(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
 
     "MaxPremiumPercentageChanged(uint256)"(
       maxPremiumPercentage?: null
@@ -507,6 +645,10 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxPremiumPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
@@ -517,6 +659,16 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -562,6 +714,12 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     cycleDurationSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hedgingRateSlippage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     maxPremiumPercentage(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -578,6 +736,16 @@ export interface PotionBuyActionV0 extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRate(
+      hedgingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

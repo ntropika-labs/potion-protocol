@@ -5,18 +5,35 @@ import { parseUnits } from "ethers/lib/utils";
 
 describe("vault collaterization", () => {
     it("calculate order size number", () => {
-        expect(calculateOrderSize(1000, 18, 90.0, 100.0, 500, 100.0)).toBe(762.7118644067797);
-        expect(calculateOrderSize(1035.98, 18, 90.5, 80.0, 590, 120.55)).toBe(951.9250780096808);
-
+        expect(calculateOrderSize(1000, 18, 90.0, 100.0, 500, 100.0)).toEqual({
+            orderSize: parseUnits("899.82004498", 8),
+            premiumPercent: toSolidityPercentage(0.022222),
+        });
+        expect(calculateOrderSize(1035.98, 18, 90.5, 80.0, 590, 120.55)).toEqual({
+            orderSize: parseUnits("937.37703050", 8),
+            premiumPercent: toSolidityPercentage(0.027241),
+        });
         // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
-        expect(calculateOrderSize(33.8978, 6, 75.89, 45.89, 15894.987, 458.899)).toBe(53.503551974513112);
+        expect(calculateOrderSize(33.8978, 6, 75.89, 45.89, 15894.987, 458.899)).toEqual({
+            orderSize: parseUnits("25.703148", 8),
+            premiumPercent: toSolidityPercentage(0.244558),
+        });
     });
     it("calculate order size string", () => {
-        expect(calculateOrderSize("1000", 18, "90.0", "100.0", "500", "100.0")).toBe(762.7118644067797);
-        expect(calculateOrderSize("1035.98", 18, "90.5", "80.0", "590", "120.55")).toBe(951.9250780096808);
+        expect(calculateOrderSize("1000", 18, "90.0", "100.0", "500", "100.0")).toEqual({
+            orderSize: parseUnits("899.82004498", 8),
+            premiumPercent: toSolidityPercentage(0.022222),
+        });
+        expect(calculateOrderSize("1035.98", 18, "90.5", "80.0", "590", "120.55")).toEqual({
+            orderSize: parseUnits("937.37703050", 8),
+            premiumPercent: toSolidityPercentage(0.027241),
+        });
 
         // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
-        expect(calculateOrderSize("33.8978", 6, "75.89", "45.89", "15894.987", "458.899")).toBe(53.503551974513112);
+        expect(calculateOrderSize("33.8978", 6, "75.89", "45.89", "15894.987", "458.899")).toEqual({
+            orderSize: parseUnits("25.703148", 8),
+            premiumPercent: toSolidityPercentage(0.244558),
+        });
     });
     it("calculate order size bignumber", () => {
         expect(
@@ -28,7 +45,10 @@ describe("vault collaterization", () => {
                 parseUnits("500", 6),
                 parseUnits("100", 6),
             ),
-        ).toBe(762.7118644067797);
+        ).toEqual({
+            orderSize: parseUnits("899.82004498", 8),
+            premiumPercent: toSolidityPercentage(0.022222),
+        });
         expect(
             calculateOrderSize(
                 parseUnits("1035.98", 18),
@@ -38,7 +58,10 @@ describe("vault collaterization", () => {
                 parseUnits("590", 6),
                 parseUnits("120.55", 6),
             ),
-        ).toBe(951.9250780096808);
+        ).toEqual({
+            orderSize: parseUnits("937.37703050", 8),
+            premiumPercent: toSolidityPercentage(0.027241),
+        });
 
         expect(
             calculateOrderSize(
@@ -49,6 +72,9 @@ describe("vault collaterization", () => {
                 parseUnits("15894.987", 6),
                 parseUnits("458.899", 6),
             ),
-        ).toBe(53.503551974513112); // eslint-disable-line @typescript-eslint/no-loss-of-precision
+        ).toEqual({
+            orderSize: parseUnits("25.703148", 8),
+            premiumPercent: toSolidityPercentage(0.244558),
+        }); // eslint-disable-line @typescript-eslint/no-loss-of-precision
     });
 });
