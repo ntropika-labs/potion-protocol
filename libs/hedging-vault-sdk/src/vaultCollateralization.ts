@@ -2,7 +2,7 @@ import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { parseAmount, parsePercentage, parsePriceInUSDC } from "./utils";
 import { applyPercentage, fromFraction, PERCENTAGE_100_BN, divByPercentage } from "./percentageUtils";
 
-const OTOKEN_DECIMALS = BigNumber.from(8);
+export const OTOKEN_DECIMALS = BigNumber.from(8);
 
 /**
     @notice Calculates the actual order size to cover the given vault size, taking into account
@@ -18,7 +18,8 @@ const OTOKEN_DECIMALS = BigNumber.from(8);
     @param quotedPremiumInUSDC_ The premium quoted by the router for the initial vault size, in USDC,
                                 (6 decimals)
 
-    @return orderSize The order size to cover the vault in number of puts (`underlyingDecimals_` decimals)
+    @return effectiveVaultSize The vault size to take into account when calculating the actual premium, which
+                               takes into account the premium itself (`underlyingDecimals_` decimals)
     @return premiumPercent The premium percentage as the ratio between the quoted premium and the order
             size in dollars based on the initial vault size, returned as a percentage
             (fixed point number with 6 decimals)
@@ -38,7 +39,7 @@ export function calculateOrderSize(
     spotPriceInUSDC_: BigNumberish,
     quotedPremiumInUSDC_: BigNumberish,
 ): {
-    orderSize: BigNumber;
+    effectiveVaultSize: BigNumber;
     premiumPercent: BigNumber;
 } {
     // Convert the input parameters to the right format
@@ -65,26 +66,10 @@ export function calculateOrderSize(
     const hedgedStrikePremiumPercent = applyPercentage(hedgedStrikePercent, premiumPercent);
 
     const denominatorPercentage = PERCENTAGE_100_BN.add(hedgedStrikePremiumPercent);
-
-    // Apply the formula
-    let orderSize;
-
-    if (underlyingDecimals.gt(OTOKEN_DECIMALS)) {
-        const decimalsDiff = underlyingDecimals.sub(OTOKEN_DECIMALS);
-        const adjustmentFactor = BigNumber.from(10).pow(decimalsDiff);
-        const numberPutsInUnderlying = divByPercentage(amountToProtect, denominatorPercentage);
-        orderSize = numberPutsInUnderlying.div(adjustmentFactor);
-    } else if (underlyingDecimals.lt(OTOKEN_DECIMALS)) {
-        const decimalsDiff = OTOKEN_DECIMALS.sub(underlyingDecimals);
-        const adjustmentFactor = BigNumber.from(10).pow(decimalsDiff);
-        const numberPutsInUnderlying = divByPercentage(amountToProtect, denominatorPercentage);
-        orderSize = numberPutsInUnderlying.mul(adjustmentFactor);
-    } else {
-        orderSize = divByPercentage(amountToProtect, denominatorPercentage);
-    }
+    const effectiveVaultSize = divByPercentage(amountToProtect, denominatorPercentage);
 
     return {
-        orderSize: orderSize,
+        effectiveVaultSize: effectiveVaultSize,
         premiumPercent: premiumPercent,
     };
 }

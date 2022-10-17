@@ -84,6 +84,6 @@ library PercentageUtils {
         @return The percentage with `PERCENTAGE_DECIMALS` decimals
     */
     function toPercentage(uint256 numerator, uint256 denominator) internal pure returns (uint256) {
-        return (numerator * PERCENTAGE_FACTOR) / denominator;
+        return (numerator * PERCENTAGE_100) / denominator;
     }
 }

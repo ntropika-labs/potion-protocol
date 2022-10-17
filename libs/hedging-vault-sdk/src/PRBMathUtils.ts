@@ -63,19 +63,22 @@ import type { BigNumberish } from "@ethersproject/bignumber";
 export function getRateInUD60x18(
     inputTokenPriceInUSD: BigNumberish,
     outputTokenPriceInUSD: BigNumberish,
-    inputTokenDecimals = 18,
-    outputTokenDecimals = 18,
+    inputTokenDecimals_: BigNumberish = 18,
+    outputTokenDecimals_: BigNumberish = 18,
 ): BigNumber {
-    const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals);
-    const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals);
+    const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals_);
+    const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals_);
     const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
 
-    if (inputTokenDecimals === outputTokenDecimals) {
+    const inputTokenDecimals = BigNumber.from(inputTokenDecimals_);
+    const outputTokenDecimals = BigNumber.from(outputTokenDecimals_);
+
+    if (inputTokenDecimals.eq(outputTokenDecimals)) {
         return rate;
     }
 
     const tenBn = BigNumber.from(10);
-    return inputTokenDecimals > outputTokenDecimals
-        ? rate.div(tenBn.pow(inputTokenDecimals - outputTokenDecimals))
-        : rate.mul(tenBn.pow(outputTokenDecimals - inputTokenDecimals));
+    return inputTokenDecimals.gt(outputTokenDecimals)
+        ? rate.div(tenBn.pow(inputTokenDecimals.sub(outputTokenDecimals)))
+        : rate.mul(tenBn.pow(outputTokenDecimals.sub(inputTokenDecimals)));
 }

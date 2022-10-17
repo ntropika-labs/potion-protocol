@@ -148,7 +148,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
-        testingEnvironmentDeployment.USDC = await mockERC20("USDC");
+        testingEnvironmentDeployment.USDC = await mockERC20("USDC", 6);
     } else {
         testingEnvironmentDeployment.USDC = await Deployments.attach<ERC20PresetMinterPauser>(
             "ERC20PresetMinterPauser",

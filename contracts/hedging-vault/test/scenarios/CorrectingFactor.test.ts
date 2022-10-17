@@ -10,7 +10,7 @@ import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfi
 
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { LifecycleStates } from "hedging-vault-sdk";
+import { LifecycleStates, OTOKEN_DECIMALS, USDC_DECIMALS, toSolidityPercentage } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/BlockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
@@ -29,11 +29,11 @@ import {
 import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
 
 /**
-    @notice Hedging Vault basic flow unit tests    
+    @notice Hedging Vault correcting factor tests 
     
     @author Roberto Cano <robercano>
  */
-describe("HedgingVaultBasic", function () {
+describe("CorrectingFactor", function () {
     let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
@@ -61,6 +61,9 @@ describe("HedgingVaultBasic", function () {
         const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
+        // Modify the hedging rate to 80% to test the hedging rate slippage
+        deploymentConfig.hedgingRate = toSolidityPercentage(80.0);
+
         tEnv = await deployTestingEnv(deploymentConfig);
 
         // Commented out on purpose
@@ -79,154 +82,87 @@ describe("HedgingVaultBasic", function () {
         await action.grantRole(Roles.Operator, ownerAccount.address);
     });
 
-    it("HVB0001 - Investment Vault Default Value", async function () {
-        // Roles
-        expect(await vault.getRoleMemberCount(Roles.Admin)).to.equal(1);
-        expect(await vault.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
-        expect(await vault.getRoleMemberCount(Roles.Operator)).to.equal(2);
-        expect(await vault.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
-        expect(await vault.getRoleMemberCount(Roles.Strategist)).to.equal(1);
-        expect(await vault.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
-        expect(await vault.getRoleMemberCount(Roles.Vault)).to.equal(0);
-        expect(await vault.getRoleMemberCount(Roles.Investor)).to.equal(3);
-
-        // Underlying asset and cap
-        expect(await vault.asset()).to.equal(tEnv.underlyingAsset.address);
-        expect(await vault.getVaultCap()).to.equal(tEnv.underlyingAssetCap);
-
-        // Emergency Lock
-        expect(await vault.paused()).to.equal(false);
-
-        // Lifecycle State
-        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
-
-        // Refunds Helper
-        expect(await vault.canRefundETH()).to.equal(true);
-        expect(await vault.canRefund(tEnv.underlyingAsset.address)).to.equal(false);
-
-        // Fee Configuration
-        expect(await vault.getManagementFee()).to.equal(tEnv.managementFee);
-        expect(await vault.getPerformanceFee()).to.equal(tEnv.performanceFee);
-        expect(await vault.getFeesRecipient()).to.equal(tEnv.feesRecipient);
-
-        // Actions
-        expect(await vault.getActionsLength()).to.equal(1);
-        expect(await vault.getAction(0)).to.equal(action.address);
-
-        // Principal Percentages
-        const principalPercentages = await vault.getPrincipalPercentages();
-        expect(principalPercentages.length).to.equal(1);
-        expect(principalPercentages[0]).to.equal(100000000);
-        expect(await vault.getPrincipalPercentage(0)).to.equal(100000000);
-    });
-
-    it("HVB0002 - Potion Buy Action Default Value", async function () {
-        // Roles
-        expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
-        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(2);
-        expect(await action.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
-        expect(await action.getRoleMemberCount(Roles.Strategist)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
-        expect(await action.getRoleMemberCount(Roles.Vault)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Vault, 0)).to.equal(vault.address);
-        expect(await action.getRoleMemberCount(Roles.Investor)).to.equal(0);
-
-        // Emergency Lock
-        expect(await action.paused()).to.equal(false);
-
-        // Lifecycle State
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
-
-        // Refunds Helper
-        expect(await action.canRefundETH()).to.equal(true);
-        expect(await action.canRefund(tEnv.underlyingAsset.address)).to.equal(false);
-        expect(await action.canRefund(tEnv.USDC.address)).to.equal(false);
-
-        // Uniswap helper
-        expect(await action.getSwapRouter()).to.equal(tEnv.uniswapV3SwapRouter.address);
-
-        // Potion Protocol helper
-        expect(await action.getPotionLiquidityManager()).to.equal(tEnv.potionLiquidityPoolManager.address);
-        expect(await action.getOpynAddressBook()).to.equal(tEnv.opynAddressBook.address);
-        expect(await action.getUSDC()).to.equal(tEnv.USDC.address);
-
-        // Action Values
-        expect(await action.maxPremiumPercentage()).to.equal(tEnv.maxPremiumPercentage);
-        expect(await action.premiumSlippage()).to.equal(tEnv.premiumSlippage);
-        expect(await action.swapSlippage()).to.equal(tEnv.swapSlippage);
-        expect(await action.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
-        expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
+    it("CF0001 - Potion Buy Action Hedging Rate Config", async function () {
         expect(await action.hedgingRate()).to.equal(tEnv.hedgingRate);
         expect(await action.hedgingRateSlippage()).to.equal(tEnv.hedgingRateSlippage);
     });
 
-    it("HVB0003 - Basic Deposit/Redemption", async function () {
-        // Mint and approve
-        await tEnv.underlyingAsset.mint(investorAccount.address, 20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
+    it("CF0002 - Full cycle with Hedging Rate Slippage", async function () {
+        /**
+            TEST SETTINGS
+        */
+        const UnderlyingDecimals = await tEnv.underlyingAsset.decimals();
 
-        await tEnv.underlyingAsset.connect(investorAccount).approve(vault.address, 20000);
-        expect(
-            await tEnv.underlyingAsset.connect(investorAccount).allowance(investorAccount.address, vault.address),
-        ).to.equal(20000);
-
-        // Deposit and check received shares
-        await vault.connect(investorAccount).deposit(20000, investorAccount.address);
-        expect(await vault.balanceOf(investorAccount.address)).to.equal(20000);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(0);
-
-        // Withdraw and check received assets
-        await vault.connect(investorAccount).redeem(20000, investorAccount.address, investorAccount.address);
-        expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
-    });
-    it("HVB0004 - Full cycle", async function () {
-        // Test Settings
-        const underlyingAssetPriceInUSD = 1000.0;
+        const underlyingPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
 
-        const underlyingAssetPriceInUSDbn = ethers.utils.parseUnits(String(underlyingAssetPriceInUSD), 8); // 1000 USDC with 8 decimals
-        const USDCPriceInUSDbn = ethers.utils.parseUnits(String(USDCPriceInUSD), 8); // 1 USDC with 8 decimals
+        const underlyingPriceInUSDC = HedgingVaultUtils.parsePriceInUSDC(underlyingPriceInUSD);
+        const USDCPriceInUSDC = HedgingVaultUtils.parsePriceInUSDC(USDCPriceInUSD);
 
-        const amountToBeInvested = ethers.utils.parseEther("20");
-        const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
-
-        /*
-            COLLATERAL
-        */
-        const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
-        const amountProtectedInUSDC = amountProtected
-            .mul(underlyingAssetPriceInUSDbn)
-            .div(USDCPriceInUSDbn)
-            .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
-
-        const collateralRequiredInUSDC = HedgingVaultUtils.applyPercentage(
-            amountProtectedInUSDC,
-            tEnv.strikePercentage,
-        );
+        const amountToBeInvested = HedgingVaultUtils.parseAmount("20");
 
         const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
         const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
 
         const lpAddress = (await ethers.getSigners())[0].address;
         const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
-        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
+
+        /*
+            COLLATERAL
+        */
+        const initialAmountToBeProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
+        const initialAmountToBeProtectedInUSDC = HedgingVaultUtils.convertAmountToUSDC(
+            initialAmountToBeProtected,
+            UnderlyingDecimals,
+            underlyingPriceInUSDC,
+            USDCPriceInUSDC,
+        );
+
+        const initialCollateralInUSDC = HedgingVaultUtils.applyPercentage(
+            initialAmountToBeProtectedInUSDC,
+            tEnv.strikePercentage,
+        );
+
+        const initialPremiumInUSDC = calculatePremium(pool, curve, initialCollateralInUSDC);
+
+        // Get the new order size, based on the initial premium
+        const { effectiveVaultSize } = HedgingVaultUtils.calculateOrderSize(
+            amountToBeInvested,
+            UnderlyingDecimals,
+            tEnv.hedgingRate,
+            tEnv.strikePercentage,
+            underlyingPriceInUSDC,
+            initialPremiumInUSDC,
+        );
+
+        const amountToBeProtected = HedgingVaultUtils.applyPercentage(effectiveVaultSize, tEnv.hedgingRate);
+        const amountToBeProtectedInUSDC = HedgingVaultUtils.convertAmountToUSDC(
+            amountToBeProtected,
+            UnderlyingDecimals,
+            underlyingPriceInUSDC,
+            USDCPriceInUSDC,
+        );
+        const collateralInUSDC = HedgingVaultUtils.applyPercentage(amountToBeProtectedInUSDC, tEnv.strikePercentage);
+        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralInUSDC);
 
         const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(
             expectedPremiumInUSDC,
             tEnv.premiumSlippage,
         );
 
-        const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSDbn, tEnv.strikePercentage);
+        const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingPriceInUSDC, tEnv.strikePercentage);
         const nextCycleStartTimestamp = await action.nextCycleStartTimestamp();
         const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
+        const expectedPremiumInUnderlying = HedgingVaultUtils.convertAmount(
+            maxPremiumWithSlippageInUSDC,
+            UnderlyingDecimals,
+            USDC_DECIMALS,
+            USDCPriceInUSDC,
+            underlyingPriceInUSDC,
+        );
         const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
-            maxPremiumWithSlippageInUSDC
-                .mul(BigNumber.from(1000000000000))
-                .mul(USDCPriceInUSDbn)
-                .div(underlyingAssetPriceInUSDbn),
+            expectedPremiumInUnderlying,
             tEnv.swapSlippage,
         );
 
@@ -282,6 +218,12 @@ describe("HedgingVaultBasic", function () {
 
         // POTION BUY INFO
 
+        const orderSizeInOtokens = HedgingVaultUtils.convertAmount(
+            effectiveVaultSize,
+            OTOKEN_DECIMALS,
+            UnderlyingDecimals,
+        );
+
         // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
         // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
         // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
@@ -291,7 +233,7 @@ describe("HedgingVaultBasic", function () {
                 poolId: 0,
                 curve: curve.asSolidityStruct(),
                 criteria: criteria,
-                orderSizeInOtokens: otokensAmount,
+                orderSizeInOtokens: orderSizeInOtokens,
             },
         ];
 
@@ -307,14 +249,22 @@ describe("HedgingVaultBasic", function () {
         // UNISWAP INFO
 
         // Set the Opyn oracle asset price for the underlying asset
-        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSDbn);
-        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSDbn);
+        const underlyingPriceInOpynFormat = HedgingVaultUtils.convertAmount(underlyingPriceInUSDC, 8, USDC_DECIMALS);
+        const USDCPriceInOpynFormat = HedgingVaultUtils.convertAmount(USDCPriceInUSDC, 8, USDC_DECIMALS);
+
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingPriceInOpynFormat);
+        await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInOpynFormat);
 
         // Set the Uniswap route info
         const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.underlyingAsset.address,
             outputToken: tEnv.USDC.address,
-            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(underlyingAssetPriceInUSD, USDCPriceInUSD, 18, 6),
+            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
+                underlyingPriceInUSD,
+                USDCPriceInUSD,
+                UnderlyingDecimals,
+                USDC_DECIMALS,
+            ),
             swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
@@ -358,11 +308,11 @@ describe("HedgingVaultBasic", function () {
         // Use the strike percent and reduce it by 10% to get the exit price
         const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
         const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
-        const underlyingAssetExitPriceInUSDbn = HedgingVaultUtils.applyPercentage(
-            underlyingAssetPriceInUSDbn,
+        const underlyingAssetExitPriceInUSD = HedgingVaultUtils.applyPercentage(
+            underlyingPriceInUSDC,
             underlyingAssetPricePercentage,
         );
-        const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
+        const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountToBeProtectedInUSDC, exitPriceDecreasePercentage);
 
         // TODO: When using the mocked version of the Potion Liquidity manager the premium is not transferred from the
         // TODO: action contract to the Potion Liquidity Manager contract. In the same way, the Opyn Controller mock is
@@ -377,10 +327,13 @@ describe("HedgingVaultBasic", function () {
                 .sub(BigNumber.from("372029887"));
         }
 
-        const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout
-            .mul(BigNumber.from(1000000000000))
-            .mul(USDCPriceInUSDbn)
-            .div(underlyingAssetPriceInUSDbn);
+        const extraUnderlyingAssetInVaultAfterPayout = HedgingVaultUtils.convertAmount(
+            totalUSDCInActionAfterPayout,
+            UnderlyingDecimals,
+            USDC_DECIMALS,
+            USDCPriceInUSDC,
+            underlyingPriceInUSDC,
+        );
 
         const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
             extraUnderlyingAssetInVaultAfterPayout,
@@ -394,10 +347,12 @@ describe("HedgingVaultBasic", function () {
             _uniswapExitPositionOutputAmount,
             tEnv.swapSlippage,
         );
-        const _totalUSDCInActionAfterPayout = _extraUnderlyingAssetInVaultAfterPayout
-            .mul(underlyingAssetPriceInUSDbn)
-            .div(USDCPriceInUSDbn)
-            .div(BigNumber.from(1000000000000));
+        const _totalUSDCInActionAfterPayout = HedgingVaultUtils.convertAmountToUSDC(
+            _extraUnderlyingAssetInVaultAfterPayout,
+            UnderlyingDecimals,
+            underlyingPriceInUSDC,
+            USDCPriceInUSDC,
+        );
 
         // Setup the mocks
         ifMocksEnabled(() => {
@@ -422,12 +377,12 @@ describe("HedgingVaultBasic", function () {
         const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
-            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingAssetPriceInUSD, 6, 18),
+            expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingPriceInUSD, 6, 18),
             swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
         // Set the Opyn oracle asset price for the underlying asset
-        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSDbn);
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetExitPriceInUSD);
 
         // Set the dispute period as over, this only works with the mock contract
         await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, expirationTimestamp, true);

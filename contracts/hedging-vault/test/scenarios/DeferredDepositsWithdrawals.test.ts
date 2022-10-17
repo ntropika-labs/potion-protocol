@@ -265,7 +265,7 @@ async function setupTestConditions(
 }
 
 /**
-    @notice Hedging Vault basic flow unit tests    
+    @notice Hedging Vault deferred deposits and withdrawals tests
     
     @author Roberto Cano <robercano>
  */
@@ -397,6 +397,8 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await action.swapSlippage()).to.equal(tEnv.swapSlippage);
         expect(await action.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
         expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
+        expect(await action.hedgingRate()).to.equal(tEnv.hedgingRate);
+        expect(await action.hedgingRateSlippage()).to.equal(tEnv.hedgingRateSlippage);
     });
 
     it("DDW0003 - Rounds Input Vault Default Value", async function () {
