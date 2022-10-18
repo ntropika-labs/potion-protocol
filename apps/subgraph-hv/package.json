@@ -1,0 +1,20 @@
+{
+  "name": "potion-subgraph-hv",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "auth-hosted": "graph auth --hosted-service",
+    "auth-studio": "graph auth --studio",
+    "create-local": "graph create potion-hv-subgraph --node http://localhost:8020",
+    "remove-local": "graph remove --node http://localhost:8020/",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy-hosted": "graph deploy --product hosted-service",
+    "deploy-studio": "graph deploy --studio",
+    "deploy-local": "graph deploy potion-hv-subgraph --node http://localhost:8020/ --ipfs http://localhost:5001 --version-label 0.0.1",
+    "test-unit": "RUST_BACKTRACE=full graph test",
+    "coverage": "graph test -- -c",
+    "lint": "eslint . --ext .ts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/**/*.ts tests/**/*.ts"
+  }
+}

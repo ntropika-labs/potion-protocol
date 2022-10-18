@@ -31325,6 +31325,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"potion-subgraph-hv@workspace:apps/subgraph-hv":
+  version: 0.0.0-use.local
+  resolution: "potion-subgraph-hv@workspace:apps/subgraph-hv"
+  languageName: unknown
+  linkType: soft
+
 "potion-subgraph@workspace:apps/subgraph":
   version: 0.0.0-use.local
   resolution: "potion-subgraph@workspace:apps/subgraph"
