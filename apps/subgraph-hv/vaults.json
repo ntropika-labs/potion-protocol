@@ -1,0 +1,20 @@
+[
+  {
+    "InvestmentVault": "0xaaa",
+		"PotionBuyAction": "0xaaa",
+		"RoundsInputVault": "0xaaa",
+		"RoundsOutputVault": "0xaaa"
+  },
+  {
+    "InvestmentVault": "0xbbb",
+		"PotionBuyAction": "0xbbb",
+		"RoundsInputVault": "0xbbb",
+		"RoundsOutputVault": "0xbbb"
+  },
+  {
+    "InvestmentVault": "0xccc",
+		"PotionBuyAction": "0xccc",
+		"RoundsInputVault": "0xccc",
+		"RoundsOutputVault": "0xccc"
+  }
+]

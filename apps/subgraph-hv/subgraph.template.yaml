@@ -1,0 +1,83 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: InvestmentVault
+    network: 
+    source:
+      address: 
+      abi: InvestmentVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - HedgingVault
+      abis:
+        - name: InvestmentVault
+          file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
+      eventHandlers:
+        - event: VaulPositionEntered(uint256,uint256)
+          handler: handleVaultPositionEntered
+      file: ./src/InvestmentVault.ts
+  
+  - kind: ethereum/contract
+    name: PotionBuyAction
+    network: 
+    source:
+      address: 
+      abi: PotionBuyAction
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - HedgingVault
+      abis:
+        - name: PotionBuyAction
+          file: ../../contracts/hedging-vault/abis/contracts/actions/PotionBuyAction.sol/PotionBuyAction.json
+      eventHandlers:
+        - event: ActionPositionEntered(indexed address,uint256)
+          handler: handleActionPositionEntered
+      file: ./src/potionBuyAction.ts
+  
+  - kind: ethereum/contract
+    name: RoundsInputVault
+    network: 
+    source:
+      address: 
+      abi: RoundsInputVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Round
+      abis:
+        - name: RoundsInputVault
+          file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsInputVault.sol/RoundsInputVault.json
+      eventHandlers:
+        - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositWithReceipt
+      file: ./src/roundsInputVault.ts
+  
+  - kind: ethereum/contract
+    name: RoundsOutputVault
+    network: 
+    source:
+      address: 
+      abi: RoundsOutputVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Round
+      abis:
+        - name: RoundsOutputVault
+          file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsOutputVault.sol/RoundsOutputVault.json
+      eventHandlers:
+        - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositWithReceipt
+      file: ./src/roundsOutputVault.ts
