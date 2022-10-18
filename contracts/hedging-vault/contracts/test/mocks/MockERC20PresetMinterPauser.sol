@@ -13,7 +13,11 @@ import "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol"
     @notice Mock contract for an ERC20 with minting and pausing capabilities
  */
 contract MockERC20PresetMinterPauser is ERC20PresetMinterPauser {
-    constructor() ERC20PresetMinterPauser("MockERC20", "MERC20") {}
+    uint8 private _decimals;
+
+    constructor(uint8 decimals_) ERC20PresetMinterPauser("MockERC20", "MERC20") {
+        _decimals = decimals_;
+    }
 
     /**
         @notice Function that spends a given allowance
@@ -28,5 +32,9 @@ contract MockERC20PresetMinterPauser is ERC20PresetMinterPauser {
         uint256 amount
     ) external {
         _spendAllowance(owner, spender, amount);
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return _decimals;
     }
 }

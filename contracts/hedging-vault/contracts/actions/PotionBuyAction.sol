@@ -121,6 +121,8 @@ contract PotionBuyAction is
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
         _setCycleDuration(initParams.cycleDurationSecs);
         _setStrikePercentage(initParams.strikePercentage);
+        _setHedgingRate(initParams.hedgingRate);
+        _setHedgingRateSlippage(initParams.hedgingRateSlippage);
 
         // Get the next time
         uint256 todayAt8UTC = TimeUtils.calculateTodayWithOffset(block.timestamp, TimeUtils.SECONDS_TO_0800_UTC);
@@ -470,7 +472,7 @@ contract PotionBuyAction is
 
         uint256 actualHedgingRate = PercentageUtils.toPercentage(amountPotionsInAssets, actualHedgedAmountInAssets);
 
-        uint256 hedgingRateWithSlippage = hedgingRate.applyPercentage(hedgingRateSlippage);
+        uint256 hedgingRateWithSlippage = hedgingRate.subtractPercentage(hedgingRateSlippage);
 
         if (actualHedgingRate < hedgingRateWithSlippage) {
             revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate, hedgingRateSlippage);

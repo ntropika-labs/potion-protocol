@@ -28,8 +28,9 @@ async function mockContract<T extends Contract>(
 
 export async function mockERC20(
     alias: string,
+    decimals: number = 18,
 ): Promise<MockContract<MockERC20PresetMinterPauser> | MockERC20PresetMinterPauser> {
-    return mockContract<MockERC20PresetMinterPauser>("MockERC20PresetMinterPauser", [], alias);
+    return mockContract<MockERC20PresetMinterPauser>("MockERC20PresetMinterPauser", [decimals], alias);
 }
 
 export async function mockPotionLiquidityPoolManager(): Promise<

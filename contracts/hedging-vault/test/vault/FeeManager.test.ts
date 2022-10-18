@@ -24,7 +24,7 @@ describe("FeeManager", function () {
         unpriviledgedAccount = (await ethers.getSigners())[4];
 
         const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
-        erc20 = (await ERC20Factory.deploy()) as MockERC20PresetMinterPauser;
+        erc20 = (await ERC20Factory.deploy(18)) as MockERC20PresetMinterPauser;
 
         const FeeManagerFactory = await ethers.getContractFactory("TestWrapperFeeManager");
         feeManager = (await FeeManagerFactory.deploy()) as TestWrapperFeeManager;

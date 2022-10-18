@@ -35,7 +35,7 @@ describe("RefundsHelper", function () {
 
             // Deploy ERC20s
             const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
-            erc20D = await ERC20Factory.deploy();
+            erc20D = await ERC20Factory.deploy(18);
 
             const RefundsHelperFactory = await ethers.getContractFactory("TestWrapperRefundsHelper");
             refundsHelper = (await RefundsHelperFactory.deploy()) as TestWrapperRefundsHelper;
@@ -108,7 +108,7 @@ describe("RefundsHelper", function () {
 
             // Deploy ERC20s
             const ERC20Factory = await ethers.getContractFactory("MockERC20PresetMinterPauser");
-            erc20D = await ERC20Factory.deploy();
+            erc20D = await ERC20Factory.deploy(18);
 
             const RefundsHelperFactory = await ethers.getContractFactory("TestWrapperRefundsHelper");
             refundsHelper = (await RefundsHelperFactory.deploy()) as TestWrapperRefundsHelper;
