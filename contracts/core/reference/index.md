@@ -133,6 +133,13 @@
 <!-- START doctoc -->
 <!-- END doctoc -->
 
+# ChainlinkAggregatorUSDC
+
+## Contents
+
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 # ERC20Base
 
 ## Contents
@@ -197,6 +204,13 @@
 <!-- END doctoc -->
 
 # SampleUnderlyingToken
+
+## Contents
+
+<!-- START doctoc -->
+<!-- END doctoc -->
+
+# TestERC20MinterPauser
 
 ## Contents
 

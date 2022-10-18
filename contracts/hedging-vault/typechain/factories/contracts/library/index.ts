@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { PercentageUtils__factory } from "./PercentageUtils__factory";
+export { PotionProtocolLib__factory } from "./PotionProtocolLib__factory";
 export { TimeUtils__factory } from "./TimeUtils__factory";

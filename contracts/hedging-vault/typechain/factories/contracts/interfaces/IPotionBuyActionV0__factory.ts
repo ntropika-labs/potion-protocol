@@ -27,6 +27,32 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "HedgingRateIsZero",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "expectedHedgingRate",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "actualHedgingRate",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateOutOfRange",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -35,6 +61,22 @@ const _abi = [
       },
     ],
     name: "MaxPremiumPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "premium",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxPremium",
+        type: "uint256",
+      },
+    ],
+    name: "PremiumExceedsMaxPremium",
     type: "error",
   },
   {
@@ -75,6 +117,32 @@ const _abi = [
       },
     ],
     name: "CycleDurationChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "hedgingRate",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateSlippageChanged",
     type: "event",
   },
   {
@@ -162,6 +230,11 @@ const _abi = [
         name: "payout",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "orderSize",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -175,6 +248,32 @@ const _abi = [
       },
     ],
     name: "setCycleDuration",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "hedgingRate",
+        type: "uint256",
+      },
+    ],
+    name: "setHedgingRate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+    ],
+    name: "setHedgingRateSlippage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

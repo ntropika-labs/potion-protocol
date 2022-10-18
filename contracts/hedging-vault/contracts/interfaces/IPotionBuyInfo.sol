@@ -26,11 +26,10 @@ import { IPotionLiquidityPool } from "../interfaces/IPotionLiquidityPool.sol";
         @custom:member totalSizeInPotions The total number of potions to buy using the given sellers list
      */
 struct PotionBuyInfo {
+    IPotionLiquidityPool.CounterpartyDetails[] sellers;
     address targetPotionAddress;
     address underlyingAsset;
     uint256 strikePriceInUSDC;
     uint256 expirationTimestamp;
-    IPotionLiquidityPool.CounterpartyDetails[] sellers;
     uint256 expectedPremiumInUSDC;
-    uint256 totalSizeInPotions;
 }

@@ -23,34 +23,6 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export type PotionBuyInfoStruct = {
-  targetPotionAddress: PromiseOrValue<string>;
-  underlyingAsset: PromiseOrValue<string>;
-  strikePriceInUSDC: PromiseOrValue<BigNumberish>;
-  expirationTimestamp: PromiseOrValue<BigNumberish>;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
-  expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
-  totalSizeInPotions: PromiseOrValue<BigNumberish>;
-};
-
-export type PotionBuyInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
-  BigNumber,
-  BigNumber
-] & {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: BigNumber;
-  expirationTimestamp: BigNumber;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
-  expectedPremiumInUSDC: BigNumber;
-  totalSizeInPotions: BigNumber;
-};
-
 export declare namespace ICurveManager {
   export type CurveStruct = {
     a_59x18: PromiseOrValue<BigNumberish>;
@@ -123,10 +95,40 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
+export declare namespace TestWrapperPotionProtocolLib {
+  export type BuyPotionParamsStruct = {
+    underlyingAsset: PromiseOrValue<string>;
+    strikePriceInUSDC: PromiseOrValue<BigNumberish>;
+    expirationTimestamp: PromiseOrValue<BigNumberish>;
+    maxPremiumInUSDC: PromiseOrValue<BigNumberish>;
+    targetPotionAddress: PromiseOrValue<string>;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
+    USDC: PromiseOrValue<string>;
+  };
+
+  export type BuyPotionParamsStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+    string
+  ] & {
+    underlyingAsset: string;
+    strikePriceInUSDC: BigNumber;
+    expirationTimestamp: BigNumber;
+    maxPremiumInUSDC: BigNumber;
+    targetPotionAddress: string;
+    sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
+    USDC: string;
+  };
+}
+
 export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
   functions: {
-    "buyPotion(address,address,(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256),uint256,address)": FunctionFragment;
-    "redeemPotion(address,address,(address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "buyPotion(address,address,(address,uint256,uint256,uint256,address,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address))": FunctionFragment;
+    "redeemPotion(address,address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -138,9 +140,7 @@ export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PotionBuyInfoStruct,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
+      TestWrapperPotionProtocolLib.BuyPotionParamsStruct
     ]
   ): string;
   encodeFunctionData(
@@ -148,7 +148,8 @@ export interface TestWrapperPotionProtocolLibInterface extends utils.Interface {
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PotionBuyInfoStruct
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
 
@@ -191,16 +192,15 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
     buyPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynFactory: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
-      slippage: PromiseOrValue<BigNumberish>,
-      USDC: PromiseOrValue<string>,
+      params: TestWrapperPotionProtocolLib.BuyPotionParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     redeemPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynController: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
+      targetPotionAddress: PromiseOrValue<string>,
+      totalSizeInPotions: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -208,16 +208,15 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
   buyPotion(
     potionLiquidityPoolManager: PromiseOrValue<string>,
     opynFactory: PromiseOrValue<string>,
-    buyInfo: PotionBuyInfoStruct,
-    slippage: PromiseOrValue<BigNumberish>,
-    USDC: PromiseOrValue<string>,
+    params: TestWrapperPotionProtocolLib.BuyPotionParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   redeemPotion(
     potionLiquidityPoolManager: PromiseOrValue<string>,
     opynController: PromiseOrValue<string>,
-    buyInfo: PotionBuyInfoStruct,
+    targetPotionAddress: PromiseOrValue<string>,
+    totalSizeInPotions: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -225,16 +224,15 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
     buyPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynFactory: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
-      slippage: PromiseOrValue<BigNumberish>,
-      USDC: PromiseOrValue<string>,
+      params: TestWrapperPotionProtocolLib.BuyPotionParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     redeemPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynController: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
+      targetPotionAddress: PromiseOrValue<string>,
+      totalSizeInPotions: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -245,16 +243,15 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
     buyPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynFactory: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
-      slippage: PromiseOrValue<BigNumberish>,
-      USDC: PromiseOrValue<string>,
+      params: TestWrapperPotionProtocolLib.BuyPotionParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     redeemPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynController: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
+      targetPotionAddress: PromiseOrValue<string>,
+      totalSizeInPotions: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -263,16 +260,15 @@ export interface TestWrapperPotionProtocolLib extends BaseContract {
     buyPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynFactory: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
-      slippage: PromiseOrValue<BigNumberish>,
-      USDC: PromiseOrValue<string>,
+      params: TestWrapperPotionProtocolLib.BuyPotionParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemPotion(
       potionLiquidityPoolManager: PromiseOrValue<string>,
       opynController: PromiseOrValue<string>,
-      buyInfo: PotionBuyInfoStruct,
+      targetPotionAddress: PromiseOrValue<string>,
+      totalSizeInPotions: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

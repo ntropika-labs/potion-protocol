@@ -10,7 +10,7 @@ import {
     RoundsVaultExchanger,
 } from "../../typechain";
 import { BigNumber } from "ethers";
-import { Roles } from "hedging-vault-sdk";
+import { PERCENTAGE_100_BN, Roles, fromSolidityPercentage } from "hedging-vault-sdk";
 import { deployRoundsInputVault, RoundsInputVaultDeployParams } from "../common/deployRoundsInputVault";
 import { deployRoundsOutputVault } from "../common/deployRoundsOutputVault";
 import { deployRoundsVaultExchanger } from "../common/deployRoundsVaultExchanger";
@@ -33,7 +33,8 @@ export interface HedgingVaultDeployParams {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber; // 6 decimals
-    hedgingPercentage: BigNumber; // 6 decimals
+    hedgingRate: BigNumber; // 6 decimals
+    hedgingRateSlippage: BigNumber; // 6 decimals
 
     // Fees configuration
     managementFee: BigNumber;
@@ -70,13 +71,28 @@ export function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployPa
     console.log(` underlyingAsset: ${deployParams.underlyingAsset}`);
     console.log(`--------------------------------------`);
     console.log(` underlyingAssetCap: ${deployParams.underlyingAssetCap}`);
-    console.log(` maxPremiumPercentage: ${deployParams.maxPremiumPercentage}`);
-    console.log(` premiumSlippage: ${deployParams.premiumSlippage}`);
-    console.log(` swapSlippage: ${deployParams.swapSlippage}`);
+    console.log(
+        ` maxPremiumPercentage: ${deployParams.maxPremiumPercentage.toString()} (${fromSolidityPercentage(
+            deployParams.maxPremiumPercentage,
+        )})`,
+    );
+    console.log(
+        ` premiumSlippage: ${deployParams.premiumSlippage} (${fromSolidityPercentage(deployParams.premiumSlippage)})`,
+    );
+    console.log(` swapSlippage: ${deployParams.swapSlippage} (${fromSolidityPercentage(deployParams.swapSlippage)})`);
     console.log(` maxSwapDurationSecs: ${deployParams.maxSwapDurationSecs}`);
     console.log(` cycleDurationSecs: ${deployParams.cycleDurationSecs}`);
-    console.log(` strikePercentage: ${deployParams.strikePercentage}`);
-    console.log(` hedgingPercentage: ${deployParams.hedgingPercentage}`);
+    console.log(
+        ` strikePercentage: ${deployParams.strikePercentage} (${fromSolidityPercentage(
+            deployParams.strikePercentage,
+        )})`,
+    );
+    console.log(` hedgingRate: ${deployParams.hedgingRate} (${fromSolidityPercentage(deployParams.hedgingRate)})`);
+    console.log(
+        ` hedgingRateSlippage: ${deployParams.hedgingRateSlippage} (${fromSolidityPercentage(
+            deployParams.hedgingRateSlippage,
+        )})`,
+    );
     console.log(`--------------------------------------`);
     console.log(` managementFee: ${deployParams.managementFee}`);
     console.log(` performanceFee: ${deployParams.performanceFee}`);
@@ -111,6 +127,8 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         maxSwapDurationSecs: parameters.maxSwapDurationSecs,
         cycleDurationSecs: parameters.cycleDurationSecs,
         strikePercentage: parameters.strikePercentage,
+        hedgingRate: parameters.hedgingRate,
+        hedgingRateSlippage: parameters.hedgingRateSlippage,
     };
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);
@@ -126,7 +144,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         performanceFee: parameters.performanceFee,
         feesRecipient: parameters.feesRecipient,
         actions: [potionBuyContract.address],
-        principalPercentages: [parameters.hedgingPercentage],
+        principalPercentages: [PERCENTAGE_100_BN],
     };
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);

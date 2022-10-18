@@ -1,4 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
+import type { BigNumberish } from "@ethersproject/bignumber";
 
 /**
      @title PercentageUtils
@@ -32,11 +33,8 @@ export const PERCENTAGE_100_BN = toSolidityPercentage(100.0);
     @dev It performs the following operation:
         (100.0 + percentage) * amount / 100.0
 */
-export function addPercentage(
-  amount: BigNumber,
-  percentage: BigNumber
-): BigNumber {
-  return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
+export function addPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return applyPercentage(amount, PERCENTAGE_100_BN.add(percentage));
 }
 
 /**
@@ -47,11 +45,8 @@ export function addPercentage(
     @dev It performs the following operation:
         (100.0 - percentage) * amount / 100.0
 */
-export function subtractPercentage(
-  amount: BigNumber,
-  percentage: BigNumber
-): BigNumber {
-  return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
+export function subtractPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return applyPercentage(amount, PERCENTAGE_100_BN.sub(percentage));
 }
 
 /**
@@ -62,11 +57,20 @@ export function subtractPercentage(
 
     @return The amount after the percentage is applied
 */
-export function applyPercentage(
-  amount: BigNumber,
-  percentage: BigNumber
-): BigNumber {
-  return amount.mul(percentage).div(PERCENTAGE_100_BN);
+export function applyPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return amount.mul(percentage).div(PERCENTAGE_100_BN);
+}
+
+/**
+    @notice Divides the given amount by the given percentage and returns the result
+
+    @param amount The amount to apply the percentage to
+    @param percentage The percentage to divide the amount by
+
+    @return The amount after it is divided by the percentage
+*/
+export function divByPercentage(amount: BigNumber, percentage: BigNumber): BigNumber {
+    return amount.mul(PERCENTAGE_100_BN).div(percentage);
 }
 
 /**
@@ -77,23 +81,31 @@ export function applyPercentage(
     @return True if the percentage is in range, false otherwise
 */
 export function isPercentageInRange(percentage: number | BigNumber): boolean {
-  if (typeof percentage === "number") {
-    return percentage >= 0 && percentage <= 100;
-  } else {
-    return percentage.lte(PERCENTAGE_100_BN);
-  }
+    if (typeof percentage === "number") {
+        return percentage >= 0 && percentage <= 100;
+    } else {
+        return percentage.lte(PERCENTAGE_100_BN);
+    }
 }
 
 /**
     @notice Transforms the given floating point percentage to the format used by the Solidity files
 */
 export function toSolidityPercentage(percentage: number): BigNumber {
-  return BigNumber.from(Math.floor(percentage * PERCENTAGE_FACTOR));
+    return BigNumber.from(Math.floor(percentage * PERCENTAGE_FACTOR));
 }
 
 /**
     @notice Transforms a percentage in the format used by the Solidity files to a floating point percentage
 */
 export function fromSolidityPercentage(percentage: BigNumber): number {
-  return percentage.div(PERCENTAGE_FACTOR).toNumber();
+    return percentage.div(PERCENTAGE_FACTOR).toNumber();
+}
+
+/**
+   @notice returns a percentage from a numerator and a denominator that have the same
+           denomination
+*/
+export function fromFraction(numerator: BigNumberish, denominator: BigNumberish): BigNumber {
+    return BigNumber.from(numerator).mul(PERCENTAGE_100_BN).div(denominator);
 }

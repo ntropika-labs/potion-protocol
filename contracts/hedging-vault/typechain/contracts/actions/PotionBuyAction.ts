@@ -28,31 +28,28 @@ import type {
 } from "../../common";
 
 export type PotionBuyInfoStruct = {
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
   targetPotionAddress: PromiseOrValue<string>;
   underlyingAsset: PromiseOrValue<string>;
   strikePriceInUSDC: PromiseOrValue<BigNumberish>;
   expirationTimestamp: PromiseOrValue<BigNumberish>;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStruct[];
   expectedPremiumInUSDC: PromiseOrValue<BigNumberish>;
-  totalSizeInPotions: PromiseOrValue<BigNumberish>;
 };
 
 export type PotionBuyInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
   IPotionLiquidityPool.CounterpartyDetailsStructOutput[],
+  string,
+  string,
+  BigNumber,
   BigNumber,
   BigNumber
 ] & {
+  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
   targetPotionAddress: string;
   underlyingAsset: string;
   strikePriceInUSDC: BigNumber;
   expirationTimestamp: BigNumber;
-  sellers: IPotionLiquidityPool.CounterpartyDetailsStructOutput[];
   expectedPremiumInUSDC: BigNumber;
-  totalSizeInPotions: BigNumber;
 };
 
 export declare namespace ICurveManager {
@@ -159,6 +156,8 @@ export declare namespace PotionBuyAction {
     maxSwapDurationSecs: PromiseOrValue<BigNumberish>;
     cycleDurationSecs: PromiseOrValue<BigNumberish>;
     strikePercentage: PromiseOrValue<BigNumberish>;
+    hedgingRate: PromiseOrValue<BigNumberish>;
+    hedgingRateSlippage: PromiseOrValue<BigNumberish>;
   };
 
   export type PotionBuyInitParamsStructOutput = [
@@ -170,6 +169,8 @@ export declare namespace PotionBuyAction {
     string,
     string,
     string,
+    BigNumber,
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -191,6 +192,8 @@ export declare namespace PotionBuyAction {
     maxSwapDurationSecs: BigNumber;
     cycleDurationSecs: BigNumber;
     strikePercentage: BigNumber;
+    hedgingRate: BigNumber;
+    hedgingRateSlippage: BigNumber;
   };
 }
 
@@ -225,7 +228,9 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "getUSDC()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "hedgingRate()": FunctionFragment;
+    "hedgingRateSlippage()": FunctionFragment;
+    "initialize((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "maxPremiumPercentage()": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "nextCycleStartTimestamp()": FunctionFragment;
@@ -237,9 +242,11 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setCycleDuration(uint256)": FunctionFragment;
+    "setHedgingRate(uint256)": FunctionFragment;
+    "setHedgingRateSlippage(uint256)": FunctionFragment;
     "setMaxPremiumPercentage(uint256)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
-    "setPotionBuyInfo((address,address,uint256,uint256,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256,uint256))": FunctionFragment;
+    "setPotionBuyInfo(((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256))": FunctionFragment;
     "setPremiumSlippage(uint256)": FunctionFragment;
     "setStrikePercentage(uint256)": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
@@ -281,6 +288,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "getUSDC"
       | "grantRole"
       | "hasRole"
+      | "hedgingRate"
+      | "hedgingRateSlippage"
       | "initialize"
       | "maxPremiumPercentage"
       | "maxSwapDurationSecs"
@@ -293,6 +302,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "setCycleDuration"
+      | "setHedgingRate"
+      | "setHedgingRateSlippage"
       | "setMaxPremiumPercentage"
       | "setMaxSwapDuration"
       | "setPotionBuyInfo"
@@ -428,6 +439,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "hedgingRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hedgingRateSlippage",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "initialize",
     values: [PotionBuyAction.PotionBuyInitParamsStruct]
   ): string;
@@ -471,6 +490,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCycleDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRate",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setHedgingRateSlippage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -613,6 +640,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getUSDC", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hedgingRateSlippage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxPremiumPercentage",
@@ -641,6 +676,14 @@ export interface PotionBuyActionInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setHedgingRateSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -689,6 +732,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "ActionPositionEntered(address,uint256)": EventFragment;
     "ActionPositionExited(address,uint256)": EventFragment;
     "CycleDurationChanged(uint256)": EventFragment;
+    "HedgingRateChanged(uint256)": EventFragment;
+    "HedgingRateSlippageChanged(uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
@@ -706,6 +751,8 @@ export interface PotionBuyActionInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
   getEvent(
@@ -756,6 +803,28 @@ export type CycleDurationChangedEvent = TypedEvent<
 
 export type CycleDurationChangedEventFilter =
   TypedEventFilter<CycleDurationChangedEvent>;
+
+export interface HedgingRateChangedEventObject {
+  hedgingRate: BigNumber;
+}
+export type HedgingRateChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateChangedEventObject
+>;
+
+export type HedgingRateChangedEventFilter =
+  TypedEventFilter<HedgingRateChangedEvent>;
+
+export interface HedgingRateSlippageChangedEventObject {
+  hedgingRateSlippage: BigNumber;
+}
+export type HedgingRateSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  HedgingRateSlippageChangedEventObject
+>;
+
+export type HedgingRateSlippageChangedEventFilter =
+  TypedEventFilter<HedgingRateSlippageChangedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -926,7 +995,13 @@ export interface PotionBuyAction extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     canPositionBeEntered(
       arg0: PromiseOrValue<string>,
@@ -1022,6 +1097,10 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1068,6 +1147,16 @@ export interface PotionBuyAction extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRate(
+      hedgingRate_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1137,7 +1226,13 @@ export interface PotionBuyAction extends BaseContract {
   calculateCurrentPayout(
     investmentAsset: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+  ): Promise<
+    [boolean, BigNumber, BigNumber] & {
+      isFinal: boolean;
+      payout: BigNumber;
+      orderSize: BigNumber;
+    }
+  >;
 
   canPositionBeEntered(
     arg0: PromiseOrValue<string>,
@@ -1233,6 +1328,10 @@ export interface PotionBuyAction extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
   initialize(
     initParams: PotionBuyAction.PotionBuyInitParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1279,6 +1378,16 @@ export interface PotionBuyAction extends BaseContract {
 
   setCycleDuration(
     durationSeconds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRate(
+    hedgingRate_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setHedgingRateSlippage(
+    hedgingRateSlippage_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1348,7 +1457,13 @@ export interface PotionBuyAction extends BaseContract {
     calculateCurrentPayout(
       investmentAsset: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber] & { isFinal: boolean; payout: BigNumber }>;
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        isFinal: boolean;
+        payout: BigNumber;
+        orderSize: BigNumber;
+      }
+    >;
 
     canPositionBeEntered(
       arg0: PromiseOrValue<string>,
@@ -1444,6 +1559,10 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: CallOverrides
@@ -1488,6 +1607,16 @@ export interface PotionBuyAction extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRate(
+      hedgingRate_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1563,6 +1692,18 @@ export interface PotionBuyAction extends BaseContract {
     CycleDurationChanged(
       cycleDurationSecs?: null
     ): CycleDurationChangedEventFilter;
+
+    "HedgingRateChanged(uint256)"(
+      hedgingRate?: null
+    ): HedgingRateChangedEventFilter;
+    HedgingRateChanged(hedgingRate?: null): HedgingRateChangedEventFilter;
+
+    "HedgingRateSlippageChanged(uint256)"(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
+    HedgingRateSlippageChanged(
+      hedgingRateSlippage?: null
+    ): HedgingRateSlippageChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
@@ -1763,6 +1904,10 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hedgingRateSlippage(overrides?: CallOverrides): Promise<BigNumber>;
+
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1809,6 +1954,16 @@ export interface PotionBuyAction extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRate(
+      hedgingRate_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1983,6 +2138,12 @@ export interface PotionBuyAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    hedgingRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hedgingRateSlippage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initialize(
       initParams: PotionBuyAction.PotionBuyInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2035,6 +2196,16 @@ export interface PotionBuyAction extends BaseContract {
 
     setCycleDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRate(
+      hedgingRate_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setHedgingRateSlippage(
+      hedgingRateSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
