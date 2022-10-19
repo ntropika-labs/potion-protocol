@@ -17,6 +17,7 @@
           :slippage="premiumSlippage"
           :balance="userCollateralBalance"
           :allowance="userAllowance"
+          :disabled="!isPotionQuantityValid"
           @buy-potions="handleBuyPotions"
         >
         </OtokenRecap>
