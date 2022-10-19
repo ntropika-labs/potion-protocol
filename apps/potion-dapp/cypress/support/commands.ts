@@ -103,7 +103,13 @@ Cypress.Commands.add(
               matchCase: false,
             });
             // APPROVE
-            cy.get(purchaseButtonAlias).trigger("click");
+            // {force: true} prevents the test from failing if a notification is displayed in front of the button
+            cy.get(purchaseButtonAlias).trigger("click", { force: true });
+
+            // TOAST NOTIFICATION
+            cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
+
+            cy.get(purchaseButtonAlias).should("not.be.disabled");
           }
         });
     }
@@ -112,11 +118,14 @@ Cypress.Commands.add(
       .should("not.be.disabled")
       .contains(purchaseLabel, { matchCase: false });
     // PURCHASE
-    cy.get(purchaseButtonAlias).trigger("click");
+    // {force: true} prevents the test from failing if a notification is displayed in front of the button
+    cy.get(purchaseButtonAlias).trigger("click", { force: true });
+
+    // TOAST NOTIFICATION
+    cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
+
     cy.get(purchaseButtonAlias)
       .should("not.be.disabled")
       .contains(purchaseLabel, { matchCase: false });
-    // TOAST NOTIFICATION
-    cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
   }
 );
