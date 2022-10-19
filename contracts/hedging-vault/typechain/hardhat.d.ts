@@ -341,6 +341,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVaultDeferredOperationUpgradeable__factory>;
     getContractFactory(
+      name: "IVaultV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IVaultV0__factory>;
+    getContractFactory(
       name: "IVaultWithReceiptsUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVaultWithReceiptsUpgradeable__factory>;
@@ -492,6 +496,10 @@ declare module "hardhat/types/runtime" {
       name: "InvestmentVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.InvestmentVault__factory>;
+    getContractFactory(
+      name: "InvestmentVaultV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.InvestmentVaultV0__factory>;
     getContractFactory(
       name: "PotionBuyActionV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -908,6 +916,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IVaultDeferredOperationUpgradeable>;
     getContractAt(
+      name: "IVaultV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IVaultV0>;
+    getContractAt(
       name: "IVaultWithReceiptsUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -1097,6 +1110,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.InvestmentVault>;
+    getContractAt(
+      name: "InvestmentVaultV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.InvestmentVaultV0>;
     getContractAt(
       name: "PotionBuyActionV0",
       address: string,

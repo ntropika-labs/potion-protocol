@@ -27,13 +27,25 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+  };
+}
+
 export interface IVaultInterface extends utils.Interface {
   functions: {
     "canPositionBeEntered()": FunctionFragment;
+    "canPositionBeEnteredWith((uint256[]))": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "enterPosition()": FunctionFragment;
+    "enterPositionWith((uint256[]))": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getFeesRecipient()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
@@ -58,10 +70,12 @@ export interface IVaultInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "canPositionBeEntered"
+      | "canPositionBeEnteredWith"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
       | "enterPosition"
+      | "enterPositionWith"
       | "exitPosition"
       | "getFeesRecipient"
       | "getLifecycleState"
@@ -88,6 +102,10 @@ export interface IVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canPositionBeEnteredWith",
+    values: [IVaultV0.StrategyStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
@@ -102,6 +120,10 @@ export interface IVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enterPositionWith",
+    values: [IVaultV0.StrategyStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
@@ -183,6 +205,10 @@ export interface IVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "canPositionBeEnteredWith",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
@@ -193,6 +219,10 @@ export interface IVaultInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "enterPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enterPositionWith",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -442,6 +472,11 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
@@ -454,6 +489,11 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -548,6 +588,11 @@ export interface IVault extends BaseContract {
 
   canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+  canPositionBeEnteredWith(
+    strategy: IVaultV0.StrategyStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
   canRefund(
@@ -558,6 +603,11 @@ export interface IVault extends BaseContract {
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   enterPosition(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  enterPositionWith(
+    strategy: IVaultV0.StrategyStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -652,6 +702,11 @@ export interface IVault extends BaseContract {
   callStatic: {
     canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
     canRefund(
@@ -662,6 +717,11 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
     enterPosition(overrides?: CallOverrides): Promise<void>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -860,6 +920,11 @@ export interface IVault extends BaseContract {
   estimateGas: {
     canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
     canRefund(
@@ -870,6 +935,11 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -967,6 +1037,11 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -979,6 +1054,11 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

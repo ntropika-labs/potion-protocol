@@ -11,6 +11,22 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actualAmountInvested",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxAmountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "InvestmentTotalTooHigh",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -263,6 +279,32 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "canPositionBeEnteredWith",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canEnter",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "canPositionBeExited",
     outputs: [
@@ -310,6 +352,26 @@ const _abi = [
   {
     inputs: [],
     name: "enterPosition",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "enterPositionWith",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

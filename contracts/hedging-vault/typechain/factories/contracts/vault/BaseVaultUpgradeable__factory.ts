@@ -14,6 +14,22 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "actualAmountInvested",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxAmountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "InvestmentTotalTooHigh",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "index",
         type: "uint256",
       },
@@ -666,6 +682,32 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "canPositionBeEnteredWith",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canEnter",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "canPositionBeExited",
     outputs: [
@@ -812,6 +854,26 @@ const _abi = [
   {
     inputs: [],
     name: "enterPosition",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "enterPositionWith",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1096,64 +1158,6 @@ const _abi = [
         type: "bool",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "adminAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "strategistAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operatorAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "underlyingAsset",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "underlyingAssetCap",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "managementFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "performanceFee",
-        type: "uint256",
-      },
-      {
-        internalType: "address payable",
-        name: "feesRecipient",
-        type: "address",
-      },
-      {
-        internalType: "contract IAction[]",
-        name: "actions",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "principalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
