@@ -24,7 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="./index.d.ts" />
+/// <reference types="cypress" />
+/// <reference types="../support" />
 
 import "@testing-library/cypress/add-commands";
 
@@ -79,5 +80,43 @@ Cypress.Commands.add(
           });
         }
       });
+  }
+);
+
+Cypress.Commands.add(
+  "approveAndPurchase",
+  (
+    _amount,
+    purchaseButtonAlias,
+    purchaseLabel = "buy",
+    doApproval = true,
+    approveLabel = "approve usdc"
+  ) => {
+    // Wait for the button to update if any previous action is still completing
+    cy.wait(1500);
+    if (doApproval) {
+      cy.get(purchaseButtonAlias)
+        .invoke("text")
+        .then((buttonText) => {
+          if (buttonText !== purchaseLabel) {
+            cy.get(purchaseButtonAlias).contains(approveLabel, {
+              matchCase: false,
+            });
+            // APPROVE
+            cy.get(purchaseButtonAlias).trigger("click");
+          }
+        });
+    }
+
+    cy.get(purchaseButtonAlias)
+      .should("not.be.disabled")
+      .contains(purchaseLabel, { matchCase: false });
+    // PURCHASE
+    cy.get(purchaseButtonAlias).trigger("click");
+    cy.get(purchaseButtonAlias)
+      .should("not.be.disabled")
+      .contains(purchaseLabel, { matchCase: false });
+    // TOAST NOTIFICATION
+    cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
   }
 );
