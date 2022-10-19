@@ -5,19 +5,21 @@ import type {
 
 import type { ERC20Upgradeable } from "potion-contracts/typechain";
 import { ERC20Upgradeable__factory } from "potion-contracts/typechain";
-import { ref } from "vue";
+import { ref, unref, type Ref } from "vue";
+import type { MaybeRef } from "@vueuse/core";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useOnboard } from "@onboard-composable";
 
 import { useEthersContract } from "./useEthersContract";
 
-export function useCollateralTokenContract() {
+export function useCollateralTokenContract(
+  walletAddress: Ref<string | null>,
+  infiniteApproval: MaybeRef<boolean> = true
+) {
   const { initContract } = useEthersContract();
   const { USDC, PotionLiquidityPool } = contractsAddresses;
-  const { connectedWallet } = useOnboard();
 
   const initContractSigner = () => {
     return initContract(
@@ -28,22 +30,23 @@ export function useCollateralTokenContract() {
     ) as ERC20Upgradeable;
   };
 
-  const contractProvider = initContract(
-    false,
-    false,
-    ERC20Upgradeable__factory,
-    USDC.address.toLowerCase()
-  ) as ERC20Upgradeable;
+  const initContractProvider = () => {
+    return initContract(
+      false,
+      false,
+      ERC20Upgradeable__factory,
+      USDC.address.toLowerCase()
+    ) as ERC20Upgradeable;
+  };
 
   const userCollateralBalance = ref(0);
   const fetchUserCollateralBalanceLoading = ref(false);
   const fetchUserCollateralBalance = async () => {
     try {
       fetchUserCollateralBalanceLoading.value = true;
-      if (connectedWallet.value) {
-        const response = await contractProvider.balanceOf(
-          connectedWallet.value.accounts[0].address
-        );
+      const provider = initContractProvider();
+      if (walletAddress.value) {
+        const response = await provider.balanceOf(walletAddress.value);
         userCollateralBalance.value = parseFloat(formatUnits(response, 6));
         fetchUserCollateralBalanceLoading.value = false;
       } else {
@@ -64,15 +67,18 @@ export function useCollateralTokenContract() {
   const fetchUserCollateralAllowance = async () => {
     fetchUserAllowanceLoading.value = true;
     try {
-      if (connectedWallet.value) {
-        const response = await contractProvider.allowance(
-          connectedWallet.value.accounts[0].address,
+      if (walletAddress.value) {
+        const provider = initContractProvider();
+        const response = await provider.allowance(
+          walletAddress.value,
           PotionLiquidityPool.address
         );
         console.info(
           `Address allowance for ${
             PotionLiquidityPool.address
-          } is ${formatUnits(response, 6)}`
+          } is ${formatUnits(response, 6)} - ${parseFloat(
+            formatUnits(response, 6)
+          )}`
         );
         userAllowance.value = parseFloat(formatUnits(response, 6));
         fetchUserAllowanceLoading.value = false;
@@ -92,17 +98,16 @@ export function useCollateralTokenContract() {
   const approveLoading = ref(false);
   const approveTx = ref<ContractTransaction | null>(null);
   const approveReceipt = ref<ContractReceipt | null>(null);
-  const approveForPotionLiquidityPool = async (
-    amount: number,
-    infinite = true
-  ) => {
+  const approveForPotionLiquidityPool = async (amount: number) => {
     approveLoading.value = true;
     try {
-      if (connectedWallet.value) {
+      if (walletAddress.value) {
         const contractSigner = initContractSigner();
         approveTx.value = await contractSigner.approve(
           PotionLiquidityPool.address,
-          infinite ? MaxUint256 : parseUnits(amount.toString(), 6)
+          unref(infiniteApproval)
+            ? MaxUint256
+            : parseUnits(amount.toString(), 6)
         );
         approveReceipt.value = await approveTx.value.wait();
         approveLoading.value = false;
