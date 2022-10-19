@@ -18,9 +18,9 @@ dataSources:
         - name: InvestmentVault
           file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
       eventHandlers:
-        - event: VaulPositionEntered(uint256,uint256)
+        - event: VaultPositionEntered(uint256,uint256)
           handler: handleVaultPositionEntered
-      file: ./src/InvestmentVault.ts
+      file: ./src/investmentVault.ts
   
   - kind: ethereum/contract
     name: PotionBuyAction
