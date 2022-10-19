@@ -3,10 +3,7 @@
 
 import { aliasQuery, resetApproval } from "../support/utilities";
 
-// TODO: this test needs data calculated by the depth router
-// because there isn't a reliable way to detect if the calculation has been done
-// it is skipped to avoid breaking the CI but it works in headed mode so if you do some changes please test like this locally
-describe.skip("Show Potion Flow", () => {
+describe("Show Potion Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00", false);
@@ -146,16 +143,9 @@ describe.skip("Show Potion Flow", () => {
     });
 
     context("Buy more potions", () => {
-      // it("Can set approval", () => {
-      //   cy.get("[test-potion-buy-button]").click();
-      //   cy.wait(200);
-
-      //   cy.get(":nth-child(2) > .grid");
-      //   cy.get("[test-potion-buy-button]")
-      //     .should("be.visible")
-      //     .and("contain.text", "buy potion");
-      // });
-      cy.get("[test-potion-buy-button]").first().as("purchaseButton");
+      beforeEach(() => {
+        cy.get("[test-potion-buy-button]").first().as("purchaseButton");
+      });
 
       context("Buy potions", () => {
         it("Can buy more potions in one transaction", () => {
@@ -169,14 +159,18 @@ describe.skip("Show Potion Flow", () => {
           cy.get("[test-potion-number-of-transactions]")
             .should("be.visible")
             .and("contain.text", "1");
-          //cy.get("[test-potion-buy-button]").click();
-          cy.approveAndPurchase(0, "@purchaseButton", "buy potion", true);
-          cy.get(":nth-child(2) > .grid");
+
+          cy.approveAndPurchase(
+            0,
+            "@purchaseButton",
+            "buy potion",
+            true,
+            "approve"
+          );
         });
 
         it("Can reset approval", async () => await resetApproval());
 
-        // TODO: This test depends on the depth router, look at the comment above for more details
         it("Can buy more potions in multiple transactions", () => {
           cy.get("[test-potion-number-of-potions-input] input")
             .clear()
@@ -188,9 +182,14 @@ describe.skip("Show Potion Flow", () => {
           cy.get("[test-potion-number-of-transactions]")
             .should("be.visible")
             .and("contain.text", "5");
-          //cy.get("[test-potion-buy-button]").click();
-          cy.approveAndPurchase(0, "@purchaseButton", "buy potion", false);
-          cy.get(":nth-child(2) > .grid");
+
+          cy.approveAndPurchase(
+            0,
+            "@purchaseButton",
+            "buy potion",
+            false,
+            "approve"
+          );
         });
       });
     });
