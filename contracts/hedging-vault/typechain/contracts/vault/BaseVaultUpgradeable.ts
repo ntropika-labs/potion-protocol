@@ -670,8 +670,8 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
-    "VaultPositionEntered(uint256,uint256)": EventFragment;
-    "VaultPositionExited(uint256)": EventFragment;
+    "VaultPositionEntered(uint256,uint256,tuple)": EventFragment;
+    "VaultPositionExited(uint256,tuple)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
   };
 
@@ -900,9 +900,10 @@ export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionEnteredEvent = TypedEvent<
-  [BigNumber, BigNumber],
+  [BigNumber, BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionEnteredEventObject
 >;
 
@@ -911,9 +912,10 @@ export type VaultPositionEnteredEventFilter =
 
 export interface VaultPositionExitedEventObject {
   newPrincipalAmount: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionExitedEvent = TypedEvent<
-  [BigNumber],
+  [BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionExitedEventObject
 >;
 
@@ -1989,20 +1991,24 @@ export interface BaseVaultUpgradeable extends BaseContract {
       newCap?: PromiseOrValue<BigNumberish> | null
     ): VaultCapChangedEventFilter;
 
-    "VaultPositionEntered(uint256,uint256)"(
+    "VaultPositionEntered(uint256,uint256,tuple)"(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
     VaultPositionEntered(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
 
-    "VaultPositionExited(uint256)"(
-      newPrincipalAmount?: null
+    "VaultPositionExited(uint256,tuple)"(
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
     VaultPositionExited(
-      newPrincipalAmount?: null
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
 
     "Withdraw(address,address,address,uint256,uint256)"(

@@ -108,8 +108,8 @@ export interface IVaultV0Interface extends utils.Interface {
   ): Result;
 
   events: {
-    "VaultPositionEntered(uint256,uint256)": EventFragment;
-    "VaultPositionExited(uint256)": EventFragment;
+    "VaultPositionEntered(uint256,uint256,tuple)": EventFragment;
+    "VaultPositionExited(uint256,tuple)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
@@ -119,9 +119,10 @@ export interface IVaultV0Interface extends utils.Interface {
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionEnteredEvent = TypedEvent<
-  [BigNumber, BigNumber],
+  [BigNumber, BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionEnteredEventObject
 >;
 
@@ -130,9 +131,10 @@ export type VaultPositionEnteredEventFilter =
 
 export interface VaultPositionExitedEventObject {
   newPrincipalAmount: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionExitedEvent = TypedEvent<
-  [BigNumber],
+  [BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionExitedEventObject
 >;
 
@@ -236,20 +238,24 @@ export interface IVaultV0 extends BaseContract {
   };
 
   filters: {
-    "VaultPositionEntered(uint256,uint256)"(
+    "VaultPositionEntered(uint256,uint256,tuple)"(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
     VaultPositionEntered(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
 
-    "VaultPositionExited(uint256)"(
-      newPrincipalAmount?: null
+    "VaultPositionExited(uint256,tuple)"(
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
     VaultPositionExited(
-      newPrincipalAmount?: null
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
   };
 

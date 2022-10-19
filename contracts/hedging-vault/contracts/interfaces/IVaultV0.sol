@@ -32,8 +32,8 @@ interface IVaultV0 {
     }
 
     /// EVENTS
-    event VaultPositionEntered(uint256 totalPrincipalAmount, uint256 principalAmountInvested);
-    event VaultPositionExited(uint256 newPrincipalAmount);
+    event VaultPositionEntered(uint256 totalPrincipalAmount, uint256 principalAmountInvested, Strategy strategy);
+    event VaultPositionExited(uint256 newPrincipalAmount, Strategy strategy);
 
     /// ERRORS
     error InvestmentTotalTooHigh(uint256 actualAmountInvested, uint256 maxAmountToInvest);

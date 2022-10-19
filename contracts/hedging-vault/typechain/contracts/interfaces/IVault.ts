@@ -291,8 +291,8 @@ export interface IVaultInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "VaultPositionEntered(uint256,uint256)": EventFragment;
-    "VaultPositionExited(uint256)": EventFragment;
+    "VaultPositionEntered(uint256,uint256,tuple)": EventFragment;
+    "VaultPositionExited(uint256,tuple)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "FeesETHSent"): EventFragment;
@@ -421,9 +421,10 @@ export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionEnteredEvent = TypedEvent<
-  [BigNumber, BigNumber],
+  [BigNumber, BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionEnteredEventObject
 >;
 
@@ -432,9 +433,10 @@ export type VaultPositionEnteredEventFilter =
 
 export interface VaultPositionExitedEventObject {
   newPrincipalAmount: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionExitedEvent = TypedEvent<
-  [BigNumber],
+  [BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionExitedEventObject
 >;
 
@@ -900,20 +902,24 @@ export interface IVault extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "VaultPositionEntered(uint256,uint256)"(
+    "VaultPositionEntered(uint256,uint256,tuple)"(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
     VaultPositionEntered(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
 
-    "VaultPositionExited(uint256)"(
-      newPrincipalAmount?: null
+    "VaultPositionExited(uint256,tuple)"(
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
     VaultPositionExited(
-      newPrincipalAmount?: null
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
   };
 

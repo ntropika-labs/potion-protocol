@@ -456,6 +456,19 @@ const _abi = [
         name: "principalAmountInvested",
         type: "uint256",
       },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
     ],
     name: "VaultPositionEntered",
     type: "event",
@@ -468,6 +481,19 @@ const _abi = [
         internalType: "uint256",
         name: "newPrincipalAmount",
         type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
       },
     ],
     name: "VaultPositionExited",

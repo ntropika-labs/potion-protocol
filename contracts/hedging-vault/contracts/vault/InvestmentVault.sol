@@ -126,7 +126,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
         // TODO: Apply fees here
 
-        emit VaultPositionExited(newPrincipalAmount);
+        emit VaultPositionExited(newPrincipalAmount, _lastStrategy);
     }
 
     /**
@@ -197,12 +197,14 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
         @inheritdoc IVaultV0
      */
     function canPositionBeExited() external view returns (bool canExit) {
-        uint256 numActions = getActionsLength();
+        uint256 numActions = _lastStrategy.actionsIndexes.length;
+        address investmentAsset = asset();
 
         for (uint256 i = 0; i < numActions; i++) {
-            IAction action = getAction(i);
+            uint256 actionIndex = _lastStrategy.actionsIndexes[i];
+            IAction action = getAction(actionIndex);
 
-            if (!action.canPositionBeExited(asset())) {
+            if (!action.canPositionBeExited(investmentAsset)) {
                 return false;
             }
         }
@@ -249,7 +251,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
         _lastStrategy = strategy;
 
-        emit VaultPositionEntered(totalPrincipalAmount, actualAmountInvested);
+        emit VaultPositionEntered(totalPrincipalAmount, actualAmountInvested, strategy);
     }
 
     /**
