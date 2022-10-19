@@ -9,6 +9,8 @@ const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
 const DiscoverPotions = () => import("@/views/DiscoverPotions.vue");
 const DiscoverTemplates = () => import("@/views/DiscoverTemplates.vue");
+const DiscoverHedgingVaults = () =>
+  import("@/views/Vault/DiscoverHedgingVaults.vue");
 const EditPool = () => import("@/views/Pools/EditPool.vue");
 //const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
 const HedgingVault = () => import("@/views/HedgingVault.vue");
@@ -38,6 +40,12 @@ const router = createRouter({
       path: "/templates",
       name: "discover-templates",
       component: DiscoverTemplates,
+      meta: { requireWallet: false, layout: BaseLayout },
+    },
+    {
+      path: "/hedging-vaults",
+      name: "discover-hedging-vaults",
+      component: DiscoverHedgingVaults,
       meta: { requireWallet: false, layout: BaseLayout },
     },
     {

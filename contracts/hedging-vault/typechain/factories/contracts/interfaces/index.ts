@@ -26,4 +26,5 @@ export { ISwapToUSDCActionV0__factory } from "./ISwapToUSDCActionV0__factory";
 export { IUniswapV3Oracle__factory } from "./IUniswapV3Oracle__factory";
 export { IVault__factory } from "./IVault__factory";
 export { IVaultDeferredOperationUpgradeable__factory } from "./IVaultDeferredOperationUpgradeable__factory";
+export { IVaultV0__factory } from "./IVaultV0__factory";
 export { IVaultWithReceiptsUpgradeable__factory } from "./IVaultWithReceiptsUpgradeable__factory";

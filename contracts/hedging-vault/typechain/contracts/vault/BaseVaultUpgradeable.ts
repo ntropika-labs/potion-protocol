@@ -27,6 +27,16 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+  };
+}
+
 export interface BaseVaultUpgradeableInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
@@ -40,6 +50,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "asset()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "canPositionBeEntered()": FunctionFragment;
+    "canPositionBeEnteredWith((uint256[]))": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
@@ -49,6 +60,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "enterPosition()": FunctionFragment;
+    "enterPositionWith((uint256[]))": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
@@ -66,7 +78,6 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address,address,address,uint256,uint256,uint256,address,address[],uint256[])": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -112,6 +123,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "asset"
       | "balanceOf"
       | "canPositionBeEntered"
+      | "canPositionBeEnteredWith"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
@@ -121,6 +133,7 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "decreaseAllowance"
       | "deposit"
       | "enterPosition"
+      | "enterPositionWith"
       | "exitPosition"
       | "getAction"
       | "getActionsLength"
@@ -138,7 +151,6 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
       | "grantRole"
       | "hasRole"
       | "increaseAllowance"
-      | "initialize"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
@@ -213,6 +225,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canPositionBeEnteredWith",
+    values: [IVaultV0.StrategyStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
@@ -244,6 +260,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enterPositionWith",
+    values: [IVaultV0.StrategyStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
@@ -312,21 +332,6 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "maxDeposit",
@@ -477,6 +482,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "canPositionBeEnteredWith",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
@@ -501,6 +510,10 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "enterPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enterPositionWith",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -562,7 +575,6 @@ export interface BaseVaultUpgradeableInterface extends utils.Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
@@ -984,6 +996,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
@@ -1020,6 +1037,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     ): Promise<ContractTransaction>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1086,20 +1108,6 @@ export interface BaseVaultUpgradeable extends BaseContract {
     increaseAllowance(
       spender: PromiseOrValue<string>,
       addedValue: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1283,6 +1291,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
   canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+  canPositionBeEnteredWith(
+    strategy: IVaultV0.StrategyStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
   canRefund(
@@ -1317,6 +1330,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   enterPosition(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  enterPositionWith(
+    strategy: IVaultV0.StrategyStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1381,20 +1399,6 @@ export interface BaseVaultUpgradeable extends BaseContract {
   increaseAllowance(
     spender: PromiseOrValue<string>,
     addedValue: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  initialize(
-    adminAddress: PromiseOrValue<string>,
-    strategistAddress: PromiseOrValue<string>,
-    operatorAddress: PromiseOrValue<string>,
-    underlyingAsset: PromiseOrValue<string>,
-    underlyingAssetCap: PromiseOrValue<BigNumberish>,
-    managementFee: PromiseOrValue<BigNumberish>,
-    performanceFee: PromiseOrValue<BigNumberish>,
-    feesRecipient: PromiseOrValue<string>,
-    actions: PromiseOrValue<string>[],
-    principalPercentages: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1578,6 +1582,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
     canRefund(
@@ -1612,6 +1621,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     enterPosition(overrides?: CallOverrides): Promise<void>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1674,20 +1688,6 @@ export interface BaseVaultUpgradeable extends BaseContract {
       addedValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     maxDeposit(
       receiver: PromiseOrValue<string>,
@@ -2055,6 +2055,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
     canRefund(
@@ -2089,6 +2094,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     ): Promise<BigNumber>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2153,20 +2163,6 @@ export interface BaseVaultUpgradeable extends BaseContract {
     increaseAllowance(
       spender: PromiseOrValue<string>,
       addedValue: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2355,6 +2351,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2391,6 +2392,11 @@ export interface BaseVaultUpgradeable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2459,20 +2465,6 @@ export interface BaseVaultUpgradeable extends BaseContract {
     increaseAllowance(
       spender: PromiseOrValue<string>,
       addedValue: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -26,4 +26,5 @@ export type { ISwapToUSDCActionV0 } from "./ISwapToUSDCActionV0";
 export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";
 export type { IVaultDeferredOperationUpgradeable } from "./IVaultDeferredOperationUpgradeable";
+export type { IVaultV0 } from "./IVaultV0";
 export type { IVaultWithReceiptsUpgradeable } from "./IVaultWithReceiptsUpgradeable";

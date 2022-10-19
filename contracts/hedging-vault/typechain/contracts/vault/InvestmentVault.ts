@@ -27,6 +27,16 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+  };
+}
+
 export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
@@ -40,6 +50,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "asset()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "canPositionBeEntered()": FunctionFragment;
+    "canPositionBeEnteredWith((uint256[]))": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
@@ -49,6 +60,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "enterPosition()": FunctionFragment;
+    "enterPositionWith((uint256[]))": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
@@ -112,6 +124,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "asset"
       | "balanceOf"
       | "canPositionBeEntered"
+      | "canPositionBeEnteredWith"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
@@ -121,6 +134,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "decreaseAllowance"
       | "deposit"
       | "enterPosition"
+      | "enterPositionWith"
       | "exitPosition"
       | "getAction"
       | "getActionsLength"
@@ -213,6 +227,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canPositionBeEnteredWith",
+    values: [IVaultV0.StrategyStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
@@ -244,6 +262,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "enterPosition",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enterPositionWith",
+    values: [IVaultV0.StrategyStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
@@ -477,6 +499,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "canPositionBeEnteredWith",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
@@ -501,6 +527,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "enterPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enterPositionWith",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -984,6 +1014,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
@@ -1020,6 +1055,11 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<ContractTransaction>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1283,6 +1323,11 @@ export interface InvestmentVault extends BaseContract {
 
   canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+  canPositionBeEnteredWith(
+    strategy: IVaultV0.StrategyStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
   canRefund(
@@ -1317,6 +1362,11 @@ export interface InvestmentVault extends BaseContract {
   ): Promise<ContractTransaction>;
 
   enterPosition(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  enterPositionWith(
+    strategy: IVaultV0.StrategyStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1578,6 +1628,11 @@ export interface InvestmentVault extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
     canRefund(
@@ -1612,6 +1667,11 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<BigNumber>;
 
     enterPosition(overrides?: CallOverrides): Promise<void>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2055,6 +2115,11 @@ export interface InvestmentVault extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
     canRefund(
@@ -2089,6 +2154,11 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<BigNumber>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2355,6 +2425,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2391,6 +2466,11 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     enterPosition(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

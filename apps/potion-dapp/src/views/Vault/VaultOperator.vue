@@ -26,7 +26,7 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
 import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
@@ -51,6 +51,9 @@ const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+const potionBuyAction = getPotionBuyActionFromVault(
+  vaultId.value.toLowerCase()
+);
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
@@ -103,10 +106,7 @@ const {
   getCurrentPayout,
   getStrategyInfo,
   strategyLoading,
-} = usePotionBuyActionContract(
-  contractsAddresses.PotionBuyAction.address,
-  true
-);
+} = usePotionBuyActionContract(potionBuyAction, true);
 
 const {
   oraclePrice,
@@ -326,7 +326,7 @@ const testAddBlock = async (addHours: number) => {
 };
 
 const { records, loadBuyerRecords } = useBuyerRecords(
-  contractsAddresses["PotionBuyAction"].address,
+  potionBuyAction,
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);

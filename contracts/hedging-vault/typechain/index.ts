@@ -170,6 +170,8 @@ export type { IVault } from "./contracts/interfaces/IVault";
 export { IVault__factory } from "./factories/contracts/interfaces/IVault__factory";
 export type { IVaultDeferredOperationUpgradeable } from "./contracts/interfaces/IVaultDeferredOperationUpgradeable";
 export { IVaultDeferredOperationUpgradeable__factory } from "./factories/contracts/interfaces/IVaultDeferredOperationUpgradeable__factory";
+export type { IVaultV0 } from "./contracts/interfaces/IVaultV0";
+export { IVaultV0__factory } from "./factories/contracts/interfaces/IVaultV0__factory";
 export type { IVaultWithReceiptsUpgradeable } from "./contracts/interfaces/IVaultWithReceiptsUpgradeable";
 export { IVaultWithReceiptsUpgradeable__factory } from "./factories/contracts/interfaces/IVaultWithReceiptsUpgradeable__factory";
 export type { PercentageUtils } from "./contracts/library/PercentageUtils";
@@ -246,6 +248,8 @@ export type { FeeManagerUpgradeable } from "./contracts/vault/FeeManagerUpgradea
 export { FeeManagerUpgradeable__factory } from "./factories/contracts/vault/FeeManagerUpgradeable__factory";
 export type { InvestmentVault } from "./contracts/vault/InvestmentVault";
 export { InvestmentVault__factory } from "./factories/contracts/vault/InvestmentVault__factory";
+export type { InvestmentVaultV0 } from "./contracts/versioning/InvestmentVaultV0";
+export { InvestmentVaultV0__factory } from "./factories/contracts/versioning/InvestmentVaultV0__factory";
 export type { PotionBuyActionV0 } from "./contracts/versioning/PotionBuyActionV0";
 export { PotionBuyActionV0__factory } from "./factories/contracts/versioning/PotionBuyActionV0__factory";
 export type { SwapToUSDCActionV0 } from "./contracts/versioning/SwapToUSDCActionV0";

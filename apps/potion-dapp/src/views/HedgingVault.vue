@@ -195,7 +195,7 @@ import { LifecycleStates } from "hedging-vault-sdk";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
 
 import { useOnboard } from "@onboard-composable";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
@@ -210,10 +210,12 @@ import { useVaultRedeem } from "@/composables/useVaultRedeem";
 
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
-const { PotionBuyAction } = contractsAddresses;
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+const potionBuyAction = getPotionBuyActionFromVault(
+  vaultId.value.toLowerCase()
+);
 
 const { blockTimestamp, getBlock } = useEthersProvider();
 
@@ -225,7 +227,7 @@ const {
   premiumSlippage,
   swapSlippage,
   strategyLoading,
-} = usePotionBuyActionContract(PotionBuyAction.address, true);
+} = usePotionBuyActionContract(potionBuyAction, true);
 
 const { operator, admin, principalPercentages, vaultStatus } =
   useInvestmentVaultContract(vaultId, true, true);
