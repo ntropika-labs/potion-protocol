@@ -4,43 +4,23 @@
 pragma solidity 0.8.14;
 
 import "./common/BaseActionUpgradeable.sol";
-import { PotionProtocolHelperUpgradeable } from "./common/PotionProtocolHelperUpgradeable.sol";
 import { UniswapV3HelperUpgradeable } from "./common/UniswapV3HelperUpgradeable.sol";
-import "../versioning/PotionBuyActionV0.sol";
 import "../library/PercentageUtils.sol";
-import "../library/OpynProtocolLib.sol";
-import "../library/TimeUtils.sol";
 import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 /**
-    @title PotionBuyAction
+    @title SwapToUSDCAction
 
     @author Roberto Cano <robercano>
 
-    @notice Investment action that implements a protective put on the assets received. For this, it uses the Potion
-    Protocol to buy the Put Options required to protect the assets. It protects the 100% of the received assets with
-    the limitation that the paid premium cannot be greater than a configured maximum premium percentage value.
+    @notice Investment action that swaps the underlying asset to USDC to keep it safe from Black Swan events
 
-    @dev The Potion Buy action uses Uniswap V3 to swap between the investment asset and USDC, which is required in order
-    to pay for the Potion Protocol premium. Because of this, the action defines a swap slippage value that is used to limit
-    the amount of slippage that is allowed on the swap operation.
-
-    @dev The action also allows to configure a slippage value for the premium when the potions are bought. This value is
-    different from the maximum premium percentage. The former is used to account for slippage when the potions are bought,
-    while the latter is used to limit how much percentage of the received investment can be used as premium. This last
-    parameter can be used to shape the investing performance of the action
-
+    @dev The action needs a Uniswap V3 Route to do the swap both at the enter position and the exit position
 
  */
-contract PotionBuyAction is
-    BaseActionUpgradeable,
-    UniswapV3HelperUpgradeable,
-    PotionProtocolHelperUpgradeable,
-    PotionBuyActionV0
-{
+contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
     using PercentageUtils for uint256;
     using SafeERC20 for IERC20;
-    using OpynProtocolLib for IOpynController;
 
     /**
         @notice Structure with all initialization parameters for the Potion Buy action
@@ -51,35 +31,18 @@ contract PotionBuyAction is
         @param investmentAsset The address of the asset managed by this Action
         @param USDC The address of the USDC token
         @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
-        @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
-        @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
-        @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
-        @param premiumSlippage The slippage percentage allowed on the premium when buying potions
         @param swapSlippage The slippage percentage allowed on the swap operation
         @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
-        @param cycleDurationSecs The duration of the investment cycle in seconds
-        @param strikePercentage The strike percentage on the price of the hedged asset, as a uint256
-               with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
-        @param hedgingRate The hedging rate to be applied to the received assets, as a uint256 with
-              `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
-    struct PotionBuyInitParams {
+    struct SwapToUSDCInitParams {
         address adminAddress;
         address strategistAddress;
         address operatorAddress;
         address investmentAsset;
         address USDC;
         address uniswapV3SwapRouter;
-        address potionLiquidityPoolManager;
-        address opynAddressBook;
-        uint256 maxPremiumPercentage;
-        uint256 premiumSlippage;
         uint256 swapSlippage;
         uint256 maxSwapDurationSecs;
-        uint256 cycleDurationSecs;
-        uint256 strikePercentage;
-        uint256 hedgingRate;
-        uint256 hedgingRateSlippage;
     }
 
     /// INITIALIZERS
@@ -89,12 +52,12 @@ contract PotionBuyAction is
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
 
-        @param initParams Initialization parameters for the Potion Buy action
+        @param initParams Initialization parameters for the Swap to USDC action
 
-        @dev See { PotionBuyInitParams }
+        @dev See { SwapToUSDCInitParams }
 
      */
-    function initialize(PotionBuyInitParams calldata initParams) external initializer {
+    function initialize(SwapToUSDCInitParams calldata initParams) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
         // asset is not allowed to be refunded and also USDC because the action will hold some of it
         // at some times. This prevents the admin to accidentally refund those assets
@@ -109,26 +72,9 @@ contract PotionBuyAction is
             cannotRefundTokens
         );
         __UniswapV3Helper_init_unchained(initParams.uniswapV3SwapRouter);
-        __PotionProtocolHelper_init_unchained(
-            initParams.potionLiquidityPoolManager,
-            initParams.opynAddressBook,
-            initParams.USDC
-        );
 
-        _setMaxPremiumPercentage(initParams.maxPremiumPercentage);
-        _setPremiumSlippage(initParams.premiumSlippage);
         _setSwapSlippage(initParams.swapSlippage);
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
-        _setCycleDuration(initParams.cycleDurationSecs);
-        _setStrikePercentage(initParams.strikePercentage);
-        _setHedgingRate(initParams.hedgingRate);
-        _setHedgingRateSlippage(initParams.hedgingRateSlippage);
-
-        // Get the next time
-        uint256 todayAt8UTC = TimeUtils.calculateTodayWithOffset(block.timestamp, TimeUtils.SECONDS_TO_0800_UTC);
-        nextCycleStartTimestamp = todayAt8UTC > block.timestamp
-            ? todayAt8UTC
-            : todayAt8UTC + initParams.cycleDurationSecs;
     }
 
     /// STATE CHANGERS
@@ -136,15 +82,9 @@ contract PotionBuyAction is
     /**
         @inheritdoc IAction
 
-        @dev The Potion Buy action takes the following steps to enter a position:
-            - Calculate the premium needed for buying the potions, including slippage
-            - Check if the premium needed is higher than the allowed maximum premium percentage. The
-              premium to be paid cannot be greater than this percentage on the investment amount
-            - Swap part of the investment asset to get the calculated needed premium in USDC
-            - Buy the potions using the calculated premium and the new USDC balance in the Action
-              contract
-
-     */
+        @dev The Swap to USDC action takes the following steps to enter a position:
+            - Swap all the investment asset to USDC and keep it in the action
+    */
     function enterPosition(address investmentAsset, uint256 amountToInvest)
         external
         onlyVault
@@ -152,12 +92,9 @@ contract PotionBuyAction is
         onlyAfterCycleStart
         nonReentrant
     {
-        _updateNextCycleStart();
         _setLifecycleState(LifecycleState.Locked);
 
-        require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
-
-        // Transferring the asset is needed here
+        // The caller is the vault, so we can trust doing this external call first
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
         uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
