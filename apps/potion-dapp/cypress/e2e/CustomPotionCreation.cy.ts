@@ -184,5 +184,11 @@ describe("Custom Potion Creation Flow", () => {
         .type(validNumber.toString());
       cy.wait("@getPoolsFromCriteria");
     });
+    it("Can approve and buy", () => {
+      cy.get(".p-3 > .flex > .text-dwhite-300").clear().type("0.001");
+      cy.get("[test-buy-potion]").first().as("purchaseButton");
+
+      cy.approveAndPurchase(0, "@purchaseButton", "buy potion");
+    });
   });
 });

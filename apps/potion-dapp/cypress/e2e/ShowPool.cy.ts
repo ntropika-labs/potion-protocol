@@ -3,7 +3,7 @@
 
 import { aliasQuery, resetApproval } from "../support/utilities";
 
-describe.skip("Show Pool Flow", () => {
+describe("Show Pool Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-pool", "2022-02-01 09:00:00+00:00");
@@ -44,6 +44,14 @@ describe.skip("Show Pool Flow", () => {
     });
 
     context("withdraw/deposit", () => {
+      const amountToExchange = 101;
+      beforeEach(() => {
+        cy.get("[test-liquidity-card-total-liquidity]")
+          .first()
+          .invoke("text")
+          .invoke("slice", 1)
+          .as("liquidityString"); // alias to access the value as this.originalLiquidityString
+      });
       it("Can switch between tabs", () => {
         cy.get("[test-liquidity-card-header]>button").each(($el) => {
           cy.wrap($el).trigger("click");
@@ -53,65 +61,58 @@ describe.skip("Show Pool Flow", () => {
       it("Can withdraw", () => {
         cy.get("[test-liquidity-card-header]>button").first().click();
 
-        let expectedLiquidityNumber = -1;
-        cy.get("[test-liquidity-card-total-liquidity]")
+        cy.get("[test-liquidity-card-withdraw] input")
+          .clear()
+          .type(amountToExchange.toString());
+
+        cy.get("[test-liquidity-card-footer-withdraw]>button")
           .first()
-          .then(($el) => {
-            expectedLiquidityNumber = parseFloat($el.text().slice(1)) - 101;
-          })
-          .then(() => {
-            cy.get("[test-liquidity-card-withdraw] input").clear().type("101");
+          .trigger("click");
 
-            cy.get("[test-liquidity-card-footer-withdraw]>button")
-              .first()
-              .trigger("click");
+        cy.get("@liquidityString").then((liquidityString: unknown) => {
+          const liquidity =
+            parseFloat(liquidityString as string) - amountToExchange;
 
-            cy.get("[test-liquidity-card-total-liquidity]")
-              .first()
-              .contains("$" + expectedLiquidityNumber);
-          });
+          cy.get("[test-liquidity-card-total-liquidity]")
+            .first()
+            .contains(liquidity.toString());
+        });
+
         cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm");
       });
-
-      it("Can set approval", () => {
+      it("Can approve and deposit", () => {
         cy.get("[test-liquidity-card-header]>button").last().click();
         cy.wait(200);
 
-        cy.get("[test-liquidity-card-footer-deposit]>button").click();
-        //cy.wait(200);
-        cy.get("[test-liquidity-card-footer-deposit]>button", {
-          timeout: 10000,
-        }).should("not.be.disabled");
+        cy.get("[test-liquidity-card-deposit] input")
+          .clear()
+          .type(amountToExchange.toString());
+
+        cy.get("[test-liquidity-card-footer-deposit]>button")
+          .first()
+          .as("purchaseButton");
+
+        cy.approveAndPurchase(
+          amountToExchange,
+          "@purchaseButton",
+          "add liquidity"
+        );
+
+        cy.get("@liquidityString").then((liquidityString: unknown) => {
+          const liquidity =
+            parseFloat(liquidityString as string) + amountToExchange;
+
+          cy.get("[test-liquidity-card-total-liquidity]")
+            .first()
+            .contains(liquidity.toString());
+        });
 
         cy.get(":nth-child(2) > .grid");
       });
-
-      it("Can deposit", () => {
-        cy.get("[test-liquidity-card-header]>button").last().click();
-        cy.wait(200);
-
-        let expectedLiquidityNumber = -1;
-        cy.get("[test-liquidity-card-total-liquidity]")
-          .first()
-          .then(($el) => {
-            expectedLiquidityNumber = parseFloat($el.text().slice(1)) + 101;
-          })
-          .then(() => {
-            cy.get("[test-liquidity-card-deposit] input").clear().type("101");
-            cy.get("[test-liquidity-card-footer-deposit]>button")
-              .first()
-              .trigger("click");
-            cy.wait(200);
-            cy.get("#toast-wrap > :nth-child(2) > .grid");
-            cy.wait(200);
-            cy.get("[test-liquidity-card-total-liquidity]")
-              .first()
-              .contains("$" + expectedLiquidityNumber);
-          });
-      });
     });
 
-    context("active put options", () => {
+    // TODO: fix enable these tests again
+    context.skip("active put options", () => {
       it("Can switch to active options", () => {
         cy.get("[test-claim-table-active-tab-switch]").click();
       });
@@ -144,7 +145,7 @@ describe.skip("Show Pool Flow", () => {
       });
     });
 
-    context("expired put options", () => {
+    context.skip("expired put options", () => {
       it("Can switch to expired options", () => {
         cy.get("[test-claim-table-expired-tab-switch]").click();
       });
@@ -222,7 +223,7 @@ describe.skip("Show Pool Flow", () => {
         });
       });
 
-      context("Claiming options", () => {
+      context.skip("Claiming options", () => {
         it("Can claim the not settled option", () => {
           cy.get("[test-claim-table-expired-options]")
             .find("tbody > tr:nth-child(1)")

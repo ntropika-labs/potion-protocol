@@ -141,18 +141,11 @@ describe("Edit Pool Flow", () => {
       cy.get(".bg-radial-glass > :nth-child(4) > .w-full").clear().type("1.4");
       cy.get(":nth-child(5) > .w-full").clear().type("1");
     });
-    it("Can set the approval", () => {
-      cy.get(".gap-3 > .before\\:content-none").click();
+    it("Can approve and edit", () => {
+      cy.get("[test-next]").first().as("purchaseButton");
 
-      cy.wait(1000);
-      cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
-        "approved"
-      );
-    });
-    it("Can edit the pool", () => {
-      cy.get(".gap-3 > .before\\:content-none").click();
+      cy.approveAndPurchase(0, "@purchaseButton", "edit");
 
-      cy.wait(1000);
       cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
     });
   });

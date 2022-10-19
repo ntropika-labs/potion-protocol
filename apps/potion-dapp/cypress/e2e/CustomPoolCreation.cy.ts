@@ -120,15 +120,12 @@ describe("Custom Pool Creation Flow", () => {
       cy.get(":nth-child(4) > .w-full").should("have.value", "1");
       cy.get(":nth-child(5) > .w-full").should("have.value", "1");
     });
-    it("Can set the approval", () => {
-      cy.get(".p-4 > .before\\:content-none").click();
-      cy.wait(2000);
-      cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
-        "approved"
-      );
-    });
-    it("Can create the pool", () => {
-      cy.get(".p-4 > .before\\:content-none").click();
+    it("Can approve and create", () => {
+      cy.get("[test-pool-settings-card-next-button]")
+        .first()
+        .as("purchaseButton");
+
+      cy.approveAndPurchase(0, "@purchaseButton", "create pool");
 
       cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
     });

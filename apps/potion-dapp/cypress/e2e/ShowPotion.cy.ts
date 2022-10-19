@@ -146,15 +146,16 @@ describe.skip("Show Potion Flow", () => {
     });
 
     context("Buy more potions", () => {
-      it("Can set approval", () => {
-        cy.get("[test-potion-buy-button]").click();
-        cy.wait(200);
+      // it("Can set approval", () => {
+      //   cy.get("[test-potion-buy-button]").click();
+      //   cy.wait(200);
 
-        cy.get(":nth-child(2) > .grid");
-        cy.get("[test-potion-buy-button]")
-          .should("be.visible")
-          .and("contain.text", "buy potion");
-      });
+      //   cy.get(":nth-child(2) > .grid");
+      //   cy.get("[test-potion-buy-button]")
+      //     .should("be.visible")
+      //     .and("contain.text", "buy potion");
+      // });
+      cy.get("[test-potion-buy-button]").first().as("purchaseButton");
 
       context("Buy potions", () => {
         it("Can buy more potions in one transaction", () => {
@@ -168,9 +169,12 @@ describe.skip("Show Potion Flow", () => {
           cy.get("[test-potion-number-of-transactions]")
             .should("be.visible")
             .and("contain.text", "1");
-          cy.get("[test-potion-buy-button]").click();
+          //cy.get("[test-potion-buy-button]").click();
+          cy.approveAndPurchase(0, "@purchaseButton", "buy potion", true);
           cy.get(":nth-child(2) > .grid");
         });
+
+        it("Can reset approval", async () => await resetApproval());
 
         // TODO: This test depends on the depth router, look at the comment above for more details
         it("Can buy more potions in multiple transactions", () => {
@@ -184,7 +188,8 @@ describe.skip("Show Potion Flow", () => {
           cy.get("[test-potion-number-of-transactions]")
             .should("be.visible")
             .and("contain.text", "5");
-          cy.get("[test-potion-buy-button]").click();
+          //cy.get("[test-potion-buy-button]").click();
+          cy.approveAndPurchase(0, "@purchaseButton", "buy potion", false);
           cy.get(":nth-child(2) > .grid");
         });
       });
