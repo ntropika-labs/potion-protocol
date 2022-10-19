@@ -1,12 +1,12 @@
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 
-import { useCollateralTokenContract } from "./useCollateralTokenContract";
 import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
-import { useUserData } from "./useUserData";
 import { useSlippage } from "./useSlippage";
 
 import type { Ref } from "vue";
 import type { DepthRouterReturn } from "potion-router";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 export function useBuyPotions(
   tokenSelectedAddress: Ref<string | null>,
@@ -14,25 +14,22 @@ export function useBuyPotions(
   durationSelected: Ref<number>,
   routerResult: Ref<DepthRouterReturn | null>
 ) {
-  const {
-    approveTx,
-    approveReceipt,
-    approveForPotionLiquidityPool,
-    approveLoading,
-  } = useCollateralTokenContract();
+  const userStore = useUserDataStore();
+  const { userAllowance, fetchUserDataLoading } = storeToRefs(userStore);
+
   const { buyPotions, buyPotionTx, buyPotionReceipt, buyPotionLoading } =
     usePotionLiquidityPoolContract();
-  const { fetchUserData, userAllowance } = useUserData();
+
   const { premiumSlippage } = useSlippage(routerResult);
 
   const isLoading = computed(
-    () => buyPotionLoading.value || approveLoading.value
+    () => buyPotionLoading.value || fetchUserDataLoading.value
   );
 
   const handleBuyPotions = async () => {
     if (routerResult?.value?.counterparties && tokenSelectedAddress.value) {
       if (premiumSlippage.value > userAllowance.value) {
-        await approveForPotionLiquidityPool(premiumSlippage.value, true);
+        await userStore.approveForPotionLiquidityPool(premiumSlippage.value);
       } else {
         await buyPotions(
           routerResult.value?.counterparties,
@@ -40,7 +37,7 @@ export function useBuyPotions(
           tokenSelectedAddress.value
         );
       }
-      await fetchUserData();
+      await userStore.fetchUserData();
     } else {
       console.info("You are missing some parameters to be set");
     }
@@ -49,7 +46,7 @@ export function useBuyPotions(
   const handleBuyOrCreatePotions = async () => {
     if (routerResult?.value?.counterparties && tokenSelectedAddress.value) {
       if (premiumSlippage.value > userAllowance.value) {
-        await approveForPotionLiquidityPool(premiumSlippage.value, true);
+        await userStore.approveForPotionLiquidityPool(premiumSlippage.value);
       } else {
         await buyPotions(
           routerResult.value?.counterparties,
@@ -60,7 +57,7 @@ export function useBuyPotions(
           durationSelected.value
         );
       }
-      await fetchUserData();
+      await userStore.fetchUserData();
     } else {
       console.info("You are missing some parameters to be set");
     }
@@ -71,8 +68,6 @@ export function useBuyPotions(
     handleBuyOrCreatePotions,
     buyPotionTx,
     buyPotionReceipt,
-    approveTx,
-    approveReceipt,
     isLoading,
   };
 }
