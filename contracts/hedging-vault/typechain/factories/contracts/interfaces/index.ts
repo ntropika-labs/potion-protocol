@@ -22,6 +22,7 @@ export { IRefundsHelper__factory } from "./IRefundsHelper__factory";
 export { IRolesManager__factory } from "./IRolesManager__factory";
 export { IRoundsInputVault__factory } from "./IRoundsInputVault__factory";
 export { IRoundsOutputVault__factory } from "./IRoundsOutputVault__factory";
+export { ISwapToUSDCActionV0__factory } from "./ISwapToUSDCActionV0__factory";
 export { IUniswapV3Oracle__factory } from "./IUniswapV3Oracle__factory";
 export { IVault__factory } from "./IVault__factory";
 export { IVaultDeferredOperationUpgradeable__factory } from "./IVaultDeferredOperationUpgradeable__factory";

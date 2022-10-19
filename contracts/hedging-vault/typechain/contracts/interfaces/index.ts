@@ -22,6 +22,7 @@ export type { IRefundsHelper } from "./IRefundsHelper";
 export type { IRolesManager } from "./IRolesManager";
 export type { IRoundsInputVault } from "./IRoundsInputVault";
 export type { IRoundsOutputVault } from "./IRoundsOutputVault";
+export type { ISwapToUSDCActionV0 } from "./ISwapToUSDCActionV0";
 export type { IUniswapV3Oracle } from "./IUniswapV3Oracle";
 export type { IVault } from "./IVault";
 export type { IVaultDeferredOperationUpgradeable } from "./IVaultDeferredOperationUpgradeable";

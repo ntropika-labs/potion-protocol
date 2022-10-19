@@ -5,8 +5,10 @@ pragma solidity 0.8.14;
 
 import "./common/BaseActionUpgradeable.sol";
 import { UniswapV3HelperUpgradeable } from "./common/UniswapV3HelperUpgradeable.sol";
-import "../library/PercentageUtils.sol";
+import { PercentageUtils } from "../library/PercentageUtils.sol";
 import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
+import "../versioning/SwapToUSDCActionV0.sol";
 
 /**
     @title SwapToUSDCAction
@@ -17,9 +19,14 @@ import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgra
 
     @dev The action needs a Uniswap V3 Route to do the swap both at the enter position and the exit position
 
+    @dev AUDIT: a possible attack that a malicious user could perform is sending USDC to this contract to increase the amount
+                that would be swapped in during exit position. This could make the swap in route to not be the ideal one
+                for the swap, having a greater slippage, and thus reverting the swap if the slippage is too high. This however
+                seems unlikely and probably the new added USDC could cover for the added slippage. This is something we need
+                to research further.
+
  */
-contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
-    using PercentageUtils for uint256;
+contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, SwapToUSDCActionV0 {
     using SafeERC20 for IERC20;
 
     /**
@@ -75,6 +82,8 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
 
         _setSwapSlippage(initParams.swapSlippage);
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
+
+        USDC = IERC20(initParams.USDC);
     }
 
     /// STATE CHANGERS
@@ -89,29 +98,17 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
         external
         onlyVault
         onlyUnlocked
-        onlyAfterCycleStart
         nonReentrant
     {
         _setLifecycleState(LifecycleState.Locked);
 
-        // The caller is the vault, so we can trust doing this external call first
+        // At this moment in the lifecycle of the vault, this external call could only come back
+        // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
+        // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
+        // operations performed inside this action
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
-            investmentAsset,
-            nextCycleStartTimestamp,
-            premiumSlippage
-        );
-
-        _swapOutput(investmentAsset, address(getUSDC()), premiumWithSlippageInUSDC, swapSlippage, maxSwapDurationSecs);
-        (uint256 amountPotionsInAssets, uint256 actualPremiumInUSDC) = _buyPotions(
-            investmentAsset,
-            nextCycleStartTimestamp,
-            premiumWithSlippageInUSDC
-        );
-
-        _validateMaxPremium(investmentAsset, amountToInvest, actualPremiumInUSDC);
-        _validateHedgingRate(investmentAsset, amountToInvest, amountPotionsInAssets, actualPremiumInUSDC);
+        _swapOutput(investmentAsset, address(USDC), amountToInvest, swapSlippage, maxSwapDurationSecs);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -123,20 +120,18 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
         external
         onlyVault
         onlyLocked
-        onlyAfterCycleEnd
         nonReentrant
         returns (uint256 amountReturned)
     {
-        require(_isPotionRedeemable(investmentAsset, nextCycleStartTimestamp), "The Potion is not redeemable yet");
-
         IERC20 investmentAssetERC20 = IERC20(investmentAsset);
-        IERC20 USDC = getUSDC();
 
-        _redeemPotions(investmentAsset, nextCycleStartTimestamp);
+        // Using balanceOf here, check the comment in the contract header about an attacker sending USDC to this contract
         uint256 amountToConvertToAssset = USDC.balanceOf(address(this));
 
         _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
 
+        // Using balanceOf here is safe as the whole balance is just sent back to the vault. If an attacker sends
+        // underlying to this contract, it will just end up as profits in the vault
         amountReturned = investmentAssetERC20.balanceOf(address(this));
 
         SafeERC20.safeTransfer(investmentAssetERC20, _msgSender(), amountReturned);
@@ -147,59 +142,17 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
     }
 
     /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setMaxPremiumPercentage(uint256 maxPremiumPercentage_) external override onlyStrategist {
-        _setMaxPremiumPercentage(maxPremiumPercentage_);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setPremiumSlippage(uint256 premiumSlippage_) external override onlyStrategist {
-        _setPremiumSlippage(premiumSlippage_);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
+        @inheritdoc ISwapToUSDCActionV0
      */
     function setSwapSlippage(uint256 swapSlippage_) external override onlyStrategist {
         _setSwapSlippage(swapSlippage_);
     }
 
     /**
-        @inheritdoc IPotionBuyActionV0
+        @inheritdoc ISwapToUSDCActionV0
      */
     function setMaxSwapDuration(uint256 durationSeconds) external override onlyStrategist {
         _setMaxSwapDuration(durationSeconds);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setCycleDuration(uint256 durationSeconds) external override onlyStrategist {
-        _setCycleDuration(durationSeconds);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setStrikePercentage(uint256 strikePercentage_) external override onlyStrategist {
-        _setStrikePercentage(strikePercentage_);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setHedgingRate(uint256 hedgingRate_) external override onlyStrategist {
-        _setHedgingRate(hedgingRate_);
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-     */
-    function setHedgingRateSlippage(uint256 hedgingRateSlippage_) external override onlyStrategist {
-        _setHedgingRateSlippage(hedgingRateSlippage_);
     }
 
     // GETTERS
@@ -210,61 +163,19 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
     function canPositionBeEntered(
         address /*investmentAsset*/
     ) public view returns (bool canEnter) {
-        canEnter = _isNextCycleStarted() && getLifecycleState() == LifecycleState.Unlocked;
+        canEnter = (getLifecycleState() == LifecycleState.Unlocked);
     }
 
     /**
         @inheritdoc IAction
      */
-    function canPositionBeExited(address investmentAsset) public view returns (bool canExit) {
-        canExit =
-            _isNextCycleStarted() &&
-            _isPotionRedeemable(investmentAsset, nextCycleStartTimestamp) &&
-            getLifecycleState() == LifecycleState.Locked;
-    }
-
-    /**
-        @inheritdoc IPotionBuyActionV0
-    */
-    function calculateCurrentPayout(address investmentAsset)
-        external
-        view
-        returns (
-            bool isFinal,
-            uint256 payout,
-            uint256 orderSize
-        )
-    {
-        return _calculateCurrentPayout(investmentAsset, nextCycleStartTimestamp);
+    function canPositionBeExited(
+        address /*investmentAsset*/
+    ) public view returns (bool canExit) {
+        canExit = (getLifecycleState() == LifecycleState.Locked);
     }
 
     /// INTERNAL FUNCTIONS
-
-    /**
-        @dev See { setMaxPremiumPercentage }
-     */
-    function _setMaxPremiumPercentage(uint256 maxPremiumPercentage_) internal {
-        if (maxPremiumPercentage_ <= 0 || maxPremiumPercentage_ > PercentageUtils.PERCENTAGE_100) {
-            revert MaxPremiumPercentageOutOfRange(maxPremiumPercentage_);
-        }
-
-        maxPremiumPercentage = maxPremiumPercentage_;
-
-        emit MaxPremiumPercentageChanged(maxPremiumPercentage_);
-    }
-
-    /**
-        @dev See { setPremiumSlippage }
-    */
-    function _setPremiumSlippage(uint256 premiumSlippage_) internal {
-        if (premiumSlippage_ <= 0 || premiumSlippage_ > PercentageUtils.PERCENTAGE_100) {
-            revert PremiumSlippageOutOfRange(premiumSlippage_);
-        }
-
-        premiumSlippage = premiumSlippage_;
-
-        emit PremiumSlippageChanged(premiumSlippage_);
-    }
 
     /**
         @dev See { setSwapSlippage }
@@ -286,132 +197,5 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable {
         maxSwapDurationSecs = durationSeconds;
 
         emit MaxSwapDurationChanged(durationSeconds);
-    }
-
-    /**
-        @dev See { setCycleDuration }
-     */
-    function _setCycleDuration(uint256 durationSeconds) internal {
-        if (durationSeconds < MIN_CYCLE_DURATION) {
-            revert CycleDurationTooShort(durationSeconds, MIN_CYCLE_DURATION);
-        }
-
-        cycleDurationSecs = durationSeconds;
-
-        emit CycleDurationChanged(durationSeconds);
-    }
-
-    /**
-        @dev See { setStrikePercentage }
-     */
-    function _setStrikePercentage(uint256 strikePercentage_) internal {
-        if (strikePercentage_ == 0) {
-            revert StrikePercentageIsZero();
-        }
-
-        strikePercentage = strikePercentage_;
-
-        emit StrikePercentageChanged(strikePercentage_);
-    }
-
-    /**
-        @dev See { setStrikePercentage }
-     */
-    function _setHedgingRate(uint256 hedgingRate_) internal {
-        if (hedgingRate_ == 0) {
-            revert HedgingRateIsZero();
-        }
-
-        hedgingRate = hedgingRate_;
-
-        emit HedgingRateChanged(hedgingRate_);
-    }
-
-    /**
-        @dev See { setStrikePercentage }
-     */
-    function _setHedgingRateSlippage(uint256 hedgingRateSlippage_) internal {
-        hedgingRateSlippage = hedgingRateSlippage_;
-
-        emit HedgingRateSlippageChanged(hedgingRateSlippage_);
-    }
-
-    /**
-        @notice Checks if the next cycle has already started or not
-
-        @return True if the next cycle has already started, false otherwise
-     */
-
-    function _isNextCycleStarted() internal view returns (bool) {
-        return block.timestamp >= nextCycleStartTimestamp;
-    }
-
-    /**
-        @notice Updates the start of the next investment cycle
-
-        @dev It has a bit of a complex logic to account for skipped cycles. If one or more
-        cycles have been skipped, then we need to bring the next cycle start close to the current
-        timestamp. To do so we calculate the current cycle offset from the cycle start that is closest
-        to now, but in the past. Then we substract this offset from now to get the start of the current
-        cycle. We then calculate the next cycle start from the previous by adding the cycle duration
-     */
-    function _updateNextCycleStart() internal {
-        uint256 currentCycleOffset = (block.timestamp - nextCycleStartTimestamp) % cycleDurationSecs;
-        uint256 lastCycleExpectedStart = block.timestamp - currentCycleOffset;
-
-        nextCycleStartTimestamp = lastCycleExpectedStart + cycleDurationSecs;
-    }
-
-    /**
-        @notice Validates that the actual premium being paid does not exceed the maximum allowed
-
-        @param investmentAsset The asset to be invested
-        @param amountToInvest The amount of assets to be invested, with `investmentAsset` decimals
-        @param actualPremiumInUSDC The actual premium being paid, with 6 decimals
-     */
-    function _validateMaxPremium(
-        address investmentAsset,
-        uint256 amountToInvest,
-        uint256 actualPremiumInUSDC
-    ) private view {
-        uint256 maxPremiumAllowedInAsset = amountToInvest.applyPercentage(maxPremiumPercentage);
-        uint256 maxPremiumAllowedInUSDC = _convertAssetToUSDCOnLivePrice(investmentAsset, maxPremiumAllowedInAsset);
-
-        if (actualPremiumInUSDC > maxPremiumAllowedInUSDC) {
-            revert PremiumExceedsMaxPremium(actualPremiumInUSDC, maxPremiumAllowedInUSDC);
-        }
-    }
-
-    /**
-        @notice Validates that the effective hedging rate is in range with the expected one
-
-        @param investmentAsset The asset to be invested
-        @param amountToInvestInAssets The amount of assets to be invested, with `investmentAsset` decimals
-        @param amountPotionsInAssets The amount of potions that were bought, with `investmentAsset` decimals
-        @param actualPremiumInUSDC The actual premium being paid, with 6 decimals
-
-        @dev If this cycle there were no assets in the vault, skip the check
-     */
-    function _validateHedgingRate(
-        address investmentAsset,
-        uint256 amountToInvestInAssets,
-        uint256 amountPotionsInAssets,
-        uint256 actualPremiumInUSDC
-    ) private view {
-        if (amountToInvestInAssets == 0) {
-            return;
-        }
-
-        uint256 actualPremiumInAsset = _convertUSDCToAssetOnLivePrice(investmentAsset, actualPremiumInUSDC);
-
-        uint256 actualHedgedAmountInAssets = amountToInvestInAssets - actualPremiumInAsset;
-
-        uint256 actualHedgingRate = PercentageUtils.toPercentage(amountPotionsInAssets, actualHedgedAmountInAssets);
-
-        uint256 hedgingRateWithSlippage = hedgingRate.subtractPercentage(hedgingRateSlippage);
-
-        if (actualHedgingRate < hedgingRateWithSlippage) {
-            revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate, hedgingRateSlippage);
-        }
     }
 }

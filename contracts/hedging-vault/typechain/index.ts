@@ -98,6 +98,8 @@ export type { UniswapV3OracleUpgradeable } from "./contracts/actions/common/Unis
 export { UniswapV3OracleUpgradeable__factory } from "./factories/contracts/actions/common/UniswapV3OracleUpgradeable__factory";
 export type { PotionBuyAction } from "./contracts/actions/PotionBuyAction";
 export { PotionBuyAction__factory } from "./factories/contracts/actions/PotionBuyAction__factory";
+export type { SwapToUSDCAction } from "./contracts/actions/SwapToUSDCAction";
+export { SwapToUSDCAction__factory } from "./factories/contracts/actions/SwapToUSDCAction__factory";
 export type { EmergencyLockUpgradeable } from "./contracts/common/EmergencyLockUpgradeable";
 export { EmergencyLockUpgradeable__factory } from "./factories/contracts/common/EmergencyLockUpgradeable__factory";
 export type { LifecycleStatesUpgradeable } from "./contracts/common/LifecycleStatesUpgradeable";
@@ -160,6 +162,8 @@ export type { IRoundsInputVault } from "./contracts/interfaces/IRoundsInputVault
 export { IRoundsInputVault__factory } from "./factories/contracts/interfaces/IRoundsInputVault__factory";
 export type { IRoundsOutputVault } from "./contracts/interfaces/IRoundsOutputVault";
 export { IRoundsOutputVault__factory } from "./factories/contracts/interfaces/IRoundsOutputVault__factory";
+export type { ISwapToUSDCActionV0 } from "./contracts/interfaces/ISwapToUSDCActionV0";
+export { ISwapToUSDCActionV0__factory } from "./factories/contracts/interfaces/ISwapToUSDCActionV0__factory";
 export type { IUniswapV3Oracle } from "./contracts/interfaces/IUniswapV3Oracle";
 export { IUniswapV3Oracle__factory } from "./factories/contracts/interfaces/IUniswapV3Oracle__factory";
 export type { IVault } from "./contracts/interfaces/IVault";
@@ -244,3 +248,5 @@ export type { InvestmentVault } from "./contracts/vault/InvestmentVault";
 export { InvestmentVault__factory } from "./factories/contracts/vault/InvestmentVault__factory";
 export type { PotionBuyActionV0 } from "./contracts/versioning/PotionBuyActionV0";
 export { PotionBuyActionV0__factory } from "./factories/contracts/versioning/PotionBuyActionV0__factory";
+export type { SwapToUSDCActionV0 } from "./contracts/versioning/SwapToUSDCActionV0";
+export { SwapToUSDCActionV0__factory } from "./factories/contracts/versioning/SwapToUSDCActionV0__factory";

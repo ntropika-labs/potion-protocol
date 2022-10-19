@@ -157,7 +157,10 @@ contract PotionBuyAction is
 
         require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
 
-        // Transferring the asset is needed here
+        // At this moment in the lifecycle of the vault, this external call could only come back
+        // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
+        // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
+        // operations performed inside this action
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
         uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(

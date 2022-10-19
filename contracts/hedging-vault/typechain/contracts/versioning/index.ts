@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { PotionBuyActionV0 } from "./PotionBuyActionV0";
+export type { SwapToUSDCActionV0 } from "./SwapToUSDCActionV0";

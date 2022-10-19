@@ -205,6 +205,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionBuyAction__factory>;
     getContractFactory(
+      name: "SwapToUSDCAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SwapToUSDCAction__factory>;
+    getContractFactory(
       name: "EmergencyLockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EmergencyLockUpgradeable__factory>;
@@ -328,6 +332,10 @@ declare module "hardhat/types/runtime" {
       name: "IRoundsOutputVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoundsOutputVault__factory>;
+    getContractFactory(
+      name: "ISwapToUSDCActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapToUSDCActionV0__factory>;
     getContractFactory(
       name: "IUniswapV3Oracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -496,6 +504,10 @@ declare module "hardhat/types/runtime" {
       name: "PotionBuyActionV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionBuyActionV0__factory>;
+    getContractFactory(
+      name: "SwapToUSDCActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SwapToUSDCActionV0__factory>;
 
     getContractAt(
       name: "IERC4626",
@@ -738,6 +750,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PotionBuyAction>;
     getContractAt(
+      name: "SwapToUSDCAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SwapToUSDCAction>;
+    getContractAt(
       name: "EmergencyLockUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -892,6 +909,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IRoundsOutputVault>;
+    getContractAt(
+      name: "ISwapToUSDCActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapToUSDCActionV0>;
     getContractAt(
       name: "IUniswapV3Oracle",
       address: string,
@@ -1102,6 +1124,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PotionBuyActionV0>;
+    getContractAt(
+      name: "SwapToUSDCActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SwapToUSDCActionV0>;
 
     // default types
     getContractFactory(
