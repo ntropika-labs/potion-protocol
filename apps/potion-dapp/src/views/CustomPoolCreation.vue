@@ -58,7 +58,7 @@
       :pool-id="poolId"
       :criterias="criterias"
       :disable-action="!readyToDeploy"
-      :action-loading="deployPoolLoading || approveDeployPoolLoading"
+      :action-loading="deployPoolLoading"
       :bonding-curve-params="bondingCurve"
       @deploy-pool="handleDeployPool"
       @navigate:back="currentFormStep = 1"
@@ -73,6 +73,7 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import {
   currencyFormatter,
@@ -95,7 +96,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { usePoolTokens } from "@/composables/usePoolTokens";
 import { useDeployPool } from "@/composables/useDeployPool";
 import { useLiquidity } from "@/composables/useLiquidity";
-import { useUserData } from "@/composables/useUserData";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -104,7 +105,8 @@ const router = useRouter();
  * Data setup
  */
 const collateral: string = contractsAddresses.USDC.address.toLowerCase();
-const { walletAddress, userCollateralBalance } = useUserData();
+const { walletAddress, userCollateralBalance, approveTx, approveReceipt } =
+  storeToRefs(useUserDataStore());
 const { liquidity, validInput, validLiquidity } = useLiquidity(
   100,
   userCollateralBalance
@@ -127,12 +129,9 @@ const { poolId } = useNextPoolId(walletAddress);
 const {
   deployLabel,
   handleDeployPool,
-  approveDeployPoolTx,
-  approveDeployPoolLoading,
-  approveDeployPoolReceipt,
+  isLoading: deployPoolLoading,
   deployPoolTx,
   deployPoolReceipt,
-  deployPoolLoading,
 } = useDeployPool(
   poolId,
   liquidity,
@@ -195,11 +194,11 @@ watch(deployPoolReceipt, (receipt) => {
   createReceiptNotification(receipt, t("pool_created"));
 });
 
-watch(approveDeployPoolTx, (transaction) => {
+watch(approveTx, (transaction) => {
   createTransactionNotification(transaction, t("approving_usdc"));
 });
 
-watch(approveDeployPoolReceipt, (receipt) => {
+watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
