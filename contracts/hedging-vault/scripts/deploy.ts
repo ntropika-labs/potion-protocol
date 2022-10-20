@@ -1,5 +1,5 @@
 import { PotionHedgingVaultConfigParams } from "./config/deployConfig";
-import { getDeploymentConfig, deployTestingEnv } from "./test/TestingEnv";
+import { getDeploymentConfig, deployTestingEnv } from "./test/testingEnv";
 
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";

@@ -5,7 +5,7 @@ import { BigNumber, Signer } from "ethers";
 
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
+import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import {
@@ -17,8 +17,8 @@ import {
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
-import { getEncodedSwapPath } from "../utils/uniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/blockchainUtils";
+import { getEncodedSwapPath } from "../../scripts/test/uniswapV3Utils";
+import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
@@ -31,8 +31,9 @@ import {
     ProviderTypes,
     DeploymentNetwork,
     DeploymentFlags,
+    DAY_IN_SECONDS,
 } from "contracts-utils";
-import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
+import { calculatePremium } from "../../scripts/test/calculationsUtils";
 
 /**
     @notice Hedging Vault basic flow unit tests    

@@ -1,269 +1,33 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, Signer } from "ethers";
+import { BigNumber } from "ethers";
 
-import { CurveCriteria, HyperbolicCurve } from "contracts-math";
-
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/TestingEnv";
+import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import {
     InvestmentVault,
     PotionBuyAction,
-    IPotionLiquidityPool,
-    IUniswapV3Oracle,
     RoundsInputVault,
     RoundsOutputVault,
     HedgingVaultOrchestrator,
     RoundsVaultExchanger,
     SwapToUSDCAction,
 } from "../../typechain";
-import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { LifecycleStates } from "hedging-vault-sdk";
-import { getEncodedSwapPath } from "../utils/uniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS } from "../utils/blockchainUtils";
+import { fastForwardChain } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
-import * as HedgingVaultUtils from "hedging-vault-sdk";
-import { Roles } from "hedging-vault-sdk";
+import { Roles, LifecycleStates } from "hedging-vault-sdk";
 
 import {
-    ifMocksEnabled,
-    asMock,
     Deployments,
     showConsoleLogs,
     ProviderTypes,
     DeploymentNetwork,
     DeploymentFlags,
+    DAY_IN_SECONDS,
 } from "contracts-utils";
-import { calculatePremium } from "../../scripts/test/PotionPoolsUtils";
-
-interface TestConditions {
-    uniswapEnterPositionInputAmount: BigNumber;
-    uniswapExitPositionOutputAmount: BigNumber;
-    potionBuyInfo: PotionBuyInfoStruct;
-    swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
-    swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct;
-    underlyingAssetExitPriceInUSD: BigNumber;
-    expirationTimestamp: BigNumber;
-}
-
-async function getPotionBuyInfo(
-    tEnv: TestingEnvironmentDeployment,
-    amountToBeInvested: BigNumber,
-    underlyingAssetPriceInUSD: BigNumber,
-    USDCPriceInUSD: BigNumber,
-): Promise<{ potionBuyInfo: PotionBuyInfoStruct; expectedPremiumInUSDC: BigNumber }> {
-    // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
-    // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
-    // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
-
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
-    const amountProtectedInUSDC = amountProtected
-        .mul(underlyingAssetPriceInUSD)
-        .div(USDCPriceInUSD)
-        .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
-
-    const collateralRequiredInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, tEnv.strikePercentage);
-
-    const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
-    const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
-
-    const lpAddress = (await ethers.getSigners())[0].address;
-    const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
-    const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
-    const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
-    const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSD, tEnv.strikePercentage);
-    const nextCycleStartTimestamp = await tEnv.potionBuyAction.nextCycleStartTimestamp();
-    const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
-
-    const potionOtokenAddress = await tEnv.opynFactory.getTargetOtokenAddress(
-        tEnv.underlyingAsset.address,
-        tEnv.USDC.address,
-        tEnv.USDC.address,
-        strikePriceInUSDC,
-        expirationTimestamp,
-        true,
-    );
-
-    const counterparties: IPotionLiquidityPool.CounterpartyDetailsStruct[] = [
-        {
-            lp: lpAddress,
-            poolId: 0,
-            curve: curve.asSolidityStruct(),
-            criteria: criteria,
-            orderSizeInOtokens: otokensAmount,
-        },
-    ];
-
-    const potionBuyInfo: PotionBuyInfoStruct = {
-        targetPotionAddress: potionOtokenAddress,
-        underlyingAsset: tEnv.underlyingAsset.address,
-        strikePriceInUSDC: strikePriceInUSDC,
-        expirationTimestamp: expirationTimestamp,
-        sellers: counterparties,
-        expectedPremiumInUSDC: expectedPremiumInUSDC,
-    };
-
-    return { potionBuyInfo, expectedPremiumInUSDC };
-}
-
-async function getSwapInfo(
-    tEnv: TestingEnvironmentDeployment,
-    underlyingAssetPriceInUSD: BigNumber,
-    USDCPriceInUSD: BigNumber,
-): Promise<{
-    swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
-    swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct;
-}> {
-    // Set the Uniswap route info
-    const swapInfoEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.underlyingAsset.address,
-        outputToken: tEnv.USDC.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            18,
-            6,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
-    };
-
-    // Set the Uniswap route info
-    const swapInfoExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.USDC.address,
-        outputToken: tEnv.underlyingAsset.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            6,
-            18,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
-    };
-
-    return { swapInfoEnterPosition, swapInfoExitPosition };
-}
-
-async function setupTestConditions(
-    tEnv: TestingEnvironmentDeployment,
-    underlyingAssetPriceInUSD: BigNumber,
-    USDCPriceInUSD: BigNumber,
-    amountToBeInvested: BigNumber,
-): Promise<TestConditions> {
-    const { potionBuyInfo, expectedPremiumInUSDC } = await getPotionBuyInfo(
-        tEnv,
-        amountToBeInvested,
-        underlyingAssetPriceInUSD,
-        USDCPriceInUSD,
-    );
-
-    const { swapInfoEnterPosition, swapInfoExitPosition } = await getSwapInfo(
-        tEnv,
-        underlyingAssetPriceInUSD,
-        USDCPriceInUSD,
-    );
-
-    /*
-        COLLATERAL
-    */
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
-    const amountProtectedInUSDC = amountProtected
-        .mul(underlyingAssetPriceInUSD)
-        .div(USDCPriceInUSD)
-        .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
-
-    const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(expectedPremiumInUSDC, tEnv.premiumSlippage);
-    const nextCycleStartTimestamp = await tEnv.potionBuyAction.nextCycleStartTimestamp();
-    const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
-
-    const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
-        maxPremiumWithSlippageInUSDC
-            .mul(BigNumber.from(1000000000000))
-            .mul(USDCPriceInUSD)
-            .div(underlyingAssetPriceInUSD),
-        tEnv.swapSlippage,
-    );
-
-    const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
-    const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
-    const underlyingAssetExitPriceInUSD = HedgingVaultUtils.applyPercentage(
-        underlyingAssetPriceInUSD,
-        underlyingAssetPricePercentage,
-    );
-    const payoutInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, exitPriceDecreasePercentage);
-
-    // TODO: when using the mocked version of the vault, the premium is never sent to the Potion Protocol,
-    // TODO: so the maximum premium remains in the vault
-    let totalUSDCInActionAfterPayout: BigNumber;
-    if (network.name === "hardhat") {
-        totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC.sub(expectedPremiumInUSDC);
-    } else {
-        totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC;
-    }
-
-    const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout
-        .mul(BigNumber.from(1000000000000))
-        .mul(USDCPriceInUSD)
-        .div(underlyingAssetPriceInUSD);
-
-    const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
-        extraUnderlyingAssetInVaultAfterPayout,
-        tEnv.swapSlippage,
-    );
-
-    // Set the Opyn oracle asset price for the underlying asset
-    await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSD);
-    await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSD);
-
-    // Setup the mocks
-    ifMocksEnabled(() => {
-        asMock(tEnv.potionLiquidityPoolManager).buyOtokens.returns(async () => {
-            // Transfer
-            await tEnv.USDC.connect(asMock(tEnv.potionLiquidityPoolManager).wallet as unknown as Signer).transferFrom(
-                tEnv.potionBuyAction.address,
-                tEnv.potionLiquidityPoolManager.address,
-                expectedPremiumInUSDC,
-            );
-            return expectedPremiumInUSDC;
-        });
-        asMock(tEnv.opynController)
-            .isSettlementAllowed.whenCalledWith(potionBuyInfo.targetPotionAddress)
-            .returns(false);
-
-        asMock(tEnv.USDC).approve.reset();
-        asMock(tEnv.USDC).approve.returns(true);
-
-        asMock(tEnv.underlyingAsset).approve.reset();
-        asMock(tEnv.underlyingAsset).approve.returns(true);
-
-        asMock(tEnv.opynController).isSettlementAllowed.whenCalledWith(potionBuyInfo.targetPotionAddress).returns(true);
-        asMock(tEnv.opynController).getPayout.returns(() => {
-            return payoutInUSDC;
-        });
-
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        asMock(tEnv.opynController).operate.returns(async (args: any) => {
-            if (args[0][0].actionType !== 8) {
-                return;
-            }
-            // TODO: This is failing and I'm not sure if it is a Smock problem or a logic
-            // TODO: problem in the tests. Talking to the smock team it seems likely that it
-            // TODO: is a problem with the smock library and calling the EVM from an async callback
-            // await tEnv.USDC.connect(ownerAccount).mint(potionBuy.address, payoutInUSDC);
-        });
-    });
-
-    return {
-        uniswapEnterPositionInputAmount,
-        uniswapExitPositionOutputAmount,
-        potionBuyInfo,
-        swapInfoEnterPosition,
-        swapInfoExitPosition,
-        underlyingAssetExitPriceInUSD,
-        expirationTimestamp,
-    };
-}
+import { setupTestConditions, getPotionBuyInfo } from "../../scripts/test/calculationsUtils";
 
 /**
     @notice Hedging Vault deferred deposits and withdrawals tests
@@ -513,11 +277,11 @@ describe("DeferredDepositsWithdrawals", function () {
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
         const tx = await orchestrator.nextRound(
-            tCond.swapInfoExitPosition,
+            tCond.potionBuySwapExitPosition,
             tCond.potionBuyInfo,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
+            tCond.potionBuySwapEnterPosition,
+            tCond.swapToUSDCSwapExitPosition,
+            tCond.swapToUSDCSwapEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
@@ -535,7 +299,7 @@ describe("DeferredDepositsWithdrawals", function () {
 
         const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
-        expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
+        expectSolidityDeepCompare(tCond.potionBuySwapEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
@@ -601,11 +365,11 @@ describe("DeferredDepositsWithdrawals", function () {
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
         tx = await orchestrator.nextRound(
-            tCond.swapInfoExitPosition,
+            tCond.potionBuySwapExitPosition,
             tCond.potionBuyInfo,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
+            tCond.potionBuySwapEnterPosition,
+            tCond.swapToUSDCSwapExitPosition,
+            tCond.swapToUSDCSwapEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
@@ -623,7 +387,7 @@ describe("DeferredDepositsWithdrawals", function () {
 
         const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
-        expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
+        expectSolidityDeepCompare(tCond.potionBuySwapEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
@@ -703,11 +467,11 @@ describe("DeferredDepositsWithdrawals", function () {
         );
 
         tx = await orchestrator.nextRound(
-            tCond.swapInfoExitPosition,
+            tCond.potionBuySwapExitPosition,
             nextPotionBuyInfo,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
+            tCond.potionBuySwapEnterPosition,
+            tCond.swapToUSDCSwapExitPosition,
+            tCond.swapToUSDCSwapEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
@@ -793,11 +557,11 @@ describe("DeferredDepositsWithdrawals", function () {
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
         tx = await orchestrator.nextRound(
-            tCond.swapInfoExitPosition,
+            tCond.potionBuySwapExitPosition,
             tCond.potionBuyInfo,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
+            tCond.potionBuySwapEnterPosition,
+            tCond.swapToUSDCSwapExitPosition,
+            tCond.swapToUSDCSwapEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
@@ -811,7 +575,7 @@ describe("DeferredDepositsWithdrawals", function () {
 
         const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
-        expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
+        expectSolidityDeepCompare(tCond.potionBuySwapEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
@@ -893,11 +657,11 @@ describe("DeferredDepositsWithdrawals", function () {
         );
 
         tx = await orchestrator.nextRound(
-            tCond.swapInfoExitPosition,
+            tCond.potionBuySwapExitPosition,
             nextPotionBuyInfo,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
-            tCond.swapInfoEnterPosition,
+            tCond.potionBuySwapEnterPosition,
+            tCond.swapToUSDCSwapExitPosition,
+            tCond.swapToUSDCSwapEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
