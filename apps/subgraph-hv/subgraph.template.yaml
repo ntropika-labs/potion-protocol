@@ -4,9 +4,8 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: InvestmentVault
-    network: 
+    network: mainnet
     source:
-      address: 
       abi: InvestmentVault
     mapping:
       kind: ethereum/events
@@ -32,9 +31,8 @@ dataSources:
   
   - kind: ethereum/contract
     name: PotionBuyAction
-    network: 
+    network: mainnet
     source:
-      address: 
       abi: PotionBuyAction
     mapping:
       kind: ethereum/events
@@ -56,9 +54,8 @@ dataSources:
   
   - kind: ethereum/contract
     name: RoundsInputVault
-    network: 
+    network: mainnet
     source:
-      address: 
       abi: RoundsInputVault
     mapping:
       kind: ethereum/events
@@ -86,9 +83,8 @@ dataSources:
   
   - kind: ethereum/contract
     name: RoundsOutputVault
-    network: 
+    network: mainnet
     source:
-      address: 
       abi: RoundsOutputVault
     mapping:
       kind: ethereum/events

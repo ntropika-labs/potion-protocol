@@ -119,7 +119,9 @@ async function main() {
   // prepare the manifest to write replacing the dataSources of the template
   const outputManifest = {
     ...templateManifest,
-    dataSources: (await Promise.all(manifestSources)).flat(),
+    dataSources: templateManifest.dataSources.concat(
+      (await Promise.all(manifestSources)).flat()
+    ),
   };
 
   await writeFile(

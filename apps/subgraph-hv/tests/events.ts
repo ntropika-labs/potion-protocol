@@ -6,12 +6,12 @@ import {
   ActionsAdded,
   Deposit,
   Withdraw,
-} from "../generated/InvestmentVault0/InvestmentVault";
+} from "../generated/InvestmentVault/InvestmentVault";
 import {
   ActionPositionEntered,
   ActionPositionExited,
   MaxPremiumPercentageChanged,
-} from "../generated/PotionBuyAction0/PotionBuyAction";
+} from "../generated/PotionBuyAction/PotionBuyAction";
 import {
   DepositWithReceipt,
   NextRound,
@@ -19,7 +19,7 @@ import {
   RedeemReceiptBatch,
   WithdrawExchangeAsset,
   WithdrawExchangeAssetBatch,
-} from "../generated/RoundsInputVault0/RoundsInputVault";
+} from "../generated/RoundsInputVault/RoundsInputVault";
 import { ethereum, BigInt, Address } from "@graphprotocol/graph-ts";
 import { newMockEvent } from "matchstick-as/assembly/index";
 
