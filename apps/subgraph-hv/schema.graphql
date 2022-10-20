@@ -1,0 +1,134 @@
+### STILL WIP
+
+type Token @entity(immutable: true) {
+  id: ID!
+  name: String!
+  symbol: String!
+  decimals: BigInt!
+}
+
+# we could have a field deposits and withdrawals to track all the deposits and withdrawals for the given block
+type Block @entity(immutable: true) {
+  id: ID!
+  number: BigInt!
+  timestamp: BigInt!
+}
+
+# ActionsAdded event will be emitted by the vault
+type HedgingVault @entity {
+  id: ID!
+  action: PotionBuyAction!
+  # RoleGranted() from roles manager upgradeable
+  #operator: Bytes!
+  #admin: Bytes!
+  #strategist: Bytes!
+  shareToken: Token!
+  asset: Token!
+  rounds: [Round!] @derivedFrom(field: "vault")
+  #investors: [Investor!] @derivedFrom(field: "user")
+  lastShareRatio: BigDecimal!
+  totalAssets: BigDecimal!
+  lastAssetsInvested: BigDecimal!
+  maxDeposit: BigDecimal!
+  maxMint: BigDecimal!
+  maxWithdraw: BigDecimal!
+  maxRedeem: BigDecimal!
+  hedgingPercentage: BigDecimal!
+  # PotionBuyAction settings - we might create a separate entity for this
+}
+
+# MaxPremiumPercentageChanged() to listen and create the entity
+type PotionBuyAction @entity {
+  id: ID!
+  vault: HedgingVault!
+  nextCycleStartTimestamp: BigInt!
+  cycleDurationSecs: BigInt!
+  maxPremiumPercentage: BigDecimal!
+  premiumSlippage: BigDecimal!
+  swapSlippage: BigDecimal!
+  maxSwapDurationSecs: BigInt!
+  strikePercentage: BigDecimal!
+}
+
+type Round @entity {
+  id: ID!
+  vault: HedgingVault!
+  roundNumber: BigInt!
+  #NextRound()
+  shareRatioAtRoundEnd: BigDecimal
+  # VaultPositionExited()
+  totalAssetsAtRoundEnd: BigDecimal
+  # VaultPositionEntered()
+  assetsInvested: BigDecimal!
+  # otokenPremium: BigDecimal!
+  # uniswapEnterFees: BigDecimal!
+  # uniswapExitFees: BigDecimal!
+  depositRequests: [DepositRequest!] @derivedFrom(field: "round")
+  withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "round")
+  # VaultPositionExited() VaultPositionEntered()
+  blockEntered: Block!
+  blockExited: Block
+  deposit: Deposit
+  withdrawal: Withdrawal
+
+}
+
+# Receiver
+type Investor @entity {
+  id: ID!
+  # maybe it is better to add a join entity VaultInvestors?
+  vaults: [HedgingVault!]
+  user: Bytes!
+  depositRequests: [DepositRequest!] @derivedFrom(field: "investor")
+  withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "investor")
+}
+
+#InvestmentVault contract
+type Deposit @entity {
+  id: ID!
+  round: Round!
+  amount: BigDecimal!
+  shareAmount: BigDecimal!
+  block: Block!
+  tx: Bytes!
+}
+
+#InvestmentVault contract
+type Withdrawal @entity {
+  id: ID!
+  round: Round!
+  amount: BigDecimal!
+  shareAmount: BigDecimal!
+  block: Block!
+  tx: Bytes!
+}
+
+# we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsInputVault
+# _deposit() vault with receipt in the OutputVault contract
+type DepositRequest @entity {
+  id: ID!
+  sender: Bytes!
+  investor: Investor!
+  round: Round!
+  amount: BigDecimal!
+  shares: BigDecimal #we get this at the end of the round by multiplying the amount by the share ratio
+  block: Block!
+  amountRedeemed: BigDecimal!
+  remainingShares: BigDecimal!
+  tx: Bytes!
+}
+
+# we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsOutputVault
+# _deposit()  with receipt in the OnputVault contract
+type WithdrawalRequest @entity {
+  id: ID!
+  sender: Bytes!
+  investor: Investor!
+  round: Round!
+  amount: BigDecimal!
+  assets: BigDecimal #we get this at the end of the round by multiplying the amount by the share ratio
+  block: Block!
+  amountRedeemed: BigDecimal!
+  remainingAssets: BigDecimal!
+  tx: Bytes!
+}
