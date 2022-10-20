@@ -23,12 +23,16 @@ interface IVaultV0 {
     /**
         @notice Strategy to execute when entering the position
 
+        @custom:member actionsIndexes The indexes of the actions to be executed for the strategy
+        @custom:member principalPercentages The percentage of the total amount to be invested in each action
+
         @dev It consists of a list of actions indexes to be executed in the order indicated in the array
              upon entering the position. This can be used to select the specific actions to be executed
              when implementing fallback strategies
      */
     struct Strategy {
         uint256[] actionsIndexes;
+        uint256[] principalPercentages;
     }
 
     /// EVENTS
@@ -37,6 +41,9 @@ interface IVaultV0 {
 
     /// ERRORS
     error InvestmentTotalTooHigh(uint256 actualAmountInvested, uint256 maxAmountToInvest);
+    error PrincipalPercentagesMismatch(uint256 actionsLength, uint256 percentagesLength);
+    error PrincipalPercentageOutOfRange(Strategy strategy, uint256 index);
+    error PrincipalPercentagesSumMoreThan100(Strategy strategy);
 
     /// FUNCTIONS
 

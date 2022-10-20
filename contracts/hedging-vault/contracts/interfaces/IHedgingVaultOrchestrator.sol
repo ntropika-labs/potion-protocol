@@ -23,12 +23,14 @@ interface IHedgingVaultOrchestrator {
 
         @param hedgingVault The vault to be used to enter and exit the position.
         @param potionBuyAction The action to be used to enter and exit the position.
+        @param swapToUSDCAction The action to be used to swap to USDC.
         @param roundsInputVault The rounds input vault to be used to enter and exit the position.
         @param roundsOutputVault The rounds output vault to be used to enter and exit the position.
     */
     function setSystemAddresses(
         address hedgingVault,
         address potionBuyAction,
+        address swapToUSDCAction,
         address roundsInputVault,
         address roundsOutputVault
     ) external;
@@ -43,13 +45,19 @@ interface IHedgingVaultOrchestrator {
         @param prevRoundExitSwapInfo The Uniswap V3 route to swap the received pay-out from USDC back to the hedged asset
         @param nextRoundPotionBuyInfo List of counterparties to use for the Potion Protocol buy
         @param nextRoundEnterSwapInfo The Uniswap V3 route to swap some hedged asset for USDC to pay the Potion Protocol premium
-        
+        @param swapToUSDCExitSwapInfo The Uniswap V3 route to swap back the full investment amount from USDC in case the Potion Buy
+                                      action reverted on the last round
+        @param swapToUSDCEnterSwapInfo The Uniswap V3 route to swap the full investment amount for USDC in case the Potion Buy action
+                                       reverts
+
         @dev Only the owner of the contract (i.e. the Operator) can call this function
      */
     function nextRound(
         IUniswapV3Oracle.SwapInfo calldata prevRoundExitSwapInfo,
         PotionBuyInfo calldata nextRoundPotionBuyInfo,
-        IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo
+        IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCExitSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCEnterSwapInfo
     ) external;
 
     /**

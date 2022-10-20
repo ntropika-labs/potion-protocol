@@ -27,6 +27,73 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actionsLength",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "percentagesLength",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentagesMismatch",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "PrincipalPercentagesSumMoreThan100",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -46,6 +113,11 @@ const _abi = [
           {
             internalType: "uint256[]",
             name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
             type: "uint256[]",
           },
         ],
@@ -72,6 +144,11 @@ const _abi = [
           {
             internalType: "uint256[]",
             name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
             type: "uint256[]",
           },
         ],
@@ -104,6 +181,11 @@ const _abi = [
           {
             internalType: "uint256[]",
             name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
             type: "uint256[]",
           },
         ],
@@ -150,6 +232,11 @@ const _abi = [
           {
             internalType: "uint256[]",
             name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
             type: "uint256[]",
           },
         ],

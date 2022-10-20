@@ -29,13 +29,25 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
       },
       {
         internalType: "uint256",
-        name: "value",
+        name: "index",
         type: "uint256",
       },
     ],
@@ -46,12 +58,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_principalPercentagesLength",
+        name: "actionsLength",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_principalPercentagesLengthExpected",
+        name: "percentagesLength",
         type: "uint256",
       },
     ],
@@ -61,9 +73,21 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "totalSumOfPercentages",
-        type: "uint256",
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
       },
     ],
     name: "PrincipalPercentagesSumMoreThan100",
@@ -300,19 +324,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "uint256[]",
-        name: "_principalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "PrincipalPercentagesUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "bytes32",
         name: "role",
@@ -463,6 +474,11 @@ const _abi = [
             name: "actionsIndexes",
             type: "uint256[]",
           },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
         ],
         indexed: false,
         internalType: "struct IVaultV0.Strategy",
@@ -487,6 +503,11 @@ const _abi = [
           {
             internalType: "uint256[]",
             name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
             type: "uint256[]",
           },
         ],
@@ -716,6 +737,11 @@ const _abi = [
             name: "actionsIndexes",
             type: "uint256[]",
           },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
         ],
         internalType: "struct IVaultV0.Strategy",
         name: "strategy",
@@ -893,6 +919,11 @@ const _abi = [
             name: "actionsIndexes",
             type: "uint256[]",
           },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
         ],
         internalType: "struct IVaultV0.Strategy",
         name: "strategy",
@@ -1004,38 +1035,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "actionIndex",
-        type: "uint256",
-      },
-    ],
-    name: "getPrincipalPercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "percentage",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getPrincipalPercentages",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -1085,19 +1084,6 @@ const _abi = [
       },
     ],
     name: "getRoleMemberCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTotalPrincipalPercentages",
     outputs: [
       {
         internalType: "uint256",
@@ -1537,19 +1523,6 @@ const _abi = [
       },
     ],
     name: "setPerformanceFee",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256[]",
-        name: "newPrincipalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "setPrincipalPercentages",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

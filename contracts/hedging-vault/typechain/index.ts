@@ -162,6 +162,8 @@ export type { IRoundsInputVault } from "./contracts/interfaces/IRoundsInputVault
 export { IRoundsInputVault__factory } from "./factories/contracts/interfaces/IRoundsInputVault__factory";
 export type { IRoundsOutputVault } from "./contracts/interfaces/IRoundsOutputVault";
 export { IRoundsOutputVault__factory } from "./factories/contracts/interfaces/IRoundsOutputVault__factory";
+export type { ISwapToUSDCAction } from "./contracts/interfaces/ISwapToUSDCAction";
+export { ISwapToUSDCAction__factory } from "./factories/contracts/interfaces/ISwapToUSDCAction__factory";
 export type { ISwapToUSDCActionV0 } from "./contracts/interfaces/ISwapToUSDCActionV0";
 export { ISwapToUSDCActionV0__factory } from "./factories/contracts/interfaces/ISwapToUSDCActionV0__factory";
 export type { IUniswapV3Oracle } from "./contracts/interfaces/IUniswapV3Oracle";

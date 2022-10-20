@@ -72,17 +72,11 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundToken, false);
         __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsManager_init_unchained(actions, principalPercentages);
+        __ActionsManager_init_unchained(actions);
         __ReentrancyGuard_init_unchained();
 
         _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
-
-        // The default strategy is defined by the order of the actions passed to the vault, thus
-        // only a sequence of consecutive indexes up to the `actions.length` minus 1 is needed
-        DefaultStrategy.actionsIndexes = new uint256[](actions.length);
-        for (uint256 i = 0; i < actions.length; i++) {
-            DefaultStrategy.actionsIndexes[i] = i;
-        }
+        _setDefaultStrategy(actions, principalPercentages);
     }
 
     /// STATE CHANGERS
@@ -215,6 +209,61 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
     /// INTERNALS
 
     /**
+        @notice Sets the default strategy that will be used when no strategy is given in the `enterPosition` call
+
+        @param actions The list of actions to be executed in the strategy
+        @param principalPercentages The list of percentages of the principal that will be used for each action
+
+        @dev The length of the actions and principalPercentages arrays must be the same
+     */
+    function _setDefaultStrategy(IAction[] calldata actions, uint256[] calldata principalPercentages) private {
+        if (principalPercentages.length != actions.length) {
+            revert PrincipalPercentagesMismatch(actions.length, principalPercentages.length);
+        }
+
+        for (uint256 i = 0; i < actions.length; i++) {
+            uint256 percentage = principalPercentages[i];
+
+            // If the percentage is 0, skip this action for the default strategy
+            if (percentage == 0) {
+                continue;
+            }
+
+            DefaultStrategy.actionsIndexes.push(i);
+            DefaultStrategy.principalPercentages.push(percentage);
+        }
+    }
+
+    /**
+        @notice See { setPrincipalPercentages }
+     */
+    function _validatePrincipalPercentages(Strategy memory strategy) private pure returns (uint256 totalPercentage) {
+        uint256 numActions = strategy.actionsIndexes.length;
+        uint256 numPercentages = strategy.principalPercentages.length;
+
+        if (numPercentages != numActions) {
+            revert PrincipalPercentagesMismatch(strategy.actionsIndexes.length, strategy.principalPercentages.length);
+        }
+
+        uint256 sumPrincipalPercentages = 0;
+
+        for (uint256 i = 0; i < numPercentages; i++) {
+            uint256 percentage = strategy.principalPercentages[i];
+            if (percentage > PercentageUtils.PERCENTAGE_100) {
+                revert PrincipalPercentageOutOfRange(strategy, i);
+            }
+
+            sumPrincipalPercentages += percentage;
+        }
+
+        if (sumPrincipalPercentages > PercentageUtils.PERCENTAGE_100) {
+            revert PrincipalPercentagesSumMoreThan100(strategy);
+        }
+
+        return sumPrincipalPercentages;
+    }
+
+    /**
         @notice Enters a position in the Vault. The strategy is used to determine the actions to be
                 executed in order to enter the position
 
@@ -223,9 +272,11 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
     function _enterPosition(Strategy memory strategy) private {
         _setLifecycleState(LifecycleState.Locked);
 
+        uint256 totalPercentage = _validatePrincipalPercentages(strategy);
+
         uint256 totalPrincipalAmount = totalAssets();
 
-        uint256 maxAmountToInvest = getTotalPrincipalPercentages().applyPercentage(totalPrincipalAmount);
+        uint256 maxAmountToInvest = totalPercentage.applyPercentage(totalPrincipalAmount);
         uint256 actualAmountInvested = 0;
         address investmentAsset = asset();
 
@@ -236,7 +287,7 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
             IAction action = getAction(actionIndex);
 
-            uint256 amountToInvest = getPrincipalPercentage(actionIndex).applyPercentage(totalPrincipalAmount);
+            uint256 amountToInvest = strategy.principalPercentages[i].applyPercentage(totalPrincipalAmount);
 
             IERC20(investmentAsset).safeApprove(address(action), amountToInvest);
 

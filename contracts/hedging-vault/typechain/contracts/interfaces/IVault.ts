@@ -30,22 +30,24 @@ import type {
 export declare namespace IVaultV0 {
   export type StrategyStruct = {
     actionsIndexes: PromiseOrValue<BigNumberish>[];
+    principalPercentages: PromiseOrValue<BigNumberish>[];
   };
 
-  export type StrategyStructOutput = [BigNumber[]] & {
+  export type StrategyStructOutput = [BigNumber[], BigNumber[]] & {
     actionsIndexes: BigNumber[];
+    principalPercentages: BigNumber[];
   };
 }
 
 export interface IVaultInterface extends utils.Interface {
   functions: {
     "canPositionBeEntered()": FunctionFragment;
-    "canPositionBeEnteredWith((uint256[]))": FunctionFragment;
+    "canPositionBeEnteredWith((uint256[],uint256[]))": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
     "enterPosition()": FunctionFragment;
-    "enterPositionWith((uint256[]))": FunctionFragment;
+    "enterPositionWith((uint256[],uint256[]))": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getFeesRecipient()": FunctionFragment;
     "getLifecycleState()": FunctionFragment;

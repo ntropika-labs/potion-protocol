@@ -17,7 +17,7 @@ contract TestWrapperActionsManager is ActionsManagerUpgradeable {
     /**
         @notice Initializes the contract
      */
-    function initialize(IAction[] calldata actions, uint256[] calldata principalPercentages) external initializer {
-        __ActionsManager_init_unchained(actions, principalPercentages);
+    function initialize(IAction[] calldata actions) external initializer {
+        __ActionsManager_init_unchained(actions);
     }
 }

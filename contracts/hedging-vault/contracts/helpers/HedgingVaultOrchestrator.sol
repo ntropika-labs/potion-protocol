@@ -4,6 +4,7 @@
 pragma solidity 0.8.14;
 
 import { IPotionBuyAction } from "../interfaces/IPotionBuyAction.sol";
+import { ISwapToUSDCAction } from "../interfaces/ISwapToUSDCAction.sol";
 import { IVault } from "../interfaces/IVault.sol";
 import { IRoundsInputVault } from "../interfaces/IRoundsInputVault.sol";
 import { IRoundsOutputVault } from "../interfaces/IRoundsOutputVault.sol";
@@ -28,52 +29,44 @@ import { IHedgingVaultOrchestrator } from "../interfaces/IHedgingVaultOrchestrat
 contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
     IVault public investmentVault;
     IPotionBuyAction public potionBuyAction;
+    ISwapToUSDCAction public swapToUSDCAction;
     IRoundsInputVault public roundsInputVault;
     IRoundsOutputVault public roundsOutputVault;
 
     /**
-        @notice Sets the addresses of the vault and the action to be used to enter and exit the position.
-
-        @param investmentVault_ The vault to be used to enter and exit the position.
-        @param potionBuyAction_ The action to be used to enter and exit the position.
-        @param roundsInputVault_ The vault that accepts input deposits on behalf of the investment vault.
-        @param roundsOutputVault_ The vault that accepts output withdrawals on behalf of the investment vault.
+        @inheritdoc IHedgingVaultOrchestrator
     */
     function setSystemAddresses(
         address investmentVault_,
         address potionBuyAction_,
+        address swapToUSDCAction_,
         address roundsInputVault_,
         address roundsOutputVault_
     ) external onlyOwner {
         investmentVault = IVault(investmentVault_);
         potionBuyAction = IPotionBuyAction(potionBuyAction_);
+        swapToUSDCAction = ISwapToUSDCAction(swapToUSDCAction_);
         roundsInputVault = IRoundsInputVault(roundsInputVault_);
         roundsOutputVault = IRoundsOutputVault(roundsOutputVault_);
     }
 
     /**
-        @notice Cycles the hedging vault system and goes to the next round. If it is the very first round (i.e. the vault
-        is not locked), it just notifies the rounds vaults for the next round and enters the position.
-
-        If it is not the very first round, it exits the position, notifies the rounds vaults for the next round, and then
-        enters the position again.
-
-        @param prevRoundExitSwapInfo The Uniswap V3 route to swap the received pay-out from USDC back to the hedged asset
-        @param nextRoundPotionBuyInfo List of counterparties to use for the Potion Protocol buy
-        @param nextRoundEnterSwapInfo The Uniswap V3 route to swap some hedged asset for USDC to pay the Potion Protocol premium
-        
-        @dev Only the owner of the contract (i.e. the Operator) can call this function
+        @inheritdoc IHedgingVaultOrchestrator
      */
     function nextRound(
-        IUniswapV3Oracle.SwapInfo calldata prevRoundExitSwapInfo,
-        PotionBuyInfo calldata nextRoundPotionBuyInfo,
-        IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo
+        IUniswapV3Oracle.SwapInfo calldata potionBuyExitSwapInfo,
+        PotionBuyInfo calldata potionBuyEnterBuyInfo,
+        IUniswapV3Oracle.SwapInfo calldata potionBuyEnterSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCExitSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCEnterSwapInfo
     ) external onlyOwner {
         ILifecycleStates.LifecycleState vaultState = investmentVault.getLifecycleState();
 
         if (vaultState == ILifecycleStates.LifecycleState.Locked) {
             // Exit position
-            potionBuyAction.setSwapInfo(prevRoundExitSwapInfo);
+            potionBuyAction.setSwapInfo(potionBuyExitSwapInfo);
+            swapToUSDCAction.setSwapInfo(swapToUSDCExitSwapInfo);
+
             investmentVault.exitPosition();
         }
 
@@ -83,16 +76,15 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
         roundsOutputVault.nextRound();
 
         // Enter position
-        potionBuyAction.setPotionBuyInfo(nextRoundPotionBuyInfo);
-        potionBuyAction.setSwapInfo(nextRoundEnterSwapInfo);
+        potionBuyAction.setPotionBuyInfo(potionBuyEnterBuyInfo);
+        potionBuyAction.setSwapInfo(potionBuyEnterSwapInfo);
+        swapToUSDCAction.setSwapInfo(swapToUSDCEnterSwapInfo);
+
         investmentVault.enterPosition();
     }
 
     /**
-        @notice Convenience function to know if the next round can be entered or not
-
-        @dev This checks if the position can be exited. This cannot account for the possibility of the position
-        to be entered as this information is not made available until the position is exited
+        @inheritdoc IHedgingVaultOrchestrator
      */
     function canEnterNextRound() external view returns (bool) {
         return investmentVault.canPositionBeExited();

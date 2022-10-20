@@ -333,6 +333,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoundsOutputVault__factory>;
     getContractFactory(
+      name: "ISwapToUSDCAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapToUSDCAction__factory>;
+    getContractFactory(
       name: "ISwapToUSDCActionV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapToUSDCActionV0__factory>;
@@ -917,6 +921,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IRoundsOutputVault>;
+    getContractAt(
+      name: "ISwapToUSDCAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapToUSDCAction>;
     getContractAt(
       name: "ISwapToUSDCActionV0",
       address: string,
