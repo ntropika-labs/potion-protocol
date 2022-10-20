@@ -98,9 +98,11 @@ Cypress.Commands.add(
       cy.get(purchaseButtonAlias)
         .invoke("text")
         .then((buttonText) => {
-          if (buttonText !== purchaseLabel) {
+          const lowercaseButtonText = (buttonText || "").toLowerCase();
+          if (purchaseLabel.match(lowercaseButtonText)) {
             cy.get(purchaseButtonAlias).contains(approveLabel, {
               matchCase: false,
+              timeout: 10000,
             });
             // APPROVE
             // {force: true} prevents the test from failing if a notification is displayed in front of the button
