@@ -1,6 +1,9 @@
 import { InvestmentVaultDeployParams, deployInvestmentVault } from "../common/deployInvestmentVault";
 import { PotionBuyActionDeployParams, deployPotionBuyAction } from "../common/deployPotionBuyAction";
-import { deployHedgingVaultOrchestrator } from "../common/deployHedgingVaultOrchestrator";
+import {
+    deployHedgingVaultOrchestrator,
+    HedgingVaultOrchestratorDeployParams,
+} from "../common/deployHedgingVaultOrchestrator";
 import {
     HedgingVaultOrchestrator,
     InvestmentVault,
@@ -112,7 +115,18 @@ export function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployPa
 
 async function deployContracts(parameters: HedgingVaultDeployParams): Promise<HedgingVaultDeploymentResult> {
     /* Orchestrator */
-    const hedgingVaultOrchestrator = await deployHedgingVaultOrchestrator();
+    const orchestratorParams: HedgingVaultOrchestratorDeployParams = {
+        potionBuyStrategy: {
+            actionsIndexes: [0],
+            principalPercentages: [toSolidityPercentage(100)],
+        },
+        swapToUSDCStrategy: {
+            actionsIndexes: [1],
+            principalPercentages: [toSolidityPercentage(100)],
+        },
+    };
+
+    const hedgingVaultOrchestrator = await deployHedgingVaultOrchestrator(orchestratorParams);
 
     /* Potion Buy Action */
     const potionBuyParams: PotionBuyActionDeployParams = {

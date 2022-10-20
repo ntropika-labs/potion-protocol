@@ -108,7 +108,7 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         // operations performed inside this action
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        _swapOutput(investmentAsset, address(USDC), amountToInvest, swapSlippage, maxSwapDurationSecs);
+        _swapInput(investmentAsset, address(USDC), amountToInvest, swapSlippage, maxSwapDurationSecs);
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }

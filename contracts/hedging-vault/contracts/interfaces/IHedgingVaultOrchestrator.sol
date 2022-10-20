@@ -4,6 +4,7 @@
 pragma solidity 0.8.14;
 
 import { PotionBuyInfo } from "../interfaces/IPotionBuyInfo.sol";
+import { IVaultV0 } from "../interfaces/IVaultV0.sol";
 import { IUniswapV3Oracle } from "../interfaces/IUniswapV3Oracle.sol";
 
 /**  
@@ -18,6 +19,8 @@ import { IUniswapV3Oracle } from "../interfaces/IUniswapV3Oracle.sol";
     @dev The `nextRound` function should be called once the previous round has ended and the payout is available.
  */
 interface IHedgingVaultOrchestrator {
+    /// STATE MODIFIERS
+
     /**
         @notice Sets the addresses of the vault and the action to be used to enter and exit the position.
 
@@ -60,6 +63,8 @@ interface IHedgingVaultOrchestrator {
         IUniswapV3Oracle.SwapInfo calldata swapToUSDCEnterSwapInfo
     ) external;
 
+    /// GETTERS
+
     /**
         @notice Convenience function to know if the next round can be entered or not
 
@@ -67,4 +72,14 @@ interface IHedgingVaultOrchestrator {
         to be entered as this information is not made available until the position is exited
      */
     function canEnterNextRound() external view returns (bool);
+
+    /**
+        @notice Returns the strategy for buying potions
+     */
+    function potionBuyStrategy() external view returns (IVaultV0.Strategy memory);
+
+    /**
+        @notice Returns the strategy for swapping to USDC
+     */
+    function swapToUSDCStrategy() external view returns (IVaultV0.Strategy memory);
 }
