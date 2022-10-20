@@ -1,7 +1,12 @@
 import { Address, log } from "@graphprotocol/graph-ts";
 import {
   PotionBuyAction as ActionContract,
+  CycleDurationChanged,
   MaxPremiumPercentageChanged,
+  MaxSwapDurationChanged,
+  PremiumSlippageChanged,
+  StrikePercentageChanged,
+  SwapSlippageChanged,
 } from "../generated/PotionBuyAction/PotionBuyAction";
 import { PotionBuyAction } from "../generated/schema";
 
@@ -37,7 +42,7 @@ export function setVault(id: Address, vault: Address): void {
   ]);
 }
 
-export function handleMaxPremiumPercentageChanged(
+function handleMaxPremiumPercentageChanged(
   event: MaxPremiumPercentageChanged
 ): void {
   const action = getOrCreateAction(event.address);
@@ -48,3 +53,62 @@ export function handleMaxPremiumPercentageChanged(
     event.params.maxPremiumPercentage.toString(),
   ]);
 }
+
+function handleCycleDurationChanged(event: CycleDurationChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.cycleDurationSecs = event.params.cycleDurationSecs;
+  action.save();
+  log.info("changed cycleDurationSecs of action {} to {}", [
+    event.address.toHexString(),
+    event.params.cycleDurationSecs.toString(),
+  ]);
+}
+
+function handleMaxSwapDurationChanged(event: MaxSwapDurationChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.maxSwapDurationSecs = event.params.maxSwapDurationSecs;
+  action.save();
+  log.info("changed maxSwapDurationSecs of action {} to {}", [
+    event.address.toHexString(),
+    event.params.maxSwapDurationSecs.toString(),
+  ]);
+}
+
+function handlePremiumSlippageChanged(event: PremiumSlippageChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.premiumSlippage = event.params.premiumSlippage;
+  action.save();
+  log.info("changed premiumSlippage of action {} to {}", [
+    event.address.toHexString(),
+    event.params.premiumSlippage.toString(),
+  ]);
+}
+
+function handleStrikePercentageChanged(event: StrikePercentageChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.strikePercentage = event.params.strikePercentage;
+  action.save();
+  log.info("changed strikePercentage of action {} to {}", [
+    event.address.toHexString(),
+    event.params.strikePercentage.toString(),
+  ]);
+}
+
+function handleSwapSlippageChanged(event: SwapSlippageChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.swapSlippage = event.params.swapSlippage;
+  action.save();
+  log.info("changed swapSlippage of action {} to {}", [
+    event.address.toHexString(),
+    event.params.swapSlippage.toString(),
+  ]);
+}
+
+export {
+  handleCycleDurationChanged,
+  handleMaxPremiumPercentageChanged,
+  handleMaxSwapDurationChanged,
+  handlePremiumSlippageChanged,
+  handleStrikePercentageChanged,
+  handleSwapSlippageChanged,
+};

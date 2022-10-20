@@ -8,9 +8,12 @@ import {
   Withdraw,
 } from "../generated/InvestmentVault/InvestmentVault";
 import {
-  ActionPositionEntered,
-  ActionPositionExited,
+  CycleDurationChanged,
   MaxPremiumPercentageChanged,
+  MaxSwapDurationChanged,
+  PremiumSlippageChanged,
+  StrikePercentageChanged,
+  SwapSlippageChanged,
 } from "../generated/PotionBuyAction/PotionBuyAction";
 import {
   DepositWithReceipt,
@@ -122,50 +125,85 @@ export function createWithdraw(
 }
 
 // PotionBuyAction events
-export function createActionPositionEntered(
-  investmentAsset: Address,
-  amountToInvest: BigInt
-): ActionPositionEntered {
-  const event = changetype<ActionPositionEntered>(newMockEvent());
-
-  event.parameters = [
-    new ethereum.EventParam(
-      "investmentAsset",
-      ethereum.Value.fromAddress(investmentAsset)
-    ),
-    new ethereum.EventParam(
-      "amountToInvest",
-      ethereum.Value.fromUnsignedBigInt(amountToInvest)
-    ),
-  ];
-
-  return event;
-}
-
-export function createActionPositionExited(
-  investmentAsset: Address,
-  amountReturned: BigInt
-): ActionPositionExited {
-  const event = changetype<ActionPositionExited>(newMockEvent());
-
-  event.parameters = [
-    new ethereum.EventParam(
-      "investmentAsset",
-      ethereum.Value.fromAddress(investmentAsset)
-    ),
-    new ethereum.EventParam(
-      "amountReturned",
-      ethereum.Value.fromUnsignedBigInt(amountReturned)
-    ),
-  ];
-
-  return event;
-}
-
 export function createMaxPremiumPercentageChanged(
   maxPremiumPercentage: BigInt
 ): MaxPremiumPercentageChanged {
   const event = changetype<MaxPremiumPercentageChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "maxPremiumPercentage",
+      ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createCycleDurationChanged(
+  maxPremiumPercentage: BigInt
+): CycleDurationChanged {
+  const event = changetype<CycleDurationChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "maxPremiumPercentage",
+      ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createMaxSwapDurationChanged(
+  maxPremiumPercentage: BigInt
+): MaxSwapDurationChanged {
+  const event = changetype<MaxSwapDurationChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "maxPremiumPercentage",
+      ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createPremiumSlippageChanged(
+  maxPremiumPercentage: BigInt
+): PremiumSlippageChanged {
+  const event = changetype<PremiumSlippageChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "maxPremiumPercentage",
+      ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createStrikePercentageChanged(
+  maxPremiumPercentage: BigInt
+): StrikePercentageChanged {
+  const event = changetype<StrikePercentageChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "maxPremiumPercentage",
+      ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createSwapSlippageChanged(
+  maxPremiumPercentage: BigInt
+): SwapSlippageChanged {
+  const event = changetype<SwapSlippageChanged>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam(

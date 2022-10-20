@@ -1,4 +1,4 @@
-import { Address, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, log } from "@graphprotocol/graph-ts";
 import {
   ActionsAdded,
   VaultPositionEntered,
@@ -8,6 +8,10 @@ import {
 import { HedgingVault } from "../generated/schema";
 import { getOrCreateToken } from "./token";
 import { setVault } from "./potionBuyAction";
+import { getOrCreateRound } from "./rounds";
+import { createBlock } from "./blocks";
+
+const BIGINT_MINUS_ONE = BigInt.fromString("-1");
 
 function createHedgingVault(id: Address): HedgingVault {
   const contract = InvestmentVault.bind(id);
@@ -19,14 +23,6 @@ function createHedgingVault(id: Address): HedgingVault {
   vault.shareToken = id;
   vault.save();
   return vault;
-}
-
-function getHedgingVault(id: Address): HedgingVault {
-  const vault = HedgingVault.load(id);
-  if (vault == null) {
-    log.error("vault address {} doesn't exists", [id.toHexString()]);
-  }
-  return vault as HedgingVault;
 }
 
 function getOrCreateHedgingVault(id: Address): HedgingVault {
@@ -43,7 +39,21 @@ function setAction(id: Address, action: Address): void {
   vault.save();
 }
 
-export function handleActionsAdded(event: ActionsAdded): void {
+function getCurrentRound(vault: HedgingVault): BigInt {
+  if (vault.currentRound) {
+    return vault.currentRound as BigInt;
+  }
+  log.error("vault {} doesn't have a round set", [vault.id.toHexString()]);
+  return BIGINT_MINUS_ONE;
+}
+
+function setCurrentRound(id: Address, currentRound: BigInt): void {
+  const vault = getOrCreateHedgingVault(id);
+  vault.currentRound = currentRound;
+  vault.save();
+}
+
+function handleActionsAdded(event: ActionsAdded): void {
   setAction(event.address, event.params.actions[0]);
   setVault(event.params.actions[0], event.address);
   log.info("PotionBuyAction {} added to vault {}", [
@@ -52,18 +62,45 @@ export function handleActionsAdded(event: ActionsAdded): void {
   ]);
 }
 
-export function handleVaultPositionEntered(event: VaultPositionEntered): void {
-  const vault = getHedgingVault(event.address);
-  log.info("address(), principalAmountInvested {}, totalPrincipalAmount {}", [
-    vault.id.toHexString(),
-    event.params.principalAmountInvested.toString(),
-    event.params.totalPrincipalAmount.toString(),
-  ]);
+function handleVaultPositionEntered(event: VaultPositionEntered): void {
+  const vault = getOrCreateHedgingVault(event.address);
+  const currentRound = getCurrentRound(vault);
+  if (currentRound.gt(BIGINT_MINUS_ONE)) {
+    createBlock(event.block.hash, event.block.number, event.block.timestamp);
+    const round = getOrCreateRound(currentRound, vault.id);
+    round.assetsInvested = event.params.principalAmountInvested;
+    round.blockEntered = event.block.hash;
+    round.save();
+    log.info(
+      "PositionEntered for vault {}, with principalAmountInvested {} and totalPrincipalAmount {}",
+      [
+        vault.id.toHexString(),
+        event.params.principalAmountInvested.toString(),
+        event.params.totalPrincipalAmount.toString(),
+      ]
+    );
+  }
 }
-export function handleVaultPositionExited(event: VaultPositionExited): void {
-  const vault = getHedgingVault(event.address);
-  log.info("address {}, newPrincipalAmount {}", [
-    vault.id.toHexString(),
-    event.params.newPrincipalAmount.toString(),
-  ]);
+
+function handleVaultPositionExited(event: VaultPositionExited): void {
+  const vault = getOrCreateHedgingVault(event.address);
+  const currentRound = getCurrentRound(vault);
+  if (currentRound.gt(BIGINT_MINUS_ONE)) {
+    createBlock(event.block.hash, event.block.number, event.block.timestamp);
+    const round = getOrCreateRound(currentRound, vault.id);
+    round.totalAssetsAtRoundEnd = event.params.newPrincipalAmount;
+    round.blockExited = event.block.hash;
+    round.save();
+    log.info("PositionExited for vault {} with newPrincipalAmount {}", [
+      vault.id.toHexString(),
+      event.params.newPrincipalAmount.toString(),
+    ]);
+  }
 }
+
+export {
+  setCurrentRound,
+  handleActionsAdded,
+  handleVaultPositionEntered,
+  handleVaultPositionExited,
+};

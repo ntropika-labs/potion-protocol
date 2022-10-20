@@ -50,7 +50,18 @@ dataSources:
       eventHandlers:
         - event: MaxPremiumPercentageChanged(uint256)
           handler: handleMaxPremiumPercentageChanged
+        - event: CycleDurationChanged(uint256)
+          handler: handleCycleDurationChanged
+        - event: MaxSwapDurationChanged(uint256)
+          handler: handleMaxSwapDurationChanged
+        - event: PremiumSlippageChanged(uint256)
+          handler: handlePremiumSlippageChanged
+        - event: StrikePercentageChanged(uint256)
+          handler: handleStrikePercentageChanged
+        - event: SwapSlippageChanged(uint256)
+          handler: handleSwapSlippageChanged
       file: ./src/potionBuyAction.ts
+
   
   - kind: ethereum/contract
     name: RoundsInputVault

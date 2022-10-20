@@ -28,6 +28,7 @@ type HedgingVault @entity {
   #investors: [Investor!] @derivedFrom(field: "user")
   lastAssetsInvested: BigInt
   lastShareRatio: BigInt
+  currentRound: BigInt
   # PotionBuyAction settings - we might create a separate entity for this
   rounds: [Round!] @derivedFrom(field: "vault")
 }
@@ -50,18 +51,18 @@ type Round @entity {
   vault: HedgingVault!
   roundNumber: BigInt!
   #NextRound()
-  shareRatioAtRoundEnd: BigDecimal
+  shareRatioAtRoundEnd: BigInt
   # VaultPositionExited()
-  totalAssetsAtRoundEnd: BigDecimal
+  totalAssetsAtRoundEnd: BigInt
   # VaultPositionEntered()
-  assetsInvested: BigDecimal!
+  assetsInvested: BigInt
   # otokenPremium: BigDecimal!
   # uniswapEnterFees: BigDecimal!
   # uniswapExitFees: BigDecimal!
   depositRequests: [DepositRequest!] @derivedFrom(field: "round")
   withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "round")
   # VaultPositionExited() VaultPositionEntered()
-  blockEntered: Block!
+  blockEntered: Block
   blockExited: Block
   deposit: Deposit
   withdrawal: Withdrawal
@@ -70,7 +71,7 @@ type Round @entity {
 
 # Receiver
 type Investor @entity {
-  id: ID!
+  id: Bytes!
   # maybe it is better to add a join entity VaultInvestors?
   vaults: [HedgingVault!]
   user: Bytes!
@@ -82,8 +83,8 @@ type Investor @entity {
 type Deposit @entity {
   id: ID!
   round: Round!
-  amount: BigDecimal!
-  shareAmount: BigDecimal!
+  amount: BigInt!
+  shareAmount: BigInt!
   block: Block!
   tx: Bytes!
 }
@@ -92,8 +93,8 @@ type Deposit @entity {
 type Withdrawal @entity {
   id: ID!
   round: Round!
-  amount: BigDecimal!
-  shareAmount: BigDecimal!
+  amount: BigInt!
+  shareAmount: BigInt!
   block: Block!
   tx: Bytes!
 }
@@ -105,11 +106,11 @@ type DepositRequest @entity {
   sender: Bytes!
   investor: Investor!
   round: Round!
-  amount: BigDecimal!
-  shares: BigDecimal #we get this at the end of the round by multiplying the amount by the share ratio
+  amount: BigInt!
+  shares: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
+  amountRedeemed: BigInt!
+  remainingShares: BigInt!
   block: Block!
-  amountRedeemed: BigDecimal!
-  remainingShares: BigDecimal!
   tx: Bytes!
 }
 
@@ -120,10 +121,10 @@ type WithdrawalRequest @entity {
   sender: Bytes!
   investor: Investor!
   round: Round!
-  amount: BigDecimal!
-  assets: BigDecimal #we get this at the end of the round by multiplying the amount by the share ratio
+  amount: BigInt!
+  assets: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
+  amountRedeemed: BigInt!
+  remainingAssets: BigInt!
   block: Block!
-  amountRedeemed: BigDecimal!
-  remainingAssets: BigDecimal!
   tx: Bytes!
 }
