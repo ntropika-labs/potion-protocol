@@ -22,6 +22,7 @@ import { IVaultV0 } from "../interfaces/IVaultV0.sol";
     actions succeed, then the position is entered. Once the position can be exited, the investment
     actions are also exited and the profit/loss of the investment cycle is realized.
  */
+/* solhint-disable-next-line no-empty-blocks */
 interface IVault is IRolesManager, ILifecycleStates, IEmergencyLock, IRefundsHelper, IFeeManager, IVaultV0 {
     // Empty on purpose
 }
