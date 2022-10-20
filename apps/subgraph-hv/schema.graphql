@@ -1,7 +1,7 @@
 ### STILL WIP
 
 type Token @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   name: String!
   symbol: String!
   decimals: BigInt!
@@ -9,45 +9,40 @@ type Token @entity(immutable: true) {
 
 # we could have a field deposits and withdrawals to track all the deposits and withdrawals for the given block
 type Block @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   number: BigInt!
   timestamp: BigInt!
 }
 
 # ActionsAdded event will be emitted by the vault
 type HedgingVault @entity {
-  id: ID!
-  action: PotionBuyAction!
+  id: Bytes!
+  action: PotionBuyAction
   # RoleGranted() from roles manager upgradeable
   #operator: Bytes!
   #admin: Bytes!
   #strategist: Bytes!
   shareToken: Token!
   asset: Token!
-  rounds: [Round!] @derivedFrom(field: "vault")
+  totalAssets: BigInt!
   #investors: [Investor!] @derivedFrom(field: "user")
-  lastShareRatio: BigDecimal!
-  totalAssets: BigDecimal!
-  lastAssetsInvested: BigDecimal!
-  maxDeposit: BigDecimal!
-  maxMint: BigDecimal!
-  maxWithdraw: BigDecimal!
-  maxRedeem: BigDecimal!
-  hedgingPercentage: BigDecimal!
+  lastAssetsInvested: BigInt
+  lastShareRatio: BigInt
   # PotionBuyAction settings - we might create a separate entity for this
+  rounds: [Round!] @derivedFrom(field: "vault")
 }
 
 # MaxPremiumPercentageChanged() to listen and create the entity
 type PotionBuyAction @entity {
-  id: ID!
-  vault: HedgingVault!
+  id: Bytes!
+  vault: HedgingVault
   nextCycleStartTimestamp: BigInt!
   cycleDurationSecs: BigInt!
-  maxPremiumPercentage: BigDecimal!
-  premiumSlippage: BigDecimal!
-  swapSlippage: BigDecimal!
+  maxPremiumPercentage: BigInt!
+  premiumSlippage: BigInt!
+  swapSlippage: BigInt!
   maxSwapDurationSecs: BigInt!
-  strikePercentage: BigDecimal!
+  strikePercentage: BigInt!
 }
 
 type Round @entity {

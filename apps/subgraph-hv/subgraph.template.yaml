@@ -13,9 +13,13 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - HedgingVault
+        - PotionBuyAction
+        - Token
       abis:
         - name: InvestmentVault
           file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
+        - name: ERC20
+          file: ../../contracts/hedging-vault/abis/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
       eventHandlers:
         - event: ActionsAdded(address[])
           handler: handleActionsAdded
@@ -44,10 +48,6 @@ dataSources:
         - name: PotionBuyAction
           file: ../../contracts/hedging-vault/abis/contracts/actions/PotionBuyAction.sol/PotionBuyAction.json
       eventHandlers:
-        - event: ActionPositionEntered(indexed address,uint256)
-          handler: handleActionPositionEntered
-        - event: ActionPositionExited(indexed address,uint256)
-          handler: handleActionPositionExited
         - event: MaxPremiumPercentageChanged(uint256)
           handler: handleMaxPremiumPercentageChanged
       file: ./src/potionBuyAction.ts
