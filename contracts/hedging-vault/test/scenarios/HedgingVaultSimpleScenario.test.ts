@@ -16,7 +16,7 @@ import {
     SwapToUSDCAction,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { LifecycleStates } from "hedging-vault-sdk";
+import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 import { getEncodedSwapPath } from "../utils/uniswapV3Utils";
 import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/blockchainUtils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
@@ -184,7 +184,7 @@ describe("HedgingVaultBasic", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it("HVB0004 - Full cycle", async function () {
+    it.only("HVB0004 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
@@ -327,7 +327,13 @@ describe("HedgingVaultBasic", function () {
         // Emulate what the orchestrator is doing to enter a position
         await potionBuy.connect(ownerAccount).setPotionBuyInfo(potionBuyInfo);
         await potionBuy.connect(ownerAccount).setSwapInfo(swapInfoEnterPosition);
-        await vault.connect(ownerAccount).enterPosition();
+
+        await expect(vault.connect(ownerAccount).enterPosition())
+            .to.emit(vault, "VaultPositionEntered")
+            .withArgs(amountToBeInvested, amountToBeInvested, {
+                actionsIndexes: [BigNumber.from(0)],
+                principalPercentages: [toSolidityPercentage(100)],
+            });
 
         // For some reason 2 blocks are mined with the last transaction, so we need to
         // substract 1 from the current block
@@ -442,9 +448,19 @@ describe("HedgingVaultBasic", function () {
         // Exit the position
         await fastForwardChain(DAY_IN_SECONDS);
 
+        const newPrincipalAmount = amountToBeInvested
+            .sub(uniswapEnterPositionInputAmount)
+            .add(uniswapExitPositionOutputAmount);
+
         // Emulate what the orchestrator is doing
         await potionBuy.connect(ownerAccount).setSwapInfo(swapInfoExitPosition);
-        await vault.connect(ownerAccount).exitPosition();
+
+        await expect(vault.connect(ownerAccount).exitPosition())
+            .to.emit(vault, "VaultPositionExited")
+            .withArgs(newPrincipalAmount, {
+                actionsIndexes: [BigNumber.from(0)],
+                principalPercentages: [toSolidityPercentage(100)],
+            });
 
         const cycleEndTimestamp = await getCurrentTimestamp();
 
@@ -459,9 +475,7 @@ describe("HedgingVaultBasic", function () {
 
         // Assets balances
         ifMocksEnabled(async () => {
-            expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(
-                amountToBeInvested.sub(uniswapEnterPositionInputAmount).add(uniswapExitPositionOutputAmount),
-            );
+            expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(newPrincipalAmount);
         });
         expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(0);
         expect(await tEnv.USDC.balanceOf(potionBuy.address)).to.equal(0);
