@@ -11,7 +11,7 @@ import type { PotionCardFragment } from "subgraph-queries/generated/operations";
 
 export const usePotions = (
   underlyings: MaybeRef<string[]>,
-  timestamp: MaybeRef<string | number>,
+  timestamp: MaybeRef<number>,
   limit: MaybeRef<number> = 8
 ) => {
   const mostCollateralized = ref<PotionCardFragment[]>([]);
@@ -111,19 +111,21 @@ export const usePotions = (
       newMostPurchased?.value?.otokens?.length === limit ?? false;
   };
 
-  const cleanLoad = async () => {
-    if (deepUnref(timestamp) > 0) {
+  const cleanLoad = async (timestamp: number, underlyings: string[]) => {
+    if (timestamp > 0 && underlyings.length > 0) {
       mostCollateralized.value = [];
       mostPurchased.value = [];
       await loadMostPopular();
     }
   };
 
-  onMounted(cleanLoad);
-
-  if (isRef(timestamp)) {
-    watch(timestamp, cleanLoad);
+  if (isRef(underlyings) && isRef(timestamp)) {
+    watch([timestamp, underlyings], ([time, unders]) => {
+      cleanLoad(time, unders);
+    });
   }
+
+  onMounted(() => cleanLoad(deepUnref(timestamp), deepUnref(underlyings)));
 
   return {
     canLoadMoreCollateralized,
