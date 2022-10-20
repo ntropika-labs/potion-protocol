@@ -109,14 +109,16 @@ Cypress.Commands.add(
             // TOAST NOTIFICATION
             cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
 
-            cy.get(purchaseButtonAlias).should("not.be.disabled");
+            cy.get(purchaseButtonAlias).should("not.be.disabled", {
+              timeout: 20000,
+            });
           }
         });
     }
 
     cy.get(purchaseButtonAlias)
       .should("not.be.disabled")
-      .contains(purchaseLabel, { matchCase: false });
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 });
     // PURCHASE
     // {force: true} prevents the test from failing if a notification is displayed in front of the button
     cy.get(purchaseButtonAlias).trigger("click", { force: true });
@@ -126,6 +128,6 @@ Cypress.Commands.add(
 
     cy.get(purchaseButtonAlias)
       .should("not.be.disabled")
-      .contains(purchaseLabel, { matchCase: false });
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 });
   }
 );
