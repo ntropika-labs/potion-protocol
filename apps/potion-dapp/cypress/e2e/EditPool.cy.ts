@@ -145,8 +145,6 @@ describe("Edit Pool Flow", () => {
       cy.get("[test-next]").first().as("purchaseButton");
 
       cy.approveAndPurchase(0, "@purchaseButton", "edit");
-
-      cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
     });
   });
 });
