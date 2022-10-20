@@ -24,6 +24,7 @@ interface Props {
   slippage: number;
   balance: number;
   allowance: number;
+  valid: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,6 +85,7 @@ const etherscanUrl = computed(() => getEtherscanUrl(props.address));
           :slippage="props.slippage"
           :allowance="props.allowance"
           :balance="props.balance"
+          :valid="valid"
           @buy-potions="emits('buyPotions')"
         ></BuyPotionButton>
       </div>
