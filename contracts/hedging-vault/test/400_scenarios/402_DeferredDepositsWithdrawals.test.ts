@@ -270,7 +270,7 @@ async function setupTestConditions(
     
     @author Roberto Cano <robercano>
  */
-describe.skip("DeferredDepositsWithdrawals", function () {
+describe("DeferredDepositsWithdrawals", function () {
     // let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
@@ -467,6 +467,7 @@ describe.skip("DeferredDepositsWithdrawals", function () {
         // System Addresses
         expect(await orchestrator.investmentVault()).to.equal(tEnv.investmentVault.address);
         expect(await orchestrator.potionBuyAction()).to.equal(tEnv.potionBuyAction.address);
+        expect(await orchestrator.swapToUSDCAction()).to.equal(tEnv.swapToUSDCAction.address);
         expect(await orchestrator.roundsInputVault()).to.equal(tEnv.roundsInputVault.address);
         expect(await orchestrator.roundsOutputVault()).to.equal(tEnv.roundsOutputVault.address);
     });

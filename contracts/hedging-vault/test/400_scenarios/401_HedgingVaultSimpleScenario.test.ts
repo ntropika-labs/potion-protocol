@@ -184,7 +184,7 @@ describe("HedgingVaultBasic", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it.only("HVB0004 - Full cycle", async function () {
+    it("HVB0004 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = 1000.0;
         const USDCPriceInUSD = 1.0;
