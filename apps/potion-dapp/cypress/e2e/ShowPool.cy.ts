@@ -157,7 +157,7 @@ describe("Show Pool Flow", () => {
         it("Shows the correct filters", () => {
           cy.get("[test-claim-table-toggle-all-button]")
             .should("be.visible")
-            .and("have.class", "bg-transparent");
+            .and("not.have.class", "bg-transparent");
           cy.get("[test-claim-table-toggle-asset-button]").should(
             "have.length",
             6

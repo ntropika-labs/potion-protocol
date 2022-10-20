@@ -201,7 +201,7 @@ watch(approveReceipt, (receipt) => {
               palette="secondary"
               :inline="true"
               :label="deployLabel"
-              :disabled="isNotConnected"
+              :disabled="isNotConnected || !validInput"
               :loading="deployPoolLoading"
               @click="handleDeployPool"
             >
