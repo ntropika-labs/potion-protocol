@@ -99,7 +99,7 @@ Cypress.Commands.add(
         .invoke("text")
         .then((buttonText) => {
           const lowercaseButtonText = (buttonText || "").toLowerCase();
-          if (purchaseLabel.match(lowercaseButtonText)) {
+          if (!purchaseLabel.match(lowercaseButtonText)) {
             cy.get(purchaseButtonAlias).contains(approveLabel, {
               matchCase: false,
               timeout: 10000,
