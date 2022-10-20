@@ -55,7 +55,8 @@ const redeemablePayoutsMap = computed(() => {
   const result = new Map<string, number>();
   Array.from(redeemableBalancesMap.value.entries()).forEach(([key, value]) => {
     const payout = expiredPotionsPayouts.value.get(key);
-    if (payout && parseInt(value) !== 0) {
+
+    if (payout && parseFloat(value) !== 0) {
       result.set(key, parseFloat(payout));
     }
   });
