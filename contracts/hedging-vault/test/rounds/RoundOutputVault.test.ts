@@ -6,7 +6,7 @@ import { RoundsOutputVault, ERC4626, MockERC20PresetMinterPauser, MockERC4626 } 
 
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
 import { mockERC4626, mockERC20 } from "../../scripts/test/contractsMocks";
 import {
     ifMocksEnabled,

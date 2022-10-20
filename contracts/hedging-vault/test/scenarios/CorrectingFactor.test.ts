@@ -11,9 +11,9 @@ import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfi
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates, OTOKEN_DECIMALS, USDC_DECIMALS, toSolidityPercentage } from "hedging-vault-sdk";
-import { getEncodedSwapPath } from "../utils/UniswapV3Utils";
-import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/BlockchainUtils";
-import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import { getEncodedSwapPath } from "../utils/uniswapV3Utils";
+import { fastForwardChain, DAY_IN_SECONDS, getCurrentTimestamp } from "../utils/blockchainUtils";
+import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
 

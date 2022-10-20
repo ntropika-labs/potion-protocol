@@ -15,7 +15,7 @@ import {
 } from "../../typechain";
 
 import * as PercentageUtils from "hedging-vault-sdk";
-import { expectSolidityDeepCompare } from "../utils/ExpectDeepUtils";
+import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
 import { BigNumber } from "ethers";
 
 chai.use(smock.matchers);

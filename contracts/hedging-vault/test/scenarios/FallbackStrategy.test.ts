@@ -270,7 +270,7 @@ async function setupTestConditions(
     
     @author Roberto Cano <robercano>
  */
-describe("DeferredDepositsWithdrawals", function () {
+describe.skip("DeferredDepositsWithdrawals", function () {
     // let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
