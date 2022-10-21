@@ -27,6 +27,18 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+    principalPercentages: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[], BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+    principalPercentages: BigNumber[];
+  };
+}
+
 export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
@@ -40,6 +52,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "asset()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "canPositionBeEntered()": FunctionFragment;
+    "canPositionBeEnteredWith((uint256[],uint256[]))": FunctionFragment;
     "canPositionBeExited()": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
@@ -49,6 +62,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "enterPosition()": FunctionFragment;
+    "enterPositionWith((uint256[],uint256[]))": FunctionFragment;
     "exitPosition()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
@@ -56,12 +70,9 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "getLifecycleState()": FunctionFragment;
     "getManagementFee()": FunctionFragment;
     "getPerformanceFee()": FunctionFragment;
-    "getPrincipalPercentage(uint256)": FunctionFragment;
-    "getPrincipalPercentages()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
-    "getTotalPrincipalPercentages()": FunctionFragment;
     "getVaultCap()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -87,7 +98,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "setFeesRecipient(address)": FunctionFragment;
     "setManagementFee(uint256)": FunctionFragment;
     "setPerformanceFee(uint256)": FunctionFragment;
-    "setPrincipalPercentages(uint256[])": FunctionFragment;
     "setVaultCap(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -112,6 +122,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "asset"
       | "balanceOf"
       | "canPositionBeEntered"
+      | "canPositionBeEnteredWith"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
@@ -121,6 +132,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "decreaseAllowance"
       | "deposit"
       | "enterPosition"
+      | "enterPositionWith"
       | "exitPosition"
       | "getAction"
       | "getActionsLength"
@@ -128,12 +140,9 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "getLifecycleState"
       | "getManagementFee"
       | "getPerformanceFee"
-      | "getPrincipalPercentage"
-      | "getPrincipalPercentages"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
-      | "getTotalPrincipalPercentages"
       | "getVaultCap"
       | "grantRole"
       | "hasRole"
@@ -159,7 +168,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
       | "setFeesRecipient"
       | "setManagementFee"
       | "setPerformanceFee"
-      | "setPrincipalPercentages"
       | "setVaultCap"
       | "supportsInterface"
       | "symbol"
@@ -213,6 +221,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canPositionBeEnteredWith",
+    values: [IVaultV0.StrategyStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canPositionBeExited",
     values?: undefined
   ): string;
@@ -246,6 +258,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "enterPositionWith",
+    values: [IVaultV0.StrategyStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "exitPosition",
     values?: undefined
   ): string;
@@ -274,14 +290,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getPrincipalPercentage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPrincipalPercentages",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -292,10 +300,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleMemberCount",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTotalPrincipalPercentages",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getVaultCap",
@@ -408,10 +412,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setPrincipalPercentages",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setVaultCap",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -477,6 +477,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "canPositionBeEnteredWith",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "canPositionBeExited",
     data: BytesLike
   ): Result;
@@ -501,6 +505,10 @@ export interface InvestmentVaultInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "enterPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enterPositionWith",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -529,14 +537,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPrincipalPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPrincipalPercentages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -546,10 +546,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleMemberCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTotalPrincipalPercentages",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -611,10 +607,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setPrincipalPercentages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setVaultCap",
     data: BytesLike
   ): Result;
@@ -651,15 +643,14 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "ManagementFeeChanged(uint256,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "PerformanceFeeChanged(uint256,uint256)": EventFragment;
-    "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "VaultCapChanged(uint256,uint256)": EventFragment;
-    "VaultPositionEntered(uint256,uint256)": EventFragment;
-    "VaultPositionExited(uint256)": EventFragment;
+    "VaultPositionEntered(uint256,uint256,tuple)": EventFragment;
+    "VaultPositionExited(uint256,tuple)": EventFragment;
     "Withdraw(address,address,address,uint256,uint256)": EventFragment;
   };
 
@@ -674,9 +665,6 @@ export interface InvestmentVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ManagementFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -807,17 +795,6 @@ export type PerformanceFeeChangedEvent = TypedEvent<
 export type PerformanceFeeChangedEventFilter =
   TypedEventFilter<PerformanceFeeChangedEvent>;
 
-export interface PrincipalPercentagesUpdatedEventObject {
-  _principalPercentages: BigNumber[];
-}
-export type PrincipalPercentagesUpdatedEvent = TypedEvent<
-  [BigNumber[]],
-  PrincipalPercentagesUpdatedEventObject
->;
-
-export type PrincipalPercentagesUpdatedEventFilter =
-  TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
-
 export interface RoleAdminChangedEventObject {
   role: string;
   previousAdminRole: string;
@@ -888,9 +865,10 @@ export type VaultCapChangedEventFilter = TypedEventFilter<VaultCapChangedEvent>;
 export interface VaultPositionEnteredEventObject {
   totalPrincipalAmount: BigNumber;
   principalAmountInvested: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionEnteredEvent = TypedEvent<
-  [BigNumber, BigNumber],
+  [BigNumber, BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionEnteredEventObject
 >;
 
@@ -899,9 +877,10 @@ export type VaultPositionEnteredEventFilter =
 
 export interface VaultPositionExitedEventObject {
   newPrincipalAmount: BigNumber;
+  strategy: IVaultV0.StrategyStructOutput;
 }
 export type VaultPositionExitedEvent = TypedEvent<
-  [BigNumber],
+  [BigNumber, IVaultV0.StrategyStructOutput],
   VaultPositionExitedEventObject
 >;
 
@@ -984,6 +963,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { canEnter: boolean }>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
@@ -1023,6 +1007,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     exitPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1042,13 +1031,6 @@ export interface InvestmentVault extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { percentage: BigNumber }>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1062,10 +1044,6 @@ export interface InvestmentVault extends BaseContract {
 
     getRoleMemberCount(
       role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1204,11 +1182,6 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1283,6 +1256,11 @@ export interface InvestmentVault extends BaseContract {
 
   canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+  canPositionBeEnteredWith(
+    strategy: IVaultV0.StrategyStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
   canRefund(
@@ -1320,6 +1298,11 @@ export interface InvestmentVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  enterPositionWith(
+    strategy: IVaultV0.StrategyStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   exitPosition(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1339,13 +1322,6 @@ export interface InvestmentVault extends BaseContract {
 
   getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getPrincipalPercentage(
-    actionIndex: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
-
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -1361,8 +1337,6 @@ export interface InvestmentVault extends BaseContract {
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
   getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1499,11 +1473,6 @@ export interface InvestmentVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setPrincipalPercentages(
-    newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setVaultCap(
     newCap: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1578,6 +1547,11 @@ export interface InvestmentVault extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
 
     canRefund(
@@ -1613,6 +1587,11 @@ export interface InvestmentVault extends BaseContract {
 
     enterPosition(overrides?: CallOverrides): Promise<void>;
 
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAction(
@@ -1630,13 +1609,6 @@ export interface InvestmentVault extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1652,8 +1624,6 @@ export interface InvestmentVault extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1785,11 +1755,6 @@ export interface InvestmentVault extends BaseContract {
 
     setPerformanceFee(
       newPerformanceFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1926,13 +1891,6 @@ export interface InvestmentVault extends BaseContract {
       newPerformanceFee?: null
     ): PerformanceFeeChangedEventFilter;
 
-    "PrincipalPercentagesUpdated(uint256[])"(
-      _principalPercentages?: null
-    ): PrincipalPercentagesUpdatedEventFilter;
-    PrincipalPercentagesUpdated(
-      _principalPercentages?: null
-    ): PrincipalPercentagesUpdatedEventFilter;
-
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
       previousAdminRole?: PromiseOrValue<BytesLike> | null,
@@ -1989,20 +1947,24 @@ export interface InvestmentVault extends BaseContract {
       newCap?: PromiseOrValue<BigNumberish> | null
     ): VaultCapChangedEventFilter;
 
-    "VaultPositionEntered(uint256,uint256)"(
+    "VaultPositionEntered(uint256,uint256,tuple)"(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
     VaultPositionEntered(
       totalPrincipalAmount?: null,
-      principalAmountInvested?: null
+      principalAmountInvested?: null,
+      strategy?: null
     ): VaultPositionEnteredEventFilter;
 
-    "VaultPositionExited(uint256)"(
-      newPrincipalAmount?: null
+    "VaultPositionExited(uint256,tuple)"(
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
     VaultPositionExited(
-      newPrincipalAmount?: null
+      newPrincipalAmount?: null,
+      strategy?: null
     ): VaultPositionExitedEventFilter;
 
     "Withdraw(address,address,address,uint256,uint256)"(
@@ -2055,6 +2017,11 @@ export interface InvestmentVault extends BaseContract {
 
     canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
 
     canRefund(
@@ -2092,6 +2059,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     exitPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2111,13 +2083,6 @@ export interface InvestmentVault extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -2133,8 +2098,6 @@ export interface InvestmentVault extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVaultCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2271,11 +2234,6 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setVaultCap(
       newCap: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2355,6 +2313,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canPositionBeEnteredWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canPositionBeExited(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2394,6 +2357,11 @@ export interface InvestmentVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    enterPositionWith(
+      strategy: IVaultV0.StrategyStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     exitPosition(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2413,15 +2381,6 @@ export interface InvestmentVault extends BaseContract {
 
     getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPrincipalPercentages(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -2435,10 +2394,6 @@ export interface InvestmentVault extends BaseContract {
 
     getRoleMemberCount(
       role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2574,11 +2529,6 @@ export interface InvestmentVault extends BaseContract {
 
     setPerformanceFee(
       newPerformanceFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

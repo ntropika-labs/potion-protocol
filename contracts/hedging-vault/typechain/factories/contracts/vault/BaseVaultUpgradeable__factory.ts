@@ -14,12 +14,40 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "index",
+        name: "actualAmountInvested",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "value",
+        name: "maxAmountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "InvestmentTotalTooHigh",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
         type: "uint256",
       },
     ],
@@ -30,12 +58,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_principalPercentagesLength",
+        name: "actionsLength",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_principalPercentagesLengthExpected",
+        name: "percentagesLength",
         type: "uint256",
       },
     ],
@@ -45,9 +73,21 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "totalSumOfPercentages",
-        type: "uint256",
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
       },
     ],
     name: "PrincipalPercentagesSumMoreThan100",
@@ -284,19 +324,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "uint256[]",
-        name: "_principalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "PrincipalPercentagesUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "bytes32",
         name: "role",
@@ -440,6 +467,24 @@ const _abi = [
         name: "principalAmountInvested",
         type: "uint256",
       },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
     ],
     name: "VaultPositionEntered",
     type: "event",
@@ -452,6 +497,24 @@ const _abi = [
         internalType: "uint256",
         name: "newPrincipalAmount",
         type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
       },
     ],
     name: "VaultPositionExited",
@@ -666,6 +729,37 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "canPositionBeEnteredWith",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canEnter",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "canPositionBeExited",
     outputs: [
@@ -817,6 +911,31 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "enterPositionWith",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "exitPosition",
     outputs: [
@@ -916,38 +1035,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "actionIndex",
-        type: "uint256",
-      },
-    ],
-    name: "getPrincipalPercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "percentage",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getPrincipalPercentages",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -997,19 +1084,6 @@ const _abi = [
       },
     ],
     name: "getRoleMemberCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTotalPrincipalPercentages",
     outputs: [
       {
         internalType: "uint256",
@@ -1096,64 +1170,6 @@ const _abi = [
         type: "bool",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "adminAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "strategistAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operatorAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "underlyingAsset",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "underlyingAssetCap",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "managementFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "performanceFee",
-        type: "uint256",
-      },
-      {
-        internalType: "address payable",
-        name: "feesRecipient",
-        type: "address",
-      },
-      {
-        internalType: "contract IAction[]",
-        name: "actions",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "principalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -1507,19 +1523,6 @@ const _abi = [
       },
     ],
     name: "setPerformanceFee",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256[]",
-        name: "newPrincipalPercentages",
-        type: "uint256[]",
-      },
-    ],
-    name: "setPrincipalPercentages",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

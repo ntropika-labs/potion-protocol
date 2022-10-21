@@ -37,18 +37,14 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     "VAULT_ROLE()": FunctionFragment;
     "getAction(uint256)": FunctionFragment;
     "getActionsLength()": FunctionFragment;
-    "getPrincipalPercentage(uint256)": FunctionFragment;
-    "getPrincipalPercentages()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
-    "getTotalPrincipalPercentages()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "initialize(address[],uint256[])": FunctionFragment;
+    "initialize(address[])": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setPrincipalPercentages(uint256[])": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
@@ -62,18 +58,14 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
       | "VAULT_ROLE"
       | "getAction"
       | "getActionsLength"
-      | "getPrincipalPercentage"
-      | "getPrincipalPercentages"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
-      | "getTotalPrincipalPercentages"
       | "grantRole"
       | "hasRole"
       | "initialize"
       | "renounceRole"
       | "revokeRole"
-      | "setPrincipalPercentages"
       | "supportsInterface"
   ): FunctionFragment;
 
@@ -110,14 +102,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getPrincipalPercentage",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPrincipalPercentages",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -130,10 +114,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getTotalPrincipalPercentages",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -143,7 +123,7 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
+    values: [PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -152,10 +132,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPrincipalPercentages",
-    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -186,14 +162,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPrincipalPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPrincipalPercentages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -205,10 +173,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
     functionFragment: "getRoleMemberCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTotalPrincipalPercentages",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -218,10 +182,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setPrincipalPercentages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
@@ -229,7 +189,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
   events: {
     "ActionsAdded(address[])": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "PrincipalPercentagesUpdated(uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -237,9 +196,6 @@ export interface TestWrapperActionsManagerInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "ActionsAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PrincipalPercentagesUpdated"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -258,17 +214,6 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface PrincipalPercentagesUpdatedEventObject {
-  _principalPercentages: BigNumber[];
-}
-export type PrincipalPercentagesUpdatedEvent = TypedEvent<
-  [BigNumber[]],
-  PrincipalPercentagesUpdatedEventObject
->;
-
-export type PrincipalPercentagesUpdatedEventFilter =
-  TypedEventFilter<PrincipalPercentagesUpdatedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -353,13 +298,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { percentage: BigNumber }>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -373,10 +311,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getRoleMemberCount(
       role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -394,7 +328,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     initialize(
       actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -407,11 +340,6 @@ export interface TestWrapperActionsManager extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -440,13 +368,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
   getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getPrincipalPercentage(
-    actionIndex: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
-
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -463,8 +384,6 @@ export interface TestWrapperActionsManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
-
   grantRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
@@ -479,7 +398,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
   initialize(
     actions: PromiseOrValue<string>[],
-    principalPercentages: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -492,11 +410,6 @@ export interface TestWrapperActionsManager extends BaseContract {
   revokeRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setPrincipalPercentages(
-    newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -525,13 +438,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber[]>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -548,8 +454,6 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -564,7 +468,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     initialize(
       actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -580,11 +483,6 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -597,13 +495,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "PrincipalPercentagesUpdated(uint256[])"(
-      _principalPercentages?: null
-    ): PrincipalPercentagesUpdatedEventFilter;
-    PrincipalPercentagesUpdated(
-      _principalPercentages?: null
-    ): PrincipalPercentagesUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -659,13 +550,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -682,8 +566,6 @@ export interface TestWrapperActionsManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTotalPrincipalPercentages(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -698,7 +580,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     initialize(
       actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -711,11 +592,6 @@ export interface TestWrapperActionsManager extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -747,15 +623,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getActionsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getPrincipalPercentage(
-      actionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPrincipalPercentages(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -769,10 +636,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     getRoleMemberCount(
       role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTotalPrincipalPercentages(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -790,7 +653,6 @@ export interface TestWrapperActionsManager extends BaseContract {
 
     initialize(
       actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -803,11 +665,6 @@ export interface TestWrapperActionsManager extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPrincipalPercentages(
-      newPrincipalPercentages: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

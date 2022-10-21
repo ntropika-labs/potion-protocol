@@ -27,89 +27,169 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export declare namespace IVaultV0 {
-  export type StrategyStruct = {
-    actionsIndexes: PromiseOrValue<BigNumberish>[];
-    principalPercentages: PromiseOrValue<BigNumberish>[];
+export declare namespace IUniswapV3Oracle {
+  export type SwapInfoStruct = {
+    inputToken: PromiseOrValue<string>;
+    outputToken: PromiseOrValue<string>;
+    expectedPriceRate: PromiseOrValue<BigNumberish>;
+    swapPath: PromiseOrValue<BytesLike>;
   };
 
-  export type StrategyStructOutput = [BigNumber[], BigNumber[]] & {
-    actionsIndexes: BigNumber[];
-    principalPercentages: BigNumber[];
+  export type SwapInfoStructOutput = [string, string, BigNumber, string] & {
+    inputToken: string;
+    outputToken: string;
+    expectedPriceRate: BigNumber;
+    swapPath: string;
   };
 }
 
-export interface IVaultInterface extends utils.Interface {
+export declare namespace SwapToUSDCAction {
+  export type SwapToUSDCInitParamsStruct = {
+    adminAddress: PromiseOrValue<string>;
+    strategistAddress: PromiseOrValue<string>;
+    operatorAddress: PromiseOrValue<string>;
+    investmentAsset: PromiseOrValue<string>;
+    USDC: PromiseOrValue<string>;
+    uniswapV3SwapRouter: PromiseOrValue<string>;
+    swapSlippage: PromiseOrValue<BigNumberish>;
+    maxSwapDurationSecs: PromiseOrValue<BigNumberish>;
+  };
+
+  export type SwapToUSDCInitParamsStructOutput = [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    adminAddress: string;
+    strategistAddress: string;
+    operatorAddress: string;
+    investmentAsset: string;
+    USDC: string;
+    uniswapV3SwapRouter: string;
+    swapSlippage: BigNumber;
+    maxSwapDurationSecs: BigNumber;
+  };
+}
+
+export interface SwapToUSDCActionInterface extends utils.Interface {
   functions: {
-    "canPositionBeEntered()": FunctionFragment;
-    "canPositionBeEnteredWith((uint256[],uint256[]))": FunctionFragment;
-    "canPositionBeExited()": FunctionFragment;
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "INVESTOR_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "STRATEGIST_ROLE()": FunctionFragment;
+    "USDC()": FunctionFragment;
+    "VAULT_ROLE()": FunctionFragment;
+    "canPositionBeEntered(address)": FunctionFragment;
+    "canPositionBeExited(address)": FunctionFragment;
     "canRefund(address)": FunctionFragment;
     "canRefundETH()": FunctionFragment;
-    "enterPosition()": FunctionFragment;
-    "enterPositionWith((uint256[],uint256[]))": FunctionFragment;
-    "exitPosition()": FunctionFragment;
-    "getFeesRecipient()": FunctionFragment;
+    "enterPosition(address,uint256)": FunctionFragment;
+    "exitPosition(address)": FunctionFragment;
     "getLifecycleState()": FunctionFragment;
-    "getManagementFee()": FunctionFragment;
-    "getPerformanceFee()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
+    "getSwapInfo(address,address)": FunctionFragment;
+    "getSwapInputAmount(address,address,uint256)": FunctionFragment;
+    "getSwapOutputAmount(address,address,uint256)": FunctionFragment;
+    "getSwapRouter()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "initialize((address,address,address,address,address,address,uint256,uint256))": FunctionFragment;
+    "maxSwapDurationSecs()": FunctionFragment;
     "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "refund(address,uint256,address)": FunctionFragment;
     "refundETH(uint256,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setFeesRecipient(address)": FunctionFragment;
-    "setManagementFee(uint256)": FunctionFragment;
-    "setPerformanceFee(uint256)": FunctionFragment;
+    "setMaxSwapDuration(uint256)": FunctionFragment;
+    "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
+    "setSwapSlippage(uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "swapSlippage()": FunctionFragment;
     "unpause()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "INVESTOR_ROLE"
+      | "OPERATOR_ROLE"
+      | "STRATEGIST_ROLE"
+      | "USDC"
+      | "VAULT_ROLE"
       | "canPositionBeEntered"
-      | "canPositionBeEnteredWith"
       | "canPositionBeExited"
       | "canRefund"
       | "canRefundETH"
       | "enterPosition"
-      | "enterPositionWith"
       | "exitPosition"
-      | "getFeesRecipient"
       | "getLifecycleState"
-      | "getManagementFee"
-      | "getPerformanceFee"
       | "getRoleAdmin"
       | "getRoleMember"
       | "getRoleMemberCount"
+      | "getSwapInfo"
+      | "getSwapInputAmount"
+      | "getSwapOutputAmount"
+      | "getSwapRouter"
       | "grantRole"
       | "hasRole"
+      | "initialize"
+      | "maxSwapDurationSecs"
       | "pause"
+      | "paused"
       | "refund"
       | "refundETH"
       | "renounceRole"
       | "revokeRole"
-      | "setFeesRecipient"
-      | "setManagementFee"
-      | "setPerformanceFee"
+      | "setMaxSwapDuration"
+      | "setSwapInfo"
+      | "setSwapSlippage"
+      | "supportsInterface"
+      | "swapSlippage"
       | "unpause"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "canPositionBeEntered",
+    functionFragment: "ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "canPositionBeEnteredWith",
-    values: [IVaultV0.StrategyStruct]
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "INVESTOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "STRATEGIST_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "USDC", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPositionBeEntered",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "canPositionBeExited",
-    values?: undefined
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "canRefund",
@@ -121,30 +201,14 @@ export interface IVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "enterPosition",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enterPositionWith",
-    values: [IVaultV0.StrategyStruct]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "exitPosition",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getFeesRecipient",
-    values?: undefined
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getLifecycleState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getManagementFee",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPerformanceFee",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -160,6 +224,30 @@ export interface IVaultInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getSwapInfo",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapInputAmount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapOutputAmount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSwapRouter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -167,7 +255,16 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "hasRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [SwapToUSDCAction.SwapToUSDCInitParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxSwapDurationSecs",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refund",
     values: [
@@ -189,25 +286,48 @@ export interface IVaultInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setFeesRecipient",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setManagementFee",
+    functionFragment: "setMaxSwapDuration",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setPerformanceFee",
+    functionFragment: "setSwapInfo",
+    values: [IUniswapV3Oracle.SwapInfoStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapSlippage",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapSlippage",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "canPositionBeEntered",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "canPositionBeEnteredWith",
+    functionFragment: "INVESTOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "STRATEGIST_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "USDC", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "VAULT_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "canPositionBeEntered",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -224,27 +344,11 @@ export interface IVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enterPositionWith",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "exitPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getFeesRecipient",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getLifecycleState",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getManagementFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPerformanceFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -259,9 +363,31 @@ export interface IVaultInterface extends utils.Interface {
     functionFragment: "getRoleMemberCount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapInputAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapOutputAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapRouter",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "maxSwapDurationSecs",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
   decodeFunctionResult(
@@ -270,82 +396,84 @@ export interface IVaultInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setFeesRecipient",
+    functionFragment: "setMaxSwapDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setManagementFee",
+    functionFragment: "setSwapInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setPerformanceFee",
+    functionFragment: "setSwapSlippage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
-    "FeesETHSent(address,uint256,uint256)": EventFragment;
-    "FeesReceipientChanged(address,address)": EventFragment;
-    "FeesSent(address,address,uint256,uint256)": EventFragment;
+    "ActionPositionEntered(address,uint256)": EventFragment;
+    "ActionPositionExited(address,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
-    "ManagementFeeChanged(uint256,uint256)": EventFragment;
-    "PerformanceFeeChanged(uint256,uint256)": EventFragment;
+    "MaxSwapDurationChanged(uint256)": EventFragment;
+    "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "VaultPositionEntered(uint256,uint256,tuple)": EventFragment;
-    "VaultPositionExited(uint256,tuple)": EventFragment;
+    "SwapSlippageChanged(uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "FeesETHSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesReceipientChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesSent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionEntered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActionPositionExited"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ManagementFeeChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PerformanceFeeChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultPositionEntered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultPositionExited"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
-export interface FeesETHSentEventObject {
-  receipient: string;
-  managementAmount: BigNumber;
-  performanceAmount: BigNumber;
+export interface ActionPositionEnteredEventObject {
+  investmentAsset: string;
+  amountToInvest: BigNumber;
 }
-export type FeesETHSentEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  FeesETHSentEventObject
+export type ActionPositionEnteredEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionEnteredEventObject
 >;
 
-export type FeesETHSentEventFilter = TypedEventFilter<FeesETHSentEvent>;
+export type ActionPositionEnteredEventFilter =
+  TypedEventFilter<ActionPositionEnteredEvent>;
 
-export interface FeesReceipientChangedEventObject {
-  oldFeeReceipient: string;
-  newFeeReceipient: string;
+export interface ActionPositionExitedEventObject {
+  investmentAsset: string;
+  amountReturned: BigNumber;
 }
-export type FeesReceipientChangedEvent = TypedEvent<
-  [string, string],
-  FeesReceipientChangedEventObject
+export type ActionPositionExitedEvent = TypedEvent<
+  [string, BigNumber],
+  ActionPositionExitedEventObject
 >;
 
-export type FeesReceipientChangedEventFilter =
-  TypedEventFilter<FeesReceipientChangedEvent>;
+export type ActionPositionExitedEventFilter =
+  TypedEventFilter<ActionPositionExitedEvent>;
 
-export interface FeesSentEventObject {
-  receipient: string;
-  token: string;
-  managementAmount: BigNumber;
-  performanceAmount: BigNumber;
+export interface InitializedEventObject {
+  version: number;
 }
-export type FeesSentEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
-  FeesSentEventObject
->;
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type FeesSentEventFilter = TypedEventFilter<FeesSentEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface LifecycleStateChangedEventObject {
   prevState: number;
@@ -359,29 +487,23 @@ export type LifecycleStateChangedEvent = TypedEvent<
 export type LifecycleStateChangedEventFilter =
   TypedEventFilter<LifecycleStateChangedEvent>;
 
-export interface ManagementFeeChangedEventObject {
-  oldManagementFee: BigNumber;
-  newManagementFee: BigNumber;
+export interface MaxSwapDurationChangedEventObject {
+  maxSwapDurationSecs: BigNumber;
 }
-export type ManagementFeeChangedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  ManagementFeeChangedEventObject
+export type MaxSwapDurationChangedEvent = TypedEvent<
+  [BigNumber],
+  MaxSwapDurationChangedEventObject
 >;
 
-export type ManagementFeeChangedEventFilter =
-  TypedEventFilter<ManagementFeeChangedEvent>;
+export type MaxSwapDurationChangedEventFilter =
+  TypedEventFilter<MaxSwapDurationChangedEvent>;
 
-export interface PerformanceFeeChangedEventObject {
-  oldPerformanceFee: BigNumber;
-  newPerformanceFee: BigNumber;
+export interface PausedEventObject {
+  account: string;
 }
-export type PerformanceFeeChangedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  PerformanceFeeChangedEventObject
->;
+export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
-export type PerformanceFeeChangedEventFilter =
-  TypedEventFilter<PerformanceFeeChangedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -420,37 +542,30 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface VaultPositionEnteredEventObject {
-  totalPrincipalAmount: BigNumber;
-  principalAmountInvested: BigNumber;
-  strategy: IVaultV0.StrategyStructOutput;
+export interface SwapSlippageChangedEventObject {
+  swapSlippage: BigNumber;
 }
-export type VaultPositionEnteredEvent = TypedEvent<
-  [BigNumber, BigNumber, IVaultV0.StrategyStructOutput],
-  VaultPositionEnteredEventObject
+export type SwapSlippageChangedEvent = TypedEvent<
+  [BigNumber],
+  SwapSlippageChangedEventObject
 >;
 
-export type VaultPositionEnteredEventFilter =
-  TypedEventFilter<VaultPositionEnteredEvent>;
+export type SwapSlippageChangedEventFilter =
+  TypedEventFilter<SwapSlippageChangedEvent>;
 
-export interface VaultPositionExitedEventObject {
-  newPrincipalAmount: BigNumber;
-  strategy: IVaultV0.StrategyStructOutput;
+export interface UnpausedEventObject {
+  account: string;
 }
-export type VaultPositionExitedEvent = TypedEvent<
-  [BigNumber, IVaultV0.StrategyStructOutput],
-  VaultPositionExitedEventObject
->;
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
-export type VaultPositionExitedEventFilter =
-  TypedEventFilter<VaultPositionExitedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface IVault extends BaseContract {
+export interface SwapToUSDCAction extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IVaultInterface;
+  interface: SwapToUSDCActionInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -472,16 +587,27 @@ export interface IVault extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    canPositionBeEntered(
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { canEnter: boolean }>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    canPositionBeEnteredWith(
-      strategy: IVaultV0.StrategyStruct,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    USDC(overrides?: CallOverrides): Promise<[string]>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    canPositionBeEntered(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canEnter: boolean }>;
 
     canPositionBeExited(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { canExit: boolean }>;
 
@@ -493,25 +619,17 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<[boolean]>;
 
     enterPosition(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    enterPositionWith(
-      strategy: IVaultV0.StrategyStruct,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     exitPosition(
+      investmentAsset: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getFeesRecipient(overrides?: CallOverrides): Promise<[string]>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<[number]>;
-
-    getManagementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getPerformanceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -529,6 +647,28 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getSwapInfo(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[IUniswapV3Oracle.SwapInfoStructOutput]>;
+
+    getSwapInputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSwapOutputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<[string]>;
+
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -541,9 +681,18 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    initialize(
+      initParams: SwapToUSDCAction.SwapToUSDCInitParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     refund(
       token: PromiseOrValue<string>,
@@ -570,34 +719,56 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setFeesRecipient(
-      newFeesRecipient: PromiseOrValue<string>,
+    setMaxSwapDuration(
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setManagementFee(
-      newManagementFee: PromiseOrValue<BigNumberish>,
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setPerformanceFee(
-      newPerformanceFee: PromiseOrValue<BigNumberish>,
+    setSwapSlippage(
+      swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  canPositionBeEnteredWith(
-    strategy: IVaultV0.StrategyStruct,
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  USDC(overrides?: CallOverrides): Promise<string>;
+
+  VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  canPositionBeEntered(
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+  canPositionBeExited(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   canRefund(
     token: PromiseOrValue<string>,
@@ -607,25 +778,17 @@ export interface IVault extends BaseContract {
   canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
   enterPosition(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  enterPositionWith(
-    strategy: IVaultV0.StrategyStruct,
+    investmentAsset: PromiseOrValue<string>,
+    amountToInvest: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   exitPosition(
+    investmentAsset: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getFeesRecipient(overrides?: CallOverrides): Promise<string>;
-
   getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-  getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -643,6 +806,28 @@ export interface IVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getSwapInfo(
+    inputToken: PromiseOrValue<string>,
+    outputToken: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
+
+  getSwapInputAmount(
+    inputToken: PromiseOrValue<string>,
+    outputToken: PromiseOrValue<string>,
+    amountOut: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSwapOutputAmount(
+    inputToken: PromiseOrValue<string>,
+    outputToken: PromiseOrValue<string>,
+    amountIn: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSwapRouter(overrides?: CallOverrides): Promise<string>;
+
   grantRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
@@ -655,9 +840,18 @@ export interface IVault extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  initialize(
+    initParams: SwapToUSDCAction.SwapToUSDCInitParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
   pause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
   refund(
     token: PromiseOrValue<string>,
@@ -684,34 +878,56 @@ export interface IVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setFeesRecipient(
-    newFeesRecipient: PromiseOrValue<string>,
+  setMaxSwapDuration(
+    durationSeconds: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setManagementFee(
-    newManagementFee: PromiseOrValue<BigNumberish>,
+  setSwapInfo(
+    info: IUniswapV3Oracle.SwapInfoStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setPerformanceFee(
-    newPerformanceFee: PromiseOrValue<BigNumberish>,
+  setSwapSlippage(
+    swapSlippage_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
   unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    canPositionBeEntered(overrides?: CallOverrides): Promise<boolean>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    canPositionBeEnteredWith(
-      strategy: IVaultV0.StrategyStruct,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    USDC(overrides?: CallOverrides): Promise<string>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    canPositionBeEntered(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    canPositionBeExited(overrides?: CallOverrides): Promise<boolean>;
+    canPositionBeExited(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     canRefund(
       token: PromiseOrValue<string>,
@@ -720,22 +936,18 @@ export interface IVault extends BaseContract {
 
     canRefundETH(overrides?: CallOverrides): Promise<boolean>;
 
-    enterPosition(overrides?: CallOverrides): Promise<void>;
-
-    enterPositionWith(
-      strategy: IVaultV0.StrategyStruct,
+    enterPosition(
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    exitPosition(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getFeesRecipient(overrides?: CallOverrides): Promise<string>;
+    exitPosition(
+      investmentAsset: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getLifecycleState(overrides?: CallOverrides): Promise<number>;
-
-    getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -753,6 +965,28 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSwapInfo(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<IUniswapV3Oracle.SwapInfoStructOutput>;
+
+    getSwapInputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<string>;
+
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -765,7 +999,16 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    initialize(
+      initParams: SwapToUSDCAction.SwapToUSDCInitParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
     pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
 
     refund(
       token: PromiseOrValue<string>,
@@ -792,57 +1035,52 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setFeesRecipient(
-      newFeesRecipient: PromiseOrValue<string>,
+    setMaxSwapDuration(
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setManagementFee(
-      newManagementFee: PromiseOrValue<BigNumberish>,
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setPerformanceFee(
-      newPerformanceFee: PromiseOrValue<BigNumberish>,
+    setSwapSlippage(
+      swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
-    "FeesETHSent(address,uint256,uint256)"(
-      receipient?: PromiseOrValue<string> | null,
-      managementAmount?: null,
-      performanceAmount?: null
-    ): FeesETHSentEventFilter;
-    FeesETHSent(
-      receipient?: PromiseOrValue<string> | null,
-      managementAmount?: null,
-      performanceAmount?: null
-    ): FeesETHSentEventFilter;
+    "ActionPositionEntered(address,uint256)"(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
+    ActionPositionEntered(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountToInvest?: null
+    ): ActionPositionEnteredEventFilter;
 
-    "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: PromiseOrValue<string> | null,
-      newFeeReceipient?: PromiseOrValue<string> | null
-    ): FeesReceipientChangedEventFilter;
-    FeesReceipientChanged(
-      oldFeeReceipient?: PromiseOrValue<string> | null,
-      newFeeReceipient?: PromiseOrValue<string> | null
-    ): FeesReceipientChangedEventFilter;
+    "ActionPositionExited(address,uint256)"(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
+    ActionPositionExited(
+      investmentAsset?: PromiseOrValue<string> | null,
+      amountReturned?: null
+    ): ActionPositionExitedEventFilter;
 
-    "FeesSent(address,address,uint256,uint256)"(
-      receipient?: PromiseOrValue<string> | null,
-      token?: PromiseOrValue<string> | null,
-      managementAmount?: null,
-      performanceAmount?: null
-    ): FeesSentEventFilter;
-    FeesSent(
-      receipient?: PromiseOrValue<string> | null,
-      token?: PromiseOrValue<string> | null,
-      managementAmount?: null,
-      performanceAmount?: null
-    ): FeesSentEventFilter;
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "LifecycleStateChanged(uint8,uint8)"(
       prevState?: PromiseOrValue<BigNumberish> | null,
@@ -853,23 +1091,15 @@ export interface IVault extends BaseContract {
       newState?: PromiseOrValue<BigNumberish> | null
     ): LifecycleStateChangedEventFilter;
 
-    "ManagementFeeChanged(uint256,uint256)"(
-      oldManagementFee?: null,
-      newManagementFee?: null
-    ): ManagementFeeChangedEventFilter;
-    ManagementFeeChanged(
-      oldManagementFee?: null,
-      newManagementFee?: null
-    ): ManagementFeeChangedEventFilter;
+    "MaxSwapDurationChanged(uint256)"(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
+    MaxSwapDurationChanged(
+      maxSwapDurationSecs?: null
+    ): MaxSwapDurationChangedEventFilter;
 
-    "PerformanceFeeChanged(uint256,uint256)"(
-      oldPerformanceFee?: null,
-      newPerformanceFee?: null
-    ): PerformanceFeeChangedEventFilter;
-    PerformanceFeeChanged(
-      oldPerformanceFee?: null,
-      newPerformanceFee?: null
-    ): PerformanceFeeChangedEventFilter;
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -904,36 +1134,39 @@ export interface IVault extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "VaultPositionEntered(uint256,uint256,tuple)"(
-      totalPrincipalAmount?: null,
-      principalAmountInvested?: null,
-      strategy?: null
-    ): VaultPositionEnteredEventFilter;
-    VaultPositionEntered(
-      totalPrincipalAmount?: null,
-      principalAmountInvested?: null,
-      strategy?: null
-    ): VaultPositionEnteredEventFilter;
+    "SwapSlippageChanged(uint256)"(
+      swapSlippage?: null
+    ): SwapSlippageChangedEventFilter;
+    SwapSlippageChanged(swapSlippage?: null): SwapSlippageChangedEventFilter;
 
-    "VaultPositionExited(uint256,tuple)"(
-      newPrincipalAmount?: null,
-      strategy?: null
-    ): VaultPositionExitedEventFilter;
-    VaultPositionExited(
-      newPrincipalAmount?: null,
-      strategy?: null
-    ): VaultPositionExitedEventFilter;
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
-    canPositionBeEntered(overrides?: CallOverrides): Promise<BigNumber>;
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    canPositionBeEnteredWith(
-      strategy: IVaultV0.StrategyStruct,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    USDC(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canPositionBeEntered(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    canPositionBeExited(overrides?: CallOverrides): Promise<BigNumber>;
+    canPositionBeExited(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     canRefund(
       token: PromiseOrValue<string>,
@@ -943,25 +1176,17 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     enterPosition(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    enterPositionWith(
-      strategy: IVaultV0.StrategyStruct,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     exitPosition(
+      investmentAsset: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getFeesRecipient(overrides?: CallOverrides): Promise<BigNumber>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getManagementFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPerformanceFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -979,6 +1204,28 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSwapInfo(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapInputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapOutputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -991,9 +1238,18 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initialize(
+      initParams: SwapToUSDCAction.SwapToUSDCInitParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    maxSwapDurationSecs(overrides?: CallOverrides): Promise<BigNumber>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     refund(
       token: PromiseOrValue<string>,
@@ -1020,20 +1276,27 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setFeesRecipient(
-      newFeesRecipient: PromiseOrValue<string>,
+    setMaxSwapDuration(
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setManagementFee(
-      newManagementFee: PromiseOrValue<BigNumberish>,
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setPerformanceFee(
-      newPerformanceFee: PromiseOrValue<BigNumberish>,
+    setSwapSlippage(
+      swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1041,16 +1304,29 @@ export interface IVault extends BaseContract {
   };
 
   populateTransaction: {
-    canPositionBeEntered(
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    canPositionBeEnteredWith(
-      strategy: IVaultV0.StrategyStruct,
+    INVESTOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    USDC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VAULT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    canPositionBeEntered(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     canPositionBeExited(
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1062,25 +1338,17 @@ export interface IVault extends BaseContract {
     canRefundETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     enterPosition(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    enterPositionWith(
-      strategy: IVaultV0.StrategyStruct,
+      investmentAsset: PromiseOrValue<string>,
+      amountToInvest: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     exitPosition(
+      investmentAsset: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getFeesRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getLifecycleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getManagementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getPerformanceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1098,6 +1366,28 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getSwapInfo(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapInputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapOutputAmount(
+      inputToken: PromiseOrValue<string>,
+      outputToken: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSwapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1110,9 +1400,20 @@ export interface IVault extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    initialize(
+      initParams: SwapToUSDCAction.SwapToUSDCInitParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    maxSwapDurationSecs(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     refund(
       token: PromiseOrValue<string>,
@@ -1139,20 +1440,27 @@ export interface IVault extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setFeesRecipient(
-      newFeesRecipient: PromiseOrValue<string>,
+    setMaxSwapDuration(
+      durationSeconds: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setManagementFee(
-      newManagementFee: PromiseOrValue<BigNumberish>,
+    setSwapInfo(
+      info: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setPerformanceFee(
-      newPerformanceFee: PromiseOrValue<BigNumberish>,
+    setSwapSlippage(
+      swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

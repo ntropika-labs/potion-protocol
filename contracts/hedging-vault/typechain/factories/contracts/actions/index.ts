@@ -3,3 +3,4 @@
 /* eslint-disable */
 export * as common from "./common";
 export { PotionBuyAction__factory } from "./PotionBuyAction__factory";
+export { SwapToUSDCAction__factory } from "./SwapToUSDCAction__factory";

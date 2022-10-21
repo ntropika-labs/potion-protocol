@@ -95,7 +95,7 @@ contract PotionBuyAction is
 
      */
     function initialize(PotionBuyInitParams calldata initParams) external initializer {
-        // Prepare the list of tokens that are not allowed to be refunded. In particular the loaned
+        // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
         // asset is not allowed to be refunded and also USDC because the action will hold some of it
         // at some times. This prevents the admin to accidentally refund those assets
         address[] memory cannotRefundTokens = new address[](2);
@@ -137,7 +137,6 @@ contract PotionBuyAction is
         @inheritdoc IAction
 
         @dev The Potion Buy action takes the following steps to enter a position:
-            - Transfer the investment amount to the Action contract
             - Calculate the premium needed for buying the potions, including slippage
             - Check if the premium needed is higher than the allowed maximum premium percentage. The
               premium to be paid cannot be greater than this percentage on the investment amount
@@ -158,7 +157,10 @@ contract PotionBuyAction is
 
         require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
 
-        // The caller is the operator, so we can trust doing this external call first
+        // At this moment in the lifecycle of the vault, this external call could only come back
+        // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
+        // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
+        // operations performed inside this action
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
         uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
