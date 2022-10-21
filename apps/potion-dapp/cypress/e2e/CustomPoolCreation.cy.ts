@@ -126,8 +126,6 @@ describe("Custom Pool Creation Flow", () => {
         .as("purchaseButton");
 
       cy.approveAndPurchase(0, "@purchaseButton", "create pool");
-
-      cy.get(":nth-child(4) > .grid > .col-span-3 > .text-sm");
     });
   });
 });

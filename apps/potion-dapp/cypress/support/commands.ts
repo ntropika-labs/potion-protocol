@@ -120,7 +120,7 @@ Cypress.Commands.add(
         });
     }
 
-    cy.wait(5000);
+    cy.wait(1000);
 
     cy.get(purchaseButtonAlias)
       .contains(purchaseLabel, { matchCase: false, timeout: 20000 })

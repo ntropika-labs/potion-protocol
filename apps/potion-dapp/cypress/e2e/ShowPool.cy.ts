@@ -106,8 +106,6 @@ describe("Show Pool Flow", () => {
             .first()
             .contains(liquidity.toString());
         });
-
-        cy.get(":nth-child(2) > .grid");
       });
     });
 
