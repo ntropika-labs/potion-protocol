@@ -3,7 +3,7 @@
 
 import { aliasQuery, resetApproval } from "../support/utilities";
 
-describe("Show Potion Flow", () => {
+describe.skip("Show Potion Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00", false);

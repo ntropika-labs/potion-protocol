@@ -191,7 +191,7 @@ describe("Custom Potion Creation Flow", () => {
       cy.get(".p-3 > .flex > .text-dwhite-300").clear().type("0.001");
       cy.get("[test-buy-potion]").first().as("purchaseButton");
 
-      cy.approveAndPurchase(0, "@purchaseButton", "buy potion", "approve");
+      cy.approveAndPurchase(0, "@purchaseButton", "buy potion", true, "approve");
     });
   });
 });
