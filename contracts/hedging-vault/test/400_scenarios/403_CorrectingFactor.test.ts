@@ -11,7 +11,6 @@ import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfi
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates, OTOKEN_DECIMALS, USDC_DECIMALS, toSolidityPercentage } from "hedging-vault-sdk";
-import { getEncodedSwapPath } from "../../scripts/test/uniswapV3Utils";
 import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
 import * as HedgingVaultUtils from "hedging-vault-sdk";
@@ -27,7 +26,6 @@ import {
     DeploymentFlags,
     DAY_IN_SECONDS,
 } from "contracts-utils";
-import { calculatePremium } from "../../scripts/test/calculationsUtils";
 
 /**
     @notice Hedging Vault correcting factor tests 
@@ -124,7 +122,7 @@ describe("CorrectingFactor", function () {
             tEnv.strikePercentage,
         );
 
-        const initialPremiumInUSDC = calculatePremium(pool, curve, initialCollateralInUSDC);
+        const initialPremiumInUSDC = HedgingVaultUtils.calculatePremium(pool, curve, initialCollateralInUSDC);
 
         // Get the new order size, based on the initial premium
         const { effectiveVaultSize } = HedgingVaultUtils.calculateOrderSize(
@@ -144,7 +142,7 @@ describe("CorrectingFactor", function () {
             USDCPriceInUSDC,
         );
         const collateralInUSDC = HedgingVaultUtils.applyPercentage(amountToBeProtectedInUSDC, tEnv.strikePercentage);
-        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralInUSDC);
+        const expectedPremiumInUSDC = HedgingVaultUtils.calculatePremium(pool, curve, collateralInUSDC);
 
         const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(
             expectedPremiumInUSDC,
@@ -266,7 +264,7 @@ describe("CorrectingFactor", function () {
                 UnderlyingDecimals,
                 USDC_DECIMALS,
             ),
-            swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
+            swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
         // Enter the position
@@ -379,7 +377,7 @@ describe("CorrectingFactor", function () {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
             expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingPriceInUSD, 6, 18),
-            swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
+            swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
         // Set the Opyn oracle asset price for the underlying asset

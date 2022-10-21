@@ -5,11 +5,10 @@ import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { ifMocksEnabled, asMock, DAY_IN_SECONDS } from "contracts-utils";
 
-import { TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
+import { TestingEnvironmentDeployment } from "../../../contracts/hedging-vault/scripts/test/testingEnv";
 
-import { IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
-import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
-import { getEncodedSwapPath } from "./uniswapV3Utils";
+import { IPotionLiquidityPool, IUniswapV3Oracle } from "../../../contracts/hedging-vault/typechain";
+import { PotionBuyInfoStruct } from "../../../contracts/hedging-vault/typechain/contracts/actions/PotionBuyAction";
 
 /**
     @notice Miscelaneous calculations utils to simulate the behaviour of the vault given some input parameters
@@ -31,6 +30,8 @@ interface TestConditions {
     swapToUSDCAmountUSDC: BigNumber;
     underlyingAssetExitPriceInUSD: BigNumber;
     expirationTimestamp: BigNumber;
+    maxPremiumWithSlippageInUSDC: BigNumber;
+    totalUSDCInActionAfterPayout: BigNumber;
 }
 
 export function calculatePremium(
@@ -129,7 +130,7 @@ export async function getSwapInfo(
             18,
             6,
         ),
-        swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
+        swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
     };
 
     // Set the Uniswap route info
@@ -142,7 +143,7 @@ export async function getSwapInfo(
             6,
             18,
         ),
-        swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
+        swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
     };
 
     // Uniswap route info for Swap To USDC
@@ -155,7 +156,7 @@ export async function getSwapInfo(
             18,
             6,
         ),
-        swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
+        swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
     };
 
     // Set the Uniswap route info
@@ -168,7 +169,7 @@ export async function getSwapInfo(
             6,
             18,
         ),
-        swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
+        swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
     };
 
     return {
@@ -310,5 +311,7 @@ export async function setupTestConditions(
         swapToUSDCAmountUSDC,
         underlyingAssetExitPriceInUSD,
         expirationTimestamp,
+        maxPremiumWithSlippageInUSDC,
+        totalUSDCInActionAfterPayout,
     };
 }

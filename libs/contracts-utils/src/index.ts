@@ -20,4 +20,4 @@ export {
   getNextTimestamp,
   getLastTimestamp,
   prepareNextTimestamp,
-} from "./blockchain";
+} from "./utils/blockchain";

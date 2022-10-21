@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 
-export function getEncodedSwapPath(tokensPath: string[], fee: number = 3000): string {
+export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
     const types = [];
     const values = [];
 
