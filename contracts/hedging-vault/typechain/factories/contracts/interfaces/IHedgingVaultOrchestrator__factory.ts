@@ -197,6 +197,60 @@ const _abi = [
         name: "nextRoundEnterSwapInfo",
         type: "tuple",
       },
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "inputToken",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "outputToken",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "expectedPriceRate",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "swapPath",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IUniswapV3Oracle.SwapInfo",
+        name: "swapToUSDCExitSwapInfo",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "inputToken",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "outputToken",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "expectedPriceRate",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "swapPath",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IUniswapV3Oracle.SwapInfo",
+        name: "swapToUSDCEnterSwapInfo",
+        type: "tuple",
+      },
     ],
     name: "nextRound",
     outputs: [],
@@ -213,6 +267,11 @@ const _abi = [
       {
         internalType: "address",
         name: "potionBuyAction",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "swapToUSDCAction",
         type: "address",
       },
       {

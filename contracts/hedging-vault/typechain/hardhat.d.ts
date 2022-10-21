@@ -205,6 +205,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionBuyAction__factory>;
     getContractFactory(
+      name: "SwapToUSDCAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SwapToUSDCAction__factory>;
+    getContractFactory(
       name: "EmergencyLockUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EmergencyLockUpgradeable__factory>;
@@ -329,6 +333,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoundsOutputVault__factory>;
     getContractFactory(
+      name: "ISwapToUSDCAction",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapToUSDCAction__factory>;
+    getContractFactory(
+      name: "ISwapToUSDCActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapToUSDCActionV0__factory>;
+    getContractFactory(
       name: "IUniswapV3Oracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV3Oracle__factory>;
@@ -340,6 +352,10 @@ declare module "hardhat/types/runtime" {
       name: "IVaultDeferredOperationUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVaultDeferredOperationUpgradeable__factory>;
+    getContractFactory(
+      name: "IVaultV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IVaultV0__factory>;
     getContractFactory(
       name: "IVaultWithReceiptsUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -493,9 +509,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.InvestmentVault__factory>;
     getContractFactory(
+      name: "InvestmentVaultV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.InvestmentVaultV0__factory>;
+    getContractFactory(
       name: "PotionBuyActionV0",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PotionBuyActionV0__factory>;
+    getContractFactory(
+      name: "SwapToUSDCActionV0",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SwapToUSDCActionV0__factory>;
 
     getContractAt(
       name: "IERC4626",
@@ -738,6 +762,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PotionBuyAction>;
     getContractAt(
+      name: "SwapToUSDCAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SwapToUSDCAction>;
+    getContractAt(
       name: "EmergencyLockUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -893,6 +922,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IRoundsOutputVault>;
     getContractAt(
+      name: "ISwapToUSDCAction",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapToUSDCAction>;
+    getContractAt(
+      name: "ISwapToUSDCActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapToUSDCActionV0>;
+    getContractAt(
       name: "IUniswapV3Oracle",
       address: string,
       signer?: ethers.Signer
@@ -907,6 +946,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IVaultDeferredOperationUpgradeable>;
+    getContractAt(
+      name: "IVaultV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IVaultV0>;
     getContractAt(
       name: "IVaultWithReceiptsUpgradeable",
       address: string,
@@ -1098,10 +1142,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.InvestmentVault>;
     getContractAt(
+      name: "InvestmentVaultV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.InvestmentVaultV0>;
+    getContractAt(
       name: "PotionBuyActionV0",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PotionBuyActionV0>;
+    getContractAt(
+      name: "SwapToUSDCActionV0",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SwapToUSDCActionV0>;
 
     // default types
     getContractFactory(

@@ -50,50 +50,5 @@ abstract contract BaseVaultUpgradeable is
     ReentrancyGuardUpgradeable,
     IVault
 {
-    // UPGRADEABLE INITIALIZER
-
-    /**
-        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
-        to the hierarchy will require to review this function to make sure that no initializer
-        is called twice, and most importantly, that all initializers are called here
-
-        @param adminAddress The address of the admin of the Vault
-        @param strategistAddress The address of the strategist of the Vault
-        @param operatorAddress The address of the operator of the Vault
-        @param underlyingAsset The address of the asset managed by this vault
-        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
-        @param managementFee The fee percentage charged for the management of the Vault
-        @param performanceFee The fee percentage charged for the performance of the Vault
-        @param feesRecipient The address of the account that will receive the fees
-        @param actions The list of investment actions to be executed in the Vault
-     */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress,
-        address underlyingAsset,
-        uint256 underlyingAssetCap,
-        uint256 managementFee,
-        uint256 performanceFee,
-        address payable feesRecipient,
-        IAction[] calldata actions,
-        uint256[] calldata principalPercentages
-    ) external initializer {
-        // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
-        // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
-        // underlying asset
-        address[] memory cannotRefundToken = new address[](1);
-        cannotRefundToken[0] = underlyingAsset;
-
-        __RolesManager_init_unchained(adminAddress, operatorAddress);
-        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
-        __EmergencyLock_init_unchained();
-        __LifecycleStates_init_unchained();
-        __RefundsHelper_init_unchained(cannotRefundToken, false);
-        __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsManager_init_unchained(actions, principalPercentages);
-        __ReentrancyGuard_init_unchained();
-
-        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
-    }
+    // Empty on purpose
 }

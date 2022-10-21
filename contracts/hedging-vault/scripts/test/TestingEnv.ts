@@ -17,6 +17,7 @@ import {
     RoundsInputVault,
     RoundsOutputVault,
     RoundsVaultExchanger,
+    SwapToUSDCAction,
 } from "../../typechain";
 import {
     mockERC20,
@@ -45,6 +46,7 @@ export interface TestingEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
+    swapToUSDCAction: SwapToUSDCAction;
     hedgingVaultOrchestrator: HedgingVaultOrchestrator;
     roundsInputVault: RoundsInputVault;
     roundsOutputVault: RoundsOutputVault;
@@ -428,6 +430,7 @@ export async function deployTestingEnv(
 
     testEnvDeployment.investmentVault = deployment.vault;
     testEnvDeployment.potionBuyAction = deployment.potionBuyAction;
+    testEnvDeployment.swapToUSDCAction = deployment.swapToUSDCAction;
     testEnvDeployment.hedgingVaultOrchestrator = deployment.orchestrator;
     testEnvDeployment.roundsInputVault = deployment.roundsInputVault;
     testEnvDeployment.roundsOutputVault = deployment.roundsOutputVault;
@@ -446,6 +449,7 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`--------------------------------------------------------------------------------`);
     console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
     console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
+    console.log(`  - Swap To USDC Action: ${testEnvDeployment.swapToUSDCAction.address}`);
     console.log(`  - Orchestrator: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
     console.log(`  - Rounds Input Vault: ${testEnvDeployment.roundsInputVault.address}`);
     console.log(`  - Rounds Output Vault: ${testEnvDeployment.roundsOutputVault.address}`);

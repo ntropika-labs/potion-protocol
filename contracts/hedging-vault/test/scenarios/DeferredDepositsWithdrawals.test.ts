@@ -17,6 +17,7 @@ import {
     RoundsOutputVault,
     HedgingVaultOrchestrator,
     RoundsVaultExchanger,
+    SwapToUSDCAction,
 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { LifecycleStates } from "hedging-vault-sdk";
@@ -249,7 +250,7 @@ async function setupTestConditions(
             // TODO: This is failing and I'm not sure if it is a Smock problem or a logic
             // TODO: problem in the tests. Talking to the smock team it seems likely that it
             // TODO: is a problem with the smock library and calling the EVM from an async callback
-            // await tEnv.USDC.connect(ownerAccount).mint(action.address, payoutInUSDC);
+            // await tEnv.USDC.connect(ownerAccount).mint(potionBuy.address, payoutInUSDC);
         });
     });
 
@@ -275,7 +276,8 @@ describe("DeferredDepositsWithdrawals", function () {
 
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
-    let action: PotionBuyAction;
+    let potionBuy: PotionBuyAction;
+    let swapUSDC: SwapToUSDCAction;
     let roundsInputVault: RoundsInputVault;
     let roundsOutputVault: RoundsOutputVault;
     let orchestrator: HedgingVaultOrchestrator;
@@ -307,7 +309,8 @@ describe("DeferredDepositsWithdrawals", function () {
         // printTestingEnv(tEnv);
 
         vault = tEnv.investmentVault;
-        action = tEnv.potionBuyAction;
+        potionBuy = tEnv.potionBuyAction;
+        swapUSDC = tEnv.swapToUSDCAction;
         roundsInputVault = tEnv.roundsInputVault;
         roundsOutputVault = tEnv.roundsOutputVault;
         orchestrator = tEnv.hedgingVaultOrchestrator;
@@ -349,56 +352,51 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await vault.getFeesRecipient()).to.equal(tEnv.feesRecipient);
 
         // Actions
-        expect(await vault.getActionsLength()).to.equal(1);
-        expect(await vault.getAction(0)).to.equal(action.address);
-
-        // Principal Percentages
-        const principalPercentages = await vault.getPrincipalPercentages();
-        expect(principalPercentages.length).to.equal(1);
-        expect(principalPercentages[0]).to.equal(100000000);
-        expect(await vault.getPrincipalPercentage(0)).to.equal(100000000);
+        expect(await vault.getActionsLength()).to.equal(2);
+        expect(await vault.getAction(0)).to.equal(potionBuy.address);
+        expect(await vault.getAction(1)).to.equal(swapUSDC.address);
     });
 
     it("DDW0002 - Potion Buy Action Default Value", async function () {
         // Roles
-        expect(await action.getRoleMemberCount(Roles.Admin)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
-        expect(await action.getRoleMemberCount(Roles.Operator)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
-        expect(await action.getRoleMemberCount(Roles.Strategist)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
-        expect(await action.getRoleMemberCount(Roles.Vault)).to.equal(1);
-        expect(await action.getRoleMember(Roles.Vault, 0)).to.equal(tEnv.investmentVault.address);
+        expect(await potionBuy.getRoleMemberCount(Roles.Admin)).to.equal(1);
+        expect(await potionBuy.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
+        expect(await potionBuy.getRoleMemberCount(Roles.Operator)).to.equal(1);
+        expect(await potionBuy.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await potionBuy.getRoleMemberCount(Roles.Strategist)).to.equal(1);
+        expect(await potionBuy.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
+        expect(await potionBuy.getRoleMemberCount(Roles.Vault)).to.equal(1);
+        expect(await potionBuy.getRoleMember(Roles.Vault, 0)).to.equal(tEnv.investmentVault.address);
 
-        expect(await action.getRoleMemberCount(Roles.Investor)).to.equal(0);
+        expect(await potionBuy.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Emergency Lock
-        expect(await action.paused()).to.equal(false);
+        expect(await potionBuy.paused()).to.equal(false);
 
         // Lifecycle State
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
 
         // Refunds Helper
-        expect(await action.canRefundETH()).to.equal(true);
-        expect(await action.canRefund(tEnv.underlyingAsset.address)).to.equal(false);
-        expect(await action.canRefund(tEnv.USDC.address)).to.equal(false);
+        expect(await potionBuy.canRefundETH()).to.equal(true);
+        expect(await potionBuy.canRefund(tEnv.underlyingAsset.address)).to.equal(false);
+        expect(await potionBuy.canRefund(tEnv.USDC.address)).to.equal(false);
 
         // Uniswap helper
-        expect(await action.getSwapRouter()).to.equal(tEnv.uniswapV3SwapRouter.address);
+        expect(await potionBuy.getSwapRouter()).to.equal(tEnv.uniswapV3SwapRouter.address);
 
         // Potion Protocol helper
-        expect(await action.getPotionLiquidityManager()).to.equal(tEnv.potionLiquidityPoolManager.address);
-        expect(await action.getOpynAddressBook()).to.equal(tEnv.opynAddressBook.address);
-        expect(await action.getUSDC()).to.equal(tEnv.USDC.address);
+        expect(await potionBuy.getPotionLiquidityManager()).to.equal(tEnv.potionLiquidityPoolManager.address);
+        expect(await potionBuy.getOpynAddressBook()).to.equal(tEnv.opynAddressBook.address);
+        expect(await potionBuy.getUSDC()).to.equal(tEnv.USDC.address);
 
         // Action Values
-        expect(await action.maxPremiumPercentage()).to.equal(tEnv.maxPremiumPercentage);
-        expect(await action.premiumSlippage()).to.equal(tEnv.premiumSlippage);
-        expect(await action.swapSlippage()).to.equal(tEnv.swapSlippage);
-        expect(await action.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
-        expect(await action.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
-        expect(await action.hedgingRate()).to.equal(tEnv.hedgingRate);
-        expect(await action.hedgingRateSlippage()).to.equal(tEnv.hedgingRateSlippage);
+        expect(await potionBuy.maxPremiumPercentage()).to.equal(tEnv.maxPremiumPercentage);
+        expect(await potionBuy.premiumSlippage()).to.equal(tEnv.premiumSlippage);
+        expect(await potionBuy.swapSlippage()).to.equal(tEnv.swapSlippage);
+        expect(await potionBuy.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
+        expect(await potionBuy.cycleDurationSecs()).to.equal(tEnv.cycleDurationSecs);
+        expect(await potionBuy.hedgingRate()).to.equal(tEnv.hedgingRate);
+        expect(await potionBuy.hedgingRateSlippage()).to.equal(tEnv.hedgingRateSlippage);
     });
 
     it("DDW0003 - Rounds Input Vault Default Value", async function () {
@@ -409,7 +407,7 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await roundsInputVault.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
         expect(await roundsInputVault.getRoleMemberCount(Roles.Strategist)).to.equal(0);
         expect(await roundsInputVault.getRoleMemberCount(Roles.Vault)).to.equal(0);
-        expect(await action.getRoleMemberCount(Roles.Investor)).to.equal(0);
+        expect(await potionBuy.getRoleMemberCount(Roles.Investor)).to.equal(0);
 
         // Emergency Lock
         expect(await roundsInputVault.paused()).to.equal(false);
@@ -517,6 +515,8 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapInfoExitPosition,
             tCond.potionBuyInfo,
             tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
         );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
@@ -524,27 +524,27 @@ describe("DeferredDepositsWithdrawals", function () {
         // substract 1 from the current block
         //const cycleStartTimestamp = (await getCurrentTimestamp()) - 1;
 
-        // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
+        // Check that the helper set the correct info in the potionBuy
+        const currentPotionBuyInfo = await potionBuy.getPotionBuyInfo(
             tEnv.underlyingAsset.address,
             tCond.expirationTimestamp,
         );
 
         expectSolidityDeepCompare(tCond.potionBuyInfo, currentPotionBuyInfo);
 
-        const currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+        const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
         expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Locked);
 
         // These balances will not be valid if the real Uniswap and Potion protocol are used.
         // As of now, the asset is not really swapped, so the only movement in balances is from
-        // the vault to the action
+        // the vault to the potionBuy
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
+        expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(
             amountToBeInvested.sub(tCond.uniswapEnterPositionInputAmount),
         );
 
@@ -599,34 +599,40 @@ describe("DeferredDepositsWithdrawals", function () {
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
-        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, tCond.potionBuyInfo, tCond.swapInfoEnterPosition);
+        tx = await orchestrator.nextRound(
+            tCond.swapInfoExitPosition,
+            tCond.potionBuyInfo,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+        );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
         // For some reason 2 blocks are mined with the last transaction, so we need to
         // substract 1 from the current block
         //const cycleStartTimestamp = (await getCurrentTimestamp()) - 1;
 
-        // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
+        // Check that the helper set the correct info in the potionBuy
+        const currentPotionBuyInfo = await potionBuy.getPotionBuyInfo(
             tEnv.underlyingAsset.address,
             tCond.expirationTimestamp,
         );
 
         expectSolidityDeepCompare(tCond.potionBuyInfo, currentPotionBuyInfo);
 
-        const currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+        const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
         expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Locked);
 
         // These balances will not be valid if the real Uniswap and Potion protocol are used.
         // As of now, the asset is not really swapped, so the only movement in balances is from
-        // the vault to the action
+        // the vault to the potionBuy
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
+        expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(
             amountToBeInvested.sub(tCond.uniswapEnterPositionInputAmount),
         );
 
@@ -695,7 +701,13 @@ describe("DeferredDepositsWithdrawals", function () {
             USDCPriceInUSD,
         );
 
-        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, nextPotionBuyInfo, tCond.swapInfoEnterPosition);
+        tx = await orchestrator.nextRound(
+            tCond.swapInfoExitPosition,
+            nextPotionBuyInfo,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+        );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
         const amountAfterProfitLoss = amountToBeInvested
@@ -779,28 +791,34 @@ describe("DeferredDepositsWithdrawals", function () {
 
         // Enter the position
         await fastForwardChain(DAY_IN_SECONDS);
-        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, tCond.potionBuyInfo, tCond.swapInfoEnterPosition);
+        tx = await orchestrator.nextRound(
+            tCond.swapInfoExitPosition,
+            tCond.potionBuyInfo,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+        );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
-        // Check that the helper set the correct info in the action
-        const currentPotionBuyInfo = await action.getPotionBuyInfo(
+        // Check that the helper set the correct info in the potionBuy
+        const currentPotionBuyInfo = await potionBuy.getPotionBuyInfo(
             tEnv.underlyingAsset.address,
             tCond.expirationTimestamp,
         );
 
         expectSolidityDeepCompare(tCond.potionBuyInfo, currentPotionBuyInfo);
 
-        const currentSwapInfo = await action.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+        const currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
 
         expectSolidityDeepCompare(tCond.swapInfoEnterPosition, currentSwapInfo);
 
         // Check the new state of the system
         expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
-        expect(await action.getLifecycleState()).to.equal(LifecycleStates.Locked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Locked);
 
         // Check balances
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(action.address)).to.equal(
+        expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(
             amountToBeInvested.sub(tCond.uniswapEnterPositionInputAmount),
         );
 
@@ -873,7 +891,13 @@ describe("DeferredDepositsWithdrawals", function () {
             USDCPriceInUSD,
         );
 
-        tx = await orchestrator.nextRound(tCond.swapInfoExitPosition, nextPotionBuyInfo, tCond.swapInfoEnterPosition);
+        tx = await orchestrator.nextRound(
+            tCond.swapInfoExitPosition,
+            nextPotionBuyInfo,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+            tCond.swapInfoEnterPosition,
+        );
         expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
 
         const amountAfterProfitLoss = amountToBeInvested

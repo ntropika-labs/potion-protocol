@@ -144,13 +144,14 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   functions: {
     "canEnterNextRound()": FunctionFragment;
     "investmentVault()": FunctionFragment;
-    "nextRound((address,address,uint256,bytes),((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256),(address,address,uint256,bytes))": FunctionFragment;
+    "nextRound((address,address,uint256,bytes),((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256),(address,address,uint256,bytes),(address,address,uint256,bytes),(address,address,uint256,bytes))": FunctionFragment;
     "owner()": FunctionFragment;
     "potionBuyAction()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "roundsInputVault()": FunctionFragment;
     "roundsOutputVault()": FunctionFragment;
-    "setSystemAddresses(address,address,address,address)": FunctionFragment;
+    "setSystemAddresses(address,address,address,address,address)": FunctionFragment;
+    "swapToUSDCAction()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -165,6 +166,7 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
       | "roundsInputVault"
       | "roundsOutputVault"
       | "setSystemAddresses"
+      | "swapToUSDCAction"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -181,6 +183,8 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
     values: [
       IUniswapV3Oracle.SwapInfoStruct,
       PotionBuyInfoStruct,
+      IUniswapV3Oracle.SwapInfoStruct,
+      IUniswapV3Oracle.SwapInfoStruct,
       IUniswapV3Oracle.SwapInfoStruct
     ]
   ): string;
@@ -207,8 +211,13 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapToUSDCAction",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -243,6 +252,10 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setSystemAddresses",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapToUSDCAction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -301,9 +314,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     investmentVault(overrides?: CallOverrides): Promise<[string]>;
 
     nextRound(
-      prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      nextRoundPotionBuyInfo: PotionBuyInfoStruct,
-      nextRoundEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyEnterBuyInfo: PotionBuyInfoStruct,
+      potionBuyEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -322,10 +337,13 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     setSystemAddresses(
       investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
+      swapToUSDCAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    swapToUSDCAction(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -338,9 +356,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   investmentVault(overrides?: CallOverrides): Promise<string>;
 
   nextRound(
-    prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
-    nextRoundPotionBuyInfo: PotionBuyInfoStruct,
-    nextRoundEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+    potionBuyExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+    potionBuyEnterBuyInfo: PotionBuyInfoStruct,
+    potionBuyEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+    swapToUSDCExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+    swapToUSDCEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -359,10 +379,13 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   setSystemAddresses(
     investmentVault_: PromiseOrValue<string>,
     potionBuyAction_: PromiseOrValue<string>,
+    swapToUSDCAction_: PromiseOrValue<string>,
     roundsInputVault_: PromiseOrValue<string>,
     roundsOutputVault_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  swapToUSDCAction(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -375,9 +398,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     investmentVault(overrides?: CallOverrides): Promise<string>;
 
     nextRound(
-      prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      nextRoundPotionBuyInfo: PotionBuyInfoStruct,
-      nextRoundEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyEnterBuyInfo: PotionBuyInfoStruct,
+      potionBuyEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -394,10 +419,13 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     setSystemAddresses(
       investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
+      swapToUSDCAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    swapToUSDCAction(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -422,9 +450,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     investmentVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     nextRound(
-      prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      nextRoundPotionBuyInfo: PotionBuyInfoStruct,
-      nextRoundEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyEnterBuyInfo: PotionBuyInfoStruct,
+      potionBuyEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -443,10 +473,13 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     setSystemAddresses(
       investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
+      swapToUSDCAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    swapToUSDCAction(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -460,9 +493,11 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     investmentVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextRound(
-      prevRoundExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
-      nextRoundPotionBuyInfo: PotionBuyInfoStruct,
-      nextRoundEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      potionBuyEnterBuyInfo: PotionBuyInfoStruct,
+      potionBuyEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCExitSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
+      swapToUSDCEnterSwapInfo: IUniswapV3Oracle.SwapInfoStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -481,10 +516,13 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     setSystemAddresses(
       investmentVault_: PromiseOrValue<string>,
       potionBuyAction_: PromiseOrValue<string>,
+      swapToUSDCAction_: PromiseOrValue<string>,
       roundsInputVault_: PromiseOrValue<string>,
       roundsOutputVault_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    swapToUSDCAction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,

@@ -8,12 +8,14 @@ import {
     RoundsInputVault,
     RoundsOutputVault,
     RoundsVaultExchanger,
+    SwapToUSDCAction,
 } from "../../typechain";
 import { BigNumber } from "ethers";
-import { PERCENTAGE_100_BN, Roles, fromSolidityPercentage } from "hedging-vault-sdk";
+import { Roles, fromSolidityPercentage, toSolidityPercentage } from "hedging-vault-sdk";
 import { deployRoundsInputVault, RoundsInputVaultDeployParams } from "../common/deployRoundsInputVault";
 import { deployRoundsOutputVault } from "../common/deployRoundsOutputVault";
 import { deployRoundsVaultExchanger } from "../common/deployRoundsVaultExchanger";
+import { deploySwapToUSDCAction, SwapToUSDCActionDeployParams } from "../common/deploySwapToUSDCAction";
 
 export interface HedgingVaultDeployParams {
     // Roles
@@ -54,6 +56,7 @@ export interface HedgingVaultDeployParams {
 export interface HedgingVaultDeploymentResult {
     vault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
+    swapToUSDCAction: SwapToUSDCAction;
     orchestrator: HedgingVaultOrchestrator;
     roundsInputVault: RoundsInputVault;
     roundsOutputVault: RoundsOutputVault;
@@ -133,6 +136,20 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
 
     const potionBuyContract: PotionBuyAction = await deployPotionBuyAction(potionBuyParams);
 
+    /* Swap To USDC Action */
+    const swapToUSDCParams: SwapToUSDCActionDeployParams = {
+        adminAddress: parameters.adminAddress,
+        strategistAddress: parameters.strategistAddress,
+        operatorAddress: hedgingVaultOrchestrator.address,
+        investmentAsset: parameters.underlyingAsset,
+        USDC: parameters.USDC,
+        uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
+        swapSlippage: parameters.swapSlippage,
+        maxSwapDurationSecs: parameters.maxSwapDurationSecs,
+    };
+
+    const swapToUSDCContract: SwapToUSDCAction = await deploySwapToUSDCAction(swapToUSDCParams);
+
     /* Investment Vault */
     const investmentVaultParams: InvestmentVaultDeployParams = {
         adminAddress: parameters.adminAddress,
@@ -143,8 +160,8 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         managementFee: parameters.managementFee,
         performanceFee: parameters.performanceFee,
         feesRecipient: parameters.feesRecipient,
-        actions: [potionBuyContract.address],
-        principalPercentages: [PERCENTAGE_100_BN],
+        actions: [potionBuyContract.address, swapToUSDCContract.address],
+        principalPercentages: [toSolidityPercentage(100), toSolidityPercentage(0)],
     };
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);
@@ -175,6 +192,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
     return {
         vault: investmentVaultContract,
         potionBuyAction: potionBuyContract,
+        swapToUSDCAction: swapToUSDCContract,
         orchestrator: hedgingVaultOrchestrator,
         roundsInputVault: roundsInputVaultContract,
         roundsOutputVault: roundsOutputVaultContract,
@@ -183,12 +201,17 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
 }
 
 async function configureContracts(parameters: HedgingVaultDeployParams, deployment: HedgingVaultDeploymentResult) {
-    /* InvestmentVault has the Vault Role for the Potion Buy Action */
-
+    /* InvestmentVault has the Vault Role for the Potion Buy Action and Swap To USDC Action */
     console.log(
         `- Setting ${deployment.vault.address} as the managing vault for ${deployment.potionBuyAction.address}`,
     );
     let tx = await deployment.potionBuyAction.grantRole(Roles.Vault, deployment.vault.address);
+    await tx.wait();
+
+    console.log(
+        `- Setting ${deployment.vault.address} as the managing vault for ${deployment.swapToUSDCAction.address}`,
+    );
+    tx = await deployment.swapToUSDCAction.grantRole(Roles.Vault, deployment.vault.address);
     await tx.wait();
 
     /* Configure the Investment Vault and the Potion Buy Action in the Orchestrator */
@@ -198,6 +221,7 @@ async function configureContracts(parameters: HedgingVaultDeployParams, deployme
     tx = await deployment.orchestrator.setSystemAddresses(
         deployment.vault.address,
         deployment.potionBuyAction.address,
+        deployment.swapToUSDCAction.address,
         deployment.roundsInputVault.address,
         deployment.roundsOutputVault.address,
     );

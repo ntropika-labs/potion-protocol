@@ -5,6 +5,10 @@ pragma solidity 0.8.14;
 
 import "./BaseVaultUpgradeable.sol";
 import "../library/PercentageUtils.sol";
+import "../versioning/InvestmentVaultV0.sol";
+
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/IERC20Upgradeable.sol";
 
 /**
     @title InvestmentVault
@@ -23,58 +27,87 @@ import "../library/PercentageUtils.sol";
     @dev See {BaseVaultUpgradeable}
  */
 
-contract InvestmentVault is BaseVaultUpgradeable {
+contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
     using PercentageUtils for uint256;
     using SafeERC20 for IERC20;
 
-    /// ERRORS
-    error InvestmentTotalTooHigh(uint256 actualAmountInvested, uint256 maxAmountToInvest);
+    // UPGRADEABLE INITIALIZER
 
     /**
-        @inheritdoc IVault
+        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+        to the hierarchy will require to review this function to make sure that no initializer
+        is called twice, and most importantly, that all initializers are called here
+
+        @param adminAddress The address of the admin of the Vault
+        @param strategistAddress The address of the strategist of the Vault
+        @param operatorAddress The address of the operator of the Vault
+        @param underlyingAsset The address of the asset managed by this vault
+        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
+        @param managementFee The fee percentage charged for the management of the Vault
+        @param performanceFee The fee percentage charged for the performance of the Vault
+        @param feesRecipient The address of the account that will receive the fees
+        @param actions The list of investment actions to be executed in the Vault
+     */
+    function initialize(
+        address adminAddress,
+        address strategistAddress,
+        address operatorAddress,
+        address underlyingAsset,
+        uint256 underlyingAssetCap,
+        uint256 managementFee,
+        uint256 performanceFee,
+        address payable feesRecipient,
+        IAction[] calldata actions,
+        uint256[] calldata principalPercentages
+    ) external initializer {
+        // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
+        // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
+        // underlying asset
+        address[] memory cannotRefundToken = new address[](1);
+        cannotRefundToken[0] = underlyingAsset;
+
+        __RolesManager_init_unchained(adminAddress, operatorAddress);
+        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
+        __EmergencyLock_init_unchained();
+        __LifecycleStates_init_unchained();
+        __RefundsHelper_init_unchained(cannotRefundToken, false);
+        __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
+        __ActionsManager_init_unchained(actions);
+        __ReentrancyGuard_init_unchained();
+
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
+        _setDefaultStrategy(actions, principalPercentages);
+    }
+
+    /// STATE CHANGERS
+
+    /**
+        @inheritdoc IVaultV0
      */
     function enterPosition() external onlyOperator onlyUnlocked nonReentrant {
-        _setLifecycleState(LifecycleState.Locked);
-
-        uint256 totalPrincipalAmount = totalAssets();
-
-        uint256 maxAmountToInvest = getTotalPrincipalPercentages().applyPercentage(totalPrincipalAmount);
-        uint256 actualAmountInvested = 0;
-        address investmentAsset = asset();
-
-        uint256 numActions = getActionsLength();
-
-        for (uint256 i = 0; i < numActions; i++) {
-            IAction action = getAction(i);
-
-            uint256 amountToInvest = getPrincipalPercentage(i).applyPercentage(totalPrincipalAmount);
-
-            IERC20(investmentAsset).safeApprove(address(action), amountToInvest);
-
-            action.enterPosition(investmentAsset, amountToInvest);
-
-            actualAmountInvested += amountToInvest;
-        }
-
-        if (actualAmountInvested > maxAmountToInvest) {
-            revert InvestmentTotalTooHigh(actualAmountInvested, maxAmountToInvest);
-        }
-
-        emit VaultPositionEntered(totalPrincipalAmount, actualAmountInvested);
+        _enterPosition(DefaultStrategy);
     }
 
     /**
-        @inheritdoc IVault
+        @inheritdoc IVaultV0
+     */
+    function enterPositionWith(Strategy calldata strategy) external onlyOperator onlyUnlocked nonReentrant {
+        _enterPosition(strategy);
+    }
+
+    /**
+        @inheritdoc IVaultV0
      */
     function exitPosition() external onlyOperator onlyLocked nonReentrant returns (uint256 newPrincipalAmount) {
         address investmentAsset = asset();
 
         uint256 totalAmountReturned = 0;
 
-        uint256 numActions = getActionsLength();
+        uint256 numActions = _lastStrategy.actionsIndexes.length;
 
         for (uint256 i = 0; i < numActions; i++) {
-            IAction action = getAction(i);
+            uint256 actionIndex = _lastStrategy.actionsIndexes[i];
+            IAction action = getAction(actionIndex);
 
             totalAmountReturned += action.exitPosition(investmentAsset);
 
@@ -87,45 +120,7 @@ contract InvestmentVault is BaseVaultUpgradeable {
 
         // TODO: Apply fees here
 
-        emit VaultPositionExited(newPrincipalAmount);
-    }
-
-    /**
-        @inheritdoc IVault
-     */
-    function canPositionBeExited() external view returns (bool canExit) {
-        uint256 numActions = getActionsLength();
-
-        for (uint256 i = 0; i < numActions; i++) {
-            IAction action = getAction(i);
-
-            if (!action.canPositionBeExited(asset())) {
-                return false;
-            }
-        }
-
-        assert(getLifecycleState() == LifecycleState.Locked);
-
-        return true;
-    }
-
-    /**
-        @inheritdoc IVault
-     */
-    function canPositionBeEntered() external view returns (bool canEnter) {
-        uint256 numActions = getActionsLength();
-
-        for (uint256 i = 0; i < numActions; i++) {
-            IAction action = getAction(i);
-
-            if (!action.canPositionBeEntered(asset())) {
-                return false;
-            }
-        }
-
-        assert(getLifecycleState() == LifecycleState.Unlocked);
-
-        return true;
+        emit VaultPositionExited(newPrincipalAmount, _lastStrategy);
     }
 
     /**
@@ -174,5 +169,162 @@ contract InvestmentVault is BaseVaultUpgradeable {
         address owner
     ) public override(ERC4626Upgradeable, IERC4626Upgradeable) onlyUnlocked onlyInvestor returns (uint256) {
         return super.redeem(shares, receiver, owner);
+    }
+
+    /// GETTERS
+
+    /**
+        @inheritdoc IVaultV0
+     */
+    function canPositionBeEntered() external view returns (bool canEnter) {
+        return _canPositionBeEnteredWith(DefaultStrategy);
+    }
+
+    /**
+        @inheritdoc IVaultV0
+     */
+    function canPositionBeEnteredWith(Strategy calldata strategy) external view returns (bool canEnter) {
+        return _canPositionBeEnteredWith(strategy);
+    }
+
+    /**
+        @inheritdoc IVaultV0
+     */
+    function canPositionBeExited() external view returns (bool canExit) {
+        uint256 numActions = _lastStrategy.actionsIndexes.length;
+        address investmentAsset = asset();
+
+        for (uint256 i = 0; i < numActions; i++) {
+            uint256 actionIndex = _lastStrategy.actionsIndexes[i];
+            IAction action = getAction(actionIndex);
+
+            if (!action.canPositionBeExited(investmentAsset)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// INTERNALS
+
+    /**
+        @notice Sets the default strategy that will be used when no strategy is given in the `enterPosition` call
+
+        @param actions The list of actions to be executed in the strategy
+        @param principalPercentages The list of percentages of the principal that will be used for each action
+
+        @dev The length of the actions and principalPercentages arrays must be the same
+     */
+    function _setDefaultStrategy(IAction[] calldata actions, uint256[] calldata principalPercentages) private {
+        if (principalPercentages.length != actions.length) {
+            revert PrincipalPercentagesMismatch(actions.length, principalPercentages.length);
+        }
+
+        for (uint256 i = 0; i < actions.length; i++) {
+            uint256 percentage = principalPercentages[i];
+
+            // If the percentage is 0, skip this action for the default strategy
+            if (percentage == 0) {
+                continue;
+            }
+
+            DefaultStrategy.actionsIndexes.push(i);
+            DefaultStrategy.principalPercentages.push(percentage);
+        }
+    }
+
+    /**
+        @notice See { setPrincipalPercentages }
+     */
+    function _validatePrincipalPercentages(Strategy memory strategy) private pure returns (uint256 totalPercentage) {
+        uint256 numActions = strategy.actionsIndexes.length;
+        uint256 numPercentages = strategy.principalPercentages.length;
+
+        if (numPercentages != numActions) {
+            revert PrincipalPercentagesMismatch(strategy.actionsIndexes.length, strategy.principalPercentages.length);
+        }
+
+        uint256 sumPrincipalPercentages = 0;
+
+        for (uint256 i = 0; i < numPercentages; i++) {
+            uint256 percentage = strategy.principalPercentages[i];
+            if (percentage > PercentageUtils.PERCENTAGE_100) {
+                revert PrincipalPercentageOutOfRange(strategy, i);
+            }
+
+            sumPrincipalPercentages += percentage;
+        }
+
+        if (sumPrincipalPercentages > PercentageUtils.PERCENTAGE_100) {
+            revert PrincipalPercentagesSumMoreThan100(strategy);
+        }
+
+        return sumPrincipalPercentages;
+    }
+
+    /**
+        @notice Enters a position in the Vault. The strategy is used to determine the actions to be
+                executed in order to enter the position
+
+        @param strategy The strategy to be used to enter the position
+     */
+    function _enterPosition(Strategy memory strategy) private {
+        _setLifecycleState(LifecycleState.Locked);
+
+        uint256 totalPercentage = _validatePrincipalPercentages(strategy);
+
+        uint256 totalPrincipalAmount = totalAssets();
+
+        uint256 maxAmountToInvest = totalPercentage.applyPercentage(totalPrincipalAmount);
+        uint256 actualAmountInvested = 0;
+        address investmentAsset = asset();
+
+        uint256 numActions = strategy.actionsIndexes.length;
+
+        for (uint256 i = 0; i < numActions; i++) {
+            uint256 actionIndex = strategy.actionsIndexes[i];
+
+            IAction action = getAction(actionIndex);
+
+            uint256 amountToInvest = strategy.principalPercentages[i].applyPercentage(totalPrincipalAmount);
+
+            IERC20(investmentAsset).safeApprove(address(action), amountToInvest);
+
+            action.enterPosition(investmentAsset, amountToInvest);
+
+            actualAmountInvested += amountToInvest;
+        }
+
+        if (actualAmountInvested > maxAmountToInvest) {
+            revert InvestmentTotalTooHigh(actualAmountInvested, maxAmountToInvest);
+        }
+
+        _lastStrategy = strategy;
+
+        emit VaultPositionEntered(totalPrincipalAmount, actualAmountInvested, strategy);
+    }
+
+    /**
+        @notice Checks if the position can be entered for the given strategy
+
+        @param strategy The strategy to be used to enter the position
+
+        @return canEnter True if the position can be entered for the given strategy, false otherwise
+     */
+    function _canPositionBeEnteredWith(Strategy memory strategy) private view returns (bool canEnter) {
+        uint256 numActions = strategy.actionsIndexes.length;
+        address investmentAsset = asset();
+
+        for (uint256 i = 0; i < numActions; i++) {
+            uint256 actionIndex = strategy.actionsIndexes[i];
+            IAction action = getAction(actionIndex);
+
+            if (!action.canPositionBeEntered(investmentAsset)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

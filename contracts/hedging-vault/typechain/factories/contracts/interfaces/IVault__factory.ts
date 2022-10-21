@@ -11,6 +11,89 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actualAmountInvested",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxAmountToInvest",
+        type: "uint256",
+      },
+    ],
+    name: "InvestmentTotalTooHigh",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentageOutOfRange",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "actionsLength",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "percentagesLength",
+        type: "uint256",
+      },
+    ],
+    name: "PrincipalPercentagesMismatch",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "PrincipalPercentagesSumMoreThan100",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -232,6 +315,24 @@ const _abi = [
         name: "principalAmountInvested",
         type: "uint256",
       },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
     ],
     name: "VaultPositionEntered",
     type: "event",
@@ -245,6 +346,24 @@ const _abi = [
         name: "newPrincipalAmount",
         type: "uint256",
       },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
     ],
     name: "VaultPositionExited",
     type: "event",
@@ -252,6 +371,37 @@ const _abi = [
   {
     inputs: [],
     name: "canPositionBeEntered",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "canEnter",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "canPositionBeEnteredWith",
     outputs: [
       {
         internalType: "bool",
@@ -310,6 +460,31 @@ const _abi = [
   {
     inputs: [],
     name: "enterPosition",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "actionsIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "principalPercentages",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct IVaultV0.Strategy",
+        name: "strategy",
+        type: "tuple",
+      },
+    ],
+    name: "enterPositionWith",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
