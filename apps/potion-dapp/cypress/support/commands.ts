@@ -93,7 +93,8 @@ Cypress.Commands.add(
     approveLabel = "approve usdc"
   ) => {
     // Wait for the button to update if any previous action is still completing
-    cy.get(purchaseButtonAlias).should("not.contain.text", "loading");
+    cy.wait(5000);
+    cy.get(purchaseButtonAlias).should("not.be.disabled");
 
     if (doApproval) {
       cy.get(purchaseButtonAlias)
@@ -119,9 +120,11 @@ Cypress.Commands.add(
         });
     }
 
+    cy.wait(5000);
+
     cy.get(purchaseButtonAlias)
-      .should("not.be.disabled")
-      .contains(purchaseLabel, { matchCase: false, timeout: 20000 });
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 })
+      .should("not.be.disabled");
     // PURCHASE
     // {force: true} prevents the test from failing if a notification is displayed in front of the button
     cy.get(purchaseButtonAlias).trigger("click", { force: true });
@@ -129,8 +132,9 @@ Cypress.Commands.add(
     // TOAST NOTIFICATION
     cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
 
+    // TODO: Remove if we disable infinite approval
     cy.get(purchaseButtonAlias)
-      .should("not.be.disabled")
-      .contains(purchaseLabel, { matchCase: false, timeout: 20000 });
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 })
+      .should("not.be.disabled");
   }
 );

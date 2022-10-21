@@ -1,12 +1,15 @@
 /// <reference types="cypress" />
 /// <reference types="../support" />
 
-import { aliasQuery } from "../support/utilities";
+import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Custom Potion Creation Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/base", "2021-01-01 09:00:00+00:00", false);
+    });
+    it("can reset the approval", async () => {
+      await resetApproval();
     });
   });
   context("customPotionCreation test", () => {
