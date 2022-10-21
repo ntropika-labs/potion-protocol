@@ -145,6 +145,7 @@ describe("InvestmentVault tests", () => {
     test("Round has been updated correctly", () => {
       assertEntity("Round", mockedRoundId, [
         { field: "assetsInvested", value: "50" },
+        { field: "blockEntered", value: contractAddress.toHexString() },
       ]);
     });
 
@@ -181,6 +182,7 @@ describe("InvestmentVault tests", () => {
     test("Round has been updated correctly", () => {
       assertEntity("Round", mockedRoundId, [
         { field: "totalAssetsAtRoundEnd", value: "60" },
+        { field: "blockExited", value: contractAddress.toHexString() },
       ]);
     });
 
