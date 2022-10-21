@@ -116,7 +116,7 @@ describe("FallbackStrategy", function () {
         expect(await swapUSDC.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
     });
 
-    it("FS0002 - Full Fallback Cycle", async function () {
+    it.only("FS0002 - Full Fallback Cycle", async function () {
         // Test Settings
         const underlyingDecimals = await tEnv.underlyingAsset.decimals();
         const USDCDecimals = await tEnv.USDC.decimals();
@@ -198,7 +198,9 @@ describe("FallbackStrategy", function () {
         // As of now, the asset is not really swapped, so the only movement in balances is from
         // the vault to the potionBuy
         expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
-        expect(await tEnv.underlyingAsset.balanceOf(swapUSDC.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(swapUSDC.address)).to.equal(
+            amountToBeInvested.sub(tCond.amountProtectedInUnderlying),
+        );
         expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(0);
 
         expect(await tEnv.USDC.balanceOf(potionBuy.address)).to.equal(0);

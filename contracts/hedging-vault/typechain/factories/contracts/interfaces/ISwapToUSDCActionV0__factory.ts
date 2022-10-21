@@ -40,6 +40,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "swapPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "SwapPercentageChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "swapSlippage",
         type: "uint256",
       },
@@ -56,6 +69,19 @@ const _abi = [
       },
     ],
     name: "setMaxSwapDuration",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "swapPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "setSwapPercentage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

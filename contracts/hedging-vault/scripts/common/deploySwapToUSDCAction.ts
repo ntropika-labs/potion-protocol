@@ -11,6 +11,7 @@ export interface SwapToUSDCActionDeployParams {
     uniswapV3SwapRouter: string;
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
+    swapPercentage: BigNumber;
 }
 
 export async function deploySwapToUSDCAction(parameters: SwapToUSDCActionDeployParams): Promise<SwapToUSDCAction> {

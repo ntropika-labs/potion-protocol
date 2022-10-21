@@ -40,6 +40,7 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
         @param swapSlippage The slippage percentage allowed on the swap operation
         @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
+        @param swapPercentage The percentage of the investment asset to swap to USDC
      */
     struct SwapToUSDCInitParams {
         address adminAddress;
@@ -50,6 +51,7 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         address uniswapV3SwapRouter;
         uint256 swapSlippage;
         uint256 maxSwapDurationSecs;
+        uint256 swapPercentage;
     }
 
     /// INITIALIZERS
@@ -82,6 +84,7 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
 
         _setSwapSlippage(initParams.swapSlippage);
         _setMaxSwapDuration(initParams.maxSwapDurationSecs);
+        _setSwapPercentage(initParams.swapPercentage);
 
         USDC = IERC20(initParams.USDC);
     }
@@ -108,9 +111,11 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         // operations performed inside this action
         IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        _swapInput(investmentAsset, address(USDC), amountToInvest, swapSlippage, maxSwapDurationSecs);
+        uint256 amountToSwap = PercentageUtils.applyPercentage(amountToInvest, swapPercentage);
 
-        emit ActionPositionEntered(investmentAsset, amountToInvest);
+        _swapInput(investmentAsset, address(USDC), amountToSwap, swapSlippage, maxSwapDurationSecs);
+
+        emit ActionPositionEntered(investmentAsset, amountToSwap);
     }
 
     /**
@@ -155,6 +160,13 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         _setMaxSwapDuration(durationSeconds);
     }
 
+    /**
+        @inheritdoc ISwapToUSDCActionV0
+     */
+    function setSwapPercentage(uint256 swapPercentage_) external override onlyStrategist {
+        _setSwapPercentage(swapPercentage_);
+    }
+
     // GETTERS
 
     /**
@@ -197,5 +209,14 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
         maxSwapDurationSecs = durationSeconds;
 
         emit MaxSwapDurationChanged(durationSeconds);
+    }
+
+    /**
+        @dev See { setSwapPercentage }
+     */
+    function _setSwapPercentage(uint256 swapPercentage_) internal {
+        swapPercentage = swapPercentage_;
+
+        emit SwapPercentageChanged(swapPercentage_);
     }
 }

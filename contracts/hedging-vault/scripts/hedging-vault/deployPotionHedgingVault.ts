@@ -160,6 +160,7 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         uniswapV3SwapRouter: parameters.uniswapV3SwapRouter,
         swapSlippage: parameters.swapSlippage,
         maxSwapDurationSecs: parameters.maxSwapDurationSecs,
+        swapPercentage: parameters.hedgingRate,
     };
 
     const swapToUSDCContract: SwapToUSDCAction = await deploySwapToUSDCAction(swapToUSDCParams);

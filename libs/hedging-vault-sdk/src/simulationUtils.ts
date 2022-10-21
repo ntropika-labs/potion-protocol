@@ -32,6 +32,7 @@ interface TestConditions {
     expirationTimestamp: BigNumber;
     maxPremiumWithSlippageInUSDC: BigNumber;
     totalUSDCInActionAfterPayout: BigNumber;
+    amountProtectedInUnderlying: BigNumber;
 }
 
 export function calculatePremium(
@@ -60,8 +61,8 @@ export async function getPotionBuyInfo(
     // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
     // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
     // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
-    const amountProtectedInUSDC = amountProtected
+    const amountProtectedInUnderlying = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
+    const amountProtectedInUSDC = amountProtectedInUnderlying
         .mul(underlyingAssetPriceInUSD)
         .div(USDCPriceInUSD)
         .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
@@ -203,8 +204,8 @@ export async function setupTestConditions(
     /*
         COLLATERAL
     */
-    const amountProtected = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
-    const amountProtectedInUSDC = amountProtected
+    const amountProtectedInUnderlying = HedgingVaultUtils.applyPercentage(amountToBeInvested, tEnv.hedgingRate);
+    const amountProtectedInUSDC = amountProtectedInUnderlying
         .mul(underlyingAssetPriceInUSD)
         .div(USDCPriceInUSD)
         .div(BigNumber.from(1000000000000)); // USDC only uses 6 decimals, so divide by 10**(18 - 6)
@@ -313,5 +314,6 @@ export async function setupTestConditions(
         expirationTimestamp,
         maxPremiumWithSlippageInUSDC,
         totalUSDCInActionAfterPayout,
+        amountProtectedInUnderlying,
     };
 }
