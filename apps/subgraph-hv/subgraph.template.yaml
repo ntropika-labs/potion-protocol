@@ -15,6 +15,8 @@ dataSources:
         - HedgingVault
         - PotionBuyAction
         - Token
+        - Block
+        - Round
       abis:
         - name: InvestmentVault
           file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
@@ -74,6 +76,13 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Round
+        - HedgingVault
+        - Investor
+        - Deposit
+        - DepositRequest
+        - Withdrawal
+        - WithdrawalRequest
+        - Block
       abis:
         - name: RoundsInputVault
           file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsInputVault.sol/RoundsInputVault.json
@@ -103,6 +112,13 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Round
+        - HedgingVault
+        - Investor
+        - Deposit
+        - DepositRequest
+        - Withdrawal
+        - WithdrawalRequest
+        - Block
       abis:
         - name: RoundsOutputVault
           file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsOutputVault.sol/RoundsOutputVault.json
