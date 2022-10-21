@@ -71,6 +71,9 @@ function handleVaultPositionEntered(event: VaultPositionEntered): void {
     round.assetsInvested = event.params.principalAmountInvested;
     round.blockEntered = event.block.hash;
     round.save();
+    vault.lastAssetsInvested = event.params.principalAmountInvested;
+    vault.totalAssets = event.params.totalPrincipalAmount;
+    vault.save();
     log.info(
       "PositionEntered for vault {}, with principalAmountInvested {} and totalPrincipalAmount {}",
       [
@@ -91,6 +94,8 @@ function handleVaultPositionExited(event: VaultPositionExited): void {
     round.totalAssetsAtRoundEnd = event.params.newPrincipalAmount;
     round.blockExited = event.block.hash;
     round.save();
+    vault.totalAssets = event.params.newPrincipalAmount;
+    vault.save();
     log.info("PositionExited for vault {} with newPrincipalAmount {}", [
       vault.id.toHexString(),
       event.params.newPrincipalAmount.toString(),

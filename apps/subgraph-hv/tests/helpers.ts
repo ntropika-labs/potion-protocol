@@ -1,13 +1,14 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { assert } from "matchstick-as/assembly/index";
-import { HedgingVault, PotionBuyAction } from "../generated/schema";
+import { HedgingVault, PotionBuyAction, Round } from "../generated/schema";
+import { createRoundId } from "../src/rounds";
 
 class FieldValuePair {
   field: string;
   value: string;
 }
 
-export function assertEntity(
+function assertEntity(
   entity: string,
   id: string,
   values: FieldValuePair[]
@@ -17,22 +18,24 @@ export function assertEntity(
   }
 }
 
-export function mockHedgingVault(
+function mockHedgingVault(
   id: Address,
   action: Address,
   asset: Address,
-  totalAssets: BigInt
+  totalAssets: BigInt,
+  currentRound: BigInt
 ): HedgingVault {
   const vault = new HedgingVault(id);
   vault.shareToken = id;
   vault.asset = asset;
   vault.action = action;
   vault.totalAssets = totalAssets;
+  vault.currentRound = currentRound;
   vault.save();
   return vault;
 }
 
-export function mockPotionBuyAction(
+function mockPotionBuyAction(
   id: Address,
   nextCycleStartTimestamp: BigInt,
   swapSlippage: BigInt,
@@ -53,3 +56,14 @@ export function mockPotionBuyAction(
   action.save();
   return action;
 }
+
+function mockRound(roundNumber: BigInt, vault: Bytes): Round {
+  const id = createRoundId(roundNumber, vault);
+  const round = new Round(id);
+  round.vault = vault;
+  round.roundNumber = roundNumber;
+  round.save();
+  return round;
+}
+
+export { assertEntity, mockHedgingVault, mockPotionBuyAction, mockRound };

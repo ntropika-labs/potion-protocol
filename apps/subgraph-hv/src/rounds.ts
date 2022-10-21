@@ -23,4 +23,4 @@ function getOrCreateRound(roundNumber: BigInt, vault: Bytes): Round {
   return round;
 }
 
-export { getOrCreateRound };
+export { createRoundId, getOrCreateRound };

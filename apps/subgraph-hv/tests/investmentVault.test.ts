@@ -10,7 +10,12 @@ import {
   mockTokenSymbol,
   mockTokenDecimals,
 } from "./contractCalls";
-import { assertEntity, mockHedgingVault, mockPotionBuyAction } from "./helpers";
+import {
+  assertEntity,
+  mockHedgingVault,
+  mockPotionBuyAction,
+  mockRound,
+} from "./helpers";
 import {
   handleActionsAdded,
   handleVaultPositionEntered,
@@ -25,6 +30,7 @@ import {
   assert,
 } from "matchstick-as/assembly/index";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { createRoundId } from "../src/rounds";
 
 const contractAddress = Address.fromString(
   "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
@@ -35,6 +41,8 @@ const assetAddress = Address.fromString(
 const actionAddress = Address.fromString(
   "0x0000000000000000000000000000000000000001"
 );
+
+const mockedRoundId = createRoundId(BigInt.fromString("0"), contractAddress);
 
 describe("InvestmentVault tests", () => {
   beforeAll(() => {
@@ -115,16 +123,37 @@ describe("InvestmentVault tests", () => {
         contractAddress,
         assetAddress,
         actionAddress,
-        BigInt.fromString("30")
+        BigInt.fromString("30"),
+        BigInt.fromString("0")
       );
+      mockRound(BigInt.fromString("0"), contractAddress);
       const mockedEvent = createVaultPositionEntered(
-        BigInt.fromString("0"),
-        BigInt.fromString("1")
+        BigInt.fromString("100"),
+        BigInt.fromString("50")
       );
       handleVaultPositionEntered(mockedEvent);
     });
 
     afterAll(clearStore);
+
+    test("can handle the event", () => {
+      assert.entityCount("HedgingVault", 1);
+      assert.entityCount("Round", 1);
+      assert.entityCount("Block", 1);
+    });
+
+    test("Round has been updated correctly", () => {
+      assertEntity("Round", mockedRoundId, [
+        { field: "assetsInvested", value: "50" },
+      ]);
+    });
+
+    test("HedgingVault has been updated correctly", () => {
+      assertEntity("HedgingVault", contractAddress.toHexString(), [
+        { field: "lastAssetsInvested", value: "50" },
+        { field: "totalAssets", value: "100" },
+      ]);
+    });
   });
 
   describe("handleVaultPositionExited", () => {
@@ -133,12 +162,32 @@ describe("InvestmentVault tests", () => {
         contractAddress,
         assetAddress,
         actionAddress,
-        BigInt.fromString("20")
+        BigInt.fromString("20"),
+        BigInt.fromString("0")
       );
-      const mockedEvent = createVaultPositionExited(BigInt.fromString("2"));
+      mockRound(BigInt.fromString("0"), contractAddress);
+      const mockedEvent = createVaultPositionExited(BigInt.fromString("60"));
       handleVaultPositionExited(mockedEvent);
     });
 
     afterAll(clearStore);
+
+    test("can handle the event", () => {
+      assert.entityCount("HedgingVault", 1);
+      assert.entityCount("Round", 1);
+      assert.entityCount("Block", 1);
+    });
+
+    test("Round has been updated correctly", () => {
+      assertEntity("Round", mockedRoundId, [
+        { field: "totalAssetsAtRoundEnd", value: "60" },
+      ]);
+    });
+
+    test("HedgingVault has been updated correctly", () => {
+      assertEntity("HedgingVault", contractAddress.toHexString(), [
+        { field: "totalAssets", value: "60" },
+      ]);
+    });
   });
 });
