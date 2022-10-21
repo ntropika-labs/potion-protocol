@@ -21,34 +21,37 @@ describe("Pool template cloning Flow", () => {
     });
 
     it("Show an error if the liquidity is not valid", () => {
-      cy.get(".selection\\:bg-accent-500").clear();
+      // wait for liquidity chart to fully load
+      cy.wait(3000);
+      cy.get("[test-add-liquidity-card-container] [test-base-input]").clear();
       cy.get(".py-3 > .flex-col > .p-4").should(
         "contain",
         "Please, enter a valid value"
       );
-      cy.get(".selection\\:bg-accent-500").clear().type("0");
+      cy.get("[test-add-liquidity-card-container] [test-base-input]")
+        .clear()
+        .type("0");
       cy.get(".py-3 > .flex-col > .p-4").should(
         "contain",
         "Please, enter a valid value"
       );
-      cy.get(".selection\\:bg-accent-500").clear().type("1.1234567");
+      cy.get("[test-add-liquidity-card-container] [test-base-input]")
+        .clear()
+        .type("1.1234567");
       cy.get(".py-3 > .flex-col > .p-4").should(
         "contain",
         "The max number of decimals is 6"
       );
     });
     it("Can input the liquidity", () => {
-      cy.get(".selection\\:bg-accent-500").clear().type("100.123456");
+      cy.get("[test-add-liquidity-card-container] [test-base-input]")
+        .clear()
+        .type("100.123456");
     });
-    it("Can set the approval", () => {
-      cy.get(".gap-3 > .whitespace-nowrap").click();
-      cy.wait(2000);
-      cy.get(":nth-child(2) > .grid > .col-span-3 > .text-sm").contains(
-        "approved"
-      );
-    });
-    it("Can clone the pool", () => {
-      cy.get("[test-clone-button]").click();
+    it("Can approve and clone", () => {
+      cy.get("[test-clone-button]").first().as("purchaseButton");
+
+      cy.approveAndPurchase(0, "@purchaseButton", "add liquidity");
     });
   });
 });

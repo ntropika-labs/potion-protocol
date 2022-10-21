@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import {
   BaseCard,
@@ -22,7 +23,6 @@ import PerformanceCard from "@/components/PerformanceCard.vue";
 
 import { useBondingCurves } from "@/composables/useBondingCurves";
 import { useClaimCollateral } from "@/composables/useClaimCollateral";
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { useCriteriasTokens } from "@/composables/useCriteriasTokens";
 import { useDeposit } from "@/composables/useDeposit";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
@@ -33,16 +33,18 @@ import { usePoolLiquidity } from "@/composables/usePoolLiquidity";
 import { usePoolOtokens } from "@/composables/usePoolOtokens";
 import { useRoutePoolId } from "@/composables/useRoutePoolId";
 import { useTokenList } from "@/composables/useTokenList";
-import { useUserData } from "@/composables/useUserData";
 import { useWithdraw } from "@/composables/useWithdraw";
 import type { PerformanceData } from "dapp-types";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const poolStatus = ref("Active");
 
-const { fetchUserData, userAllowance, userCollateralBalance } = useUserData();
+const userStore = useUserDataStore();
+const { userCollateralBalance, approveTx, approveReceipt } =
+  storeToRefs(userStore);
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 
 const { poolId, poolLp, id } = useRoutePoolId(route.params);
@@ -90,17 +92,17 @@ const {
   canDeposit,
   deposit,
   depositReceipt,
-  depositLoading,
+  isLoading: depositLoading,
   depositTx,
   depositLabel,
   amount: modelDeposit,
-} = useDeposit(poolId, userAllowance, userCollateralBalance);
+} = useDeposit(poolId);
 
 const handleDeposit = async () => {
   const deposited = await deposit();
   if (deposited) {
     addLiquidity(modelDeposit);
-    fetchUserData();
+    userStore.fetchUserData();
   }
 };
 
@@ -117,15 +119,12 @@ const handleWithdraw = async () => {
   const withdrawed = await withdraw();
   if (withdrawed) {
     decreaseLiquidity(modelWithdraw);
-    fetchUserData();
+    userStore.fetchUserData();
   }
 };
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 watch(criterias, loadEmergingCurves);
-
-const { approveLoading, approveTx, approveReceipt } =
-  useCollateralTokenContract();
 
 const {
   claimOtoken,
@@ -156,9 +155,7 @@ const onEditClick = () =>
     params: { lp: poolLp.value, id: poolId.value },
   });
 
-const isLoading = computed(
-  () => depositLoading.value || withdrawLoading.value || approveLoading.value
-);
+const isLoading = computed(() => depositLoading.value || withdrawLoading.value);
 
 /*
  * Toast notifications

@@ -50,6 +50,7 @@
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import { useNotifications } from "@/composables/useNotifications";
 import { useDepthRouter } from "@/composables/useDepthRouter";
@@ -62,7 +63,6 @@ import { useRouterCriterias } from "@/composables/useRouterCriterias";
 import { usePotionTokens } from "@/composables/usePotionTokens";
 import { useSlippage } from "@/composables/useSlippage";
 import { useBuyPotions } from "@/composables/useBuyPotions";
-import { useUserData } from "@/composables/useUserData";
 import { useRoutePotionId } from "@/composables/useRoutePotionId";
 import { usePotion } from "@/composables/usePotion";
 import { usePotionOrders } from "@/composables/usePotionOrders";
@@ -71,13 +71,15 @@ import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import OrderBook from "@/components/OrderBook.vue";
 import OtokenRecap from "@/components/OtokenRecap.vue";
 import ReviewPanel from "@/components/CustomPotion/ReviewPanel.vue";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const route = useRoute();
 
 const { potionAddress } = useRoutePotionId(route.params);
 
-const { userAllowance, userCollateralBalance } = useUserData();
+const { userCollateralBalance, userAllowance, approveTx, approveReceipt } =
+  storeToRefs(useUserDataStore());
 const { ethPrice } = useEthereumPrice();
 const { gasPrice } = useGas(ethPrice);
 
@@ -148,8 +150,7 @@ const {
   handleBuyPotions,
   buyPotionTx,
   buyPotionReceipt,
-  approveTx,
-  approveReceipt,
+  isLoading: buyPotionLoading,
 } = useBuyPotions(
   otokenAddress,
   strikeSelected,
@@ -157,7 +158,7 @@ const {
   routerResult
 );
 
-const loading = computed(() => routerRunning.value || fetching.value);
+const loading = computed(() => routerRunning.value || buyPotionLoading.value);
 
 // Notifications
 const {

@@ -1,13 +1,12 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useOnboard } from "@onboard-composable";
-
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 import { usePotionLiquidityPoolContract } from "@/composables/usePotionLiquidityPoolContract";
 
 import type { ComputedRef, Ref } from "vue";
 import type { BondingCurveParams, Criteria } from "dapp-types";
+import { useUserDataStore } from "@/stores/useUserDataStore";
+import { storeToRefs } from "pinia";
 
 type RefOrComputedRef<T> = Ref<T> | ComputedRef<T>;
 
@@ -20,7 +19,9 @@ export function useDeployPool(
   deployMessage: string
 ) {
   const { t } = useI18n();
-  const { connectedWallet } = useOnboard();
+  const userStore = useUserDataStore();
+  const { walletAddress, userAllowance, fetchUserDataLoading } =
+    storeToRefs(userStore);
 
   const {
     depositAndCreateCurveAndCriteriaTx,
@@ -29,15 +30,11 @@ export function useDeployPool(
     depositAndCreateCurveAndCriteriaLoading,
   } = usePotionLiquidityPoolContract();
 
-  const {
-    fetchUserCollateralBalance,
-    fetchUserCollateralAllowance,
-    userAllowance,
-    approveForPotionLiquidityPool,
-    approveLoading,
-    approveTx,
-    approveReceipt,
-  } = useCollateralTokenContract();
+  const isLoading = computed(
+    () =>
+      depositAndCreateCurveAndCriteriaLoading.value ||
+      fetchUserDataLoading.value
+  );
 
   const amountNeededToApprove = computed(() => {
     if (userAllowance.value === 0) {
@@ -50,7 +47,7 @@ export function useDeployPool(
   });
 
   const deployLabel = computed(() => {
-    if (connectedWallet.value) {
+    if (walletAddress.value) {
       return amountNeededToApprove.value > 0 ? approveMessage : deployMessage;
     }
     return t("connect_wallet");
@@ -58,7 +55,7 @@ export function useDeployPool(
 
   const handleDeployPool = async () => {
     if (amountNeededToApprove.value > 0) {
-      await approveForPotionLiquidityPool(liquidity.value, true);
+      await userStore.approveForPotionLiquidityPool(liquidity.value);
     } else {
       await depositAndCreateCurveAndCriteria(
         poolId.value,
@@ -67,18 +64,15 @@ export function useDeployPool(
         criterias.value
       );
     }
-    fetchUserCollateralBalance();
-    fetchUserCollateralAllowance();
+
+    await userStore.fetchUserData();
   };
 
   return {
     deployLabel,
     handleDeployPool,
-    approveDeployPoolTx: approveTx,
-    approveDeployPoolLoading: approveLoading,
-    approveDeployPoolReceipt: approveReceipt,
+    isLoading,
     deployPoolTx: depositAndCreateCurveAndCriteriaTx,
     deployPoolReceipt: depositAndCreateCurveAndCriteriaReceipt,
-    deployPoolLoading: depositAndCreateCurveAndCriteriaLoading,
   };
 }

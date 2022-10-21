@@ -19,7 +19,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
   const removeToast = (hash: string) => notifications.value.delete(hash);
 
   const createTransactionNotification = (
-    transaction: ContractTransaction | null,
+    transaction: Readonly<ContractTransaction> | ContractTransaction | null,
     title: string,
     body = "Your transaction is pending",
     srcset = atomSrcset
@@ -42,7 +42,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
   };
 
   const createReceiptNotification = (
-    receipt: ContractReceipt | null,
+    receipt: Readonly<ContractReceipt> | ContractReceipt | null,
     title: string,
     body = "Your transaction has completed",
     srcset = atomSrcset
