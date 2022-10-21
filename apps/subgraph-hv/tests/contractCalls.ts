@@ -112,6 +112,12 @@ function mockCycleDurationSecs(
   ).returns([ethereum.Value.fromUnsignedBigInt(cycleDurationSecs)]);
 }
 
+function mockVault(contractAddress: Address, vaultAddress: Address): void {
+  createMockedFunction(contractAddress, "vault", "vault():(address)").returns([
+    ethereum.Value.fromAddress(vaultAddress),
+  ]);
+}
+
 export {
   mockAsset,
   mockTotalAssets,
@@ -125,4 +131,5 @@ export {
   mockMaxSwapDurationSecs,
   mockStrikePercentage,
   mockCycleDurationSecs,
+  mockVault,
 };
