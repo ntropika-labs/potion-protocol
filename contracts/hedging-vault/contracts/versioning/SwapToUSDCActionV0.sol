@@ -31,6 +31,13 @@ abstract contract SwapToUSDCActionV0 is ISwapToUSDCActionV0 {
     uint256 public maxSwapDurationSecs;
 
     /**
+        @notice The percentage of the investment asset to swap to USDC
+
+        @dev The percentage is stored in the form of a uint256 with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+     */
+    uint256 public swapPercentage;
+
+    /**
         @notice Address of the USDC contract
      */
     IERC20 public USDC;

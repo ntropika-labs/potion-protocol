@@ -30,15 +30,23 @@ import type {
 export interface ISwapToUSDCActionV0Interface extends utils.Interface {
   functions: {
     "setMaxSwapDuration(uint256)": FunctionFragment;
+    "setSwapPercentage(uint256)": FunctionFragment;
     "setSwapSlippage(uint256)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "setMaxSwapDuration" | "setSwapSlippage"
+    nameOrSignatureOrTopic:
+      | "setMaxSwapDuration"
+      | "setSwapPercentage"
+      | "setSwapSlippage"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "setMaxSwapDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSwapPercentage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -48,6 +56,10 @@ export interface ISwapToUSDCActionV0Interface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "setMaxSwapDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSwapPercentage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -57,10 +69,12 @@ export interface ISwapToUSDCActionV0Interface extends utils.Interface {
 
   events: {
     "MaxSwapDurationChanged(uint256)": EventFragment;
+    "SwapPercentageChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "MaxSwapDurationChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwapPercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
 }
 
@@ -74,6 +88,17 @@ export type MaxSwapDurationChangedEvent = TypedEvent<
 
 export type MaxSwapDurationChangedEventFilter =
   TypedEventFilter<MaxSwapDurationChangedEvent>;
+
+export interface SwapPercentageChangedEventObject {
+  swapPercentage: BigNumber;
+}
+export type SwapPercentageChangedEvent = TypedEvent<
+  [BigNumber],
+  SwapPercentageChangedEventObject
+>;
+
+export type SwapPercentageChangedEventFilter =
+  TypedEventFilter<SwapPercentageChangedEvent>;
 
 export interface SwapSlippageChangedEventObject {
   swapSlippage: BigNumber;
@@ -118,6 +143,11 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setSwapPercentage(
+      swapPercentage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -129,6 +159,11 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setSwapPercentage(
+    swapPercentage: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setSwapSlippage(
     swapSlippage_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -137,6 +172,11 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
   callStatic: {
     setMaxSwapDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSwapPercentage(
+      swapPercentage: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -154,6 +194,13 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
       maxSwapDurationSecs?: null
     ): MaxSwapDurationChangedEventFilter;
 
+    "SwapPercentageChanged(uint256)"(
+      swapPercentage?: null
+    ): SwapPercentageChangedEventFilter;
+    SwapPercentageChanged(
+      swapPercentage?: null
+    ): SwapPercentageChangedEventFilter;
+
     "SwapSlippageChanged(uint256)"(
       swapSlippage?: null
     ): SwapSlippageChangedEventFilter;
@@ -166,6 +213,11 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setSwapPercentage(
+      swapPercentage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -175,6 +227,11 @@ export interface ISwapToUSDCActionV0 extends BaseContract {
   populateTransaction: {
     setMaxSwapDuration(
       durationSeconds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setSwapPercentage(
+      swapPercentage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

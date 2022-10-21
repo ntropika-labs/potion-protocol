@@ -1,10 +1,3 @@
-export type {
-  DeploymentInitParams,
-  DeploymentObjectLegacy,
-  DeploymentObject,
-  DeploymentParams,
-  DeploymentContract,
-} from "./deployment";
 export { Deployments } from "./deployment";
 export { asMock, ifMocksEnabled } from "./test/mocks";
 export type { MockOrContract } from "./test/mocks";
@@ -19,3 +12,12 @@ export {
   isNetwork,
 } from "./types";
 export { showConsoleLogs } from "./test/console";
+export { DAY_IN_SECONDS, WEEK_IN_SECONDS } from "./constants";
+export {
+  fastForwardChain,
+  getCurrentBlock,
+  getCurrentTimestamp,
+  getNextTimestamp,
+  getLastTimestamp,
+  prepareNextTimestamp,
+} from "./utils/blockchain";

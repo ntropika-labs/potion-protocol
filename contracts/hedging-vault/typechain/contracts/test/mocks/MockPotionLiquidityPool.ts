@@ -120,6 +120,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
     "createAndBuyOtokens(address,address,address,uint256,uint256,bool,(address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],uint256)": FunctionFragment;
     "getVaultId(address)": FunctionFragment;
     "lpPools(address,uint256)": FunctionFragment;
+    "setRevertBuyOtokens(bool)": FunctionFragment;
     "settleAfterExpiry(address)": FunctionFragment;
   };
 
@@ -129,6 +130,7 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
       | "createAndBuyOtokens"
       | "getVaultId"
       | "lpPools"
+      | "setRevertBuyOtokens"
       | "settleAfterExpiry"
   ): FunctionFragment;
 
@@ -162,6 +164,10 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setRevertBuyOtokens",
+    values: [PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "settleAfterExpiry",
     values: [PromiseOrValue<string>]
   ): string;
@@ -173,6 +179,10 @@ export interface MockPotionLiquidityPoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getVaultId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lpPools", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRevertBuyOtokens",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "settleAfterExpiry",
     data: BytesLike
@@ -238,6 +248,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[IPotionLiquidityPool.PoolOfCapitalStructOutput]>;
 
+    setRevertBuyOtokens(
+      enable: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     settleAfterExpiry(
       arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -274,6 +289,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
 
+  setRevertBuyOtokens(
+    enable: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   settleAfterExpiry(
     arg0: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -309,6 +329,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<IPotionLiquidityPool.PoolOfCapitalStructOutput>;
+
+    setRevertBuyOtokens(
+      enable: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     settleAfterExpiry(
       arg0: PromiseOrValue<string>,
@@ -349,6 +374,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    setRevertBuyOtokens(
+      enable: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     settleAfterExpiry(
       arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -384,6 +414,11 @@ export interface MockPotionLiquidityPool extends BaseContract {
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setRevertBuyOtokens(
+      enable: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     settleAfterExpiry(

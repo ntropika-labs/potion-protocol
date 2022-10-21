@@ -14,6 +14,7 @@ interface ISwapToUSDCActionV0 {
     /// EVENTS
     event SwapSlippageChanged(uint256 swapSlippage);
     event MaxSwapDurationChanged(uint256 maxSwapDurationSecs);
+    event SwapPercentageChanged(uint256 swapPercentage);
 
     /// ERRORS
     error SwapSlippageOutOfRange(uint256 swapSlippage);
@@ -31,4 +32,9 @@ interface ISwapToUSDCActionV0 {
         @notice Sets the maximum duration in seconds for a Uniswap swap operation
      */
     function setMaxSwapDuration(uint256 durationSeconds) external;
+
+    /**
+        @notice Sets the percentage of the investment asset to swap to USDC
+     */
+    function setSwapPercentage(uint256 swapPercentage) external;
 }

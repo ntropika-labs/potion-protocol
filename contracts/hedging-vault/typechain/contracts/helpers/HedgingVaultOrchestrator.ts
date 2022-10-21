@@ -52,6 +52,18 @@ export type PotionBuyInfoStructOutput = [
   expectedPremiumInUSDC: BigNumber;
 };
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+    principalPercentages: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[], BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+    principalPercentages: BigNumber[];
+  };
+}
+
 export declare namespace IUniswapV3Oracle {
   export type SwapInfoStruct = {
     inputToken: PromiseOrValue<string>;
@@ -147,11 +159,13 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
     "nextRound((address,address,uint256,bytes),((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256),(address,address,uint256,bytes),(address,address,uint256,bytes),(address,address,uint256,bytes))": FunctionFragment;
     "owner()": FunctionFragment;
     "potionBuyAction()": FunctionFragment;
+    "potionBuyStrategy()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "roundsInputVault()": FunctionFragment;
     "roundsOutputVault()": FunctionFragment;
     "setSystemAddresses(address,address,address,address,address)": FunctionFragment;
     "swapToUSDCAction()": FunctionFragment;
+    "swapToUSDCStrategy()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -162,11 +176,13 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
       | "nextRound"
       | "owner"
       | "potionBuyAction"
+      | "potionBuyStrategy"
       | "renounceOwnership"
       | "roundsInputVault"
       | "roundsOutputVault"
       | "setSystemAddresses"
       | "swapToUSDCAction"
+      | "swapToUSDCStrategy"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -191,6 +207,10 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "potionBuyAction",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "potionBuyStrategy",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -220,6 +240,10 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "swapToUSDCStrategy",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -236,6 +260,10 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "potionBuyAction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "potionBuyStrategy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -256,6 +284,10 @@ export interface HedgingVaultOrchestratorInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "swapToUSDCAction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapToUSDCStrategy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -326,6 +358,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
     potionBuyAction(overrides?: CallOverrides): Promise<[string]>;
 
+    potionBuyStrategy(
+      overrides?: CallOverrides
+    ): Promise<[IVaultV0.StrategyStructOutput]>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -344,6 +380,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<ContractTransaction>;
 
     swapToUSDCAction(overrides?: CallOverrides): Promise<[string]>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
+    ): Promise<[IVaultV0.StrategyStructOutput]>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -368,6 +408,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
   potionBuyAction(overrides?: CallOverrides): Promise<string>;
 
+  potionBuyStrategy(
+    overrides?: CallOverrides
+  ): Promise<IVaultV0.StrategyStructOutput>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -386,6 +430,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
   ): Promise<ContractTransaction>;
 
   swapToUSDCAction(overrides?: CallOverrides): Promise<string>;
+
+  swapToUSDCStrategy(
+    overrides?: CallOverrides
+  ): Promise<IVaultV0.StrategyStructOutput>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -410,6 +458,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
     potionBuyAction(overrides?: CallOverrides): Promise<string>;
 
+    potionBuyStrategy(
+      overrides?: CallOverrides
+    ): Promise<IVaultV0.StrategyStructOutput>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     roundsInputVault(overrides?: CallOverrides): Promise<string>;
@@ -426,6 +478,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<void>;
 
     swapToUSDCAction(overrides?: CallOverrides): Promise<string>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
+    ): Promise<IVaultV0.StrategyStructOutput>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -462,6 +518,8 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
     potionBuyAction(overrides?: CallOverrides): Promise<BigNumber>;
 
+    potionBuyStrategy(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -480,6 +538,8 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<BigNumber>;
 
     swapToUSDCAction(overrides?: CallOverrides): Promise<BigNumber>;
+
+    swapToUSDCStrategy(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -505,6 +565,8 @@ export interface HedgingVaultOrchestrator extends BaseContract {
 
     potionBuyAction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    potionBuyStrategy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -523,6 +585,10 @@ export interface HedgingVaultOrchestrator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     swapToUSDCAction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
