@@ -13,7 +13,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IUniswapV3Oracle } from "../interfaces/IUniswapV3Oracle.sol";
 import { IPotionProtocolOracle } from "../interfaces/IPotionProtocolOracle.sol";
 import { ILifecycleStates } from "../interfaces/ILifecycleStates.sol";
-import { IHedgingVaultOrchestrator } from "../interfaces/IHedgingVaultOrchestrator.sol";
+import "../interfaces/IHedgingVaultOrchestrator.sol";
 
 /**  
     @title HedgingVaultOrchestrator
@@ -32,6 +32,24 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
     ISwapToUSDCAction public swapToUSDCAction;
     IRoundsInputVault public roundsInputVault;
     IRoundsOutputVault public roundsOutputVault;
+
+    IVaultV0.Strategy private _potionBuyStrategy;
+    IVaultV0.Strategy private _swapToUSDCStrategy;
+
+    /// CONSTRUCTOR
+
+    /**
+        @notice Constructor for the HedgingVaultOrchestrator contract
+
+        @param potionBuyStrategy_ The default strategy to buy potions
+        @param swapToUSDCStrategy_ The fallback strategy to swap to USDC
+     */
+    constructor(IVaultV0.Strategy memory potionBuyStrategy_, IVaultV0.Strategy memory swapToUSDCStrategy_) {
+        _potionBuyStrategy = potionBuyStrategy_;
+        _swapToUSDCStrategy = swapToUSDCStrategy_;
+    }
+
+    // STATE MODIFIERS
 
     /**
         @inheritdoc IHedgingVaultOrchestrator
@@ -80,13 +98,36 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
         potionBuyAction.setSwapInfo(potionBuyEnterSwapInfo);
         swapToUSDCAction.setSwapInfo(swapToUSDCEnterSwapInfo);
 
-        investmentVault.enterPosition();
+        // Main strategy
+        /* solhint-disable-next-line no-empty-blocks */
+        try investmentVault.enterPositionWith(_potionBuyStrategy) {
+            // Empty on purpose
+        } catch {
+            // Fallback strategy
+            investmentVault.enterPositionWith(_swapToUSDCStrategy);
+        }
     }
+
+    /// GETTERS
 
     /**
         @inheritdoc IHedgingVaultOrchestrator
      */
     function canEnterNextRound() external view returns (bool) {
         return investmentVault.canPositionBeExited();
+    }
+
+    /**
+        @inheritdoc IHedgingVaultOrchestrator
+     */
+    function potionBuyStrategy() external view returns (IVaultV0.Strategy memory) {
+        return _potionBuyStrategy;
+    }
+
+    /**
+        @inheritdoc IHedgingVaultOrchestrator
+     */
+    function swapToUSDCStrategy() external view returns (IVaultV0.Strategy memory) {
+        return _swapToUSDCStrategy;
     }
 }

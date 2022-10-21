@@ -38,7 +38,7 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgrad
     contract cannot be updated. The main vault contract will inherit first from the base vault,
     and then use the versioning contracts to expand its storage in case it is needed.
  */
-
+/* solhint-disable-next-line no-empty-blocks */
 abstract contract BaseVaultUpgradeable is
     RolesManagerUpgradeable, // Making explicit inheritance here, although it is not necessary
     ERC4626CapUpgradeable,

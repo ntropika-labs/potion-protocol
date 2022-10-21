@@ -18,6 +18,7 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
     // complain about the mocked functions being view or pure. We cannot make them view or pure
     // because then Typechain generates an interface that does not match that of IPotionLiquidityPool
     uint256 private __silenceCompilerWarning;
+    bool private _enableRevertBuyOtokens;
 
     /**
         @inheritdoc IPotionLiquidityPool
@@ -28,6 +29,9 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
         uint256 _maxPremium
     ) external returns (uint256 premium) {
         __silenceCompilerWarning = 1;
+        if (_enableRevertBuyOtokens) {
+            revert("MockPotionLiquidityPool: buy otoken failed");
+        }
         return _maxPremium;
     }
 
@@ -45,6 +49,9 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
         uint256 maxPremium
     ) external returns (uint256 premium) {
         __silenceCompilerWarning = 1;
+        if (_enableRevertBuyOtokens) {
+            revert("MockPotionLiquidityPool: buy otoken failed");
+        }
         return maxPremium;
     }
 
@@ -82,5 +89,9 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
                 curveHash: keccak256(abi.encodePacked(dummy)),
                 criteriaSetHash: keccak256(abi.encodePacked(dummy))
             });
+    }
+
+    function setRevertBuyOtokens(bool enable) external {
+        _enableRevertBuyOtokens = enable;
     }
 }

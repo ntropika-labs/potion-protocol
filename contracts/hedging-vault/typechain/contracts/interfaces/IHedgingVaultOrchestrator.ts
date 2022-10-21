@@ -136,18 +136,34 @@ export declare namespace IPotionLiquidityPool {
   };
 }
 
+export declare namespace IVaultV0 {
+  export type StrategyStruct = {
+    actionsIndexes: PromiseOrValue<BigNumberish>[];
+    principalPercentages: PromiseOrValue<BigNumberish>[];
+  };
+
+  export type StrategyStructOutput = [BigNumber[], BigNumber[]] & {
+    actionsIndexes: BigNumber[];
+    principalPercentages: BigNumber[];
+  };
+}
+
 export interface IHedgingVaultOrchestratorInterface extends utils.Interface {
   functions: {
     "canEnterNextRound()": FunctionFragment;
     "nextRound((address,address,uint256,bytes),((address,uint256,(int256,int256,int256,int256,int256),(address,address,bool,uint256,uint256),uint256)[],address,address,uint256,uint256,uint256),(address,address,uint256,bytes),(address,address,uint256,bytes),(address,address,uint256,bytes))": FunctionFragment;
+    "potionBuyStrategy()": FunctionFragment;
     "setSystemAddresses(address,address,address,address,address)": FunctionFragment;
+    "swapToUSDCStrategy()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "canEnterNextRound"
       | "nextRound"
+      | "potionBuyStrategy"
       | "setSystemAddresses"
+      | "swapToUSDCStrategy"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -165,6 +181,10 @@ export interface IHedgingVaultOrchestratorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "potionBuyStrategy",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSystemAddresses",
     values: [
       PromiseOrValue<string>,
@@ -174,6 +194,10 @@ export interface IHedgingVaultOrchestratorInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "swapToUSDCStrategy",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "canEnterNextRound",
@@ -181,7 +205,15 @@ export interface IHedgingVaultOrchestratorInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "nextRound", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "potionBuyStrategy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setSystemAddresses",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapToUSDCStrategy",
     data: BytesLike
   ): Result;
 
@@ -226,6 +258,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    potionBuyStrategy(
+      overrides?: CallOverrides
+    ): Promise<[IVaultV0.StrategyStructOutput]>;
+
     setSystemAddresses(
       hedgingVault: PromiseOrValue<string>,
       potionBuyAction: PromiseOrValue<string>,
@@ -234,6 +270,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
+    ): Promise<[IVaultV0.StrategyStructOutput]>;
   };
 
   canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
@@ -247,6 +287,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  potionBuyStrategy(
+    overrides?: CallOverrides
+  ): Promise<IVaultV0.StrategyStructOutput>;
+
   setSystemAddresses(
     hedgingVault: PromiseOrValue<string>,
     potionBuyAction: PromiseOrValue<string>,
@@ -255,6 +299,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
     roundsOutputVault: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  swapToUSDCStrategy(
+    overrides?: CallOverrides
+  ): Promise<IVaultV0.StrategyStructOutput>;
 
   callStatic: {
     canEnterNextRound(overrides?: CallOverrides): Promise<boolean>;
@@ -268,6 +316,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    potionBuyStrategy(
+      overrides?: CallOverrides
+    ): Promise<IVaultV0.StrategyStructOutput>;
+
     setSystemAddresses(
       hedgingVault: PromiseOrValue<string>,
       potionBuyAction: PromiseOrValue<string>,
@@ -276,6 +328,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       roundsOutputVault: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
+    ): Promise<IVaultV0.StrategyStructOutput>;
   };
 
   filters: {};
@@ -292,6 +348,8 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    potionBuyStrategy(overrides?: CallOverrides): Promise<BigNumber>;
+
     setSystemAddresses(
       hedgingVault: PromiseOrValue<string>,
       potionBuyAction: PromiseOrValue<string>,
@@ -300,6 +358,8 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    swapToUSDCStrategy(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -314,6 +374,8 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    potionBuyStrategy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setSystemAddresses(
       hedgingVault: PromiseOrValue<string>,
       potionBuyAction: PromiseOrValue<string>,
@@ -321,6 +383,10 @@ export interface IHedgingVaultOrchestrator extends BaseContract {
       roundsInputVault: PromiseOrValue<string>,
       roundsOutputVault: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapToUSDCStrategy(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

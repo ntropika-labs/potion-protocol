@@ -53,6 +53,7 @@ export declare namespace SwapToUSDCAction {
     uniswapV3SwapRouter: PromiseOrValue<string>;
     swapSlippage: PromiseOrValue<BigNumberish>;
     maxSwapDurationSecs: PromiseOrValue<BigNumberish>;
+    swapPercentage: PromiseOrValue<BigNumberish>;
   };
 
   export type SwapToUSDCInitParamsStructOutput = [
@@ -62,6 +63,7 @@ export declare namespace SwapToUSDCAction {
     string,
     string,
     string,
+    BigNumber,
     BigNumber,
     BigNumber
   ] & {
@@ -73,6 +75,7 @@ export declare namespace SwapToUSDCAction {
     uniswapV3SwapRouter: string;
     swapSlippage: BigNumber;
     maxSwapDurationSecs: BigNumber;
+    swapPercentage: BigNumber;
   };
 }
 
@@ -101,7 +104,7 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
     "getSwapRouter()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "initialize((address,address,address,address,address,address,uint256,uint256))": FunctionFragment;
+    "initialize((address,address,address,address,address,address,uint256,uint256,uint256))": FunctionFragment;
     "maxSwapDurationSecs()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -111,8 +114,10 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "setMaxSwapDuration(uint256)": FunctionFragment;
     "setSwapInfo((address,address,uint256,bytes))": FunctionFragment;
+    "setSwapPercentage(uint256)": FunctionFragment;
     "setSwapSlippage(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "swapPercentage()": FunctionFragment;
     "swapSlippage()": FunctionFragment;
     "unpause()": FunctionFragment;
   };
@@ -152,8 +157,10 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
       | "revokeRole"
       | "setMaxSwapDuration"
       | "setSwapInfo"
+      | "setSwapPercentage"
       | "setSwapSlippage"
       | "supportsInterface"
+      | "swapPercentage"
       | "swapSlippage"
       | "unpause"
   ): FunctionFragment;
@@ -294,12 +301,20 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
     values: [IUniswapV3Oracle.SwapInfoStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "setSwapPercentage",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSwapSlippage",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapPercentage",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "swapSlippage",
@@ -404,11 +419,19 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setSwapPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setSwapSlippage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapPercentage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -427,6 +450,7 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "SwapPercentageChanged(uint256)": EventFragment;
     "SwapSlippageChanged(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
@@ -440,6 +464,7 @@ export interface SwapToUSDCActionInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwapPercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapSlippageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
@@ -541,6 +566,17 @@ export type RoleRevokedEvent = TypedEvent<
 >;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface SwapPercentageChangedEventObject {
+  swapPercentage: BigNumber;
+}
+export type SwapPercentageChangedEvent = TypedEvent<
+  [BigNumber],
+  SwapPercentageChangedEventObject
+>;
+
+export type SwapPercentageChangedEventFilter =
+  TypedEventFilter<SwapPercentageChangedEvent>;
 
 export interface SwapSlippageChangedEventObject {
   swapSlippage: BigNumber;
@@ -729,6 +765,11 @@ export interface SwapToUSDCAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setSwapPercentage(
+      swapPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -738,6 +779,8 @@ export interface SwapToUSDCAction extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    swapPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     swapSlippage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -888,6 +931,11 @@ export interface SwapToUSDCAction extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setSwapPercentage(
+    swapPercentage_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setSwapSlippage(
     swapSlippage_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -897,6 +945,8 @@ export interface SwapToUSDCAction extends BaseContract {
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  swapPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1045,6 +1095,11 @@ export interface SwapToUSDCAction extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setSwapPercentage(
+      swapPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1054,6 +1109,8 @@ export interface SwapToUSDCAction extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    swapPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1133,6 +1190,13 @@ export interface SwapToUSDCAction extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
+
+    "SwapPercentageChanged(uint256)"(
+      swapPercentage?: null
+    ): SwapPercentageChangedEventFilter;
+    SwapPercentageChanged(
+      swapPercentage?: null
+    ): SwapPercentageChangedEventFilter;
 
     "SwapSlippageChanged(uint256)"(
       swapSlippage?: null
@@ -1286,6 +1350,11 @@ export interface SwapToUSDCAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setSwapPercentage(
+      swapPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1295,6 +1364,8 @@ export interface SwapToUSDCAction extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    swapPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     swapSlippage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1450,6 +1521,11 @@ export interface SwapToUSDCAction extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setSwapPercentage(
+      swapPercentage_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setSwapSlippage(
       swapSlippage_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1459,6 +1535,8 @@ export interface SwapToUSDCAction extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    swapPercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     swapSlippage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
