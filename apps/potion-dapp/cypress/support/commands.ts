@@ -93,7 +93,8 @@ Cypress.Commands.add(
     approveLabel = "approve usdc"
   ) => {
     // Wait for the button to update if any previous action is still completing
-    cy.wait(1500);
+    cy.get(purchaseButtonAlias).should("not.contain.text", "loading");
+
     if (doApproval) {
       cy.get(purchaseButtonAlias)
         .invoke("text")
