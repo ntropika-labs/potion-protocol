@@ -29,7 +29,7 @@ import {
     
     @author Roberto Cano <robercano>
  */
-describe.only("HedgingVaultBasic", function () {
+describe("HedgingVaultBasic", function () {
     let ownerAccount: SignerWithAddress;
     let investorAccount: SignerWithAddress;
 
