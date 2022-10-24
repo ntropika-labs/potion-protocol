@@ -25,9 +25,9 @@ dataSources:
       eventHandlers:
         - event: ActionsAdded(address[])
           handler: handleActionsAdded
-        - event: VaultPositionEntered(uint256,uint256)
+        - event: VaultPositionEntered(uint256,uint256,(uint256[],uint256[]))
           handler: handleVaultPositionEntered
-        - event: VaultPositionExited(uint256)
+        - event: VaultPositionExited(uint256,(uint256[],uint256[]))
           handler: handleVaultPositionExited
         - event: Deposit(indexed address,indexed address,uint256,uint256)
           handler: handleDeposit
