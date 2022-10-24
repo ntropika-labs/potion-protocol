@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
 import { BaseCard } from "potion-ui";
-
+import { onMounted, onUnmounted } from "vue";
 import TokenSelectionPanel from "@/components/CustomPotion/TokenSelectionPanel.vue";
 import StrikeSelectionPanel from "@/components/CustomPotion/StrikeSelectionPanel.vue";
 import DurationSelectionPanel from "@/components/CustomPotion/DurationSelectionPanel.vue";
@@ -82,7 +82,18 @@ const {
   formattedMarketSize,
   formattedPremium,
   numberOfTransactions,
+  runRouter,
 } = useDepthRouter(criterias, orderSize, strikeSelected, gasPrice, ethPrice);
+
+const intervalRouter = ref<ReturnType<typeof setInterval> | null>(null);
+onMounted(async () => {
+  intervalRouter.value = setInterval(() => {
+    runRouter();
+  }, 30000);
+});
+onUnmounted(() => {
+  clearInterval(intervalRouter.value ?? 0);
+});
 
 const {
   slippage,

@@ -2,17 +2,17 @@ import { getPoolsFromCriterias } from "potion-router";
 import { currencyFormatter } from "potion-ui";
 import { computed, isRef, ref, toRaw, unref } from "vue";
 
+import { useTokenList } from "@/composables/useTokenList";
+import { contractsAddresses } from "@/helpers/contracts";
 import { worker } from "@/web-worker";
 import { watchDebounced } from "@vueuse/core";
 
-import { useTokenList } from "@/composables/useTokenList";
-import { contractsAddresses } from "@/helpers/contracts";
+import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 
 import type { DepthRouterReturn } from "potion-router";
 import type { Ref } from "vue";
 import type { Criteria, MaybeNumberRef } from "dapp-types";
 import type { ChartCriteriaPool, IPoolUntyped } from "potion-router/src/types";
-import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 export const useDepthRouter = (
   criterias: Ref<Criteria[]> | Criteria[],
   orderSize: MaybeNumberRef,

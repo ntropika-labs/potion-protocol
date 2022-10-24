@@ -48,7 +48,7 @@ export const Deployments = {
         network: "kovan",
     },
     localhost: {
-        timestamp: 1666190431,
+        timestamp: 1666612965,
         network: "localhost",
         contracts: {
             AddressBook: {
