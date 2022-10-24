@@ -24,7 +24,7 @@ export function useCriteriasTokens(
       const promises = addresses.map(async (address) => {
         const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
         await fetchTokenPrice();
-        prices.set(address, price.value);
+        prices.set(address, price.value.toString());
       });
       await Promise.allSettled(promises);
     } catch (error) {
