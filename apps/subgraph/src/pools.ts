@@ -21,6 +21,11 @@ import {
   Template,
 } from "../generated/schema";
 import { calculateAverageCost } from "./curves";
+import { Actions } from "./enums";
+import {
+  updateHistoricalPoolData,
+  updateHistoricalTemplateData,
+} from "./historicalData";
 import {
   oTokenFixedtoDecimals,
   oTokenIncrementLiquidity,
@@ -28,11 +33,6 @@ import {
   oTokenSettled,
 } from "./otoken";
 import { collateralToDecimals } from "./token";
-import {
-  updateHistoricalPoolData,
-  updateHistoricalTemplateData,
-} from "./historicalData";
-import { Actions } from "./enums";
 
 const ZERO_BIGDECIMAL = BigDecimal.fromString("0");
 const HUNDRED_BIGDECIMAL = BigDecimal.fromString("100");
