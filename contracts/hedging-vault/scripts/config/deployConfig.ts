@@ -84,6 +84,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
     "hardhat.develop.hedging": DefaultConfig,
     "internal.develop.test": DefaultConfig,
     "hardhat.develop.test": DefaultConfig,
+    "hardhat.develop.multivault": DefaultConfig,
     "localhost.goerli": {
         // Asset address
         USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
