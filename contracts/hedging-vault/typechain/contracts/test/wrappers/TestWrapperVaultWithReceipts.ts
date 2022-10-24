@@ -278,7 +278,7 @@ export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface DepositWithReceiptEventObject {
   caller: string;
-  owner: string;
+  receiver: string;
   id: BigNumber;
   assets: BigNumber;
 }
@@ -760,13 +760,13 @@ export interface TestWrapperVaultWithReceipts extends BaseContract {
 
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       id?: null,
       assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       id?: null,
       assets?: null
     ): DepositWithReceiptEventFilter;
