@@ -16,7 +16,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "receipient",
+        name: "recipient",
         type: "address",
       },
       {
@@ -41,17 +41,17 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "oldFeeReceipient",
+        name: "oldFeeRecipient",
         type: "address",
       },
       {
         indexed: true,
         internalType: "address",
-        name: "newFeeReceipient",
+        name: "newFeeRecipient",
         type: "address",
       },
     ],
-    name: "FeesReceipientChanged",
+    name: "FeesRecipientChanged",
     type: "event",
   },
   {
@@ -60,7 +60,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "receipient",
+        name: "recipient",
         type: "address",
       },
       {

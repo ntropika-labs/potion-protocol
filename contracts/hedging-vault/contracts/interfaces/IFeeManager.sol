@@ -18,14 +18,14 @@ interface IFeeManager {
     /// EVENTS
     event ManagementFeeChanged(uint256 oldManagementFee, uint256 newManagementFee);
     event PerformanceFeeChanged(uint256 oldPerformanceFee, uint256 newPerformanceFee);
-    event FeesReceipientChanged(address indexed oldFeeReceipient, address indexed newFeeReceipient);
+    event FeesRecipientChanged(address indexed oldFeeRecipient, address indexed newFeeRecipient);
     event FeesSent(
-        address indexed receipient,
+        address indexed recipient,
         address indexed token,
         uint256 managementAmount,
         uint256 performanceAmount
     );
-    event FeesETHSent(address indexed receipient, uint256 managementAmount, uint256 performanceAmount);
+    event FeesETHSent(address indexed recipient, uint256 managementAmount, uint256 performanceAmount);
 
     /// FUNCTIONS
 

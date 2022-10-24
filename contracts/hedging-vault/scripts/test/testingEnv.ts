@@ -374,7 +374,7 @@ export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgi
         );
     }
 
-    return hedgingVaultConfig;
+    return Object.assign({}, hedgingVaultConfig);
 }
 
 export async function deployTestingEnv(

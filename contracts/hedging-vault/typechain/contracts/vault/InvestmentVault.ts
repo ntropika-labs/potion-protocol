@@ -636,7 +636,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "Deposit(address,address,uint256,uint256)": EventFragment;
     "FeesETHSent(address,uint256,uint256)": EventFragment;
-    "FeesReceipientChanged(address,address)": EventFragment;
+    "FeesRecipientChanged(address,address)": EventFragment;
     "FeesSent(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
@@ -658,7 +658,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesETHSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesReceipientChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesRecipientChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesSent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
@@ -709,7 +709,7 @@ export type DepositEvent = TypedEvent<
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
 export interface FeesETHSentEventObject {
-  receipient: string;
+  recipient: string;
   managementAmount: BigNumber;
   performanceAmount: BigNumber;
 }
@@ -720,20 +720,20 @@ export type FeesETHSentEvent = TypedEvent<
 
 export type FeesETHSentEventFilter = TypedEventFilter<FeesETHSentEvent>;
 
-export interface FeesReceipientChangedEventObject {
-  oldFeeReceipient: string;
-  newFeeReceipient: string;
+export interface FeesRecipientChangedEventObject {
+  oldFeeRecipient: string;
+  newFeeRecipient: string;
 }
-export type FeesReceipientChangedEvent = TypedEvent<
+export type FeesRecipientChangedEvent = TypedEvent<
   [string, string],
-  FeesReceipientChangedEventObject
+  FeesRecipientChangedEventObject
 >;
 
-export type FeesReceipientChangedEventFilter =
-  TypedEventFilter<FeesReceipientChangedEvent>;
+export type FeesRecipientChangedEventFilter =
+  TypedEventFilter<FeesRecipientChangedEvent>;
 
 export interface FeesSentEventObject {
-  receipient: string;
+  recipient: string;
   token: string;
   managementAmount: BigNumber;
   performanceAmount: BigNumber;
@@ -1826,33 +1826,33 @@ export interface InvestmentVault extends BaseContract {
     ): DepositEventFilter;
 
     "FeesETHSent(address,uint256,uint256)"(
-      receipient?: PromiseOrValue<string> | null,
+      recipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
     FeesETHSent(
-      receipient?: PromiseOrValue<string> | null,
+      recipient?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesETHSentEventFilter;
 
-    "FeesReceipientChanged(address,address)"(
-      oldFeeReceipient?: PromiseOrValue<string> | null,
-      newFeeReceipient?: PromiseOrValue<string> | null
-    ): FeesReceipientChangedEventFilter;
-    FeesReceipientChanged(
-      oldFeeReceipient?: PromiseOrValue<string> | null,
-      newFeeReceipient?: PromiseOrValue<string> | null
-    ): FeesReceipientChangedEventFilter;
+    "FeesRecipientChanged(address,address)"(
+      oldFeeRecipient?: PromiseOrValue<string> | null,
+      newFeeRecipient?: PromiseOrValue<string> | null
+    ): FeesRecipientChangedEventFilter;
+    FeesRecipientChanged(
+      oldFeeRecipient?: PromiseOrValue<string> | null,
+      newFeeRecipient?: PromiseOrValue<string> | null
+    ): FeesRecipientChangedEventFilter;
 
     "FeesSent(address,address,uint256,uint256)"(
-      receipient?: PromiseOrValue<string> | null,
+      recipient?: PromiseOrValue<string> | null,
       token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null
     ): FeesSentEventFilter;
     FeesSent(
-      receipient?: PromiseOrValue<string> | null,
+      recipient?: PromiseOrValue<string> | null,
       token?: PromiseOrValue<string> | null,
       managementAmount?: null,
       performanceAmount?: null

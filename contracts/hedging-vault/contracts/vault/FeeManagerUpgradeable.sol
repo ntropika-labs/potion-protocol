@@ -50,7 +50,7 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
     uint256 private _performanceFee;
 
     /**
-        @notice The receipient of all the fees defined in the manager
+        @notice The recipient of all the fees defined in the manager
      */
     address payable private _feesRecipient;
 
@@ -68,11 +68,11 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
     function __FeeManager_init_unchained(
         uint256 managementFee_,
         uint256 performanceFee_,
-        address payable feeReceipient_
+        address payable feeRecipient_
     ) internal onlyInitializing {
         _setManagementFee(managementFee_);
         _setPerformanceFee(performanceFee_);
-        _setFeesRecipient(feeReceipient_);
+        _setFeesRecipient(feeRecipient_);
     }
 
     /// FUNCTIONS
@@ -217,11 +217,11 @@ contract FeeManagerUpgradeable is RolesManagerUpgradeable, IFeeManager {
     function _setFeesRecipient(address payable newFeesRecipient) private {
         require(newFeesRecipient != _feesRecipient, "Fees recipient is the same as before");
 
-        address oldFeesReceipient = newFeesRecipient;
+        address oldFeesRecipient = newFeesRecipient;
 
         _feesRecipient = newFeesRecipient;
 
-        emit FeesReceipientChanged(oldFeesReceipient, newFeesRecipient);
+        emit FeesRecipientChanged(oldFeesRecipient, newFeesRecipient);
     }
 
     /**

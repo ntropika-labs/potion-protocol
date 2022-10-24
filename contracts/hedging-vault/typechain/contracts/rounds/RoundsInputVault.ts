@@ -530,7 +530,7 @@ export type AssetsDepositedEventFilter = TypedEventFilter<AssetsDepositedEvent>;
 
 export interface DepositWithReceiptEventObject {
   caller: string;
-  owner: string;
+  receiver: string;
   id: BigNumber;
   assets: BigNumber;
 }
@@ -676,9 +676,9 @@ export interface WithdrawExchangeAssetEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  assets: BigNumber;
-  sharesId: BigNumber;
-  sharesAmount: BigNumber;
+  exchangeAssetAmount: BigNumber;
+  receiptId: BigNumber;
+  receiptAmount: BigNumber;
 }
 export type WithdrawExchangeAssetEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber, BigNumber],
@@ -692,9 +692,9 @@ export interface WithdrawExchangeAssetBatchEventObject {
   caller: string;
   receiver: string;
   owner: string;
-  assets: BigNumber;
-  sharesIds: BigNumber[];
-  sharesAmounts: BigNumber[];
+  exchangeAssetAmount: BigNumber;
+  receiptIds: BigNumber[];
+  receiptAmounts: BigNumber[];
 }
 export type WithdrawExchangeAssetBatchEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber[], BigNumber[]],
@@ -1435,13 +1435,13 @@ export interface RoundsInputVault extends BaseContract {
 
     "DepositWithReceipt(address,address,uint256,uint256)"(
       caller?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       id?: null,
       assets?: null
     ): DepositWithReceiptEventFilter;
     DepositWithReceipt(
       caller?: PromiseOrValue<string> | null,
-      owner?: PromiseOrValue<string> | null,
+      receiver?: PromiseOrValue<string> | null,
       id?: null,
       assets?: null
     ): DepositWithReceiptEventFilter;
@@ -1565,34 +1565,34 @@ export interface RoundsInputVault extends BaseContract {
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
+      exchangeAssetAmount?: null,
+      receiptId?: null,
+      receiptAmount?: null
     ): WithdrawExchangeAssetEventFilter;
     WithdrawExchangeAsset(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesId?: null,
-      sharesAmount?: null
+      exchangeAssetAmount?: null,
+      receiptId?: null,
+      receiptAmount?: null
     ): WithdrawExchangeAssetEventFilter;
 
     "WithdrawExchangeAssetBatch(address,address,address,uint256,uint256[],uint256[])"(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
+      exchangeAssetAmount?: null,
+      receiptIds?: null,
+      receiptAmounts?: null
     ): WithdrawExchangeAssetBatchEventFilter;
     WithdrawExchangeAssetBatch(
       caller?: PromiseOrValue<string> | null,
       receiver?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
-      assets?: null,
-      sharesIds?: null,
-      sharesAmounts?: null
+      exchangeAssetAmount?: null,
+      receiptIds?: null,
+      receiptAmounts?: null
     ): WithdrawExchangeAssetBatchEventFilter;
   };
 

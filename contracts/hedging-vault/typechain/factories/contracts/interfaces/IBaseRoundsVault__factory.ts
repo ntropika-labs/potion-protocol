@@ -47,7 +47,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "owner",
+        name: "receiver",
         type: "address",
       },
       {
@@ -270,19 +270,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "assets",
+        name: "exchangeAssetAmount",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "sharesId",
+        name: "receiptId",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "sharesAmount",
+        name: "receiptAmount",
         type: "uint256",
       },
     ],
@@ -313,19 +313,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "assets",
+        name: "exchangeAssetAmount",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256[]",
-        name: "sharesIds",
+        name: "receiptIds",
         type: "uint256[]",
       },
       {
         indexed: false,
         internalType: "uint256[]",
-        name: "sharesAmounts",
+        name: "receiptAmounts",
         type: "uint256[]",
       },
     ],

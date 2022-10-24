@@ -24,7 +24,7 @@ import "../extensions/interfaces/IERC1155FullSupplyUpgradeable.sol";
     @author Roberto Cano <robercano>
  */
 interface IVaultWithReceiptsUpgradeable is IERC1155FullSupplyUpgradeable {
-    event DepositWithReceipt(address indexed caller, address indexed owner, uint256 id, uint256 assets);
+    event DepositWithReceipt(address indexed caller, address indexed receiver, uint256 id, uint256 assets);
 
     event RedeemReceipt(
         address indexed caller,

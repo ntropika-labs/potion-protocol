@@ -116,7 +116,7 @@ describe("FallbackStrategy", function () {
         expect(await swapUSDC.maxSwapDurationSecs()).to.equal(tEnv.maxSwapDurationSecs);
     });
 
-    it.only("FS0002 - Full Fallback Cycle", async function () {
+    it("FS0002 - Full Fallback Cycle", async function () {
         // Test Settings
         const underlyingDecimals = await tEnv.underlyingAsset.decimals();
         const USDCDecimals = await tEnv.USDC.decimals();

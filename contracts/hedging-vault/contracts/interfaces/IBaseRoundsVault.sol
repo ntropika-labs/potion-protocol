@@ -47,17 +47,17 @@ interface IBaseRoundsVault is IVaultDeferredOperationUpgradeable {
         address indexed caller,
         address indexed receiver,
         address indexed owner,
-        uint256 assets,
-        uint256 sharesId,
-        uint256 sharesAmount
+        uint256 exchangeAssetAmount,
+        uint256 receiptId,
+        uint256 receiptAmount
     );
     event WithdrawExchangeAssetBatch(
         address indexed caller,
         address indexed receiver,
         address indexed owner,
-        uint256 assets,
-        uint256[] sharesIds,
-        uint256[] sharesAmounts
+        uint256 exchangeAssetAmount,
+        uint256[] receiptIds,
+        uint256[] receiptAmounts
     );
 
     // PUBLIC FUNCTIONS
