@@ -2,13 +2,15 @@ import {
   NextRound,
   DepositWithReceipt,
   RedeemReceipt,
+  RedeemReceiptBatch,
   WithdrawExchangeAsset,
   WithdrawExchangeAssetBatch,
   RoundsInputVault,
 } from "../generated/RoundsInputVault/RoundsInputVault";
+import { DepositRequest } from "../generated/schema";
 import { getOrCreateRound, createRoundId } from "./rounds";
 import { addInvestorVault } from "./investors";
-import { BigInt, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { setCurrentRound } from "./investmentVault";
 import {
   getOrCreateDepositRequest,
@@ -55,49 +57,88 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
 }
 
 function handleRedeemReceipt(event: RedeemReceipt): void {
-  const receiptToRedeem = getDepositRequest(
+  // retrive vault and roundNumber from the contract state
+  const contract = RoundsInputVault.bind(event.address);
+  const vaultAddress = contract.vault();
+  const roundNumber = contract.getCurrentRound();
+  const roundId = createRoundId(roundNumber, vaultAddress);
+  redeem(
     event.params.id,
+    roundId,
+    roundNumber,
+    event.params.amount,
     event.params.receiver
   );
-  if (receiptToRedeem) {
-    // retrive vault and roundNumber from the contract state
-    const contract = RoundsInputVault.bind(event.address);
-    const vaultAddress = contract.vault();
-    const roundNumber = contract.getCurrentRound();
-    const roundId = createRoundId(roundNumber, vaultAddress);
-    // check if we are in the same round, same round means that we are updating the current request
-    if (roundId == receiptToRedeem.round) {
-      // if the amount in the event is the same that we have already put inside it means that we want to delete the receipt
-      if (receiptToRedeem.amount == event.params.amount) {
-        deleteDepositRequest(receiptToRedeem.id);
-      } else {
-        receiptToRedeem.amount = receiptToRedeem.amount.minus(
-          event.params.amount
-        );
-        receiptToRedeem.save();
-        log.info(
-          "updated DepositRequest of {} for round {}, the new amount is {}",
-          [
-            event.params.receiver.toHexString(),
-            roundNumber.toString(),
-            receiptToRedeem.amount.toString(),
-          ]
-        );
-      }
-      // different round means that we are redeeming assets
-    } else {
-      receiptToRedeem.amountRedeemed = event.params.amount;
-      receiptToRedeem.save();
-      log.info("redeemed {} for {} from receipt {}", [
-        event.params.amount.toString(),
-        event.params.receiver.toHexString(),
-        event.params.id.toString(),
-      ]);
-    }
-  } else {
+}
+
+function handleRedeemReceiptBatch(event: RedeemReceiptBatch): void {
+  // retrive vault and roundNumber from the contract state
+  const contract = RoundsInputVault.bind(event.address);
+  const vaultAddress = contract.vault();
+  const roundNumber = contract.getCurrentRound();
+  const roundId = createRoundId(roundNumber, vaultAddress);
+  for (let i = 0; i < event.params.ids.length; i += 1) {
+    redeem(
+      event.params.ids[i],
+      roundId,
+      roundNumber,
+      event.params.amounts[i],
+      event.params.receiver
+    );
+  }
+}
+
+function redeem(
+  recipeId: BigInt,
+  roundId: Bytes,
+  roundNumber: BigInt,
+  amount: BigInt,
+  receiver: Address
+): void {
+  const depositRequest = getDepositRequest(recipeId, receiver);
+  if (depositRequest == null) {
     log.error("receipt {} doesn't exist for {}", [
-      event.params.id.toString(),
-      event.params.receiver.toHexString(),
+      recipeId.toString(),
+      receiver.toHexString(),
+    ]);
+  } else {
+    _redeem(depositRequest, recipeId, roundId, roundNumber, amount, receiver);
+  }
+}
+
+function _redeem(
+  depositRequest: DepositRequest,
+  recipeId: BigInt,
+  roundId: Bytes,
+  roundNumber: BigInt,
+  amount: BigInt,
+  receiver: Address
+): void {
+  // check if we are in the same round, same round means that we are updating the current request
+  if (roundId == depositRequest.round) {
+    // if the amount in the event is the same that we have already put inside it means that we want to delete the depositRequest
+    if (depositRequest.amount == amount) {
+      deleteDepositRequest(depositRequest.id);
+    } else {
+      depositRequest.amount = depositRequest.amount.minus(amount);
+      depositRequest.save();
+      log.info(
+        "updated DepositRequest of {} for round {}, the new amount is {}",
+        [
+          receiver.toHexString(),
+          roundNumber.toString(),
+          depositRequest.amount.toString(),
+        ]
+      );
+    }
+    // different round means that we are redeeming assets
+  } else {
+    depositRequest.amountRedeemed = amount;
+    depositRequest.save();
+    log.info("redeemed {} for {} from depositRequest {}", [
+      amount.toString(),
+      receiver.toHexString(),
+      recipeId.toString(),
     ]);
   }
 }
@@ -135,6 +176,7 @@ export {
   handleNextRound,
   handleDepositWithReceipt,
   handleRedeemReceipt,
+  handleRedeemReceiptBatch,
   handleWithdrawExchangeAsset,
   handleWithdrawExchangeAssetBatch,
 };
