@@ -14,6 +14,13 @@ class FieldValuePair {
   value: string;
 }
 
+class DepositRequestParams {
+  depositId: BigInt;
+  amount: BigInt;
+  amountRedeemed: BigInt;
+  remainingShares: BigInt;
+}
+
 function assertEntity(
   entity: string,
   id: string,
@@ -73,28 +80,48 @@ function mockRound(roundNumber: BigInt, vault: Bytes): Round {
 }
 
 function mockDepositRequest(
-  depositId: BigInt,
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingShares: BigInt,
+  params: DepositRequestParams,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(params.depositId, investor);
   const depositRequest = new DepositRequest(id);
   depositRequest.round = round;
   depositRequest.investor = investor;
   depositRequest.sender = sender;
-  depositRequest.amount = amount;
-  depositRequest.amountRedeemed = amountRedeemed;
-  depositRequest.remainingShares = remainingShares;
+  depositRequest.amount = params.amount;
+  depositRequest.amountRedeemed = params.amountRedeemed;
+  depositRequest.remainingShares = params.remainingShares;
   depositRequest.block = block;
   depositRequest.tx = tx;
   depositRequest.save();
   return depositRequest;
+}
+
+function mockDepositRequests(
+  round: Bytes,
+  investor: Address,
+  sender: Address,
+  params: DepositRequestParams[],
+  block: Bytes,
+  tx: Bytes
+): DepositRequest[] {
+  const result: DepositRequest[] = [];
+  for (let i = 0; i < params.length; i += 1) {
+    const depositRequest = mockDepositRequest(
+      round,
+      investor,
+      sender,
+      params[i],
+      block,
+      tx
+    );
+    result.push(depositRequest);
+  }
+  return result;
 }
 
 export {
@@ -103,4 +130,6 @@ export {
   mockPotionBuyAction,
   mockRound,
   mockDepositRequest,
+  mockDepositRequests,
+  DepositRequestParams,
 };

@@ -2,13 +2,21 @@ import {
   createNextRound,
   createDepositWithReceipt,
   createRedeemReceipt,
+  createRedeemReceiptBatch,
 } from "./events";
 import { mockVault, mockCurrentRound } from "./contractCalls";
-import { assertEntity, mockHedgingVault, mockDepositRequest } from "./helpers";
+import {
+  assertEntity,
+  mockHedgingVault,
+  mockDepositRequest,
+  mockDepositRequests,
+  DepositRequestParams,
+} from "./helpers";
 import {
   handleNextRound,
   handleDepositWithReceipt,
   handleRedeemReceipt,
+  handleRedeemReceiptBatch,
 } from "../src/roundsInputVault";
 import {
   test,
@@ -35,12 +43,47 @@ const actionAddress = Address.fromString(
 );
 
 const mockedRoundId = createRoundId(BigInt.fromString("1"), vaultAddress);
+const mockedRoundId_B = createRoundId(BigInt.fromString("5"), vaultAddress);
 const mockedCaller = Address.fromString(
   "0x0000000000000000000000000000000000000001"
 );
 const mockedInvestor = Address.fromString(
   "0x0000000000000000000000000000000000000002"
 );
+
+const mockedRoundParams: DepositRequestParams = {
+  depositId: BigInt.fromString("2"),
+  amount: BigInt.fromString("100"),
+  amountRedeemed: BigInt.fromString("0"),
+  remainingShares: BigInt.fromString("0"),
+};
+
+const mockedRoundParamsArray: DepositRequestParams[] = [
+  {
+    depositId: BigInt.fromString("1"),
+    amount: BigInt.fromString("10"),
+    amountRedeemed: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("0"),
+  },
+  {
+    depositId: BigInt.fromString("2"),
+    amount: BigInt.fromString("100"),
+    amountRedeemed: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("0"),
+  },
+  {
+    depositId: BigInt.fromString("3"),
+    amount: BigInt.fromString("500"),
+    amountRedeemed: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("0"),
+  },
+  {
+    depositId: BigInt.fromString("4"),
+    amount: BigInt.fromString("1000"),
+    amountRedeemed: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("0"),
+  },
+];
 
 describe("roundsInputVault", () => {
   beforeAll(() => {
@@ -108,13 +151,10 @@ describe("roundsInputVault", () => {
     describe("DepositRequest already exists", () => {
       beforeAll(() => {
         mockDepositRequest(
-          BigInt.fromString("2"),
           mockedRoundId,
           mockedInvestor,
           mockedCaller,
-          BigInt.fromString("100"),
-          BigInt.fromString("0"),
-          BigInt.fromString("0"),
+          mockedRoundParams,
           contractAddress,
           contractAddress
         );
@@ -152,13 +192,10 @@ describe("roundsInputVault", () => {
     describe("RedeemReceipt has been called in a different round", () => {
       beforeAll(() => {
         mockDepositRequest(
-          BigInt.fromString("2"),
           mockedRoundId,
           mockedInvestor,
           mockedCaller,
-          BigInt.fromString("100"),
-          BigInt.fromString("0"),
-          BigInt.fromString("0"),
+          mockedRoundParams,
           contractAddress,
           contractAddress
         );
@@ -197,13 +234,10 @@ describe("roundsInputVault", () => {
       describe("user has requested a DepositRequest reduption", () => {
         beforeAll(() => {
           mockDepositRequest(
-            BigInt.fromString("2"),
             mockedRoundId,
             mockedInvestor,
             mockedCaller,
-            BigInt.fromString("100"),
-            BigInt.fromString("0"),
-            BigInt.fromString("0"),
+            mockedRoundParams,
             contractAddress,
             contractAddress
           );
@@ -237,13 +271,10 @@ describe("roundsInputVault", () => {
       describe("user has requested a DepositRequest deletion", () => {
         beforeAll(() => {
           mockDepositRequest(
-            BigInt.fromString("2"),
             mockedRoundId,
             mockedInvestor,
             mockedCaller,
-            BigInt.fromString("100"),
-            BigInt.fromString("0"),
-            BigInt.fromString("0"),
+            mockedRoundParams,
             contractAddress,
             contractAddress
           );
@@ -267,6 +298,335 @@ describe("roundsInputVault", () => {
             "RedeemReceipt",
             createDepositRequestId(
               BigInt.fromString("2"),
+              mockedInvestor
+            ).toHexString()
+          );
+        });
+      });
+    });
+  });
+
+  describe("RedeemReceiptBatch", () => {
+    describe("redeems are all in the same round", () => {
+      describe("redeems are all in the round where DepositRequests have been created", () => {
+        beforeAll(() => {
+          mockCurrentRound(contractAddress, BigInt.fromString("1"));
+        });
+        describe("requests are all to reduce DepositRequests", () => {
+          beforeAll(() => {
+            mockDepositRequests(
+              mockedRoundId,
+              mockedInvestor,
+              mockedCaller,
+              mockedRoundParamsArray,
+              contractAddress,
+              contractAddress
+            );
+            const mockedEvent = createRedeemReceiptBatch(
+              mockedCaller,
+              mockedInvestor,
+              mockedCaller,
+              [BigInt.fromString("1"), BigInt.fromString("3")],
+              [BigInt.fromString("5"), BigInt.fromString("50")]
+            );
+            handleRedeemReceiptBatch(mockedEvent);
+          });
+          afterAll(clearStore);
+
+          test("can handle the event", () => {
+            assert.entityCount("DepositRequest", 4);
+          });
+
+          test("RedeemReceipt 1 has been updated correctly", () => {
+            assertEntity(
+              "DepositRequest",
+              createDepositRequestId(
+                BigInt.fromString("1"),
+                mockedInvestor
+              ).toHexString(),
+              [{ field: "amount", value: "5" }]
+            );
+          });
+
+          test("RedeemReceipt 3 has been updated correctly", () => {
+            assertEntity(
+              "DepositRequest",
+              createDepositRequestId(
+                BigInt.fromString("3"),
+                mockedInvestor
+              ).toHexString(),
+              [{ field: "amount", value: "450" }]
+            );
+          });
+        });
+        describe("requests are all to delete DepositRequests", () => {
+          beforeAll(() => {
+            mockDepositRequests(
+              mockedRoundId,
+              mockedInvestor,
+              mockedCaller,
+              mockedRoundParamsArray,
+              contractAddress,
+              contractAddress
+            );
+            const mockedEvent = createRedeemReceiptBatch(
+              mockedCaller,
+              mockedInvestor,
+              mockedCaller,
+              [BigInt.fromString("2"), BigInt.fromString("3")],
+              [BigInt.fromString("100"), BigInt.fromString("500")]
+            );
+            handleRedeemReceiptBatch(mockedEvent);
+          });
+          afterAll(clearStore);
+
+          test("can handle the event", () => {
+            assert.entityCount("DepositRequest", 2);
+          });
+
+          test("RedeemReceipt 2 has been deleted", () => {
+            assert.notInStore(
+              "RedeemReceipt",
+              createDepositRequestId(
+                BigInt.fromString("2"),
+                mockedInvestor
+              ).toHexString()
+            );
+          });
+
+          test("RedeemReceipt 3 has been deleted", () => {
+            assert.notInStore(
+              "RedeemReceipt",
+              createDepositRequestId(
+                BigInt.fromString("3"),
+                mockedInvestor
+              ).toHexString()
+            );
+          });
+        });
+        describe("requests are a mix between reduce and delete DepositRequests", () => {
+          beforeAll(() => {
+            mockDepositRequests(
+              mockedRoundId,
+              mockedInvestor,
+              mockedCaller,
+              mockedRoundParamsArray,
+              contractAddress,
+              contractAddress
+            );
+            const mockedEvent = createRedeemReceiptBatch(
+              mockedCaller,
+              mockedInvestor,
+              mockedCaller,
+              [
+                BigInt.fromString("2"),
+                BigInt.fromString("3"),
+                BigInt.fromString("4"),
+              ],
+              [
+                BigInt.fromString("100"),
+                BigInt.fromString("500"),
+                BigInt.fromString("500"),
+              ]
+            );
+            handleRedeemReceiptBatch(mockedEvent);
+          });
+          afterAll(clearStore);
+
+          test("can handle the event", () => {
+            assert.entityCount("DepositRequest", 2);
+          });
+
+          test("RedeemReceipt 2 has been deleted", () => {
+            assert.notInStore(
+              "RedeemReceipt",
+              createDepositRequestId(
+                BigInt.fromString("2"),
+                mockedInvestor
+              ).toHexString()
+            );
+          });
+
+          test("RedeemReceipt 3 has been deleted", () => {
+            assert.notInStore(
+              "RedeemReceipt",
+              createDepositRequestId(
+                BigInt.fromString("3"),
+                mockedInvestor
+              ).toHexString()
+            );
+          });
+
+          test("RedeemReceipt 4 has been updated correctly", () => {
+            assertEntity(
+              "DepositRequest",
+              createDepositRequestId(
+                BigInt.fromString("4"),
+                mockedInvestor
+              ).toHexString(),
+              [{ field: "amount", value: "500" }]
+            );
+          });
+        });
+      });
+
+      describe("requests are all to redeem DepositRequests", () => {
+        beforeAll(() => {
+          mockCurrentRound(contractAddress, BigInt.fromString("5"));
+          mockDepositRequests(
+            mockedRoundId,
+            mockedInvestor,
+            mockedCaller,
+            mockedRoundParamsArray,
+            contractAddress,
+            contractAddress
+          );
+          const mockedEvent = createRedeemReceiptBatch(
+            mockedCaller,
+            mockedInvestor,
+            mockedCaller,
+            [BigInt.fromString("1"), BigInt.fromString("3")],
+            [BigInt.fromString("5"), BigInt.fromString("50")]
+          );
+          handleRedeemReceiptBatch(mockedEvent);
+        });
+        afterAll(clearStore);
+
+        test("can handle the event", () => {
+          assert.entityCount("DepositRequest", 4);
+        });
+
+        test("RedeemReceipt 1 has been updated correctly", () => {
+          assertEntity(
+            "DepositRequest",
+            createDepositRequestId(
+              BigInt.fromString("1"),
+              mockedInvestor
+            ).toHexString(),
+            [{ field: "amountRedeemed", value: "5" }]
+          );
+        });
+
+        test("RedeemReceipt 3 has been updated correctly", () => {
+          assertEntity(
+            "DepositRequest",
+            createDepositRequestId(
+              BigInt.fromString("3"),
+              mockedInvestor
+            ).toHexString(),
+            [{ field: "amountRedeemed", value: "50" }]
+          );
+        });
+      });
+    });
+
+    describe("redeems are in multiple rounds", () => {
+      describe("requests are a mix between redeem and reduce DepositRequests", () => {
+        beforeAll(() => {
+          mockCurrentRound(contractAddress, BigInt.fromString("5"));
+          mockDepositRequests(
+            mockedRoundId,
+            mockedInvestor,
+            mockedCaller,
+            mockedRoundParamsArray.slice(0, 2),
+            contractAddress,
+            contractAddress
+          );
+          mockDepositRequests(
+            mockedRoundId_B,
+            mockedInvestor,
+            mockedCaller,
+            mockedRoundParamsArray.slice(2, 4),
+            contractAddress,
+            contractAddress
+          );
+          const mockedEvent = createRedeemReceiptBatch(
+            mockedCaller,
+            mockedInvestor,
+            mockedCaller,
+            [BigInt.fromString("1"), BigInt.fromString("3")],
+            [BigInt.fromString("5"), BigInt.fromString("50")]
+          );
+          handleRedeemReceiptBatch(mockedEvent);
+        });
+        afterAll(clearStore);
+
+        test("can handle the event", () => {
+          assert.entityCount("DepositRequest", 4);
+        });
+
+        test("RedeemReceipt 1 has been updated correctly", () => {
+          assertEntity(
+            "DepositRequest",
+            createDepositRequestId(
+              BigInt.fromString("1"),
+              mockedInvestor
+            ).toHexString(),
+            [{ field: "amountRedeemed", value: "5" }]
+          );
+        });
+
+        test("RedeemReceipt 3 has been updated correctly", () => {
+          assertEntity(
+            "DepositRequest",
+            createDepositRequestId(
+              BigInt.fromString("3"),
+              mockedInvestor
+            ).toHexString(),
+            [{ field: "amount", value: "450" }]
+          );
+        });
+      });
+      describe("requests are a mix between redeem and delete DepositRequests", () => {
+        beforeAll(() => {
+          mockCurrentRound(contractAddress, BigInt.fromString("5"));
+          mockDepositRequests(
+            mockedRoundId,
+            mockedInvestor,
+            mockedCaller,
+            mockedRoundParamsArray.slice(0, 2),
+            contractAddress,
+            contractAddress
+          );
+          mockDepositRequests(
+            mockedRoundId_B,
+            mockedInvestor,
+            mockedCaller,
+            mockedRoundParamsArray.slice(2, 4),
+            contractAddress,
+            contractAddress
+          );
+          const mockedEvent = createRedeemReceiptBatch(
+            mockedCaller,
+            mockedInvestor,
+            mockedCaller,
+            [BigInt.fromString("1"), BigInt.fromString("3")],
+            [BigInt.fromString("10"), BigInt.fromString("500")]
+          );
+          handleRedeemReceiptBatch(mockedEvent);
+        });
+        afterAll(clearStore);
+
+        test("can handle the event", () => {
+          assert.entityCount("DepositRequest", 3);
+        });
+
+        test("RedeemReceipt 1 has been updated correctly", () => {
+          assertEntity(
+            "DepositRequest",
+            createDepositRequestId(
+              BigInt.fromString("1"),
+              mockedInvestor
+            ).toHexString(),
+            [{ field: "amountRedeemed", value: "10" }]
+          );
+        });
+
+        test("RedeemReceipt 3 has been deleted", () => {
+          assert.notInStore(
+            "RedeemReceipt",
+            createDepositRequestId(
+              BigInt.fromString("3"),
               mockedInvestor
             ).toHexString()
           );
