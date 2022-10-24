@@ -17,7 +17,7 @@ export function useCriteriasTokens(
   );
 
   const fetchAssetsPrice = async () => {
-    const prices = new Map();
+    const prices = new Map<string, string>();
     const addresses = criterias.value.map(({ token }) => token.address);
 
     try {
