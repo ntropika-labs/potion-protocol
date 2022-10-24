@@ -1,7 +1,13 @@
 import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { assert } from "matchstick-as/assembly/index";
-import { HedgingVault, PotionBuyAction, Round } from "../generated/schema";
+import {
+  DepositRequest,
+  HedgingVault,
+  PotionBuyAction,
+  Round,
+} from "../generated/schema";
 import { createRoundId } from "../src/rounds";
+import { createDepositRequestId } from "../src/deposits";
 
 class FieldValuePair {
   field: string;
@@ -66,4 +72,35 @@ function mockRound(roundNumber: BigInt, vault: Bytes): Round {
   return round;
 }
 
-export { assertEntity, mockHedgingVault, mockPotionBuyAction, mockRound };
+function mockDepositRequest(
+  depositId: BigInt,
+  round: Bytes,
+  investor: Address,
+  sender: Address,
+  amount: BigInt,
+  amountRedeemed: BigInt,
+  remainingShares: BigInt,
+  block: Bytes,
+  tx: Bytes
+): DepositRequest {
+  const id = createDepositRequestId(depositId, investor);
+  const depositRequest = new DepositRequest(id);
+  depositRequest.round = round;
+  depositRequest.investor = investor;
+  depositRequest.sender = sender;
+  depositRequest.amount = amount;
+  depositRequest.amountRedeemed = amountRedeemed;
+  depositRequest.remainingShares = remainingShares;
+  depositRequest.block = block;
+  depositRequest.tx = tx;
+  depositRequest.save();
+  return depositRequest;
+}
+
+export {
+  assertEntity,
+  mockHedgingVault,
+  mockPotionBuyAction,
+  mockRound,
+  mockDepositRequest,
+};

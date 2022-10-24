@@ -231,7 +231,7 @@ export function createNextRound(newRoundNumber: BigInt): NextRound {
 
 export function createDepositWithReceipt(
   caller: Address,
-  owner: Address,
+  receiver: Address,
   id: BigInt,
   assets: BigInt
 ): DepositWithReceipt {
@@ -239,7 +239,7 @@ export function createDepositWithReceipt(
 
   event.parameters = [
     new ethereum.EventParam("caller", ethereum.Value.fromAddress(caller)),
-    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
+    new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("id", ethereum.Value.fromUnsignedBigInt(id)),
     new ethereum.EventParam(
       "assets",
@@ -300,9 +300,9 @@ export function createWithdrawExchangeAsset(
   caller: Address,
   receiver: Address,
   owner: Address,
-  assets: BigInt,
-  sharesId: BigInt,
-  sharesAmount: BigInt
+  exchangeAssetAmount: BigInt,
+  recipeId: BigInt,
+  recipeAmount: BigInt
 ): WithdrawExchangeAsset {
   const event = changetype<WithdrawExchangeAsset>(newMockEvent());
 
@@ -311,16 +311,16 @@ export function createWithdrawExchangeAsset(
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "exchangeAssetAmount",
+      ethereum.Value.fromUnsignedBigInt(exchangeAssetAmount)
     ),
     new ethereum.EventParam(
-      "sharesId",
-      ethereum.Value.fromUnsignedBigInt(sharesId)
+      "recipeId",
+      ethereum.Value.fromUnsignedBigInt(recipeId)
     ),
     new ethereum.EventParam(
-      "sharesAmount",
-      ethereum.Value.fromUnsignedBigInt(sharesAmount)
+      "recipeAmount",
+      ethereum.Value.fromUnsignedBigInt(recipeAmount)
     ),
   ];
 
@@ -331,9 +331,9 @@ export function createWithdrawExchangeAssetBatch(
   caller: Address,
   receiver: Address,
   owner: Address,
-  assets: BigInt,
-  sharesIds: Array<BigInt>,
-  sharesAmounts: Array<BigInt>
+  exchangeAssetAmount: BigInt,
+  recipeIds: Array<BigInt>,
+  recipeAmounts: Array<BigInt>
 ): WithdrawExchangeAssetBatch {
   const event = changetype<WithdrawExchangeAssetBatch>(newMockEvent());
 
@@ -342,16 +342,16 @@ export function createWithdrawExchangeAssetBatch(
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "exchangeAssetAmount",
+      ethereum.Value.fromUnsignedBigInt(exchangeAssetAmount)
     ),
     new ethereum.EventParam(
-      "sharesId",
-      ethereum.Value.fromUnsignedBigIntArray(sharesIds)
+      "recipeId",
+      ethereum.Value.fromUnsignedBigIntArray(recipeIds)
     ),
     new ethereum.EventParam(
-      "sharesAmount",
-      ethereum.Value.fromUnsignedBigIntArray(sharesAmounts)
+      "recipeAmount",
+      ethereum.Value.fromUnsignedBigIntArray(recipeAmounts)
     ),
   ];
 

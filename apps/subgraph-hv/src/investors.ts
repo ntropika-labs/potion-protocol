@@ -20,8 +20,10 @@ function getOrCreateInvestor(id: Address): Investor {
 
 function addInvestorVault(id: Address, vault: Address): void {
   const investor = getOrCreateInvestor(id);
-  investor.vaults = addItemToArray(investor.vaults, vault);
-  investor.save();
+  if (investor.vaults.indexOf(vault) == -1) {
+    investor.vaults = addItemToArray(investor.vaults, vault);
+    investor.save();
+  }
 }
 
 export { addInvestorVault, getOrCreateInvestor };
