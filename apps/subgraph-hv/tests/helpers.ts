@@ -5,9 +5,11 @@ import {
   HedgingVault,
   PotionBuyAction,
   Round,
+  WithdrawalRequest,
 } from "../generated/schema";
 import { createRoundId } from "../src/rounds";
 import { createDepositRequestId } from "../src/deposits";
+import { createWithdrawalRequestId } from "../src/withdrawals";
 
 class FieldValuePair {
   field: string;
@@ -19,6 +21,13 @@ class DepositRequestParams {
   amount: BigInt;
   amountRedeemed: BigInt;
   remainingShares: BigInt;
+}
+
+class WithdrawalRequestParams {
+  depositId: BigInt;
+  amount: BigInt;
+  amountRedeemed: BigInt;
+  remainingAssets: BigInt;
 }
 
 function assertEntity(
@@ -124,6 +133,51 @@ function mockDepositRequests(
   return result;
 }
 
+function mockWithdrawalRequest(
+  round: Bytes,
+  investor: Address,
+  sender: Address,
+  params: WithdrawalRequestParams,
+  block: Bytes,
+  tx: Bytes
+): WithdrawalRequest {
+  const id = createWithdrawalRequestId(params.depositId, investor);
+  const withdrawalRequest = new WithdrawalRequest(id);
+  withdrawalRequest.round = round;
+  withdrawalRequest.investor = investor;
+  withdrawalRequest.sender = sender;
+  withdrawalRequest.amount = params.amount;
+  withdrawalRequest.amountRedeemed = params.amountRedeemed;
+  withdrawalRequest.remainingAssets = params.remainingAssets;
+  withdrawalRequest.block = block;
+  withdrawalRequest.tx = tx;
+  withdrawalRequest.save();
+  return withdrawalRequest;
+}
+
+function mockWithdrawalRequests(
+  round: Bytes,
+  investor: Address,
+  sender: Address,
+  params: WithdrawalRequestParams[],
+  block: Bytes,
+  tx: Bytes
+): WithdrawalRequest[] {
+  const result: WithdrawalRequest[] = [];
+  for (let i = 0; i < params.length; i += 1) {
+    const withdrawalRequest = mockWithdrawalRequest(
+      round,
+      investor,
+      sender,
+      params[i],
+      block,
+      tx
+    );
+    result.push(withdrawalRequest);
+  }
+  return result;
+}
+
 export {
   assertEntity,
   mockHedgingVault,
@@ -132,4 +186,7 @@ export {
   mockDepositRequest,
   mockDepositRequests,
   DepositRequestParams,
+  mockWithdrawalRequest,
+  mockWithdrawalRequests,
+  WithdrawalRequestParams,
 };

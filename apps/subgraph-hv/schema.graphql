@@ -91,7 +91,7 @@ type Deposit @entity {
 
 #InvestmentVault contract
 type Withdrawal @entity {
-  id: ID!
+  id: Bytes!
   round: Round!
   amount: BigInt!
   shareAmount: BigInt!
@@ -117,7 +117,7 @@ type DepositRequest @entity {
 # we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsOutputVault
 # _deposit()  with receipt in the OnputVault contract
 type WithdrawalRequest @entity {
-  id: ID!
+  id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
