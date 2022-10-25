@@ -2,6 +2,8 @@ import {
   createActionsAdded,
   createVaultPositionEntered,
   createVaultPositionExited,
+  createDeposit,
+  createWithdraw,
 } from "./events";
 import {
   mockAsset,
@@ -18,8 +20,10 @@ import {
 } from "./helpers";
 import {
   handleActionsAdded,
+  handleDeposit,
   handleVaultPositionEntered,
   handleVaultPositionExited,
+  handleWithdraw,
 } from "../src/investmentVault";
 import {
   test,
@@ -40,6 +44,9 @@ const assetAddress = Address.fromString(
 );
 const actionAddress = Address.fromString(
   "0x0000000000000000000000000000000000000001"
+);
+const investorAddress = Address.fromString(
+  "0x0000000000000000000000000000000000001000"
 );
 
 const mockedRoundId = createRoundId(
@@ -192,6 +199,75 @@ describe("InvestmentVault tests", () => {
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", contractAddress.toHexString(), [
         { field: "totalAssets", value: "60" },
+      ]);
+    });
+  });
+
+  describe("Deposit", () => {
+    beforeAll(() => {
+      mockHedgingVault(
+        contractAddress,
+        assetAddress,
+        actionAddress,
+        BigInt.fromString("20"),
+        BigInt.fromString("0")
+      );
+      mockRound(BigInt.fromString("0"), contractAddress);
+      const mockedEvent = createDeposit(
+        investorAddress,
+        investorAddress,
+        BigInt.fromString("50"),
+        BigInt.fromString("10")
+      );
+      handleDeposit(mockedEvent);
+    });
+    afterAll(clearStore);
+
+    test("can handle the event", () => {
+      assert.entityCount("HedgingVault", 1);
+      assert.entityCount("Deposit", 1);
+      assert.entityCount("Block", 1);
+    });
+
+    test("Deposit has been created correctly", () => {
+      assertEntity("Deposit", contractAddress.concatI32(0).toHexString(), [
+        { field: "amount", value: "50" },
+        { field: "shareAmount", value: "10" },
+      ]);
+    });
+  });
+
+  describe("Withdraw", () => {
+    beforeAll(() => {
+      mockHedgingVault(
+        contractAddress,
+        assetAddress,
+        actionAddress,
+        BigInt.fromString("20"),
+        BigInt.fromString("0")
+      );
+      mockRound(BigInt.fromString("0"), contractAddress);
+      const mockedEvent = createWithdraw(
+        investorAddress,
+        investorAddress,
+        investorAddress,
+        BigInt.fromString("50"),
+        BigInt.fromString("10")
+      );
+      handleWithdraw(mockedEvent);
+    });
+    afterAll(clearStore);
+
+    test("can handle the event", () => {
+      assert.entityCount("HedgingVault", 1);
+      assert.entityCount("Withdrawal", 1);
+      assert.entityCount("Block", 1);
+    });
+
+    test("Withdrawal has been created correctly", () => {
+      assertEntity("Withdrawal", contractAddress.concatI32(0).toHexString(), [
+        { field: "amount", value: "50" },
+        { field: "shareAmount", value: "10" },
       ]);
     });
   });
