@@ -295,7 +295,7 @@ describe("roundsInputVault", () => {
 
         test("DepositRequest has been deleted", () => {
           assert.notInStore(
-            "RedeemReceipt",
+            "DepositRequest",
             createDepositRequestId(
               BigInt.fromString("2"),
               mockedInvestor
@@ -337,7 +337,7 @@ describe("roundsInputVault", () => {
             assert.entityCount("DepositRequest", 4);
           });
 
-          test("RedeemReceipt 1 has been updated correctly", () => {
+          test("DepositRequest 1 has been updated correctly", () => {
             assertEntity(
               "DepositRequest",
               createDepositRequestId(
@@ -348,7 +348,7 @@ describe("roundsInputVault", () => {
             );
           });
 
-          test("RedeemReceipt 3 has been updated correctly", () => {
+          test("DepositRequest 3 has been updated correctly", () => {
             assertEntity(
               "DepositRequest",
               createDepositRequestId(
@@ -384,9 +384,9 @@ describe("roundsInputVault", () => {
             assert.entityCount("DepositRequest", 2);
           });
 
-          test("RedeemReceipt 2 has been deleted", () => {
+          test("DepositRequest 2 has been deleted", () => {
             assert.notInStore(
-              "RedeemReceipt",
+              "DepositRequest",
               createDepositRequestId(
                 BigInt.fromString("2"),
                 mockedInvestor
@@ -394,9 +394,9 @@ describe("roundsInputVault", () => {
             );
           });
 
-          test("RedeemReceipt 3 has been deleted", () => {
+          test("DepositRequest 3 has been deleted", () => {
             assert.notInStore(
-              "RedeemReceipt",
+              "DepositRequest",
               createDepositRequestId(
                 BigInt.fromString("3"),
                 mockedInvestor
@@ -437,9 +437,9 @@ describe("roundsInputVault", () => {
             assert.entityCount("DepositRequest", 2);
           });
 
-          test("RedeemReceipt 2 has been deleted", () => {
+          test("DepositRequest 2 has been deleted", () => {
             assert.notInStore(
-              "RedeemReceipt",
+              "DepositRequest",
               createDepositRequestId(
                 BigInt.fromString("2"),
                 mockedInvestor
@@ -447,9 +447,9 @@ describe("roundsInputVault", () => {
             );
           });
 
-          test("RedeemReceipt 3 has been deleted", () => {
+          test("DepositRequest 3 has been deleted", () => {
             assert.notInStore(
-              "RedeemReceipt",
+              "DepositRequest",
               createDepositRequestId(
                 BigInt.fromString("3"),
                 mockedInvestor
@@ -457,7 +457,7 @@ describe("roundsInputVault", () => {
             );
           });
 
-          test("RedeemReceipt 4 has been updated correctly", () => {
+          test("DepositRequest 4 has been updated correctly", () => {
             assertEntity(
               "DepositRequest",
               createDepositRequestId(
@@ -496,7 +496,7 @@ describe("roundsInputVault", () => {
           assert.entityCount("DepositRequest", 4);
         });
 
-        test("RedeemReceipt 1 has been updated correctly", () => {
+        test("DepositRequest 1 has been updated correctly", () => {
           assertEntity(
             "DepositRequest",
             createDepositRequestId(
@@ -507,7 +507,7 @@ describe("roundsInputVault", () => {
           );
         });
 
-        test("RedeemReceipt 3 has been updated correctly", () => {
+        test("DepositRequest 3 has been updated correctly", () => {
           assertEntity(
             "DepositRequest",
             createDepositRequestId(
@@ -555,7 +555,7 @@ describe("roundsInputVault", () => {
           assert.entityCount("DepositRequest", 4);
         });
 
-        test("RedeemReceipt 1 has been updated correctly", () => {
+        test("DepositRequest 1 has been updated correctly", () => {
           assertEntity(
             "DepositRequest",
             createDepositRequestId(
@@ -566,7 +566,7 @@ describe("roundsInputVault", () => {
           );
         });
 
-        test("RedeemReceipt 3 has been updated correctly", () => {
+        test("DepositRequest 3 has been updated correctly", () => {
           assertEntity(
             "DepositRequest",
             createDepositRequestId(
@@ -611,7 +611,7 @@ describe("roundsInputVault", () => {
           assert.entityCount("DepositRequest", 3);
         });
 
-        test("RedeemReceipt 1 has been updated correctly", () => {
+        test("DepositRequest 1 has been updated correctly", () => {
           assertEntity(
             "DepositRequest",
             createDepositRequestId(
@@ -622,9 +622,9 @@ describe("roundsInputVault", () => {
           );
         });
 
-        test("RedeemReceipt 3 has been deleted", () => {
+        test("DepositRequest 3 has been deleted", () => {
           assert.notInStore(
-            "RedeemReceipt",
+            "DepositRequest",
             createDepositRequestId(
               BigInt.fromString("3"),
               mockedInvestor
