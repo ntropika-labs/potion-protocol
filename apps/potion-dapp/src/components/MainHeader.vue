@@ -18,6 +18,16 @@
           active-class="shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400"
           :to="{ name: r.name }"
           class="p-2 transition uppercase text-base font-sans"
+          :class="[
+            {
+              'shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400':
+                r.name === 'discover-templates' && isPoolRoute,
+            },
+            {
+              'shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400':
+                r.name === 'discover-potions' && !isPoolRoute,
+            },
+          ]"
           >{{ r.label }}</router-link
         >
       </div>
@@ -67,6 +77,10 @@ const routes = [
     label: "Pool Liquidity",
   },
 ];
+
+const isPoolRoute = computed(() => {
+  return route.meta.sublink === "pools";
+});
 const connectButtonLabel = computed(() => {
   const account = connectedWallet?.value?.accounts[0] ?? null;
   return account?.ens?.name ?? account?.address ?? t("connect_wallet");
