@@ -1,0 +1,66 @@
+{
+  "timestamp": 1666624341,
+  "network": "develop",
+  "contracts": {
+    "USDC": {
+      "address": "0x5c74c94173F05dA1720953407cbb920F3DF9f887",
+      "blockNumber": 0
+    },
+    "UnderlyingAsset": {
+      "address": "0x720472c8ce72c2A2D711333e064ABD3E6BbEAdd3",
+      "blockNumber": 0
+    },
+    "PotionLiquidityPool": {
+      "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
+      "blockNumber": 169
+    },
+    "OpynController": {
+      "address": "0x6C2d83262fF84cBaDb3e416D527403135D757892",
+      "blockNumber": 170
+    },
+    "OpynFactory": {
+      "address": "0xFD6F7A6a5c21A3f503EBaE7a473639974379c351",
+      "blockNumber": 171
+    },
+    "OpynOracle": {
+      "address": "0xa6e99A4ED7498b3cdDCBB61a6A607a4925Faa1B7",
+      "blockNumber": 172
+    },
+    "OpynAddressBook": {
+      "address": "0x5302E909d1e93e30F05B5D6Eea766363D14F9892",
+      "blockNumber": 173
+    },
+    "UniswapV3Router": {
+      "address": "0x0ed64d01D0B4B655E410EF1441dD677B695639E7",
+      "blockNumber": 174
+    },
+    "HedgingVaultOrchestrator": {
+      "address": "0x96F3Ce39Ad2BfDCf92C0F6E2C2CAbF83874660Fc",
+      "blockNumber": 177
+    },
+    "PotionBuyAction": {
+      "address": "0x986aaa537b8cc170761FDAC6aC4fc7F9d8a20A8C",
+      "blockNumber": 178
+    },
+    "SwapToUSDCAction": {
+      "address": "0xde2Bd2ffEA002b8E84ADeA96e5976aF664115E2c",
+      "blockNumber": 179
+    },
+    "InvestmentVault": {
+      "address": "0xefc1aB2475ACb7E60499Efb171D173be19928a05",
+      "blockNumber": 180
+    },
+    "RoundsInputVault": {
+      "address": "0x870526b7973b56163a6997bB7C886F5E4EA53638",
+      "blockNumber": 181
+    },
+    "RoundsOutputVault": {
+      "address": "0xD49a0e9A4CD5979aE36840f542D2d7f02C4817Be",
+      "blockNumber": 182
+    },
+    "RoundsVaultExchanger": {
+      "address": "0xe1Fd27F4390DcBE165f4D60DBF821e4B9Bb02dEd",
+      "blockNumber": 183
+    }
+  }
+}

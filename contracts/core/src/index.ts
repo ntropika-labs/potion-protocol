@@ -230,7 +230,7 @@ export const Deployments = {
         },
     },
     "localhost.hedging": {
-        timestamp: 1665651788,
+        timestamp: 1666623961,
         network: "develop",
         contracts: {
             AddressBook: {
