@@ -20,13 +20,15 @@ function createWithdrawal(
 
 function createWithdrawalRequestId(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): Bytes {
-  return investor.concatI32(withdrawalId.toI32());
+  return vaultAddress.concat(investor).concatI32(withdrawalId.toI32());
 }
 
 function createWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
@@ -36,7 +38,7 @@ function createWithdrawalRequest(
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   const withdrawalRequest = new WithdrawalRequest(id);
   withdrawalRequest.round = round;
   withdrawalRequest.investor = investor;
@@ -52,6 +54,7 @@ function createWithdrawalRequest(
 
 function getOrCreateWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
@@ -61,11 +64,12 @@ function getOrCreateWithdrawalRequest(
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   const withdrawalRequest = WithdrawalRequest.load(id);
   if (withdrawalRequest == null) {
     return createWithdrawalRequest(
       withdrawalId,
+      vaultAddress,
       round,
       investor,
       sender,
@@ -81,9 +85,10 @@ function getOrCreateWithdrawalRequest(
 
 function getWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): WithdrawalRequest | null {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   return WithdrawalRequest.load(id);
 }
 

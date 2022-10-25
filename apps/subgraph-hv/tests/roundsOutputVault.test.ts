@@ -141,6 +141,7 @@ describe("roundsOutputVault", () => {
           "WithdrawalRequest",
           createWithdrawalRequestId(
             BigInt.fromString("5"),
+            vaultAddress,
             mockedInvestor
           ).toHexString(),
           [{ field: "amount", value: "10" }]
@@ -152,6 +153,7 @@ describe("roundsOutputVault", () => {
       beforeAll(() => {
         mockWithdrawalRequest(
           mockedRoundId,
+          vaultAddress,
           mockedInvestor,
           mockedCaller,
           mockedRoundParams,
@@ -180,6 +182,7 @@ describe("roundsOutputVault", () => {
           "WithdrawalRequest",
           createWithdrawalRequestId(
             BigInt.fromString("2"),
+            vaultAddress,
             mockedInvestor
           ).toHexString(),
           [{ field: "amount", value: "110" }]
@@ -193,6 +196,7 @@ describe("roundsOutputVault", () => {
       beforeAll(() => {
         mockWithdrawalRequest(
           mockedRoundId,
+          vaultAddress,
           mockedInvestor,
           mockedCaller,
           mockedRoundParams,
@@ -220,6 +224,7 @@ describe("roundsOutputVault", () => {
           "WithdrawalRequest",
           createWithdrawalRequestId(
             BigInt.fromString("2"),
+            vaultAddress,
             mockedInvestor
           ).toHexString(),
           [{ field: "amountRedeemed", value: "10" }]
@@ -235,6 +240,7 @@ describe("roundsOutputVault", () => {
         beforeAll(() => {
           mockWithdrawalRequest(
             mockedRoundId,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParams,
@@ -261,6 +267,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("2"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amount", value: "60" }]
@@ -272,6 +279,7 @@ describe("roundsOutputVault", () => {
         beforeAll(() => {
           mockWithdrawalRequest(
             mockedRoundId,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParams,
@@ -298,6 +306,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("2"),
+              vaultAddress,
               mockedInvestor
             ).toHexString()
           );
@@ -316,6 +325,7 @@ describe("roundsOutputVault", () => {
           beforeAll(() => {
             mockWithdrawalRequests(
               mockedRoundId,
+              vaultAddress,
               mockedInvestor,
               mockedCaller,
               mockedRoundParamsArray,
@@ -342,6 +352,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("1"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString(),
               [{ field: "amount", value: "5" }]
@@ -353,6 +364,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("3"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString(),
               [{ field: "amount", value: "450" }]
@@ -363,6 +375,7 @@ describe("roundsOutputVault", () => {
           beforeAll(() => {
             mockWithdrawalRequests(
               mockedRoundId,
+              vaultAddress,
               mockedInvestor,
               mockedCaller,
               mockedRoundParamsArray,
@@ -389,6 +402,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("2"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString()
             );
@@ -399,6 +413,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("3"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString()
             );
@@ -408,6 +423,7 @@ describe("roundsOutputVault", () => {
           beforeAll(() => {
             mockWithdrawalRequests(
               mockedRoundId,
+              vaultAddress,
               mockedInvestor,
               mockedCaller,
               mockedRoundParamsArray,
@@ -442,6 +458,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("2"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString()
             );
@@ -452,6 +469,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("3"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString()
             );
@@ -462,6 +480,7 @@ describe("roundsOutputVault", () => {
               "WithdrawalRequest",
               createWithdrawalRequestId(
                 BigInt.fromString("4"),
+                vaultAddress,
                 mockedInvestor
               ).toHexString(),
               [{ field: "amount", value: "500" }]
@@ -475,6 +494,7 @@ describe("roundsOutputVault", () => {
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
           mockWithdrawalRequests(
             mockedRoundId,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParamsArray,
@@ -501,6 +521,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("1"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amountRedeemed", value: "5" }]
@@ -512,6 +533,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("3"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amountRedeemed", value: "50" }]
@@ -526,6 +548,7 @@ describe("roundsOutputVault", () => {
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
           mockWithdrawalRequests(
             mockedRoundId,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParamsArray.slice(0, 2),
@@ -534,6 +557,7 @@ describe("roundsOutputVault", () => {
           );
           mockWithdrawalRequests(
             mockedRoundId_B,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParamsArray.slice(2, 4),
@@ -560,6 +584,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("1"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amountRedeemed", value: "5" }]
@@ -571,6 +596,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("3"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amount", value: "450" }]
@@ -582,6 +608,7 @@ describe("roundsOutputVault", () => {
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
           mockWithdrawalRequests(
             mockedRoundId,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParamsArray.slice(0, 2),
@@ -590,6 +617,7 @@ describe("roundsOutputVault", () => {
           );
           mockWithdrawalRequests(
             mockedRoundId_B,
+            vaultAddress,
             mockedInvestor,
             mockedCaller,
             mockedRoundParamsArray.slice(2, 4),
@@ -616,6 +644,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("1"),
+              vaultAddress,
               mockedInvestor
             ).toHexString(),
             [{ field: "amountRedeemed", value: "10" }]
@@ -627,6 +656,7 @@ describe("roundsOutputVault", () => {
             "WithdrawalRequest",
             createWithdrawalRequestId(
               BigInt.fromString("3"),
+              vaultAddress,
               mockedInvestor
             ).toHexString()
           );

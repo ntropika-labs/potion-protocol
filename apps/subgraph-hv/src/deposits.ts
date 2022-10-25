@@ -18,12 +18,17 @@ function createDeposit(
   return deposit;
 }
 
-function createDepositRequestId(depositId: BigInt, investor: Address): Bytes {
-  return investor.concatI32(depositId.toI32());
+function createDepositRequestId(
+  depositId: BigInt,
+  vaultAddress: Address,
+  investor: Address
+): Bytes {
+  return vaultAddress.concat(investor).concatI32(depositId.toI32());
 }
 
 function createDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
@@ -33,7 +38,7 @@ function createDepositRequest(
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   const depositRequest = new DepositRequest(id);
   depositRequest.round = round;
   depositRequest.investor = investor;
@@ -49,6 +54,7 @@ function createDepositRequest(
 
 function getOrCreateDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
@@ -58,11 +64,12 @@ function getOrCreateDepositRequest(
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   const depositRequest = DepositRequest.load(id);
   if (depositRequest == null) {
     return createDepositRequest(
       depositId,
+      vaultAddress,
       round,
       investor,
       sender,
@@ -78,9 +85,10 @@ function getOrCreateDepositRequest(
 
 function getDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): DepositRequest | null {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   return DepositRequest.load(id);
 }
 

@@ -43,6 +43,7 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
   // load the depositRequest, if it doesn't exists it will be initialized to an empty one
   const depositRequest = getOrCreateDepositRequest(
     event.params.id,
+    vaultAddress,
     roundId,
     event.params.receiver,
     event.params.caller,
@@ -64,6 +65,7 @@ function handleRedeemReceipt(event: RedeemReceipt): void {
   const roundId = createRoundId(roundNumber, vaultAddress);
   redeem(
     event.params.id,
+    vaultAddress,
     roundId,
     roundNumber,
     event.params.amount,
@@ -80,6 +82,7 @@ function handleRedeemReceiptBatch(event: RedeemReceiptBatch): void {
   for (let i = 0; i < event.params.ids.length; i += 1) {
     redeem(
       event.params.ids[i],
+      vaultAddress,
       roundId,
       roundNumber,
       event.params.amounts[i],
@@ -90,12 +93,13 @@ function handleRedeemReceiptBatch(event: RedeemReceiptBatch): void {
 
 function redeem(
   recipeId: BigInt,
+  vaultAddress: Address,
   roundId: Bytes,
   roundNumber: BigInt,
   amount: BigInt,
   receiver: Address
 ): void {
-  const depositRequest = getDepositRequest(recipeId, receiver);
+  const depositRequest = getDepositRequest(recipeId, vaultAddress, receiver);
   if (depositRequest == null) {
     log.error("receipt {} doesn't exist for {}", [
       recipeId.toString(),

@@ -90,13 +90,14 @@ function mockRound(roundNumber: BigInt, vault: Bytes): Round {
 
 function mockDepositRequest(
   round: Bytes,
+  vaultAddress: Address,
   investor: Address,
   sender: Address,
   params: DepositRequestParams,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(params.depositId, investor);
+  const id = createDepositRequestId(params.depositId, vaultAddress, investor);
   const depositRequest = new DepositRequest(id);
   depositRequest.round = round;
   depositRequest.investor = investor;
@@ -112,6 +113,7 @@ function mockDepositRequest(
 
 function mockDepositRequests(
   round: Bytes,
+  vaultAddress: Address,
   investor: Address,
   sender: Address,
   params: DepositRequestParams[],
@@ -122,6 +124,7 @@ function mockDepositRequests(
   for (let i = 0; i < params.length; i += 1) {
     const depositRequest = mockDepositRequest(
       round,
+      vaultAddress,
       investor,
       sender,
       params[i],
@@ -135,13 +138,18 @@ function mockDepositRequests(
 
 function mockWithdrawalRequest(
   round: Bytes,
+  vaultAddress: Address,
   investor: Address,
   sender: Address,
   params: WithdrawalRequestParams,
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
-  const id = createWithdrawalRequestId(params.depositId, investor);
+  const id = createWithdrawalRequestId(
+    params.depositId,
+    vaultAddress,
+    investor
+  );
   const withdrawalRequest = new WithdrawalRequest(id);
   withdrawalRequest.round = round;
   withdrawalRequest.investor = investor;
@@ -157,6 +165,7 @@ function mockWithdrawalRequest(
 
 function mockWithdrawalRequests(
   round: Bytes,
+  vaultAddress: Address,
   investor: Address,
   sender: Address,
   params: WithdrawalRequestParams[],
@@ -167,6 +176,7 @@ function mockWithdrawalRequests(
   for (let i = 0; i < params.length; i += 1) {
     const withdrawalRequest = mockWithdrawalRequest(
       round,
+      vaultAddress,
       investor,
       sender,
       params[i],
