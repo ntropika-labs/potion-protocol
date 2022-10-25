@@ -217,6 +217,7 @@ watch(redeemReceipt, (receipt) =>
               :expiry="potion.expiry"
               :is-expired="false"
               :is-withdraw-enabled="false"
+              :otoken-address="potion.otoken.id"
               :token="potion.otoken.underlyingAsset"
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"

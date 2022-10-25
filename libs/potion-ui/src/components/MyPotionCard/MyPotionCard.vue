@@ -26,10 +26,7 @@ export interface Props {
   currentPayout: string;
   quantity: string;
   currency?: string;
-  etherscan?: {
-    url: string;
-    label: string;
-  };
+  otokenAddress: string;
 }
 
 const { t } = useI18n();
@@ -48,23 +45,25 @@ const withdrawLabel = computed(() => {
 const payoutLabel = computed(() => {
   return props.isExpired ? t("total_payout") : t("current_payout");
 });
+
+const etherscanUrl = computed(() => {
+  return `https://etherscan.io/address/${props.otokenAddress}`;
+});
 </script>
 <template>
   <BaseCard class="text-dwhite-400" :full-height="false" test-my-potion-card>
-    <div
-      class="grid grid-flow-row grid-cols-2 justify-between items-center gap-8 py-4 px-6"
-    >
-      <div>
-        <BaseTag class="uppercase">{{ t("put_option") }}</BaseTag>
-      </div>
+    <div class="grid grid-flow-row grid-cols-2 justify-between gap-8 py-4 px-6">
+      <BaseTag class="uppercase justify-self-start">{{
+        t("put_option")
+      }}</BaseTag>
 
-      <span v-if="props.etherscan.url !== ''">
+      <span class="self-center justify-self-end text-dwhite-300 font-mono z-10">
         <a
-          :href="props.etherscan.url"
-          class="flex items-center text-xs font-serif font-semibold hover:underline self-end"
+          :href="etherscanUrl"
+          class="flex items-center text-xs font-semibold hover:underline"
         >
           <i class="i-ph-arrow-square-in mr-1"></i>
-          {{ props.etherscan.label }}
+          {{ otokenAddress.substring(0, 8) }}...
         </a>
       </span>
     </div>
