@@ -1,5 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Withdrawal, WithdrawalRequest } from "../generated/schema";
+import { addWithdrawalRequest, removeWithdrawalRequest } from "./rounds";
 
 function createWithdrawal(
   round: Bytes,
@@ -47,6 +48,7 @@ function createWithdrawalRequest(
   withdrawalRequest.block = block;
   withdrawalRequest.tx = tx;
   withdrawalRequest.save();
+  addWithdrawalRequest(round, id);
   return withdrawalRequest;
 }
 
@@ -85,7 +87,11 @@ function getWithdrawalRequest(
 }
 
 function deleteWithdrawalRequest(id: Bytes): void {
-  store.remove("WithdrawalRequest", id.toHexString());
+  const withdrawalRequest = WithdrawalRequest.load(id);
+  if (withdrawalRequest) {
+    removeWithdrawalRequest(withdrawalRequest.round, id);
+    store.remove("WithdrawalRequest", id.toHexString());
+  }
   log.info("WithdrawalRequest {} has been removed", [id.toHexString()]);
 }
 

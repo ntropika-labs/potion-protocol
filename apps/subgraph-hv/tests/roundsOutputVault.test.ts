@@ -13,6 +13,8 @@ import {
   mockWithdrawalRequest,
   mockWithdrawalRequests,
   WithdrawalRequestParams,
+  mockRound,
+  arrayToString,
 } from "./helpers";
 import {
   handleNextRound,
@@ -128,6 +130,7 @@ describe("roundsOutputVault", () => {
   describe("DepositWithReceipt", () => {
     describe("new WithdrawalRequest", () => {
       beforeAll(() => {
+        mockRound(BigInt.fromString("1"), vaultAddress);
         mockCurrentRound(contractAddress, BigInt.fromString("1"));
         const mockedEvent = createOutputDepositWithReceipt(
           mockedCaller,
@@ -143,6 +146,7 @@ describe("roundsOutputVault", () => {
         assert.entityCount("WithdrawalRequest", 1);
         assert.entityCount("Investor", 1);
         assert.entityCount("Block", 1);
+        assert.entityCount("Round", 1);
       });
 
       test("WithdrawalRequest has been populated correctly", () => {
@@ -155,6 +159,19 @@ describe("roundsOutputVault", () => {
           ).toHexString(),
           [{ field: "amount", value: "10" }]
         );
+      });
+
+      test("WithdrawalRequest has been added to the Round", () => {
+        const ids = [
+          createWithdrawalRequestId(
+            BigInt.fromString("5"),
+            vaultAddress,
+            mockedInvestor
+          ).toHexString(),
+        ];
+        assertEntity("Round", mockedRoundId.toHexString(), [
+          { field: "withdrawalRequests", value: arrayToString(ids) },
+        ]);
       });
     });
 
@@ -286,6 +303,18 @@ describe("roundsOutputVault", () => {
 
       describe("user has requested a WithdrawalRequest deletion", () => {
         beforeAll(() => {
+          mockRound(
+            BigInt.fromString("1"),
+            vaultAddress,
+            [],
+            [
+              createWithdrawalRequestId(
+                BigInt.fromString("2"),
+                vaultAddress,
+                mockedInvestor
+              ),
+            ]
+          );
           mockWithdrawalRequest(
             mockedRoundId,
             vaultAddress,
@@ -308,6 +337,7 @@ describe("roundsOutputVault", () => {
 
         test("can handle event", () => {
           assert.entityCount("WithdrawalRequest", 0);
+          assert.entityCount("Round", 1);
         });
 
         test("WithdrawalRequest has been deleted", () => {
@@ -319,6 +349,12 @@ describe("roundsOutputVault", () => {
               mockedInvestor
             ).toHexString()
           );
+        });
+
+        test("WithdrawalRequest has been removed from the Round", () => {
+          assertEntity("Round", mockedRoundId.toHexString(), [
+            { field: "withdrawalRequests", value: "[]" },
+          ]);
         });
       });
     });
@@ -382,6 +418,33 @@ describe("roundsOutputVault", () => {
         });
         describe("requests are all to delete WithdrawalRequests", () => {
           beforeAll(() => {
+            mockRound(
+              BigInt.fromString("1"),
+              vaultAddress,
+              [],
+              [
+                createWithdrawalRequestId(
+                  BigInt.fromString("1"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("2"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("3"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("4"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+              ]
+            );
             mockWithdrawalRequests(
               mockedRoundId,
               vaultAddress,
@@ -404,6 +467,7 @@ describe("roundsOutputVault", () => {
 
           test("can handle the event", () => {
             assert.entityCount("WithdrawalRequest", 2);
+            assert.entityCount("Round", 1);
           });
 
           test("WithdrawalRequest 2 has been deleted", () => {
@@ -427,9 +491,54 @@ describe("roundsOutputVault", () => {
               ).toHexString()
             );
           });
+
+          test("WithdrawalRequest 2 and 3 have been removed from the Round", () => {
+            const ids = [
+              createWithdrawalRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+              createWithdrawalRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+            ];
+            assertEntity("Round", mockedRoundId.toHexString(), [
+              { field: "withdrawalRequests", value: arrayToString(ids) },
+            ]);
+          });
         });
         describe("requests are a mix between reduce and delete WithdrawalRequests", () => {
           beforeAll(() => {
+            mockRound(
+              BigInt.fromString("1"),
+              vaultAddress,
+              [],
+              [
+                createWithdrawalRequestId(
+                  BigInt.fromString("1"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("2"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("3"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+                createWithdrawalRequestId(
+                  BigInt.fromString("4"),
+                  vaultAddress,
+                  mockedInvestor
+                ),
+              ]
+            );
             mockWithdrawalRequests(
               mockedRoundId,
               vaultAddress,
@@ -460,6 +569,7 @@ describe("roundsOutputVault", () => {
 
           test("can handle the event", () => {
             assert.entityCount("WithdrawalRequest", 2);
+            assert.entityCount("Round", 1);
           });
 
           test("WithdrawalRequest 2 has been deleted", () => {
@@ -494,6 +604,24 @@ describe("roundsOutputVault", () => {
               ).toHexString(),
               [{ field: "amount", value: "500" }]
             );
+          });
+
+          test("WithdrawalRequest 2 and 3 have been removed from the Round", () => {
+            const ids = [
+              createWithdrawalRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+              createWithdrawalRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+            ];
+            assertEntity("Round", mockedRoundId.toHexString(), [
+              { field: "withdrawalRequests", value: arrayToString(ids) },
+            ]);
           });
         });
       });
@@ -614,6 +742,40 @@ describe("roundsOutputVault", () => {
       });
       describe("requests are a mix between redeem and delete WithdrawalRequests", () => {
         beforeAll(() => {
+          mockRound(
+            BigInt.fromString("1"),
+            vaultAddress,
+            [],
+            [
+              createWithdrawalRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createWithdrawalRequestId(
+                BigInt.fromString("2"),
+                vaultAddress,
+                mockedInvestor
+              ),
+            ]
+          );
+          mockRound(
+            BigInt.fromString("5"),
+            vaultAddress,
+            [],
+            [
+              createWithdrawalRequestId(
+                BigInt.fromString("3"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createWithdrawalRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ),
+            ]
+          );
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
           mockWithdrawalRequests(
             mockedRoundId,
@@ -646,6 +808,7 @@ describe("roundsOutputVault", () => {
 
         test("can handle the event", () => {
           assert.entityCount("WithdrawalRequest", 3);
+          assert.entityCount("Round", 2);
         });
 
         test("WithdrawalRequest 1 has been updated correctly", () => {
@@ -669,6 +832,19 @@ describe("roundsOutputVault", () => {
               mockedInvestor
             ).toHexString()
           );
+        });
+
+        test("WithdrawalRequest 3 has been removed from Round 5", () => {
+          const ids = [
+            createWithdrawalRequestId(
+              BigInt.fromString("4"),
+              vaultAddress,
+              mockedInvestor
+            ).toHexString(),
+          ];
+          assertEntity("Round", mockedRoundId_B.toHexString(), [
+            { field: "withdrawalRequests", value: arrayToString(ids) },
+          ]);
         });
       });
     });

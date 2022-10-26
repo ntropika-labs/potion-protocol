@@ -81,11 +81,18 @@ function mockPotionBuyAction(
   return action;
 }
 
-function mockRound(roundNumber: BigInt, vault: Bytes): Round {
+function mockRound(
+  roundNumber: BigInt,
+  vault: Bytes,
+  depositRequests: Bytes[] = [],
+  withdrawalRequests: Bytes[] = []
+): Round {
   const id = createRoundId(roundNumber, vault);
   const round = new Round(id);
   round.vault = vault;
   round.roundNumber = roundNumber;
+  round.depositRequests = depositRequests;
+  round.withdrawalRequests = withdrawalRequests;
   round.save();
   return round;
 }
@@ -192,6 +199,10 @@ function mockWithdrawalRequests(
   return result;
 }
 
+function arrayToString(array: string[]): string {
+  return "[" + array.join(", ") + "]";
+}
+
 export {
   assertEntity,
   mockHedgingVault,
@@ -203,4 +214,5 @@ export {
   mockWithdrawalRequest,
   mockWithdrawalRequests,
   WithdrawalRequestParams,
+  arrayToString,
 };

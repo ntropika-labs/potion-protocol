@@ -1,5 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Deposit, DepositRequest } from "../generated/schema";
+import { addDepositRequest, removeDepositRequest } from "./rounds";
 
 function createDeposit(
   round: Bytes,
@@ -47,6 +48,7 @@ function createDepositRequest(
   depositRequest.block = block;
   depositRequest.tx = tx;
   depositRequest.save();
+  addDepositRequest(round, id);
   return depositRequest;
 }
 
@@ -85,7 +87,11 @@ function getDepositRequest(
 }
 
 function deleteDepositRequest(id: Bytes): void {
-  store.remove("DepositRequest", id.toHexString());
+  const depositRequest = DepositRequest.load(id);
+  if (depositRequest) {
+    removeDepositRequest(depositRequest.round, id);
+    store.remove("DepositRequest", id.toHexString());
+  }
   log.info("DepositRequest {} has been removed", [id.toHexString()]);
 }
 

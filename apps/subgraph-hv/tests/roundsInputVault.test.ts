@@ -13,6 +13,8 @@ import {
   mockDepositRequest,
   mockDepositRequests,
   DepositRequestParams,
+  mockRound,
+  arrayToString,
 } from "./helpers";
 import {
   handleNextRound,
@@ -128,6 +130,7 @@ describe("roundsInputVault", () => {
   describe("DepositWithReceipt", () => {
     describe("new DepositRequest", () => {
       beforeAll(() => {
+        mockRound(BigInt.fromString("1"), vaultAddress);
         mockCurrentRound(contractAddress, BigInt.fromString("1"));
         const mockedEvent = createDepositWithReceipt(
           mockedCaller,
@@ -143,6 +146,7 @@ describe("roundsInputVault", () => {
         assert.entityCount("DepositRequest", 1);
         assert.entityCount("Investor", 1);
         assert.entityCount("Block", 1);
+        assert.entityCount("Round", 1);
       });
 
       test("DepositRequest has been populated correctly", () => {
@@ -155,6 +159,19 @@ describe("roundsInputVault", () => {
           ).toHexString(),
           [{ field: "amount", value: "10" }]
         );
+      });
+
+      test("DepositRequest has been added to the Round", () => {
+        const ids = [
+          createDepositRequestId(
+            BigInt.fromString("5"),
+            vaultAddress,
+            mockedInvestor
+          ).toHexString(),
+        ];
+        assertEntity("Round", mockedRoundId.toHexString(), [
+          { field: "depositRequests", value: arrayToString(ids) },
+        ]);
       });
     });
 
@@ -286,6 +303,13 @@ describe("roundsInputVault", () => {
 
       describe("user has requested a DepositRequest deletion", () => {
         beforeAll(() => {
+          mockRound(BigInt.fromString("1"), vaultAddress, [
+            createDepositRequestId(
+              BigInt.fromString("2"),
+              vaultAddress,
+              mockedInvestor
+            ),
+          ]);
           mockDepositRequest(
             mockedRoundId,
             vaultAddress,
@@ -308,6 +332,7 @@ describe("roundsInputVault", () => {
 
         test("can handle event", () => {
           assert.entityCount("DepositRequest", 0);
+          assert.entityCount("Round", 1);
         });
 
         test("DepositRequest has been deleted", () => {
@@ -319,6 +344,12 @@ describe("roundsInputVault", () => {
               mockedInvestor
             ).toHexString()
           );
+        });
+
+        test("DepositRequest has been removed from the Round", () => {
+          assertEntity("Round", mockedRoundId.toHexString(), [
+            { field: "depositRequests", value: "[]" },
+          ]);
         });
       });
     });
@@ -382,6 +413,28 @@ describe("roundsInputVault", () => {
         });
         describe("requests are all to delete DepositRequests", () => {
           beforeAll(() => {
+            mockRound(BigInt.fromString("1"), vaultAddress, [
+              createDepositRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("2"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("3"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ),
+            ]);
             mockDepositRequests(
               mockedRoundId,
               vaultAddress,
@@ -404,6 +457,7 @@ describe("roundsInputVault", () => {
 
           test("can handle the event", () => {
             assert.entityCount("DepositRequest", 2);
+            assert.entityCount("Round", 1);
           });
 
           test("DepositRequest 2 has been deleted", () => {
@@ -427,9 +481,49 @@ describe("roundsInputVault", () => {
               ).toHexString()
             );
           });
+
+          test("DepositRequest 2 and 3 have been removed from the Round", () => {
+            const ids = [
+              createDepositRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+              createDepositRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+            ];
+            assertEntity("Round", mockedRoundId.toHexString(), [
+              { field: "depositRequests", value: arrayToString(ids) },
+            ]);
+          });
         });
         describe("requests are a mix between reduce and delete DepositRequests", () => {
           beforeAll(() => {
+            mockRound(BigInt.fromString("1"), vaultAddress, [
+              createDepositRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("2"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("3"),
+                vaultAddress,
+                mockedInvestor
+              ),
+              createDepositRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ),
+            ]);
             mockDepositRequests(
               mockedRoundId,
               vaultAddress,
@@ -460,6 +554,7 @@ describe("roundsInputVault", () => {
 
           test("can handle the event", () => {
             assert.entityCount("DepositRequest", 2);
+            assert.entityCount("Round", 1);
           });
 
           test("DepositRequest 2 has been deleted", () => {
@@ -494,6 +589,24 @@ describe("roundsInputVault", () => {
               ).toHexString(),
               [{ field: "amount", value: "500" }]
             );
+          });
+
+          test("DepositRequest 2 and 3 have been removed from the Round", () => {
+            const ids = [
+              createDepositRequestId(
+                BigInt.fromString("1"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+              createDepositRequestId(
+                BigInt.fromString("4"),
+                vaultAddress,
+                mockedInvestor
+              ).toHexString(),
+            ];
+            assertEntity("Round", mockedRoundId.toHexString(), [
+              { field: "depositRequests", value: arrayToString(ids) },
+            ]);
           });
         });
       });
@@ -614,6 +727,30 @@ describe("roundsInputVault", () => {
       });
       describe("requests are a mix between redeem and delete DepositRequests", () => {
         beforeAll(() => {
+          mockRound(BigInt.fromString("1"), vaultAddress, [
+            createDepositRequestId(
+              BigInt.fromString("1"),
+              vaultAddress,
+              mockedInvestor
+            ),
+            createDepositRequestId(
+              BigInt.fromString("2"),
+              vaultAddress,
+              mockedInvestor
+            ),
+          ]);
+          mockRound(BigInt.fromString("5"), vaultAddress, [
+            createDepositRequestId(
+              BigInt.fromString("3"),
+              vaultAddress,
+              mockedInvestor
+            ),
+            createDepositRequestId(
+              BigInt.fromString("4"),
+              vaultAddress,
+              mockedInvestor
+            ),
+          ]);
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
           mockDepositRequests(
             mockedRoundId,
@@ -646,6 +783,7 @@ describe("roundsInputVault", () => {
 
         test("can handle the event", () => {
           assert.entityCount("DepositRequest", 3);
+          assert.entityCount("Round", 2);
         });
 
         test("DepositRequest 1 has been updated correctly", () => {
@@ -669,6 +807,19 @@ describe("roundsInputVault", () => {
               mockedInvestor
             ).toHexString()
           );
+        });
+
+        test("DepositRequest 3 has been removed from Round 5", () => {
+          const ids = [
+            createDepositRequestId(
+              BigInt.fromString("4"),
+              vaultAddress,
+              mockedInvestor
+            ).toHexString(),
+          ];
+          assertEntity("Round", mockedRoundId_B.toHexString(), [
+            { field: "depositRequests", value: arrayToString(ids) },
+          ]);
         });
       });
     });
