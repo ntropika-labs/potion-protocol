@@ -8,7 +8,7 @@ import {
   RoundsOutputVault,
 } from "../generated/RoundsOutputVault/RoundsOutputVault";
 import { WithdrawalRequest } from "../generated/schema";
-import { getOrCreateRound, createRoundId } from "./rounds";
+import { getOrCreateRound, createRoundId, updateAssets } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { setCurrentRound } from "./investmentVault";
@@ -25,6 +25,12 @@ function handleNextRound(event: NextRound): void {
   const vaultAddress = contract.vault();
   getOrCreateRound(event.params.newRoundNumber, vaultAddress);
   setCurrentRound(vaultAddress, event.params.newRoundNumber);
+  if (event.params.newRoundNumber.gt(BigInt.fromString("0"))) {
+    updateAssets(
+      event.params.newRoundNumber.minus(BigInt.fromString("1")),
+      vaultAddress
+    );
+  }
   log.info("NextRound {} for OutputVault {}", [
     event.params.newRoundNumber.toString(),
     event.address.toHexString(),

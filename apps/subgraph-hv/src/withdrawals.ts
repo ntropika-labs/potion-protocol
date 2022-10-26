@@ -95,6 +95,17 @@ function deleteWithdrawalRequest(id: Bytes): void {
   log.info("WithdrawalRequest {} has been removed", [id.toHexString()]);
 }
 
+function updateWithdrawalRequestAssets(id: Bytes, shareRatio: BigInt): void {
+  const withdrawalRequest = WithdrawalRequest.load(id);
+  if (withdrawalRequest == null) {
+    log.error("withdrawalRequest {} doesn't exists", [id.toHexString()]);
+  } else {
+    log.info("updated WithdrawalRequest {}", [id.toHexString()]);
+    withdrawalRequest.assets = withdrawalRequest.amount.times(shareRatio);
+    withdrawalRequest.save();
+  }
+}
+
 export {
   createWithdrawal,
   createWithdrawalRequest,
@@ -102,4 +113,5 @@ export {
   createWithdrawalRequestId,
   getWithdrawalRequest,
   deleteWithdrawalRequest,
+  updateWithdrawalRequestAssets,
 };

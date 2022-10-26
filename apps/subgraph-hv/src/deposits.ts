@@ -95,6 +95,16 @@ function deleteDepositRequest(id: Bytes): void {
   log.info("DepositRequest {} has been removed", [id.toHexString()]);
 }
 
+function updateDepositRequestShares(id: Bytes, shareRatio: BigInt): void {
+  const depositRequest = DepositRequest.load(id);
+  if (depositRequest == null) {
+    log.error("depositRequest {} doesn't exists", [id.toHexString()]);
+  } else {
+    depositRequest.shares = depositRequest.amount.times(shareRatio);
+    depositRequest.save();
+  }
+}
+
 export {
   createDeposit,
   createDepositRequest,
@@ -102,4 +112,5 @@ export {
   createDepositRequestId,
   getDepositRequest,
   deleteDepositRequest,
+  updateDepositRequestShares,
 };

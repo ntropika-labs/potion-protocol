@@ -103,6 +103,43 @@ describe("roundsOutputVault", () => {
 
   describe("NextRound", () => {
     beforeAll(() => {
+      mockWithdrawalRequests(
+        mockedRoundId,
+        vaultAddress,
+        mockedInvestor,
+        mockedCaller,
+        mockedWithdrawalParamsArray,
+        contractAddress,
+        contractAddress
+      );
+      mockRound(
+        BigInt.fromString("1"),
+        vaultAddress,
+        [],
+        [
+          createWithdrawalRequestId(
+            BigInt.fromString("1"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createWithdrawalRequestId(
+            BigInt.fromString("2"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createWithdrawalRequestId(
+            BigInt.fromString("3"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createWithdrawalRequestId(
+            BigInt.fromString("4"),
+            vaultAddress,
+            mockedInvestor
+          ),
+        ],
+        BigInt.fromString("10")
+      );
       mockHedgingVault(
         vaultAddress,
         vaultAddress,
@@ -110,20 +147,69 @@ describe("roundsOutputVault", () => {
         BigInt.fromString("30"),
         BigInt.fromString("0")
       );
-      const mockedEvent = createOutputNextRound(BigInt.fromString("1"));
+      const mockedEvent = createOutputNextRound(BigInt.fromString("2"));
       handleNextRound(mockedEvent);
     });
 
     afterAll(clearStore);
 
     test("can handle event", () => {
-      assert.entityCount("Round", 1);
+      assert.entityCount("Round", 2);
+      assert.entityCount("WithdrawalRequest", 4);
     });
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
-        { field: "currentRound", value: "1" },
+        { field: "currentRound", value: "2" },
       ]);
+    });
+
+    test("WithdrawalRequest 1 assets has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("1"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "assets", value: "100" }]
+      );
+    });
+
+    test("WithdrawalRequest 2 assets has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("2"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "assets", value: "1000" }]
+      );
+    });
+
+    test("WithdrawalRequest 3 assets has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("3"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "assets", value: "5000" }]
+      );
+    });
+
+    test("WithdrawalRequest 4 assets has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("4"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "assets", value: "10000" }]
+      );
     });
   });
 

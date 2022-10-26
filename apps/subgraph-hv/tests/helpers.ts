@@ -85,7 +85,8 @@ function mockRound(
   roundNumber: BigInt,
   vault: Bytes,
   depositRequests: Bytes[] = [],
-  withdrawalRequests: Bytes[] = []
+  withdrawalRequests: Bytes[] = [],
+  shareRatioAtRoundEnd: BigInt = BigInt.fromString("0")
 ): Round {
   const id = createRoundId(roundNumber, vault);
   const round = new Round(id);
@@ -93,6 +94,7 @@ function mockRound(
   round.roundNumber = roundNumber;
   round.depositRequests = depositRequests;
   round.withdrawalRequests = withdrawalRequests;
+  round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
   round.save();
   return round;
 }

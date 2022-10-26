@@ -103,6 +103,43 @@ describe("roundsInputVault", () => {
 
   describe("NextRound", () => {
     beforeAll(() => {
+      mockDepositRequests(
+        mockedRoundId,
+        vaultAddress,
+        mockedInvestor,
+        mockedCaller,
+        mockedDepositParamsArray,
+        contractAddress,
+        contractAddress
+      );
+      mockRound(
+        BigInt.fromString("1"),
+        vaultAddress,
+        [
+          createDepositRequestId(
+            BigInt.fromString("1"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createDepositRequestId(
+            BigInt.fromString("2"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createDepositRequestId(
+            BigInt.fromString("3"),
+            vaultAddress,
+            mockedInvestor
+          ),
+          createDepositRequestId(
+            BigInt.fromString("4"),
+            vaultAddress,
+            mockedInvestor
+          ),
+        ],
+        [],
+        BigInt.fromString("10")
+      );
       mockHedgingVault(
         vaultAddress,
         vaultAddress,
@@ -110,20 +147,69 @@ describe("roundsInputVault", () => {
         BigInt.fromString("30"),
         BigInt.fromString("0")
       );
-      const mockedEvent = createNextRound(BigInt.fromString("1"));
+      const mockedEvent = createNextRound(BigInt.fromString("2"));
       handleNextRound(mockedEvent);
     });
 
     afterAll(clearStore);
 
     test("can handle event", () => {
-      assert.entityCount("Round", 1);
+      assert.entityCount("Round", 2);
+      assert.entityCount("DepositRequest", 4);
     });
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
-        { field: "currentRound", value: "1" },
+        { field: "currentRound", value: "2" },
       ]);
+    });
+
+    test("DepositRequest 1 shares has been updated correctly", () => {
+      assertEntity(
+        "DepositRequest",
+        createDepositRequestId(
+          BigInt.fromString("1"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "shares", value: "100" }]
+      );
+    });
+
+    test("DepositRequest 2 shares has been updated correctly", () => {
+      assertEntity(
+        "DepositRequest",
+        createDepositRequestId(
+          BigInt.fromString("2"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "shares", value: "1000" }]
+      );
+    });
+
+    test("DepositRequest 3 shares has been updated correctly", () => {
+      assertEntity(
+        "DepositRequest",
+        createDepositRequestId(
+          BigInt.fromString("3"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "shares", value: "5000" }]
+      );
+    });
+
+    test("DepositRequest 4 shares has been updated correctly", () => {
+      assertEntity(
+        "DepositRequest",
+        createDepositRequestId(
+          BigInt.fromString("4"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [{ field: "shares", value: "10000" }]
+      );
     });
   });
 

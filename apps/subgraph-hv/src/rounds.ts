@@ -1,6 +1,8 @@
 import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { Round } from "../generated/schema";
+import { updateDepositRequestShares } from "./deposits";
 import { addItemToArray, removeItemFromArray } from "./helpers";
+import { updateWithdrawalRequestAssets } from "./withdrawals";
 
 function createRoundId(roundNumber: BigInt, vault: Bytes): Bytes {
   return vault.concatI32(roundNumber.toI32());
@@ -101,6 +103,54 @@ function removeWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
   return false;
 }
 
+function updateShares(roundNumber: BigInt, vault: Bytes): void {
+  const id = createRoundId(roundNumber, vault);
+  const round = Round.load(id);
+  if (round == null) {
+    log.error("Tried to update the shares of round {} that doesn't exists", [
+      id.toHexString(),
+    ]);
+  } else {
+    if (round.shareRatioAtRoundEnd) {
+      for (let i = 0; i < round.depositRequests.length; i += 1) {
+        updateDepositRequestShares(
+          round.depositRequests[i],
+          round.shareRatioAtRoundEnd as BigInt
+        );
+      }
+    } else {
+      log.error(
+        "Tried to update the shares of round {} before setting shareRatioAtRoundEnd",
+        [id.toHexString()]
+      );
+    }
+  }
+}
+
+function updateAssets(roundNumber: BigInt, vault: Bytes): void {
+  const id = createRoundId(roundNumber, vault);
+  const round = Round.load(id);
+  if (round == null) {
+    log.error("Tried to update the assets of round {} that doesn't exists", [
+      id.toHexString(),
+    ]);
+  } else {
+    if (round.shareRatioAtRoundEnd) {
+      for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
+        updateWithdrawalRequestAssets(
+          round.withdrawalRequests[i],
+          round.shareRatioAtRoundEnd as BigInt
+        );
+      }
+    } else {
+      log.error(
+        "Tried to update the assets of round {} before setting shareRatioAtRoundEnd",
+        [id.toHexString()]
+      );
+    }
+  }
+}
+
 export {
   createRoundId,
   getOrCreateRound,
@@ -108,4 +158,6 @@ export {
   addWithdrawalRequest,
   removeDepositRequest,
   removeWithdrawalRequest,
+  updateShares,
+  updateAssets,
 };
