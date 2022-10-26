@@ -1,8 +1,8 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { Round } from "../generated/schema";
 
-function createRoundId(roundNumber: BigInt, vault: Bytes): string {
-  return vault.toHexString().concat(roundNumber.toString());
+function createRoundId(roundNumber: BigInt, vault: Bytes): Bytes {
+  return vault.concatI32(roundNumber.toI32());
 }
 
 function createRound(roundNumber: BigInt, vault: Bytes): Round {

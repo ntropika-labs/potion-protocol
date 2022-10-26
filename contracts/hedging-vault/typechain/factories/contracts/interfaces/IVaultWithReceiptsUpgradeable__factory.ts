@@ -47,7 +47,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "owner",
+        name: "receiver",
         type: "address",
       },
       {

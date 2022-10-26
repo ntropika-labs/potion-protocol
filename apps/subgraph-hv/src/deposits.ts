@@ -1,8 +1,8 @@
-import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Deposit, DepositRequest } from "../generated/schema";
 
 function createDeposit(
-  round: string,
+  round: Bytes,
   amount: BigInt,
   shareAmount: BigInt,
   block: Bytes,
@@ -18,8 +18,13 @@ function createDeposit(
   return deposit;
 }
 
+function createDepositRequestId(depositId: BigInt, investor: Address): Bytes {
+  return investor.concatI32(depositId.toI32());
+}
+
 function createDepositRequest(
-  round: string,
+  depositId: BigInt,
+  round: Bytes,
   investor: Address,
   sender: Address,
   amount: BigInt,
@@ -28,7 +33,7 @@ function createDepositRequest(
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = investor.toHexString().concat(round);
+  const id = createDepositRequestId(depositId, investor);
   const depositRequest = new DepositRequest(id);
   depositRequest.round = round;
   depositRequest.investor = investor;
@@ -42,4 +47,53 @@ function createDepositRequest(
   return depositRequest;
 }
 
-export { createDeposit, createDepositRequest };
+function getOrCreateDepositRequest(
+  depositId: BigInt,
+  round: Bytes,
+  investor: Address,
+  sender: Address,
+  amount: BigInt,
+  amountRedeemed: BigInt,
+  remainingShares: BigInt,
+  block: Bytes,
+  tx: Bytes
+): DepositRequest {
+  const id = createDepositRequestId(depositId, investor);
+  const depositRequest = DepositRequest.load(id);
+  if (depositRequest == null) {
+    return createDepositRequest(
+      depositId,
+      round,
+      investor,
+      sender,
+      amount,
+      amountRedeemed,
+      remainingShares,
+      block,
+      tx
+    );
+  }
+  return depositRequest;
+}
+
+function getDepositRequest(
+  depositId: BigInt,
+  investor: Address
+): DepositRequest | null {
+  const id = createDepositRequestId(depositId, investor);
+  return DepositRequest.load(id);
+}
+
+function deleteDepositRequest(id: Bytes): void {
+  store.remove("DepositRequest", id.toHexString());
+  log.info("DepositRequest {} has been removed", [id.toHexString()]);
+}
+
+export {
+  createDeposit,
+  createDepositRequest,
+  getOrCreateDepositRequest,
+  createDepositRequestId,
+  getDepositRequest,
+  deleteDepositRequest,
+};
