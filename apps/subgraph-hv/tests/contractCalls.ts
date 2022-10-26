@@ -118,6 +118,17 @@ function mockVault(contractAddress: Address, vaultAddress: Address): void {
   ]);
 }
 
+function mockCurrentRound(
+  contractAddress: Address,
+  currentRound: BigInt
+): void {
+  createMockedFunction(
+    contractAddress,
+    "getCurrentRound",
+    "getCurrentRound():(uint256)"
+  ).returns([ethereum.Value.fromUnsignedBigInt(currentRound)]);
+}
+
 export {
   mockAsset,
   mockTotalAssets,
@@ -132,4 +143,5 @@ export {
   mockStrikePercentage,
   mockCycleDurationSecs,
   mockVault,
+  mockCurrentRound,
 };

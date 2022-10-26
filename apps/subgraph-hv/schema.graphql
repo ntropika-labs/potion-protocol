@@ -47,7 +47,7 @@ type PotionBuyAction @entity {
 }
 
 type Round @entity {
-  id: ID!
+  id: Bytes!
   vault: HedgingVault!
   roundNumber: BigInt!
   #NextRound()
@@ -73,7 +73,7 @@ type Round @entity {
 type Investor @entity {
   id: Bytes!
   # maybe it is better to add a join entity VaultInvestors?
-  vaults: [HedgingVault!]
+  vaults: [HedgingVault!]!
   user: Bytes!
   depositRequests: [DepositRequest!] @derivedFrom(field: "investor")
   withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "investor")
@@ -81,7 +81,7 @@ type Investor @entity {
 
 #InvestmentVault contract
 type Deposit @entity {
-  id: ID!
+  id: Bytes!
   round: Round!
   amount: BigInt!
   shareAmount: BigInt!
@@ -91,7 +91,7 @@ type Deposit @entity {
 
 #InvestmentVault contract
 type Withdrawal @entity {
-  id: ID!
+  id: Bytes!
   round: Round!
   amount: BigInt!
   shareAmount: BigInt!
@@ -102,7 +102,7 @@ type Withdrawal @entity {
 # we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsInputVault
 # _deposit() vault with receipt in the OutputVault contract
 type DepositRequest @entity {
-  id: ID!
+  id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
@@ -117,7 +117,7 @@ type DepositRequest @entity {
 # we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsOutputVault
 # _deposit()  with receipt in the OnputVault contract
 type WithdrawalRequest @entity {
-  id: ID!
+  id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!

@@ -42,7 +42,10 @@ const actionAddress = Address.fromString(
   "0x0000000000000000000000000000000000000001"
 );
 
-const mockedRoundId = createRoundId(BigInt.fromString("0"), contractAddress);
+const mockedRoundId = createRoundId(
+  BigInt.fromString("0"),
+  contractAddress
+).toHexString();
 
 describe("InvestmentVault tests", () => {
   beforeAll(() => {
