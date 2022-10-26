@@ -32,9 +32,6 @@ function createDepositRequest(
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingShares: BigInt,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
@@ -43,9 +40,10 @@ function createDepositRequest(
   depositRequest.round = round;
   depositRequest.investor = investor;
   depositRequest.sender = sender;
-  depositRequest.amount = amount;
-  depositRequest.amountRedeemed = amountRedeemed;
-  depositRequest.remainingShares = remainingShares;
+  depositRequest.amount = BigInt.fromString("0");
+  depositRequest.amountRedeemed = BigInt.fromString("0");
+  depositRequest.shares = BigInt.fromString("0");
+  depositRequest.remainingShares = BigInt.fromString("0");
   depositRequest.block = block;
   depositRequest.tx = tx;
   depositRequest.save();
@@ -58,9 +56,6 @@ function getOrCreateDepositRequest(
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingShares: BigInt,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
@@ -73,9 +68,6 @@ function getOrCreateDepositRequest(
       round,
       investor,
       sender,
-      amount,
-      amountRedeemed,
-      remainingShares,
       block,
       tx
     );

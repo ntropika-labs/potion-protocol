@@ -3,6 +3,8 @@ import {
   createOutputDepositWithReceipt,
   createOutputRedeemReceipt,
   createOutputRedeemReceiptBatch,
+  createOutputWithdrawExchangeAsset,
+  createOutputWithdrawExchangeAssetBatch,
 } from "./events";
 import { mockVault, mockCurrentRound } from "./contractCalls";
 import {
@@ -17,6 +19,8 @@ import {
   handleDepositWithReceipt,
   handleRedeemReceipt,
   handleRedeemReceiptBatch,
+  handleWithdrawExchangeAsset,
+  handleWithdrawExchangeAssetBatch,
 } from "../src/roundsOutputVault";
 import {
   test,
@@ -51,36 +55,41 @@ const mockedInvestor = Address.fromString(
   "0x0000000000000000000000000000000000000002"
 );
 
-const mockedRoundParams: WithdrawalRequestParams = {
+const mockedWithdrawalParams: WithdrawalRequestParams = {
   depositId: BigInt.fromString("2"),
   amount: BigInt.fromString("100"),
   amountRedeemed: BigInt.fromString("0"),
+  assets: BigInt.fromString("50"),
   remainingAssets: BigInt.fromString("0"),
 };
 
-const mockedRoundParamsArray: WithdrawalRequestParams[] = [
+const mockedWithdrawalParamsArray: WithdrawalRequestParams[] = [
   {
     depositId: BigInt.fromString("1"),
     amount: BigInt.fromString("10"),
     amountRedeemed: BigInt.fromString("0"),
+    assets: BigInt.fromString("5"),
     remainingAssets: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("2"),
     amount: BigInt.fromString("100"),
     amountRedeemed: BigInt.fromString("0"),
+    assets: BigInt.fromString("50"),
     remainingAssets: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("3"),
     amount: BigInt.fromString("500"),
     amountRedeemed: BigInt.fromString("0"),
+    assets: BigInt.fromString("250"),
     remainingAssets: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("4"),
     amount: BigInt.fromString("1000"),
     amountRedeemed: BigInt.fromString("0"),
+    assets: BigInt.fromString("500"),
     remainingAssets: BigInt.fromString("0"),
   },
 ];
@@ -156,7 +165,7 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor,
           mockedCaller,
-          mockedRoundParams,
+          mockedWithdrawalParams,
           contractAddress,
           contractAddress
         );
@@ -199,7 +208,7 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor,
           mockedCaller,
-          mockedRoundParams,
+          mockedWithdrawalParams,
           contractAddress,
           contractAddress
         );
@@ -243,7 +252,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParams,
+            mockedWithdrawalParams,
             contractAddress,
             contractAddress
           );
@@ -282,7 +291,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParams,
+            mockedWithdrawalParams,
             contractAddress,
             contractAddress
           );
@@ -328,7 +337,7 @@ describe("roundsOutputVault", () => {
               vaultAddress,
               mockedInvestor,
               mockedCaller,
-              mockedRoundParamsArray,
+              mockedWithdrawalParamsArray,
               contractAddress,
               contractAddress
             );
@@ -378,7 +387,7 @@ describe("roundsOutputVault", () => {
               vaultAddress,
               mockedInvestor,
               mockedCaller,
-              mockedRoundParamsArray,
+              mockedWithdrawalParamsArray,
               contractAddress,
               contractAddress
             );
@@ -426,7 +435,7 @@ describe("roundsOutputVault", () => {
               vaultAddress,
               mockedInvestor,
               mockedCaller,
-              mockedRoundParamsArray,
+              mockedWithdrawalParamsArray,
               contractAddress,
               contractAddress
             );
@@ -497,7 +506,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParamsArray,
+            mockedWithdrawalParamsArray,
             contractAddress,
             contractAddress
           );
@@ -551,7 +560,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParamsArray.slice(0, 2),
+            mockedWithdrawalParamsArray.slice(0, 2),
             contractAddress,
             contractAddress
           );
@@ -560,7 +569,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParamsArray.slice(2, 4),
+            mockedWithdrawalParamsArray.slice(2, 4),
             contractAddress,
             contractAddress
           );
@@ -611,7 +620,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParamsArray.slice(0, 2),
+            mockedWithdrawalParamsArray.slice(0, 2),
             contractAddress,
             contractAddress
           );
@@ -620,7 +629,7 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             mockedInvestor,
             mockedCaller,
-            mockedRoundParamsArray.slice(2, 4),
+            mockedWithdrawalParamsArray.slice(2, 4),
             contractAddress,
             contractAddress
           );
@@ -662,6 +671,132 @@ describe("roundsOutputVault", () => {
           );
         });
       });
+    });
+  });
+
+  describe("WithdrawExchangeAsset", () => {
+    beforeAll(() => {
+      mockWithdrawalRequest(
+        mockedRoundId,
+        vaultAddress,
+        mockedInvestor,
+        mockedCaller,
+        mockedWithdrawalParams,
+        contractAddress,
+        contractAddress
+      );
+      const mockedEvent = createOutputWithdrawExchangeAsset(
+        mockedCaller,
+        mockedInvestor,
+        mockedCaller,
+        BigInt.fromString("15"),
+        BigInt.fromString("2"),
+        BigInt.fromString("30")
+      );
+      handleWithdrawExchangeAsset(mockedEvent);
+    });
+    afterAll(clearStore);
+
+    test("can handle event", () => {
+      assert.entityCount("WithdrawalRequest", 1);
+    });
+
+    test("WithdrawalRequest has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("2"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [
+          { field: "amount", value: "70" },
+          { field: "amountRedeemed", value: "15" },
+          { field: "remainingAssets", value: "35" },
+        ]
+      );
+    });
+  });
+
+  describe("WithdrawExchangeAssetBatch", () => {
+    beforeAll(() => {
+      mockWithdrawalRequests(
+        mockedRoundId,
+        vaultAddress,
+        mockedInvestor,
+        mockedCaller,
+        mockedWithdrawalParamsArray,
+        contractAddress,
+        contractAddress
+      );
+      const mockedEvent = createOutputWithdrawExchangeAssetBatch(
+        mockedCaller,
+        mockedInvestor,
+        mockedInvestor,
+        BigInt.fromString("5"),
+        [
+          BigInt.fromString("1"),
+          BigInt.fromString("2"),
+          BigInt.fromString("4"),
+        ],
+        [
+          BigInt.fromString("1"),
+          BigInt.fromString("100"),
+          BigInt.fromString("0"),
+        ]
+      );
+      handleWithdrawExchangeAssetBatch(mockedEvent);
+    });
+    afterAll(clearStore);
+
+    test("can handle event", () => {
+      assert.entityCount("WithdrawalRequest", 4);
+    });
+
+    test("WithdrawalRequest 1 has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("1"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [
+          { field: "amount", value: "9" },
+          { field: "amountRedeemed", value: "5" },
+          { field: "remainingAssets", value: "0" },
+        ]
+      );
+    });
+    test("WithdrawalRequest 2 has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("2"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [
+          { field: "amount", value: "0" },
+          { field: "amountRedeemed", value: "5" },
+          { field: "remainingAssets", value: "45" },
+        ]
+      );
+    });
+    test("WithdrawalRequest 4 has been updated correctly", () => {
+      assertEntity(
+        "WithdrawalRequest",
+        createWithdrawalRequestId(
+          BigInt.fromString("4"),
+          vaultAddress,
+          mockedInvestor
+        ).toHexString(),
+        [
+          { field: "amount", value: "1000" },
+          { field: "amountRedeemed", value: "5" },
+          { field: "remainingAssets", value: "495" },
+        ]
+      );
     });
   });
 });

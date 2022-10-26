@@ -21,6 +21,7 @@ class DepositRequestParams {
   amount: BigInt;
   amountRedeemed: BigInt;
   remainingShares: BigInt;
+  shares: BigInt;
 }
 
 class WithdrawalRequestParams {
@@ -28,6 +29,7 @@ class WithdrawalRequestParams {
   amount: BigInt;
   amountRedeemed: BigInt;
   remainingAssets: BigInt;
+  assets: BigInt;
 }
 
 function assertEntity(
@@ -104,6 +106,7 @@ function mockDepositRequest(
   depositRequest.sender = sender;
   depositRequest.amount = params.amount;
   depositRequest.amountRedeemed = params.amountRedeemed;
+  depositRequest.shares = params.shares;
   depositRequest.remainingShares = params.remainingShares;
   depositRequest.block = block;
   depositRequest.tx = tx;
@@ -156,6 +159,7 @@ function mockWithdrawalRequest(
   withdrawalRequest.sender = sender;
   withdrawalRequest.amount = params.amount;
   withdrawalRequest.amountRedeemed = params.amountRedeemed;
+  withdrawalRequest.assets = params.assets;
   withdrawalRequest.remainingAssets = params.remainingAssets;
   withdrawalRequest.block = block;
   withdrawalRequest.tx = tx;

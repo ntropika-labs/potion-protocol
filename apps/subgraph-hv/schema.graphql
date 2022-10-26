@@ -107,8 +107,8 @@ type DepositRequest @entity {
   investor: Investor!
   round: Round!
   amount: BigInt!
-  shares: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
   amountRedeemed: BigInt!
+  shares: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
   remainingShares: BigInt!
   block: Block!
   tx: Bytes!
@@ -122,7 +122,7 @@ type WithdrawalRequest @entity {
   investor: Investor!
   round: Round!
   amount: BigInt!
-  assets: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
+  assets: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
   amountRedeemed: BigInt!
   remainingAssets: BigInt!
   block: Block!

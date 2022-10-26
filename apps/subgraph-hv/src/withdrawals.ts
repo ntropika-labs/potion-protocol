@@ -32,9 +32,6 @@ function createWithdrawalRequest(
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingAssets: BigInt,
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
@@ -43,9 +40,10 @@ function createWithdrawalRequest(
   withdrawalRequest.round = round;
   withdrawalRequest.investor = investor;
   withdrawalRequest.sender = sender;
-  withdrawalRequest.amount = amount;
-  withdrawalRequest.amountRedeemed = amountRedeemed;
-  withdrawalRequest.remainingAssets = remainingAssets;
+  withdrawalRequest.amount = BigInt.fromString("0");
+  withdrawalRequest.amountRedeemed = BigInt.fromString("0");
+  withdrawalRequest.assets = BigInt.fromString("0");
+  withdrawalRequest.remainingAssets = BigInt.fromString("0");
   withdrawalRequest.block = block;
   withdrawalRequest.tx = tx;
   withdrawalRequest.save();
@@ -58,9 +56,6 @@ function getOrCreateWithdrawalRequest(
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingAssets: BigInt,
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
@@ -73,9 +68,6 @@ function getOrCreateWithdrawalRequest(
       round,
       investor,
       sender,
-      amount,
-      amountRedeemed,
-      remainingAssets,
       block,
       tx
     );
