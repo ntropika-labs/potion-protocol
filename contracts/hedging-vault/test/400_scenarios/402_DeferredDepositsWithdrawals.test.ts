@@ -17,7 +17,6 @@ import {
 } from "../../typechain";
 import { fastForwardChain } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
-import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles, LifecycleStates } from "hedging-vault-sdk";
 
 import {
@@ -28,6 +27,7 @@ import {
     DeploymentFlags,
     DAY_IN_SECONDS,
 } from "contracts-utils";
+import { setupTestConditions, getPotionBuyInfo } from "../../scripts/test/simulationUtils";
 
 /**
     @notice Hedging Vault deferred deposits and withdrawals tests
@@ -242,12 +242,7 @@ describe("DeferredDepositsWithdrawals", function () {
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
 
-        const tCond = await HedgingVaultUtils.setupTestConditions(
-            tEnv,
-            underlyingAssetPriceInUSD,
-            USDCPriceInUSD,
-            amountToBeInvested,
-        );
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -332,12 +327,7 @@ describe("DeferredDepositsWithdrawals", function () {
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
 
-        const tCond = await HedgingVaultUtils.setupTestConditions(
-            tEnv,
-            underlyingAssetPriceInUSD,
-            USDCPriceInUSD,
-            amountToBeInvested,
-        );
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -469,7 +459,7 @@ describe("DeferredDepositsWithdrawals", function () {
         */
         await fastForwardChain(DAY_IN_SECONDS);
 
-        const { potionBuyInfo: nextPotionBuyInfo } = await HedgingVaultUtils.getPotionBuyInfo(
+        const { potionBuyInfo: nextPotionBuyInfo } = await getPotionBuyInfo(
             tEnv,
             BigNumber.from(0),
             underlyingAssetPriceInUSD,
@@ -529,12 +519,7 @@ describe("DeferredDepositsWithdrawals", function () {
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
 
-        const tCond = await HedgingVaultUtils.setupTestConditions(
-            tEnv,
-            underlyingAssetPriceInUSD,
-            USDCPriceInUSD,
-            amountToBeInvested,
-        );
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -664,7 +649,7 @@ describe("DeferredDepositsWithdrawals", function () {
         */
         await fastForwardChain(DAY_IN_SECONDS);
 
-        const { potionBuyInfo: nextPotionBuyInfo } = await HedgingVaultUtils.getPotionBuyInfo(
+        const { potionBuyInfo: nextPotionBuyInfo } = await getPotionBuyInfo(
             tEnv,
             BigNumber.from(0),
             underlyingAssetPriceInUSD,

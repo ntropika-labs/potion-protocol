@@ -30,6 +30,7 @@ import {
 
 import { fastForwardChain } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
+import { setupTestConditions } from "../../scripts/test/simulationUtils";
 
 /**
     @notice Hedging Vault fallback strategies tests
@@ -124,12 +125,7 @@ describe("FallbackStrategy", function () {
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
 
-        const tCond = await HedgingVaultUtils.setupTestConditions(
-            tEnv,
-            underlyingAssetPriceInUSD,
-            USDCPriceInUSD,
-            amountToBeInvested,
-        );
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
