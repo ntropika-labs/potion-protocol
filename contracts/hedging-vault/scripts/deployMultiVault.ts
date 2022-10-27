@@ -41,6 +41,24 @@ async function deployVaultWithSuffix(
 
     Deployments.persist(true);
 
+    // Deposit some amount
+    const deployer = (await ethers.provider.listAccounts())[0];
+
+    const underlyingDecimals = await deployment.underlyingAsset.decimals();
+
+    const mintAmount = ethers.utils.parseUnits("100000000", underlyingDecimals);
+    await deployment.underlyingAsset.mint(deployer, mintAmount);
+    await deployment.underlyingAsset.approve(deployment.roundsInputVault.address, ethers.constants.MaxUint256);
+
+    const depositAmount = ethers.utils.parseUnits("10000000", underlyingDecimals);
+    await deployment.roundsInputVault.deposit(depositAmount, deployer);
+
+    console.log(
+        `- Deposited ${ethers.utils.formatUnits(depositAmount, underlyingDecimals)} into vault for config ${
+            deploymentType.config
+        }`,
+    );
+
     return deployment;
 }
 
