@@ -241,6 +241,8 @@ describe("DeferredDepositsWithdrawals", function () {
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
+        const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
+        const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
         const tCond = await HedgingVaultUtils.setupTestConditions(
             tEnv,
@@ -288,7 +290,7 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1), exchangeRate);
 
         // For some reason 2 blocks are mined with the last transaction, so we need to
         // substract 1 from the current block
@@ -331,6 +333,8 @@ describe("DeferredDepositsWithdrawals", function () {
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
+        const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
+        const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
         const tCond = await HedgingVaultUtils.setupTestConditions(
             tEnv,
@@ -381,7 +385,7 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1), exchangeRate);
 
         // For some reason 2 blocks are mined with the last transaction, so we need to
         // substract 1 from the current block
@@ -483,7 +487,7 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1), BigNumber.from(0));
 
         const amountAfterProfitLoss = amountToBeInvested
             .sub(tCond.uniswapEnterPositionInputAmount)
@@ -528,6 +532,8 @@ describe("DeferredDepositsWithdrawals", function () {
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
+        const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
+        const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
         const tCond = await HedgingVaultUtils.setupTestConditions(
             tEnv,
@@ -578,7 +584,7 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1), exchangeRate);
 
         // Check that the helper set the correct info in the potionBuy
         const currentPotionBuyInfo = await potionBuy.getPotionBuyInfo(
@@ -678,7 +684,7 @@ describe("DeferredDepositsWithdrawals", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1));
+        expect(tx).to.emit(orchestrator, "NextRound").withArgs(currentRound.add(1), BigNumber.from(0));
 
         const amountAfterProfitLoss = amountToBeInvested
             .sub(tCond.uniswapEnterPositionInputAmount)

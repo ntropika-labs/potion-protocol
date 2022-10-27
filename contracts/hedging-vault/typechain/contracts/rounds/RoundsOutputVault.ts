@@ -468,7 +468,7 @@ export interface RoundsOutputVaultInterface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "DepositWithReceipt(address,address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "NextRound(uint256)": EventFragment;
+    "NextRound(uint256,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RedeemReceipt(address,address,address,uint256,uint256)": EventFragment;
     "RedeemReceiptBatch(address,address,address,uint256[],uint256[])": EventFragment;
@@ -538,8 +538,12 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface NextRoundEventObject {
   newRoundNumber: BigNumber;
+  prevRoundExchangeRate: BigNumber;
 }
-export type NextRoundEvent = TypedEvent<[BigNumber], NextRoundEventObject>;
+export type NextRoundEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  NextRoundEventObject
+>;
 
 export type NextRoundEventFilter = TypedEventFilter<NextRoundEvent>;
 
@@ -1436,11 +1440,13 @@ export interface RoundsOutputVault extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "NextRound(uint256)"(
-      newRoundNumber?: PromiseOrValue<BigNumberish> | null
+    "NextRound(uint256,uint256)"(
+      newRoundNumber?: PromiseOrValue<BigNumberish> | null,
+      prevRoundExchangeRate?: null
     ): NextRoundEventFilter;
     NextRound(
-      newRoundNumber?: PromiseOrValue<BigNumberish> | null
+      newRoundNumber?: PromiseOrValue<BigNumberish> | null,
+      prevRoundExchangeRate?: null
     ): NextRoundEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;

@@ -79,13 +79,15 @@ abstract contract BaseRoundsVaultUpgradeable is
         @inheritdoc IBaseRoundsVault
      */
     function nextRound() external onlyOperator {
-        _exchangeRateByRound[_roundNumber.current()] = _getCurrentExchangeRate();
+        uint256 exchangeRate = _getCurrentExchangeRate();
+
+        _exchangeRateByRound[_roundNumber.current()] = exchangeRate;
 
         _operate();
 
         _roundNumber.increment();
 
-        emit NextRound(_roundNumber.current());
+        emit NextRound(_roundNumber.current(), exchangeRate);
     }
 
     /**

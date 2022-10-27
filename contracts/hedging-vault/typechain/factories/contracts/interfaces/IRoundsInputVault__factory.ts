@@ -106,6 +106,12 @@ const _abi = [
         name: "newRoundNumber",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "prevRoundExchangeRate",
+        type: "uint256",
+      },
     ],
     name: "NextRound",
     type: "event",

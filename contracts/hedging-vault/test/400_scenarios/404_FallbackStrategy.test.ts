@@ -123,6 +123,8 @@ describe("FallbackStrategy", function () {
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
+        const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
+        let exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
         const tCond = await HedgingVaultUtils.setupTestConditions(
             tEnv,
@@ -177,7 +179,7 @@ describe("FallbackStrategy", function () {
             tCond.swapToUSDCSwapExitPosition,
             tCond.swapToUSDCSwapEnterPosition,
         );
-        await expect(tx).to.emit(roundsInputVault, "NextRound").withArgs(currentRound.add(1));
+        await expect(tx).to.emit(roundsInputVault, "NextRound").withArgs(currentRound.add(1), exchangeRate);
         await expect(tx)
             .to.emit(vault, "VaultPositionEntered")
             .withArgs(amountToBeInvested, amountToBeInvested, {
@@ -275,7 +277,11 @@ describe("FallbackStrategy", function () {
             underlyingAssetPriceInUSD,
         );
 
-        await expect(tx).to.emit(roundsInputVault, "NextRound").withArgs(currentRound.add(1));
+        exchangeRate = amountToBeInvested
+            .mul(BigNumber.from(10).pow(underlyingAssetDecimals))
+            .div(amountUnderlyingReturned);
+
+        await expect(tx).to.emit(roundsInputVault, "NextRound").withArgs(currentRound.add(1), exchangeRate);
         await expect(tx)
             .to.emit(vault, "VaultPositionExited")
             .withArgs(amountUnderlyingReturned, {
