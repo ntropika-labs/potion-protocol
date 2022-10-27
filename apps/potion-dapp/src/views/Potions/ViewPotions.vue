@@ -268,6 +268,7 @@ watch(redeemReceipt, (receipt) =>
               text-potions-expired-potion-card
               :withdrawable="isPotionWithdrawable(potion.otoken.id)"
               :expiry="potion.expiry"
+              :otoken-address="potion.otoken.id"
               :is-expired="true"
               :is-withdraw-enabled="isSameUserConnected && !redeemLoading"
               :token="potion.otoken.underlyingAsset"
