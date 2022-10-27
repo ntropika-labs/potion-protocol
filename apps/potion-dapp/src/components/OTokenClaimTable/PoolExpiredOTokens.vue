@@ -10,6 +10,7 @@ import {
 import { useTokenList } from "@/composables/useTokenList";
 import { useI18n } from "vue-i18n";
 import { contractsAddresses } from "@/helpers/contracts";
+import { calculatePnL } from "@/helpers/pnl";
 
 import type { OtokenDataset } from "dapp-types";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
@@ -27,12 +28,6 @@ const { symbol: currency } = useTokenList(
   contractsAddresses.USDC.address.toLowerCase()
 );
 
-const calcProfitAndLoss = (
-  premium: number,
-  collateral: number,
-  reclaimable: number
-) => (premium + collateral - reclaimable) / collateral;
-
 const dataset = computed<OtokenDataset>(() => {
   return props.otokens.map((item) => {
     const id = item?.otoken.id ?? "";
@@ -48,7 +43,7 @@ const dataset = computed<OtokenDataset>(() => {
     const collateral = parseFloat(item.collateral);
 
     if (props.claimedOtokens.includes(id)) {
-      const pnl = calcProfitAndLoss(premium, collateral, payout) * 100;
+      const pnl = calculatePnL(premium, collateral, payout) * 100;
 
       return [
         { value: symbol },
@@ -67,7 +62,7 @@ const dataset = computed<OtokenDataset>(() => {
       ];
     } else {
       const reclaimable = payout > 0 ? payout : returned;
-      const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
+      const pnl = calculatePnL(premium, collateral, reclaimable) * 100;
 
       return [
         { value: symbol },

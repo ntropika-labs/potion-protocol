@@ -10,6 +10,7 @@ import {
 import { useTokenList } from "@/composables/useTokenList";
 import { useI18n } from "vue-i18n";
 import { contractsAddresses } from "@/helpers/contracts";
+import { estimatePnL } from "@/helpers/pnl";
 
 import type { OtokenDataset } from "dapp-types";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
@@ -26,17 +27,6 @@ const { symbol: currency } = useTokenList(
   contractsAddresses.USDC.address.toLowerCase()
 );
 
-const calcProfitAndLoss = (
-  premium: number,
-  collateral: number,
-  strikePrice: number,
-  currentPrice: number
-) => {
-  const amountOfOtokens = collateral / strikePrice;
-  const otokenValue = Math.max(strikePrice - currentPrice, 0);
-  return (premium - amountOfOtokens * otokenValue) / collateral;
-};
-
 const dataset = computed<OtokenDataset>(() => {
   return props.otokens.map((item) => {
     const address = item?.otoken.underlyingAsset.address ?? "";
@@ -47,12 +37,8 @@ const dataset = computed<OtokenDataset>(() => {
     const collateral = parseFloat(item.collateral);
 
     const pnl =
-      calcProfitAndLoss(
-        premium,
-        collateral,
-        strikePrice,
-        parseFloat(currentPrice)
-      ) * 100;
+      estimatePnL(premium, collateral, strikePrice, parseFloat(currentPrice)) *
+      100;
 
     return [
       { value: symbol },
