@@ -26,6 +26,8 @@ import {
     DeploymentFlags,
     DAY_IN_SECONDS,
 } from "contracts-utils";
+import { calculatePremium } from "../../scripts/test/simulationUtils";
+import { getEncodedSwapPath } from "../../scripts/test/uniswapV3Utils";
 
 /**
     @notice Hedging Vault correcting factor tests 
@@ -122,7 +124,7 @@ describe("CorrectingFactor", function () {
             tEnv.strikePercentage,
         );
 
-        const initialPremiumInUSDC = HedgingVaultUtils.calculatePremium(pool, curve, initialCollateralInUSDC);
+        const initialPremiumInUSDC = calculatePremium(pool, curve, initialCollateralInUSDC);
 
         // Get the new order size, based on the initial premium
         const { effectiveVaultSize } = HedgingVaultUtils.calculateOrderSize(
@@ -142,7 +144,7 @@ describe("CorrectingFactor", function () {
             USDCPriceInUSDC,
         );
         const collateralInUSDC = HedgingVaultUtils.applyPercentage(amountToBeProtectedInUSDC, tEnv.strikePercentage);
-        const expectedPremiumInUSDC = HedgingVaultUtils.calculatePremium(pool, curve, collateralInUSDC);
+        const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralInUSDC);
 
         const maxPremiumWithSlippageInUSDC = HedgingVaultUtils.addPercentage(
             expectedPremiumInUSDC,
@@ -264,7 +266,7 @@ describe("CorrectingFactor", function () {
                 UnderlyingDecimals,
                 USDC_DECIMALS,
             ),
-            swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
+            swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
         };
 
         // Enter the position
@@ -377,7 +379,7 @@ describe("CorrectingFactor", function () {
             inputToken: tEnv.USDC.address,
             outputToken: tEnv.underlyingAsset.address,
             expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(USDCPriceInUSD, underlyingPriceInUSD, 6, 18),
-            swapPath: HedgingVaultUtils.getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
+            swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
         };
 
         // Set the Opyn oracle asset price for the underlying asset
