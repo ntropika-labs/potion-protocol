@@ -10,8 +10,10 @@
   "scripts": {
     "build": "graphql-codegen",
     "codegen": "graphql-codegen",
+    "codegen-hv": "graphql-codegen -c graphql-hv.config.yml",
     "introspection": "graphql-codegen -c introspection.yml",
-    "lint": "eslint --fix queries",
-    "format": "prettier --write 'queries/**/*.{graphql,gql}'"
+    "introspection-hv": "graphql-codegen -c introspection-hv.yml",
+    "lint": "eslint --fix queries && eslint --fix queries-hv",
+    "format": "prettier --write 'queries/**/*.{graphql,gql}' && prettier --write 'queries-hv/**/*.{graphql,gql}'"
   }
 }

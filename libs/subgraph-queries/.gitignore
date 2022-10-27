@@ -26,5 +26,8 @@ storybook-static
 
 # Generated files
 generated/*
+!generated/hv
+generated/hv/*
 # Put the schema introspection in the repo
 !generated/schema.json
+!generated/hv/schema.json
