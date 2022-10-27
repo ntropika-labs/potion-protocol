@@ -10,8 +10,8 @@ import { InvestmentVault, PotionBuyAction, SwapToUSDCAction } from "../../typech
 import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
-import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { Roles } from "hedging-vault-sdk";
+import { setupTestConditions } from "../../scripts/test/simulationUtils";
 
 import {
     ifMocksEnabled,
@@ -180,12 +180,7 @@ describe("HedgingVaultBasic", function () {
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8);
         const amountToBeInvested = ethers.utils.parseEther("20");
 
-        const tCond = await HedgingVaultUtils.setupTestConditions(
-            tEnv,
-            underlyingAssetPriceInUSD,
-            USDCPriceInUSD,
-            amountToBeInvested,
-        );
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         /*
             MINT
