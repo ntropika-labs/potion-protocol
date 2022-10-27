@@ -22,6 +22,7 @@ interface Props {
   priceMap: Map<string, string>;
   payoutMap: Map<string, number>;
   claimedOtokens: string[];
+  claimCollateralLoading?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -158,6 +159,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :underlyings="underlyings"
           :payout-map="props.payoutMap"
           :claimed-otokens="props.claimedOtokens"
+          :claim-collateral-loading="props.claimCollateralLoading ?? false"
           test-claim-table-expired-options
           @claim-otoken="claimOtoken"
         >

@@ -13,6 +13,7 @@ import BaseButton from "../BaseButton/BaseButton.vue";
 export interface Props {
   headings: Array<string>;
   dataset: OtokenDataset;
+  loading?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -62,7 +63,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
               test-table-claim-button
               :palette="cell.color"
               :label="cell.value"
-              :disabled="!cell.claimable"
+              :disabled="!cell.claimable || loading"
               :inline="true"
               size="sm"
               @click="onButtonPressed(index, cellIndex)"
