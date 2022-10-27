@@ -89,7 +89,7 @@ dataSources:
       eventHandlers:
         - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
           handler: handleDepositWithReceipt
-        - event: NextRound(indexed uint256)
+        - event: NextRound(indexed uint256,uint256)
           handler: handleNextRound
         - event: RedeemReceipt(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleRedeemReceipt
@@ -125,7 +125,7 @@ dataSources:
       eventHandlers:
         - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
           handler: handleDepositWithReceipt
-        - event: NextRound(indexed uint256)
+        - event: NextRound(indexed uint256,uint256)
           handler: handleNextRound
         - event: RedeemReceipt(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleRedeemReceipt

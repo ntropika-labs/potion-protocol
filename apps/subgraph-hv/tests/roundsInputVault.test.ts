@@ -138,7 +138,7 @@ describe("roundsInputVault", () => {
           ),
         ],
         [],
-        BigInt.fromString("10")
+        BigInt.fromString("5")
       );
       mockHedgingVault(
         vaultAddress,
@@ -147,7 +147,10 @@ describe("roundsInputVault", () => {
         BigInt.fromString("30"),
         BigInt.fromString("0")
       );
-      const mockedEvent = createNextRound(BigInt.fromString("2"));
+      const mockedEvent = createNextRound(
+        BigInt.fromString("2"),
+        BigInt.fromString("10")
+      );
       handleNextRound(mockedEvent);
     });
 
@@ -162,6 +165,14 @@ describe("roundsInputVault", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
         { field: "currentRound", value: "2" },
       ]);
+    });
+
+    test("Round 1 has been updated correctly", () => {
+      assertEntity(
+        "Round",
+        createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
+        [{ field: "shareRatioAtRoundEnd", value: "10" }]
+      );
     });
 
     test("DepositRequest 1 shares has been updated correctly", () => {
