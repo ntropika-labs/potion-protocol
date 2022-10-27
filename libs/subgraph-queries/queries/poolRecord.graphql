@@ -10,6 +10,9 @@ fragment PoolRecordOtokenInfo on PoolRecord {
     expiry
     underlyingAsset {
       address
+      symbol
+      decimals
+      name
     }
   }
 }

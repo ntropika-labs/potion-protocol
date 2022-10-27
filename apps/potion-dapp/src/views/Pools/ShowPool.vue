@@ -52,11 +52,8 @@ const { pool, curve, criterias, fetching, error, dailyData } = usePool(id);
 
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 
-const { activeOtokens, expiredOtokens, payoutMap } = usePoolOtokens(
-  id,
-  poolId,
-  poolLp
-);
+const { activeOtokens, expiredOtokens, payoutMap, assetsWithOtokens } =
+  usePoolOtokens(id, poolId, poolLp);
 
 const { assets, tokens, tokenPricesMap } = useCriteriasTokens(criterias);
 
@@ -267,7 +264,7 @@ watch(claimCollateralReceipt, (receipt) =>
         <OtokenClaimTable
           :active-otokens="activeOtokens"
           :expired-otokens="expiredOtokens"
-          :underlyings="assets"
+          :underlyings="assetsWithOtokens"
           :price-map="tokenPricesMap"
           :payout-map="payoutMap"
           :claimed-otokens="claimedOtokens"
