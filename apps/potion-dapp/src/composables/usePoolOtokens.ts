@@ -47,35 +47,24 @@ const usePoolOtokens = (
   );
 
   const assetsWithOtokens = computed(() => {
-    const tokens: Token[] = [];
+    const tokens = new Set<Token>();
+
     activeOtokens.value.forEach((poolRecord) => {
-      if (
-        !tokens.some(
-          (token) => token.address === poolRecord.otoken.underlyingAsset.address
-        )
-      ) {
-        tokens.push({
-          name: poolRecord.otoken.underlyingAsset.name,
-          symbol: poolRecord.otoken.underlyingAsset.symbol,
-          address: poolRecord.otoken.underlyingAsset.address,
-        });
-      }
+      tokens.add({
+        name: poolRecord.otoken.underlyingAsset.name,
+        symbol: poolRecord.otoken.underlyingAsset.symbol,
+        address: poolRecord.otoken.underlyingAsset.address,
+      });
     });
     expiredOtokens.value.forEach((poolRecord) => {
-      if (
-        !tokens.some(
-          (token) => token.address === poolRecord.otoken.underlyingAsset.address
-        )
-      ) {
-        tokens.push({
-          name: poolRecord.otoken.underlyingAsset.name,
-          symbol: poolRecord.otoken.underlyingAsset.symbol,
-          address: poolRecord.otoken.underlyingAsset.address,
-        });
-      }
+      tokens.add({
+        name: poolRecord.otoken.underlyingAsset.name,
+        symbol: poolRecord.otoken.underlyingAsset.symbol,
+        address: poolRecord.otoken.underlyingAsset.address,
+      });
     });
 
-    return tokens;
+    return Array.from(tokens);
   });
 
   watch(data, async () => {
