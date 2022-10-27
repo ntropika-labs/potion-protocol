@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
+import { BigNumber } from "ethers";
 import { MockContract } from "@defi-wonderland/smock";
 
 import { RoundsOutputVault, ERC4626, MockERC20PresetMinterPauser, MockERC4626 } from "../../typechain";
@@ -90,6 +91,8 @@ describe("RoundsOutputVault", function () {
         const assets = ethers.utils.parseEther("0.1");
         const shares = await targetVault.convertToShares(assets);
         const currentRound = await roundsOutputVault.getCurrentRound();
+        const decimals = await assetToken.decimals();
+        const exchangeRate = assets.mul(BigNumber.from(10).pow(decimals)).div(shares);
 
         await roundsOutputVault.connect(unpriviledgedAccount).deposit(shares, unpriviledgedAccount.address);
 
@@ -109,7 +112,7 @@ describe("RoundsOutputVault", function () {
             .to.emit(roundsOutputVault, "SharesRedeemed")
             .withArgs(currentRound, operatorAccount.address, shares, assets);
 
-        await expect(tx).to.emit(roundsOutputVault, "NextRound").withArgs(currentRound.add(1));
+        await expect(tx).to.emit(roundsOutputVault, "NextRound").withArgs(currentRound.add(1), exchangeRate);
 
         expect(await roundsOutputVault.getCurrentRound()).to.equal(currentRound.add(1));
     });

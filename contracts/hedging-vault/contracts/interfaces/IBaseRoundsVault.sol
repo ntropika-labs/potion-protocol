@@ -42,7 +42,7 @@ import "../interfaces/IVaultDeferredOperationUpgradeable.sol";
 // TODO: wait for the next release of the compiler to fix it
 interface IBaseRoundsVault is IVaultDeferredOperationUpgradeable {
     // EVENTS
-    event NextRound(uint256 indexed newRoundNumber);
+    event NextRound(uint256 indexed newRoundNumber, uint256 prevRoundExchangeRate);
     event WithdrawExchangeAsset(
         address indexed caller,
         address indexed receiver,
