@@ -102,7 +102,8 @@ async function main() {
     // prepare the data source for every contract
     return templateManifest.dataSources.map((manifestSource) => {
       const contractInfo = source.contracts[manifestSource.name];
-      const name = `${manifestSource.name}${index}`;
+      const name =
+        index === 0 ? manifestSource.name : `${manifestSource.name}${index}`;
       return {
         ...manifestSource,
         name,
@@ -119,9 +120,7 @@ async function main() {
   // prepare the manifest to write replacing the dataSources of the template
   const outputManifest = {
     ...templateManifest,
-    dataSources: templateManifest.dataSources.concat(
-      (await Promise.all(manifestSources)).flat()
-    ),
+    dataSources: (await Promise.all(manifestSources)).flat(),
   };
 
   await writeFile(
