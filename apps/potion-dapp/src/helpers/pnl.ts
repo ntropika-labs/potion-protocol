@@ -3,13 +3,19 @@
  * @param premium the price paid to the LP for this option
  * @param collateral the amount of stable coin provided by the LP for this option
  * @param reclaimable the amount of stable coin that the LP can reclaim from this option
+ * @throws an error if reclaimable > collateral
  * @returns PnL as a pure number (should be multiplied by 100 to obtain a percentage)
  */
 const calculatePnL = (
   premium: number,
   collateral: number,
   reclaimable: number
-): number => (premium - collateral + reclaimable) / collateral;
+): number => {
+  if (reclaimable > collateral) {
+    throw new Error("reclaimable > collateral");
+  }
+  return (premium - collateral + reclaimable) / collateral;
+};
 
 /**
  * Used to estimate the pnl of active options

@@ -4,8 +4,8 @@ import { calculatePnL, estimatePnL } from "../pnl";
 describe("pnl helper", () => {
   describe("calculatePnL", () => {
     it("calculate the PnL correctly when a LP earns money", () => {
-      const result = calculatePnL(500, 100, 400);
-      expect(result).toBe(8);
+      const result = calculatePnL(1000, 100, 100);
+      expect(result).toBe(10);
     });
     it("calculate the PnL correctly when a LP don't gain any money", () => {
       const result = calculatePnL(500, 500, 0);
@@ -14,6 +14,11 @@ describe("pnl helper", () => {
     it("calculate the PnL correctly when a LP lose money", () => {
       const result = calculatePnL(500, 1000, 0);
       expect(result).toBe(-0.5);
+    });
+    it("raise an error if reclaimable > collateral", () => {
+      expect(() => calculatePnL(500, 100, 400)).toThrowError(
+        "reclaimable > collateral"
+      );
     });
   });
   describe("estimatePnL", () => {
