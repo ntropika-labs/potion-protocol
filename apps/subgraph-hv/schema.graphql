@@ -59,8 +59,8 @@ type Round @entity {
   # otokenPremium: BigDecimal!
   # uniswapEnterFees: BigDecimal!
   # uniswapExitFees: BigDecimal!
-  depositRequests: [DepositRequest!] @derivedFrom(field: "round")
-  withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "round")
+  depositRequests: [DepositRequest!]!
+  withdrawalRequests: [WithdrawalRequest!]!
   # VaultPositionExited() VaultPositionEntered()
   blockEntered: Block
   blockExited: Block
@@ -107,8 +107,8 @@ type DepositRequest @entity {
   investor: Investor!
   round: Round!
   amount: BigInt!
-  shares: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
   amountRedeemed: BigInt!
+  shares: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
   remainingShares: BigInt!
   block: Block!
   tx: Bytes!
@@ -122,7 +122,7 @@ type WithdrawalRequest @entity {
   investor: Investor!
   round: Round!
   amount: BigInt!
-  assets: BigInt #we get this at the end of the round by multiplying the amount by the share ratio
+  assets: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
   amountRedeemed: BigInt!
   remainingAssets: BigInt!
   block: Block!

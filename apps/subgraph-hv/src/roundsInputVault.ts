@@ -8,7 +8,7 @@ import {
   RoundsInputVault,
 } from "../generated/RoundsInputVault/RoundsInputVault";
 import { DepositRequest } from "../generated/schema";
-import { getOrCreateRound, createRoundId } from "./rounds";
+import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { setCurrentRound } from "./investmentVault";
@@ -25,6 +25,12 @@ function handleNextRound(event: NextRound): void {
   const vaultAddress = contract.vault();
   getOrCreateRound(event.params.newRoundNumber, vaultAddress);
   setCurrentRound(vaultAddress, event.params.newRoundNumber);
+  if (event.params.newRoundNumber.gt(BigInt.fromString("0"))) {
+    updateShares(
+      event.params.newRoundNumber.minus(BigInt.fromString("1")),
+      vaultAddress
+    );
+  }
   log.info("NextRound {} for InputVault {}", [
     event.params.newRoundNumber.toString(),
     event.address.toHexString(),
@@ -43,12 +49,10 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
   // load the depositRequest, if it doesn't exists it will be initialized to an empty one
   const depositRequest = getOrCreateDepositRequest(
     event.params.id,
+    vaultAddress,
     roundId,
     event.params.receiver,
     event.params.caller,
-    BigInt.fromString("0"),
-    BigInt.fromString("0"),
-    BigInt.fromString("0"),
     event.block.hash,
     event.transaction.hash
   );
@@ -64,6 +68,7 @@ function handleRedeemReceipt(event: RedeemReceipt): void {
   const roundId = createRoundId(roundNumber, vaultAddress);
   redeem(
     event.params.id,
+    vaultAddress,
     roundId,
     roundNumber,
     event.params.amount,
@@ -80,6 +85,7 @@ function handleRedeemReceiptBatch(event: RedeemReceiptBatch): void {
   for (let i = 0; i < event.params.ids.length; i += 1) {
     redeem(
       event.params.ids[i],
+      vaultAddress,
       roundId,
       roundNumber,
       event.params.amounts[i],
@@ -89,26 +95,27 @@ function handleRedeemReceiptBatch(event: RedeemReceiptBatch): void {
 }
 
 function redeem(
-  recipeId: BigInt,
+  receiptId: BigInt,
+  vaultAddress: Address,
   roundId: Bytes,
   roundNumber: BigInt,
   amount: BigInt,
   receiver: Address
 ): void {
-  const depositRequest = getDepositRequest(recipeId, receiver);
+  const depositRequest = getDepositRequest(receiptId, vaultAddress, receiver);
   if (depositRequest == null) {
     log.error("receipt {} doesn't exist for {}", [
-      recipeId.toString(),
+      receiptId.toString(),
       receiver.toHexString(),
     ]);
   } else {
-    _redeem(depositRequest, recipeId, roundId, roundNumber, amount, receiver);
+    _redeem(depositRequest, receiptId, roundId, roundNumber, amount, receiver);
   }
 }
 
 function _redeem(
   depositRequest: DepositRequest,
-  recipeId: BigInt,
+  receiptId: BigInt,
   roundId: Bytes,
   roundNumber: BigInt,
   amount: BigInt,
@@ -138,38 +145,69 @@ function _redeem(
     log.info("redeemed {} for {} from depositRequest {}", [
       amount.toString(),
       receiver.toHexString(),
-      recipeId.toString(),
+      receiptId.toString(),
     ]);
   }
 }
 
 function handleWithdrawExchangeAsset(event: WithdrawExchangeAsset): void {
-  log.info(
-    "caller {}, owner {}, receiver {}, receiptId {}, receiptAmount {}, exchangeAssetAmount {}",
-    [
-      event.params.caller.toHexString(),
-      event.params.owner.toHexString(),
-      event.params.receiver.toHexString(),
-      event.params.receiptId.toString(),
-      event.params.receiptAmount.toString(),
-      event.params.exchangeAssetAmount.toString(),
-    ]
+  const contract = RoundsInputVault.bind(event.address);
+  const vaultAddress = contract.vault();
+  withdraw(
+    event.params.receiptId,
+    vaultAddress,
+    event.params.receiver,
+    event.params.receiptAmount,
+    event.params.exchangeAssetAmount
   );
 }
+
 function handleWithdrawExchangeAssetBatch(
   event: WithdrawExchangeAssetBatch
 ): void {
-  log.info(
-    "caller {}, owner {}, receiver {}, receiptIds {}, shareAmounts {}, exchangeAssetAmount {}",
-    [
-      event.params.caller.toHexString(),
-      event.params.owner.toHexString(),
-      event.params.receiver.toHexString(),
-      event.params.receiptIds.toString(),
-      event.params.receiptAmounts.toString(),
-      event.params.exchangeAssetAmount.toString(),
-    ]
-  );
+  const contract = RoundsInputVault.bind(event.address);
+  const vaultAddress = contract.vault();
+  for (let i = 0; i < event.params.receiptIds.length; i += 1) {
+    withdraw(
+      event.params.receiptIds[i],
+      vaultAddress,
+      event.params.receiver,
+      event.params.receiptAmounts[i],
+      event.params.exchangeAssetAmount
+    );
+  }
+}
+
+function withdraw(
+  receiptId: BigInt,
+  vaultAddress: Address,
+  receiver: Address,
+  receiptAmount: BigInt,
+  exchangeAssetAmount: BigInt
+): void {
+  const depositRequest = getDepositRequest(receiptId, vaultAddress, receiver);
+  if (depositRequest == null) {
+    log.error("receipt {} doesn't exist for {}", [
+      receiptId.toString(),
+      receiver.toHexString(),
+    ]);
+  } else {
+    depositRequest.amount = depositRequest.amount.minus(receiptAmount);
+    depositRequest.amountRedeemed =
+      depositRequest.amountRedeemed.plus(exchangeAssetAmount);
+    depositRequest.remainingShares =
+      depositRequest.shares.minus(exchangeAssetAmount);
+    depositRequest.save();
+    log.info(
+      "DepositRequest {} now has {} amount, {} amountRedeemed and {} remainingShares",
+      [
+        depositRequest.id.toHexString(),
+        depositRequest.amount.toString(),
+        depositRequest.amountRedeemed.toString(),
+        depositRequest.remainingShares.toString(),
+      ]
+    );
+  }
 }
 
 export {

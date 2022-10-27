@@ -1,5 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Deposit, DepositRequest } from "../generated/schema";
+import { addDepositRequest, removeDepositRequest } from "./rounds";
 
 function createDeposit(
   round: Bytes,
@@ -18,57 +19,57 @@ function createDeposit(
   return deposit;
 }
 
-function createDepositRequestId(depositId: BigInt, investor: Address): Bytes {
-  return investor.concatI32(depositId.toI32());
+function createDepositRequestId(
+  depositId: BigInt,
+  vaultAddress: Address,
+  investor: Address
+): Bytes {
+  return vaultAddress.concat(investor).concatI32(depositId.toI32());
 }
 
 function createDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingShares: BigInt,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   const depositRequest = new DepositRequest(id);
   depositRequest.round = round;
   depositRequest.investor = investor;
   depositRequest.sender = sender;
-  depositRequest.amount = amount;
-  depositRequest.amountRedeemed = amountRedeemed;
-  depositRequest.remainingShares = remainingShares;
+  depositRequest.amount = BigInt.fromString("0");
+  depositRequest.amountRedeemed = BigInt.fromString("0");
+  depositRequest.shares = BigInt.fromString("0");
+  depositRequest.remainingShares = BigInt.fromString("0");
   depositRequest.block = block;
   depositRequest.tx = tx;
   depositRequest.save();
+  addDepositRequest(round, id);
   return depositRequest;
 }
 
 function getOrCreateDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingShares: BigInt,
   block: Bytes,
   tx: Bytes
 ): DepositRequest {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   const depositRequest = DepositRequest.load(id);
   if (depositRequest == null) {
     return createDepositRequest(
       depositId,
+      vaultAddress,
       round,
       investor,
       sender,
-      amount,
-      amountRedeemed,
-      remainingShares,
       block,
       tx
     );
@@ -78,15 +79,30 @@ function getOrCreateDepositRequest(
 
 function getDepositRequest(
   depositId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): DepositRequest | null {
-  const id = createDepositRequestId(depositId, investor);
+  const id = createDepositRequestId(depositId, vaultAddress, investor);
   return DepositRequest.load(id);
 }
 
 function deleteDepositRequest(id: Bytes): void {
-  store.remove("DepositRequest", id.toHexString());
+  const depositRequest = DepositRequest.load(id);
+  if (depositRequest) {
+    removeDepositRequest(depositRequest.round, id);
+    store.remove("DepositRequest", id.toHexString());
+  }
   log.info("DepositRequest {} has been removed", [id.toHexString()]);
+}
+
+function updateDepositRequestShares(id: Bytes, shareRatio: BigInt): void {
+  const depositRequest = DepositRequest.load(id);
+  if (depositRequest == null) {
+    log.error("depositRequest {} doesn't exists", [id.toHexString()]);
+  } else {
+    depositRequest.shares = depositRequest.amount.times(shareRatio);
+    depositRequest.save();
+  }
 }
 
 export {
@@ -96,4 +112,5 @@ export {
   createDepositRequestId,
   getDepositRequest,
   deleteDepositRequest,
+  updateDepositRequestShares,
 };

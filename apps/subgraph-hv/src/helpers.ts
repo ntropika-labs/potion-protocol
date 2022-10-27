@@ -6,4 +6,14 @@ function addItemToArray<T>(source: Array<T>, newItem: T): Array<T> {
   return newArray;
 }
 
-export { addItemToArray };
+function removeItemFromArray<T>(source: Array<T>, itemToRemove: T): Array<T> {
+  const index = source.indexOf(itemToRemove);
+  if (index > -1) {
+    const newArray = source;
+    newArray.splice(index, 1);
+    return newArray;
+  }
+  return source;
+}
+
+export { addItemToArray, removeItemFromArray };

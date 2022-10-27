@@ -1,5 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Withdrawal, WithdrawalRequest } from "../generated/schema";
+import { addWithdrawalRequest, removeWithdrawalRequest } from "./rounds";
 
 function createWithdrawal(
   round: Bytes,
@@ -20,58 +21,55 @@ function createWithdrawal(
 
 function createWithdrawalRequestId(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): Bytes {
-  return investor.concatI32(withdrawalId.toI32());
+  return vaultAddress.concat(investor).concatI32(withdrawalId.toI32());
 }
 
 function createWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingAssets: BigInt,
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   const withdrawalRequest = new WithdrawalRequest(id);
   withdrawalRequest.round = round;
   withdrawalRequest.investor = investor;
   withdrawalRequest.sender = sender;
-  withdrawalRequest.amount = amount;
-  withdrawalRequest.amountRedeemed = amountRedeemed;
-  withdrawalRequest.remainingAssets = remainingAssets;
+  withdrawalRequest.amount = BigInt.fromString("0");
+  withdrawalRequest.amountRedeemed = BigInt.fromString("0");
+  withdrawalRequest.assets = BigInt.fromString("0");
+  withdrawalRequest.remainingAssets = BigInt.fromString("0");
   withdrawalRequest.block = block;
   withdrawalRequest.tx = tx;
   withdrawalRequest.save();
+  addWithdrawalRequest(round, id);
   return withdrawalRequest;
 }
 
 function getOrCreateWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   round: Bytes,
   investor: Address,
   sender: Address,
-  amount: BigInt,
-  amountRedeemed: BigInt,
-  remainingAssets: BigInt,
   block: Bytes,
   tx: Bytes
 ): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   const withdrawalRequest = WithdrawalRequest.load(id);
   if (withdrawalRequest == null) {
     return createWithdrawalRequest(
       withdrawalId,
+      vaultAddress,
       round,
       investor,
       sender,
-      amount,
-      amountRedeemed,
-      remainingAssets,
       block,
       tx
     );
@@ -81,15 +79,31 @@ function getOrCreateWithdrawalRequest(
 
 function getWithdrawalRequest(
   withdrawalId: BigInt,
+  vaultAddress: Address,
   investor: Address
 ): WithdrawalRequest | null {
-  const id = createWithdrawalRequestId(withdrawalId, investor);
+  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
   return WithdrawalRequest.load(id);
 }
 
 function deleteWithdrawalRequest(id: Bytes): void {
-  store.remove("WithdrawalRequest", id.toHexString());
+  const withdrawalRequest = WithdrawalRequest.load(id);
+  if (withdrawalRequest) {
+    removeWithdrawalRequest(withdrawalRequest.round, id);
+    store.remove("WithdrawalRequest", id.toHexString());
+  }
   log.info("WithdrawalRequest {} has been removed", [id.toHexString()]);
+}
+
+function updateWithdrawalRequestAssets(id: Bytes, shareRatio: BigInt): void {
+  const withdrawalRequest = WithdrawalRequest.load(id);
+  if (withdrawalRequest == null) {
+    log.error("withdrawalRequest {} doesn't exists", [id.toHexString()]);
+  } else {
+    log.info("updated WithdrawalRequest {}", [id.toHexString()]);
+    withdrawalRequest.assets = withdrawalRequest.amount.times(shareRatio);
+    withdrawalRequest.save();
+  }
 }
 
 export {
@@ -99,4 +113,5 @@ export {
   createWithdrawalRequestId,
   getWithdrawalRequest,
   deleteWithdrawalRequest,
+  updateWithdrawalRequestAssets,
 };
