@@ -39,6 +39,51 @@ export declare namespace IVaultV0 {
   };
 }
 
+export declare namespace InvestmentVault {
+  export type InvestmentVaultInitParamsStruct = {
+    adminAddress: PromiseOrValue<string>;
+    strategistAddress: PromiseOrValue<string>;
+    operatorAddress: PromiseOrValue<string>;
+    underlyingAsset: PromiseOrValue<string>;
+    underlyingAssetCap: PromiseOrValue<BigNumberish>;
+    managementFee: PromiseOrValue<BigNumberish>;
+    performanceFee: PromiseOrValue<BigNumberish>;
+    feesRecipient: PromiseOrValue<string>;
+    actions: PromiseOrValue<string>[];
+    principalPercentages: PromiseOrValue<BigNumberish>[];
+    sharesName: PromiseOrValue<string>;
+    sharesSymbol: PromiseOrValue<string>;
+  };
+
+  export type InvestmentVaultInitParamsStructOutput = [
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string[],
+    BigNumber[],
+    string,
+    string
+  ] & {
+    adminAddress: string;
+    strategistAddress: string;
+    operatorAddress: string;
+    underlyingAsset: string;
+    underlyingAssetCap: BigNumber;
+    managementFee: BigNumber;
+    performanceFee: BigNumber;
+    feesRecipient: string;
+    actions: string[];
+    principalPercentages: BigNumber[];
+    sharesName: string;
+    sharesSymbol: string;
+  };
+}
+
 export interface InvestmentVaultInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
@@ -77,7 +122,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address,address,address,uint256,uint256,uint256,address,address[],uint256[])": FunctionFragment;
+    "initialize((address,address,address,address,uint256,uint256,uint256,address,address[],uint256[],string,string))": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
@@ -319,18 +364,7 @@ export interface InvestmentVaultInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [InvestmentVault.InvestmentVaultInitParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "maxDeposit",
@@ -1068,16 +1102,7 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
+      initParams: InvestmentVault.InvestmentVaultInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1359,16 +1384,7 @@ export interface InvestmentVault extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
-    adminAddress: PromiseOrValue<string>,
-    strategistAddress: PromiseOrValue<string>,
-    operatorAddress: PromiseOrValue<string>,
-    underlyingAsset: PromiseOrValue<string>,
-    underlyingAssetCap: PromiseOrValue<BigNumberish>,
-    managementFee: PromiseOrValue<BigNumberish>,
-    performanceFee: PromiseOrValue<BigNumberish>,
-    feesRecipient: PromiseOrValue<string>,
-    actions: PromiseOrValue<string>[],
-    principalPercentages: PromiseOrValue<BigNumberish>[],
+    initParams: InvestmentVault.InvestmentVaultInitParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1646,16 +1662,7 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<boolean>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
+      initParams: InvestmentVault.InvestmentVaultInitParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2120,16 +2127,7 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
+      initParams: InvestmentVault.InvestmentVaultInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2418,16 +2416,7 @@ export interface InvestmentVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      adminAddress: PromiseOrValue<string>,
-      strategistAddress: PromiseOrValue<string>,
-      operatorAddress: PromiseOrValue<string>,
-      underlyingAsset: PromiseOrValue<string>,
-      underlyingAssetCap: PromiseOrValue<BigNumberish>,
-      managementFee: PromiseOrValue<BigNumberish>,
-      performanceFee: PromiseOrValue<BigNumberish>,
-      feesRecipient: PromiseOrValue<string>,
-      actions: PromiseOrValue<string>[],
-      principalPercentages: PromiseOrValue<BigNumberish>[],
+      initParams: InvestmentVault.InvestmentVaultInitParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

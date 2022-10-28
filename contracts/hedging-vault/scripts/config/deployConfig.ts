@@ -37,6 +37,12 @@ export interface PotionHedgingVaultConfigParams {
     hedgingRate: BigNumber; // 6 decimals
     hedgingRateSlippage: BigNumber; // 6 decimals
 
+    // Shares configuration
+    //
+    // Shares name and symbol
+    sharesName: string;
+    sharesSymbol: string;
+
     // Fees configuration
     //
     // - If feesRecipient is not provided, then the admin address is used as the fees recipient
@@ -83,31 +89,13 @@ const DefaultConfig: PotionHedgingVaultConfigParams = {
     hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
     hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
 
-    // Fees configuration
-    managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
-    performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
-};
-
-const MultiVaultConfig: PotionHedgingVaultConfigParams = {
-    // Investment configuration
-    maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
-    premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
-    swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
-    maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
-    cycleDurationSecs: BigNumber.from(86400), //                            1 day
-    strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
-    hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
-    hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+    // Shares configuration
+    sharesName: "HV-80-100-1D-WETH",
+    sharesSymbol: "HVP1",
 
     // Fees configuration
     managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
     performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
-
-    // Third-party dependencies
-    potionProtocolDeployConfigName: "hardhat.develop.hedging",
-
-    // Test Deposit
-    testDepositAmount: parseEther("10000000"),
 };
 
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
@@ -118,9 +106,81 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
     "hardhat.develop.hedging": DefaultConfig,
     "internal.develop.test": DefaultConfig,
     "hardhat.develop.test": DefaultConfig,
-    "hardhat.develop.multivaultA": MultiVaultConfig,
-    "hardhat.develop.multivaultB": MultiVaultConfig,
-    "hardhat.develop.multivaultC": MultiVaultConfig,
+    "hardhat.develop.multivaultA": {
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HVA-80-100-1D-WETH",
+        sharesSymbol: "HVAP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "hardhat.develop.hedging",
+
+        // Test Deposit
+        testDepositAmount: parseEther("10000000"),
+    },
+    "hardhat.develop.multivaultB": {
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HVB-80-100-1D-WETH",
+        sharesSymbol: "HVBP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "hardhat.develop.hedging",
+
+        // Test Deposit
+        testDepositAmount: parseEther("10000000"),
+    },
+    "hardhat.develop.multivaultC": {
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HVC-80-100-1D-WETH",
+        sharesSymbol: "HVCP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
+        performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "hardhat.develop.hedging",
+
+        // Test Deposit
+        testDepositAmount: parseEther("10000000"),
+    },
     "localhost.goerli": {
         // Asset address
         USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
@@ -135,6 +195,10 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
         hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
         hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HV-80-100-1D-WETH",
+        sharesSymbol: "HVP1",
 
         // Fees configuration
         managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
@@ -159,6 +223,10 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
         hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
         hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HV-80-100-1D-WETH",
+        sharesSymbol: "HVP1",
 
         // Fees configuration
         managementFee: PercentageUtils.toSolidityPercentage(0), //              0%

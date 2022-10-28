@@ -80,6 +80,8 @@ export interface TestingEnvironmentDeployment {
     feesRecipient: string;
     inputReceiptsURI: string;
     outputReceiptsURI: string;
+    sharesName: string;
+    sharesSymbol: string;
 }
 
 function getTokensFromUniswapPath(uniswapPath: string) {
@@ -276,6 +278,8 @@ async function prepareTestEnvironment(
     testingEnvironmentDeployment.strikePercentage = deploymentConfig.strikePercentage;
     testingEnvironmentDeployment.hedgingRate = deploymentConfig.hedgingRate;
     testingEnvironmentDeployment.hedgingRateSlippage = deploymentConfig.hedgingRateSlippage;
+    testingEnvironmentDeployment.sharesName = deploymentConfig.sharesName;
+    testingEnvironmentDeployment.sharesSymbol = deploymentConfig.sharesSymbol;
     testingEnvironmentDeployment.managementFee = deploymentConfig.managementFee;
     testingEnvironmentDeployment.performanceFee = deploymentConfig.performanceFee;
     testingEnvironmentDeployment.feesRecipient = deploymentConfig.feesRecipient || deployer.address;
@@ -424,6 +428,10 @@ export async function deployTestingEnv(
         hedgingRate: testEnvDeployment.hedgingRate,
         hedgingRateSlippage: testEnvDeployment.hedgingRateSlippage,
 
+        // Shares configuration
+        sharesName: testEnvDeployment.sharesName,
+        sharesSymbol: testEnvDeployment.sharesSymbol,
+
         // Fees configuration
         managementFee: testEnvDeployment.managementFee,
         performanceFee: testEnvDeployment.performanceFee,
@@ -492,6 +500,8 @@ export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvir
     console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
     console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
     console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
+    console.log(`  - Shares Name: ${testEnvDeployment.sharesName}`);
+    console.log(`  - Shares Symbol: ${testEnvDeployment.sharesSymbol}`);
     console.log(
         `  - Underlying Asset Cap: ${
             testEnvDeployment.underlyingAssetCap.eq(ethers.constants.MaxUint256)
