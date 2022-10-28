@@ -101,6 +101,7 @@ function updateDepositRequestShares(id: Bytes, exchangeRate: BigInt): void {
     log.error("depositRequest {} doesn't exists", [id.toHexString()]);
   } else {
     depositRequest.shares = depositRequest.amount.times(exchangeRate);
+    depositRequest.remainingShares = depositRequest.amount.times(exchangeRate);
     depositRequest.save();
   }
 }

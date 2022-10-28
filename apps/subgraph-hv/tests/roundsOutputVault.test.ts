@@ -183,7 +183,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "100" }]
+        [
+          { field: "assets", value: "100" },
+          { field: "remainingAssets", value: "100" },
+        ]
       );
     });
 
@@ -195,7 +198,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "1000" }]
+        [
+          { field: "assets", value: "1000" },
+          { field: "remainingAssets", value: "1000" },
+        ]
       );
     });
 
@@ -207,7 +213,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "5000" }]
+        [
+          { field: "assets", value: "5000" },
+          { field: "remainingAssets", value: "5000" },
+        ]
       );
     });
 
@@ -219,7 +228,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "10000" }]
+        [
+          { field: "assets", value: "10000" },
+          { field: "remainingAssets", value: "10000" },
+        ]
       );
     });
   });

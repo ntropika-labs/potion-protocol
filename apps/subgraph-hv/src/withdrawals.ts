@@ -102,6 +102,8 @@ function updateWithdrawalRequestAssets(id: Bytes, exchangeRate: BigInt): void {
   } else {
     log.info("updated WithdrawalRequest {}", [id.toHexString()]);
     withdrawalRequest.assets = withdrawalRequest.amount.times(exchangeRate);
+    withdrawalRequest.remainingAssets =
+      withdrawalRequest.amount.times(exchangeRate);
     withdrawalRequest.save();
   }
 }
