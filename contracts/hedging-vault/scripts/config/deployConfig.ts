@@ -1,4 +1,5 @@
 import { BigNumber } from "ethers";
+import { parseEther } from "ethers/lib/utils";
 import * as PercentageUtils from "hedging-vault-sdk";
 
 /**
@@ -58,6 +59,17 @@ export interface PotionHedgingVaultConfigParams {
     potionLiquidityPoolManager?: string;
     opynAddressBook?: string;
     opynMockOracle?: string;
+
+    // Dependencies config
+    //
+    // Config name of the dependencies to use. If empty, then the same config name as
+    // the current deployment is used
+    potionProtocolDeployConfigName?: string;
+
+    // Test Deposit
+    //
+    // If defined and not zero, then a test deposit is performed after the deployment by the deployer address
+    testDepositAmount?: BigNumber;
 }
 
 const DefaultConfig: PotionHedgingVaultConfigParams = {
@@ -76,6 +88,28 @@ const DefaultConfig: PotionHedgingVaultConfigParams = {
     performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
 };
 
+const MultiVaultConfig: PotionHedgingVaultConfigParams = {
+    // Investment configuration
+    maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+    premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+    swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+    maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+    cycleDurationSecs: BigNumber.from(86400), //                            1 day
+    strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+    hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+    hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+    // Fees configuration
+    managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
+    performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
+
+    // Third-party dependencies
+    potionProtocolDeployConfigName: "hardhat.develop.hedging",
+
+    // Test Deposit
+    testDepositAmount: parseEther("10000000"),
+};
+
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
     hardhat: DefaultConfig,
     "localhost.test": DefaultConfig,
@@ -84,7 +118,9 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
     "hardhat.develop.hedging": DefaultConfig,
     "internal.develop.test": DefaultConfig,
     "hardhat.develop.test": DefaultConfig,
-    "hardhat.develop.multivault": DefaultConfig,
+    "hardhat.develop.multivaultA": MultiVaultConfig,
+    "hardhat.develop.multivaultB": MultiVaultConfig,
+    "hardhat.develop.multivaultC": MultiVaultConfig,
     "localhost.goerli": {
         // Asset address
         USDC: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", //            Custom USDC
