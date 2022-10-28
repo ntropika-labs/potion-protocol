@@ -136,7 +136,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   run-unit-test-subgraph:
-    name: Run unit tests (subgraph)
+    name: Run unit tests (subgraph core)
     runs-on: ubuntu-latest
     needs: [lint]
     steps:
@@ -154,10 +154,26 @@ jobs:
 
       - name: Subgraph unit test
         run: yarn test-unit potion-subgraph
+  
+  run-unit-test-subgraph-hv:
+    name: Run unit tests (subgraph hedging-vault)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Subgraph coverage
-        if: success()
-        run: yarn nx run potion-subgraph:coverage
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Prepare subgraph.yaml
+        run: yarn nx run potion-subgraph-hv:prepare-local
+
+      - name: Codegen
+        run: yarn codegen potion-subgraph-hv
+
+      - name: Subgraph unit test
+        run: yarn test-unit potion-subgraph-hv
 
   run-component-tests:
     name: Run component tests
