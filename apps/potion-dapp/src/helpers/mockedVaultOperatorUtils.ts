@@ -1,12 +1,13 @@
 import type { Ref } from "vue";
 import { Token as UniswapToken } from "@uniswap/sdk-core";
-import { Trade } from "@uniswap/router-sdk";
 
 import type { Token } from "dapp-types";
 
 import { contractsAddresses } from "@/helpers/contracts";
 import { getChainId, getWETHAddress } from "@/helpers/uniswap";
 import { mockWeb3Onboard } from "@/helpers/onboard";
+import { UniswapActionType } from "@/types";
+import type { BigNumberish } from "ethers";
 
 console.log("Running a mocked version of 'vaultOperatorUtils'");
 
@@ -29,34 +30,26 @@ const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
   };
 };
 
-const getEnterExpectedPriceRate = (
+const getExpectedPriceRate = (
   oraclePrice: Ref<number>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _: Trade<never, never, never>
+  _tradePrice: BigNumberish,
+  actionType: UniswapActionType
 ) => {
-  return oraclePrice.value; // default to 1000
+  if (actionType === UniswapActionType.ENTER_POSITION) {
+    return oraclePrice.value; // default to 1000
+  } else {
+    return 1 / oraclePrice.value; // default to 0.001,
+  }
 };
 
-const getExitExpectedPriceRate = (
-  oraclePrice: Ref<number>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _: Trade<never, never, never>
-) => {
-  return 1 / oraclePrice.value; // default to 0.001,
-};
-
-const getRecipientAddress = (): string => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getRecipientAddress = (_: string): string => {
   return mockWeb3Onboard.wallets[0]?.accounts[0]?.address;
 };
-
-const evaluatePremium = (routerPremium: number, premiumSlippage: number) =>
-  routerPremium + (premiumSlippage * routerPremium) / 100;
 
 export {
   convertCollateralToUniswapToken,
   convertQuoteUniswapTokenToToken,
-  getEnterExpectedPriceRate,
-  getExitExpectedPriceRate,
+  getExpectedPriceRate,
   getRecipientAddress,
-  evaluatePremium,
 };

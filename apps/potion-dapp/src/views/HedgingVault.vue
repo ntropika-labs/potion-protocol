@@ -79,7 +79,7 @@
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
-          :value="principalPercentages[0].toString()"
+          :value="hedgingRate.toString()"
           symbol="%"
           :loading="strategyLoading"
         />
@@ -227,10 +227,14 @@ const {
   premiumSlippage,
   swapSlippage,
   strategyLoading,
+  hedgingRate,
 } = usePotionBuyActionContract(potionBuyAction, true);
 
-const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(vaultId, true, true);
+const { operator, admin, vaultStatus } = useInvestmentVaultContract(
+  vaultId,
+  true,
+  true
+);
 
 const {
   assetAddress,

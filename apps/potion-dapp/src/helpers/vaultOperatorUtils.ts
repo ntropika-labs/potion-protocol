@@ -4,9 +4,16 @@ import { Token as UniswapToken } from "@uniswap/sdk-core";
 
 import type { Token } from "dapp-types";
 
-import { contractsAddresses } from "./hedgingVaultContracts";
+import { getContractsFromVault } from "./hedgingVaultContracts";
 import { getChainId } from "@/helpers/uniswap";
+import { UniswapActionType } from "@/types";
 
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
 const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
   return new UniswapToken(
     getChainId(),
@@ -17,6 +24,12 @@ const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
   );
 };
 
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
 const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
   return {
     name: uniToken.name || "",
@@ -26,31 +39,36 @@ const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
   };
 };
 
-const getEnterExpectedPriceRate = (
-  _: Ref<number>,
-  tradePrice: BigNumberish
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because the expected price rate must match the one from the oracle for local development
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const getExpectedPriceRate = (
+  _oraclePrice: Ref<number>,
+  tradePrice: BigNumberish,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _actionType: UniswapActionType
 ) => {
   return tradePrice.toString(); //The expected price of the swap as a fixed point SD59x18 number
 };
 
-const getExitExpectedPriceRate = (_: Ref<number>, tradePrice: BigNumberish) => {
-  return tradePrice.toString(); //The expected price of the swap as a fixed point SD59x18 number
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const getRecipientAddress = (vaultAddress: string): string => {
+  const { potionBuyAction } = getContractsFromVault(vaultAddress);
+
+  return potionBuyAction;
 };
-
-const getRecipientAddress = (): string => {
-  const { PotionBuyAction } = contractsAddresses;
-
-  return PotionBuyAction.address;
-};
-
-const evaluatePremium = (routerPremium: number, premiumSlippage: number) =>
-  routerPremium + (premiumSlippage * routerPremium) / 100;
 
 export {
   convertCollateralToUniswapToken,
   convertQuoteUniswapTokenToToken,
-  getEnterExpectedPriceRate,
-  getExitExpectedPriceRate,
+  getExpectedPriceRate,
   getRecipientAddress,
-  evaluatePremium,
 };

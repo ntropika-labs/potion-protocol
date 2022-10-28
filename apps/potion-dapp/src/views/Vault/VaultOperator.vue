@@ -26,8 +26,7 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
-import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
-import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
+import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
 import { useOtokenFactory } from "@/composables/useOtokenFactory";
@@ -51,24 +50,14 @@ const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const potionBuyAction = getPotionBuyActionFromVault(
+const { potionBuyAction, usdc } = getContractsFromVault(
   vaultId.value.toLowerCase()
 );
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 
-const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
-  vaultId,
-  true,
-  true
-);
-
-const principalPercentage = computed(() =>
-  principalPercentages.value && principalPercentages.value.length
-    ? principalPercentages.value[0]
-    : 0
-);
+const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
 
 const {
   vaultName,
@@ -80,19 +69,14 @@ const {
 } = useErc4626Contract(vaultId, true, true);
 
 const {
-  enterPositionTx,
-  enterPositionReceipt,
-  enterPositionLoading,
-  enterPosition: vaultEnterPosition,
-  canPositionBeEntered,
-  exitPositionTx,
-  exitPositionReceipt,
-  exitPositionLoading,
-  exitPosition: vaultExitPosition,
-  canPositionBeExited,
-  fetchCanPositionBeEntered,
-  fetchCanPositionBeExited,
-} = useHedgingVaultOrchestratorContract();
+  enterNextRound: vaultEnterNextRound,
+  fetchCanEnterNextRound,
+  canEnterNextRound,
+  nextRoundLoading,
+  //  nextRoundError,
+  nextRoundTx,
+  nextRoundReceipt,
+} = useHedgingVaultOrchestratorContract(vaultId.value.toLowerCase());
 
 const {
   nextCycleTimestamp,
@@ -103,6 +87,7 @@ const {
   maxSwapDurationSecs,
   strikePercentage,
   currentPayout,
+  hedgingRate,
   getCurrentPayout,
   getStrategyInfo,
   strategyLoading,
@@ -117,7 +102,7 @@ const {
 } = useVaultOperatorCalculations(
   assetAddress,
   strikePercentage,
-  principalPercentage,
+  hedgingRate,
   totalAssets
 );
 
@@ -152,6 +137,15 @@ const criteriasParam = computed(() => {
   ];
 });
 
+console.table([
+  {
+    criteriasParam: JSON.stringify(criteriasParam.value),
+    orderSize: orderSize.value,
+    strikePrice: strikePrice.value,
+    gasPrice: gasPrice.value,
+    oraclePrice: oraclePrice.value,
+  },
+]);
 const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
   useDepthRouter(
     criteriasParam,
@@ -174,7 +168,11 @@ const {
   loadExitPositionRoute,
   evaluateEnterPositionData,
   evaluateExitPositionData,
-} = useVaultOperatorActions(currentPayout);
+} = useVaultOperatorActions(
+  vaultId.value.toLowerCase(),
+  assetAddress,
+  currentPayout
+);
 
 const counterpartiesText = computed(() => {
   return enterPositionData.value &&
@@ -185,27 +183,36 @@ const counterpartiesText = computed(() => {
 
 const { getTargetOtokenAddress } = useOtokenFactory();
 
-const enterPosition = async () => {
-  if (!isEnterPositionOperationValid.value) {
+const enterNextRound = async () => {
+  if (
+    nextRoundLoading.value ||
+    !canEnterNextRound.value ||
+    !isEnterPositionOperationValid.value ||
+    !isExitPositionOperationValid.value
+  ) {
     throw new Error(
-      "A uniswap route and a set of counterparties is required to enter position"
+      "2 uniswap routes and a set of counterparties are required to enter the next round"
     );
   }
 
+  // EXIT POSITION DATA
+  const exitSwapInfo = evaluateExitPositionData(tokenAsset, oraclePrice);
+
+  // ENTER POSITION DATA
   const expirationTimestamp = createValidExpiry(
     blockTimestamp.value,
     cycleDurationDays.value
   );
   const newOtokenAddress = await getTargetOtokenAddress(
     tokenAsset.value.address,
-    coreContractsAddresses.USDC.address,
-    coreContractsAddresses.USDC.address,
+    usdc,
+    usdc,
     strikePrice.value,
     expirationTimestamp,
     true
   );
 
-  const { swapInfo, potionBuyInfo } = evaluateEnterPositionData(
+  const { swapInfo: enterSwapInfo, potionBuyInfo } = evaluateEnterPositionData(
     tokenAsset,
     oraclePrice,
     strikePrice,
@@ -214,16 +221,13 @@ const enterPosition = async () => {
     expirationTimestamp
   );
 
-  await vaultEnterPosition(swapInfo, potionBuyInfo);
-};
-
-const exitPosition = async () => {
-  const swapData = evaluateExitPositionData(tokenAsset, oraclePrice);
-  await vaultExitPosition(swapData);
+  await vaultEnterNextRound(enterSwapInfo, potionBuyInfo, exitSwapInfo);
 };
 
 const callbackLoadEnterRoute = async () => {
   await loadEnterPositionRoute(
+    hedgingRate,
+    strikePercentage,
     potionRouterParameters,
     tokenAsset,
     premiumSlippage,
@@ -237,9 +241,7 @@ const callbackLoadExitRoute = async () => {
 };
 
 watch(vaultStatus, async () => {
-  await getStrategyInfo();
-
-  await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
+  await Promise.all([getStrategyInfo(), fetchCanEnterNextRound()]);
 
   await Promise.all([getCurrentPayout(assetAddress.value), getTotalAssets()]);
 });
@@ -255,13 +257,13 @@ watch(assetAddress, async (address) => {
 const currentFormStep = ref(0);
 const tabs = ref([
   {
-    title: t("counterparties"),
+    title: t("enter_position"),
     subtitle: "",
     isValid: hasCounterparties,
     enabled: true,
   },
   {
-    title: t("enter_position"),
+    title: t("exit_position"),
     subtitle: "",
     isValid: true,
     enabled: hasCounterparties,
@@ -281,20 +283,12 @@ const {
   removeToast,
 } = useNotifications();
 
-watch(enterPositionTx, (transaction) => {
-  createTransactionNotification(transaction, t("entering_position"));
+watch(nextRoundTx, (transaction) => {
+  createTransactionNotification(transaction, t("entering_round"));
 });
 
-watch(enterPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("position_entered"));
-});
-
-watch(exitPositionTx, (transaction) => {
-  createTransactionNotification(transaction, t("exiting_position"));
-});
-
-watch(exitPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("position_exited"));
+watch(nextRoundReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("round_entered"));
 });
 
 watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
@@ -348,8 +342,7 @@ watch(blockTimestamp, async () => {
   await Promise.all([
     getStrategyInfo(),
     getCurrentPayout(assetAddress.value),
-    fetchCanPositionBeEntered(),
-    fetchCanPositionBeExited(),
+    fetchCanEnterNextRound(),
   ]);
 
   loadBuyerRecords();
@@ -492,7 +485,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('hedging_level')"
-              :value="principalPercentage.toString()"
+              :value="hedgingRate.toString()"
               symbol="%"
             />
             <LabelValue
@@ -545,17 +538,52 @@ watch(blockTimestamp, async () => {
     </div>
     <!-- END FIXED SIDEBAR -->
     <div class="lg:col-span-2">
-      <!-- START ENTER POSITION -->
-      <div v-if="canPositionBeEntered">
+      <!-- START ENTER NEXT ROUND -->
+      <div v-if="canEnterNextRound">
+        <div class="flex flex-row justify-end mb-4 w-full">
+          <div class="flex flex-col items-end">
+            <BaseButton
+              label="enter next round"
+              palette="secondary"
+              :disabled="!isExitPositionOperationValid || isActionLoading"
+              :loading="nextRoundLoading"
+              @click="enterNextRound()"
+            ></BaseButton>
+            <p
+              v-if="!isExitPositionOperationValid"
+              class="text-secondary-500 text-xs text-right mt-2"
+            >
+              Data to exit the current position and enter the new one are
+              required
+            </p>
+          </div>
+        </div>
         <TabNavigationComponent
-          title="Enter position"
+          title="Enter next round"
           :tabs="tabs"
           :default-index="currentFormStep"
           :show-quit-tabs="false"
           @navigate-tab="(index) => (currentFormStep = index)"
         >
           <BaseCard class="p-6">
-            <div class="flex flex-col gap-8">
+            <!-- START ENTER POSITION TAB -->
+            <div class="flex justify-end">
+              <BaseButton
+                palette="primary"
+                label="Load data"
+                :disabled="isActionLoading"
+                @click="callbackLoadEnterRoute()"
+              >
+                <template #pre-icon
+                  ><i
+                    class="i-ph-arrows-clockwise mr-1"
+                    :class="isActionLoading && 'animate-spin'"
+                  ></i
+                ></template>
+              </BaseButton>
+            </div>
+            <!-- START POTION INFO -->
+            <div class="flex flex-col gap-8 w-1/2">
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
@@ -568,248 +596,180 @@ watch(blockTimestamp, async () => {
                     {{ enterPositionData?.potionRouterResult?.premium }}
                   </p>
                 </div>
-                <div v-else class="text-center">
-                  <p class="text-white/40 uppercase">No result found</p>
-                </div>
-                <div>
-                  <BaseButton
-                    palette="primary"
-                    label="Load data"
-                    :disabled="isActionLoading"
-                    @click="callbackLoadEnterRoute()"
-                  >
-                    <template #pre-icon
-                      ><i
-                        class="i-ph-arrows-clockwise mr-1"
-                        :class="isActionLoading && 'animate-spin'"
-                      ></i
-                    ></template>
-                  </BaseButton>
-                </div>
               </div>
-              <div>
-                <div class="flex flex-row items-center gap-2 mb-4">
-                  <div
-                    class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
-                  >
-                    <span v-if="hasCounterparties">
-                      {{
-                        enterPositionData?.potionRouterResult?.counterparties
-                          .length
-                      }}
-                    </span>
-                    <span v-else-if="isActionLoading || strategyLoading"
-                      ><i class="i-ph-arrows-clockwise animate-spin"></i
-                    ></span>
-                    <span v-else>no</span>
-                  </div>
-                  <h3 class="text-xl font-bold capitalize">
-                    {{ counterpartiesText }}
-                  </h3>
-                </div>
-                <div v-if="hasCounterparties" class="flex flex-col gap-4">
-                  <BaseCard
-                    v-for="(cp, index) in enterPositionData?.potionRouterResult
-                      ?.counterparties"
-                    :key="index"
-                    class="p-6 relative"
-                  >
-                    <div class="grid md:grid-cols-3 pl-4 justify-between">
-                      <div class="md:col-span-2">
-                        <p class="font-medium text-lg">
-                          LP: <span class="font-semibold">{{ cp.lp }}</span>
-                        </p>
-                        <p class="font-medium text-lg">
-                          Pool id:
-                          <span class="font-semibold">{{ cp.poolId }}</span>
-                        </p>
-                      </div>
-                      <div class="flex justify-end">
-                        <div
-                          class="flex flex-col items-end rounded-lg ring-1 ring-white ring-opacity-5 p-2"
-                        >
-                          <p>order size in otokens:</p>
-                          <pre
-                            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
-                            >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <hr class="opacity-40 mx-4 mb-2 mt-3" />
-                    <p class="">> Curve</p>
-                    <div class="flex flex-row gap-4">
-                      <div class="text-center">
-                        <p>a</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.a_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>b</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.b_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>c</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.c_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>d</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.d_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>max_util</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.max_util, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                    </div>
 
-                    <p class="">> Criteria</p>
-                    <pre
-                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
-                    >
-                  </BaseCard>
+              <!-- START COUNTERPARTIES HEADER -->
+              <div class="flex flex-row items-center gap-2 mb-4">
+                <div
+                  class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
+                >
+                  <span v-if="hasCounterparties">
+                    {{
+                      enterPositionData?.potionRouterResult?.counterparties
+                        .length
+                    }}
+                  </span>
+                  <span v-else-if="isActionLoading || strategyLoading"
+                    ><i class="i-ph-arrows-clockwise animate-spin"></i
+                  ></span>
+                  <span v-else>no</span>
                 </div>
-                <div v-else-if="isActionLoading">
-                  <div class="animate-pulse flex space-x-4">
-                    <div class="rounded-full bg-slate-700 h-10 w-10"></div>
-                    <div class="flex-1 space-y-6 py-1">
-                      <div class="h-2 bg-slate-700 rounded"></div>
-                      <div class="space-y-3">
-                        <div class="grid grid-cols-3 gap-4">
-                          <div
-                            class="h-2 bg-slate-700 rounded col-span-2"
-                          ></div>
-                          <div
-                            class="h-2 bg-slate-700 rounded col-span-1"
-                          ></div>
-                        </div>
-                        <div class="h-2 bg-slate-700 rounded"></div>
+                <h3 class="text-xl font-bold capitalize">
+                  {{ counterpartiesText }}
+                </h3>
+              </div>
+              <!-- END COUNTERPARTIES HEADER -->
+              <!-- START COUNTERPARTIES LIST -->
+              <div v-if="hasCounterparties" class="flex flex-col gap-4">
+                <BaseCard
+                  v-for="(cp, index) in enterPositionData?.potionRouterResult
+                    ?.counterparties"
+                  :key="index"
+                  class="p-6 relative"
+                >
+                  <div class="grid md:grid-cols-3 pl-4 justify-between">
+                    <div class="md:col-span-2">
+                      <p class="font-medium text-lg">
+                        LP: <span class="font-semibold">{{ cp.lp }}</span>
+                      </p>
+                      <p class="font-medium text-lg">
+                        Pool id:
+                        <span class="font-semibold">{{ cp.poolId }}</span>
+                      </p>
+                    </div>
+                    <div class="flex justify-end">
+                      <div
+                        class="flex flex-col items-end rounded-lg ring-1 ring-white ring-opacity-5 p-2"
+                      >
+                        <p>order size in otokens:</p>
+                        <pre
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
+                          >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
+                        >
                       </div>
                     </div>
                   </div>
-                </div>
-                <div v-else class="text-center">
-                  <p class="text-white/40 text-3xl uppercase">
-                    No result found
-                  </p>
+                  <hr class="opacity-40 mx-4 mb-2 mt-3" />
+                  <p class="">> Curve</p>
+                  <div class="flex flex-row gap-4">
+                    <div class="text-center">
+                      <p>a</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.a_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>b</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.b_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>c</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.c_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>d</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.d_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>max_util</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.max_util, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                  </div>
+
+                  <p class="">> Criteria</p>
+                  <pre
+                    class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
+                  >
+                </BaseCard>
+              </div>
+              <div v-else-if="isActionLoading">
+                <div class="animate-pulse flex space-x-4">
+                  <div class="rounded-full bg-slate-700 h-10 w-10"></div>
+                  <div class="flex-1 space-y-6 py-1">
+                    <div class="h-2 bg-slate-700 rounded"></div>
+                    <div class="space-y-3">
+                      <div class="grid grid-cols-3 gap-4">
+                        <div class="h-2 bg-slate-700 rounded col-span-2"></div>
+                        <div class="h-2 bg-slate-700 rounded col-span-1"></div>
+                      </div>
+                      <div class="h-2 bg-slate-700 rounded"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div v-else class="text-center">
+                <p class="text-white/40 text-3xl uppercase">No result found</p>
+              </div>
+              <!-- END COUNTERPARTIES LIST -->
             </div>
+            <!-- END POTION INFO -->
+            <!-- START ENTER UNI ROUTE -->
+            <div>
+              <!-- START ROUTE HEADER -->
+              <div>
+                <h1 class="text-xl font-semibold">Uniswap route</h1>
+              </div>
+              <!-- END ROUTE HEADER -->
+              <TokenSwap
+                :route-data="enterPositionData?.uniswapRouterResult"
+                :router-loading="isActionLoading"
+              />
+            </div>
+            <!-- END ENTER UNI ROUTE -->
+            <!-- END ENTER POSITION TAB -->
           </BaseCard>
+
           <BaseCard class="p-6">
-            <h1 class="text-xl font-semibold">Uniswap route</h1>
-            <div
-              class="flex flex-row-reverse md:flex-row items-start justify-between gap-4 my-4"
-            >
-              <div class="flex md:flex-row gap-4">
-                <BaseButton
-                  label="route"
-                  :disabled="isActionLoading || enterPositionLoading"
-                  @click="callbackLoadEnterRoute()"
-                >
-                  <template #pre-icon>
-                    <i
-                      class="i-ph-arrows-clockwise mr-1"
-                      :class="isActionLoading && 'animate-spin'"
-                    ></i>
-                  </template>
-                </BaseButton>
-              </div>
-              <div class="flex flex-col items-end">
-                <BaseButton
-                  label="enter position"
-                  palette="secondary"
-                  :disabled="!isEnterPositionOperationValid || isActionLoading"
-                  :loading="enterPositionLoading"
-                  @click="enterPosition()"
-                ></BaseButton>
-                <p
-                  v-if="!isEnterPositionOperationValid"
-                  class="text-secondary-500 text-xs text-right mt-2"
-                >
-                  A route is required to enter the position
-                </p>
-              </div>
+            <!-- START EXIT POSITION TAB -->
+            <h1 class="text-xl font-semibold">Exit position</h1>
+            <hr class="opacity-40 my-4" />
+            <h3 class="text-xl font-semibold">Uniswap route</h3>
+            <div class="flex md:flex-row gap-4">
+              <BaseButton
+                label="route"
+                :disabled="isActionLoading || nextRoundLoading"
+                @click="callbackLoadExitRoute()"
+              >
+                <template #pre-icon>
+                  <i
+                    class="i-ph-arrows-clockwise mr-1"
+                    :class="isActionLoading && 'animate-spin'"
+                  ></i> </template
+              ></BaseButton>
             </div>
             <TokenSwap
-              :route-data="enterPositionData?.uniswapRouterResult"
+              :route-data="exitPositionData"
               :router-loading="isActionLoading"
             />
+            <!-- END EXIT POSITION TAB -->
           </BaseCard>
         </TabNavigationComponent>
       </div>
-      <!-- END ENTER POSITION -->
-      <!-- START EXIT POSITION -->
-      <BaseCard v-else-if="canPositionBeExited" class="p-6">
-        <h1 class="text-xl font-semibold">Exit position</h1>
-        <hr class="opacity-40 my-4" />
-        <h3 class="text-xl font-semibold">Uniswap route</h3>
-        <div
-          class="flex flex-row-reverse md:flex-row justify-between items-start gap-4 my-4"
-        >
-          <div class="flex md:flex-row gap-4">
-            <BaseButton
-              label="route"
-              :disabled="isActionLoading || exitPositionLoading"
-              @click="callbackLoadExitRoute()"
-            >
-              <template #pre-icon>
-                <i
-                  class="i-ph-arrows-clockwise mr-1"
-                  :class="isActionLoading && 'animate-spin'"
-                ></i> </template
-            ></BaseButton>
-          </div>
-          <div class="flex flex-col items-end">
-            <BaseButton
-              label="exit position"
-              palette="secondary"
-              :disabled="
-                !isExitPositionOperationValid ||
-                isActionLoading ||
-                exitPositionLoading
-              "
-              :loading="exitPositionLoading"
-              @click="exitPosition()"
-            ></BaseButton>
-            <p
-              v-if="!isExitPositionOperationValid"
-              class="text-secondary-500 text-xs text-right mt-2"
-            >
-              A route is required to exit the position
-            </p>
-          </div>
-        </div>
-        <TokenSwap
-          :route-data="exitPositionData"
-          :router-loading="isActionLoading"
-        />
-      </BaseCard>
-      <!-- END EXIT POSITION -->
+      <!-- END ENTER NEXT ROUND -->
       <div v-else class="flex items-center justify-center h-full">
         <p class="text-4xl text-dwhite-400 text-opacity-20">
           No action available

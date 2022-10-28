@@ -1,5 +1,4 @@
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
-import { formatUnits } from "@ethersproject/units";
 
 import { LifecycleStates, Roles } from "hedging-vault-sdk";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
@@ -99,29 +98,6 @@ export function useInvestmentVaultContract(
     }
   };
 
-  const principalPercentages = ref<number[]>([0]);
-  const principalPercentagesLoading = ref(false);
-  const getPrincipalPercentages = async () => {
-    try {
-      principalPercentagesLoading.value = true;
-      const contract = initContractProvider();
-      const response = await contract.getPrincipalPercentages();
-      principalPercentages.value = response.map((x: BigNumberish) => {
-        return parseFloat(formatUnits(x, 6));
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(
-          `cannot get the principal percentages: ${error.message}`
-        );
-      } else {
-        throw new Error(`cannot get the principal percentages: ${error}`);
-      }
-    } finally {
-      principalPercentagesLoading.value = false;
-    }
-  };
-
   const vaultStatus = ref<number>(0);
   const vaultStatusLoading = ref(false);
   const getVaultStatus = async () => {
@@ -148,7 +124,6 @@ export function useInvestmentVaultContract(
         getOperator(),
         getAdmin(),
         getStrategist(),
-        getPrincipalPercentages(),
         getVaultStatus(),
       ]);
     }
@@ -160,14 +135,6 @@ export function useInvestmentVaultContract(
       "LifecycleStateChanged",
       (prevState: BigNumberish, nextState: BigNumberish) => {
         vaultStatus.value = nextState as LifecycleStates;
-      }
-    );
-    wsContract.on(
-      "PrincipalPercentagesUpdated",
-      (newPrincipalPercentages: BigNumberish[]) => {
-        principalPercentages.value = newPrincipalPercentages.map((x) => {
-          return parseFloat(formatUnits(x, 6));
-        });
       }
     );
 
@@ -200,9 +167,6 @@ export function useInvestmentVaultContract(
     strategist,
     strategistLoading,
     getStrategist,
-    principalPercentages,
-    principalPercentagesLoading,
-    getPrincipalPercentages,
     vaultStatus,
     vaultStatusLoading,
     getVaultStatus,

@@ -1,4 +1,9 @@
 import { wrap } from "comlink";
+import { getUniswapRoute, runPremiumSwapRouter } from "@premium-swap-router";
+interface AlphaRouter {
+  getUniswapRoute: typeof getUniswapRoute;
+  runPremiumSwapRouter: typeof runPremiumSwapRouter;
+}
 
 const webWorker = new Worker(
   new URL("./alpha-router-functions.ts", import.meta.url),
@@ -6,5 +11,5 @@ const webWorker = new Worker(
     type: "module",
   }
 );
-const worker = wrap(webWorker);
+const worker = wrap<AlphaRouter>(webWorker);
 export { worker };

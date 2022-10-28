@@ -277,6 +277,31 @@ export function usePotionBuyActionContract(
   };
   errorRegistry["currentPayout"] = currentPayoutError;
 
+  //Hedging Rate
+  const hedgingRate = ref<number>(0);
+  const hedgingRateLoading = ref(false);
+  const hedgingRateError = ref<string | null>(null);
+  const getHedgingRate = async () => {
+    hedgingRateLoading.value = true;
+    hedgingRateError.value = null;
+    try {
+      const provider = initContractProvider();
+      const rate = await provider.hedgingRate();
+      hedgingRate.value = parseFloat(formatUnits(rate, 6));
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot get hedging rate: ${error.message}`
+          : "Cannot get hedging rate";
+      hedgingRateError.value = errorMessage;
+
+      //throw new Error(errorMessage);
+    } finally {
+      hedgingRateLoading.value = false;
+    }
+  };
+  errorRegistry["hedgingRate"] = hedgingRateError;
+
   // Get strategy info
 
   const strategyLoading = ref(false);
@@ -291,6 +316,7 @@ export function usePotionBuyActionContract(
         getPremiumSlippage(),
         getSwapSlippage(),
         getStrikePercentage(),
+        getHedgingRate(),
       ]);
     } catch (error) {
       const errorMessage =
@@ -361,6 +387,7 @@ export function usePotionBuyActionContract(
   return {
     strategyLoading,
     strategyError,
+    cycleDurationDays,
     getStrategyInfo,
     nextCycleTimestampLoading,
     nextCycleTimestampError,
@@ -394,6 +421,9 @@ export function usePotionBuyActionContract(
     currentPayoutError,
     currentPayout,
     getCurrentPayout,
-    cycleDurationDays,
+    hedgingRateLoading,
+    hedgingRateError,
+    hedgingRate,
+    getHedgingRate,
   };
 }

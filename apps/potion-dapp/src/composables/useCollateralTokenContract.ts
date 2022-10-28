@@ -121,6 +121,12 @@ export function useCollateralTokenContract() {
     }
   };
 
+  const fetchActionBalance = async (actionAddress: string) => {
+    const response = await contractProvider.balanceOf(actionAddress);
+
+    return parseFloat(formatUnits(response, 6));
+  };
+
   return {
     fetchUserCollateralBalance,
     userCollateralBalance,
@@ -132,5 +138,6 @@ export function useCollateralTokenContract() {
     approveLoading,
     approveTx,
     approveReceipt,
+    fetchActionBalance,
   };
 }

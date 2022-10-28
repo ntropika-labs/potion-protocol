@@ -1,3 +1,4 @@
+import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
 import { Protocol, Trade } from "@uniswap/router-sdk";
 import { type Currency, TradeType } from "@uniswap/sdk-core";
 import type { MethodParameters, Pool } from "@uniswap/v3-sdk";
@@ -30,4 +31,22 @@ export interface UniswapRouterReturn {
   methodParameters: MethodParameters | undefined;
   estimatedGasUsed: BigNumberish;
   estimatedGasUsedUSD: BigNumberish;
+}
+
+export type Sellers = IPotionLiquidityPool.CounterpartyDetailsStruct[];
+
+export interface UniSwapInfo {
+  steps: Array<{ inputToken: Token; fee: number }>;
+  outputToken: Token;
+  expectedPriceRate: BigNumberish; //The expected price of the swap as a fixed point SD59x18 number
+}
+
+export interface PotionBuyInfo {
+  targetPotionAddress: string;
+  underlyingAsset: string;
+  strikePriceInUSDC: string;
+  expirationTimestamp: BigNumberish;
+  sellers: Sellers;
+  expectedPremiumInUSDC: string;
+  totalSizeInPotions: BigNumberish;
 }
