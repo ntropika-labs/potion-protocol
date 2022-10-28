@@ -229,6 +229,7 @@ const callbackLoadEnterRoute = async () => {
     hedgingRate,
     strikePercentage,
     potionRouterParameters,
+    oraclePrice,
     tokenAsset,
     premiumSlippage,
     swapSlippage
