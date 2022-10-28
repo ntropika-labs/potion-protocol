@@ -51,7 +51,7 @@ type Round @entity {
   vault: HedgingVault!
   roundNumber: BigInt!
   #NextRound()
-  shareRatioAtRoundEnd: BigInt
+  exchangeRate: BigInt
   # VaultPositionExited()
   totalAssetsAtRoundEnd: BigInt
   # VaultPositionEntered()
