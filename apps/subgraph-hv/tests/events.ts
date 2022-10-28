@@ -224,13 +224,20 @@ export function createSwapSlippageChanged(
 }
 
 // RoundsInputVault/RoundsOutputVault events
-export function createNextRound(newRoundNumber: BigInt): NextRound {
+export function createNextRound(
+  newRoundNumber: BigInt,
+  prevRoundExchangeRate: BigInt
+): NextRound {
   const event = changetype<NextRound>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam(
       "newRoundNumber",
       ethereum.Value.fromUnsignedBigInt(newRoundNumber)
+    ),
+    new ethereum.EventParam(
+      "prevRoundExchangeRate",
+      ethereum.Value.fromUnsignedBigInt(prevRoundExchangeRate)
     ),
   ];
 
@@ -366,13 +373,20 @@ export function createWithdrawExchangeAssetBatch(
   return event;
 }
 
-export function createOutputNextRound(newRoundNumber: BigInt): OutputNextRound {
+export function createOutputNextRound(
+  newRoundNumber: BigInt,
+  prevRoundExchangeRate: BigInt
+): OutputNextRound {
   const event = changetype<OutputNextRound>(newMockEvent());
 
   event.parameters = [
     new ethereum.EventParam(
       "newRoundNumber",
       ethereum.Value.fromUnsignedBigInt(newRoundNumber)
+    ),
+    new ethereum.EventParam(
+      "prevRoundExchangeRate",
+      ethereum.Value.fromUnsignedBigInt(prevRoundExchangeRate)
     ),
   ];
 

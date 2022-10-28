@@ -103,7 +103,11 @@ function removeWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
   return false;
 }
 
-function updateShares(roundNumber: BigInt, vault: Bytes): void {
+function updateShares(
+  roundNumber: BigInt,
+  vault: Bytes,
+  shareRatioAtRoundEnd: BigInt
+): void {
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
   if (round == null) {
@@ -111,23 +115,22 @@ function updateShares(roundNumber: BigInt, vault: Bytes): void {
       id.toHexString(),
     ]);
   } else {
-    if (round.shareRatioAtRoundEnd) {
-      for (let i = 0; i < round.depositRequests.length; i += 1) {
-        updateDepositRequestShares(
-          round.depositRequests[i],
-          round.shareRatioAtRoundEnd as BigInt
-        );
-      }
-    } else {
-      log.error(
-        "Tried to update the shares of round {} before setting shareRatioAtRoundEnd",
-        [id.toHexString()]
+    for (let i = 0; i < round.depositRequests.length; i += 1) {
+      updateDepositRequestShares(
+        round.depositRequests[i],
+        shareRatioAtRoundEnd
       );
     }
+    round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
+    round.save();
   }
 }
 
-function updateAssets(roundNumber: BigInt, vault: Bytes): void {
+function updateAssets(
+  roundNumber: BigInt,
+  vault: Bytes,
+  shareRatioAtRoundEnd: BigInt
+): void {
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
   if (round == null) {
@@ -135,19 +138,14 @@ function updateAssets(roundNumber: BigInt, vault: Bytes): void {
       id.toHexString(),
     ]);
   } else {
-    if (round.shareRatioAtRoundEnd) {
-      for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
-        updateWithdrawalRequestAssets(
-          round.withdrawalRequests[i],
-          round.shareRatioAtRoundEnd as BigInt
-        );
-      }
-    } else {
-      log.error(
-        "Tried to update the assets of round {} before setting shareRatioAtRoundEnd",
-        [id.toHexString()]
+    for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
+      updateWithdrawalRequestAssets(
+        round.withdrawalRequests[i],
+        shareRatioAtRoundEnd
       );
     }
+    round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
+    round.save();
   }
 }
 

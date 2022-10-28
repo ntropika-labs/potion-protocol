@@ -209,7 +209,7 @@ spin_up_environment() {
     yarn nx run @potion-protocol/hedging-vault:compile
     msg "${GREEN}- Hedging vault contracts compiled ${NOFORMAT}"
 
-    yarn nx run @potion-protocol/hedging-vault:deploy-local.hedging
+    yarn nx run @potion-protocol/hedging-vault:deploy-local.multivault
     msg "${GREEN}- Hedging contracts deployed ${NOFORMAT}"
   fi
 
@@ -219,21 +219,41 @@ spin_up_environment() {
 
   # run prepare-local and codegen only on cold starts
   if [[ $is_environment_running -eq 0 || $init_environment -eq 1 ]]; then
+    # prepare potion core subgraph
     yarn nx run potion-subgraph:prepare-hedging
-    msg "${GREEN}- Potion subgraph.yaml is ready ${NOFORMAT}"
+    msg "${GREEN}- Potion Core subgraph.yaml is ready ${NOFORMAT}"
 
     yarn nx run potion-subgraph:codegen
-    msg "${GREEN}- Subgraph codegen ${NOFORMAT}"    
+    msg "${GREEN}- Potion Core subgraph codegen done ${NOFORMAT}"    
 
+    # prepare hedging vault subgraph
+    yarn nx run potion-subgraph-hv:prepare-local
+    msg "${GREEN} - Hedging Vault subgraph.yaml is ready ${NOFORMAT}"
+
+    yarn nx run potion-subgraph-hv:codegen
+    msg "${GREEN}- Hedging Vault subgraph codegen done ${NOFORMAT}"    
+
+    # generate queries
     yarn nx run subgraph-queries:codegen
-    msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
+    msg "${GREEN}- Potion Core subgraph queries generated ${NOFORMAT}"
+    
+    yarn nx run subgraph-queries:codegen-hv
+    msg "${GREEN}- Hedging Vault subgraph queries generated ${NOFORMAT}"
   fi
 
+  # deploy potion core subgraph
   yarn nx run potion-subgraph:create-local
-  msg "${GREEN}- Potion subgraph created ${NOFORMAT}"
+  msg "${GREEN}- Potion Core subgraph created ${NOFORMAT}"
 
   yarn nx run potion-subgraph:deploy-local --version-label 0.0.1
-  msg "${GREEN}- Potion subgraph deployed ${NOFORMAT}"
+  msg "${GREEN}- Potion Core subgraph deployed ${NOFORMAT}"
+
+  # deploy hedging vault subgraph
+  yarn nx run potion-subgraph-hv:create-local
+  msg "${GREEN}- Hedging Vault subgraph created ${NOFORMAT}"
+
+  yarn nx run potion-subgraph-hv:deploy-local --version-label 0.0.1
+  msg "${GREEN}- Hedging Vault subgraph deployed ${NOFORMAT}"
 
   return 0
 }

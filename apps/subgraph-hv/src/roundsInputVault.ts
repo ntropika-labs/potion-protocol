@@ -28,7 +28,8 @@ function handleNextRound(event: NextRound): void {
   if (event.params.newRoundNumber.gt(BigInt.fromString("0"))) {
     updateShares(
       event.params.newRoundNumber.minus(BigInt.fromString("1")),
-      vaultAddress
+      vaultAddress,
+      event.params.prevRoundExchangeRate
     );
   }
   log.info("NextRound {} for InputVault {}", [

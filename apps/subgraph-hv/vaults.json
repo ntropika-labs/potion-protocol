@@ -1,6 +1,6 @@
 [
-  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.hedging.json", 
-  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.hedging.json", 
-  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.hedging.json",
+  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.multivault-A.json", 
+  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.multivault-B.json", 
+  "../../contracts/hedging-vault/deployments/hardhat/hardhat.develop.multivault-C.json",
   "file-that-doesnt-exists"
 ]
