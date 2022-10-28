@@ -14,6 +14,7 @@ interface ImportMetaEnv {
     | "goerli"
     | "mainnet";
   readonly VITE_SUBGRAPH_ADDRESS: string;
+  readonly VITE_SUBGRAPH_HV_ADDRESS: string;
   readonly VITE_ENDPOINT_PROVIDER: string;
   readonly VITE_INFURA_KEY: string;
   readonly VITE_DEVELOPMENT_MNEMONIC: string;
