@@ -11,32 +11,40 @@ export interface Token {
   logoURI: string;
 }
 
+type LocalDeployments =
+  | "localhost"
+  | "localhost.hedging"
+  | "localhost.multivault"
+  | "localhost.goerli";
+type GanacheDeployments = "ganache";
+type KovanDeployments = "kovan";
+type GoerliDeployments = "goerli";
+type MainnetDeployments = "mainnet";
+
 const getTokenList = (
   networkName:
-    | "localhost"
-    | "localhost.hedging"
-    | "localhost.goerli"
-    | "ganache"
-    | "kovan"
-    | "goerli"
-    | "mainnet"
+    | LocalDeployments
+    | GanacheDeployments
+    | KovanDeployments
+    | GoerliDeployments
+    | MainnetDeployments
 ): Token[] => {
-  switch (networkName) {
-    case "localhost":
-    case "localhost.hedging":
-    case "localhost.goerli":
-      return localhost.tokens;
-    case "ganache":
-      return ganache.tokens;
-    case "kovan":
-      return kovan.tokens;
-    case "goerli":
-      return goerli.tokens;
-    case "mainnet":
-      return mainnet.tokens;
-    default:
-      throw new Error("Unsupported network");
+  if (/localhost/.test(networkName)) {
+    return localhost.tokens;
   }
+  if (/ganache/.test(networkName)) {
+    return ganache.tokens;
+  }
+  if (/kovan/.test(networkName)) {
+    return kovan.tokens;
+  }
+  if (/goerli/.test(networkName)) {
+    return goerli.tokens;
+  }
+  if (/mainnet/.test(networkName)) {
+    return mainnet.tokens;
+  }
+  throw new Error("Unsupported network");
 };
 
 export { kovan, ganache, mainnet, getTokenList };

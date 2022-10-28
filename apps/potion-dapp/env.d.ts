@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_ETHEREUM_NETWORK:
     | "localhost"
     | "localhost.hedging"
+    | "localhost.goerli"
+    | "localhost.multivault"
     | "ganache"
     | "goerli"
     | "mainnet";
