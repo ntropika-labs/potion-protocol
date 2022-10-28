@@ -171,7 +171,7 @@ describe("roundsInputVault", () => {
       assertEntity(
         "Round",
         createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
-        [{ field: "shareRatioAtRoundEnd", value: "10" }]
+        [{ field: "exchangeRate", value: "10" }]
       );
     });
 
