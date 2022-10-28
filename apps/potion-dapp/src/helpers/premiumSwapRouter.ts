@@ -121,7 +121,9 @@ const runPremiumSwapRouter = async (
   potionRouterResult: DepthRouterReturn;
   uniswapRouterResult: UniswapRouterReturn;
 }> => {
-  console.log(principalHedgedAmount, strikePriceUSDC, gas, ethPrice);
+  console.table([
+    { principalHedgedAmount, pools, strikePriceUSDC, gas, ethPrice },
+  ]);
   // POTION ROUTER
   const potionRouterWithPremium = runDepthRouter(
     pools,
@@ -146,7 +148,9 @@ const runPremiumSwapRouter = async (
     hedgingRate,
     strikePercent,
     strikePriceUSDC,
-    potionRouterWithPremium.premium
+    !Number.isNaN(potionRouterWithPremium.premium)
+      ? potionRouterWithPremium.premium
+      : 1
   );
 
   const potionRouter = runDepthRouter(
