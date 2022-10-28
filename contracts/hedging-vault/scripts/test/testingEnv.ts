@@ -28,7 +28,7 @@ import {
     mockOpynOracle,
     mockOpynAddressBook,
 } from "./contractsMocks";
-import { asMock, Deployments, ProviderTypes } from "contracts-utils";
+import { asMock, Deployments } from "contracts-utils";
 import type { DeploymentType } from "contracts-utils";
 import { fromSolidityPercentage } from "hedging-vault-sdk";
 import {
@@ -348,33 +348,52 @@ function usePotionDeployments(hedgingVaultConfig: PotionHedgingVaultConfigParams
     }
 }
 
-export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
-    const deploymentTypeName = Deployments.getDeploymentNameFromType(deploymentType);
-    const legacyDeploymentTypeName = Deployments.getLegacyDeploymentNameFromType(deploymentType);
-    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
+function addPotionDeployments(deploymentName: string, hedgingVaultConfig: PotionHedgingVaultConfigParams) {
+    const potionDeploymentName = hedgingVaultConfig.potionProtocolDeployConfigName || deploymentName;
+    const potionDeploymentType = Deployments.getDeploymentTypeFromName(potionDeploymentName);
 
-    let potionProtocolDeployments;
-    if (deploymentType.provider !== ProviderTypes.Internal && deploymentType.config !== "test") {
-        potionProtocolDeployments = getPotionProtocolDeployments(deploymentTypeName);
+    let potionProtocolDeployments = getPotionProtocolDeployments(potionDeploymentName);
 
-        if (potionProtocolDeployments === undefined) {
-            potionProtocolDeployments = getPotionProtocolDeployments(legacyDeploymentTypeName);
-        }
-
-        if (potionProtocolDeployments !== undefined) {
-            usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
-        }
+    if (potionProtocolDeployments === undefined) {
+        const legacyDeploymentTypeName = Deployments.getLegacyDeploymentNameFromType(potionDeploymentType);
+        potionProtocolDeployments = getPotionProtocolDeployments(legacyDeploymentTypeName);
     }
 
     if (potionProtocolDeployments !== undefined) {
-        console.log("[Using Potion Protocol deployments]\n");
-    } else {
-        console.log(
-            `[Not using potion protocol deployments, couldn't find ${deploymentTypeName} or ${legacyDeploymentTypeName} deployments]\n`,
-        );
+        usePotionDeployments(hedgingVaultConfig, potionProtocolDeployments);
     }
 
+    return hedgingVaultConfig;
+}
+
+export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgingVaultConfigParams {
+    const deploymentTypeName = Deployments.getDeploymentNameFromType(deploymentType);
+    const hedgingVaultConfig = PotionHedgingVaultDeploymentConfigs[deploymentTypeName];
+
+    addPotionDeployments(deploymentTypeName, hedgingVaultConfig);
+
+    // Return a copy of the config
     return Object.assign({}, hedgingVaultConfig);
+}
+
+async function testDepositInVault(testDepositAmount: BigNumber, testEnvDeployment: TestingEnvironmentDeployment) {
+    // Deposit some amount
+    const deployer = (await ethers.provider.listAccounts())[0];
+    const underlyingDecimals = await testEnvDeployment.underlyingAsset.decimals();
+
+    await testEnvDeployment.underlyingAsset.mint(deployer, testDepositAmount);
+    await testEnvDeployment.underlyingAsset.approve(
+        testEnvDeployment.roundsInputVault.address,
+        ethers.constants.MaxUint256,
+    );
+
+    await testEnvDeployment.roundsInputVault.deposit(testDepositAmount, deployer);
+
+    console.log(
+        `- Deposited ${ethers.utils.formatUnits(testDepositAmount, underlyingDecimals)} into vault ${
+            testEnvDeployment.roundsInputVault.address
+        }`,
+    );
 }
 
 export async function deployTestingEnv(
@@ -439,6 +458,10 @@ export async function deployTestingEnv(
     console.log(`--------------------------------------------------------------------------------\n`);
 
     printDeploymentEnvironment(testEnvDeployment);
+
+    if (deploymentConfig.testDepositAmount !== undefined && deploymentConfig.testDepositAmount !== BigNumber.from(0)) {
+        await testDepositInVault(deploymentConfig.testDepositAmount, testEnvDeployment);
+    }
 
     return testEnvDeployment;
 }
