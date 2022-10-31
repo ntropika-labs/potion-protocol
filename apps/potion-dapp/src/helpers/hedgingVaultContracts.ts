@@ -7,6 +7,8 @@ let contractsAddresses = {};
 const multiVaultAddresses: Array<{
   vault: string;
   potionBuyAction: string;
+  roundsInputVault?: string;
+  roundsOutputVault?: string;
   swapToUSDCAction?: string;
   hedgingVaultOrchestrator?: string;
   usdc?: string;
@@ -69,6 +71,8 @@ function _setContractsForVault(deployment: any): void {
   if (!data) {
     multiVaultAddresses.push({
       vault: deployment.InvestmentVault.address.toLowerCase(),
+      roundsInputVault: deployment.RoundsInputVault.address.toLowerCase(),
+      roundsOutputVault: deployment.RoundsOutputVault.address.toLowerCase(),
       potionBuyAction: deployment.PotionBuyAction?.address.toLowerCase(),
       swapToUSDCAction: deployment.SwapToUSDCAction?.address.toLowerCase(),
       hedgingVaultOrchestrator:

@@ -3,7 +3,6 @@ import { TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import { BigNumber } from "ethers";
 
-import { applyPercentage } from "hedging-vault-sdk";
 import {
   getChainId,
   USDCUniToken,
@@ -39,9 +38,11 @@ import { useErc20Contract } from "./useErc20Contract";
 export function useVaultOperatorActions(
   vaultAddress: string,
   underlyingAddress: Ref<string>,
-  currentPayout: Ref<ActionPayout | undefined>
+  currentPayout: Ref<ActionPayout | undefined>,
+  vaultTotalSupply: Ref<number>,
+  outputVaultTotalShares: Ref<number>
 ) {
-  const { swapToUSDCAction, potionBuyAction } =
+  const { swapToUSDCAction, potionBuyAction, roundsInputVault } =
     getContractsFromVault(vaultAddress);
   const { fetchActionBalance } = useCollateralTokenContract();
   const {
@@ -101,8 +102,13 @@ export function useVaultOperatorActions(
       hasRoute(exitPositionData.value?.uniswapRouterResult);
 
     const hasNoPayout =
-      totalAmountToSwap.value === 0 && currentPayout.value?.currentPayout === 0;
+      totalAmountToSwap.value === 0 && !currentPayout.value?.currentPayout;
 
+    console.log(
+      "EXIT VALID",
+      totalAmountToSwap.value,
+      !currentPayout.value?.currentPayout
+    );
     return isValidPayout || hasNoPayout;
   });
 
@@ -139,40 +145,69 @@ export function useVaultOperatorActions(
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
       const recipientAddress = getRecipientAddress(vaultAddress);
 
-      const totalUnderlyingBalance = await getTokenBalance(
+      const exitSwapAmountInUnderlying = totalPayout / oraclePrice.value;
+      const actionUnderlyingBalance = await getTokenBalance(
         false,
         potionBuyAction
       );
+      const inputVaultUnderlyingBalance = await getTokenBalance(
+        false,
+        roundsInputVault
+      );
 
-      const exitSwapAmountInUnderlying = totalPayout * oraclePrice.value;
+      const totalPrincipalBeforeWithdrawalInUnderlying =
+        exitSwapAmountInUnderlying +
+        (actionUnderlyingBalance as number) +
+        (inputVaultUnderlyingBalance as number);
 
-      const newPrincipalInUnderlying =
-        exitSwapAmountInUnderlying + (totalUnderlyingBalance as number);
+      // When the vault is still not initialized the vaultTotalSupply is 0
+      let sharePrice = 1;
+      if (vaultTotalSupply.value !== 0) {
+        const investmentVaultTotalShares = vaultTotalSupply.value;
+        console.log(
+          "INVESTMENT VAULT TOTAL SHARES",
+          investmentVaultTotalShares
+        );
+        sharePrice =
+          totalPrincipalBeforeWithdrawalInUnderlying /
+          investmentVaultTotalShares;
+      }
+
+      const totalSharesToWithdraw = outputVaultTotalShares.value;
+
+      const totalAssetsToWithdrawInUnderlying =
+        totalSharesToWithdraw * sharePrice;
+
+      const totalPrincipalInUnderlying =
+        totalPrincipalBeforeWithdrawalInUnderlying -
+        totalAssetsToWithdrawInUnderlying;
 
       console.table([
         {
           totalPayout,
           exitSwapAmountInUnderlying,
+          actionUnderlyingBalance,
+          inputVaultUnderlyingBalance,
+          totalPrincipalBeforeWithdrawalInUnderlying,
+          sharePrice,
+          totalAssetsToWithdrawInUnderlying,
+          totalPrincipalInUnderlying,
           //          underlyingAddress: rawPotionrouterParams.pools[0].underlyingAddress,
           oraclePrice: oraclePrice.value,
           strikePrice: rawPotionrouterParams.strikePriceUSDC,
-          totalUnderlyingBalance,
-          newPrincipalInUnderlying,
           hedgingRate: hedgingRate.value,
         },
       ]);
 
-      const principalHedgedAmount = applyPercentage(
-        BigNumber.from(newPrincipalInUnderlying),
-        BigNumber.from(hedgingRate.value)
-      );
-      console.log("principalHedgedAmount", principalHedgedAmount.toString());
+      const principalHedgedAmountInUnderlying =
+        (totalPrincipalInUnderlying * hedgingRate.value) / 100;
 
       const swapRouterResult = await worker.runPremiumSwapRouter(
         hedgingRate.value,
         strikePercent.value,
+        oraclePrice.value,
         rawPotionrouterParams.pools,
-        principalHedgedAmount.toNumber(), //rawPotionrouterParams.orderSize,
+        principalHedgedAmountInUnderlying,
         rawPotionrouterParams.strikePriceUSDC,
         rawPotionrouterParams.gas,
         rawPotionrouterParams.ethPrice,
@@ -189,7 +224,7 @@ export function useVaultOperatorActions(
       enterPositionData.value = swapRouterResult;
 
       await loadEnterPositionFallbackRoute(
-        principalHedgedAmount.toNumber(),
+        principalHedgedAmountInUnderlying,
         collateralToken,
         swapSlippage
       );
@@ -237,16 +272,14 @@ export function useVaultOperatorActions(
     underlyingToken: Ref<Token>,
     oraclePrice: Ref<number>
   ): { swapInfo: UniSwapInfo; fallback: UniSwapInfo } => {
-    if (
-      !isExitPositionOperationValid.value ||
-      !fallbackExitPositionData.value
-    ) {
+    if (!isExitPositionOperationValid.value) {
       throw new Error("A uniswap route is required to exit position");
     }
 
     toggleUniswapPolling(false);
 
     let swapInfo: UniSwapInfo;
+    let fallbackSwapInfo: UniSwapInfo;
     const USDCToken = convertQuoteUniswapTokenToToken(USDCUniToken);
 
     if (totalAmountToSwap.value > 0) {
@@ -258,10 +291,18 @@ export function useVaultOperatorActions(
         enterPositionData.value?.uniswapRouterResult &&
         swapRoute &&
         swapRoute.protocol === Protocol.V3 &&
-        executionPrice
+        executionPrice &&
+        fallbackExitPositionData.value
       ) {
         swapInfo = evaluateUniswapRoute(
           enterPositionData.value?.uniswapRouterResult,
+          UniswapActionType.ENTER_POSITION,
+          oraclePrice,
+          underlyingToken.value,
+          USDCToken
+        );
+        fallbackSwapInfo = evaluateUniswapRoute(
+          fallbackExitPositionData.value,
           UniswapActionType.ENTER_POSITION,
           oraclePrice,
           underlyingToken.value,
@@ -281,15 +322,17 @@ export function useVaultOperatorActions(
         outputToken: underlyingToken.value,
         expectedPriceRate: 0,
       };
+      fallbackSwapInfo = {
+        steps: [
+          {
+            inputToken: USDCToken,
+            fee: 0,
+          },
+        ],
+        outputToken: underlyingToken.value,
+        expectedPriceRate: 0,
+      };
     }
-
-    const fallbackSwapInfo: UniSwapInfo = evaluateUniswapRoute(
-      fallbackExitPositionData.value,
-      UniswapActionType.ENTER_POSITION,
-      oraclePrice,
-      underlyingToken.value,
-      USDCToken
-    );
 
     return { swapInfo, fallback: fallbackSwapInfo };
   };
@@ -458,6 +501,8 @@ export function useVaultOperatorActions(
   return {
     enterPositionData,
     exitPositionData,
+    fallbackEnterPositionData,
+    fallbackExitPositionData,
     isActionLoading,
     totalAmountToSwap,
     isTotalAmountValid,

@@ -50,14 +50,20 @@ const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const { potionBuyAction, usdc } = getContractsFromVault(
+const { potionBuyAction, usdc, roundsOutputVault } = getContractsFromVault(
   vaultId.value.toLowerCase()
 );
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { getGas, gasPrice } = useBlockNative();
 
-const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
+const {
+  vaultStatus,
+  getTotalSupply,
+  totalSupply,
+  getShareBalance,
+  shareBalance,
+} = useInvestmentVaultContract(vaultId, true, true);
 
 const {
   vaultName,
@@ -158,6 +164,8 @@ const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
 
 const {
   //uniswapRouterResult,
+  fallbackEnterPositionData,
+  fallbackExitPositionData,
   enterPositionData,
   exitPositionData,
   isActionLoading,
@@ -171,7 +179,9 @@ const {
 } = useVaultOperatorActions(
   vaultId.value.toLowerCase(),
   assetAddress,
-  currentPayout
+  currentPayout,
+  totalSupply,
+  shareBalance
 );
 
 const counterpartiesText = computed(() => {
@@ -196,7 +206,8 @@ const enterNextRound = async () => {
   }
 
   // EXIT POSITION DATA
-  const exitSwapInfo = evaluateExitPositionData(tokenAsset, oraclePrice);
+  const { swapInfo: exitSwapInfo, fallback: exitFallbackSwapInfo } =
+    evaluateExitPositionData(tokenAsset, oraclePrice);
 
   // ENTER POSITION DATA
   const expirationTimestamp = createValidExpiry(
@@ -212,7 +223,11 @@ const enterNextRound = async () => {
     true
   );
 
-  const { swapInfo: enterSwapInfo, potionBuyInfo } = evaluateEnterPositionData(
+  const {
+    swapInfo: enterSwapInfo,
+    potionBuyInfo,
+    fallback: enterFallbackSwapInfo,
+  } = evaluateEnterPositionData(
     tokenAsset,
     oraclePrice,
     strikePrice,
@@ -221,7 +236,22 @@ const enterNextRound = async () => {
     expirationTimestamp
   );
 
-  await vaultEnterNextRound(enterSwapInfo, potionBuyInfo, exitSwapInfo);
+  console.log(
+    "NEXT ROUND",
+    enterSwapInfo,
+    potionBuyInfo,
+    exitSwapInfo,
+    enterFallbackSwapInfo,
+    exitFallbackSwapInfo
+  );
+
+  await vaultEnterNextRound(
+    enterSwapInfo,
+    potionBuyInfo,
+    exitSwapInfo,
+    enterFallbackSwapInfo,
+    exitFallbackSwapInfo
+  );
 };
 
 const callbackLoadEnterRoute = async () => {
@@ -238,6 +268,7 @@ const callbackLoadEnterRoute = async () => {
 };
 
 const callbackLoadExitRoute = async () => {
+  console.log("load exit position route");
   await loadExitPositionRoute(tokenAsset, swapSlippage);
 };
 
@@ -245,6 +276,9 @@ watch(vaultStatus, async () => {
   await Promise.all([getStrategyInfo(), fetchCanEnterNextRound()]);
 
   await Promise.all([getCurrentPayout(assetAddress.value), getTotalAssets()]);
+
+  getTotalSupply();
+  getShareBalance(roundsOutputVault as string);
 });
 
 watch(assetAddress, async (address) => {
@@ -378,6 +412,15 @@ watch(blockTimestamp, async () => {
           </BaseButton>
         </div>
       </div>
+      <BaseButton
+        palette="primary"
+        label="totalsupply"
+        @click="() => getTotalSupply()"
+      >
+        <template #pre-icon>
+          <i class="i-ph-test-tube-fill"></i>
+        </template>
+      </BaseButton>
     </div>
     <div class="flex flex-col mt-4 gap-2">
       <p>Underlying asset: {{ assetAddress }}</p>
@@ -546,12 +589,18 @@ watch(blockTimestamp, async () => {
             <BaseButton
               label="enter next round"
               palette="secondary"
-              :disabled="!isExitPositionOperationValid || isActionLoading"
+              :disabled="
+                !isEnterPositionOperationValid ||
+                !isExitPositionOperationValid ||
+                isActionLoading
+              "
               :loading="nextRoundLoading"
               @click="enterNextRound()"
             ></BaseButton>
             <p
-              v-if="!isExitPositionOperationValid"
+              v-if="
+                !isEnterPositionOperationValid || !isExitPositionOperationValid
+              "
               class="text-secondary-500 text-xs text-right mt-2"
             >
               Data to exit the current position and enter the new one are
@@ -584,7 +633,7 @@ watch(blockTimestamp, async () => {
               </BaseButton>
             </div>
             <!-- START POTION INFO -->
-            <div class="flex flex-col gap-8 w-1/2">
+            <div class="flex flex-col gap-8">
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
@@ -729,7 +778,7 @@ watch(blockTimestamp, async () => {
             </div>
             <!-- END POTION INFO -->
             <!-- START ENTER UNI ROUTE -->
-            <div>
+            <div class="mt-4">
               <!-- START ROUTE HEADER -->
               <div>
                 <h1 class="text-xl font-semibold">Uniswap route</h1>
@@ -737,6 +786,10 @@ watch(blockTimestamp, async () => {
               <!-- END ROUTE HEADER -->
               <TokenSwap
                 :route-data="enterPositionData?.uniswapRouterResult"
+                :router-loading="isActionLoading"
+              />
+              <TokenSwap
+                :route-data="fallbackEnterPositionData"
                 :router-loading="isActionLoading"
               />
             </div>
@@ -763,7 +816,11 @@ watch(blockTimestamp, async () => {
               ></BaseButton>
             </div>
             <TokenSwap
-              :route-data="exitPositionData"
+              :route-data="exitPositionData?.uniswapRouterResult"
+              :router-loading="isActionLoading"
+            />
+            <TokenSwap
+              :route-data="fallbackExitPositionData"
               :router-loading="isActionLoading"
             />
             <!-- END EXIT POSITION TAB -->
