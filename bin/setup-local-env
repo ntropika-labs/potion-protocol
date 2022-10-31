@@ -237,7 +237,7 @@ spin_up_environment() {
     yarn nx run subgraph-queries:codegen
     msg "${GREEN}- Potion Core subgraph queries generated ${NOFORMAT}"
     
-    yarn nx run subgraph-queries:codegen-hv
+    yarn nx run subgraph-queries-hv:codegen
     msg "${GREEN}- Hedging Vault subgraph queries generated ${NOFORMAT}"
   fi
 

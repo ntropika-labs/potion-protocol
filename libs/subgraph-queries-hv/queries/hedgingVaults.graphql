@@ -1,0 +1,79 @@
+query getHedgingVault($vault: ID!, $investor: String!) {
+  hedgingVault(id: $vault) {
+    id
+    action {
+      id
+      cycleDurationSecs
+      maxPremiumPercentage
+      maxSwapDurationSecs
+      nextCycleStartTimestamp
+      premiumSlippage
+      strikePercentage
+      swapSlippage
+    }
+    asset {
+      id
+      name
+      symbol
+      decimals
+    }
+    currentRound
+    lastAssetsInvested
+    lastShareRatio
+    shareToken {
+      id
+      name
+      symbol
+      decimals
+    }
+    totalAssets
+    rounds {
+      roundNumber
+      exchangeRate
+      depositRequests(where: { investor: $investor }) {
+        amount
+        amountRedeemed
+        shares
+        remainingShares
+      }
+      withdrawalRequests(where: { investor: $investor }) {
+        amount
+        amountRedeemed
+        assets
+        remainingAssets
+      }
+    }
+  }
+}
+
+query getHedgingVaults {
+  hedgingVaults {
+    id
+    action {
+      id
+      cycleDurationSecs
+      maxPremiumPercentage
+      maxSwapDurationSecs
+      nextCycleStartTimestamp
+      premiumSlippage
+      strikePercentage
+      swapSlippage
+    }
+    asset {
+      id
+      name
+      symbol
+      decimals
+    }
+    currentRound
+    lastAssetsInvested
+    lastShareRatio
+    shareToken {
+      id
+      name
+      symbol
+      decimals
+    }
+    totalAssets
+  }
+}

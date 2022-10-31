@@ -29849,6 +29849,7 @@ __metadata:
     potion-ui: "*"
     potion-unocss: "*"
     subgraph-queries: "*"
+    subgraph-queries-hv: "*"
   languageName: unknown
   linkType: soft
 
@@ -34127,6 +34128,12 @@ __metadata:
   checksum: 4d7084015207f2a606dfc10c29cb5ba569f2fe8005551df7396110dd694d6ff650f2debafa95bd5d147dfb4ca50f57868e2a7f91bf5d11ef734fe7ccbd7abf59
   languageName: node
   linkType: hard
+
+"subgraph-queries-hv@*, subgraph-queries-hv@workspace:libs/subgraph-queries-hv":
+  version: 0.0.0-use.local
+  resolution: "subgraph-queries-hv@workspace:libs/subgraph-queries-hv"
+  languageName: unknown
+  linkType: soft
 
 "subgraph-queries@*, subgraph-queries@workspace:libs/subgraph-queries":
   version: 0.0.0-use.local

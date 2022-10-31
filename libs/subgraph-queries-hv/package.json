@@ -1,5 +1,5 @@
 {
-  "name": "subgraph-queries",
+  "name": "subgraph-queries-hv",
   "private": true,
   "version": "0.0.0",
   "main": "./generated/schema.ts",
