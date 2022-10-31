@@ -24,7 +24,7 @@ const fragmentToData = (fragment: HedgingVaultFragment): VaultData => ({
     decimals: parseInt(fragment.shareToken.decimals),
   },
   size: fragment.totalAssets,
-  hedgingRate: formatUnits(fragment?.action?.maxPremiumPercentage ?? "0", 6),
+  hedgingRate: formatUnits(fragment?.action?.hedgingRate ?? "0", 6),
   strikePercentage: formatUnits(fragment.action?.strikePercentage ?? "0", 6),
 });
 

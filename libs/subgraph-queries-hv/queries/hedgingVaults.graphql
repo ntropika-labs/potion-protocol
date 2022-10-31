@@ -10,6 +10,7 @@ query getHedgingVault($vault: ID!, $investor: String!) {
       premiumSlippage
       strikePercentage
       swapSlippage
+      hedgingRate
     }
     asset {
       id
@@ -58,6 +59,7 @@ query getHedgingVaults {
       premiumSlippage
       strikePercentage
       swapSlippage
+      hedgingRate
     }
     asset {
       id
