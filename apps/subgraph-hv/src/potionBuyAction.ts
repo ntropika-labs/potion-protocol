@@ -2,6 +2,7 @@ import { Address, log } from "@graphprotocol/graph-ts";
 import {
   PotionBuyAction as ActionContract,
   CycleDurationChanged,
+  HedgingRateChanged,
   MaxPremiumPercentageChanged,
   MaxSwapDurationChanged,
   PremiumSlippageChanged,
@@ -14,6 +15,7 @@ function createAction(id: Address): PotionBuyAction {
   const contract = ActionContract.bind(id);
   const action = new PotionBuyAction(id);
   action.cycleDurationSecs = contract.cycleDurationSecs();
+  action.hedgingRate = contract.hedgingRate();
   action.maxPremiumPercentage = contract.maxPremiumPercentage();
   action.maxSwapDurationSecs = contract.maxSwapDurationSecs();
   action.nextCycleStartTimestamp = contract.nextCycleStartTimestamp();
@@ -63,6 +65,15 @@ function handleCycleDurationChanged(event: CycleDurationChanged): void {
     event.params.cycleDurationSecs.toString(),
   ]);
 }
+function handleHedgingRateChanged(event: HedgingRateChanged): void {
+  const action = getOrCreateAction(event.address);
+  action.hedgingRate = event.params.hedgingRate;
+  action.save();
+  log.info("changed hedgingRate of action {} to {}", [
+    event.address.toHexString(),
+    event.params.hedgingRate.toString(),
+  ]);
+}
 
 function handleMaxSwapDurationChanged(event: MaxSwapDurationChanged): void {
   const action = getOrCreateAction(event.address);
@@ -106,6 +117,7 @@ function handleSwapSlippageChanged(event: SwapSlippageChanged): void {
 
 export {
   handleCycleDurationChanged,
+  handleHedgingRateChanged,
   handleMaxPremiumPercentageChanged,
   handleMaxSwapDurationChanged,
   handlePremiumSlippageChanged,

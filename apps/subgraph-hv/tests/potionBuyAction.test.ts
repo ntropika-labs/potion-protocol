@@ -1,5 +1,6 @@
 import {
   createCycleDurationChanged,
+  createHedgingRateChanged,
   createMaxPremiumPercentageChanged,
   createMaxSwapDurationChanged,
   createPremiumSlippageChanged,
@@ -15,6 +16,7 @@ import {
   mockMaxSwapDurationSecs,
   mockStrikePercentage,
   mockCycleDurationSecs,
+  mockHedgingRate,
 } from "./contractCalls";
 import {
   describe,
@@ -27,6 +29,7 @@ import {
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
   handleCycleDurationChanged,
+  handleHedgingRateChanged,
   handleMaxPremiumPercentageChanged,
   handleMaxSwapDurationChanged,
   handlePremiumSlippageChanged,
@@ -40,6 +43,7 @@ const contractAddress = Address.fromString(
 
 function mockPotionBuyAction(): void {
   mockCycleDurationSecs(contractAddress, BigInt.fromString("45"));
+  mockHedgingRate(contractAddress, BigInt.fromString("75"));
   mockMaxPremiumPercentage(contractAddress, BigInt.fromString("15"));
   mockMaxSwapDurationSecs(contractAddress, BigInt.fromString("30"));
   mockNextCycleStartTimestamp(contractAddress, BigInt.fromString("5"));
@@ -65,6 +69,34 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "10" },
+        { field: "hedgingRate", value: "75" },
+        { field: "maxPremiumPercentage", value: "15" },
+        { field: "maxSwapDurationSecs", value: "30" },
+        { field: "nextCycleStartTimestamp", value: "5" },
+        { field: "premiumSlippage", value: "12" },
+        { field: "strikePercentage", value: "50" },
+        { field: "swapSlippage", value: "11" },
+      ]);
+    });
+  });
+
+  describe("HedgingRateChanged", () => {
+    beforeAll(() => {
+      mockPotionBuyAction();
+      const mockedEvent = createHedgingRateChanged(BigInt.fromString("50"));
+      handleHedgingRateChanged(mockedEvent);
+    });
+
+    afterAll(clearStore);
+
+    test("can handle the event", () => {
+      assert.entityCount("PotionBuyAction", 1);
+    });
+
+    test("PotionBuyAction has been populated correctly", () => {
+      assertEntity("PotionBuyAction", contractAddress.toHexString(), [
+        { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "50" },
         { field: "maxPremiumPercentage", value: "15" },
         { field: "maxSwapDurationSecs", value: "30" },
         { field: "nextCycleStartTimestamp", value: "5" },
@@ -93,6 +125,7 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "75" },
         { field: "maxPremiumPercentage", value: "10" },
         { field: "maxSwapDurationSecs", value: "30" },
         { field: "nextCycleStartTimestamp", value: "5" },
@@ -119,6 +152,7 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "75" },
         { field: "maxPremiumPercentage", value: "15" },
         { field: "maxSwapDurationSecs", value: "10" },
         { field: "nextCycleStartTimestamp", value: "5" },
@@ -145,6 +179,7 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "75" },
         { field: "maxPremiumPercentage", value: "15" },
         { field: "maxSwapDurationSecs", value: "30" },
         { field: "nextCycleStartTimestamp", value: "5" },
@@ -173,6 +208,7 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "75" },
         { field: "maxPremiumPercentage", value: "15" },
         { field: "maxSwapDurationSecs", value: "30" },
         { field: "nextCycleStartTimestamp", value: "5" },
@@ -199,6 +235,7 @@ describe("PotionBuyAction", () => {
     test("PotionBuyAction has been populated correctly", () => {
       assertEntity("PotionBuyAction", contractAddress.toHexString(), [
         { field: "cycleDurationSecs", value: "45" },
+        { field: "hedgingRate", value: "75" },
         { field: "maxPremiumPercentage", value: "15" },
         { field: "maxSwapDurationSecs", value: "30" },
         { field: "nextCycleStartTimestamp", value: "5" },

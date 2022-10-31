@@ -129,6 +129,14 @@ function mockCurrentRound(
   ).returns([ethereum.Value.fromUnsignedBigInt(currentRound)]);
 }
 
+function mockHedgingRate(contractAddress: Address, hedgingRate: BigInt): void {
+  createMockedFunction(
+    contractAddress,
+    "hedgingRate",
+    "hedgingRate():(uint256)"
+  ).returns([ethereum.Value.fromUnsignedBigInt(hedgingRate)]);
+}
+
 export {
   mockAsset,
   mockTotalAssets,
@@ -144,4 +152,5 @@ export {
   mockCycleDurationSecs,
   mockVault,
   mockCurrentRound,
+  mockHedgingRate,
 };

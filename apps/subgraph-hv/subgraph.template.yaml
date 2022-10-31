@@ -54,6 +54,8 @@ dataSources:
           handler: handleMaxPremiumPercentageChanged
         - event: CycleDurationChanged(uint256)
           handler: handleCycleDurationChanged
+        - event: HedgingRateChanged(uint256)
+          handler: handleHedgingRateChanged
         - event: MaxSwapDurationChanged(uint256)
           handler: handleMaxSwapDurationChanged
         - event: PremiumSlippageChanged(uint256)

@@ -79,6 +79,7 @@ describe("InvestmentVault tests", () => {
         BigInt.fromString("0"),
         BigInt.fromString("0"),
         BigInt.fromString("0"),
+        BigInt.fromString("0"),
         BigInt.fromString("0")
       );
       const mockedEvent = createActionsAdded([actionAddress]);

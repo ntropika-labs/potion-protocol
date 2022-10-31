@@ -37,13 +37,14 @@ type HedgingVault @entity {
 type PotionBuyAction @entity {
   id: Bytes!
   vault: HedgingVault
-  nextCycleStartTimestamp: BigInt!
   cycleDurationSecs: BigInt!
+  hedgingRate: BigInt!
   maxPremiumPercentage: BigInt!
-  premiumSlippage: BigInt!
-  swapSlippage: BigInt!
   maxSwapDurationSecs: BigInt!
+  nextCycleStartTimestamp: BigInt!
+  premiumSlippage: BigInt!
   strikePercentage: BigInt!
+  swapSlippage: BigInt!
 }
 
 type Round @entity {

@@ -67,7 +67,8 @@ function mockPotionBuyAction(
   maxPremiumPercentage: BigInt,
   maxSwapDurationSecs: BigInt,
   strikePercentage: BigInt,
-  cycleDurationSecs: BigInt
+  cycleDurationSecs: BigInt,
+  hedgingRate: BigInt
 ): PotionBuyAction {
   const action = new PotionBuyAction(id);
   action.nextCycleStartTimestamp = nextCycleStartTimestamp;
@@ -77,6 +78,7 @@ function mockPotionBuyAction(
   action.maxSwapDurationSecs = maxSwapDurationSecs;
   action.strikePercentage = strikePercentage;
   action.cycleDurationSecs = cycleDurationSecs;
+  action.hedgingRate = hedgingRate;
   action.save();
   return action;
 }
