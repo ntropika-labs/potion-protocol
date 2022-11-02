@@ -12,17 +12,7 @@
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
-        <div>
-          <p class="capitalize">{{ t("status") }}</p>
-          <BaseTag :is-loading="strategyLoading">
-            <div
-              class="h-2 w-2 rounded-full mr-1"
-              :class="statusInfo.class"
-            ></div>
-            <span>{{ statusInfo.label }}</span>
-          </BaseTag>
-        </div>
-        <div>
+        <!-- <div>
           <p class="capitalize">{{ t("admin") }}</p>
           <a :href="getEtherscanUrl(admin)">
             <BaseTag :is-loading="strategyLoading">
@@ -39,7 +29,7 @@
               <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
           </a>
-        </div>
+        </div> -->
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
         <LabelValue
@@ -52,7 +42,7 @@
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          :value="totalAssets?.toString()"
+          :value="vault.totalAssets"
           :symbol="assetSymbol"
           :loading="strategyLoading"
         />
@@ -70,51 +60,51 @@
         <AssetTag
           :title="t('asset')"
           :token="{
-            name: assetName,
-            symbol: assetSymbol,
-            address: assetAddress,
+            name: vault.asset.name,
+            symbol: vault.asset.symbol,
+            address: vault.asset.address,
           }"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
-          :value="principalPercentages[0].toString()"
+          :value="vault.hedgingRate"
           symbol="%"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('strike')"
-          :value="strikePercentage.toString()"
+          :value="vault.strikePercentage"
           symbol="%"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('cycle_duration')"
-          :value="cycleDurationDays.toString()"
+          :value="vault.cycleDurationSecs"
           symbol="days"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium')"
-          :value="maxPremiumPercentage.toString()"
+          :value="vault.maxPremiumPercentage"
           symbol="%"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium_slippage')"
-          :value="premiumSlippage.toString()"
+          :value="vault.premiumSlippage"
           symbol="%"
           :loading="strategyLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_swap_slippage')"
-          :value="swapSlippage.toString()"
+          :value="vault.swapSlippage"
           symbol="%"
           :loading="strategyLoading"
         />
@@ -126,7 +116,7 @@
               :horizontal="true"
               :title="t('time_left_until_next_cycle')"
               :time-from="blockTimestamp.toString()"
-              :time-to="nextCycleTimestamp.toString()"
+              :time-to="vault.nextCycleTimestamp"
               :loading="strategyLoading"
             />
           </div>
@@ -155,7 +145,7 @@
                 :max="userBalance"
                 :min="0.1"
                 :step="0.01"
-                :unit="vaultSymbol"
+                :unit="vault.shareToken.symbol"
               />
               <BaseButton
                 palette="secondary"
@@ -183,7 +173,7 @@ import { useRoute } from "vue-router";
 
 import {
   BaseCard,
-  BaseTag,
+  // BaseTag,
   LabelValue,
   AssetTag,
   InputNumber,
@@ -191,11 +181,8 @@ import {
   TimeTag,
   getEtherscanUrl,
 } from "potion-ui";
-import { LifecycleStates } from "hedging-vault-sdk";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
-
-import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
 
 import { useOnboard } from "@onboard-composable";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
@@ -203,44 +190,32 @@ import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useNotifications } from "@/composables/useNotifications";
-import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useVaultDeposit } from "@/composables/useVaultDeposit";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
+
+import { useHedgingVault } from "@/composables/useHedgingVault";
+import { useUserData } from "@/composables/useUserData";
 
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const potionBuyAction = getPotionBuyActionFromVault(
-  vaultId.value.toLowerCase()
-);
 
 const { blockTimestamp, getBlock } = useEthersProvider();
 
-const {
-  strikePercentage,
-  maxPremiumPercentage,
-  cycleDurationDays,
-  nextCycleTimestamp,
-  premiumSlippage,
-  swapSlippage,
-  strategyLoading,
-} = usePotionBuyActionContract(potionBuyAction, true);
+const { walletAddress } = useUserData();
+const { vault, loading: strategyLoading } = useHedgingVault(
+  vaultId,
+  walletAddress
+);
 
-const { operator, admin, principalPercentages, vaultStatus } =
-  useInvestmentVaultContract(vaultId, true, true);
+const assetAddress = computed(() => vault.value.asset.address);
+const assetSymbol = computed(() => vault.value.asset.symbol);
 
-const {
-  assetAddress,
-  assetName,
-  assetSymbol,
-  assetToShare,
-  totalAssets,
-  userBalance,
-  vaultSymbol,
-} = useErc4626Contract(vaultId, true, true);
+const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
+const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
 const {
   userBalance: assetUserBalance,
@@ -288,27 +263,6 @@ const isLoading = computed(
     depositLoading.value ||
     approveLoading.value
 );
-
-const statusInfo = computed(() => {
-  switch (vaultStatus.value) {
-    case LifecycleStates.Unlocked:
-      return {
-        label: t("unlocked"),
-        class: "bg-accent-500",
-      };
-    case LifecycleStates.Committed:
-      return {
-        label: t("committed"),
-        class: "bg-orange-500",
-      };
-    case LifecycleStates.Locked:
-    default:
-      return {
-        label: t("locked"),
-        class: "bg-error",
-      };
-  }
-});
 
 watch(assetAddress, async () => {
   if (connectedWallet.value) {
