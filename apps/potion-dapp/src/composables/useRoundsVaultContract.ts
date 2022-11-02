@@ -56,8 +56,10 @@ export function useRoundsVaultContract(
     userAllowance: assetUserAllowance,
     // fetchUserAllowanceLoading: assetFetchUserAllowanceLoading,
     fetchUserAllowance: assetFetchUserAllowance,
-    // approveLoading: assetApproveLoading,
-    approveSpending: assetApproveSpending,
+    approveLoading: assetApproveLoading,
+    approveTx: assetApproveTx,
+    approveReceipt: assetApproveReceipt,
+    approveSpending,
     fetchErc20Info: assetFetchErc20Info,
   } = useErc20Contract(asset, false);
 
@@ -194,6 +196,10 @@ export function useRoundsVaultContract(
    * For the Output Vault, we will need to approve the the RoundsOutputVault contract to spend the InvestmentVault asset (shares)
    * ex: investmentVaultContract.approve(RoundsOutputVault.address, amount)
    */
+
+  const assetApproveSpending = async () => {
+    await approveSpending(unref(address));
+  };
 
   const depositTx = ref<ContractTransaction | null>(null);
   const depositReceipt = ref<ContractReceipt | null>(null);
@@ -432,6 +438,9 @@ export function useRoundsVaultContract(
     assetSymbol,
     assetDecimals,
     assetUserAllowance,
+    assetApproveLoading,
+    assetApproveTx,
+    assetApproveReceipt,
     assetApproveSpending,
     assetFetchErc20Info,
     getExchangeRate,
