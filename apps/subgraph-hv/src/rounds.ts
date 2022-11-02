@@ -118,7 +118,7 @@ function updateShares(
     for (let i = 0; i < round.depositRequests.length; i += 1) {
       updateDepositRequestShares(round.depositRequests[i], exchangeRate);
     }
-    round.exchangeRate = exchangeRate;
+    round.assetToShareRate = exchangeRate;
     round.save();
   }
 }
@@ -138,7 +138,7 @@ function updateAssets(
     for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
       updateWithdrawalRequestAssets(round.withdrawalRequests[i], exchangeRate);
     }
-    round.exchangeRate = exchangeRate;
+    round.shareToAssetRate = exchangeRate;
     round.save();
   }
 }

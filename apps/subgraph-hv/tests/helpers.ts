@@ -96,7 +96,8 @@ function mockRound(
   round.roundNumber = roundNumber;
   round.depositRequests = depositRequests;
   round.withdrawalRequests = withdrawalRequests;
-  round.exchangeRate = exchangeRate;
+  round.assetToShareRate = exchangeRate;
+  round.shareToAssetRate = exchangeRate;
   round.save();
   return round;
 }

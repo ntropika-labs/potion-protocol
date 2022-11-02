@@ -43,6 +43,26 @@ function setAction(id: Address, action: Address): void {
   vault.save();
 }
 
+function setLastShareToAssetRate(id: Address, exchangeRate: BigInt): void {
+  const vault = HedgingVault.load(id);
+  if (vault == null) {
+    log.error("vault {} doesn't exists", [id.toHexString()]);
+  } else {
+    vault.lastShareToAssetRate = exchangeRate;
+    vault.save();
+  }
+}
+
+function setLastAssetToShareRate(id: Address, exchangeRate: BigInt): void {
+  const vault = HedgingVault.load(id);
+  if (vault == null) {
+    log.error("vault {} doesn't exists", [id.toHexString()]);
+  } else {
+    vault.lastAssetToShareRate = exchangeRate;
+    vault.save();
+  }
+}
+
 function getCurrentRound(vault: HedgingVault): BigInt {
   if (vault.currentRound) {
     return vault.currentRound as BigInt;
@@ -164,6 +184,8 @@ function handleWithdraw(event: Withdraw): void {
 
 export {
   setCurrentRound,
+  setLastAssetToShareRate,
+  setLastShareToAssetRate,
   handleActionsAdded,
   handleVaultPositionEntered,
   handleVaultPositionExited,

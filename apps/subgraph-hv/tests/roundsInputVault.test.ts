@@ -164,6 +164,7 @@ describe("roundsInputVault", () => {
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
         { field: "currentRound", value: "2" },
+        { field: "lastAssetToShareRate", value: "10" },
       ]);
     });
 
@@ -171,7 +172,7 @@ describe("roundsInputVault", () => {
       assertEntity(
         "Round",
         createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
-        [{ field: "exchangeRate", value: "10" }]
+        [{ field: "assetToShareRate", value: "10" }]
       );
     });
 
