@@ -1,11 +1,9 @@
 import type { Ref } from "vue";
 import type { BigNumberish } from "ethers";
-import { Token as UniswapToken } from "@uniswap/sdk-core";
 
 import type { Token } from "dapp-types";
 
 import { getContractsFromVault } from "./hedgingVaultContracts";
-import { getChainId } from "@/helpers/uniswap";
 import { UniswapActionType } from "@/types";
 
 /**
@@ -14,14 +12,13 @@ import { UniswapActionType } from "@/types";
  * @param vaultAddress Address of the vault we are acting on
  * @returns The address to use as an intermediate recipient in multihop swaps
  */
-const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
-  return new UniswapToken(
-    getChainId(),
-    token.address,
-    token.decimals || 0,
-    token.symbol,
-    token.name
-  );
+const mockCollateralToken = (token: Token): Token => {
+  return {
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: token.address,
+    decimals: token.decimals,
+  };
 };
 
 /**
@@ -30,12 +27,12 @@ const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
  * @param vaultAddress Address of the vault we are acting on
  * @returns The address to use as an intermediate recipient in multihop swaps
  */
-const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
+const mockUnderlyingToken = (token: Token): Token => {
   return {
-    name: uniToken.name || "",
-    symbol: uniToken.symbol || "",
-    address: uniToken.address,
-    decimals: uniToken.decimals,
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: token.address,
+    decimals: token.decimals,
   };
 };
 
@@ -67,8 +64,8 @@ const getRecipientAddress = (vaultAddress: string): string => {
 };
 
 export {
-  convertCollateralToUniswapToken,
-  convertQuoteUniswapTokenToToken,
   getExpectedPriceRate,
   getRecipientAddress,
+  mockCollateralToken,
+  mockUnderlyingToken,
 };

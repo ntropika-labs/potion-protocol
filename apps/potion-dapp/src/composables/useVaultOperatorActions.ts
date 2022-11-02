@@ -9,9 +9,10 @@ import {
   convertUniswapTokenToToken,
 } from "@/helpers/uniswap";
 import {
-  convertQuoteUniswapTokenToToken,
   getExpectedPriceRate,
   getRecipientAddress,
+  mockCollateralToken,
+  mockUnderlyingToken,
 } from "@vault-operator-utils";
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
@@ -132,11 +133,12 @@ export function useVaultOperatorActions(
     strikePercent: Ref<number>,
     potionRouterParameters: Ref<DepthRouterParameters>,
     oraclePrice: Ref<number>,
-    collateralToken: Ref<Token>,
+    underlyingToken: Ref<Token>,
     premiumSlippage: Ref<number>,
     swapSlippage: Ref<number>,
     maxSplits = 1
   ) => {
+    console.log("LOADING ENTER POSITION DATA");
     try {
       swapRouterLoading.value = true;
       const totalPayout = await getTotalPayout();
@@ -165,7 +167,7 @@ export function useVaultOperatorActions(
       if (vaultTotalSupply.value !== 0) {
         const investmentVaultTotalShares = vaultTotalSupply.value;
         console.log(
-          "INVESTMENT VAULT TOTAL SHARES",
+          "- INVESTMENT VAULT TOTAL SHARES",
           investmentVaultTotalShares
         );
         sharePrice =
@@ -182,6 +184,10 @@ export function useVaultOperatorActions(
         totalPrincipalBeforeWithdrawalInUnderlying -
         totalAssetsToWithdrawInUnderlying;
 
+      const principalHedgedAmountInUnderlying =
+        (totalPrincipalInUnderlying * hedgingRate.value) / 100;
+
+      console.log("- PREMIUM SWAP ROUTER PARAMS");
       console.table([
         {
           totalPayout,
@@ -189,6 +195,7 @@ export function useVaultOperatorActions(
           actionUnderlyingBalance,
           inputVaultUnderlyingBalance,
           totalPrincipalBeforeWithdrawalInUnderlying,
+          principalHedgedAmountInUnderlying,
           sharePrice,
           totalAssetsToWithdrawInUnderlying,
           totalPrincipalInUnderlying,
@@ -199,33 +206,39 @@ export function useVaultOperatorActions(
         },
       ]);
 
-      const principalHedgedAmountInUnderlying =
-        (totalPrincipalInUnderlying * hedgingRate.value) / 100;
+      const swapRouterResult = await worker.runPremiumSwapRouter({
+        vaultParameters: {
+          principalHedgedAmount: principalHedgedAmountInUnderlying,
+          hedgingRate: hedgingRate.value,
+          strikePercent: strikePercent.value,
+          oraclePrice: oraclePrice.value,
+        },
+        potionRouterParameters: {
+          pools: rawPotionrouterParams.pools,
+          strikePriceUSDC: rawPotionrouterParams.strikePriceUSDC,
+          gas: rawPotionrouterParams.gas,
+          ethPrice: rawPotionrouterParams.ethPrice,
+        },
+        uniswapParameters: {
+          chainId: getChainId(),
+          underlyingToken: underlyingToken.value,
+          collateralToken: USDCToken,
+          tradeType: TradeType.EXACT_OUTPUT,
+          maxSplits: maxSplits,
+          premiumSlippage: premiumSlippage.value,
+          recipientAddress: recipientAddress,
+          slippageToleranceInteger: swapSlippage.value,
+          actionType: UniswapActionType.ENTER_POSITION,
+        },
+      });
 
-      const swapRouterResult = await worker.runPremiumSwapRouter(
-        hedgingRate.value,
-        strikePercent.value,
-        oraclePrice.value,
-        rawPotionrouterParams.pools,
-        principalHedgedAmountInUnderlying,
-        rawPotionrouterParams.strikePriceUSDC,
-        rawPotionrouterParams.gas,
-        rawPotionrouterParams.ethPrice,
-        getChainId(),
-        collateralToken.value,
-        USDCToken,
-        TradeType.EXACT_OUTPUT,
-        maxSplits,
-        premiumSlippage.value,
-        recipientAddress,
-        swapSlippage.value
-      );
+      console.log(swapRouterResult);
 
       enterPositionData.value = swapRouterResult;
 
       await loadEnterPositionFallbackRoute(
         principalHedgedAmountInUnderlying,
-        collateralToken,
+        underlyingToken,
         swapSlippage
       );
     } finally {
@@ -234,7 +247,7 @@ export function useVaultOperatorActions(
   };
 
   const loadExitPositionRoute = async (
-    collateralToken: Ref<Token>,
+    underlyingToken: Ref<Token>,
     swapSlippage: Ref<number>
   ) => {
     /**
@@ -244,12 +257,13 @@ export function useVaultOperatorActions(
     const totalPayout = await getTotalPayout();
     if (totalPayout > 0) {
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+      const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
       const recipientAddress = getRecipientAddress(vaultAddress);
       totalAmountToSwap.value = totalPayout;
 
       const uniswapRouterResult = await getRoute(
         USDCToken,
-        collateralToken.value,
+        underlyingTokenToSwap,
         TradeType.EXACT_INPUT,
         totalAmountToSwap.value,
         1, // TODO remove: assert here theres only 1 route returned (no split routes)
@@ -262,7 +276,7 @@ export function useVaultOperatorActions(
         ? { uniswapRouterResult }
         : null;
 
-      await loadExitPositionFallbackRoute(collateralToken, swapSlippage);
+      await loadExitPositionFallbackRoute(underlyingToken, swapSlippage);
     } else {
       totalAmountToSwap.value = 0;
     }
@@ -280,7 +294,8 @@ export function useVaultOperatorActions(
 
     let swapInfo: UniSwapInfo;
     let fallbackSwapInfo: UniSwapInfo;
-    const USDCToken = convertQuoteUniswapTokenToToken(USDCUniToken);
+    const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+    const collateralTokenToSwap = mockCollateralToken(USDCToken);
 
     if (totalAmountToSwap.value > 0) {
       const swapRoute = exitPositionData.value?.uniswapRouterResult.routes[0];
@@ -299,14 +314,14 @@ export function useVaultOperatorActions(
           UniswapActionType.ENTER_POSITION,
           oraclePrice,
           underlyingToken.value,
-          USDCToken
+          collateralTokenToSwap
         );
         fallbackSwapInfo = evaluateUniswapRoute(
           fallbackExitPositionData.value,
           UniswapActionType.ENTER_POSITION,
           oraclePrice,
           underlyingToken.value,
-          USDCToken
+          collateralTokenToSwap
         );
       } else {
         throw new Error("swapRoute isn't a protocol v3 route");
@@ -380,13 +395,15 @@ export function useVaultOperatorActions(
         executionPrice &&
         routePremium
       ) {
-        const USDCToken = convertQuoteUniswapTokenToToken(USDCUniToken);
+        const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+        const collateralTokenToSwap = mockCollateralToken(USDCToken);
+
         const swapInfo: UniSwapInfo = evaluateUniswapRoute(
           enterPositionData.value?.uniswapRouterResult,
           UniswapActionType.ENTER_POSITION,
           oraclePrice,
           underlyingToken.value,
-          USDCToken
+          collateralTokenToSwap
         );
 
         const potionBuyInfo = {
@@ -404,7 +421,7 @@ export function useVaultOperatorActions(
           UniswapActionType.ENTER_POSITION,
           oraclePrice,
           underlyingToken.value,
-          USDCToken
+          collateralTokenToSwap
         );
 
         return { swapInfo, potionBuyInfo, fallback: fallbackSwapInfo };
@@ -420,40 +437,46 @@ export function useVaultOperatorActions(
 
   const loadEnterPositionFallbackRoute = async (
     principalHedgedAmount: number,
-    collateralToken: Ref<Token>,
+    underlyingToken: Ref<Token>,
     swapSlippage: Ref<number>
   ) => {
+    console.log("RUNNING ENTER POSITION FALLBACK ROUTE");
     const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+    const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
     const recipientAddress = getRecipientAddress(vaultAddress);
 
+    // TODO: fix
     const uniswapRouterResult = await getRoute(
-      collateralToken.value,
+      underlyingTokenToSwap,
       USDCToken,
-      TradeType.EXACT_OUTPUT,
+      TradeType.EXACT_INPUT,
       principalHedgedAmount,
       1, // TODO remove: assert here theres only 1 route returned (no split routes)
       recipientAddress,
       swapSlippage.value,
-      UniswapActionType.ENTER_POSITION
+      UniswapActionType.EXIT_POSITION
     );
 
     fallbackEnterPositionData.value = uniswapRouterResult || null;
   };
 
   const loadExitPositionFallbackRoute = async (
-    collateralToken: Ref<Token>,
+    underlyingToken: Ref<Token>,
     swapSlippage: Ref<number>
   ) => {
     const totalFallbackBalance = await fetchActionBalance(
       swapToUSDCAction as string
     );
 
+    console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
+
     const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+    const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
     const recipientAddress = getRecipientAddress(vaultAddress);
 
     const uniswapRouterResult = await getRoute(
       USDCToken,
-      collateralToken.value,
+      underlyingTokenToSwap,
       TradeType.EXACT_INPUT,
       totalFallbackBalance,
       1, // TODO remove: assert here theres only 1 route returned (no split routes)

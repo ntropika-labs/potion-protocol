@@ -1,32 +1,43 @@
 import type { Ref } from "vue";
-import { Token as UniswapToken } from "@uniswap/sdk-core";
 
 import type { Token } from "dapp-types";
 
-import { contractsAddresses } from "@/helpers/contracts";
-import { getChainId, getWETHAddress } from "@/helpers/uniswap";
+import { contractsAddresses } from "./contracts";
+import { getWETHAddress } from "@/helpers/uniswap";
 import { mockWeb3Onboard } from "@/helpers/onboard";
 import { UniswapActionType } from "@/types";
 import type { BigNumberish } from "ethers";
 
 console.log("Running a mocked version of 'vaultOperatorUtils'");
 
-const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
-  return new UniswapToken(
-    getChainId(),
-    getWETHAddress(),
-    token.decimals || 0,
-    token.symbol,
-    token.name
-  );
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const mockCollateralToken = (token: Token): Token => {
+  return {
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: contractsAddresses.USDC.address.toLowerCase(),
+    decimals: token.decimals,
+  };
 };
 
-const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const mockUnderlyingToken = (token: Token): Token => {
+  console.log(getWETHAddress());
   return {
-    name: uniToken.name || "",
-    symbol: uniToken.symbol || "",
-    address: contractsAddresses.USDC.address,
-    decimals: uniToken.decimals,
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: getWETHAddress(),
+    decimals: token.decimals,
   };
 };
 
@@ -48,8 +59,8 @@ const getRecipientAddress = (_: string): string => {
 };
 
 export {
-  convertCollateralToUniswapToken,
-  convertQuoteUniswapTokenToToken,
   getExpectedPriceRate,
   getRecipientAddress,
+  mockCollateralToken,
+  mockUnderlyingToken,
 };
