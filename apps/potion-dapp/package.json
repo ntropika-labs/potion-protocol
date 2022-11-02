@@ -11,6 +11,7 @@
     "build-testnet": "NODE_ENV=production MODE=testnet vite build --mode=testnet",
     "build-test": "NODE_ENV=production MODE=test vite build --mode=test",
     "build-tsc": "NODE_ENV=production vue-tsc --noEmit",
+    "prepare-multivault": "node prepareMultivault.mjs",
     "preview": "yarn run -T vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-ui": "vitest --environment jsdom --ui",

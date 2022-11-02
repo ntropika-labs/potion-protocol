@@ -219,6 +219,9 @@ spin_up_environment() {
 
   # run prepare-local and codegen only on cold starts
   if [[ $is_environment_running -eq 0 || $init_environment -eq 1 ]]; then
+    yarn nx run potion-dapp:prepare-multivault
+    msg "${GREEN}- Potion Dapp multivault.json is ready ${NOFORMAT}"
+
     # prepare potion core subgraph
     yarn nx run potion-subgraph:prepare-hedging
     msg "${GREEN}- Potion Core subgraph.yaml is ready ${NOFORMAT}"
