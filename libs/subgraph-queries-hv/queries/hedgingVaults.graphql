@@ -1,36 +1,47 @@
-query getHedgingVault($vault: ID!, $investor: String!) {
-  hedgingVault(id: $vault) {
-    id
-    action {
+fragment VaultInfo on HedgingVault {
+  id
+  currentRound
+  lastAssetToShareRate
+  lastAssetsInvested
+  lastShareToAssetRate
+  totalAssets
+}
+
+fragment ActionInfo on PotionBuyAction {
       id
       cycleDurationSecs
+      hedgingRate
       maxPremiumPercentage
       maxSwapDurationSecs
       nextCycleStartTimestamp
       premiumSlippage
       strikePercentage
       swapSlippage
-      hedgingRate
+}
+
+fragment TokenInfo on Token {
+      id
+      name
+      symbol
+      decimals
+}
+
+query getHedgingVault($vault: ID!, $investor: String!) {
+  hedgingVault(id: $vault) {
+    ...VaultInfo
+    action {
+      ...ActionInfo
     }
     asset {
-      id
-      name
-      symbol
-      decimals
+      ...TokenInfo
     }
-    currentRound
-    lastAssetsInvested
-    lastShareRatio
     shareToken {
-      id
-      name
-      symbol
-      decimals
+      ...TokenInfo
     }
-    totalAssets
-    rounds {
+    rounds (orderBy: roundNumber) {
       roundNumber
-      exchangeRate
+      assetToShareRate
+      shareToAssetRate
       depositRequests(where: { investor: $investor }) {
         amount
         amountRedeemed
@@ -49,33 +60,15 @@ query getHedgingVault($vault: ID!, $investor: String!) {
 
 query getHedgingVaults {
   hedgingVaults {
-    id
+    ...VaultInfo
     action {
-      id
-      cycleDurationSecs
-      maxPremiumPercentage
-      maxSwapDurationSecs
-      nextCycleStartTimestamp
-      premiumSlippage
-      strikePercentage
-      swapSlippage
-      hedgingRate
+      ...ActionInfo
     }
     asset {
-      id
-      name
-      symbol
-      decimals
+      ...TokenInfo
     }
-    currentRound
-    lastAssetsInvested
-    lastShareRatio
     shareToken {
-      id
-      name
-      symbol
-      decimals
+      ...TokenInfo
     }
-    totalAssets
   }
 }
