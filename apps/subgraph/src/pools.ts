@@ -179,10 +179,15 @@ function updateConfigPoolTemplate(
         pool.lp
       );
     }
-    // increment template's fields to represent the new pool joining.
+    // increase template's fields to represent the new pool joining.
     template.numPools = template.numPools.plus(ONE_BIGINT);
-    template.size = template.size.plus(pool.size);
-    template.save();
+    increaseTemplate(
+      template,
+      pool.size,
+      pool.locked,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
+    );
     // Set the pool to use the new / loaded template
     pool.template = template.id;
 
@@ -197,8 +202,13 @@ function updateConfigPoolTemplate(
         ]
       );
       pastTemplate.numPools = pastTemplate.numPools.minus(ONE_BIGINT);
-      pastTemplate.size = pastTemplate.size.minus(pool.size);
-      pastTemplate.save();
+      decreaseTemplate(
+        pastTemplate,
+        pool.size,
+        pool.locked,
+        ZERO_BIGDECIMAL,
+        ZERO_BIGDECIMAL
+      );
       log.info("Updated the pastTemplate {}, size is {} and numPools is {}", [
         pastTemplate.id,
         pastTemplate.size.toString(),
@@ -218,6 +228,49 @@ function updateConfigPoolTemplate(
     updateHistoricalPoolData(pool, timestamp);
     updateHistoricalTemplateData(template, timestamp);
   }
+}
+
+/**
+ * Functions used to increase and decrease size, utilization, liquidityAtTrades and pnl of a Template after certain actions
+ */
+function increaseTemplate(
+  template: Template,
+  newSize: BigDecimal,
+  newLocked: BigDecimal,
+  newLiquidityAtTrades: BigDecimal,
+  newPnl: BigDecimal
+): void {
+  template.size = template.size.plus(newSize);
+  template.locked = template.locked.plus(newLocked);
+  template.utilization = getUtilization(template.size, template.locked);
+  template.liquidityAtTrades =
+    template.liquidityAtTrades.plus(newLiquidityAtTrades);
+  template.pnlTotal = template.pnlTotal.plus(newPnl);
+  template.pnlPercentage = getPnlPercentage(
+    template.liquidityAtTrades,
+    template.pnlTotal
+  );
+  template.save();
+}
+
+function decreaseTemplate(
+  template: Template,
+  newSize: BigDecimal,
+  newLocked: BigDecimal,
+  newLiquidityAtTrades: BigDecimal,
+  newPnl: BigDecimal
+): void {
+  template.size = template.size.minus(newSize);
+  template.locked = template.locked.minus(newLocked);
+  template.utilization = getUtilization(template.size, template.locked);
+  template.liquidityAtTrades =
+    template.liquidityAtTrades.minus(newLiquidityAtTrades);
+  template.pnlTotal = template.pnlTotal.minus(newPnl);
+  template.pnlPercentage = getPnlPercentage(
+    template.liquidityAtTrades,
+    template.pnlTotal
+  );
+  template.save();
 }
 
 /**
@@ -642,20 +695,21 @@ export function handleOptionsSold(event: OptionsSold): void {
     );
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string);
+    const template = Template.load(pool.template as string)!;
     if (template) {
-      template.size = template.size.plus(premiumAmount);
-      template.pnlTotal = template.pnlTotal.plus(premiumAmount);
-      template.liquidityAtTrades = template.liquidityAtTrades.plus(pool.size);
-      template.locked = template.locked.plus(liquidityCollateralized);
-      template.utilization = getUtilization(template.size, template.locked);
-      template.save();
+      increaseTemplate(
+        template,
+        premiumAmount,
+        liquidityCollateralized,
+        pool.size,
+        premiumAmount
+      );
     }
 
     // Update the pool
     pool.liquidityAtTrades = pool.liquidityAtTrades.plus(pool.size);
-    pool.locked = liquidityCollateralized.plus(pool.locked);
-    pool.size = premiumAmount.plus(pool.size);
+    pool.locked = pool.locked.plus(liquidityCollateralized);
+    pool.size = pool.size.plus(premiumAmount);
     pool.unlocked = pool.size.minus(pool.locked);
     pool.utilization = getUtilization(pool.size, pool.locked);
     pool.pnlTotal = pool.pnlTotal.plus(premiumAmount);
@@ -709,6 +763,7 @@ export function handleOptionsSold(event: OptionsSold): void {
       // The oToken (and record) has not received liquidity from this pool
       poolRecord = new PoolRecord(poolRecordID);
       poolRecord.pool = poolId;
+      poolRecord.template = template.id;
       poolRecord.lpRecord = record.id;
       poolRecord.otoken = event.params.otoken;
       poolRecord.collateral = liquidityCollateralized;
@@ -773,16 +828,32 @@ export function handleOptionSettlementDistributed(
       poolTotalCollateralized.minus(collateralReturned);
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string)!;
-    template.size = template.size.minus(deltaCollateralizedAndReturned);
-    template.locked = template.locked.minus(poolTotalCollateralized);
-    template.utilization = getUtilization(template.size, template.locked);
-    template.pnlTotal = template.pnlTotal.minus(deltaCollateralizedAndReturned);
-    template.pnlPercentage = getPnlPercentage(
-      template.liquidityAtTrades,
-      template.pnlTotal
+    // because the template of the pool could have been changed in the meantmime we need to load
+    // both the current template to update liquidity and utilization
+    // and the template at the moment of the PoolRecord creation to update the PnL
+    const currentTemplate = Template.load(pool.template as string)!;
+
+    // update template liquidity and utilization
+    decreaseTemplate(
+      currentTemplate,
+      deltaCollateralizedAndReturned,
+      poolTotalCollateralized,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
     );
-    template.save();
+
+    const pnlTemplate = Template.load(poolRecord.template as string)!;
+    // update template PnL
+    decreaseTemplate(
+      pnlTemplate,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
+      deltaCollateralizedAndReturned
+    );
+
+    // load the updated template
+    const template = Template.load(pool.template as string)!;
 
     // Update the pool
     pool.size = pool.size.minus(deltaCollateralizedAndReturned);

@@ -5,7 +5,7 @@ import {
   presetUno,
   presetWebFonts,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
 } from "unocss";
 
 const preset = presetUno();
@@ -107,11 +107,8 @@ export default defineConfig({
         500: "#887DB5",
       },
       deepBlue: "#231b4b",
-      //@ts-expect-error - no type for iterable
-      error: preset.theme?.colors?.red[500],
-      //@ts-expect-error - no type for iterable
-      warning: preset.theme?.colors?.yellow[500],
-
+      error: preset.theme?.colors?.red,
+      warning: preset.theme?.colors?.yellow,
       black: preset.theme?.colors?.black,
       white: preset.theme?.colors?.white,
       gray: preset.theme?.colors?.coolGray,

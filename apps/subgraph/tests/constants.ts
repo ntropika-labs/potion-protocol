@@ -12,8 +12,17 @@ export const CURVE_PRECISION_BIG_INT = BigInt.fromI32(10).pow(18);
 
 export const BIGINT_ZERO = BigInt.fromI32(0);
 export const BIGINT_ONE = BigInt.fromI32(1);
+export const BIGINT_TEN = BigInt.fromI32(10);
+export const BIGINT_FIFTY = BigInt.fromI32(50);
 export const BIGINT_ONE_HUNDRED = BigInt.fromI32(100);
-// Format 100 as a collateral to manage the 6 decimals
+
+// Format with 6 decimals to be used ad collateral
+export const BIGINT_TEN_AS_COLLATERAL = BIGINT_FIFTY.times(
+  COLLATERAL_PRECISION_BIG_INT
+);
+export const BIGINT_FIFTY_AS_COLLATERAL = BIGINT_FIFTY.times(
+  COLLATERAL_PRECISION_BIG_INT
+);
 export const BIGINT_ONE_HUNDRED_AS_COLLATERAL = BIGINT_ONE_HUNDRED.times(
   COLLATERAL_PRECISION_BIG_INT
 );
@@ -23,6 +32,9 @@ export const MOCKED_LP = Address.fromString(
 );
 export const MOCKED_CURVE_ID = Bytes.fromHexString(
   "0x0000000000000000000000000000000000000010"
+);
+export const MOCKED_CURVE_A_ID = Bytes.fromHexString(
+  "0x0000000000000000000000000000000000000020"
 );
 export const MOCKED_CRITERIA_ID = Bytes.fromHexString(
   "0x0000000000000000000000000000000000000100"
@@ -35,6 +47,9 @@ export const MOCKED_CRITERIA_B_ID = Bytes.fromHexString(
 );
 export const MOCKED_CRITERIA_SET_ID = Bytes.fromHexString(
   "0x0000000000000000000000000000000000001000"
+);
+export const MOCKED_CRITERIA_SET_A_ID = Bytes.fromHexString(
+  "0x0000000000000000000000000000000000002000"
 );
 export const MOCKED_TOKEN_A_ID = Bytes.fromHexString(
   "0x0000000000000000000000000000000000010000"
