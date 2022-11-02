@@ -143,15 +143,17 @@ const criteriasParam = computed(() => {
   ];
 });
 
+console.log("PARAMETERS USED TO RUN 'useDepthRouter'");
 console.table([
   {
-    criteriasParam: JSON.stringify(criteriasParam.value),
-    orderSize: orderSize.value,
-    strikePrice: strikePrice.value,
-    gasPrice: gasPrice.value,
-    oraclePrice: oraclePrice.value,
+    criteriasParam: criteriasParam,
+    orderSize: orderSize,
+    strikePrice: strikePrice,
+    gasPrice: gasPrice,
+    oraclePrice: oraclePrice,
   },
 ]);
+
 const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
   useDepthRouter(
     criteriasParam,
@@ -236,14 +238,16 @@ const enterNextRound = async () => {
     expirationTimestamp
   );
 
-  console.log(
-    "NEXT ROUND",
-    enterSwapInfo,
-    potionBuyInfo,
-    exitSwapInfo,
-    enterFallbackSwapInfo,
-    exitFallbackSwapInfo
-  );
+  console.log("NEXT ROUND");
+  console.table([
+    {
+      enterSwapInfo,
+      potionBuyInfo,
+      exitSwapInfo,
+      enterFallbackSwapInfo,
+      exitFallbackSwapInfo,
+    },
+  ]);
 
   await vaultEnterNextRound(
     enterSwapInfo,
@@ -788,6 +792,7 @@ watch(blockTimestamp, async () => {
                 :route-data="enterPositionData?.uniswapRouterResult"
                 :router-loading="isActionLoading"
               />
+              <h3 class="text-xl font-semibold">Fallback route</h3>
               <TokenSwap
                 :route-data="fallbackEnterPositionData"
                 :router-loading="isActionLoading"
@@ -819,6 +824,7 @@ watch(blockTimestamp, async () => {
               :route-data="exitPositionData?.uniswapRouterResult"
               :router-loading="isActionLoading"
             />
+            <h3 class="text-xl font-semibold">Fallback route</h3>
             <TokenSwap
               :route-data="fallbackExitPositionData"
               :router-loading="isActionLoading"
