@@ -70,33 +70,33 @@ const dataset = computed<OtokenDataset>(() => {
       const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
 
       return [
-        { value: symbol },
-        { value: dateFormatter(item.otoken.expiry, true) },
-        { value: shortCurrencyFormatter(premium, currency) },
-        { value: shortCurrencyFormatter(strikePrice, currency) },
-        { value: shortCurrencyFormatter(payout, currency) },
-        { value: shortCurrencyFormatter(returned, currency) },
-        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
         {
           button: true,
           claimable: isReclaimable,
           value: isReclaimable ? t("claim") : t("claimed"),
           color: isReclaimable ? "secondary-o" : "secondary",
         },
+        { value: symbol },
+        { value: dateFormatter(item.otoken.expiry, true) },
+        { value: shortCurrencyFormatter(strikePrice, currency) },
+        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+        { value: shortCurrencyFormatter(premium, currency) },
+        { value: shortCurrencyFormatter(payout, currency) },
+        { value: shortCurrencyFormatter(returned, currency) },
       ];
     }
   });
 });
 
 const headings = [
+  t("action"),
   t("asset"),
   t("expiration_date"),
-  t("premium"),
   t("strike_price"),
-  t("reclaimable"),
-  t("claimed"),
   t("pnl"),
-  t("action"),
+  t("premium"),
+  t("claimable"),
+  t("claimed"),
 ];
 
 const emits = defineEmits<{

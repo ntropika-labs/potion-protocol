@@ -22,7 +22,8 @@ buy_potion: buy potion
 buying_potion: buying potion
 check_pool: check pool
 choose_pool_assets: Choose one or more assets this pool will insure
-choose_pool_curve: Curve the pool will use to determine sell prices, as a function of your pool utilization.
+choose_pool_curve: Curve the pool will use to determine sell prices, as a function of your pool
+  utilization.
 claimed: Claimed
 claiming_collateral: claiming collateral
 cloned: Cloned
@@ -33,7 +34,7 @@ connected_chain: Connected Chain
 connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 create_pool: create pool
-create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
+create_pool_subtitle: GREAT POWER, GREAT RESPONSIBILITY!
 create_pool_title: Create custom pool from scratch
 create_potion: create potion
 create_potion_subtitle: PROTECTION POWER IN YOUR HANDS!
@@ -116,7 +117,6 @@ projected_pnl: Projected P&L
 purchased_potions_not_expired: Purchased Potions not expired.
 put_option: put option
 quantity: Quantity
-reclaimable: reclaimable
 review_and_create: review and create
 review_your_choices: Review your choices before creating the pool on chain.
 set_bonding_curve_params: Set the following parameters and define your curve.
@@ -155,3 +155,5 @@ your_liquidity: Your liquidity
 your_potion_expires_in: your potion expires in
 your_put_recipe: Your put recipe
 your_strike_price: your strike price
+premium: Premium
+claimable: Claimable

@@ -41,7 +41,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
         <th
           v-for="(label, index) in props.headings"
           :key="`heading-${index}`"
-          class="font-medium py-3 text-right first:pl-4 px-2 last:pr-4 w-[120px] last:w-[150px]"
+          class="font-medium py-3 text-right first:pl-4 px-2 last:pr-4 w-[120px] last:w-[150px] capitalize"
         >
           {{ label }}
         </th>
