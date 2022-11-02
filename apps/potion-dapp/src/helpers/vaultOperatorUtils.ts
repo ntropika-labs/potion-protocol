@@ -1,4 +1,3 @@
-import type { Ref } from "vue";
 import type { BigNumberish } from "ethers";
 
 import type { Token } from "dapp-types";
@@ -43,7 +42,7 @@ const mockUnderlyingToken = (token: Token): Token => {
  * @returns The address to use as an intermediate recipient in multihop swaps
  */
 const getExpectedPriceRate = (
-  _oraclePrice: Ref<number>,
+  _oraclePrice: number,
   tradePrice: BigNumberish,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _actionType: UniswapActionType

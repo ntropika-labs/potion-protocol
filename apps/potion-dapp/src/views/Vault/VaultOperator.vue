@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  unref,
+  watch,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { formatUnits } from "@ethersproject/units";
-import { createValidExpiry } from "@/helpers/time";
 import {
   AssetTag,
   BaseButton,
@@ -16,9 +23,6 @@ import { LifecycleStates } from "hedging-vault-sdk";
 
 import { useHedgingVaultOrchestratorContract } from "@/composables/useHedgingVaultOrchestratorContract";
 import { useNotifications } from "@/composables/useNotifications";
-// import { useCoinGecko } from "@/composables/useCoinGecko";
-import { useDepthRouter } from "@/composables/useDepthRouter";
-import { useBlockNative } from "@/composables/useBlockNative";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
@@ -29,11 +33,12 @@ import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultCont
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 
-import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { useBuyerRecords } from "@/composables/useBuyerRecords";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultOperatorCalculations } from "@/composables/useVaultOperatorCalculations";
-import { useVaultOperatorActions } from "@/composables/useVaultOperatorActions";
+
+import { useVaultOperatorEnterPosition } from "@/composables/useVaultOperatorEnterPosition";
+import { useVaultOperatorExitPosition } from "@/composables/useVaultOperatorExitPosition";
+import { useOracleContract } from "@/composables/useOracleContract";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -50,12 +55,13 @@ const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const { potionBuyAction, usdc, roundsOutputVault } = getContractsFromVault(
+const { potionBuyAction, roundsOutputVault } = getContractsFromVault(
   vaultId.value.toLowerCase()
 );
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
-const { getGas, gasPrice } = useBlockNative();
+const { polledPrice, startPolling, stopPolling } = useOracleContract();
+const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
 
 const {
   vaultStatus,
@@ -94,22 +100,43 @@ const {
   strikePercentage,
   currentPayout,
   hedgingRate,
+  totalPayoutUSDC,
   getCurrentPayout,
   getStrategyInfo,
+  getTotalPayoutInUSDC,
   strategyLoading,
 } = usePotionBuyActionContract(potionBuyAction, true);
 
 const {
-  oraclePrice,
-  oraclePriceUpdated,
-  strikePrice,
-  orderSize,
-  numberOfOtokensToBuyBN,
-} = useVaultOperatorCalculations(
-  assetAddress,
-  strikePercentage,
+  enterPositionData, // Raw data to use when entering the position
+  isActionLoading: isEnterPositionLoading,
+  hasCounterparties,
+  isEnterPositionOperationValid,
+  loadEnterPositionRoute,
+  evaluateEnterPositionData,
+} = useVaultOperatorEnterPosition(
+  vaultId,
+  tokenAsset,
+  totalPayoutUSDC,
+  totalSupply,
+  shareBalance,
   hedgingRate,
-  totalAssets
+  strikePercentage,
+  oraclePrice,
+  cycleDurationDays
+);
+
+const {
+  exitPositionData, // Raw data to use when entering the position
+  isActionLoading: isExitPositionLoading,
+  isExitPositionOperationValid,
+  loadExitPositionRoute,
+  evaluateExitPositionData,
+} = useVaultOperatorExitPosition(
+  vaultId,
+  tokenAsset,
+  totalPayoutUSDC,
+  oraclePrice
 );
 
 const statusInfo = computed(() => {
@@ -133,69 +160,25 @@ const statusInfo = computed(() => {
   }
 });
 
-const criteriasParam = computed(() => {
-  return [
-    {
-      token: tokenAsset.value,
-      maxStrike: strikePercentage.value,
-      maxDuration: cycleDurationDays.value,
-    },
-  ];
-});
-
-console.log("PARAMETERS USED TO RUN 'useDepthRouter'");
-console.table([
-  {
-    criteriasParam: criteriasParam,
-    orderSize: orderSize,
-    strikePrice: strikePrice,
-    gasPrice: gasPrice,
-    oraclePrice: oraclePrice,
-  },
-]);
-
-const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
-  useDepthRouter(
-    criteriasParam,
-    orderSize,
-    strikePrice,
-    gasPrice,
-    oraclePrice,
-    false
-  );
-
-const {
-  //uniswapRouterResult,
-  fallbackEnterPositionData,
-  fallbackExitPositionData,
-  enterPositionData,
-  exitPositionData,
-  isActionLoading,
-  hasCounterparties,
-  isEnterPositionOperationValid,
-  isExitPositionOperationValid,
-  loadEnterPositionRoute,
-  loadExitPositionRoute,
-  evaluateEnterPositionData,
-  evaluateExitPositionData,
-} = useVaultOperatorActions(
-  vaultId.value.toLowerCase(),
-  assetAddress,
-  currentPayout,
-  totalSupply,
-  shareBalance
-);
-
 const counterpartiesText = computed(() => {
   return enterPositionData.value &&
-    enterPositionData.value.potionRouterResult.counterparties.length > 1
+    enterPositionData.value.potionRouterData.counterparties.length > 1
     ? t("counterparties")
     : t("counterparty");
 });
 
-const { getTargetOtokenAddress } = useOtokenFactory();
-
-const enterNextRound = async () => {
+/**
+ * Callback to enter the next round.
+ * It requires the user to manually load routes ('callbackLoadRoutes') for the enter and exit positions before being able to issue this command.
+ *
+ * Executes the following steps:
+ * 1. Evaluates previously loaded data for the exit position. This results in an object containing encoded data, suitable for the contracts,
+ *    for the uniswap route and fallback route
+ * 2. Gets a new otoken address
+ * 3. Evaluates previously loaded data for the enter position. This results in an object containing encoded data, suitable for the contracts,
+ *    for the uniswap route, the potion buy info and the fallback route
+ */
+const callbackEnterNextRound = async () => {
   if (
     nextRoundLoading.value ||
     !canEnterNextRound.value ||
@@ -209,34 +192,14 @@ const enterNextRound = async () => {
 
   // EXIT POSITION DATA
   const { swapInfo: exitSwapInfo, fallback: exitFallbackSwapInfo } =
-    evaluateExitPositionData(tokenAsset, oraclePrice);
+    evaluateExitPositionData();
 
   // ENTER POSITION DATA
-  const expirationTimestamp = createValidExpiry(
-    blockTimestamp.value,
-    cycleDurationDays.value
-  );
-  const newOtokenAddress = await getTargetOtokenAddress(
-    tokenAsset.value.address,
-    usdc,
-    usdc,
-    strikePrice.value,
-    expirationTimestamp,
-    true
-  );
-
   const {
     swapInfo: enterSwapInfo,
     potionBuyInfo,
     fallback: enterFallbackSwapInfo,
-  } = evaluateEnterPositionData(
-    tokenAsset,
-    oraclePrice,
-    strikePrice,
-    numberOfOtokensToBuyBN,
-    newOtokenAddress,
-    expirationTimestamp
-  );
+  } = await evaluateEnterPositionData(blockTimestamp.value);
 
   console.log("NEXT ROUND");
   console.table([
@@ -258,22 +221,19 @@ const enterNextRound = async () => {
   );
 };
 
-const callbackLoadEnterRoute = async () => {
-  await loadEnterPositionRoute(
-    hedgingRate,
-    strikePercentage,
-    potionRouterParameters,
-    oraclePrice,
-    tokenAsset,
-    premiumSlippage,
-    swapSlippage
-  );
+const callbackLoadRoutes = async () => {
+  await Promise.all([
+    loadEnterPositionRoute(premiumSlippage.value, swapSlippage.value),
+    loadExitPositionRoute(swapSlippage.value),
+  ]);
   rerunRequired.value = false;
 };
 
-const callbackLoadExitRoute = async () => {
-  console.log("load exit position route");
-  await loadExitPositionRoute(tokenAsset, swapSlippage);
+const addOraclePolling = (address: string | null) => {
+  stopPolling();
+  if (address) {
+    startPolling(address);
+  }
 };
 
 watch(vaultStatus, async () => {
@@ -288,8 +248,9 @@ watch(vaultStatus, async () => {
 watch(assetAddress, async (address) => {
   if (!address) return;
 
-  await getCurrentPayout(address);
-  await getPoolsFromCriterias();
+  addOraclePolling(address);
+
+  await Promise.all([getTotalPayoutInUSDC(), getCurrentPayout(address)]);
 });
 
 // Tab navigation
@@ -310,8 +271,11 @@ const tabs = ref([
 ]);
 
 onMounted(async () => {
-  await Promise.all([getGas(), getBlock("latest")]);
+  addOraclePolling(unref(assetAddress));
+  await getBlock("latest");
 });
+
+onBeforeUnmount(stopPolling);
 
 // Toast notifications
 const {
@@ -330,7 +294,7 @@ watch(nextRoundReceipt, (receipt) => {
   createReceiptNotification(receipt, t("round_entered"));
 });
 
-watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
+watch(polledPrice, ({ newPrice, oldPrice }) => {
   if (
     oldPrice !== undefined &&
     newPrice !== undefined &&
@@ -591,15 +555,26 @@ watch(blockTimestamp, async () => {
         <div class="flex flex-row justify-end mb-4 w-full">
           <div class="flex flex-col items-end">
             <BaseButton
+              palette="primary"
+              label="Load data"
+              :disabled="isEnterPositionLoading"
+              @click="callbackLoadRoutes()"
+            >
+              <template #pre-icon
+                ><i
+                  class="i-ph-arrows-clockwise mr-1"
+                  :class="isEnterPositionLoading && 'animate-spin'"
+                ></i
+              ></template>
+            </BaseButton>
+            <BaseButton
               label="enter next round"
               palette="secondary"
               :disabled="
-                !isEnterPositionOperationValid ||
-                !isExitPositionOperationValid ||
-                isActionLoading
+                !isEnterPositionOperationValid || !isExitPositionOperationValid
               "
-              :loading="nextRoundLoading"
-              @click="enterNextRound()"
+              :loading="nextRoundLoading || isEnterPositionLoading"
+              @click="callbackEnterNextRound()"
             ></BaseButton>
             <p
               v-if="
@@ -621,21 +596,6 @@ watch(blockTimestamp, async () => {
         >
           <BaseCard class="p-6">
             <!-- START ENTER POSITION TAB -->
-            <div class="flex justify-end">
-              <BaseButton
-                palette="primary"
-                label="Load data"
-                :disabled="isActionLoading"
-                @click="callbackLoadEnterRoute()"
-              >
-                <template #pre-icon
-                  ><i
-                    class="i-ph-arrows-clockwise mr-1"
-                    :class="isActionLoading && 'animate-spin'"
-                  ></i
-                ></template>
-              </BaseButton>
-            </div>
             <!-- START POTION INFO -->
             <div class="flex flex-col gap-8">
               <div class="flex flex-row justify-between">
@@ -643,11 +603,11 @@ watch(blockTimestamp, async () => {
                   <h3 class="text-xl font-bold">Premium</h3>
                   <p>
                     Premium + gas:
-                    {{ enterPositionData?.potionRouterResult?.premiumGas }}
+                    {{ enterPositionData?.potionRouterData?.premiumGas }}
                   </p>
                   <p>
                     Premium:
-                    {{ enterPositionData?.potionRouterResult?.premium }}
+                    {{ enterPositionData?.potionRouterData?.premium }}
                   </p>
                 </div>
               </div>
@@ -659,11 +619,10 @@ watch(blockTimestamp, async () => {
                 >
                   <span v-if="hasCounterparties">
                     {{
-                      enterPositionData?.potionRouterResult?.counterparties
-                        .length
+                      enterPositionData?.potionRouterData?.counterparties.length
                     }}
                   </span>
-                  <span v-else-if="isActionLoading || strategyLoading"
+                  <span v-else-if="isEnterPositionLoading || strategyLoading"
                     ><i class="i-ph-arrows-clockwise animate-spin"></i
                   ></span>
                   <span v-else>no</span>
@@ -676,7 +635,7 @@ watch(blockTimestamp, async () => {
               <!-- START COUNTERPARTIES LIST -->
               <div v-if="hasCounterparties" class="flex flex-col gap-4">
                 <BaseCard
-                  v-for="(cp, index) in enterPositionData?.potionRouterResult
+                  v-for="(cp, index) in enterPositionData?.potionRouterData
                     ?.counterparties"
                   :key="index"
                   class="p-6 relative"
@@ -760,7 +719,7 @@ watch(blockTimestamp, async () => {
                   >
                 </BaseCard>
               </div>
-              <div v-else-if="isActionLoading">
+              <div v-else-if="isEnterPositionLoading">
                 <div class="animate-pulse flex space-x-4">
                   <div class="rounded-full bg-slate-700 h-10 w-10"></div>
                   <div class="flex-1 space-y-6 py-1">
@@ -789,13 +748,13 @@ watch(blockTimestamp, async () => {
               </div>
               <!-- END ROUTE HEADER -->
               <TokenSwap
-                :route-data="enterPositionData?.uniswapRouterResult"
-                :router-loading="isActionLoading"
+                :route-data="enterPositionData?.uniswapRouterData"
+                :router-loading="isEnterPositionLoading"
               />
               <h3 class="text-xl font-semibold">Fallback route</h3>
               <TokenSwap
-                :route-data="fallbackEnterPositionData"
-                :router-loading="isActionLoading"
+                :route-data="enterPositionData?.fallbackUniswapRouterData"
+                :router-loading="isEnterPositionLoading"
               />
             </div>
             <!-- END ENTER UNI ROUTE -->
@@ -807,27 +766,14 @@ watch(blockTimestamp, async () => {
             <h1 class="text-xl font-semibold">Exit position</h1>
             <hr class="opacity-40 my-4" />
             <h3 class="text-xl font-semibold">Uniswap route</h3>
-            <div class="flex md:flex-row gap-4">
-              <BaseButton
-                label="route"
-                :disabled="isActionLoading || nextRoundLoading"
-                @click="callbackLoadExitRoute()"
-              >
-                <template #pre-icon>
-                  <i
-                    class="i-ph-arrows-clockwise mr-1"
-                    :class="isActionLoading && 'animate-spin'"
-                  ></i> </template
-              ></BaseButton>
-            </div>
             <TokenSwap
-              :route-data="exitPositionData?.uniswapRouterResult"
-              :router-loading="isActionLoading"
+              :route-data="exitPositionData?.uniswapRouterData"
+              :router-loading="isExitPositionLoading"
             />
             <h3 class="text-xl font-semibold">Fallback route</h3>
             <TokenSwap
-              :route-data="fallbackExitPositionData"
-              :router-loading="isActionLoading"
+              :route-data="exitPositionData?.fallbackUniswapRouterData"
+              :router-loading="isExitPositionLoading"
             />
             <!-- END EXIT POSITION TAB -->
           </BaseCard>

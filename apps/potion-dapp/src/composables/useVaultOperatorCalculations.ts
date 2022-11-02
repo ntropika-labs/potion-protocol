@@ -1,35 +1,15 @@
-import {
-  ref,
-  computed,
-  watch,
-  unref,
-  isRef,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { computed, unref, type Ref } from "vue";
 import { BigNumber } from "ethers";
 import { parseUnits } from "@ethersproject/units";
-
-import { useOracleContract } from "./useOracleContract";
 
 import type { MaybeRef } from "@vueuse/core";
 
 export function useVaultOperatorCalculations(
-  assetAddress: MaybeRef<string | null>,
+  oraclePrice: Ref<number>,
   strikePercentage: MaybeRef<number | null>,
   principalPercentage: MaybeRef<number | null>,
   totalAssets: MaybeRef<number>
 ) {
-  const { polledPrice, startPolling, stopPolling } = useOracleContract();
-  const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
-  const oraclePriceUpdated = ref<{
-    oldPrice: string | undefined;
-    newPrice: string | undefined;
-  }>({
-    oldPrice: undefined,
-    newPrice: undefined,
-  });
-
   const strikePrice = computed(() => {
     const sp = unref(strikePercentage);
     return sp === null ? 0 : oraclePrice.value * (sp / 100);
@@ -58,30 +38,7 @@ export function useVaultOperatorCalculations(
     return BigNumber.from(0);
   });
 
-  const addOraclePolling = (address: string | null) => {
-    stopPolling();
-    if (address) {
-      startPolling(address);
-    }
-  };
-
-  if (isRef(assetAddress)) {
-    watch(assetAddress, (address) => addOraclePolling(address));
-  }
-
-  watch(
-    polledPrice,
-    (newPrice: string | undefined, oldPrice: string | undefined) => {
-      oraclePriceUpdated.value = { oldPrice, newPrice };
-    }
-  );
-
-  onMounted(() => addOraclePolling(unref(assetAddress)));
-  onBeforeUnmount(stopPolling);
-
   return {
-    oraclePrice,
-    oraclePriceUpdated,
     strikePrice,
     orderSize,
     numberOfOtokensToBuyBN,

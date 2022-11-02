@@ -10,8 +10,12 @@ import type {
 
 import type { Token } from "dapp-types";
 
-import { UniswapActionType, type UniswapRouterReturn } from "@/types";
-
+import {
+  UniswapActionType,
+  type UniSwapInfo,
+  type UniswapRouterReturn,
+} from "@/types";
+import { getExpectedPriceRate } from "@vault-operator-utils";
 // The alphaRouter expectes only V2 or V3 as protocol config and not also MIXED so we can't import the Protocol enum from uniswap sdk
 // as a workaround we just redeclare it here, hoping that uniswap decides to actually expose this enum from the router package
 enum Protocol {
@@ -122,6 +126,39 @@ const convertUniswapRouteToFlatRoute = (
   return uniswapRouterResult;
 };
 
+const evaluateUniswapRoute = (
+  routerReturn: UniswapRouterReturn,
+  uniswapActionType: UniswapActionType,
+  oraclePrice: number,
+  inputToken: Token,
+  outputToken: Token
+): UniSwapInfo => {
+  const swapRoute = routerReturn.routes[0];
+  const executionPrice = routerReturn.tradeExecutionPrice;
+  if (swapRoute && swapRoute.protocol === Protocol.V3 && executionPrice) {
+    const firstPoolFee = swapRoute.pools[0].fee;
+    const expectedPriceRate = getExpectedPriceRate(
+      oraclePrice,
+      executionPrice,
+      uniswapActionType
+    );
+    const swapInfo = {
+      steps: [
+        {
+          inputToken,
+          fee: firstPoolFee,
+        },
+      ],
+      outputToken,
+      expectedPriceRate: expectedPriceRate, // this value needs to be = to the swap route price rate. Ex: eth is 100 at the time of swap, the value is 1 / 100
+    };
+
+    return swapInfo;
+  } else {
+    throw new Error("swapRoute isn't a protocol v3 route");
+  }
+};
+
 export {
   USDCUniToken,
   getChainId,
@@ -130,5 +167,6 @@ export {
   convertUniswapRouteToFlatRoute,
   convertTokenToUniswapToken,
   convertUniswapTokenToToken,
+  evaluateUniswapRoute,
   Protocol,
 };

@@ -1,5 +1,3 @@
-import type { Ref } from "vue";
-
 import type { Token } from "dapp-types";
 
 import { contractsAddresses } from "./contracts";
@@ -42,14 +40,14 @@ const mockUnderlyingToken = (token: Token): Token => {
 };
 
 const getExpectedPriceRate = (
-  oraclePrice: Ref<number>,
+  oraclePrice: number,
   _tradePrice: BigNumberish,
   actionType: UniswapActionType
 ) => {
   if (actionType === UniswapActionType.ENTER_POSITION) {
-    return oraclePrice.value; // default to 1000
+    return oraclePrice; // default to 1000
   } else {
-    return 1 / oraclePrice.value; // default to 0.001,
+    return 1 / oraclePrice; // default to 0.001,
   }
 };
 

@@ -9,6 +9,7 @@ import { useEthersContract } from "./useEthersContract";
 import type { Ref } from "vue";
 
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
+import { useCollateralTokenContract } from "./useCollateralTokenContract";
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
@@ -58,6 +59,7 @@ export function usePotionBuyActionContract(
     ) as PotionBuyAction;
   };
 
+  const { fetchActionBalance } = useCollateralTokenContract();
   /**
    * Contract methods
    **/
@@ -302,6 +304,22 @@ export function usePotionBuyActionContract(
   };
   errorRegistry["hedgingRate"] = hedgingRateError;
 
+  /**
+   * Calculate the current total payout in USDC
+   * @returns Returns the total payout calculated as the current payout we get from the Potion Buy Actions and any leftover
+   * still in the contract from previous runs
+   */
+  const totalPayoutUSDC = ref<ActionPayout | undefined>();
+  const getTotalPayoutInUSDC = async () => {
+    const payout = currentPayout.value?.currentPayout || 0;
+    const premiumLeftovers = await fetchActionBalance(contractAddress);
+
+    totalPayoutUSDC.value = {
+      currentPayout: payout + premiumLeftovers,
+      isFinal: currentPayout.value?.isFinal || false,
+    };
+  };
+
   // Get strategy info
 
   const strategyLoading = ref(false);
@@ -425,5 +443,7 @@ export function usePotionBuyActionContract(
     hedgingRateError,
     hedgingRate,
     getHedgingRate,
+    totalPayoutUSDC,
+    getTotalPayoutInUSDC,
   };
 }
