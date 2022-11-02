@@ -18,6 +18,7 @@ interface Props {
   otokens: PoolRecordOtokenInfoFragment[];
   payoutMap: Map<string, number>;
   claimedOtokens: string[];
+  claimCollateralLoading: boolean;
 }
 
 const props = defineProps<Props>();
@@ -115,6 +116,7 @@ const onButtonPressed = (index: number, cellIndex: number) => {
     <PutOptionsTable
       :headings="headings"
       :dataset="dataset"
+      :loading="claimCollateralLoading"
       @button-pressed="onButtonPressed"
     />
   </div>

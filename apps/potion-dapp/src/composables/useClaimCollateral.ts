@@ -1,5 +1,7 @@
 import { ref } from "vue";
+
 import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
+
 import type { Ref, ComputedRef } from "vue";
 
 export function useClaimCollateral(
@@ -8,8 +10,12 @@ export function useClaimCollateral(
 ) {
   const claimedOtokens = ref<string[]>([]);
 
-  const { claimCollateral, claimCollateralTx, claimCollateralReceipt } =
-    usePotionLiquidityPoolContract();
+  const {
+    claimCollateral,
+    claimCollateralTx,
+    claimCollateralReceipt,
+    claimCollateralLoading,
+  } = usePotionLiquidityPoolContract();
 
   const claimOtoken = async (otokenId: string) => {
     if (poolId.value !== null) {
@@ -23,5 +29,6 @@ export function useClaimCollateral(
     claimedOtokens,
     claimCollateralTx,
     claimCollateralReceipt,
+    claimCollateralLoading,
   };
 }

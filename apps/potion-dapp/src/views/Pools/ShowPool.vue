@@ -128,6 +128,7 @@ const {
   claimCollateralTx,
   claimCollateralReceipt,
   claimedOtokens,
+  claimCollateralLoading,
 } = useClaimCollateral(poolId, poolLp);
 
 onMounted(() => getBlock("latest"));
@@ -268,6 +269,7 @@ watch(claimCollateralReceipt, (receipt) =>
           :price-map="tokenPricesMap"
           :payout-map="payoutMap"
           :claimed-otokens="claimedOtokens"
+          :claim-collateral-loading="claimCollateralLoading"
           @otoken-claimed="claimOtoken"
         ></OtokenClaimTable>
       </div>
