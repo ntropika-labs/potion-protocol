@@ -8,22 +8,22 @@ fragment VaultInfo on HedgingVault {
 }
 
 fragment ActionInfo on PotionBuyAction {
-      id
-      cycleDurationSecs
-      hedgingRate
-      maxPremiumPercentage
-      maxSwapDurationSecs
-      nextCycleStartTimestamp
-      premiumSlippage
-      strikePercentage
-      swapSlippage
+  id
+  cycleDurationSecs
+  hedgingRate
+  maxPremiumPercentage
+  maxSwapDurationSecs
+  nextCycleStartTimestamp
+  premiumSlippage
+  strikePercentage
+  swapSlippage
 }
 
 fragment TokenInfo on Token {
-      id
-      name
-      symbol
-      decimals
+  id
+  name
+  symbol
+  decimals
 }
 
 query getHedgingVault($vault: ID!, $investor: String!) {
@@ -38,7 +38,7 @@ query getHedgingVault($vault: ID!, $investor: String!) {
     shareToken {
       ...TokenInfo
     }
-    rounds (orderBy: roundNumber) {
+    rounds(orderBy: roundNumber) {
       roundNumber
       assetToShareRate
       shareToAssetRate
