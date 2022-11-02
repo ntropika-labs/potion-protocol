@@ -25,7 +25,9 @@ interface Props {
   claimCollateralLoading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  claimCollateralLoading: false,
+});
 const emits = defineEmits<{
   (e: "otoken-claimed", id: string): void;
 }>();
@@ -159,7 +161,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :underlyings="underlyings"
           :payout-map="props.payoutMap"
           :claimed-otokens="props.claimedOtokens"
-          :claim-collateral-loading="props.claimCollateralLoading ?? false"
+          :claim-collateral-loading="props.claimCollateralLoading"
           test-claim-table-expired-options
           @claim-otoken="claimOtoken"
         >

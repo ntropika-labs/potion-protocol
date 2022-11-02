@@ -16,7 +16,7 @@ export interface Props {
   loading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { loading: false });
 const { t } = useI18n();
 
 const emits = defineEmits<{
@@ -63,7 +63,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
               test-table-claim-button
               :palette="cell.color"
               :label="cell.value"
-              :disabled="!cell.claimable || loading"
+              :disabled="!cell.claimable || props.loading"
               :inline="true"
               size="sm"
               @click="onButtonPressed(index, cellIndex)"
