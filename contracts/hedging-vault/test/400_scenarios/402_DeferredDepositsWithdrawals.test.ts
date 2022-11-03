@@ -119,6 +119,10 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await vault.getActionsLength()).to.equal(2);
         expect(await vault.getAction(0)).to.equal(potionBuy.address);
         expect(await vault.getAction(1)).to.equal(swapUSDC.address);
+
+        // Shares name and symbol
+        expect(await vault.name()).to.equal(tEnv.sharesName);
+        expect(await vault.symbol()).to.equal(tEnv.sharesSymbol);
     });
 
     it("DDW0002 - Potion Buy Action Default Value", async function () {
