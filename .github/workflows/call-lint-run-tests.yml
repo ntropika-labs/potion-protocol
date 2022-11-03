@@ -61,6 +61,17 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           VITE_ENDPOINT_PROVIDER: ${{ inputs.VITE_ENDPOINT_PROVIDER }}
           VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+  
+  run-unit-test-contracts-hv:
+    name: Run unit tests (contracts hedging vault)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Hedging Vault unit test
         run: yarn nx run @potion-protocol/hedging-vault:test
@@ -158,7 +169,7 @@ jobs:
   run-unit-test-subgraph-hv:
     name: Run unit tests (subgraph hedging-vault)
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [run-unit-test-contracts-hv]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
