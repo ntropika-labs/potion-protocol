@@ -1,17 +1,22 @@
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
 
-import { LifecycleStates, Roles } from "hedging-vault-sdk";
+import { LifecycleStates } from "hedging-vault-sdk";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "@/composables/useEthersContract";
 import { ContractInitError } from "@/helpers/errors";
 
 import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
+import type { MaybeRef } from "@vueuse/core";
+import type {
+  ContractTransaction,
+  ContractReceipt,
+} from "@ethersproject/contracts";
 import type { BigNumberish } from "ethers";
-import type { Ref } from "vue";
+import { parseUnits } from "@ethersproject/units";
 
 export function useInvestmentVaultContract(
-  address: string | Ref<string>,
+  address: MaybeRef<string>,
   fetchInitialData = true,
   eventListeners = false
 ) {
@@ -44,61 +49,78 @@ export function useInvestmentVaultContract(
     }
   };
 
-  const operator = ref("");
-  const operatorLoading = ref(false);
-  const getOperator = async () => {
+  const initContractSigner = () => {
     try {
-      operatorLoading.value = true;
-      const contract = initContractProvider();
-      operator.value = await contract.getRoleMember(Roles.Operator, 0);
+      return initContract(
+        true,
+        false,
+        InvestmentVault__factory,
+        unref(address).toLowerCase()
+      ) as InvestmentVault;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the operator: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the operator: ${error}`);
-      }
-    } finally {
-      operatorLoading.value = false;
+      const errorMessage =
+        error instanceof Error
+          ? "Unable to init contract: " + error.message
+          : "Unable to init contract";
+
+      throw new ContractInitError(errorMessage);
     }
   };
 
-  const admin = ref("");
-  const adminLoading = ref(false);
-  const getAdmin = async () => {
+  const depositTransaction = ref<ContractTransaction | null>(null);
+  const depositReceipt = ref<ContractReceipt | null>(null);
+  const depositLoading = ref(false);
+  const deposit = async (assets: BigNumberish, receiver: string) => {
     try {
-      adminLoading.value = true;
-      const contract = initContractProvider();
-      admin.value = await contract.getRoleMember(Roles.Admin, 0);
+      depositLoading.value = true;
+      const contract = initContractSigner();
+      depositTransaction.value = await contract.deposit(
+        parseUnits(assets.toString(), 6),
+        receiver
+      );
+      depositReceipt.value = await depositTransaction.value.wait();
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the admin: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the admin: ${error}`);
-      }
+      const message =
+        error instanceof Error
+          ? `Cannot deposit: ${error.message}`
+          : "Cannot deposit";
+
+      throw new Error(message);
     } finally {
-      adminLoading.value = false;
+      depositLoading.value = false;
     }
   };
 
-  const strategist = ref("");
-  const strategistLoading = ref(false);
-  const getStrategist = async () => {
+  const redeemTransaction = ref<ContractTransaction | null>(null);
+  const redeemReceipt = ref<ContractReceipt | null>(null);
+  const redeemLoading = ref(false);
+  const redeem = async (
+    shares: BigNumberish,
+    receiver: string,
+    owner: string
+  ) => {
     try {
-      strategistLoading.value = true;
-      const contract = initContractProvider();
-      strategist.value = await contract.getRoleMember(Roles.Strategist, 0);
+      redeemLoading.value = true;
+      const contract = initContractSigner();
+      redeemTransaction.value = await contract.redeem(
+        parseUnits(shares.toString(), 6),
+        receiver,
+        owner
+      );
+      redeemReceipt.value = await redeemTransaction.value.wait();
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the strategist: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the strategist: ${error}`);
-      }
+      const message =
+        error instanceof Error
+          ? `Cannot redeem: ${error.message}`
+          : "Cannot redeem";
+
+      throw new Error(message);
     } finally {
-      strategistLoading.value = false;
+      redeemLoading.value = false;
     }
   };
 
-  const vaultStatus = ref<number>(0);
+  const vaultStatus = ref<LifecycleStates>(LifecycleStates.Unlocked);
   const vaultStatusLoading = ref(false);
   const getVaultStatus = async () => {
     try {
@@ -115,17 +137,6 @@ export function useInvestmentVaultContract(
       throw new Error(message);
     } finally {
       vaultStatusLoading.value = false;
-    }
-  };
-
-  const fetchInfo = async () => {
-    if (unref(address)) {
-      return await Promise.all([
-        getOperator(),
-        getAdmin(),
-        getStrategist(),
-        getVaultStatus(),
-      ]);
     }
   };
 
@@ -147,28 +158,27 @@ export function useInvestmentVaultContract(
 
   if (fetchInitialData) {
     onMounted(async () => {
-      await fetchInfo();
+      await getVaultStatus();
     });
   }
 
   if (isRef(address)) {
     watch(address, async () => {
-      await fetchInfo();
+      await getVaultStatus();
     });
   }
 
   return {
-    operator,
-    operatorLoading,
-    getOperator,
-    admin,
-    adminLoading,
-    getAdmin,
-    strategist,
-    strategistLoading,
-    getStrategist,
+    deposit,
+    depositLoading,
+    depositReceipt,
+    depositTransaction,
+    getVaultStatus,
+    redeem,
+    redeemLoading,
+    redeemReceipt,
+    redeemTransaction,
     vaultStatus,
     vaultStatusLoading,
-    getVaultStatus,
   };
 }
