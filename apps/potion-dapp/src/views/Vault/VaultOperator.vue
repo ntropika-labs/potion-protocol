@@ -209,6 +209,7 @@ const callbackEnterNextRound = async () => {
       exitSwapInfo,
       enterFallbackSwapInfo,
       exitFallbackSwapInfo,
+      sizeInPotions: formatUnits(potionBuyInfo.totalSizeInPotions.toString()),
     },
   ]);
 
@@ -553,7 +554,7 @@ watch(blockTimestamp, async () => {
       <!-- START ENTER NEXT ROUND -->
       <div v-if="canEnterNextRound">
         <div class="flex flex-row justify-end mb-4 w-full">
-          <div class="flex flex-col items-end">
+          <div class="flex flex-row items-start gap-4 justify-end">
             <BaseButton
               palette="primary"
               label="Load data"
@@ -567,24 +568,28 @@ watch(blockTimestamp, async () => {
                 ></i
               ></template>
             </BaseButton>
-            <BaseButton
-              label="enter next round"
-              palette="secondary"
-              :disabled="
-                !isEnterPositionOperationValid || !isExitPositionOperationValid
-              "
-              :loading="nextRoundLoading || isEnterPositionLoading"
-              @click="callbackEnterNextRound()"
-            ></BaseButton>
-            <p
-              v-if="
-                !isEnterPositionOperationValid || !isExitPositionOperationValid
-              "
-              class="text-secondary-500 text-xs text-right mt-2"
-            >
-              Data to exit the current position and enter the new one are
-              required
-            </p>
+            <div class="flex flex-col justify-end items-end">
+              <BaseButton
+                label="enter next round"
+                palette="secondary"
+                :disabled="
+                  !isEnterPositionOperationValid ||
+                  !isExitPositionOperationValid
+                "
+                :loading="nextRoundLoading || isEnterPositionLoading"
+                @click="callbackEnterNextRound()"
+              ></BaseButton>
+              <p
+                v-if="
+                  !isEnterPositionOperationValid ||
+                  !isExitPositionOperationValid
+                "
+                class="text-secondary-500 text-xs text-right mt-2"
+              >
+                Data to exit the current position and enter the new one are
+                required
+              </p>
+            </div>
           </div>
         </div>
         <TabNavigationComponent
