@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
 import { computed, onMounted, readonly, ref, watch, type Ref } from "vue";
 import type { ConnectedChain } from "@web3-onboard/core";
+import { contractsAddresses } from "@/helpers/contracts";
 
 import { useOnboard } from "@onboard-composable";
 import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
 
 export const useUserDataStore = defineStore("user_data", () => {
+  const { PotionLiquidityPool } = contractsAddresses;
   const { connectedWallet, connectedChain } = useOnboard();
   const walletAddress = computed(
     () => connectedWallet.value?.accounts[0].address ?? ""
@@ -16,7 +18,7 @@ export const useUserDataStore = defineStore("user_data", () => {
   const {
     fetchUserCollateralBalance,
     fetchUserCollateralAllowance,
-    approveForPotionLiquidityPool,
+    approve,
     userAllowance,
     userCollateralBalance,
     fetchUserCollateralBalanceLoading,
@@ -24,7 +26,11 @@ export const useUserDataStore = defineStore("user_data", () => {
     approveLoading,
     approveTx,
     approveReceipt,
-  } = useCollateralTokenContract(walletAddress, infiniteApproval);
+  } = useCollateralTokenContract(
+    walletAddress,
+    { address: PotionLiquidityPool.address, name: "PotionLiquidityPool" },
+    infiniteApproval
+  );
 
   const userDataLoading = computed(
     () =>
@@ -63,7 +69,7 @@ export const useUserDataStore = defineStore("user_data", () => {
     infiniteApproval: readonly<Ref<boolean>>(infiniteApproval),
     fetchUserDataLoading: readonly<Ref<boolean>>(userDataLoading),
     fetchUserData,
-    approveForPotionLiquidityPool,
+    approveForPotionLiquidityPool: approve,
     setInfiniteApproval,
   };
 });
