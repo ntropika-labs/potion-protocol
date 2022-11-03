@@ -19,10 +19,7 @@ import {
   convertUniswapRouteToFlatRoute,
   Protocol,
 } from "@/helpers/uniswap";
-// import { calculateOrderSize } from "hedging-vault-sdk";
-// import { type BigNumberish } from "ethers";
-// import { formatUnits } from "@ethersproject/units";
-// import { mockUnderlyingToken } from "@vault-operator-utils";
+import { parseUnits } from "@ethersproject/units";
 
 const initUniswapAlphaRouter = (chainId: ChainId) => {
   const web3Provider = new JsonRpcProvider(uniswapRpcUrl);
@@ -74,8 +71,10 @@ const getUniswapRoute = async (
     const inputUniToken = convertTokenToUniswapToken(inputTokenSwap);
 
     // Define a currency amount and a deadline
-    const tokenAmountWithDecimals =
-      Math.ceil(tokenAmount) * 10 ** inputUniToken.decimals;
+    const tokenAmountWithDecimals = parseUnits(
+      tokenAmount.toFixed(),
+      inputUniToken.decimals
+    );
 
     const deadline =
       deadlineTimestamp !== undefined
@@ -178,139 +177,4 @@ const getPotionRoute = async (
   return potionRouter;
 };
 
-// enterPosition
-// const runPremiumSwapRouter = async ({
-//   vaultParameters,
-//   potionRouterParameters,
-//   uniswapParameters,
-// }: {
-//   vaultParameters: {
-//     principalHedgedAmount: number;
-//     hedgingRate: BigNumberish;
-//     strikePercent: BigNumberish;
-//     oraclePrice: BigNumberish;
-//   };
-//   potionRouterParameters: {
-//     pools: IPoolUntyped[];
-//     strikePriceUSDC: number;
-//     gas: number;
-//     ethPrice: number;
-//   };
-//   uniswapParameters: {
-//     chainId: ChainId;
-//     underlyingToken: PotionToken;
-//     collateralToken: PotionToken;
-//     tradeType: TradeType;
-//     maxSplits: number;
-//     premiumSlippage: number;
-//     recipientAddress: string;
-//     slippageToleranceInteger: number; // =1
-//     actionType: UniswapActionType; // = UniswapActionType.ENTER_POSITION
-//     deadlineTimestamp?: number;
-//   };
-// }): Promise<{
-//   potionRouterResult: DepthRouterReturn;
-//   uniswapRouterResult: UniswapRouterReturn;
-// }> => {
-//   console.log("- PREMIUM SWAP ROUTER PARAMS");
-//   console.table([
-//     {
-//       principalHedgedAmount: vaultParameters.principalHedgedAmount,
-//       pools: potionRouterParameters.pools,
-//       strikePriceUSDC: potionRouterParameters.strikePriceUSDC,
-//       gas: potionRouterParameters.gas,
-//       ethPrice: potionRouterParameters.ethPrice,
-//     },
-//   ]);
-
-//   // POTION ROUTER
-//   const potionRouterWithEstimatedPremium = runDepthRouter(
-//     potionRouterParameters.pools, // TODO: check pools may not match the order size
-//     vaultParameters.principalHedgedAmount *
-//       potionRouterParameters.strikePriceUSDC,
-//     potionRouterParameters.strikePriceUSDC,
-//     potionRouterParameters.gas,
-//     potionRouterParameters.ethPrice
-//   );
-
-//   console.log(
-//     "- POTION ROUTER WITH ESTIMATED PREMIUM (initialOrder/premium/orderSizeInOtokens)",
-//     vaultParameters.principalHedgedAmount *
-//       potionRouterParameters.strikePriceUSDC,
-//     potionRouterWithEstimatedPremium.premium,
-//     potionRouterWithEstimatedPremium.counterparties.map((c) =>
-//       formatUnits(c.orderSizeInOtokens.toString(), 8)
-//     )
-//   );
-
-//   // TODO: check
-//   const actualVaultSizeInUnderlying = calculateOrderSize(
-//     vaultParameters.principalHedgedAmount,
-//     uniswapParameters.underlyingToken.decimals as number,
-//     vaultParameters.hedgingRate,
-//     vaultParameters.strikePercent,
-//     vaultParameters.oraclePrice,
-//     potionRouterWithEstimatedPremium.premium.toFixed(
-//       uniswapParameters.collateralToken.decimals as number
-//     )
-//   );
-
-//   // TODO: conver to number with at least 16 digit after point
-//   const effectiveVaultSize = parseFloat(
-//     formatUnits(
-//       actualVaultSizeInUnderlying.effectiveVaultSize.toString(),
-//       uniswapParameters.underlyingToken.decimals
-//     )
-//   );
-
-//   const potionRouter = runDepthRouter(
-//     potionRouterParameters.pools, // TODO: check pools doesnt match the order size
-//     effectiveVaultSize * potionRouterParameters.strikePriceUSDC,
-//     potionRouterParameters.strikePriceUSDC,
-//     potionRouterParameters.gas,
-//     potionRouterParameters.ethPrice
-//   );
-
-//   console.log(
-//     "- POTION ROUTER WITH EFFECTIVE VAULT SIZE (initialOrder/premium/orderSizeInOtokens)",
-//     effectiveVaultSize * potionRouterParameters.strikePriceUSDC,
-//     potionRouter.premium,
-
-//     potionRouter.counterparties.map((c) =>
-//       formatUnits(c.orderSizeInOtokens.toString(), 8)
-//     )
-//   );
-
-//   // UNISWAP ROUTE
-//   const premiumWithSlippage =
-//     ((100 + uniswapParameters.premiumSlippage) * potionRouter.premium) / 100;
-//   console.log("- PREMIUM WITH SLIPPAGE", premiumWithSlippage);
-
-//   const underlyingTokenToSwap = mockUnderlyingToken(
-//     uniswapParameters.underlyingToken
-//   );
-
-//   const uniswapResult = await getUniswapRoute(
-//     uniswapParameters.chainId,
-//     underlyingTokenToSwap,
-//     uniswapParameters.collateralToken,
-//     uniswapParameters.tradeType,
-//     premiumWithSlippage,
-//     uniswapParameters.maxSplits,
-//     uniswapParameters.recipientAddress,
-//     uniswapParameters.slippageToleranceInteger,
-//     uniswapParameters.actionType,
-//     uniswapParameters.deadlineTimestamp
-//   );
-
-//   return {
-//     potionRouterResult: potionRouter,
-//     uniswapRouterResult: uniswapResult,
-//   };
-// };
-
-export {
-  getUniswapRoute,
-  getPotionRoute,
-  //runPremiumSwapRouter
-};
+export { getUniswapRoute, getPotionRoute };
