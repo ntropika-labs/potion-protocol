@@ -35,6 +35,8 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   swapSlippage: formatUnits(result?.action?.swapSlippage ?? "0", 6),
   premiumSlippage: formatUnits(result?.action?.premiumSlippage ?? "0", 6),
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
+  currentRound: result?.currentRound ?? "0",
+  rounds: result?.rounds ?? [],
 });
 
 const useHedgingVault = (
