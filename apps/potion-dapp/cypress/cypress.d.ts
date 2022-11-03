@@ -16,6 +16,14 @@ declare global {
        * @example cy.seed('/a/database/path', '2021-01-01 08:00:00+00:00')
        */
       seed(databasePath: string, chainTime?: string): Chainable<Element>;
+
+      approveAndPurchase(
+        amount: number,
+        purchaseButtonAlias: string,
+        purchaseLabel: string,
+        doApproval?: boolean,
+        approveLabel?: string
+      ): Chainable<Element>;
     }
   }
 }

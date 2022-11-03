@@ -55,7 +55,8 @@ const redeemablePayoutsMap = computed(() => {
   const result = new Map<string, number>();
   Array.from(redeemableBalancesMap.value.entries()).forEach(([key, value]) => {
     const payout = expiredPotionsPayouts.value.get(key);
-    if (payout && parseInt(value) !== 0) {
+
+    if (payout && parseFloat(value) !== 0) {
       result.set(key, parseFloat(payout));
     }
   });
@@ -216,6 +217,7 @@ watch(redeemReceipt, (receipt) =>
               :expiry="potion.expiry"
               :is-expired="false"
               :is-withdraw-enabled="false"
+              :otoken-address="potion.otoken.id"
               :token="potion.otoken.underlyingAsset"
               :strike-price="potion.otoken.strikePrice"
               :quantity="potion.numberOfOTokens"
@@ -266,6 +268,7 @@ watch(redeemReceipt, (receipt) =>
               text-potions-expired-potion-card
               :withdrawable="isPotionWithdrawable(potion.otoken.id)"
               :expiry="potion.expiry"
+              :otoken-address="potion.otoken.id"
               :is-expired="true"
               :is-withdraw-enabled="isSameUserConnected && !redeemLoading"
               :token="potion.otoken.underlyingAsset"

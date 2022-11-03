@@ -28,7 +28,7 @@ const { t } = useI18n();
     <h5 v-if="props.withLabel" class="mb-2 text-lg font-medium">
       {{ t("creator") }}
     </h5>
-    <BaseTag class="rounded-full gap-1">
+    <BaseTag class="rounded-full gap-1 hover:bg-white/90 hover:text-black/60">
       <img v-if="props.icon" :src="props.icon" class="w-3 h-3" />
       <i v-else class="i-ph-user-fill w-3 h-3"></i>
       <a :href="props.link" target="_blank" class="font-mono">{{

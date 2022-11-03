@@ -1,12 +1,14 @@
-import { getPoolsFromCriterias as _getPoolsFromCriterias } from "potion-router";
-import { currencyFormatter } from "potion-ui";
 import { computed, isRef, ref, toRaw, unref } from "vue";
-
-import { worker } from "@web-worker/potion-router";
 import { watchDebounced } from "@vueuse/core";
 
+import { getPoolsFromCriterias as _getPoolsFromCriterias } from "potion-router";
+import { currencyFormatter } from "potion-ui";
+
+import { worker } from "@web-worker/potion-router";
 import { useTokenList } from "@/composables/useTokenList";
 import { contractsAddresses } from "@/helpers/contracts";
+
+import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 
 import type { DepthRouterReturn } from "potion-router";
 import type { Ref } from "vue";
@@ -17,7 +19,6 @@ import type {
   IRouterParameters,
 } from "potion-router";
 
-import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
 export const useDepthRouter = (
   criterias: Ref<Criteria[]> | Criteria[],
   orderSize: MaybeNumberRef,

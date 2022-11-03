@@ -43,7 +43,7 @@ This file contains two main sections describing how to setup the project for loc
 
     ```
 
-    - `VITE_BLOCKNATIVE_API_KEY` - This API key is required to fetch gas prices. A default key is generated on sign up and is available in your dashboard.
+    - `VITE_BLOCKNATIVE_API_KEY` - This API key is required to fetch gas prices. A default key is generated on sign up and is available in your dashboard. You can register at [BlockNative](https://www.blocknative.com/) to get your own key.
 
     - `VITE_ENDPOINT_PROVIDER` - Choose one between `infura` or `alchemy`. This variable informs the DApp on what provider to use to fetch on-chain activity
 
@@ -51,6 +51,8 @@ This file contains two main sections describing how to setup the project for loc
 
       - If you have `VITE_ENDPOINT_PROVIDER="alchemy"`, you want to customize the `VITE_ALCHEMY_KEY` variable
       - If you have `VITE_ENDPOINT_PROVIDER="infura"`, you want to customize the `VITE_INFURA_KEY` variable
+
+      You can register at [Alchemy](https://www.alchemy.com/) or [Infura](https://infura.io/) to get your own key.
 
     - `GANACHE_VOLUME` - A relative or absolute path on the host machine to mount into the `ganache` container using [bind mounts](https://docs.docker.com/storage/bind-mounts/). The folder will be managed by Docker and should be reserved for this purpose.  
       The volume will mount the contents of the `GANACHE_VOLUME` folder at the `/opt` path. Any database will be available from inside the container as `/opt/{folder name}` where `{folder name}` is the name of the folder.

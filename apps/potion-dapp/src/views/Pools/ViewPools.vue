@@ -41,7 +41,7 @@
         :active="true"
         :tokens="getTokens(pool.id)"
         :size="pool.size"
-        :utilization="pool.utilization"
+        :utilization="(parseFloat(pool.utilization) * 100).toFixed(3)"
         :pnl="pool.pnlPercentage"
       >
         <template #poolLink>

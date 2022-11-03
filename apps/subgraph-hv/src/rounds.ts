@@ -106,7 +106,7 @@ function removeWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
 function updateShares(
   roundNumber: BigInt,
   vault: Bytes,
-  shareRatioAtRoundEnd: BigInt
+  exchangeRate: BigInt
 ): void {
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
@@ -116,12 +116,9 @@ function updateShares(
     ]);
   } else {
     for (let i = 0; i < round.depositRequests.length; i += 1) {
-      updateDepositRequestShares(
-        round.depositRequests[i],
-        shareRatioAtRoundEnd
-      );
+      updateDepositRequestShares(round.depositRequests[i], exchangeRate);
     }
-    round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
+    round.assetToShareRate = exchangeRate;
     round.save();
   }
 }
@@ -129,7 +126,7 @@ function updateShares(
 function updateAssets(
   roundNumber: BigInt,
   vault: Bytes,
-  shareRatioAtRoundEnd: BigInt
+  exchangeRate: BigInt
 ): void {
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
@@ -139,12 +136,9 @@ function updateAssets(
     ]);
   } else {
     for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
-      updateWithdrawalRequestAssets(
-        round.withdrawalRequests[i],
-        shareRatioAtRoundEnd
-      );
+      updateWithdrawalRequestAssets(round.withdrawalRequests[i], exchangeRate);
     }
-    round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
+    round.shareToAssetRate = exchangeRate;
     round.save();
   }
 }

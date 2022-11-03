@@ -15,7 +15,6 @@ const development = MODE === "development";
 const VITE_MODE = process.env.MODE;
 
 const getFsPath = (path: string) =>
-  //@ts-expect-error import without module in package.json
   fileURLToPath(new URL(path, import.meta.url));
 const getLibraryPath = (
   libPath: string,

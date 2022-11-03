@@ -23,6 +23,7 @@
         </template>
       </BaseButton>
       <BaseButton
+        test-pool-settings-card-next-button
         palette="secondary"
         :inline="true"
         :label="props.navigateNextLabel"

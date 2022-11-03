@@ -19,72 +19,6 @@ export const Deployments = {
             },
         },
     },
-    hardhat: {
-        timestamp: 1665223539,
-        network: "develop",
-        contracts: {
-            USDC: {
-                address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-                blockNumber: 0,
-            },
-            UnderlyingAsset: {
-                address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-                blockNumber: 0,
-            },
-            PotionLiquidityPool: {
-                address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
-                blockNumber: 0,
-            },
-            OpynAddressBook: {
-                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-                blockNumber: 0,
-            },
-            OpynController: {
-                address: "0xa16E02E87b7454126E5E10d957A927A7F5B5d2be",
-                blockNumber: 0,
-            },
-            OpynFactory: {
-                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-                blockNumber: 0,
-            },
-            OpynOracle: {
-                address: "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-                blockNumber: 0,
-            },
-            MockOpynOracle: {
-                address: "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-                blockNumber: 0,
-            },
-            UniswapV3Router: {
-                address: "0x2625760C4A8e8101801D3a48eE64B2bEA42f1E96",
-                blockNumber: 231,
-            },
-            HedgingVaultOrchestrator: {
-                address: "0x139e1D41943ee15dDe4DF876f9d0E7F85e26660A",
-                blockNumber: 234,
-            },
-            PotionBuyAction: {
-                address: "0xAdE429ba898c34722e722415D722A70a297cE3a2",
-                blockNumber: 235,
-            },
-            InvestmentVault: {
-                address: "0x7B4f352Cd40114f12e82fC675b5BA8C7582FC513",
-                blockNumber: 236,
-            },
-            RoundsInputVault: {
-                address: "0xcE0066b1008237625dDDBE4a751827de037E53D2",
-                blockNumber: 237,
-            },
-            RoundsOutputVault: {
-                address: "0x82EdA215Fa92B45a3a76837C65Ab862b6C7564a8",
-                blockNumber: 238,
-            },
-            RoundsVaultExchanger: {
-                address: "0x87006e75a5B6bE9D1bbF61AC8Cd84f05D9140589",
-                blockNumber: 239,
-            },
-        },
-    },
     "localhost.goerli": {
         timestamp: 1662461323,
         network: "localhost",
@@ -205,24 +139,24 @@ export const Deployments = {
             },
         },
     },
-    localhost: {
-        timestamp: 1662028169,
-        network: "localhost",
+    "localhost.multivaultA": {
+        timestamp: 1667471825,
+        network: "develop",
         contracts: {
             USDC: {
-                address: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7",
+                address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
                 blockNumber: 0,
             },
             UnderlyingAsset: {
-                address: "0x821f3361D454cc98b7555221A06Be563a7E2E0A6",
-                blockNumber: 196,
+                address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+                blockNumber: 0,
             },
             PotionLiquidityPool: {
-                address: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+                address: "0x59b670e9fA9D0A427751Af201D676719a970857b",
                 blockNumber: 0,
             },
             OpynAddressBook: {
-                address: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
                 blockNumber: 0,
             },
             OpynController: {
@@ -234,11 +168,11 @@ export const Deployments = {
                 blockNumber: 0,
             },
             OpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
                 blockNumber: 0,
             },
             MockOpynOracle: {
-                address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
                 blockNumber: 0,
             },
             UniswapV3Router: {
@@ -254,8 +188,176 @@ export const Deployments = {
                 blockNumber: 77,
             },
             HedgingVaultOperatorHelper: {
-                address: "0x04C89607413713Ec9775E14b954286519d836FEf",
-                blockNumber: 79,
+                address: "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
+                blockNumber: 99,
+            },
+            HedgingVaultOrchestrator: {
+                address: "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B",
+                blockNumber: 102,
+            },
+            PotionBuyAction: {
+                address: "0x2B0d36FACD61B71CC05ab8F3D2355ec3631C0dd5",
+                blockNumber: 105,
+            },
+            SwapToUSDCAction: {
+                address: "0x46b142DD1E924FAb83eCc3c08e4D46E82f005e0E",
+                blockNumber: 107,
+            },
+            InvestmentVault: {
+                address: "0x1c85638e118b37167e9298c2268758e058DdfDA0",
+                blockNumber: 109,
+            },
+            RoundsInputVault: {
+                address: "0x4C2F7092C2aE51D986bEFEe378e50BD4dB99C901",
+                blockNumber: 111,
+            },
+            RoundsOutputVault: {
+                address: "0x49fd2BE640DB2910c2fAb69bB8531Ab6E76127ff",
+                blockNumber: 113,
+            },
+            RoundsVaultExchanger: {
+                address: "0x4631BCAbD6dF18D94796344963cB60d44a4136b6",
+                blockNumber: 114,
+            },
+        },
+    },
+    "localhost.multivaultB": {
+        timestamp: 1667471830,
+        network: "develop",
+        contracts: {
+            USDC: {
+                address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+                blockNumber: 0,
+            },
+            UnderlyingAsset: {
+                address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+                blockNumber: 0,
+            },
+            PotionLiquidityPool: {
+                address: "0x59b670e9fA9D0A427751Af201D676719a970857b",
+                blockNumber: 0,
+            },
+            OpynAddressBook: {
+                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+                blockNumber: 0,
+            },
+            OpynController: {
+                address: "0xa16E02E87b7454126E5E10d957A927A7F5B5d2be",
+                blockNumber: 0,
+            },
+            OpynFactory: {
+                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+                blockNumber: 0,
+            },
+            OpynOracle: {
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+                blockNumber: 0,
+            },
+            MockOpynOracle: {
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+                blockNumber: 0,
+            },
+            UniswapV3Router: {
+                address: "0x4b6aB5F819A515382B0dEB6935D793817bB4af28",
+                blockNumber: 124,
+            },
+            HedgingVaultOrchestrator: {
+                address: "0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397",
+                blockNumber: 127,
+            },
+            PotionBuyAction: {
+                address: "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",
+                blockNumber: 128,
+            },
+            SwapToUSDCAction: {
+                address: "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",
+                blockNumber: 129,
+            },
+            InvestmentVault: {
+                address: "0x34B40BA116d5Dec75548a9e9A8f15411461E8c70",
+                blockNumber: 130,
+            },
+            RoundsInputVault: {
+                address: "0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A",
+                blockNumber: 131,
+            },
+            RoundsOutputVault: {
+                address: "0x07882Ae1ecB7429a84f1D53048d35c4bB2056877",
+                blockNumber: 132,
+            },
+            RoundsVaultExchanger: {
+                address: "0x22753E4264FDDc6181dc7cce468904A80a363E44",
+                blockNumber: 133,
+            },
+        },
+    },
+    "localhost.multivaultC": {
+        timestamp: 1667471834,
+        network: "develop",
+        contracts: {
+            USDC: {
+                address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+                blockNumber: 0,
+            },
+            UnderlyingAsset: {
+                address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+                blockNumber: 0,
+            },
+            PotionLiquidityPool: {
+                address: "0x59b670e9fA9D0A427751Af201D676719a970857b",
+                blockNumber: 0,
+            },
+            OpynAddressBook: {
+                address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+                blockNumber: 0,
+            },
+            OpynController: {
+                address: "0xa16E02E87b7454126E5E10d957A927A7F5B5d2be",
+                blockNumber: 0,
+            },
+            OpynFactory: {
+                address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+                blockNumber: 0,
+            },
+            OpynOracle: {
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+                blockNumber: 0,
+            },
+            MockOpynOracle: {
+                address: "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+                blockNumber: 0,
+            },
+            UniswapV3Router: {
+                address: "0xE3011A37A904aB90C8881a99BD1F6E21401f1522",
+                blockNumber: 143,
+            },
+            HedgingVaultOrchestrator: {
+                address: "0x525C7063E7C20997BaaE9bDa922159152D0e8417",
+                blockNumber: 146,
+            },
+            PotionBuyAction: {
+                address: "0x38a024C0b412B9d1db8BC398140D00F5Af3093D4",
+                blockNumber: 147,
+            },
+            SwapToUSDCAction: {
+                address: "0x5fc748f1FEb28d7b76fa1c6B07D8ba2d5535177c",
+                blockNumber: 148,
+            },
+            InvestmentVault: {
+                address: "0xB82008565FdC7e44609fA118A4a681E92581e680",
+                blockNumber: 149,
+            },
+            RoundsInputVault: {
+                address: "0x2a810409872AfC346F9B5b26571Fd6eC42EA4849",
+                blockNumber: 150,
+            },
+            RoundsOutputVault: {
+                address: "0xb9bEECD1A582768711dE1EE7B0A1d582D9d72a6C",
+                blockNumber: 151,
+            },
+            RoundsVaultExchanger: {
+                address: "0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8",
+                blockNumber: 152,
             },
         },
     },

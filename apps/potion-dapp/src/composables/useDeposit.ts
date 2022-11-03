@@ -1,20 +1,20 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
-import { useCollateralTokenContract } from "./useCollateralTokenContract";
 
 import { deepUnref } from "@/helpers/vue";
 
 import type { MaybeRef } from "@vueuse/core";
+import { useUserDataStore } from "@/stores/useUserDataStore";
+import { storeToRefs } from "pinia";
 
-export function useDeposit(
-  id: MaybeRef<number | null>,
-  userAllowance: MaybeRef<number>,
-  userCollateralBalance: MaybeRef<number>
-) {
+export function useDeposit(id: MaybeRef<number | null>) {
   const amount = ref(100);
 
   const { t } = useI18n();
+  const userStore = useUserDataStore();
+  const { userCollateralBalance, userAllowance, fetchUserDataLoading } =
+    storeToRefs(userStore);
 
   const {
     depositTx,
@@ -22,7 +22,10 @@ export function useDeposit(
     deposit: contractDeposit,
     depositLoading,
   } = usePotionLiquidityPoolContract();
-  const { approveForPotionLiquidityPool } = useCollateralTokenContract();
+
+  const isLoading = computed(
+    () => depositLoading.value || fetchUserDataLoading.value
+  );
 
   const canDeposit = computed(
     () => amount.value > 0 && amount.value <= deepUnref(userCollateralBalance)
@@ -42,10 +45,13 @@ export function useDeposit(
     const poolId = deepUnref(id);
     if (canDeposit.value) {
       if (amountNeededToApprove.value > 0) {
-        await approveForPotionLiquidityPool(amount.value, true);
+        await userStore.approveForPotionLiquidityPool(amount.value);
+        await userStore.fetchUserData();
       } else {
         if (poolId !== null) {
           await contractDeposit(poolId, amount.value);
+
+          await userStore.fetchUserData();
           return true;
         }
       }
@@ -63,7 +69,7 @@ export function useDeposit(
   return {
     depositReceipt,
     depositTx,
-    depositLoading,
+    isLoading,
     deposit,
     canDeposit,
     depositLabel,

@@ -10,6 +10,7 @@ import {
   CreatorTag,
   AssetTag,
 } from "potion-ui";
+import { storeToRefs } from "pinia";
 
 import CurvesChart from "@/components/CurvesChart.vue";
 import AddLiquidityCard from "@/components/CustomPool/AddLiquidityCard.vue";
@@ -17,43 +18,35 @@ import PerformanceCard from "@/components/PerformanceCard.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import UnderlyingList from "potion-ui/src/components/UnderlyingList/UnderlyingList.vue";
 
-import { useOnboard } from "@onboard-composable";
 import { contractsAddresses } from "@/helpers/contracts";
 import { getEtherscanUrl } from "@/helpers/addresses";
 
 import { useTokenList } from "@/composables/useTokenList";
 import { useEmergingCurves } from "@/composables/useEmergingCurves";
-import { useTemplateSnapshots } from "@/composables/useSnapshots";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useNotifications } from "@/composables/useNotifications";
 import { useCriteriasTokens } from "@/composables/useCriteriasTokens";
-import { useUserData } from "@/composables/useUserData";
 import { useNextPoolId } from "@/composables/useNextPoolId";
 import { useBondingCurves } from "@/composables/useBondingCurves";
 import { useRouteTemplateId } from "@/composables/useRouteTemplateId";
 import { usePoolTemplate } from "@/composables/usePoolTemplate";
 import { useDeployPool } from "@/composables/useDeployPool";
 import { useLiquidity } from "@/composables/useLiquidity";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const collateral = useTokenList(contractsAddresses.USDC.address.toLowerCase());
 
-const { walletAddress, userCollateralBalance } = useUserData();
+const { walletAddress, userCollateralBalance, approveTx, approveReceipt } =
+  storeToRefs(useUserDataStore());
 
 const { templateId } = useRouteTemplateId(route.params);
-const { template, curve, criterias } = usePoolTemplate(templateId);
+const { template, curve, criterias, dailyData } = usePoolTemplate(templateId);
 
-const { chartData, fetching: loadingSnapshots } = useTemplateSnapshots(
-  templateId.value
-);
 const { blockTimestamp, getBlock, loading: loadingBlock } = useEthersProvider();
 onMounted(() => getBlock("latest"));
-
-const performanceChartDataReady = computed(
-  () => !(loadingSnapshots.value || loadingBlock.value)
-);
 
 const { tokens, assets, tokenPricesMap } = useCriteriasTokens(criterias);
 
@@ -86,19 +79,15 @@ const { liquidity, validInput } = useLiquidity(100, userCollateralBalance);
 
 const { emergingCurves, loadEmergingCurves } = useEmergingCurves(criterias);
 
-const { connectedWallet } = useOnboard();
-const isNotConnected = computed(() => !connectedWallet.value);
+const isNotConnected = computed(() => !walletAddress.value);
 
 const { poolId } = useNextPoolId(walletAddress);
 
 const {
   deployLabel,
-  approveDeployPoolTx,
-  approveDeployPoolLoading,
-  approveDeployPoolReceipt,
   handleDeployPool,
   deployPoolTx,
-  deployPoolLoading,
+  isLoading: deployPoolLoading,
   deployPoolReceipt,
 } = useDeployPool(
   poolId,
@@ -107,10 +96,6 @@ const {
   criterias,
   `${t("approve")} USDC`,
   t("add_liquidity")
-);
-
-const deployLoading = computed(
-  () => approveDeployPoolLoading.value || deployPoolLoading.value
 );
 
 watch(criterias, loadEmergingCurves);
@@ -132,11 +117,11 @@ watch(deployPoolReceipt, (receipt) => {
   createReceiptNotification(receipt, t("pool_created"));
 });
 
-watch(approveDeployPoolTx, (transaction) => {
+watch(approveTx, (transaction) => {
   createTransactionNotification(transaction, t("approving_usdc"));
 });
 
-watch(approveDeployPoolReceipt, (receipt) => {
+watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>
@@ -185,8 +170,8 @@ watch(approveDeployPoolReceipt, (receipt) => {
     <div class="mt-8 grid gap-8 grid-cols-1 xl:grid-cols-3">
       <div class="flex flex-col gap-8 xl:col-span-2">
         <PerformanceCard
-          v-if="performanceChartDataReady"
-          :performance-data="chartData"
+          v-if="!loadingBlock"
+          :performance-data="dailyData"
           :today-timestamp="blockTimestamp"
         >
         </PerformanceCard>
@@ -216,8 +201,8 @@ watch(approveDeployPoolReceipt, (receipt) => {
               palette="secondary"
               :inline="true"
               :label="deployLabel"
-              :disabled="isNotConnected || deployLoading"
-              :loading="deployLoading"
+              :disabled="isNotConnected || !validInput"
+              :loading="deployPoolLoading"
               @click="handleDeployPool"
             >
               <template #pre-icon>

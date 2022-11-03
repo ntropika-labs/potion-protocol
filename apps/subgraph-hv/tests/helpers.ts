@@ -67,7 +67,8 @@ function mockPotionBuyAction(
   maxPremiumPercentage: BigInt,
   maxSwapDurationSecs: BigInt,
   strikePercentage: BigInt,
-  cycleDurationSecs: BigInt
+  cycleDurationSecs: BigInt,
+  hedgingRate: BigInt
 ): PotionBuyAction {
   const action = new PotionBuyAction(id);
   action.nextCycleStartTimestamp = nextCycleStartTimestamp;
@@ -77,6 +78,7 @@ function mockPotionBuyAction(
   action.maxSwapDurationSecs = maxSwapDurationSecs;
   action.strikePercentage = strikePercentage;
   action.cycleDurationSecs = cycleDurationSecs;
+  action.hedgingRate = hedgingRate;
   action.save();
   return action;
 }
@@ -86,7 +88,7 @@ function mockRound(
   vault: Bytes,
   depositRequests: Bytes[] = [],
   withdrawalRequests: Bytes[] = [],
-  shareRatioAtRoundEnd: BigInt = BigInt.fromString("0")
+  exchangeRate: BigInt = BigInt.fromString("0")
 ): Round {
   const id = createRoundId(roundNumber, vault);
   const round = new Round(id);
@@ -94,7 +96,8 @@ function mockRound(
   round.roundNumber = roundNumber;
   round.depositRequests = depositRequests;
   round.withdrawalRequests = withdrawalRequests;
-  round.shareRatioAtRoundEnd = shareRatioAtRoundEnd;
+  round.assetToShareRate = exchangeRate;
+  round.shareToAssetRate = exchangeRate;
   round.save();
   return round;
 }

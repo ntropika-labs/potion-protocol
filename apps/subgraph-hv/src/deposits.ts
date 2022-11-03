@@ -95,12 +95,13 @@ function deleteDepositRequest(id: Bytes): void {
   log.info("DepositRequest {} has been removed", [id.toHexString()]);
 }
 
-function updateDepositRequestShares(id: Bytes, shareRatio: BigInt): void {
+function updateDepositRequestShares(id: Bytes, exchangeRate: BigInt): void {
   const depositRequest = DepositRequest.load(id);
   if (depositRequest == null) {
     log.error("depositRequest {} doesn't exists", [id.toHexString()]);
   } else {
-    depositRequest.shares = depositRequest.amount.times(shareRatio);
+    depositRequest.shares = depositRequest.amount.times(exchangeRate);
+    depositRequest.remainingShares = depositRequest.amount.times(exchangeRate);
     depositRequest.save();
   }
 }

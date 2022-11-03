@@ -12,3 +12,10 @@ expose({
   getUniswapRoute,
   runPremiumSwapRouter,
 });
+
+export interface MixedRouter {
+  getUniswapRoute: typeof getUniswapRoute;
+  runPremiumSwapRouter: typeof runPremiumSwapRouter;
+  getEmergingBondingCurvesFromCriterias: typeof getEmergingBondingCurvesFromCriterias;
+  runDepthRouter: typeof runDepthRouter;
+}

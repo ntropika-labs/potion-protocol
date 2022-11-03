@@ -1,7 +1,10 @@
-import { ref, computed, watch, unref, onMounted } from "vue";
 import { useGetPoolRecordsByPoolQuery } from "subgraph-queries/generated/urql";
-import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
+import { computed, onMounted, ref, unref, watch } from "vue";
+
 import { useEthersProvider } from "./useEthersProvider";
+import { usePotionLiquidityPoolContract } from "./usePotionLiquidityPoolContract";
+
+import type { Token } from "dapp-types";
 
 import type { Ref, ComputedRef } from "vue";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
@@ -43,6 +46,27 @@ const usePoolOtokens = (
     )
   );
 
+  const assetsWithOtokens = computed(() => {
+    const tokens = new Set<Token>();
+
+    activeOtokens.value.forEach((poolRecord) => {
+      tokens.add({
+        name: poolRecord.otoken.underlyingAsset.name,
+        symbol: poolRecord.otoken.underlyingAsset.symbol,
+        address: poolRecord.otoken.underlyingAsset.address,
+      });
+    });
+    expiredOtokens.value.forEach((poolRecord) => {
+      tokens.add({
+        name: poolRecord.otoken.underlyingAsset.name,
+        symbol: poolRecord.otoken.underlyingAsset.symbol,
+        address: poolRecord.otoken.underlyingAsset.address,
+      });
+    });
+
+    return Array.from(tokens);
+  });
+
   watch(data, async () => {
     const newLoadedIds =
       data?.value?.poolRecords?.map(({ otoken }) => otoken.id) ?? [];
@@ -59,6 +83,7 @@ const usePoolOtokens = (
 
   return {
     activeOtokens,
+    assetsWithOtokens,
     expiredOtokens,
     poolOtokens,
     payoutMap,

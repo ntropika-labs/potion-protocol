@@ -6,7 +6,7 @@ fragment CriteriaSetsWithLiquidity on CriteriaJoinedCriteriaSet {
   }
 }
 
-query getMaxStrikeForUnderlying($underlying: String, $alreadyLoadedIds: [ID!]) {
+query getMaxStrikeForUnderlying($underlying: String, $alreadyLoadedIds: [Bytes!]) {
   criterias(
     where: { underlyingAsset: $underlying, id_not_in: $alreadyLoadedIds }
     orderBy: maxStrikePercent
@@ -23,7 +23,7 @@ query getMaxStrikeForUnderlying($underlying: String, $alreadyLoadedIds: [ID!]) {
 query getMaxDurationForStrike(
   $underlying: String
   $strike: BigDecimal
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
 ) {
   criterias(
     where: {

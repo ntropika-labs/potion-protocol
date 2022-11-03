@@ -14,6 +14,7 @@ import {
   PremiumSlippageChanged,
   StrikePercentageChanged,
   SwapSlippageChanged,
+  HedgingRateChanged,
 } from "../generated/PotionBuyAction/PotionBuyAction";
 import {
   DepositWithReceipt,
@@ -217,6 +218,21 @@ export function createSwapSlippageChanged(
     new ethereum.EventParam(
       "maxPremiumPercentage",
       ethereum.Value.fromUnsignedBigInt(maxPremiumPercentage)
+    ),
+  ];
+
+  return event;
+}
+
+export function createHedgingRateChanged(
+  hedgingRate: BigInt
+): HedgingRateChanged {
+  const event = changetype<HedgingRateChanged>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam(
+      "hedgingRate",
+      ethereum.Value.fromUnsignedBigInt(hedgingRate)
     ),
   ];
 

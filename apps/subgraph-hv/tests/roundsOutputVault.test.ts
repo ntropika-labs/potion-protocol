@@ -164,6 +164,7 @@ describe("roundsOutputVault", () => {
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
         { field: "currentRound", value: "2" },
+        { field: "lastShareToAssetRate", value: "10" },
       ]);
     });
 
@@ -171,7 +172,7 @@ describe("roundsOutputVault", () => {
       assertEntity(
         "Round",
         createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
-        [{ field: "shareRatioAtRoundEnd", value: "10" }]
+        [{ field: "shareToAssetRate", value: "10" }]
       );
     });
 
@@ -183,7 +184,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "100" }]
+        [
+          { field: "assets", value: "100" },
+          { field: "remainingAssets", value: "100" },
+        ]
       );
     });
 
@@ -195,7 +199,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "1000" }]
+        [
+          { field: "assets", value: "1000" },
+          { field: "remainingAssets", value: "1000" },
+        ]
       );
     });
 
@@ -207,7 +214,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "5000" }]
+        [
+          { field: "assets", value: "5000" },
+          { field: "remainingAssets", value: "5000" },
+        ]
       );
     });
 
@@ -219,7 +229,10 @@ describe("roundsOutputVault", () => {
           vaultAddress,
           mockedInvestor
         ).toHexString(),
-        [{ field: "assets", value: "10000" }]
+        [
+          { field: "assets", value: "10000" },
+          { field: "remainingAssets", value: "10000" },
+        ]
       );
     });
   });

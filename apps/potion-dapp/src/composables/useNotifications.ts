@@ -60,7 +60,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
     );
 
   const createTransactionNotification = (
-    transaction: ContractTransaction | null,
+    transaction: Readonly<ContractTransaction> | ContractTransaction | null,
     title: string,
     body = t("transaction_pending"),
     srcset = atomSrcset
@@ -77,7 +77,7 @@ const useNotifications = (hideTimeout: number = defaultTimeout) => {
     );
 
   const createReceiptNotification = (
-    receipt: ContractReceipt | null,
+    receipt: Readonly<ContractReceipt> | ContractReceipt | null,
     title: string,
     body = t("transaction_completed"),
     srcset = atomSrcset

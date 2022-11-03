@@ -6,3 +6,8 @@ expose({
   getUniswapRoute,
   runPremiumSwapRouter,
 });
+
+export interface AlphaRouter {
+  getUniswapRoute: typeof getUniswapRoute;
+  runPremiumSwapRouter: typeof runPremiumSwapRouter;
+}

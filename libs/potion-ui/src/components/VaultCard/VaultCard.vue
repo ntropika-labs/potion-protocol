@@ -12,9 +12,9 @@ import type { Token } from "dapp-types";
 const props = withDefaults(
   defineProps<{
     asset: Token;
-    hedgingRate: number;
-    size: number;
-    strike: number;
+    hedgingRate: string;
+    size: string;
+    strike: string;
     currency?: string;
   }>(),
   { currency: "USDC" }

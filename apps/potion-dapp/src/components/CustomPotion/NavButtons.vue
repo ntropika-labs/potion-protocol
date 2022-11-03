@@ -78,6 +78,7 @@ const areStepsValid = computed(
     </BaseButton>
     <BuyPotionButton
       v-if="props.currentStep === CustomPotionStep.REVIEW"
+      test-buy-potion
       :valid="areStepsValid"
       :slippage="props.slippage"
       :allowance="props.allowance"

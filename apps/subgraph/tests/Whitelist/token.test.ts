@@ -1,6 +1,6 @@
 import { test, clearStore } from "matchstick-as/assembly/index";
 import { log } from "matchstick-as/assembly/log";
-import { Address, Bytes } from "@graphprotocol/graph-ts";
+import { Bytes, Address } from "@graphprotocol/graph-ts";
 import {
   MOCKED_TOKEN_A_ID,
   MOCKED_TOKEN_B_ID,
@@ -11,7 +11,7 @@ import {
   createCollateralWhitelisted,
   createProductWhitelisted,
 } from "../events";
-import { assertEntity, mockTokenCalls } from "../helpers";
+import { assertBytesEntity as assertEntity, mockTokenCalls } from "../helpers";
 import {
   handleCollateralWhitelist,
   handleProductWhitelist,
@@ -19,7 +19,7 @@ import {
 
 test("it can create a new collateral token after a collateralWhitelisted event", () => {
   const mockedEvent = createCollateralWhitelisted(
-    Address.fromString(MOCKED_TOKEN_A_ID)
+    Address.fromBytes(MOCKED_TOKEN_A_ID)
   );
   mockTokenCalls(
     MOCKED_TOKEN_A_ID,
@@ -28,12 +28,12 @@ test("it can create a new collateral token after a collateralWhitelisted event",
     "UTT"
   );
   log.info("Calling handleCollateralWhitelist with the following Token {}", [
-    MOCKED_TOKEN_A_ID,
+    MOCKED_TOKEN_A_ID.toHexString(),
   ]);
   handleCollateralWhitelist(mockedEvent);
   assertEntity("Token", MOCKED_TOKEN_A_ID, [
-    ["id", MOCKED_TOKEN_A_ID],
-    ["address", MOCKED_TOKEN_A_ID],
+    ["id", MOCKED_TOKEN_A_ID.toHexString()],
+    ["address", MOCKED_TOKEN_A_ID.toHexString()],
     ["decimals", COLLATERAL_PRECISION_DECIMALS.toString()],
     ["name", "UNIT_TEST_TOKEN"],
     ["symbol", "UTT"],
@@ -45,9 +45,9 @@ test("it can create a new collateral token after a collateralWhitelisted event",
 test("it can create a new underlying token after a productWhitelisted event", () => {
   const mockedEvent = createProductWhitelisted(
     Bytes.fromHexString(""),
-    Address.fromString(MOCKED_TOKEN_A_ID),
-    Address.fromString(MOCKED_TOKEN_B_ID),
-    Address.fromString(MOCKED_TOKEN_C_ID),
+    Address.fromBytes(MOCKED_TOKEN_A_ID),
+    Address.fromBytes(MOCKED_TOKEN_B_ID),
+    Address.fromBytes(MOCKED_TOKEN_C_ID),
     false
   );
   mockTokenCalls(
@@ -58,8 +58,8 @@ test("it can create a new underlying token after a productWhitelisted event", ()
   );
   handleProductWhitelist(mockedEvent);
   assertEntity("Token", MOCKED_TOKEN_A_ID, [
-    ["id", MOCKED_TOKEN_A_ID],
-    ["address", MOCKED_TOKEN_A_ID],
+    ["id", MOCKED_TOKEN_A_ID.toHexString()],
+    ["address", MOCKED_TOKEN_A_ID.toHexString()],
     ["decimals", COLLATERAL_PRECISION_DECIMALS.toString()],
     ["name", "UNIT_TEST_TOKEN"],
     ["symbol", "UTT"],

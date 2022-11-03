@@ -4,7 +4,7 @@ name: Development branch actions
 on:
   workflow_dispatch:
   pull_request:
-    branches: [feat-hedging-vault-mvp-CU-2f9b2q9]
+    branches: [next]
     paths-ignore:
       - "**.md"
       - "**.txt"

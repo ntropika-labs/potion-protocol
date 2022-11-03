@@ -9,9 +9,9 @@ describe("VaultCard.cy.ts", () => {
       symbol: "AST",
       address: "0x123",
     },
-    hedgingRate: 100,
-    size: 3000,
-    strike: 10,
+    hedgingRate: "100",
+    size: "3000",
+    strike: "10",
     currency: "TST",
     onSelected: {},
   };

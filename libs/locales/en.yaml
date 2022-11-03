@@ -1,9 +1,9 @@
 action: Action
+active: active
 active_options: Active Put Options
 active_potions: Active Potions
-active: active
-add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
 add_liquidity: Add liquidity
+add_liquidity_hint: By providing liquidity you're creating your pool cloning this template.
 add_more_liquidity: Add More Liquidity
 admin: admin
 all: All
@@ -23,9 +23,8 @@ buy_potion: buy potion
 buying_potion: buying potion
 check_pool: check pool
 choose_pool_assets: Choose one or more assets this pool will insure
-choose_pool_curve: >-
-  Curve the pool will use to determine sell prices, as a function of your pool
-  utilization.
+choose_pool_curve: Curve the pool will use to determine sell prices, as a function of your pool utilization.
+claimable: Claimable
 claimed: Claimed
 claiming_collateral: claiming collateral
 cloned: Cloned
@@ -39,7 +38,7 @@ contracts_addresses: Contracts Addresses
 counterparties: Counterparties
 counterparty: Counterparty
 create_pool: create pool
-create_pool_subtitle: GREAT POWER, GREAT RESPONSABILITY!
+create_pool_subtitle: GREAT POWER, GREAT RESPONSIBILITY!
 create_pool_title: Create custom pool from scratch
 create_potion: create potion
 create_potion_subtitle: PROTECTION POWER IN YOUR HANDS!
@@ -115,8 +114,8 @@ my_pool: My Pool
 my_pools: My Pools
 my_potions: My Potions
 my_summary: my summary
-next: next
 new_price: There is a price update
+next: next
 no_options: No options to show
 no_potions_available: No potions to show
 no_underlying_asset_found: no underlying asset found
