@@ -122,20 +122,33 @@
           </div>
           <div class="flex gap-6 w-full mt-5">
             <div class="w-1/2 flex flex-col items-center gap-4">
+              <h3 v-if="currentDepositAmount > 0">
+                {{
+                  t("current_deposit_request_info", { currentDepositAmount })
+                }}
+              </h3>
               <InputNumber
                 v-model="depositAmount"
                 class="self-stretch"
-                :max="assetUserBalance"
+                :max="userCollateralBalance"
                 :min="0.1"
                 :step="0.01"
                 :unit="assetSymbol"
               />
               <BaseButton
                 palette="secondary"
-                :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled || isLoading"
-                :loading="depositLoading || approveLoading"
-                @click="handleDeposit()"
+                :label="depositLabel"
+                :disabled="invalidDepositAmount || isLoading"
+                :loading="approveLoading || updateDepositLoading"
+                @click="handleUpdateDeposit"
+              />
+              <BaseButton
+                v-if="canDeleteDepositRequest"
+                palette="secondary-outline"
+                :label="t('delete_deposit_request')"
+                :disabled="isLoading"
+                :loading="deleteDepositLoading"
+                @click="deleteDepositRequest"
               />
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
@@ -168,7 +181,7 @@
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 
@@ -185,64 +198,50 @@ import {
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
-import { useOnboard } from "@onboard-composable";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
-import { useErc20Contract } from "@/composables/useErc20Contract";
+import { useDepositRequests } from "@/composables/useDepositRequests";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useHedgingVault } from "@/composables/useHedgingVault";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultDeposit } from "@/composables/useVaultDeposit";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
 
-import { useHedgingVault } from "@/composables/useHedgingVault";
-
 import { useUserDataStore } from "@/stores/useUserDataStore";
+import { useVaultStore } from "@/stores/useVaultStore";
 
 const { t } = useI18n();
-const { connectedWallet } = useOnboard();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
 
+// current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
 
-const { walletAddress } = storeToRefs(useUserDataStore());
+// user info
+const { walletAddress, userCollateralBalance } = storeToRefs(
+  useUserDataStore()
+);
 
+// vault info
+const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
 const { vault, loading: strategyLoading } = useHedgingVault(
   vaultId,
   walletAddress
 );
-
-const assetAddress = computed(() => vault.value.asset.address);
 const assetSymbol = computed(() => vault.value.asset.symbol);
 
-const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
+const vaultStore = useVaultStore(vaultId.value, "InvestmentVault");
+const vaultState = vaultStore();
+
+const { approveLoading, approveReceipt, approveTx, userAllowance } =
+  storeToRefs(vaultState);
+
 const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
-const {
-  userBalance: assetUserBalance,
-  fetchUserAllowance,
-  getTokenBalance,
-  fetchErc20Info,
-} = useErc20Contract(assetAddress, false);
-
-const {
-  approveTx,
-  approveReceipt,
-  approveLoading,
-  depositLoading,
-  depositReceipt,
-  depositTx,
-  handleDeposit,
-  amount: depositAmount,
-  buttonState: depositButtonState,
-} = useVaultDeposit(
-  assetUserBalance,
-  assetAddress,
-  assetSymbol,
-  vaultId,
-  vaultStatus
+const shareToAssetRatio = computed(() => 1 / assetToShare.value);
+const balanceInAsset = computed(
+  () => userBalance.value * shareToAssetRatio.value
 );
 
 const {
@@ -254,28 +253,57 @@ const {
   buttonState: redeemButtonState,
 } = useVaultRedeem(userBalance, vaultId, vaultStatus);
 
-const shareToAssetRatio = computed(() => 1 / assetToShare.value);
-const balanceInAsset = computed(
-  () => userBalance.value * shareToAssetRatio.value
+const {
+  canDeleteDepositRequest,
+  currentDepositAmount,
+  deleteDepositLoading,
+  deleteDepositRequest,
+  deleteDepositReceipt,
+  deleteDepositTransaction,
+  updateDepositLoading,
+  updateDepositRequest,
+  updateDepositReceipt,
+  updateDepositTransaction,
+} = useDepositRequests(
+  vaultId,
+  vault.value.currentRound,
+  walletAddress,
+  vault.value.rounds
 );
+
+const depositAmount = ref(0.1);
+const invalidDepositAmount = computed(
+  () =>
+    depositAmount.value <= 0 ||
+    depositAmount.value > userCollateralBalance.value
+);
+const depositLabel = computed(() => {
+  if (depositAmount.value > userAllowance.value) {
+    return t("approve");
+  }
+  if (currentDepositAmount.value > 0) {
+    return t("update");
+  }
+  return t("deposit");
+});
+const handleUpdateDeposit = async () => {
+  if (!invalidDepositAmount.value) {
+    if (depositAmount.value > userAllowance.value) {
+      vaultState.approve(depositAmount.value);
+    } else {
+      updateDepositRequest(depositAmount);
+    }
+  }
+};
 
 const isLoading = computed(
   () =>
+    approveLoading.value ||
     strategyLoading.value ||
     redeemLoading.value ||
-    depositLoading.value ||
-    approveLoading.value
+    deleteDepositLoading.value ||
+    updateDepositLoading.value
 );
-
-watch(assetAddress, async () => {
-  if (connectedWallet.value) {
-    await Promise.all([
-      fetchErc20Info(),
-      getTokenBalance(true),
-      fetchUserAllowance(vaultId.value),
-    ]);
-  }
-});
 
 onMounted(() => {
   getBlock("latest");
@@ -297,11 +325,19 @@ watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 
-watch(depositTx, (transaction) => {
+watch(deleteDepositTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("deleting_deposit"));
+});
+
+watch(deleteDepositReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("deleted_deposit"));
+});
+
+watch(updateDepositTransaction, (transaction) => {
   createTransactionNotification(transaction, t("depositing"));
 });
 
-watch(depositReceipt, (receipt) => {
+watch(updateDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deposited"));
 });
 
