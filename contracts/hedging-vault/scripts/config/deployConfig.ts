@@ -107,7 +107,7 @@ const MultiVaultConfig: PotionHedgingVaultConfigParams = {
     potionProtocolDeployConfigName: "hardhat.develop.hedging",
 
     // Test Deposit
-    testDepositAmount: parseEther("10000000"),
+    testDepositAmount: parseEther("10"),
 };
 
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
