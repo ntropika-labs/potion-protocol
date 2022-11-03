@@ -1,4 +1,4 @@
-import { computed, onMounted, ref, unref, type Ref } from "vue";
+import { computed, onMounted, ref, type Ref } from "vue";
 import { TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 
@@ -35,7 +35,6 @@ import { useDepthRouter } from "./useDepthRouter";
 import { useVaultOperatorCalculations } from "./useVaultOperatorCalculations";
 import { createValidExpiry } from "@/helpers";
 import { useOtokenFactory } from "./useOtokenFactory";
-import { computedAsync } from "@vueuse/core";
 import { calculateOrderSize } from "hedging-vault-sdk";
 import { formatUnits } from "@ethersproject/units";
 
@@ -73,23 +72,28 @@ export function useVaultOperatorEnterPosition(
     lowercaseVaultAddress.value
   );
 
+  const underlyingTokenAddress = computed(() =>
+    underlyingToken.value?.address.toLowerCase()
+  );
+
   const {
     getRoute,
     routerLoading,
     togglePolling: toggleUniswapPolling,
   } = useAlphaRouter(getChainId());
 
-  const { getTokenBalance } = useErc20Contract(underlyingToken.value.address);
+  const { getTokenBalance } = useErc20Contract(underlyingTokenAddress);
   const { getGas, gasPrice } = useBlockNative();
 
   const { getTargetOtokenAddress } = useOtokenFactory();
 
-  const totalPrincipalInUnderlying = computedAsync(async () => {
+  const getTotalPrincipalInUnderlying = async () => {
     let price = 1;
     const totalPayout = totalPayoutUSDC.value
       ? totalPayoutUSDC.value.currentPayout
       : 0;
     const exitSwapAmountInUnderlying = totalPayout / oraclePrice.value;
+
     const actionUnderlyingBalance = await getTokenBalance(
       false,
       potionBuyAction
@@ -123,7 +127,7 @@ export function useVaultOperatorEnterPosition(
       totalPrincipalBeforeWithdrawalInUnderlying -
       totalAssetsToWithdrawInUnderlying
     );
-  }, 0);
+  };
 
   const totalAmountToSwap = ref(0);
 
@@ -150,8 +154,7 @@ export function useVaultOperatorEnterPosition(
       totalAmountToSwap,
       strikePrice,
       gasPrice,
-      oraclePrice,
-      false
+      oraclePrice
     );
 
   const enterPositionData: Ref<{
@@ -208,7 +211,7 @@ export function useVaultOperatorEnterPosition(
   const loadEnterPositionRoute = async (
     premiumSlippage: number,
     swapSlippage: number,
-    maxSplits = 1
+    maxSplits = 1 // TODO remove: assert here theres only 1 route returned (no split routes)
   ) => {
     console.log("LOADING ENTER POSITION DATA");
     if (
@@ -219,29 +222,38 @@ export function useVaultOperatorEnterPosition(
     }
     try {
       isLoading.value = true;
-      const rawPotionrouterParams = unref(potionRouterParameters);
+      //const rawPotionrouterParams = unref(potionRouterParameters);
 
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
       const underlyingTokenValue = underlyingToken.value;
       const recipientAddress = getRecipientAddress(lowercaseVaultAddress.value);
 
+      const totalPrincipalInUnderlying = await getTotalPrincipalInUnderlying();
       const principalHedgedAmountInUnderlying =
-        (totalPrincipalInUnderlying.value * hedgingRate.value) / 100;
+        (totalPrincipalInUnderlying * hedgingRate.value) / 100;
 
       const principalHedgedAmountInUSDC =
         principalHedgedAmountInUnderlying *
-        rawPotionrouterParams.strikePriceUSDC;
+        potionRouterParameters.value.strikePriceUSDC;
 
-      // TODO: finish triggering the potion router update
       totalAmountToSwap.value = principalHedgedAmountInUSDC;
 
       // POTION ROUTER
       const potionRouterWithEstimatedPremium = await worker.getPotionRoute(
         principalHedgedAmountInUSDC,
-        rawPotionrouterParams.pools, // TODO: check pools may not match the order size
-        rawPotionrouterParams.strikePriceUSDC,
-        rawPotionrouterParams.gas,
-        rawPotionrouterParams.ethPrice
+        potionRouterParameters.value.pools, // TODO: check pools may not match the order size
+        potionRouterParameters.value.strikePriceUSDC,
+        potionRouterParameters.value.gas,
+        potionRouterParameters.value.ethPrice
+      );
+
+      console.log(
+        potionRouterWithEstimatedPremium,
+        principalHedgedAmountInUnderlying,
+        underlyingTokenValue,
+        hedgingRate.value,
+        strikePercent.value,
+        oraclePrice.value
       );
 
       const actualVaultSizeInUnderlying = calculateOrderSize(
@@ -263,23 +275,30 @@ export function useVaultOperatorEnterPosition(
       );
 
       const effectiveVaultSizeInUSDC =
-        effectiveVaultSizeInUnderlying * rawPotionrouterParams.strikePriceUSDC;
+        effectiveVaultSizeInUnderlying *
+        potionRouterParameters.value.strikePriceUSDC;
 
       // TODO: finish triggering the potion router update
-      totalAmountToSwap.value = principalHedgedAmountInUSDC;
+      totalAmountToSwap.value = effectiveVaultSizeInUSDC;
 
       const potionRouterForEffectiveSize = await worker.getPotionRoute(
         effectiveVaultSizeInUSDC,
-        rawPotionrouterParams.pools, // TODO: check pools doesnt match the order size
-        rawPotionrouterParams.strikePriceUSDC,
-        rawPotionrouterParams.gas,
-        rawPotionrouterParams.ethPrice
+        potionRouterParameters.value.pools, // TODO: check pools doesnt match the order size
+        potionRouterParameters.value.strikePriceUSDC,
+        potionRouterParameters.value.gas,
+        potionRouterParameters.value.ethPrice
       );
 
       const premiumWithSlippage =
         ((100 + premiumSlippage) * potionRouterForEffectiveSize.premium) / 100;
-      console.log("- PREMIUM WITH SLIPPAGE", premiumWithSlippage);
+      console.log(
+        "- PREMIUM WITH SLIPPAGE",
+        premiumWithSlippage,
+        potionRouterForEffectiveSize.premium
+      );
 
+      // substitute the local address for the underlying token with the official address for WETH
+      // required to to run the uniswap router
       const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
 
       const uniswapResult = await getRoute(
@@ -301,7 +320,7 @@ export function useVaultOperatorEnterPosition(
         USDCToken,
         TradeType.EXACT_INPUT,
         principalHedgedAmountInUnderlying,
-        1, // TODO remove: assert here theres only 1 route returned (no split routes)
+        maxSplits,
         recipientAddress,
         swapSlippage,
         UniswapActionType.EXIT_POSITION
@@ -372,6 +391,7 @@ export function useVaultOperatorEnterPosition(
         routePremium
       ) {
         const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+        // mock the official address of USDC with the one from the local deployment
         const collateralTokenToSwap = mockCollateralToken(USDCToken);
 
         const swapInfo: UniSwapInfo = evaluateUniswapRoute(
