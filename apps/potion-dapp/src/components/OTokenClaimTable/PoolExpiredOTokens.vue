@@ -10,6 +10,7 @@ import {
 import { useTokenList } from "@/composables/useTokenList";
 import { useI18n } from "vue-i18n";
 import { contractsAddresses } from "@/helpers/contracts";
+import { calculatePnL } from "@/helpers/pnl";
 
 import type { OtokenDataset } from "dapp-types";
 import type { PoolRecordOtokenInfoFragment } from "subgraph-queries/generated/operations";
@@ -18,6 +19,7 @@ interface Props {
   otokens: PoolRecordOtokenInfoFragment[];
   payoutMap: Map<string, number>;
   claimedOtokens: string[];
+  claimCollateralLoading: boolean;
 }
 
 const props = defineProps<Props>();
@@ -26,12 +28,6 @@ const { t } = useI18n();
 const { symbol: currency } = useTokenList(
   contractsAddresses.USDC.address.toLowerCase()
 );
-
-const calcProfitAndLoss = (
-  premium: number,
-  collateral: number,
-  reclaimable: number
-) => (premium + collateral - reclaimable) / collateral;
 
 const dataset = computed<OtokenDataset>(() => {
   return props.otokens.map((item) => {
@@ -48,7 +44,7 @@ const dataset = computed<OtokenDataset>(() => {
     const collateral = parseFloat(item.collateral);
 
     if (props.claimedOtokens.includes(id)) {
-      const pnl = calcProfitAndLoss(premium, collateral, payout) * 100;
+      const pnl = calculatePnL(premium, collateral, payout) * 100;
 
       return [
         { value: symbol },
@@ -67,36 +63,36 @@ const dataset = computed<OtokenDataset>(() => {
       ];
     } else {
       const reclaimable = payout > 0 ? payout : returned;
-      const pnl = calcProfitAndLoss(premium, collateral, reclaimable) * 100;
+      const pnl = calculatePnL(premium, collateral, reclaimable) * 100;
 
       return [
-        { value: symbol },
-        { value: dateFormatter(item.otoken.expiry, true) },
-        { value: shortCurrencyFormatter(premium, currency) },
-        { value: shortCurrencyFormatter(strikePrice, currency) },
-        { value: shortCurrencyFormatter(payout, currency) },
-        { value: shortCurrencyFormatter(returned, currency) },
-        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
         {
           button: true,
           claimable: isReclaimable,
           value: isReclaimable ? t("claim") : t("claimed"),
           color: isReclaimable ? "secondary-o" : "secondary",
         },
+        { value: symbol },
+        { value: dateFormatter(item.otoken.expiry, true) },
+        { value: shortCurrencyFormatter(strikePrice, currency) },
+        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+        { value: shortCurrencyFormatter(premium, currency) },
+        { value: shortCurrencyFormatter(payout, currency) },
+        { value: shortCurrencyFormatter(returned, currency) },
       ];
     }
   });
 });
 
 const headings = [
+  t("action"),
   t("asset"),
   t("expiration_date"),
-  t("premium"),
   t("strike_price"),
-  t("reclaimable"),
-  t("claimed"),
   t("pnl"),
-  t("action"),
+  t("premium"),
+  t("claimable"),
+  t("claimed"),
 ];
 
 const emits = defineEmits<{
@@ -115,6 +111,7 @@ const onButtonPressed = (index: number, cellIndex: number) => {
     <PutOptionsTable
       :headings="headings"
       :dataset="dataset"
+      :loading="claimCollateralLoading"
       @button-pressed="onButtonPressed"
     />
   </div>

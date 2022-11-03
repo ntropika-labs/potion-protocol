@@ -1,6 +1,6 @@
 query getOrderBookEntries(
   $otoken: String!
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $direction: OrderDirection = asc
 ) {
   orderBookEntries(

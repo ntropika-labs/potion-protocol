@@ -29,7 +29,7 @@ const {
 
 const getCreator = (address: string) => ({
   label: address,
-  link: "",
+  link: `https://etherscan.io/address/${address}`,
 });
 
 const { t } = useI18n();

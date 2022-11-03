@@ -95,9 +95,7 @@ const unutilizedLiquidity = computed(() => {
           <template #footerDescription>
             <p>
               {{ t("unutilized_capital") }}:
-              <span class="text-secondary-500"
-                >{{ unutilizedLiquidity }} USDC</span
-              >
+              <span class="text-dwhite">{{ unutilizedLiquidity }} USDC</span>
             </p>
           </template>
         </InputNumber>

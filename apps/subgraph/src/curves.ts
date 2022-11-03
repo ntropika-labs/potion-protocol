@@ -3,21 +3,6 @@ import { CurveAdded } from "../generated/CurveManager/CurveManager";
 import { Curve } from "../generated/schema";
 import { int59x18ToDecimal } from "./helpers";
 
-export function createCriteriaId(criteriaHash: Bytes): string {
-  return criteriaHash.toHexString();
-}
-
-export function createCriteriaSetId(criteriaSetHash: Bytes): string {
-  return criteriaSetHash.toHexString();
-}
-
-export function createCriteriaJoinedCriteriaSetId(
-  criteriaHash: Bytes,
-  criteriaSetHash: Bytes
-): string {
-  return criteriaHash.toHexString() + criteriaSetHash.toHexString();
-}
-
 function calculateAverageCostAux(
   curve: Curve,
   util: BigDecimal,
@@ -53,12 +38,12 @@ function calculateAverageCostAux(
 }
 
 export function calculateAverageCost(
-  curveId: string,
+  curveId: Bytes,
   util: BigDecimal,
   locked: BigDecimal,
   size: BigDecimal
 ): BigDecimal {
-  log.debug("calculateAverageCost {}", [curveId]);
+  log.debug("calculateAverageCost {}", [curveId.toHexString()]);
   const curve = Curve.load(curveId);
   if (curve) {
     return calculateAverageCostAux(curve as Curve, util, locked, size);
@@ -72,9 +57,9 @@ export function calculateAverageCost(
  */
 export function handleCurveAdded(event: CurveAdded): void {
   const curveId: Bytes = event.params.curveHash;
-  let curve = Curve.load(curveId.toHexString());
+  let curve = Curve.load(curveId);
   if (curve == null) {
-    curve = new Curve(curveId.toHexString());
+    curve = new Curve(curveId);
 
     curve.a = int59x18ToDecimal(event.params.curveParams.a_59x18);
     curve.b = int59x18ToDecimal(event.params.curveParams.b_59x18);

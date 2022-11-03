@@ -23,6 +23,12 @@ fragment templateInfo on Template {
 
 fragment templateData on Template {
   ...templateInfo
+  dailyData (orderBy: timestamp, orderDirection: asc) {
+    timestamp
+    pnl
+    liquidity
+    utilization
+  }
   curve {
     ...curveData
   }

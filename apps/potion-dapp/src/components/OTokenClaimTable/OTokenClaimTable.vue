@@ -22,9 +22,12 @@ interface Props {
   priceMap: Map<string, string>;
   payoutMap: Map<string, number>;
   claimedOtokens: string[];
+  claimCollateralLoading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  claimCollateralLoading: false,
+});
 const emits = defineEmits<{
   (e: "otoken-claimed", id: string): void;
 }>();
@@ -32,14 +35,14 @@ const emits = defineEmits<{
 const { t } = useI18n();
 
 const activeTab = ref(tabs.expired);
-const selectedUnderlyings = ref<Map<string, boolean>>(new Map());
-const totalSelectedUnderlyings = computed(
-  () => Array.from(selectedUnderlyings.value.values()).filter(Boolean).length
+const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
+const selectedUnderlyings = ref<Set<string>>(
+  new Set(uniqueUnderlyings.value.map(({ address }) => address))
 );
 
 const filterOtokens = (otokens: PoolRecordOtokenInfoFragment[]) =>
   otokens.filter(({ otoken }) =>
-    selectedUnderlyings.value.get(otoken.underlyingAsset.address)
+    selectedUnderlyings.value.has(otoken.underlyingAsset.address)
   );
 
 const filteredActiveOtokens = computed(() =>
@@ -49,25 +52,33 @@ const filteredExpiredOtokens = computed(() =>
   filterOtokens(props.expiredOtokens)
 );
 
-const uniqueUnderlyings = computed(() => _uniqBy(props.underlyings, "address"));
-
-const setUnderlying = (key: string, value: boolean) =>
-  selectedUnderlyings.value.set(key, value);
+const setUnderlying = (key: string, state: boolean) => {
+  if (state === true) {
+    selectedUnderlyings.value.add(key);
+  } else {
+    selectedUnderlyings.value.delete(key);
+  }
+};
 const toggleUnderlying = (key: string) =>
-  setUnderlying(key, !selectedUnderlyings.value.get(key));
-const isActive = (key: string) => selectedUnderlyings.value.get(key);
+  setUnderlying(key, !selectedUnderlyings.value.has(key));
+const isActive = (key: string) => selectedUnderlyings.value.has(key);
 
 // bulk operations
-const setAllUnderlyings = (v: boolean) =>
-  uniqueUnderlyings.value.forEach(({ address }) => setUnderlying(address, v));
+const setAllUnderlyings = (desiredState: boolean) => {
+  if (desiredState === true)
+    selectedUnderlyings.value = new Set(
+      uniqueUnderlyings.value.map((u) => u.address)
+    );
+  else selectedUnderlyings.value.clear();
+};
 const selectAllUnderlyings = () => setAllUnderlyings(true);
 const deselectAllUnderlyings = () => setAllUnderlyings(false);
 
 const toggleAllUnderlyings = () => {
-  if (totalSelectedUnderlyings.value === 0) {
-    selectAllUnderlyings();
-  } else {
+  if (selectedUnderlyings.value.size === uniqueUnderlyings.value.length) {
     deselectAllUnderlyings();
+  } else {
+    selectAllUnderlyings();
   }
 };
 
@@ -123,7 +134,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
             size="xs"
             class="!capitalize"
             test-claim-table-toggle-all-button
-            :palette="getButtonColor(totalSelectedUnderlyings === 0)"
+            palette="secondary"
             @click="toggleAllUnderlyings"
           />
           <BaseButton
@@ -150,6 +161,7 @@ watch(uniqueUnderlyings, selectAllUnderlyings);
           :underlyings="underlyings"
           :payout-map="props.payoutMap"
           :claimed-otokens="props.claimedOtokens"
+          :claim-collateral-loading="props.claimCollateralLoading"
           test-claim-table-expired-options
           @claim-otoken="claimOtoken"
         >

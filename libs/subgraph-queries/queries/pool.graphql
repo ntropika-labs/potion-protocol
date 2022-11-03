@@ -95,6 +95,12 @@ query getPoolById($id: ID!) {
     locked
     pnlPercentage
     utilization
+    dailyData (orderBy: timestamp, orderDirection: asc) {
+      timestamp
+      pnl
+      liquidity
+      utilization
+    }
     template {
       curve {
         id

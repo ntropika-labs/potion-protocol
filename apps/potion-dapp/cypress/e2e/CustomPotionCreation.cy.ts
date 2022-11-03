@@ -1,12 +1,15 @@
 /// <reference types="cypress" />
 /// <reference types="../support" />
 
-import { aliasQuery } from "../support/utilities";
+import { aliasQuery, resetApproval } from "../support/utilities";
 
 describe("Custom Potion Creation Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/base", "2021-01-01 09:00:00+00:00", false);
+    });
+    it("can reset the approval", async () => {
+      await resetApproval();
     });
   });
   context("customPotionCreation test", () => {
@@ -182,6 +185,18 @@ describe("Custom Potion Creation Flow", () => {
         .clear()
         .type(validNumber.toString());
       cy.wait("@getPoolsFromCriteria");
+    });
+    it("Can approve and buy", () => {
+      cy.get(".p-3 > .flex > .text-dwhite-300").clear().type("0.001");
+      cy.get("[test-buy-potion]").first().as("purchaseButton");
+
+      cy.approveAndPurchase(
+        0,
+        "@purchaseButton",
+        "buy potion",
+        true,
+        "approve"
+      );
     });
   });
 });

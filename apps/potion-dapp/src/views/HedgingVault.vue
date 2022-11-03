@@ -170,6 +170,7 @@
 import { useI18n } from "vue-i18n";
 import { computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import {
   BaseCard,
@@ -195,7 +196,8 @@ import { useVaultDeposit } from "@/composables/useVaultDeposit";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
 
 import { useHedgingVault } from "@/composables/useHedgingVault";
-import { useUserData } from "@/composables/useUserData";
+
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const { connectedWallet } = useOnboard();
@@ -205,7 +207,8 @@ const { vaultId } = useRouteVaultIdentifier(route.params);
 
 const { blockTimestamp, getBlock } = useEthersProvider();
 
-const { walletAddress } = useUserData();
+const { walletAddress } = storeToRefs(useUserDataStore());
+
 const { vault, loading: strategyLoading } = useHedgingVault(
   vaultId,
   walletAddress

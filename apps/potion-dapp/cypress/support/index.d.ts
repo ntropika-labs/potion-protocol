@@ -19,5 +19,13 @@ declare namespace Cypress {
       startFresh = true,
       persistData = false
     ): Chainable<Element>;
+
+    approveAndPurchase(
+      amount: number,
+      purchaseButtonAlias: string,
+      purchaseLabel: string,
+      doApproval?: boolean,
+      approveLabel?: string
+    ): Chainable<Element>;
   }
 }

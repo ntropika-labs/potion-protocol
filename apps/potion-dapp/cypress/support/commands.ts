@@ -24,7 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="./index.d.ts" />
+/// <reference types="cypress" />
+/// <reference types="../support" />
 
 import "@testing-library/cypress/add-commands";
 
@@ -79,5 +80,61 @@ Cypress.Commands.add(
           });
         }
       });
+  }
+);
+
+Cypress.Commands.add(
+  "approveAndPurchase",
+  (
+    _amount,
+    purchaseButtonAlias,
+    purchaseLabel = "buy",
+    doApproval = true,
+    approveLabel = "approve usdc"
+  ) => {
+    // Wait for the button to update if any previous action is still completing
+    cy.wait(5000);
+    cy.get(purchaseButtonAlias).should("not.be.disabled");
+
+    if (doApproval) {
+      cy.get(purchaseButtonAlias)
+        .invoke("text")
+        .then((buttonText) => {
+          const lowercaseButtonText = (buttonText || "").toLowerCase();
+          if (!purchaseLabel.match(lowercaseButtonText)) {
+            cy.get(purchaseButtonAlias).contains(approveLabel, {
+              matchCase: false,
+              timeout: 10000,
+            });
+            // APPROVE
+            // {force: true} prevents the test from failing if a notification is displayed in front of the button
+            cy.get(purchaseButtonAlias).trigger("click", { force: true });
+
+            // TOAST NOTIFICATION
+            cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
+
+            cy.get(purchaseButtonAlias).should("not.be.disabled", {
+              timeout: 20000,
+            });
+          }
+        });
+    }
+
+    cy.wait(1000);
+
+    cy.get(purchaseButtonAlias)
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 })
+      .should("not.be.disabled");
+    // PURCHASE
+    // {force: true} prevents the test from failing if a notification is displayed in front of the button
+    cy.get(purchaseButtonAlias).trigger("click", { force: true });
+
+    // TOAST NOTIFICATION
+    cy.get("#toast-wrap > :nth-child(2) > .grid", { timeout: 10000 });
+
+    // TODO: Remove if we disable infinite approval
+    cy.get(purchaseButtonAlias)
+      .contains(purchaseLabel, { matchCase: false, timeout: 20000 })
+      .should("not.be.disabled");
   }
 );

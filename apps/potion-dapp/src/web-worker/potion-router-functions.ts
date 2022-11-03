@@ -8,3 +8,8 @@ expose({
   getEmergingBondingCurvesFromCriterias,
   runDepthRouter,
 });
+
+export interface PotionRouter {
+  getEmergingBondingCurvesFromCriterias: typeof getEmergingBondingCurvesFromCriterias;
+  runDepthRouter: typeof runDepthRouter;
+}

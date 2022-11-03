@@ -133,3 +133,6 @@ yarn nx run potion-dapp:local-test-e2e
 - Run `yarn nx run potion-dapp:local-dev-test-e2e` to spin up the dev server and cypress client simultaneously
 
 _The command runs in **foreground**, command needs to be terminated manually_
+
+## Build for Testnet
+To build for a testnet, you need to use the command `build-testnet`. This command will use oracles to fetch prices instead of getting them from Coingecko.

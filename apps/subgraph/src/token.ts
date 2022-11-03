@@ -2,7 +2,13 @@ import {
   CollateralWhitelisted,
   ProductWhitelisted,
 } from "../generated/Whitelist/Whitelist";
-import { BigInt, Address, BigDecimal, log } from "@graphprotocol/graph-ts";
+import {
+  BigInt,
+  Address,
+  BigDecimal,
+  Bytes,
+  log,
+} from "@graphprotocol/graph-ts";
 import { Token, Product } from "../generated/schema";
 import { getTokenDecimals, getTokenName, getTokenSymbol } from "./tokenHelpers";
 import { bigIntToDecimal } from "./helpers";
@@ -17,20 +23,23 @@ export function collateralToDecimals(value: BigInt): BigDecimal {
   return bigIntToDecimal(value, decimals as i32);
 }
 
-export function createTokenId(address: Address): string {
-  return address.toHexString();
+export function createProductId(
+  underlying: Bytes,
+  strike: Bytes,
+  collateral: Bytes
+): Bytes {
+  return underlying.concat(strike).concat(collateral);
 }
 
 function createToken(address: Address, tokenType: TokenType): void {
-  const tokenId = createTokenId(address);
-  let token = Token.load(tokenId);
+  let token = Token.load(address);
 
   if (token == null) {
     log.info("Creating new {} token for address {}", [
       tokenType,
       address.toHexString(),
     ]);
-    token = new Token(tokenId);
+    token = new Token(address);
     token.address = address;
     token.decimals = getTokenDecimals(address);
     token.name = getTokenName(address);
@@ -49,17 +58,17 @@ export function handleProductWhitelist(event: ProductWhitelisted): void {
       event.params.strike.toHexString(),
     ]
   );
-  // Create an entity for the underlying of the product (if it does not exist already).
   createToken(event.params.underlying, TokenType.UNDERLYING);
 
-  const productID =
-    event.params.underlying.toHexString() +
-    event.params.strike.toHexString() +
-    event.params.collateral.toHexString();
+  const productID = createProductId(
+    event.params.underlying,
+    event.params.strike,
+    event.params.collateral
+  );
   const product = new Product(productID);
-  product.underlying = event.params.underlying.toHexString();
-  product.strike = event.params.strike.toHexString();
-  product.collateral = event.params.collateral.toHexString();
+  product.underlying = event.params.underlying;
+  product.strike = event.params.strike;
+  product.collateral = event.params.collateral;
   product.isPut = event.params.isPut;
   product.isWhitelisted = true;
   product.save();

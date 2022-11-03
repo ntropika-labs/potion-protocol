@@ -1,4 +1,5 @@
 import { wrap } from "comlink";
+import type { AlphaRouter } from "./alpha-router-functions";
 
 const webWorker = new Worker(
   new URL("./alpha-router-functions.ts", import.meta.url),
@@ -6,5 +7,5 @@ const webWorker = new Worker(
     type: "module",
   }
 );
-const worker = wrap(webWorker);
+const worker = wrap<AlphaRouter>(webWorker);
 export { worker };

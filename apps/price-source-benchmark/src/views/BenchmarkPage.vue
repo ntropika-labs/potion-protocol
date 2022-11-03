@@ -4,7 +4,6 @@ import { $fetch } from "ohmyfetch";
 
 import type { SelectableToken } from "dapp-types";
 import { Oracle__factory, type Oracle } from "@potion-protocol/core/typechain";
-
 import { BaseButton, InputNumber, TokenCard } from "potion-ui";
 
 import { useTokenList } from "@/composables/useTokenList";
