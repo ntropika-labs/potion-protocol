@@ -74,17 +74,26 @@ describe("CurveManager math", function () {
             });
         });
 
-        const coshFailureCases: CoshTestCase[] = [
+        const coshLessThanZeroFailureCases: CoshTestCase[] = [
             new CoshTestCase(-0.001),
             new CoshTestCase(-1),
             new CoshTestCase(-99),
+        ];
+
+        coshLessThanZeroFailureCases.forEach(tc => {
+            it(`out of bounds: cosh(${tc.in_number})`, async () => {
+                await expect(curveManager.cosh(tc.in_59x18.value)).to.be.revertedWith("Cosh input < 0");
+            });
+        });
+
+        const coshTooHighFailureCases: CoshTestCase[] = [
             new CoshTestCase(20.001),
             new CoshTestCase(99), // This would overflow in solidity if not explicitly guarded against
         ];
 
-        coshFailureCases.forEach(tc => {
+        coshTooHighFailureCases.forEach(tc => {
             it(`out of bounds: cosh(${tc.in_number})`, async () => {
-                await expect(curveManager.cosh(tc.in_59x18.value)).to.be.revertedWith("Cosh input");
+                await expect(curveManager.cosh(tc.in_59x18.value)).to.be.revertedWith("Cosh input too high");
             });
         });
     });
@@ -155,16 +164,23 @@ describe("CurveManager math", function () {
             });
         });
 
-        const curveFailureCases: HyperbolicCurveTestCase[] = [
-            new HyperbolicCurveTestCase(curve3, -1.0001),
-            new HyperbolicCurveTestCase(curve3, 1.0001),
-        ];
+        const curveTooLowFailureCases: HyperbolicCurveTestCase[] = [new HyperbolicCurveTestCase(curve3, -1.0001)];
 
-        curveFailureCases.forEach(tc => {
+        curveTooLowFailureCases.forEach(tc => {
             it(`out of bounds: curve(${tc.x_number})`, async () => {
                 await expect(
                     curveManager.hyperbolicCurve(tc.curve.asSolidityStruct(), tc.x_59x18.value),
-                ).to.be.revertedWith("x input");
+                ).to.be.revertedWith("x input too low");
+            });
+        });
+
+        const curveTooHighFailureCases: HyperbolicCurveTestCase[] = [new HyperbolicCurveTestCase(curve3, 1.0001)];
+
+        curveTooHighFailureCases.forEach(tc => {
+            it(`out of bounds: curve(${tc.x_number})`, async () => {
+                await expect(
+                    curveManager.hyperbolicCurve(tc.curve.asSolidityStruct(), tc.x_59x18.value),
+                ).to.be.revertedWith("x input too high");
             });
         });
     });
