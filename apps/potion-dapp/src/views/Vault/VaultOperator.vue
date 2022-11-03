@@ -32,6 +32,7 @@ import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultCont
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useErc20Contract } from "@/composables/useErc20Contract";
 
 import { useBuyerRecords } from "@/composables/useBuyerRecords";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
@@ -90,6 +91,9 @@ const {
   nextRoundReceipt,
 } = useHedgingVaultOrchestratorContract(vaultId.value.toLowerCase());
 
+const { balance, getTokenBalance } = useErc20Contract(
+  "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44"
+);
 const {
   nextCycleTimestamp,
   cycleDurationDays,
@@ -220,9 +224,16 @@ const callbackEnterNextRound = async () => {
     enterFallbackSwapInfo,
     exitFallbackSwapInfo
   );
+
+  // Reset data from routers
+  enterPositionData.value = null;
+  exitPositionData.value = null;
+
+  await getTotalPayoutInUSDC();
 };
 
 const callbackLoadRoutes = async () => {
+  await getTotalPayoutInUSDC();
   await Promise.all([
     loadEnterPositionRoute(premiumSlippage.value, swapSlippage.value),
     loadExitPositionRoute(swapSlippage.value),
@@ -251,7 +262,8 @@ watch(assetAddress, async (address) => {
 
   addOraclePolling(address);
 
-  await Promise.all([getTotalPayoutInUSDC(), getCurrentPayout(address)]);
+  await getCurrentPayout(address);
+  await getTotalPayoutInUSDC();
 });
 
 // Tab navigation
@@ -260,20 +272,23 @@ const tabs = ref([
   {
     title: t("enter_position"),
     subtitle: "",
-    isValid: hasCounterparties,
+    isValid: isEnterPositionOperationValid,
     enabled: true,
   },
   {
     title: t("exit_position"),
     subtitle: "",
-    isValid: true,
-    enabled: hasCounterparties,
+    isValid: isExitPositionOperationValid,
+    enabled: true,
   },
 ]);
 
 onMounted(async () => {
   addOraclePolling(unref(assetAddress));
   await getBlock("latest");
+  await getTokenBalance(false, potionBuyAction);
+
+  console.log(balance);
 });
 
 onBeforeUnmount(stopPolling);
