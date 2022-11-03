@@ -127,7 +127,7 @@ export function useInvestmentVaultContract(
       const contract = initContractProvider();
 
       const totalSupplyBN = await contract.totalSupply();
-      console.log("TOTAL SUPPLY", parseFloat(formatUnits(totalSupplyBN, 18)));
+
       totalSupply.value = parseFloat(formatUnits(totalSupplyBN, 18));
     } catch (error) {
       const message =
@@ -148,7 +148,6 @@ export function useInvestmentVaultContract(
       const contract = initContractProvider();
 
       const shareBalanceBN = await contract.balanceOf(address);
-      console.log("SHAR EBALANCE", shareBalanceBN.toString());
 
       shareBalance.value = parseFloat(formatUnits(shareBalanceBN, 6));
     } catch (error) {

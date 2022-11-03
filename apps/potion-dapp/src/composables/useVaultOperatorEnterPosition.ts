@@ -247,15 +247,6 @@ export function useVaultOperatorEnterPosition(
         potionRouterParameters.value.ethPrice
       );
 
-      console.log(
-        potionRouterWithEstimatedPremium,
-        principalHedgedAmountInUnderlying,
-        underlyingTokenValue,
-        hedgingRate.value,
-        strikePercent.value,
-        oraclePrice.value
-      );
-
       const actualVaultSizeInUnderlying = calculateOrderSize(
         principalHedgedAmountInUnderlying,
         underlyingTokenValue.decimals as number,
