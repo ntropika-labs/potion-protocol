@@ -10,9 +10,9 @@ console.log("Running a mocked version of 'vaultOperatorUtils'");
 
 /**
  * This function was developed with no other purpose than being able to change the recipient by mocking this file.
- * This is required because we need a valid address for uniswap to run the router
- * @param vaultAddress Address of the vault we are acting on
- * @returns The address to use as an intermediate recipient in multihop swaps
+ * This replaces the official address of the collateral token with the one for USDC from the local deployment
+ * @param token Potion token we are using as a collateral
+ * @returns Potion token with the address mocked with the one from the local deployment
  */
 const mockCollateralToken = (token: Token): Token => {
   return {
@@ -25,9 +25,9 @@ const mockCollateralToken = (token: Token): Token => {
 
 /**
  * This function was developed with no other purpose than being able to change the recipient by mocking this file.
- * This is required because we need a valid address for uniswap to run the router
- * @param vaultAddress Address of the vault we are acting on
- * @returns The address to use as an intermediate recipient in multihop swaps
+ * This replaces the alocal deployment ddress of the underlying token with the official one for WETH
+ * @param token Potion token we are using as underlying
+ * @returns Potion token with the address mocked with the official one
  */
 const mockUnderlyingToken = (token: Token): Token => {
   console.log(getWETHAddress());

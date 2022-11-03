@@ -58,8 +58,8 @@ export function useVaultOperatorExitPosition(
   const { fetchActionBalance } = useCollateralTokenContract();
 
   const exitPositionData: Ref<{
-    uniswapRouterData: UniswapRouterReturn;
-    fallbackUniswapRouterData: UniswapRouterReturn;
+    uniswapRouterData: UniswapRouterReturn | null;
+    fallbackUniswapRouterData: UniswapRouterReturn | null;
   } | null> = ref(null);
   const isLoading = ref(false);
 
@@ -112,22 +112,20 @@ export function useVaultOperatorExitPosition(
       throw new Error("totalPayoutUSDC must be defined");
     }
     try {
+      let uniswapExitRoute = null;
+      let fallbackRoute = null;
       isLoading.value = true;
+      const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+      const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
+      const recipientAddress = getRecipientAddress(lowercaseVaultAddress.value);
       /**
        * TODO: if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
        * We will still need to pass a the swap object with an empty swapPath ("")
        */
       if (totalPayoutUSDC.value && totalPayoutUSDC.value.currentPayout > 0) {
-        const USDCToken = convertUniswapTokenToToken(USDCUniToken);
-        const underlyingTokenToSwap = mockUnderlyingToken(
-          underlyingToken.value
-        );
-        const recipientAddress = getRecipientAddress(
-          lowercaseVaultAddress.value
-        );
         const payout = totalPayoutUSDC.value.currentPayout;
 
-        const uniswapRouterResult = await getRoute(
+        uniswapExitRoute = await getRoute(
           USDCToken,
           underlyingTokenToSwap,
           TradeType.EXACT_INPUT,
@@ -138,17 +136,20 @@ export function useVaultOperatorExitPosition(
           UniswapActionType.EXIT_POSITION
         );
 
-        if (!uniswapRouterResult) {
+        if (!uniswapExitRoute) {
           throw new Error("No uniswap route found");
         }
+      } else {
+        uniswapExitRoute = null;
+      }
+      const totalFallbackBalance = await fetchActionBalance(
+        swapToUSDCAction as string
+      );
 
-        const totalFallbackBalance = await fetchActionBalance(
-          swapToUSDCAction as string
-        );
+      console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
 
-        console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
-
-        const fallbackRoute = await getRoute(
+      if (totalFallbackBalance > 0) {
+        fallbackRoute = await getRoute(
           USDCToken,
           underlyingTokenToSwap,
           TradeType.EXACT_INPUT,
@@ -162,12 +163,14 @@ export function useVaultOperatorExitPosition(
         if (!fallbackRoute) {
           throw new Error("No fallback route found");
         }
-
-        exitPositionData.value = {
-          uniswapRouterData: uniswapRouterResult,
-          fallbackUniswapRouterData: fallbackRoute,
-        };
+      } else {
+        fallbackRoute = null;
       }
+
+      exitPositionData.value = {
+        uniswapRouterData: uniswapExitRoute,
+        fallbackUniswapRouterData: fallbackRoute,
+      };
     } finally {
       isLoading.value = false;
     }
@@ -184,35 +187,28 @@ export function useVaultOperatorExitPosition(
     toggleUniswapPolling(false);
 
     let swapInfo: UniSwapInfo;
-    let fallbackSwapInfo: UniSwapInfo;
+    let fallbackInfo: UniSwapInfo;
     const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+    // mock the official address of USDC with the one from the local deployment
     const collateralTokenToSwap = mockCollateralToken(USDCToken);
 
-    if (totalPayoutUSDC.value && totalPayoutUSDC.value.currentPayout > 0) {
+    console.log("TOTAL PAYOUT USDC", totalPayoutUSDC.value);
+    if (
+      totalPayoutUSDC.value &&
+      totalPayoutUSDC.value.currentPayout > 0 &&
+      exitPositionData.value?.uniswapRouterData
+    ) {
       const swapRoute = exitPositionData.value?.uniswapRouterData.routes[0];
       const executionPrice =
         exitPositionData.value?.uniswapRouterData.tradeExecutionPrice;
 
-      if (
-        exitPositionData.value?.uniswapRouterData &&
-        swapRoute &&
-        swapRoute.protocol === Protocol.V3 &&
-        executionPrice &&
-        exitPositionData.value.fallbackUniswapRouterData
-      ) {
+      if (swapRoute && swapRoute.protocol === Protocol.V3 && executionPrice) {
         swapInfo = evaluateUniswapRoute(
           exitPositionData.value?.uniswapRouterData,
           UniswapActionType.EXIT_POSITION, // TODO: change enum names to better ones
           oraclePrice.value,
-          underlyingToken.value,
-          collateralTokenToSwap
-        );
-        fallbackSwapInfo = evaluateUniswapRoute(
-          exitPositionData.value.fallbackUniswapRouterData,
-          UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
-          oraclePrice.value,
-          underlyingToken.value,
-          collateralTokenToSwap
+          collateralTokenToSwap,
+          underlyingToken.value
         );
       } else {
         throw new Error("swapRoute isn't a protocol v3 route");
@@ -228,7 +224,18 @@ export function useVaultOperatorExitPosition(
         outputToken: underlyingToken.value,
         expectedPriceRate: 0,
       };
-      fallbackSwapInfo = {
+    }
+
+    if (exitPositionData.value?.fallbackUniswapRouterData) {
+      fallbackInfo = evaluateUniswapRoute(
+        exitPositionData.value?.fallbackUniswapRouterData,
+        UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
+        oraclePrice.value,
+        collateralTokenToSwap,
+        underlyingToken.value
+      );
+    } else {
+      fallbackInfo = {
         steps: [
           {
             inputToken: USDCToken,
@@ -240,7 +247,7 @@ export function useVaultOperatorExitPosition(
       };
     }
 
-    return { swapInfo, fallback: fallbackSwapInfo };
+    return { swapInfo, fallback: fallbackInfo };
   };
 
   return {
