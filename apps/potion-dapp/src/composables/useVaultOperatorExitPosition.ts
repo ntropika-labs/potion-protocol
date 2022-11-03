@@ -88,8 +88,8 @@ export function useVaultOperatorExitPosition(
       isTotalAmountValid.value &&
       !!totalPayoutUSDC.value &&
       totalPayoutUSDC.value?.currentPayout > 0 &&
-      hasRoute(exitPositionData.value?.uniswapRouterData) &&
-      hasRoute(exitPositionData.value?.fallbackUniswapRouterData);
+      (hasRoute(exitPositionData.value?.uniswapRouterData) ||
+        hasRoute(exitPositionData.value?.fallbackUniswapRouterData));
 
     const hasNoPayout =
       isTotalAmountValid.value &&
