@@ -207,6 +207,8 @@ import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
 
+import { getRoundsInputFromVault } from "@/helpers/hedgingVaultContracts";
+
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
 
@@ -214,6 +216,7 @@ const { t } = useI18n();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+const roundsInputAddress = getRoundsInputFromVault(vaultId.value);
 
 // current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
@@ -231,11 +234,11 @@ const { vault, loading: strategyLoading } = useHedgingVault(
 );
 const assetSymbol = computed(() => vault.value.asset.symbol);
 
-const vaultStore = useVaultStore(vaultId.value, "InvestmentVault");
-const vaultState = vaultStore();
+const roundsInputStore = useVaultStore(roundsInputAddress, "RoundsInputVault");
+const roundsInputState = roundsInputStore();
 
 const { approveLoading, approveReceipt, approveTx, userAllowance } =
-  storeToRefs(vaultState);
+  storeToRefs(roundsInputState);
 
 const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
@@ -265,9 +268,9 @@ const {
   updateDepositReceipt,
   updateDepositTransaction,
 } = useDepositRequests(
-  vaultId,
+  roundsInputAddress,
+  vault.value.asset.address,
   vault.value.currentRound,
-  walletAddress,
   vault.value.rounds
 );
 
@@ -289,7 +292,8 @@ const depositLabel = computed(() => {
 const handleUpdateDeposit = async () => {
   if (!invalidDepositAmount.value) {
     if (depositAmount.value > userAllowance.value) {
-      vaultState.approve(depositAmount.value);
+      await roundsInputState.approve(depositAmount.value);
+      roundsInputState.fetchUserData();
     } else {
       updateDepositRequest(depositAmount);
     }

@@ -1,5 +1,5 @@
 import { computed, unref } from "vue";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
+import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { DepositRequestInfoFragment } from "subgraph-queries-hv/generated/operations";
@@ -11,20 +11,20 @@ interface RoundsFragment {
 
 function useDepositRequests(
   vaultAddress: MaybeRef<string>,
+  assetAddress: MaybeRef<string>,
   currentRound: MaybeRef<string>,
-  investor: MaybeRef<string>,
   rounds: MaybeRef<RoundsFragment[]>
 ) {
   const {
     deposit,
     depositLoading,
     depositReceipt,
-    depositTransaction,
+    depositTx,
     redeem,
     redeemLoading,
     redeemReceipt,
-    redeemTransaction,
-  } = useInvestmentVaultContract(vaultAddress);
+    redeemTx,
+  } = useRoundsVaultContract(vaultAddress, assetAddress, false);
 
   const round = computed(() =>
     unref(rounds)?.find((round) => round.roundNumber === unref(currentRound))
@@ -40,19 +40,15 @@ function useDepositRequests(
   );
 
   const updateDepositRequest = async (amount: MaybeRef<number>) => {
-    deposit(unref(amount), unref(investor));
+    deposit(unref(amount));
   };
 
   const canDeleteDepositRequest = computed(
     () => currentDepositAmount.value > 0
   );
-  const deleteDepositRequest = async () => {
+  const deleteDepositRequest = async (id: number) => {
     if (canDeleteDepositRequest.value) {
-      await redeem(
-        currentDepositAmount.value,
-        unref(investor),
-        unref(investor)
-      );
+      await redeem(id, currentDepositAmount.value);
     }
   };
 
@@ -62,11 +58,11 @@ function useDepositRequests(
     deleteDepositLoading: redeemLoading,
     deleteDepositReceipt: redeemReceipt,
     deleteDepositRequest,
-    deleteDepositTransaction: redeemTransaction,
+    deleteDepositTransaction: redeemTx,
     updateDepositLoading: depositLoading,
     updateDepositReceipt: depositReceipt,
     updateDepositRequest,
-    updateDepositTransaction: depositTransaction,
+    updateDepositTransaction: depositTx,
   };
 }
 
