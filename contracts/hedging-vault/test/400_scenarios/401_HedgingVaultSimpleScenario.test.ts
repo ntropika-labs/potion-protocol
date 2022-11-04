@@ -3,7 +3,11 @@ import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
+import {
+    getDeploymentConfig,
+    deployHedgingVaultEnvironment,
+    HedgingVaultEnvironmentDeployment,
+} from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import { InvestmentVault, PotionBuyAction, SwapToUSDCAction } from "../../typechain";
@@ -37,7 +41,7 @@ describe("HedgingVaultBasic", function () {
     let vault: InvestmentVault;
     let potionBuy: PotionBuyAction;
     let swapToUSDC: SwapToUSDCAction;
-    let tEnv: TestingEnvironmentDeployment;
+    let tEnv: HedgingVaultEnvironmentDeployment;
 
     before(function () {
         showConsoleLogs(false);
@@ -58,7 +62,7 @@ describe("HedgingVaultBasic", function () {
         const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
-        tEnv = await deployTestingEnv(deploymentConfig);
+        tEnv = await deployHedgingVaultEnvironment(deploymentConfig);
 
         // Commented out on purpose
         // printTestingEnv(tEnv);
@@ -123,6 +127,7 @@ describe("HedgingVaultBasic", function () {
         expect(await potionBuy.getRoleMember(Roles.Admin, 0)).to.equal(tEnv.adminAddress);
         expect(await potionBuy.getRoleMemberCount(Roles.Operator)).to.equal(2);
         expect(await potionBuy.getRoleMember(Roles.Operator, 0)).to.equal(tEnv.hedgingVaultOrchestrator.address);
+        expect(await potionBuy.getRoleMember(Roles.Operator, 1)).to.equal(ownerAccount.address);
         expect(await potionBuy.getRoleMemberCount(Roles.Strategist)).to.equal(1);
         expect(await potionBuy.getRoleMember(Roles.Strategist, 0)).to.equal(tEnv.strategistAddress);
         expect(await potionBuy.getRoleMemberCount(Roles.Vault)).to.equal(1);

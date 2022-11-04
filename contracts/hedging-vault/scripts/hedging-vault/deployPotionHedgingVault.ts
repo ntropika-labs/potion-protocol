@@ -274,7 +274,5 @@ export async function deployHedgingVault(parameters: HedgingVaultDeployParams): 
 
     await configureContracts(parameters, deploymentResult);
 
-    // TODO: verify deployment
-
     return deploymentResult;
 }

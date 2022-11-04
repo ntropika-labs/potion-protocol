@@ -27,7 +27,7 @@ import {
     mockOpynFactory,
     mockOpynOracle,
     mockOpynAddressBook,
-} from "./contractsMocks";
+} from "../test/contractsMocks";
 import { asMock, Deployments } from "contracts-utils";
 import type { DeploymentType } from "contracts-utils";
 import { fromSolidityPercentage } from "hedging-vault-sdk";
@@ -36,13 +36,13 @@ import {
     printHedgingVaultDeployParams,
     HedgingVaultDeploymentResult,
     HedgingVaultDeployParams,
-} from "../hedging-vault/deployPotionHedgingVault";
+} from "./deployPotionHedgingVault";
 import { PotionHedgingVaultDeploymentConfigs, PotionHedgingVaultConfigParams } from "../config/deployConfig";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { Deployments as PotionDeployments } from "@potion-protocol/core";
 
-export interface TestingEnvironmentDeployment {
+export interface HedgingVaultEnvironmentDeployment {
     // Contracts
     investmentVault: InvestmentVault;
     potionBuyAction: PotionBuyAction;
@@ -94,7 +94,7 @@ function getTokensFromUniswapPath(uniswapPath: string) {
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
+function setupUniswapV3Mock(tEnv: HedgingVaultEnvironmentDeployment) {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     asMock(tEnv.uniswapV3SwapRouter)?.exactInput.returns(async (args: any) => {
         const { firstToken: paramsTokenIn, secondToken: paramsTokenOut } = getTokensFromUniswapPath(args.params.path);
@@ -147,8 +147,8 @@ function setupUniswapV3Mock(tEnv: TestingEnvironmentDeployment) {
 
 async function mockContractsIfNeeded(
     deploymentConfig: PotionHedgingVaultConfigParams,
-): Promise<Partial<TestingEnvironmentDeployment>> {
-    const testingEnvironmentDeployment: Partial<TestingEnvironmentDeployment> = {};
+): Promise<Partial<HedgingVaultEnvironmentDeployment>> {
+    const testingEnvironmentDeployment: Partial<HedgingVaultEnvironmentDeployment> = {};
 
     // Check if need to mock USDC
     if (!deploymentConfig.USDC) {
@@ -258,10 +258,10 @@ async function mockContractsIfNeeded(
     return testingEnvironmentDeployment;
 }
 
-async function prepareTestEnvironment(
+async function prepareHedgingVaultEnvironment(
     deployer: SignerWithAddress,
     deploymentConfig: PotionHedgingVaultConfigParams,
-): Promise<TestingEnvironmentDeployment> {
+): Promise<HedgingVaultEnvironmentDeployment> {
     const testingEnvironmentDeployment = await mockContractsIfNeeded(deploymentConfig);
 
     testingEnvironmentDeployment.adminAddress = deployer.address;
@@ -314,7 +314,7 @@ async function prepareTestEnvironment(
         throw new Error(`No uniswapV3SwapRouter address provided and no mocking enabled`);
     }
 
-    return testingEnvironmentDeployment as TestingEnvironmentDeployment;
+    return testingEnvironmentDeployment as HedgingVaultEnvironmentDeployment;
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -380,7 +380,7 @@ export function getDeploymentConfig(deploymentType: DeploymentType): PotionHedgi
     return Object.assign({}, hedgingVaultConfig);
 }
 
-async function testDepositInVault(testDepositAmount: BigNumber, testEnvDeployment: TestingEnvironmentDeployment) {
+async function testDepositInVault(testDepositAmount: BigNumber, testEnvDeployment: HedgingVaultEnvironmentDeployment) {
     // Deposit some amount
     const deployer = (await ethers.provider.listAccounts())[0];
     const underlyingDecimals = await testEnvDeployment.underlyingAsset.decimals();
@@ -400,12 +400,15 @@ async function testDepositInVault(testDepositAmount: BigNumber, testEnvDeploymen
     );
 }
 
-export async function deployTestingEnv(
+export async function deployHedgingVaultEnvironment(
     deploymentConfig: PotionHedgingVaultConfigParams,
-): Promise<TestingEnvironmentDeployment> {
+): Promise<HedgingVaultEnvironmentDeployment> {
     const deployer = (await ethers.getSigners())[0];
 
-    const testEnvDeployment: TestingEnvironmentDeployment = await prepareTestEnvironment(deployer, deploymentConfig);
+    const testEnvDeployment: HedgingVaultEnvironmentDeployment = await prepareHedgingVaultEnvironment(
+        deployer,
+        deploymentConfig,
+    );
 
     const deploymentParams: HedgingVaultDeployParams = {
         // Roles
@@ -474,82 +477,82 @@ export async function deployTestingEnv(
     return testEnvDeployment;
 }
 
-export async function printDeploymentEnvironment(testEnvDeployment: TestingEnvironmentDeployment) {
+export async function printDeploymentEnvironment(environmentDeployment: HedgingVaultEnvironmentDeployment) {
     console.log(`--------------------------------------------------------------------------------`);
     console.log(`                         DEPLOYMENT ENVIRONMENT`);
     console.log(`--------------------------------------------------------------------------------`);
-    console.log(`  - Investment Vault: ${testEnvDeployment.investmentVault.address}`);
-    console.log(`  - Potion Buy Action: ${testEnvDeployment.potionBuyAction.address}`);
-    console.log(`  - Swap To USDC Action: ${testEnvDeployment.swapToUSDCAction.address}`);
-    console.log(`  - Orchestrator: ${testEnvDeployment.hedgingVaultOrchestrator.address}`);
-    console.log(`  - Rounds Input Vault: ${testEnvDeployment.roundsInputVault.address}`);
-    console.log(`  - Rounds Output Vault: ${testEnvDeployment.roundsOutputVault.address}`);
-    console.log(`  - Rounds Vault Exchanger: ${testEnvDeployment.roundsVaultExchanger.address}`);
+    console.log(`  - Investment Vault: ${environmentDeployment.investmentVault.address}`);
+    console.log(`  - Potion Buy Action: ${environmentDeployment.potionBuyAction.address}`);
+    console.log(`  - Swap To USDC Action: ${environmentDeployment.swapToUSDCAction.address}`);
+    console.log(`  - Orchestrator: ${environmentDeployment.hedgingVaultOrchestrator.address}`);
+    console.log(`  - Rounds Input Vault: ${environmentDeployment.roundsInputVault.address}`);
+    console.log(`  - Rounds Output Vault: ${environmentDeployment.roundsOutputVault.address}`);
+    console.log(`  - Rounds Vault Exchanger: ${environmentDeployment.roundsVaultExchanger.address}`);
     console.log(`------------------------------------------------------`);
-    console.log(`  - Underlying Asset: ${testEnvDeployment.underlyingAsset.address}`);
-    console.log(`  - USDC: ${testEnvDeployment.USDC.address}`);
+    console.log(`  - Underlying Asset: ${environmentDeployment.underlyingAsset.address}`);
+    console.log(`  - USDC: ${environmentDeployment.USDC.address}`);
     console.log(`------------------------------------------------------`);
-    console.log(`  - Potion Liquidity Pool Manager: ${testEnvDeployment.potionLiquidityPoolManager.address}`);
-    console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
-    console.log(`  - Opyn Address Book: ${testEnvDeployment.opynAddressBook.address}`);
-    console.log(`  - Opyn Controller: ${testEnvDeployment.opynController.address}`);
-    console.log(`  - Opyn Factory: ${testEnvDeployment.opynFactory.address}`);
-    console.log(`  - Opyn Oracle: ${testEnvDeployment.opynOracle.address}`);
-    console.log(`  - Opyn Swap Router: ${testEnvDeployment.uniswapV3SwapRouter.address}`);
+    console.log(`  - Potion Liquidity Pool Manager: ${environmentDeployment.potionLiquidityPoolManager.address}`);
+    console.log(`  - Opyn Oracle: ${environmentDeployment.opynOracle.address}`);
+    console.log(`  - Opyn Address Book: ${environmentDeployment.opynAddressBook.address}`);
+    console.log(`  - Opyn Controller: ${environmentDeployment.opynController.address}`);
+    console.log(`  - Opyn Factory: ${environmentDeployment.opynFactory.address}`);
+    console.log(`  - Opyn Oracle: ${environmentDeployment.opynOracle.address}`);
+    console.log(`  - Opyn Swap Router: ${environmentDeployment.uniswapV3SwapRouter.address}`);
     console.log(`------------------------------------------------------`);
-    console.log(`  - Admin: ${testEnvDeployment.adminAddress.toString()}`);
-    console.log(`  - Strategist: ${testEnvDeployment.strategistAddress.toString()}`);
-    console.log(`  - Operator: ${testEnvDeployment.operatorAddress.toString()}`);
-    console.log(`  - Shares Name: ${testEnvDeployment.sharesName}`);
-    console.log(`  - Shares Symbol: ${testEnvDeployment.sharesSymbol}`);
+    console.log(`  - Admin: ${environmentDeployment.adminAddress.toString()}`);
+    console.log(`  - Strategist: ${environmentDeployment.strategistAddress.toString()}`);
+    console.log(`  - Operator: ${environmentDeployment.operatorAddress.toString()}`);
+    console.log(`  - Shares Name: ${environmentDeployment.sharesName}`);
+    console.log(`  - Shares Symbol: ${environmentDeployment.sharesSymbol}`);
     console.log(
         `  - Underlying Asset Cap: ${
-            testEnvDeployment.underlyingAssetCap.eq(ethers.constants.MaxUint256)
+            environmentDeployment.underlyingAssetCap.eq(ethers.constants.MaxUint256)
                 ? "Maximum (uint256)"
-                : ethers.utils.formatUnits(testEnvDeployment.underlyingAssetCap)
+                : ethers.utils.formatUnits(environmentDeployment.underlyingAssetCap)
         }`,
     );
     console.log(
-        `  - Max Premium Percentage: ${testEnvDeployment.maxPremiumPercentage.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.maxPremiumPercentage,
+        `  - Max Premium Percentage: ${environmentDeployment.maxPremiumPercentage.toString()} (${fromSolidityPercentage(
+            environmentDeployment.maxPremiumPercentage,
         )}%)`,
     );
     console.log(
-        `  - Premium Slippage: ${testEnvDeployment.premiumSlippage.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.premiumSlippage,
+        `  - Premium Slippage: ${environmentDeployment.premiumSlippage.toString()} (${fromSolidityPercentage(
+            environmentDeployment.premiumSlippage,
         )}%)`,
     );
     console.log(
-        `  - Swap Slippage: ${testEnvDeployment.swapSlippage.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.swapSlippage,
+        `  - Swap Slippage: ${environmentDeployment.swapSlippage.toString()} (${fromSolidityPercentage(
+            environmentDeployment.swapSlippage,
         )}%)`,
     );
-    console.log(`  - Max Swap Duration: ${testEnvDeployment.maxSwapDurationSecs.toString()} seconds`);
+    console.log(`  - Max Swap Duration: ${environmentDeployment.maxSwapDurationSecs.toString()} seconds`);
     console.log(
-        `  - Cycle Duration: ${testEnvDeployment.cycleDurationSecs.toString()} seconds (${testEnvDeployment.cycleDurationSecs
+        `  - Cycle Duration: ${environmentDeployment.cycleDurationSecs.toString()} seconds (${environmentDeployment.cycleDurationSecs
             .div(BigNumber.from(3600))
-            .toString()} hours, ${testEnvDeployment.cycleDurationSecs.div(BigNumber.from(86400)).toString()} days)`,
+            .toString()} hours, ${environmentDeployment.cycleDurationSecs.div(BigNumber.from(86400)).toString()} days)`,
     );
     console.log(
-        `  - Strike Percentage: ${testEnvDeployment.strikePercentage.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.strikePercentage,
+        `  - Strike Percentage: ${environmentDeployment.strikePercentage.toString()} (${fromSolidityPercentage(
+            environmentDeployment.strikePercentage,
         )}%)`,
     );
     console.log(
-        `  - Hedging Percentage: ${testEnvDeployment.hedgingRate.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.hedgingRate,
+        `  - Hedging Percentage: ${environmentDeployment.hedgingRate.toString()} (${fromSolidityPercentage(
+            environmentDeployment.hedgingRate,
         )}%)`,
     );
     console.log(
-        `  - Management Fee: ${testEnvDeployment.managementFee.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.managementFee,
+        `  - Management Fee: ${environmentDeployment.managementFee.toString()} (${fromSolidityPercentage(
+            environmentDeployment.managementFee,
         )}%)`,
     );
     console.log(
-        `  - Performance Fee: ${testEnvDeployment.performanceFee.toString()} (${fromSolidityPercentage(
-            testEnvDeployment.performanceFee,
+        `  - Performance Fee: ${environmentDeployment.performanceFee.toString()} (${fromSolidityPercentage(
+            environmentDeployment.performanceFee,
         )}%)`,
     );
-    console.log(`  - Fees Recipient: ${testEnvDeployment.feesRecipient}`);
+    console.log(`  - Fees Recipient: ${environmentDeployment.feesRecipient}`);
     console.log(`--------------------------------------------------------------------------------\n`);
 }

@@ -1,11 +1,12 @@
 import { PotionHedgingVaultConfigParams } from "./config/deployConfig";
-import { getDeploymentConfig, deployTestingEnv } from "./test/testingEnv";
+import { getDeploymentConfig, deployHedgingVaultEnvironment } from "./hedging-vault/deployHedgingVaultEnvironment";
 
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { DeploymentFlags, Deployments, getDeploymentType } from "contracts-utils";
 import type { DeploymentType } from "contracts-utils";
 import { ethers } from "hardhat";
+import { verifyHedgingVaultEnvironment } from "./hedging-vault/verifyHedgingVaultEnvironment";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -37,7 +38,8 @@ async function main() {
         );
     }
 
-    await deployTestingEnv(deploymentConfig);
+    const hedgingVaultEnvironment = await deployHedgingVaultEnvironment(deploymentConfig);
+    await verifyHedgingVaultEnvironment(deploymentConfig, hedgingVaultEnvironment);
 
     Deployments.persist(true);
 
