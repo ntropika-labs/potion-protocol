@@ -1,4 +1,4 @@
-import { computed, unref } from "vue";
+import { computed, onMounted, ref, unref } from "vue";
 import { formatUnits } from "@ethersproject/units";
 import { useGetHedgingVaultQuery } from "subgraph-queries-hv/generated/urql";
 
@@ -44,26 +44,31 @@ const useHedgingVault = (
   vault: MaybeRef<string>,
   investor: MaybeRef<string>
 ) => {
+  const hedgingVault = ref(queryResultToVault(null));
   const variables = computed(() => ({
     vault: unref(vault),
     investor: unref(investor),
   }));
 
-  const { data, fetching, error } = useGetHedgingVaultQuery({
+  const { fetching, error, executeQuery } = useGetHedgingVaultQuery({
     variables,
     context: {
       url: import.meta.env.VITE_SUBGRAPH_HV_ADDRESS,
     },
   });
 
-  const hedgingVault = computed(() =>
-    queryResultToVault(data.value?.hedgingVault ?? null)
-  );
+  async function loadVault() {
+    const { data } = await executeQuery();
+    hedgingVault.value = queryResultToVault(data.value?.hedgingVault ?? null);
+  }
+
+  onMounted(loadVault);
 
   return {
     vault: hedgingVault,
     loading: fetching,
     error,
+    loadVault,
   };
 };
 

@@ -15,7 +15,7 @@
         <!-- <div>
           <p class="capitalize">{{ t("admin") }}</p>
           <a :href="getEtherscanUrl(admin)">
-            <BaseTag :is-loading="strategyLoading">
+            <BaseTag :is-loading="vaultLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ admin }}</span>
             </BaseTag>
@@ -24,7 +24,7 @@
         <div>
           <p class="capitalize">{{ t("operator") }}</p>
           <a :href="getEtherscanUrl(operator)">
-            <BaseTag :is-loading="strategyLoading">
+            <BaseTag :is-loading="vaultLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
@@ -37,21 +37,21 @@
           :title="t('share_price')"
           :value="shareToAssetRatio.toString()"
           :symbol="`${assetSymbol}/Share`"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
           :value="vault.totalAssets"
           :symbol="assetSymbol"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
           :symbol="`= ${balanceInAsset} ${assetSymbol}`"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
       </div>
     </BaseCard>
@@ -64,49 +64,49 @@
             symbol: vault.asset.symbol,
             address: vault.asset.address,
           }"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
           :value="vault.hedgingRate"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('strike')"
           :value="vault.strikePercentage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('cycle_duration')"
           :value="vault.cycleDurationSecs"
           symbol="days"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium')"
           :value="vault.maxPremiumPercentage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium_slippage')"
           :value="vault.premiumSlippage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_swap_slippage')"
           :value="vault.swapSlippage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
       </BaseCard>
       <div class="col-span-4 self-start">
@@ -117,14 +117,17 @@
               :title="t('time_left_until_next_cycle')"
               :time-from="blockTimestamp.toString()"
               :time-to="vault.nextCycleTimestamp"
-              :loading="strategyLoading"
+              :loading="vaultLoading"
             />
           </div>
           <div class="flex gap-6 w-full mt-5">
             <div class="w-1/2 flex flex-col items-center gap-4">
               <h3 v-if="currentDepositAmount > 0">
                 {{
-                  t("current_deposit_request_info", { currentDepositAmount })
+                  t("current_deposit_request_info", {
+                    currentDepositAmount,
+                    assetSymbol,
+                  })
                 }}
               </h3>
               <InputNumber
@@ -135,21 +138,23 @@
                 :step="0.01"
                 :unit="assetSymbol"
               />
-              <BaseButton
-                palette="secondary"
-                :label="depositLabel"
-                :disabled="invalidDepositAmount || isLoading"
-                :loading="approveLoading || updateDepositLoading"
-                @click="handleUpdateDeposit"
-              />
-              <BaseButton
-                v-if="canDeleteDepositRequest"
-                palette="secondary-outline"
-                :label="t('delete_deposit_request')"
-                :disabled="isLoading"
-                :loading="deleteDepositLoading"
-                @click="deleteDepositRequest"
-              />
+              <div class="flex gap-4">
+                <BaseButton
+                  palette="secondary"
+                  :label="depositLabel"
+                  :disabled="invalidDepositAmount || isLoading"
+                  :loading="approveLoading || updateDepositLoading"
+                  @click="handleUpdateDeposit"
+                />
+                <BaseButton
+                  v-if="canDeleteDepositRequest"
+                  palette="secondary-o"
+                  :label="t('delete')"
+                  :disabled="isLoading"
+                  :loading="deleteDepositLoading"
+                  @click="handleDeleteDeposit"
+                />
+              </div>
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
               <InputNumber
@@ -228,10 +233,11 @@ const { walletAddress, userCollateralBalance } = storeToRefs(
 
 // vault info
 const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
-const { vault, loading: strategyLoading } = useHedgingVault(
-  vaultId,
-  walletAddress
-);
+const {
+  vault,
+  loading: vaultLoading,
+  loadVault,
+} = useHedgingVault(vaultId, walletAddress);
 const currentRound = computed(() => vault.value.currentRound);
 const assetSymbol = computed(() => vault.value.asset.symbol);
 const assetAddress = computed(() => vault.value.asset.address);
@@ -292,21 +298,30 @@ const depositLabel = computed(() => {
   }
   return t("deposit");
 });
+
 const handleUpdateDeposit = async () => {
   if (!invalidDepositAmount.value) {
     if (depositAmount.value > userAllowance.value) {
       await roundsInputState.approve(depositAmount.value);
       roundsInputState.fetchUserData();
     } else {
-      updateDepositRequest(depositAmount);
+      await updateDepositRequest(depositAmount);
+      setTimeout(loadVault, 5000);
     }
+  }
+};
+
+const handleDeleteDeposit = async () => {
+  if (currentDepositAmount.value > 0) {
+    await deleteDepositRequest();
+    setTimeout(loadVault, 5000);
   }
 };
 
 const isLoading = computed(
   () =>
     approveLoading.value ||
-    strategyLoading.value ||
+    vaultLoading.value ||
     redeemLoading.value ||
     deleteDepositLoading.value ||
     updateDepositLoading.value
