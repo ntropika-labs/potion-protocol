@@ -13,6 +13,7 @@ import { BaseRoundsVaultUpgradeable__factory } from "@potion-protocol/hedging-va
 
 import type { BaseRoundsVaultUpgradeable } from "@potion-protocol/hedging-vault/typechain";
 import type { Ref } from "vue";
+import type { BigNumberish } from "ethers";
 export function useRoundsVaultContract(
   address: string | Ref<string>,
   asset: string | Ref<string>,
@@ -244,7 +245,7 @@ export function useRoundsVaultContract(
   const redeemReceipt = ref<ContractReceipt | null>(null);
 
   const redeem = async (
-    id: number,
+    id: BigNumberish,
     amount: number,
     self = true,
     receiver?: string

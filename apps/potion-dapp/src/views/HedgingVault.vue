@@ -232,7 +232,10 @@ const { vault, loading: strategyLoading } = useHedgingVault(
   vaultId,
   walletAddress
 );
+const currentRound = computed(() => vault.value.currentRound);
 const assetSymbol = computed(() => vault.value.asset.symbol);
+const assetAddress = computed(() => vault.value.asset.address);
+const vaultRounds = computed(() => vault.value.rounds);
 
 const roundsInputStore = useVaultStore(roundsInputAddress, "RoundsInputVault");
 const roundsInputState = roundsInputStore();
@@ -269,9 +272,9 @@ const {
   updateDepositTransaction,
 } = useDepositRequests(
   roundsInputAddress,
-  vault.value.asset.address,
-  vault.value.currentRound,
-  vault.value.rounds
+  assetAddress,
+  currentRound,
+  vaultRounds
 );
 
 const depositAmount = ref(0.1);

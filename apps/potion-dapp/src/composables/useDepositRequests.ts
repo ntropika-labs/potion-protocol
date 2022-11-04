@@ -1,13 +1,9 @@
 import { computed, unref } from "vue";
+import { formatUnits } from "@ethersproject/units";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
 
 import type { MaybeRef } from "@vueuse/core";
-import type { DepositRequestInfoFragment } from "subgraph-queries-hv/generated/operations";
-
-interface RoundsFragment {
-  roundNumber: string;
-  depositRequests: DepositRequestInfoFragment[];
-}
+import type { RoundsFragment } from "@/types";
 
 function useDepositRequests(
   vaultAddress: MaybeRef<string>,
@@ -29,15 +25,12 @@ function useDepositRequests(
   const round = computed(() =>
     unref(rounds)?.find((round) => round.roundNumber === unref(currentRound))
   );
-  const depositRequests = computed(() => round?.value?.depositRequests ?? []);
+  const depositRequest = computed(() => round?.value?.depositRequests[0]);
 
-  const currentDepositAmount = computed(
-    () =>
-      depositRequests?.value?.reduce(
-        (acc, request) => acc + parseInt(request?.amount ?? "0"),
-        0
-      ) ?? 0
-  );
+  const currentDepositAmount = computed(() => {
+    const value = depositRequest?.value?.amount ?? "0";
+    return parseInt(formatUnits(value, 18));
+  });
 
   const updateDepositRequest = async (amount: MaybeRef<number>) => {
     deposit(unref(amount));
@@ -46,9 +39,9 @@ function useDepositRequests(
   const canDeleteDepositRequest = computed(
     () => currentDepositAmount.value > 0
   );
-  const deleteDepositRequest = async (id: number) => {
+  const deleteDepositRequest = async () => {
     if (canDeleteDepositRequest.value) {
-      await redeem(id, currentDepositAmount.value);
+      await redeem(unref(currentRound), currentDepositAmount.value);
     }
   };
 

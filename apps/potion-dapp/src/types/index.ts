@@ -1,5 +1,18 @@
+import type {
+  DepositRequestInfoFragment,
+  WithdrawalRequestInfoFragment,
+} from "subgraph-queries-hv/generated/operations";
+
 export * from "@/types/web3Onboard";
 export * from "@/types/uniswapAlphaRouter";
+
+export interface RoundsFragment {
+  roundNumber: string;
+  assetToShareRate: string;
+  shareToAssetRate: string;
+  depositRequests: DepositRequestInfoFragment[];
+  withdrawalRequests: WithdrawalRequestInfoFragment[];
+}
 
 export interface EstimatedPrice {
   confidence: number;

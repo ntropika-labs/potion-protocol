@@ -4,6 +4,7 @@ import { useGetHedgingVaultQuery } from "subgraph-queries-hv/generated/urql";
 
 import type { GetHedgingVaultQuery } from "subgraph-queries-hv/generated/operations";
 import type { MaybeRef } from "@vueuse/core";
+import type { RoundsFragment } from "@/types";
 
 type HedgingVaultFragment = GetHedgingVaultQuery["hedgingVault"];
 
@@ -36,7 +37,7 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   premiumSlippage: formatUnits(result?.action?.premiumSlippage ?? "0", 6),
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
   currentRound: result?.currentRound ?? "0",
-  rounds: result?.rounds ?? [],
+  rounds: (result?.rounds ?? []) as unknown as RoundsFragment,
 });
 
 const useHedgingVault = (
