@@ -26,6 +26,20 @@ fragment TokenInfo on Token {
   decimals
 }
 
+fragment DepositRequestInfo on DepositRequest {
+  amount
+  amountRedeemed
+  shares
+  remainingShares
+}
+
+fragment WithdrawalRequestInfo on WithdrawalRequest {
+  amount
+  amountRedeemed
+  assets
+  remainingAssets
+}
+
 query getHedgingVault($vault: ID!, $investor: String!) {
   hedgingVault(id: $vault) {
     ...VaultInfo
@@ -43,16 +57,10 @@ query getHedgingVault($vault: ID!, $investor: String!) {
       assetToShareRate
       shareToAssetRate
       depositRequests(where: { investor: $investor }) {
-        amount
-        amountRedeemed
-        shares
-        remainingShares
+        ...DepositRequestInfo
       }
       withdrawalRequests(where: { investor: $investor }) {
-        amount
-        amountRedeemed
-        assets
-        remainingAssets
+        ...WithdrawalRequestInfo
       }
     }
   }

@@ -46,6 +46,7 @@ create_potion_title: Create protective potions by selecting asset, strike and du
 creating_pool: creating pool
 creator: Creator
 currency: Currency
+current_deposit_request_info: You have already deposited {currentDepositAmount} {assetSymbol} inside this vault
 current_payout: Current Payout
 current_price: current price
 curve_formula_title: Equation
