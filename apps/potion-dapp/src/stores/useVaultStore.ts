@@ -5,11 +5,12 @@ import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useUserDataStore } from "@/stores/useUserDataStore";
 
 import type { Ref } from "vue";
+import type { MaybeRef } from "@vueuse/core";
 
 const useVaultStore = (
   address: string,
   name: string,
-  underlyingAddress: string
+  underlyingAddress: MaybeRef<string>
 ) =>
   defineStore(`vault_${address}_${name}`, () => {
     const { walletAddress, infiniteApproval } = storeToRefs(useUserDataStore());

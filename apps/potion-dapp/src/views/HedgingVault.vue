@@ -246,7 +246,7 @@ const vaultRounds = computed(() => vault.value.rounds);
 const roundsInputStore = useVaultStore(
   roundsInputAddress,
   "RoundsInputVault",
-  assetAddress.value
+  assetAddress
 );
 const roundsInputState = roundsInputStore();
 
