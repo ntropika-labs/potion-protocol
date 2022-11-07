@@ -1,37 +1,32 @@
 import { defineStore, storeToRefs } from "pinia";
 import { onMounted, readonly, watch } from "vue";
 
-import { useCollateralTokenContract } from "@/composables/useCollateralTokenContract";
+import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useUserDataStore } from "@/stores/useUserDataStore";
 
 import type { Ref } from "vue";
 
-const useVaultStore = (address: string, name: string) =>
-  defineStore(`vault_${address}`, () => {
+const useVaultStore = (
+  address: string,
+  name: string,
+  underlyingAddress: string
+) =>
+  defineStore(`vault_${address}_${name}`, () => {
     const { walletAddress, infiniteApproval } = storeToRefs(useUserDataStore());
 
     const {
-      fetchUserCollateralBalance,
-      fetchUserCollateralAllowance,
-      approve,
+      approveSpending,
       userAllowance,
+      fetchUserAllowance,
       fetchUserAllowanceLoading,
       approveLoading,
       approveTx,
       approveReceipt,
-    } = useCollateralTokenContract(
-      walletAddress,
-      { address, name },
-      infiniteApproval
-    );
-    const fetchUserData = async () => {
-      if (walletAddress.value) {
-        await Promise.all([
-          fetchUserCollateralBalance(),
-          fetchUserCollateralAllowance(),
-        ]);
-      }
-    };
+    } = useErc20Contract(underlyingAddress);
+
+    const approve = (amount: number) =>
+      approveSpending(address, infiniteApproval.value, amount);
+    const fetchUserData = () => fetchUserAllowance(address);
 
     onMounted(fetchUserData);
 

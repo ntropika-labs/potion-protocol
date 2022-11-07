@@ -243,7 +243,11 @@ const assetSymbol = computed(() => vault.value.asset.symbol);
 const assetAddress = computed(() => vault.value.asset.address);
 const vaultRounds = computed(() => vault.value.rounds);
 
-const roundsInputStore = useVaultStore(roundsInputAddress, "RoundsInputVault");
+const roundsInputStore = useVaultStore(
+  roundsInputAddress,
+  "RoundsInputVault",
+  assetAddress.value
+);
 const roundsInputState = roundsInputStore();
 
 const { approveLoading, approveReceipt, approveTx, userAllowance } =
