@@ -1,0 +1,114 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract ISwapRouter",
+        "name": "swapRouter",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "exactAmountIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedAmountOut",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "slippage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct UniswapV3SwapLib.SwapInputParameters",
+        "name": "parameters",
+        "type": "tuple"
+      }
+    ],
+    "name": "swapInput",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountOut",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ISwapRouter",
+        "name": "swapRouter",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "exactAmountOut",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedAmountIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "slippage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct UniswapV3SwapLib.SwapOutputParameters",
+        "name": "parameters",
+        "type": "tuple"
+      }
+    ],
+    "name": "swapOutput",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountIn",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

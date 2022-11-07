@@ -140,7 +140,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultA": {
-        timestamp: 1667471825,
+        timestamp: 1667830090,
         network: "develop",
         contracts: {
             USDC: {
@@ -176,18 +176,6 @@ export const Deployments = {
                 blockNumber: 0,
             },
             UniswapV3Router: {
-                address: "0xFD471836031dc5108809D173A067e8486B9047A3",
-                blockNumber: 70,
-            },
-            PotionBuyAction: {
-                address: "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-                blockNumber: 75,
-            },
-            InvestmentVault: {
-                address: "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
-                blockNumber: 77,
-            },
-            HedgingVaultOperatorHelper: {
                 address: "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
                 blockNumber: 99,
             },
@@ -222,7 +210,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultB": {
-        timestamp: 1667471830,
+        timestamp: 1667830094,
         network: "develop",
         contracts: {
             USDC: {
@@ -292,7 +280,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultC": {
-        timestamp: 1667471834,
+        timestamp: 1667830099,
         network: "develop",
         contracts: {
             USDC: {
