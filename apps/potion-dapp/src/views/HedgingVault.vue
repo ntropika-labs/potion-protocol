@@ -156,6 +156,36 @@
                 />
               </div>
             </div>
+            <div
+              v-if="estimatedAssets > 0"
+              class="w-1/2 flex flex-col items-center gap-4"
+            >
+              <h3>{{ t("estimated_assets", { estimatedAssets }) }}</h3>
+              <BaseButton
+                palette="secondary"
+                :label="exchangeLabel"
+                :disabled="!canExchange || isLoading"
+                :loading="approveExchangeLoading || exchangeTicketsLoading"
+                @click="handleExchange"
+              />
+              <template v-if="canDeleteWithdrawalRequest">
+                <h4>
+                  {{
+                    t("current_withdrawal_request_info", {
+                      currentWithdrawalAmount,
+                      assetSymbol,
+                    })
+                  }}
+                </h4>
+                <BaseButton
+                  palette="secondary-o"
+                  :label="t('delete')"
+                  :disabled="isLoading"
+                  :loading="deleteWithdrawalLoading"
+                  @click="handleDeleteWithdrawal"
+                />
+              </template>
+            </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
               <InputNumber
                 v-model="redeemAmount"
@@ -207,12 +237,18 @@ import { useDepositRequests } from "@/composables/useDepositRequests";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
+import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
+import { useWithdrawalRequests } from "@/composables/useWithdrawalRequests";
 
-import { getRoundsInputFromVault } from "@/helpers/hedgingVaultContracts";
+import {
+  getRoundsExchangerFromVault,
+  getRoundsInputFromVault,
+  getRoundsOutputFromVault,
+} from "@/helpers/hedgingVaultContracts";
 
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -221,7 +257,9 @@ const { t } = useI18n();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+const roundsExchangerAddress = getRoundsExchangerFromVault(vaultId.value);
 const roundsInputAddress = getRoundsInputFromVault(vaultId.value);
+const roundsOutputAddress = getRoundsOutputFromVault(vaultId.value);
 
 // current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
@@ -232,7 +270,6 @@ const { walletAddress, userCollateralBalance } = storeToRefs(
 );
 
 // vault info
-const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
 const {
   vault,
   loading: vaultLoading,
@@ -242,7 +279,9 @@ const currentRound = computed(() => vault.value.currentRound);
 const assetSymbol = computed(() => vault.value.asset.symbol);
 const assetAddress = computed(() => vault.value.asset.address);
 const vaultRounds = computed(() => vault.value.rounds);
+const lastShareToAssetRate = computed(() => vault.value.lastShareToAssetRate);
 
+// InputsRoundsVault
 const roundsInputStore = useVaultStore(
   roundsInputAddress,
   "RoundsInputVault",
@@ -253,22 +292,7 @@ const roundsInputState = roundsInputStore();
 const { approveLoading, approveReceipt, approveTx, userAllowance } =
   storeToRefs(roundsInputState);
 
-const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
-
-const shareToAssetRatio = computed(() => 1 / assetToShare.value);
-const balanceInAsset = computed(
-  () => userBalance.value * shareToAssetRatio.value
-);
-
-const {
-  redeemLoading,
-  redeemReceipt,
-  redeemTx,
-  handleRedeem,
-  amount: redeemAmount,
-  buttonState: redeemButtonState,
-} = useVaultRedeem(userBalance, vaultId, vaultStatus);
-
+// Deposit requests
 const {
   canDeleteDepositRequest,
   currentDepositAmount,
@@ -322,13 +346,94 @@ const handleDeleteDeposit = async () => {
   }
 };
 
+// Input output exchange
+const {
+  estimatedAssets,
+  approveExchange,
+  approveExchangeLoading,
+  approveExchangeReceipt,
+  approveExchangeTransaction,
+  canExchange,
+  exchangeTickets,
+  exchangeTicketsLoading,
+  exchangeTicketsReceipt,
+  exchangeTicketsTransaction,
+} = useInputOutputVaultExchange(
+  roundsExchangerAddress,
+  roundsInputAddress,
+  roundsOutputAddress,
+  assetAddress,
+  vaultRounds,
+  lastShareToAssetRate
+);
+
+const exchangeLabel = computed(() =>
+  canExchange.value ? t("exchange") : t("approve")
+);
+
+const handleExchange = async () => {
+  if (canExchange.value) {
+    exchangeTickets();
+  } else {
+    approveExchange();
+  }
+};
+
+// withdrawal requests
+const {
+  canDeleteWithdrawalRequest,
+  currentWithdrawalAmount,
+  deleteWithdrawalLoading,
+  deleteWithdrawalReceipt,
+  deleteWithdrawalRequest,
+  deleteWithdrawalTransaction,
+} = useWithdrawalRequests(
+  roundsOutputAddress,
+  assetAddress,
+  currentRound,
+  vaultRounds
+);
+
+const handleDeleteWithdrawal = async () => {
+  if (currentWithdrawalAmount.value > 0) {
+    await deleteWithdrawalRequest();
+    setTimeout(loadVault, 5000);
+  }
+};
+
+/* 
+  Legacy code
+*/
+const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
+const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
+
+const shareToAssetRatio = computed(() => 1 / assetToShare.value);
+const balanceInAsset = computed(
+  () => userBalance.value * shareToAssetRatio.value
+);
+
+const {
+  redeemLoading,
+  redeemReceipt,
+  redeemTx,
+  handleRedeem,
+  amount: redeemAmount,
+  buttonState: redeemButtonState,
+} = useVaultRedeem(userBalance, vaultId, vaultStatus);
+/* 
+  End of legacy code
+*/
+
 const isLoading = computed(
   () =>
+    approveExchangeLoading.value ||
     approveLoading.value ||
-    vaultLoading.value ||
-    redeemLoading.value ||
     deleteDepositLoading.value ||
-    updateDepositLoading.value
+    deleteWithdrawalLoading.value ||
+    exchangeTicketsLoading.value ||
+    redeemLoading.value ||
+    updateDepositLoading.value ||
+    vaultLoading.value
 );
 
 onMounted(() => {
@@ -351,12 +456,36 @@ watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 
+watch(approveExchangeTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("approving_exchange"));
+});
+
+watch(approveExchangeReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("exchange_approved"));
+});
+
 watch(deleteDepositTransaction, (transaction) => {
   createTransactionNotification(transaction, t("deleting_deposit"));
 });
 
 watch(deleteDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deleted_deposit"));
+});
+
+watch(deleteWithdrawalTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("deleting_withdrawal"));
+});
+
+watch(deleteWithdrawalReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("deleted_withdrawal"));
+});
+
+watch(exchangeTicketsTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("exchanging_tickets"));
+});
+
+watch(exchangeTicketsReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("tickets_exchanged"));
 });
 
 watch(updateDepositTransaction, (transaction) => {

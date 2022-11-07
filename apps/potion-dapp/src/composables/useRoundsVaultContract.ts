@@ -168,8 +168,8 @@ export function useRoundsVaultContract(
   };
 
   const setApprovalForAllLoading = ref(false);
-  const setApprovalForAllTx = ref<ContractTransaction>();
-  const setApprovalForAllReceipt = ref<ContractReceipt>();
+  const setApprovalForAllTx = ref<ContractTransaction | null>(null);
+  const setApprovalForAllReceipt = ref<ContractReceipt | null>(null);
   const setApprovalForAll = async (operator: string, approved: boolean) => {
     try {
       setApprovalForAllLoading.value = true;

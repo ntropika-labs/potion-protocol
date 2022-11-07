@@ -10,6 +10,8 @@ import { RoundsVaultExchanger__factory } from "@potion-protocol/hedging-vault/ty
 
 import type { RoundsVaultExchanger } from "@potion-protocol/hedging-vault/typechain";
 import type { Ref } from "vue";
+import type { BigNumberish } from "ethers";
+
 export function useRoundsVaultExchanger(
   address: string | Ref<string>,
   roundsInputAddress: string | Ref<string>,
@@ -29,7 +31,7 @@ export function useRoundsVaultExchanger(
   const exchangeInputForOutputLoading = ref(false);
   const exchangeInputForOutputTx = ref<ContractTransaction | null>(null);
   const exchangeInputForOutputReceipt = ref<ContractReceipt | null>(null);
-  const exchangeInputForOutput = async (id: number, amount: number) => {
+  const exchangeInputForOutput = async (id: BigNumberish, amount: number) => {
     try {
       exchangeInputForOutputLoading.value = true;
       const contract = initContractSigner();
@@ -56,7 +58,7 @@ export function useRoundsVaultExchanger(
   const exchangeInputForOutputBatchTx = ref<ContractTransaction | null>(null);
   const exchangeInputForOutputBatchReceipt = ref<ContractReceipt | null>(null);
   const exchangeInputForOutputBatch = async (
-    ids: number[],
+    ids: BigNumberish[],
     amounts: number[]
   ) => {
     try {
@@ -85,6 +87,7 @@ export function useRoundsVaultExchanger(
     exchangeInputForOutput,
     exchangeInputForOutputLoading,
     exchangeInputForOutputTx,
+    exchangeInputForOutputReceipt,
     exchangeInputForOutputBatch,
     exchangeInputForOutputBatchLoading,
     exchangeInputForOutputBatchTx,
