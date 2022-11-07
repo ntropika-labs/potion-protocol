@@ -1,4 +1,4 @@
-import { computed, ref, unref } from "vue";
+import { ref, unref } from "vue";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 
@@ -13,19 +13,14 @@ import type {
 } from "@ethersproject/contracts";
 import type { ERC20Upgradeable } from "@potion-protocol/core/typechain";
 import type { MaybeRef } from "@vueuse/core";
+import type { Ref } from "vue";
 
 export function useCollateralTokenContract(
-  walletRef: MaybeRef<string | null>,
-  targetContract: {
-    address: string;
-    name: string;
-  },
+  walletAddress: Ref<string | null>,
   infiniteApproval: MaybeRef<boolean> = true
 ) {
   const { initContract } = useEthersContract();
-  const { USDC } = contractsAddresses;
-
-  const walletAddress = computed(() => unref(walletRef));
+  const { USDC, PotionLiquidityPool } = contractsAddresses;
 
   const initContractSigner = () => {
     return initContract(
@@ -77,13 +72,14 @@ export function useCollateralTokenContract(
         const provider = initContractProvider();
         const response = await provider.allowance(
           walletAddress.value,
-          targetContract.address
+          PotionLiquidityPool.address
         );
         console.info(
-          `Address allowance for ${targetContract.address} is ${formatUnits(
-            response,
-            6
-          )} - ${parseFloat(formatUnits(response, 6))}`
+          `Address allowance for ${
+            PotionLiquidityPool.address
+          } is ${formatUnits(response, 6)} - ${parseFloat(
+            formatUnits(response, 6)
+          )}`
         );
         userAllowance.value = parseFloat(formatUnits(response, 6));
         fetchUserAllowanceLoading.value = false;
@@ -103,29 +99,31 @@ export function useCollateralTokenContract(
   const approveLoading = ref(false);
   const approveTx = ref<ContractTransaction | null>(null);
   const approveReceipt = ref<ContractReceipt | null>(null);
-  const approve = async (amount: number) => {
-    if (!walletAddress.value) {
-      throw new Error("Connect your wallet first");
-    }
+  const approveForPotionLiquidityPool = async (amount: number) => {
+    approveLoading.value = true;
     try {
-      approveLoading.value = true;
-      const amountToApprove = unref(infiniteApproval)
-        ? MaxUint256
-        : parseUnits(amount.toString(), 6);
-      const contractSigner = initContractSigner();
-      approveTx.value = await contractSigner.approve(
-        targetContract.address,
-        amountToApprove
-      );
-      approveReceipt.value = await approveTx.value.wait();
+      if (walletAddress.value) {
+        const contractSigner = initContractSigner();
+        approveTx.value = await contractSigner.approve(
+          PotionLiquidityPool.address,
+          unref(infiniteApproval)
+            ? MaxUint256
+            : parseUnits(amount.toString(), 6)
+        );
+        approveReceipt.value = await approveTx.value.wait();
+        approveLoading.value = false;
+      } else {
+        throw new Error("Connect your wallet first");
+      }
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? `Cannnot approve for ${targetContract.name}: ${error.message}`
-          : `Cannnot approve for ${targetContract.name}`;
-      throw new Error(message);
-    } finally {
       approveLoading.value = false;
+      if (error instanceof Error) {
+        throw new Error(
+          `Cannot approve for the liquidity pool: ${error.message}`
+        );
+      } else {
+        throw new Error("Cannot approve for the liquidity pool");
+      }
     }
   };
 
@@ -136,7 +134,7 @@ export function useCollateralTokenContract(
     fetchUserCollateralAllowance,
     userAllowance,
     fetchUserAllowanceLoading,
-    approve,
+    approveForPotionLiquidityPool,
     approveLoading,
     approveTx,
     approveReceipt,
