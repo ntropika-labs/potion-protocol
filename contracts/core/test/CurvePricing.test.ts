@@ -301,7 +301,7 @@ describe("CurvePricing", function () {
                 potionLiquidityPool
                     .connect(potionLp1)
                     .withdraw(POOL_ID, totalPremiumInCollateralTokens.add(LOCKED_LIQUIDITY)),
-            ).to.revertedWith("revert");
+            ).to.revertedWith("panic code 0x11");
         });
     });
 
