@@ -72,7 +72,7 @@ const getUniswapRoute = async (
 
     // Define a currency amount and a deadline
     const tokenAmountWithDecimals = parseUnits(
-      tokenAmount.toFixed(),
+      tokenAmount.toFixed(inputUniToken.decimals),
       inputUniToken.decimals
     );
 
