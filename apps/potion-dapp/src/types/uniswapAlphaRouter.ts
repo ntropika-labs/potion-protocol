@@ -44,9 +44,8 @@ export interface UniSwapInfo {
 export interface PotionBuyInfo {
   targetPotionAddress: string;
   underlyingAsset: string;
-  strikePriceInUSDC: string;
+  strikePriceInUSDC: number;
   expirationTimestamp: BigNumberish;
   sellers: Sellers;
-  expectedPremiumInUSDC: string;
-  totalSizeInPotions: BigNumberish;
+  expectedPremiumInUSDC: number;
 }

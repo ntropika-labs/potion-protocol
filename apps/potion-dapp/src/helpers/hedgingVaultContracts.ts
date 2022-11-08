@@ -1,5 +1,4 @@
 import { Deployments } from "@potion-protocol/hedging-vault";
-import multivault from "@potion-protocol/hedging-vault/multivault.json";
 import { ethereumNetwork } from "./";
 
 let contractsAddresses = {};
@@ -7,12 +6,12 @@ let contractsAddresses = {};
 const multiVaultAddresses: Array<{
   vault: string;
   potionBuyAction: string;
-  roundsInputVault?: string;
-  roundsOutputVault?: string;
-  swapToUSDCAction?: string;
-  hedgingVaultOrchestrator?: string;
-  usdc?: string;
-}> = multivault.slice(); // slice it to duplicate it and update the pointer
+  roundsInputVault: string;
+  roundsOutputVault: string;
+  swapToUSDCAction: string;
+  hedgingVaultOrchestrator: string;
+  usdc: string;
+}> = [];
 // ASCII range for uppercase letters is [65,90]
 const BASE_ASCII_INDEX = 65;
 const MULTIVAULT_BASE_NAME = "localhost.multivault";
