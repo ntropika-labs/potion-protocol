@@ -8,7 +8,7 @@ import type {
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
 import { getRateInUD60x18 } from "hedging-vault-sdk";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, unref } from "vue";
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { parseUnits } from "@ethersproject/units";
@@ -19,6 +19,7 @@ import { useEthersContract } from "./useEthersContract";
 
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOrchestrator";
 import type { PotionBuyInfo, UniSwapInfo } from "@/types";
+import type { MaybeRef } from "@vueuse/core";
 
 export type VaultStatus = "locked" | "unlocked" | "suspended";
 
@@ -39,10 +40,14 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   return utils.solidityPack(types, values);
 }
 
-export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
+export function useHedgingVaultOrchestratorContract(
+  vaultAddress: MaybeRef<string>
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const { hedgingVaultOrchestrator } = getContractsFromVault(vaultAddress);
+  const { hedgingVaultOrchestrator } = getContractsFromVault(
+    unref(vaultAddress)
+  );
 
   //Provider initialization
   const initContractSigner = () => {
@@ -50,7 +55,7 @@ export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
       true,
       false,
       HedgingVaultOrchestrator__factory,
-      hedgingVaultOrchestrator as string
+      hedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 
@@ -59,7 +64,7 @@ export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
       false,
       false,
       HedgingVaultOrchestrator__factory,
-      hedgingVaultOrchestrator as string
+      hedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 
@@ -103,13 +108,21 @@ export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
   const getPotionBuyActionData = (
     potionBuyInfo: PotionBuyInfo
   ): PotionBuyInfoStruct => {
+    console.log("potionBuyInfo", potionBuyInfo);
+
     return {
       sellers: potionBuyInfo.sellers,
       targetPotionAddress: potionBuyInfo.targetPotionAddress,
       underlyingAsset: potionBuyInfo.underlyingAsset,
-      strikePriceInUSDC: parseUnits(potionBuyInfo.strikePriceInUSDC, 8),
+      strikePriceInUSDC: parseUnits(
+        potionBuyInfo.strikePriceInUSDC.toFixed(8), // 8 digits are required for the strike price
+        8
+      ),
       expirationTimestamp: potionBuyInfo.expirationTimestamp,
-      expectedPremiumInUSDC: parseUnits(potionBuyInfo.expectedPremiumInUSDC, 6),
+      expectedPremiumInUSDC: parseUnits(
+        potionBuyInfo.expectedPremiumInUSDC.toFixed(6),
+        6
+      ),
     };
   };
 
@@ -117,7 +130,6 @@ export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
    * Contract Vars
    */
 
-  //const hedgingVaultAddress = ref("");
   const actionsAddress = ref("");
 
   //
@@ -154,6 +166,14 @@ export function useHedgingVaultOrchestratorContract(vaultAddress: string) {
 
       const potionBuyActionData = getPotionBuyActionData(enterPotionBuyInfo);
 
+      console.log(
+        "FINAL DATA",
+        potionBuyActionData,
+        enterSwapData,
+        exitSwapData,
+        fallbackEnterSwapData,
+        fallbackExitSwapData
+      );
       nextRoundTx.value = await contractSigner.nextRound(
         exitSwapData,
         potionBuyActionData,
