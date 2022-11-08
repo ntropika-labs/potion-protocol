@@ -34,7 +34,7 @@ collateral_claimed: collateral claimed
 committed: committed
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 counterparties: Counterparties
 counterparty: Counterparty
@@ -136,7 +136,7 @@ position_entered: Position Entered
 position_exited: Position Exited
 potion_bought: potion bought
 premium: Premium
-price_changed: The price of { token } went from { oldPrice } to { newPrice } 
+price_changed: The price of { token } went from { oldPrice } to { newPrice }
 price_not_in_tollerance: The new price is outside of the slippage tollerance
 price_per_potion: price per potion
 profit_and_loss: Profit & Loss
@@ -198,3 +198,5 @@ your_potion_expires_in: your potion expires in
 your_put_recipe: Your put recipe
 your_shares: your shares
 your_strike_price: your strike price
+entering_round: Entering new round
+round_entered: Round entered
