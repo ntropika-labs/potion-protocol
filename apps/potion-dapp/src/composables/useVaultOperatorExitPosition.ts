@@ -16,13 +16,13 @@ import {
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useAlphaRouter } from "./useAlphaRouter";
-import { useCollateralTokenContract } from "./useCollateralTokenContract";
 
 import type { Token } from "dapp-types";
 import type { ActionPayout } from "./usePotionBuyActionContract";
 
 import { UniswapActionType } from "@/types";
 import type { UniswapRouterReturn, UniSwapInfo } from "@/types";
+import { useErc20Contract } from "./useErc20Contract";
 
 /**
  * The composable returns a set of functions to perform operations to exit the current cycle and exposes references
@@ -45,7 +45,7 @@ export function useVaultOperatorExitPosition(
   const lowercaseVaultAddress = computed(() =>
     vaultAddress.value.toLowerCase()
   );
-  const { swapToUSDCAction } = getContractsFromVault(
+  const { swapToUSDCAction, usdc } = getContractsFromVault(
     lowercaseVaultAddress.value
   );
 
@@ -55,7 +55,8 @@ export function useVaultOperatorExitPosition(
     togglePolling: toggleUniswapPolling,
   } = useAlphaRouter(getChainId());
 
-  const { fetchActionBalance } = useCollateralTokenContract();
+  const { balance: fallbackUSDCBalance, getTokenBalance: getUSDCBalance } =
+    useErc20Contract(usdc as string, false);
 
   const exitPositionData: Ref<{
     uniswapRouterData: UniswapRouterReturn | null;
@@ -142,10 +143,9 @@ export function useVaultOperatorExitPosition(
       } else {
         uniswapExitRoute = null;
       }
-      const totalFallbackBalance = await fetchActionBalance(
-        swapToUSDCAction as string
-      );
+      await getUSDCBalance(false, swapToUSDCAction as string);
 
+      const totalFallbackBalance = fallbackUSDCBalance.value;
       console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
 
       if (totalFallbackBalance > 0) {

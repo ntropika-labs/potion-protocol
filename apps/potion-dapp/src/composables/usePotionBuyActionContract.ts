@@ -8,8 +8,10 @@ import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
 
+import { contractsAddresses } from "@/helpers/contracts";
+
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
-import { useCollateralTokenContract } from "./useCollateralTokenContract";
+import { useErc20Contract } from "./useErc20Contract";
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
@@ -59,7 +61,9 @@ export function usePotionBuyActionContract(
     ) as PotionBuyAction;
   };
 
-  const { fetchActionBalance } = useCollateralTokenContract();
+  const { USDC } = contractsAddresses;
+  const { balance: potionActionUSDCBalance, getTokenBalance: getUSDCBalance } =
+    useErc20Contract(USDC.address, false);
   /**
    * Contract methods
    **/
@@ -312,10 +316,10 @@ export function usePotionBuyActionContract(
   const totalPayoutUSDC = ref<ActionPayout | undefined>();
   const getTotalPayoutInUSDC = async () => {
     const payout = currentPayout.value?.currentPayout || 0;
-    const premiumLeftovers = await fetchActionBalance(contractAddress);
+    await getUSDCBalance(false, contractAddress);
 
     totalPayoutUSDC.value = {
-      currentPayout: payout + premiumLeftovers,
+      currentPayout: payout + potionActionUSDCBalance.value,
       isFinal: currentPayout.value?.isFinal || false,
     };
   };
