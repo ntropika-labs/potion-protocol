@@ -149,7 +149,7 @@ export function useInvestmentVaultContract(
 
       const shareBalanceBN = await contract.balanceOf(address);
 
-      shareBalance.value = parseFloat(formatUnits(shareBalanceBN, 6));
+      shareBalance.value = parseFloat(formatUnits(shareBalanceBN, 18));
     } catch (error) {
       const message =
         error instanceof Error
