@@ -207,7 +207,7 @@ jobs:
           working-directory: libs/potion-ui
 
       - name: Archive screenshots code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: potion-ui-components-cypress-screenshots
@@ -215,7 +215,7 @@ jobs:
           retention-days: 25
 
       - name: Archive videos code coverage results (potion-ui components)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: potion-ui-components-cypress-videos
@@ -288,7 +288,7 @@ jobs:
           config: "pageLoadTimeout=100000,baseUrl=${{ env.PREVIEW_URL }}"
 
       - name: Archive screenshots code coverage results (potion-dapp e2e)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: potion-dapp-e2e-cypress-screenshots
@@ -296,7 +296,7 @@ jobs:
           retention-days: 25
 
       - name: Archive videos code coverage results (potion-dapp e2e)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: potion-dapp-e2e-cypress-videos
