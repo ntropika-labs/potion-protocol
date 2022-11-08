@@ -21,6 +21,8 @@ import {
 } from "potion-ui";
 import { LifecycleStates } from "hedging-vault-sdk";
 
+import { contractsAddresses } from "@/helpers/contracts";
+
 import { useHedgingVaultOrchestratorContract } from "@/composables/useHedgingVaultOrchestratorContract";
 import { useNotifications } from "@/composables/useNotifications";
 
@@ -50,6 +52,7 @@ const TabNavigationComponent = defineAsyncComponent(
 
 const rerunRequired = ref(false);
 const IS_DEV_ENV = import.meta.env;
+const { USDC } = contractsAddresses;
 
 const { t } = useI18n();
 const router = useRouter();
@@ -72,14 +75,11 @@ const {
   shareBalance,
 } = useInvestmentVaultContract(vaultId, true, true);
 
-const {
-  vaultName,
-  assetSymbol,
-  assetAddress,
-  totalAssets,
-  tokenAsset,
-  getTotalAssets,
-} = useErc4626Contract(vaultId, true, true);
+const { vaultName, assetSymbol, assetAddress, tokenAsset } = useErc4626Contract(
+  vaultId,
+  true,
+  true
+);
 
 const {
   enterNextRound: vaultEnterNextRound,
@@ -91,9 +91,13 @@ const {
   nextRoundReceipt,
 } = useHedgingVaultOrchestratorContract(vaultId.value.toLowerCase());
 
-const { balance, getTokenBalance } = useErc20Contract(
-  "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44"
-);
+const {
+  balance: potionActionUnderlyingBalance,
+  getTokenBalance: getUnderlyingBalance,
+} = useErc20Contract(assetAddress, false);
+const { balance: potionActionUSDCBalance, getTokenBalance: getUSDCBalance } =
+  useErc20Contract(USDC.address, false);
+
 const {
   nextCycleTimestamp,
   cycleDurationDays,
@@ -118,6 +122,7 @@ const {
   isEnterPositionOperationValid,
   loadEnterPositionRoute,
   evaluateEnterPositionData,
+  effectiveVaultSizeInUnderlying,
 } = useVaultOperatorEnterPosition(
   vaultId,
   tokenAsset,
@@ -213,7 +218,9 @@ const callbackEnterNextRound = async () => {
       exitSwapInfo,
       enterFallbackSwapInfo,
       exitFallbackSwapInfo,
-      sizeInPotions: formatUnits(potionBuyInfo.totalSizeInPotions.toString()),
+      counterparties: potionBuyInfo.sellers.map((s) =>
+        formatUnits(s.orderSizeInOtokens, 8)
+      ),
     },
   ]);
 
@@ -251,7 +258,7 @@ const addOraclePolling = (address: string | null) => {
 watch(vaultStatus, async () => {
   await Promise.all([getStrategyInfo(), fetchCanEnterNextRound()]);
 
-  await Promise.all([getCurrentPayout(assetAddress.value), getTotalAssets()]);
+  await getCurrentPayout(assetAddress.value);
 
   getTotalSupply();
   getShareBalance(roundsOutputVault as string);
@@ -286,9 +293,16 @@ const tabs = ref([
 onMounted(async () => {
   addOraclePolling(unref(assetAddress));
   await getBlock("latest");
-  await getTokenBalance(false, potionBuyAction);
+  await getUnderlyingBalance(false, potionBuyAction);
 
-  console.log(balance);
+  // TODO: test env only
+  await getUSDCBalance(false, potionBuyAction);
+
+  console.log(
+    "POTION BUY ACTIONS BALANCES (underlying/usdc)",
+    potionActionUnderlyingBalance.value,
+    potionActionUSDCBalance.value
+  );
 });
 
 onBeforeUnmount(stopPolling);
@@ -347,6 +361,7 @@ const setPriceCommand = computed(
   () =>
     `yarn set-price --otoken ${potionAddress.value} --price 500 --network localhost`
 );
+
 const copySetPriceCommand = async () => {
   if (potionAddress.value) {
     await navigator.clipboard.writeText(setPriceCommand.value);
@@ -366,6 +381,7 @@ watch(blockTimestamp, async () => {
 
   loadBuyerRecords();
 });
+
 // END TODO: DELETE
 </script>
 
@@ -427,6 +443,53 @@ watch(blockTimestamp, async () => {
           </BaseButton>
         </div>
       </div>
+    </div>
+    <div class="flex flex-col mt-4 gap-2">
+      <table>
+        <thead>
+          <th>Total deposit</th>
+          <th>Total withdrawal</th>
+          <th>Spot price at round end</th>
+          <th>
+            Potion initial premium
+            <span class="small">1st run</span>
+          </th>
+          <th>
+            Potion estimated premium
+            <span class="small"> 2nd run</span>
+          </th>
+        </thead>
+        <tbody class="text-center">
+          <tr>
+            <td>0 (10 if not in a round yet)</td>
+            <td>0</td>
+            <td>
+              <span v-if="vaultStatus === LifecycleStates.Locked">{{
+                oraclePrice
+              }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>{{ enterPositionData?.potionRouterInitialData.premium }}</td>
+            <td>{{ enterPositionData?.potionRouterData.premium }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <th>RoundsInput shares</th>
+          <th>Order size (OT)</th>
+          <th>Action Underl. balance</th>
+          <th>Action USDC balance</th>
+        </thead>
+        <tbody class="text-center">
+          <tr>
+            <td>-</td>
+            <td>{{ effectiveVaultSizeInUnderlying }}</td>
+            <td>{{ potionActionUnderlyingBalance }}</td>
+            <td>{{ potionActionUSDCBalance }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <!-- END TEST COMMANDS -->
@@ -497,7 +560,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('vault_size')"
-              :value="totalAssets.toString()"
+              value="0"
               :symbol="assetSymbol"
             />
             <div class="flex flex-col gap-2">
@@ -589,7 +652,8 @@ watch(blockTimestamp, async () => {
                 palette="secondary"
                 :disabled="
                   !isEnterPositionOperationValid ||
-                  !isExitPositionOperationValid
+                  !isExitPositionOperationValid ||
+                  rerunRequired
                 "
                 :loading="nextRoundLoading || isEnterPositionLoading"
                 @click="callbackEnterNextRound()"
@@ -603,6 +667,13 @@ watch(blockTimestamp, async () => {
               >
                 Data to exit the current position and enter the new one are
                 required
+              </p>
+              <p
+                v-if="rerunRequired"
+                class="text-secondary-500 text-xs text-right mt-2"
+              >
+                The spot price has changed significantly since data was loaded,
+                please load it again.
               </p>
             </div>
           </div>
