@@ -32,7 +32,6 @@ import type {
 import { useErc20Contract } from "./useErc20Contract";
 import { useBlockNative } from "./useBlockNative";
 import { useDepthRouter } from "./useDepthRouter";
-import { useVaultOperatorCalculations } from "./useVaultOperatorCalculations";
 import { createValidExpiry } from "@/helpers";
 import { useOtokenFactory } from "./useOtokenFactory";
 import { calculateOrderSize } from "hedging-vault-sdk";
@@ -65,6 +64,7 @@ export function useVaultOperatorEnterPosition(
   oraclePrice: Ref<number>,
   cycleDurationDays: Ref<number>
 ) {
+  const effectiveVaultSizeInUnderlying = ref(0);
   const lowercaseVaultAddress = computed(() =>
     vaultAddress.value.toLowerCase()
   );
@@ -72,8 +72,8 @@ export function useVaultOperatorEnterPosition(
     lowercaseVaultAddress.value
   );
 
-  const underlyingTokenAddress = computed(() =>
-    underlyingToken.value?.address.toLowerCase()
+  const underlyingTokenAddress = computed(
+    () => underlyingToken.value?.address.toLowerCase() || ""
   );
 
   const {
@@ -82,7 +82,7 @@ export function useVaultOperatorEnterPosition(
     togglePolling: toggleUniswapPolling,
   } = useAlphaRouter(getChainId());
 
-  const { getTokenBalance } = useErc20Contract(underlyingTokenAddress);
+  const { getTokenBalance } = useErc20Contract(underlyingTokenAddress, false);
   const { getGas, gasPrice } = useBlockNative();
 
   const { getTargetOtokenAddress } = useOtokenFactory();
@@ -108,11 +108,20 @@ export function useVaultOperatorEnterPosition(
       (actionUnderlyingBalance as number) +
       (inputVaultUnderlyingBalance as number);
 
+    console.log(
+      totalPayoutUSDC.value,
+      totalPrincipalBeforeWithdrawalInUnderlying,
+      exitSwapAmountInUnderlying,
+      actionUnderlyingBalance,
+      inputVaultUnderlyingBalance
+    );
+
     // When the vault is still not initialized the vaultTotalSupply is 0
     if (vaultTotalSupply.value !== 0) {
       const investmentVaultTotalShares = vaultTotalSupply.value;
       console.log(
         "- INVESTMENT VAULT TOTAL SHARES",
+        totalPrincipalBeforeWithdrawalInUnderlying,
         investmentVaultTotalShares
       );
       price =
@@ -131,12 +140,12 @@ export function useVaultOperatorEnterPosition(
 
   const totalAmountToSwap = ref(0);
 
-  const { strikePrice, numberOfOtokensToBuyBN } = useVaultOperatorCalculations(
-    oraclePrice,
-    strikePercent,
-    hedgingRate,
-    totalAmountToSwap
-  );
+  const strikePrice = computed(() => {
+    const strikePercentage = strikePercent.value;
+    return strikePercentage === null
+      ? 0
+      : oraclePrice.value * (strikePercentage / 100);
+  });
 
   const criteriasParam = computed<Criteria[]>(() => {
     return [
@@ -161,6 +170,7 @@ export function useVaultOperatorEnterPosition(
     potionRouterData: DepthRouterReturn;
     uniswapRouterData: UniswapRouterReturn;
     fallbackUniswapRouterData: UniswapRouterReturn;
+    potionRouterInitialData: DepthRouterReturn; // TODO: remove
   } | null> = ref(null);
 
   const isLoading = ref(false);
@@ -247,6 +257,11 @@ export function useVaultOperatorEnterPosition(
         potionRouterParameters.value.ethPrice
       );
 
+      console.log(
+        "ESTIMATED PREMIUM",
+        potionRouterWithEstimatedPremium.premium
+      );
+
       const actualVaultSizeInUnderlying = calculateOrderSize(
         principalHedgedAmountInUnderlying,
         underlyingTokenValue.decimals as number,
@@ -258,7 +273,7 @@ export function useVaultOperatorEnterPosition(
         )
       );
 
-      const effectiveVaultSizeInUnderlying = parseFloat(
+      effectiveVaultSizeInUnderlying.value = parseFloat(
         formatUnits(
           actualVaultSizeInUnderlying.effectiveVaultSize.toString(),
           underlyingTokenValue.decimals
@@ -266,11 +281,8 @@ export function useVaultOperatorEnterPosition(
       );
 
       const effectiveVaultSizeInUSDC =
-        effectiveVaultSizeInUnderlying *
+        effectiveVaultSizeInUnderlying.value *
         potionRouterParameters.value.strikePriceUSDC;
-
-      // TODO: finish triggering the potion router update
-      totalAmountToSwap.value = effectiveVaultSizeInUSDC;
 
       const potionRouterForEffectiveSize = await worker.getPotionRoute(
         effectiveVaultSizeInUSDC,
@@ -324,6 +336,7 @@ export function useVaultOperatorEnterPosition(
         potionRouterData: potionRouterForEffectiveSize,
         uniswapRouterData: uniswapResult,
         fallbackUniswapRouterData: fallbackRoute,
+        potionRouterInitialData: potionRouterWithEstimatedPremium,
       };
     } finally {
       isLoading.value = false;
@@ -357,8 +370,7 @@ export function useVaultOperatorEnterPosition(
       const swapRoute = enterPositionData.value?.uniswapRouterData.routes[0];
       const executionPrice =
         enterPositionData.value?.uniswapRouterData.tradeExecutionPrice;
-      const routePremium =
-        enterPositionData?.value?.potionRouterData?.premium?.toFixed(6);
+      const routePremium = enterPositionData?.value?.potionRouterData?.premium;
 
       const counterparties =
         enterPositionData.value?.potionRouterData.counterparties.map(
@@ -385,7 +397,7 @@ export function useVaultOperatorEnterPosition(
         // mock the official address of USDC with the one from the local deployment
         const collateralTokenToSwap = mockCollateralToken(USDCToken);
 
-        const swapInfo: UniSwapInfo = evaluateUniswapRoute(
+        const swapInfo = evaluateUniswapRoute(
           enterPositionData.value?.uniswapRouterData,
           UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
           oraclePrice.value,
@@ -396,14 +408,13 @@ export function useVaultOperatorEnterPosition(
         const potionBuyInfo = {
           targetPotionAddress: newOtokenAddress,
           underlyingAsset: underlyingToken.value.address,
-          strikePriceInUSDC: strikePrice.value.toFixed(6),
+          strikePriceInUSDC: strikePrice.value,
           expirationTimestamp: expirationTimestamp,
           sellers: counterparties,
           expectedPremiumInUSDC: routePremium,
-          totalSizeInPotions: numberOfOtokensToBuyBN.value,
         };
 
-        const fallbackSwapInfo: UniSwapInfo = evaluateUniswapRoute(
+        const fallbackSwapInfo = evaluateUniswapRoute(
           enterPositionData.value?.fallbackUniswapRouterData,
           UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
           oraclePrice.value,
@@ -435,5 +446,6 @@ export function useVaultOperatorEnterPosition(
     isEnterPositionOperationValid,
     loadEnterPositionRoute,
     evaluateEnterPositionData,
+    effectiveVaultSizeInUnderlying,
   };
 }
