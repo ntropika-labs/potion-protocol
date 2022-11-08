@@ -8,7 +8,8 @@ import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
 import type { RoundsFragment } from "@/types";
 
-const formatAmount = (amount: BigNumberish) => parseInt(formatUnits(amount, 6));
+const formatAmount = (amount: MaybeRef<BigNumberish>) =>
+  parseInt(formatUnits(unref(amount), 18));
 
 function useInputOutputVaultExchange(
   exchangerAddress: MaybeRef<string>,
@@ -42,7 +43,7 @@ function useInputOutputVaultExchange(
   );
 
   const calcAssets = (shares: string) =>
-    formatAmount(BigNumber.from(shares).mul(unref(shareToAssetRate)));
+    formatAmount(BigNumber.from(shares).mul(formatAmount(shareToAssetRate)));
 
   const estimatedAssets = computed(() =>
     unref(rounds).reduce(
