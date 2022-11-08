@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from "pinia";
-import { onMounted, readonly, watch } from "vue";
+import { onMounted, readonly, watch, isRef } from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useUserDataStore } from "@/stores/useUserDataStore";
@@ -38,6 +38,10 @@ const useVaultStore = (
         userAllowance.value = 0;
       }
     });
+
+    if (isRef(underlyingAddress)) {
+      watch(underlyingAddress, fetchUserData);
+    }
 
     return {
       approve,
