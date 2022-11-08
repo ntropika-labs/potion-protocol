@@ -13,10 +13,10 @@ import { useOnboard } from "@onboard-composable";
 import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 
 import { useEthersContract } from "./useEthersContract";
+import type { MaybeRef } from "@vueuse/core";
 
-import type { Ref } from "vue";
 export function useErc20Contract(
-  address: string | Ref<string>,
+  address: MaybeRef<string>,
   fetchInitialData = true
 ) {
   const { initContract } = useEthersContract();
@@ -122,6 +122,11 @@ export function useErc20Contract(
   ) => {
     try {
       const contractProvider = initContractProvider();
+
+      if (!decimals.value) {
+        await getDecimals();
+      }
+
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address
