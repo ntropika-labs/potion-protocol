@@ -160,11 +160,11 @@
               v-if="estimatedAssets > 0"
               class="w-1/2 flex flex-col items-center gap-4"
             >
-              <h3>{{ t("estimated_assets", { estimatedAssets }) }}</h3>
+              <h3>{{ t("estimated_exchange_assets", { estimatedAssets }) }}</h3>
               <BaseButton
                 palette="secondary"
                 :label="exchangeLabel"
-                :disabled="!canExchange || isLoading"
+                :disabled="isLoading"
                 :loading="approveExchangeLoading || exchangeTicketsLoading"
                 @click="handleExchange"
               />
@@ -173,7 +173,6 @@
                   {{
                     t("current_withdrawal_request_info", {
                       currentWithdrawalAmount,
-                      assetSymbol,
                     })
                   }}
                 </h4>
@@ -359,11 +358,13 @@ const {
   exchangeTicketsReceipt,
   exchangeTicketsTransaction,
 } = useInputOutputVaultExchange(
+  walletAddress,
   roundsExchangerAddress,
   roundsInputAddress,
   roundsOutputAddress,
   assetAddress,
   vaultRounds,
+  currentRound,
   lastShareToAssetRate
 );
 
