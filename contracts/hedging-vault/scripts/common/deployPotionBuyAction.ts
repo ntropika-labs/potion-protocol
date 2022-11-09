@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
 import { PotionBuyAction } from "../../typechain";
 import { DeploymentFlags, Deployments } from "contracts-utils";
+import { Roles } from "hedging-vault-sdk";
 
 export interface PotionBuyActionDeployParams {
     adminAddress: string;
@@ -27,5 +28,8 @@ export async function deployPotionBuyAction(parameters: PotionBuyActionDeployPar
         options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
     })) as PotionBuyAction;
     console.log(`    ...deployed to: ${potionBuyAction.address}`);
+
+    const numOperators = await potionBuyAction.getRoleMemberCount(Roles.Operator);
+    console.log(`    ...number of operators: ${numOperators}`);
     return potionBuyAction;
 }

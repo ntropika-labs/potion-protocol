@@ -15,7 +15,11 @@ import {
     DAY_IN_SECONDS,
 } from "contracts-utils";
 
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
+import {
+    getDeploymentConfig,
+    deployHedgingVaultEnvironment,
+    HedgingVaultEnvironmentDeployment,
+} from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import {
@@ -48,7 +52,7 @@ describe("FallbackStrategy", function () {
     let roundsInputVault: RoundsInputVault;
     let roundsOutputVault: RoundsOutputVault;
     let orchestrator: HedgingVaultOrchestrator;
-    let tEnv: TestingEnvironmentDeployment;
+    let tEnv: HedgingVaultEnvironmentDeployment;
 
     before(function () {
         showConsoleLogs(false);
@@ -69,7 +73,7 @@ describe("FallbackStrategy", function () {
         const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
-        tEnv = await deployTestingEnv(deploymentConfig);
+        tEnv = await deployHedgingVaultEnvironment(deploymentConfig);
 
         // Commented out on purpose
         // printTestingEnv(tEnv);

@@ -3,7 +3,11 @@ import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
+import {
+    getDeploymentConfig,
+    deployHedgingVaultEnvironment,
+    HedgingVaultEnvironmentDeployment,
+} from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import {
@@ -17,7 +21,7 @@ import {
 } from "../../typechain";
 import { fastForwardChain } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
-import { Roles, LifecycleStates } from "hedging-vault-sdk";
+import { Roles, LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 
 import {
     Deployments,
@@ -46,7 +50,7 @@ describe("DeferredDepositsWithdrawals", function () {
     let roundsOutputVault: RoundsOutputVault;
     let orchestrator: HedgingVaultOrchestrator;
     let roundsExchanger: RoundsVaultExchanger;
-    let tEnv: TestingEnvironmentDeployment;
+    let tEnv: HedgingVaultEnvironmentDeployment;
 
     before(function () {
         showConsoleLogs(false);
@@ -67,7 +71,7 @@ describe("DeferredDepositsWithdrawals", function () {
         const deploymentType = Deployments.getType();
         deploymentConfig = getDeploymentConfig(deploymentType);
 
-        tEnv = await deployTestingEnv(deploymentConfig);
+        tEnv = await deployHedgingVaultEnvironment(deploymentConfig);
 
         // Commented out on purpose
         // printTestingEnv(tEnv);
@@ -238,6 +242,28 @@ describe("DeferredDepositsWithdrawals", function () {
         expect(await orchestrator.swapToUSDCAction()).to.equal(tEnv.swapToUSDCAction.address);
         expect(await orchestrator.roundsInputVault()).to.equal(tEnv.roundsInputVault.address);
         expect(await orchestrator.roundsOutputVault()).to.equal(tEnv.roundsOutputVault.address);
+
+        // Owner
+        expect(await orchestrator.owner()).to.equal(tEnv.operatorAddress);
+
+        // Strategies
+        const potionBuyStrategy = await orchestrator.potionBuyStrategy();
+        expectSolidityDeepCompare(
+            {
+                actionsIndexes: [BigNumber.from(0)],
+                principalPercentages: [toSolidityPercentage(100)],
+            },
+            potionBuyStrategy,
+        );
+
+        const swapToUSDCStrategy = await orchestrator.swapToUSDCStrategy();
+        expectSolidityDeepCompare(
+            {
+                actionsIndexes: [BigNumber.from(1)],
+                principalPercentages: [toSolidityPercentage(100)],
+            },
+            swapToUSDCStrategy,
+        );
     });
 
     it("DDW0006 - Simple Deposit", async function () {

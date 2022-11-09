@@ -5,7 +5,11 @@ import { BigNumber, Signer } from "ethers";
 
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 
-import { getDeploymentConfig, deployTestingEnv, TestingEnvironmentDeployment } from "../../scripts/test/testingEnv";
+import {
+    getDeploymentConfig,
+    deployHedgingVaultEnvironment,
+    HedgingVaultEnvironmentDeployment,
+} from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
 import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
@@ -41,7 +45,7 @@ describe("CorrectingFactor", function () {
     let deploymentConfig: PotionHedgingVaultConfigParams;
     let vault: InvestmentVault;
     let action: PotionBuyAction;
-    let tEnv: TestingEnvironmentDeployment;
+    let tEnv: HedgingVaultEnvironmentDeployment;
 
     before(function () {
         showConsoleLogs(false);
@@ -65,7 +69,7 @@ describe("CorrectingFactor", function () {
         // Modify the hedging rate to 80% to test the hedging rate slippage
         deploymentConfig.hedgingRate = toSolidityPercentage(80.0);
 
-        tEnv = await deployTestingEnv(deploymentConfig);
+        tEnv = await deployHedgingVaultEnvironment(deploymentConfig);
 
         // Commented out on purpose
         // printTestingEnv(tEnv);
