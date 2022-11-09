@@ -2,6 +2,8 @@ import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Deposit, DepositRequest } from "../generated/schema";
 import { addDepositRequest, removeDepositRequest } from "./rounds";
 
+const decimals = BigInt.fromI32(10).pow(18);
+
 function createDeposit(
   round: Bytes,
   amount: BigInt,
@@ -100,8 +102,12 @@ function updateDepositRequestShares(id: Bytes, exchangeRate: BigInt): void {
   if (depositRequest == null) {
     log.error("depositRequest {} doesn't exists", [id.toHexString()]);
   } else {
-    depositRequest.shares = depositRequest.amount.times(exchangeRate);
-    depositRequest.remainingShares = depositRequest.amount.times(exchangeRate);
+    depositRequest.shares = depositRequest.amount
+      .times(exchangeRate)
+      .div(decimals);
+    depositRequest.remainingShares = depositRequest.amount
+      .times(exchangeRate)
+      .div(decimals);
     depositRequest.save();
   }
 }

@@ -36,6 +36,8 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { createWithdrawalRequestId } from "../src/withdrawals";
 import { createRoundId } from "../src/rounds";
 
+const decimals = BigInt.fromI32(10).pow(18);
+
 const contractAddress = Address.fromString(
   "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
 );
@@ -149,7 +151,7 @@ describe("roundsOutputVault", () => {
       );
       const mockedEvent = createOutputNextRound(
         BigInt.fromString("2"),
-        BigInt.fromString("10")
+        BigInt.fromString("10").times(decimals)
       );
       handleNextRound(mockedEvent);
     });
@@ -164,7 +166,7 @@ describe("roundsOutputVault", () => {
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
         { field: "currentRound", value: "2" },
-        { field: "lastShareToAssetRate", value: "10" },
+        { field: "lastShareToAssetRate", value: "10000000000000000000" },
       ]);
     });
 
@@ -172,7 +174,7 @@ describe("roundsOutputVault", () => {
       assertEntity(
         "Round",
         createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
-        [{ field: "shareToAssetRate", value: "10" }]
+        [{ field: "shareToAssetRate", value: "10000000000000000000" }]
       );
     });
 
