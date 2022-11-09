@@ -20,7 +20,7 @@ function getRoundsExchangerFromVault(vault: string) {
     (mv) => mv.InvestmentVault.toLowerCase() === vault.toLowerCase()
   );
   if (data) {
-    return data.RoundsExchangerVault;
+    return data.RoundsVaultExchanger;
   }
   throw `${vault} isn't a recognized vault`;
 }
