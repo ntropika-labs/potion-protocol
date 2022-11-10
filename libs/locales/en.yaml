@@ -49,6 +49,7 @@ currency: Currency
 current_deposit_request_info: You have already deposited {currentDepositAmount} {assetSymbol} inside this vault
 current_payout: Current Payout
 current_price: current price
+current_withdrawal_request_info: You have a withdrawal request of {currentWithdrawalAmount} assets inside this vault
 curve_formula_title: Equation
 curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
 curve_parameters: Parameters defining the curve.
@@ -71,6 +72,7 @@ empty: Empty
 enable_or_disable: Enable/Disable
 enter_position: Enter position
 entering_position: Entering position
+estimated_exchange_assets: You have {estimatedAssets} estimated assets
 exiting_position: Existing position
 expiration: Expiration
 expiration_date: Exp. Date

@@ -38,6 +38,7 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
   currentRound: result?.currentRound ?? "0",
   rounds: (result?.rounds ?? []) as unknown as RoundsFragment,
+  lastShareToAssetRate: result?.lastShareToAssetRate ?? "0",
 });
 
 const useHedgingVault = (

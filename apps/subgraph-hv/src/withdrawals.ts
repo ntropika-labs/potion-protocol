@@ -2,6 +2,8 @@ import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
 import { Withdrawal, WithdrawalRequest } from "../generated/schema";
 import { addWithdrawalRequest, removeWithdrawalRequest } from "./rounds";
 
+const decimals = BigInt.fromI32(10).pow(18);
+
 function createWithdrawal(
   round: Bytes,
   amount: BigInt,
@@ -101,9 +103,12 @@ function updateWithdrawalRequestAssets(id: Bytes, exchangeRate: BigInt): void {
     log.error("withdrawalRequest {} doesn't exists", [id.toHexString()]);
   } else {
     log.info("updated WithdrawalRequest {}", [id.toHexString()]);
-    withdrawalRequest.assets = withdrawalRequest.amount.times(exchangeRate);
-    withdrawalRequest.remainingAssets =
-      withdrawalRequest.amount.times(exchangeRate);
+    withdrawalRequest.assets = withdrawalRequest.amount
+      .times(exchangeRate)
+      .div(decimals);
+    withdrawalRequest.remainingAssets = withdrawalRequest.amount
+      .times(exchangeRate)
+      .div(decimals);
     withdrawalRequest.save();
   }
 }

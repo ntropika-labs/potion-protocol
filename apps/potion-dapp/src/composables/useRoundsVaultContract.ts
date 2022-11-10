@@ -168,8 +168,8 @@ export function useRoundsVaultContract(
   };
 
   const setApprovalForAllLoading = ref(false);
-  const setApprovalForAllTx = ref<ContractTransaction>();
-  const setApprovalForAllReceipt = ref<ContractReceipt>();
+  const setApprovalForAllTx = ref<ContractTransaction | null>(null);
+  const setApprovalForAllReceipt = ref<ContractReceipt | null>(null);
   const setApprovalForAll = async (operator: string, approved: boolean) => {
     try {
       setApprovalForAllLoading.value = true;
@@ -178,6 +178,7 @@ export function useRoundsVaultContract(
       setApprovalForAllTx.value = tx;
       const receipt = await tx.wait();
       setApprovalForAllReceipt.value = receipt;
+      isApprovedForAll.value = approved;
       return receipt;
     } catch (error) {
       if (error instanceof Error) {
@@ -292,8 +293,8 @@ export function useRoundsVaultContract(
   const redeemExchangeAssetTx = ref<ContractTransaction | null>(null);
   const redeemExchangeAssetReceipt = ref<ContractReceipt | null>(null);
   const redeemExchangeAsset = async (
-    id: number,
-    amount: number,
+    id: BigNumberish,
+    amount: BigNumberish,
     self = true,
     receiver?: string
   ) => {
@@ -341,8 +342,8 @@ export function useRoundsVaultContract(
   const redeemExchangeAssetBatchTx = ref<ContractTransaction | null>(null);
   const redeemExchangeAssetBatchReceipt = ref<ContractReceipt | null>(null);
   const redeemExchangeAssetBatch = async (
-    ids: number[],
-    amounts: number[],
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
     self = true,
     receiver?: string
   ) => {
