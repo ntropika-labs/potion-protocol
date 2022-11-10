@@ -45,7 +45,7 @@ export function useHedgingVaultOrchestratorContract(
 ) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const { hedgingVaultOrchestrator } = getContractsFromVault(
+  const { HedgingVaultOrchestrator } = getContractsFromVault(
     unref(vaultAddress)
   );
 
@@ -55,7 +55,7 @@ export function useHedgingVaultOrchestratorContract(
       true,
       false,
       HedgingVaultOrchestrator__factory,
-      hedgingVaultOrchestrator
+      HedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 
@@ -64,7 +64,7 @@ export function useHedgingVaultOrchestratorContract(
       false,
       false,
       HedgingVaultOrchestrator__factory,
-      hedgingVaultOrchestrator
+      HedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 

@@ -59,8 +59,8 @@ const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const { potionBuyAction, roundsOutputVault } = getContractsFromVault(
-  vaultId.value.toLowerCase()
+const { PotionBuyAction, RoundsOutputVault } = getContractsFromVault(
+  vaultId.value
 );
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
@@ -114,7 +114,7 @@ const {
   getTotalPayoutInUSDC,
   getNextCycleTimestamp,
   strategyLoading,
-} = usePotionBuyActionContract(potionBuyAction, true);
+} = usePotionBuyActionContract(PotionBuyAction, true);
 
 const {
   enterPositionData, // Raw data to use when entering the position
@@ -262,7 +262,7 @@ watch(vaultStatus, async () => {
   await getCurrentPayout(assetAddress.value);
 
   getTotalSupply();
-  getShareBalance(roundsOutputVault as string);
+  getShareBalance(RoundsOutputVault);
 });
 
 watch(assetAddress, async (address) => {
@@ -294,10 +294,10 @@ const tabs = ref([
 onMounted(async () => {
   addOraclePolling(unref(assetAddress));
   await getBlock("latest");
-  await getUnderlyingBalance(false, potionBuyAction);
+  await getUnderlyingBalance(false, PotionBuyAction);
 
   // TODO: test env only
-  await getUSDCBalance(false, potionBuyAction);
+  await getUSDCBalance(false, PotionBuyAction);
 
   await getNextCycleTimestamp();
   console.log(
@@ -361,7 +361,7 @@ const testAddBlock = async (addHours: number) => {
 };
 
 const { records, loadBuyerRecords } = useBuyerRecords(
-  potionBuyAction,
+  PotionBuyAction,
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);

@@ -65,11 +65,9 @@ export function useVaultOperatorEnterPosition(
   cycleDurationDays: Ref<number>
 ) {
   const effectiveVaultSizeInUnderlying = ref(0);
-  const lowercaseVaultAddress = computed(() =>
-    vaultAddress.value.toLowerCase()
-  );
+
   const { PotionBuyAction, RoundsInputVault, USDC } = getContractsFromVault(
-    lowercaseVaultAddress.value
+    vaultAddress.value
   );
 
   const underlyingTokenAddress = computed(
@@ -108,13 +106,16 @@ export function useVaultOperatorEnterPosition(
       (actionUnderlyingBalance as number) +
       (inputVaultUnderlyingBalance as number);
 
-    console.log(
-      totalPayoutUSDC.value,
-      totalPrincipalBeforeWithdrawalInUnderlying,
-      exitSwapAmountInUnderlying,
-      actionUnderlyingBalance,
-      inputVaultUnderlyingBalance
-    );
+    console.log("getTotalPrincipalInUnderlying");
+    console.table([
+      {
+        totalPayoutUSDC: totalPayoutUSDC.value,
+        totalPrincipalBeforeWithdrawalInUnderlying,
+        exitSwapAmountInUnderlying,
+        actionUnderlyingBalance,
+        inputVaultUnderlyingBalance,
+      },
+    ]);
 
     // When the vault is still not initialized the vaultTotalSupply is 0
     if (vaultTotalSupply.value !== 0) {
@@ -236,7 +237,9 @@ export function useVaultOperatorEnterPosition(
 
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
       const underlyingTokenValue = underlyingToken.value;
-      const recipientAddress = getRecipientAddress(lowercaseVaultAddress.value);
+      const recipientAddress = getRecipientAddress(
+        vaultAddress.value.toLowerCase()
+      );
 
       const totalPrincipalInUnderlying = await getTotalPrincipalInUnderlying();
       const principalHedgedAmountInUnderlying =
