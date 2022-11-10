@@ -79,7 +79,7 @@ export function useRoundsVaultExchanger(
         throw new Error(`Cannot exchange`);
       }
     } finally {
-      exchangeInputForOutputLoading.value = false;
+      exchangeInputForOutputBatchLoading.value = false;
     }
   };
 
