@@ -168,7 +168,7 @@
                 :loading="approveExchangeLoading || exchangeTicketsLoading"
                 @click="handleExchange"
               />
-              <template v-if="canDeleteWithdrawalRequest">
+              <template v-if="false && canDeleteWithdrawalRequest">
                 <h4>
                   {{
                     t("current_withdrawal_request_info", {
