@@ -169,6 +169,15 @@ spin_up_environment() {
   yarn nx run subgraph-queries:codegen
   msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
 
+  yarn nx run subgraph-queries-hv:codegen
+
+  yarn nx run potion-subgraph-hv:prepare-local
+
+  yarn nx run potion-subgraph-hv:create-local
+  msg "${GREEN}- Hedging Vault subgraph created ${NOFORMAT}"
+
+  yarn nx run potion-subgraph-hv:deploy-local --version-label 0.0.1
+
   return 0
 }
 
