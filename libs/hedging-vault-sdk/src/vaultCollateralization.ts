@@ -50,6 +50,18 @@ export function calculateOrderSize(
     const spotPriceInUSDC = parsePriceInUSDC(spotPriceInUSDC_);
     const quotedPremiumInUSDC = parsePriceInUSDC(quotedPremiumInUSDC_);
 
+    // For debugging purposes
+    console.log("calculateOrderSize");
+    console.table([
+        {
+            vaultSize: vaultSize.toString(),
+            underlyingDecimals: underlyingDecimals.toString(),
+            hedgingRate: hedgingRate.toString(),
+            strikePercent: strikePercent.toString(),
+            spotPriceInUSDC: spotPriceInUSDC.toString(),
+            quotedPremiumInUSDC: quotedPremiumInUSDC.toString(),
+        },
+    ]);
     // Calculate the premium percent
     const premiumPercent = _calculatePremiumPercent(
         vaultSize,
@@ -60,6 +72,8 @@ export function calculateOrderSize(
         quotedPremiumInUSDC,
     );
 
+    console.log("premiumPercent", premiumPercent.toString());
+
     const amountToProtect = applyPercentage(vaultSize, hedgingRate);
 
     const hedgedStrikePercent = applyPercentage(strikePercent, hedgingRate);
@@ -68,6 +82,16 @@ export function calculateOrderSize(
     const denominatorPercentage = PERCENTAGE_100_BN.add(hedgedStrikePremiumPercent);
     const effectiveVaultSize = divByPercentage(amountToProtect, denominatorPercentage);
 
+    console.table([
+        {
+            amountToProtect: amountToProtect.toString(),
+            hedgedStrikePercent: hedgedStrikePercent.toString(),
+            hedgedStrikePremiumPercent: hedgedStrikePremiumPercent.toString(),
+            denominatorPercentage: denominatorPercentage.toString(),
+        },
+    ]);
+
+    console.log("effectiveVaultSize", effectiveVaultSize.toString());
     return {
         effectiveVaultSize: effectiveVaultSize,
         premiumPercent: premiumPercent,
