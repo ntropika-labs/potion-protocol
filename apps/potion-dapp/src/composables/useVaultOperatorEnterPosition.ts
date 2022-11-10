@@ -257,11 +257,6 @@ export function useVaultOperatorEnterPosition(
         potionRouterParameters.value.ethPrice
       );
 
-      console.log(
-        "ESTIMATED PREMIUM",
-        potionRouterWithEstimatedPremium.premium
-      );
-
       const actualVaultSizeInUnderlying = calculateOrderSize(
         principalHedgedAmountInUnderlying,
         underlyingTokenValue.decimals as number,
@@ -344,7 +339,7 @@ export function useVaultOperatorEnterPosition(
   };
 
   const evaluateEnterPositionData = async (
-    blockTimestamp: number
+    blockTimestamp: Ref<number>
   ): Promise<{
     swapInfo: UniSwapInfo;
     potionBuyInfo: PotionBuyInfo;
@@ -353,10 +348,20 @@ export function useVaultOperatorEnterPosition(
     if (isEnterPositionOperationValid.value && hasCounterparties.value) {
       toggleUniswapPolling(false);
 
-      const expirationTimestamp = createValidExpiry(
-        blockTimestamp,
-        cycleDurationDays.value
-      );
+      // Generate a new expiration timestamp that is closest in time (at 8AM)
+
+      // Today at 8AM, it might be in the past
+      let expirationTimestamp = createValidExpiry(blockTimestamp.value, 0);
+
+      // If the date in the past, then correct it
+      if (expirationTimestamp < blockTimestamp.value) {
+        // Today + cycle duration days at 8AM
+        expirationTimestamp = createValidExpiry(
+          blockTimestamp.value,
+          cycleDurationDays.value
+        );
+      }
+
       const newOtokenAddress = await getTargetOtokenAddress(
         underlyingToken.value.address,
         usdc,

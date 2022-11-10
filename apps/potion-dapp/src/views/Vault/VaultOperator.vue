@@ -112,6 +112,7 @@ const {
   getCurrentPayout,
   getStrategyInfo,
   getTotalPayoutInUSDC,
+  getNextCycleTimestamp,
   strategyLoading,
 } = usePotionBuyActionContract(potionBuyAction, true);
 
@@ -208,7 +209,7 @@ const callbackEnterNextRound = async () => {
     swapInfo: enterSwapInfo,
     potionBuyInfo,
     fallback: enterFallbackSwapInfo,
-  } = await evaluateEnterPositionData(blockTimestamp.value);
+  } = await evaluateEnterPositionData(blockTimestamp);
 
   console.log("NEXT ROUND");
   console.table([
@@ -298,10 +299,17 @@ onMounted(async () => {
   // TODO: test env only
   await getUSDCBalance(false, potionBuyAction);
 
+  await getNextCycleTimestamp();
   console.log(
     "POTION BUY ACTIONS BALANCES (underlying/usdc)",
     potionActionUnderlyingBalance.value,
     potionActionUSDCBalance.value
+  );
+
+  console.log(
+    "POTION EXPIRY CHECK (nextCycleTimestamp/blockTimestamp)",
+    nextCycleTimestamp.value,
+    blockTimestamp.value
   );
 });
 
@@ -394,6 +402,15 @@ watch(blockTimestamp, async () => {
         <div class="flex flex-row gap-4">
           <BaseButton
             palette="primary"
+            label="+4H"
+            @click="() => testAddBlock(4)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+          <BaseButton
+            palette="primary"
             label="+1D"
             @click="() => testAddBlock(24)"
           >
@@ -469,8 +486,20 @@ watch(blockTimestamp, async () => {
               }}</span>
               <span v-else>-</span>
             </td>
-            <td>{{ enterPositionData?.potionRouterInitialData.premium }}</td>
-            <td>{{ enterPositionData?.potionRouterData.premium }}</td>
+            <td>
+              {{
+                enterPositionData?.potionRouterInitialData.premium
+                  .toFixed(7)
+                  .slice(0, -1)
+              }}
+            </td>
+            <td>
+              {{
+                enterPositionData?.potionRouterData.premium
+                  .toFixed(7)
+                  .slice(0, -1)
+              }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -484,9 +513,13 @@ watch(blockTimestamp, async () => {
         <tbody class="text-center">
           <tr>
             <td>-</td>
-            <td>{{ effectiveVaultSizeInUnderlying }}</td>
-            <td>{{ potionActionUnderlyingBalance }}</td>
-            <td>{{ potionActionUSDCBalance }}</td>
+            <td>
+              {{ effectiveVaultSizeInUnderlying.toFixed(9).slice(0, -1) }}
+            </td>
+            <td>
+              {{ potionActionUnderlyingBalance.toFixed(19).slice(0, -1) }}
+            </td>
+            <td>{{ potionActionUSDCBalance.toFixed(7).slice(0, -1) }}</td>
           </tr>
         </tbody>
       </table>
