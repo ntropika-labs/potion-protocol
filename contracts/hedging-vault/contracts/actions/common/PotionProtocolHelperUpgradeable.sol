@@ -246,6 +246,8 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
 
         isFinal = _isPotionRedeemable(hedgedAsset, expirationTimestamp);
         orderSize = _calculateOrderSize(buyInfo);
+
+        // TODO: this call can revert if the potion is not redeemable yet. We should handle this case
         payout = PotionProtocolLib.getPayout(opynController, buyInfo.targetPotionAddress, orderSize);
     }
 
