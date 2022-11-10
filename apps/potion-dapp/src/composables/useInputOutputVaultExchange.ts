@@ -46,7 +46,11 @@ function useInputOutputVaultExchange(
   );
 
   const pastRounds = computed(() =>
-    unref(rounds).filter((round) => round.roundNumber !== unref(currentRound))
+    unref(rounds).filter(
+      (round) =>
+        round.roundNumber !== unref(currentRound) &&
+        round.depositRequests.length > 0
+    )
   );
 
   const calcAssets = (shares: string) => {
