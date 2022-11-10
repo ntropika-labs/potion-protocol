@@ -96,12 +96,6 @@ const DefaultConfig: PotionHedgingVaultConfigParams = {
     // Fees configuration
     managementFee: PercentageUtils.toSolidityPercentage(3), //              3%
     performanceFee: PercentageUtils.toSolidityPercentage(3), //             3%
-
-    // Third-party dependencies
-    potionProtocolDeployConfigName: "hardhat.develop.hedging",
-
-    // Test Deposit
-    testDepositAmount: parseEther("10"),
 };
 
 export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedgingVaultConfigParams } = {
@@ -135,7 +129,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         potionProtocolDeployConfigName: "hardhat.develop.hedging",
 
         // Test Deposit
-        testDepositAmount: parseEther("10000000"),
+        testDepositAmount: parseEther("10"),
     },
     "hardhat.develop.multivaultB": {
         // Investment configuration
@@ -160,7 +154,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         potionProtocolDeployConfigName: "hardhat.develop.hedging",
 
         // Test Deposit
-        testDepositAmount: parseEther("10000000"),
+        testDepositAmount: parseEther("10"),
     },
     "hardhat.develop.multivaultC": {
         // Investment configuration
@@ -185,7 +179,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         potionProtocolDeployConfigName: "hardhat.develop.hedging",
 
         // Test Deposit
-        testDepositAmount: parseEther("10000000"),
+        testDepositAmount: parseEther("10"),
     },
     "localhost.goerli": {
         // Asset address
