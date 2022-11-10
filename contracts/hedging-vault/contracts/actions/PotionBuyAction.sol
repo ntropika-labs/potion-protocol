@@ -45,23 +45,23 @@ contract PotionBuyAction is
     /**
         @notice Structure with all initialization parameters for the Potion Buy action
 
-        @param adminAddress The address of the admin of the Action
-        @param strategistAddress The address of the strategist of the Action
-        @param operatorAddress The address of the operator of the Action
-        @param investmentAsset The address of the asset managed by this Action
-        @param USDC The address of the USDC token
-        @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
-        @param potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
-        @param opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
-        @param maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
-        @param premiumSlippage The slippage percentage allowed on the premium when buying potions
-        @param swapSlippage The slippage percentage allowed on the swap operation
-        @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
-        @param cycleDurationSecs The duration of the investment cycle in seconds
-        @param strikePercentage The strike percentage on the price of the hedged asset, as a uint256
-               with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
-        @param hedgingRate The hedging rate to be applied to the received assets, as a uint256 with
-              `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+        @custom:member adminAddress The address of the admin of the Action
+        @custom:member strategistAddress The address of the strategist of the Action
+        @custom:member operatorAddress The address of the operator of the Action
+        @custom:member investmentAsset The address of the asset managed by this Action
+        @custom:member USDC The address of the USDC token
+        @custom:member uniswapV3SwapRouter The address of the Uniswap V3 swap router
+        @custom:member potionLiquidityPoolManager The address of the Potion Protocol liquidity manager contract
+        @custom:member opynAddressBook The address of the Opyn Address Book where other contract addresses can be found
+        @custom:member maxPremiumPercentage The maximum percentage of the received investment that can be used as premium
+        @custom:member premiumSlippage The slippage percentage allowed on the premium when buying potions
+        @custom:member swapSlippage The slippage percentage allowed on the swap operation
+        @custom:member maxSwapDurationSecs The maximum duration of the swap operation in seconds
+        @custom:member cycleDurationSecs The duration of the investment cycle in seconds
+        @custom:member strikePercentage The strike percentage on the price of the hedged asset, as a uint256
+                       with `PercentageUtils.PERCENTAGE_DECIMALS` decimals
+        @custom:member hedgingRate The hedging rate to be applied to the received assets, as a uint256 with
+                       `PercentageUtils.PERCENTAGE_DECIMALS` decimals
      */
     struct PotionBuyInitParams {
         address adminAddress;

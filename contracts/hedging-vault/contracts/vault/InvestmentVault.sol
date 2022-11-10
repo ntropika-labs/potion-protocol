@@ -34,49 +34,65 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
     // UPGRADEABLE INITIALIZER
 
     /**
-        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+        @custom:member adminAddress The address of the admin of the Vault
+        @custom:member strategistAddress The address of the strategist of the Vault
+        @custom:member operatorAddress The address of the operator of the Vault
+        @custom:member underlyingAsset The address of the asset managed by this vault
+        @custom:member underlyingAssetCap The cap on the amount of principal that the vault can manage
+        @custom:member managementFee The fee percentage charged for the management of the Vault
+        @custom:member performanceFee The fee percentage charged for the performance of the Vault
+        @custom:member feesRecipient The address of the account that will receive the fees
+        @custom:member actions The list of investment actions to be executed in the Vault
+        @custom:member principalPercentages The list of principal percentages for the default strategy
+        @custom:member sharesName The name of the shares token
+        @custom:member sharesSymbol The symbol of the shares token
+     */
+    struct InvestmentVaultInitParams {
+        address adminAddress;
+        address strategistAddress;
+        address operatorAddress;
+        address underlyingAsset;
+        uint256 underlyingAssetCap;
+        uint256 managementFee;
+        uint256 performanceFee;
+        address payable feesRecipient;
+        IAction[] actions;
+        uint256[] principalPercentages;
+        string sharesName;
+        string sharesSymbol;
+    }
+
+    /// INITIALIZERS
+
+    /**
+       @notice Takes care of the initialization of all the contracts hierarchy. Any changes
         to the hierarchy will require to review this function to make sure that no initializer
         is called twice, and most importantly, that all initializers are called here
 
-        @param adminAddress The address of the admin of the Vault
-        @param strategistAddress The address of the strategist of the Vault
-        @param operatorAddress The address of the operator of the Vault
-        @param underlyingAsset The address of the asset managed by this vault
-        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
-        @param managementFee The fee percentage charged for the management of the Vault
-        @param performanceFee The fee percentage charged for the performance of the Vault
-        @param feesRecipient The address of the account that will receive the fees
-        @param actions The list of investment actions to be executed in the Vault
+        @param initParams Initialization parameters for the Investment Vault
+
+        @dev See { InvestmentVaultInitParams }
+
      */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress,
-        address underlyingAsset,
-        uint256 underlyingAssetCap,
-        uint256 managementFee,
-        uint256 performanceFee,
-        address payable feesRecipient,
-        IAction[] calldata actions,
-        uint256[] calldata principalPercentages
-    ) external initializer {
+    function initialize(InvestmentVaultInitParams calldata initParams) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
         // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
         // underlying asset
         address[] memory cannotRefundToken = new address[](1);
-        cannotRefundToken[0] = underlyingAsset;
+        cannotRefundToken[0] = initParams.underlyingAsset;
 
-        __RolesManager_init_unchained(adminAddress, operatorAddress);
-        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
+        __RolesManager_init_unchained(initParams.adminAddress, initParams.operatorAddress);
+        __ERC20_init_unchained(initParams.sharesName, initParams.sharesSymbol);
+        __ERC4626Cap_init_unchained(initParams.underlyingAssetCap, initParams.underlyingAsset);
         __EmergencyLock_init_unchained();
         __LifecycleStates_init_unchained();
         __RefundsHelper_init_unchained(cannotRefundToken, false);
-        __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsManager_init_unchained(actions);
+        __FeeManager_init_unchained(initParams.managementFee, initParams.performanceFee, initParams.feesRecipient);
+        __ActionsManager_init_unchained(initParams.actions);
         __ReentrancyGuard_init_unchained();
 
-        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
-        _setDefaultStrategy(actions, principalPercentages);
+        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, initParams.strategistAddress);
+        _setDefaultStrategy(initParams.actions, initParams.principalPercentages);
     }
 
     /// STATE CHANGERS

@@ -17,14 +17,14 @@ export function useCriteriasTokens(
   );
 
   const fetchAssetsPrice = async () => {
-    const prices = new Map();
+    const prices = new Map<string, string>();
     const addresses = criterias.value.map(({ token }) => token.address);
 
     try {
       const promises = addresses.map(async (address) => {
         const { fetchTokenPrice, price } = useCoinGecko(undefined, address);
         await fetchTokenPrice();
-        prices.set(address, price.value);
+        prices.set(address, price.value.toString());
       });
       await Promise.allSettled(promises);
     } catch (error) {

@@ -68,7 +68,7 @@ export function useVaultOperatorEnterPosition(
   const lowercaseVaultAddress = computed(() =>
     vaultAddress.value.toLowerCase()
   );
-  const { potionBuyAction, roundsInputVault, usdc } = getContractsFromVault(
+  const { PotionBuyAction, RoundsInputVault, USDC } = getContractsFromVault(
     lowercaseVaultAddress.value
   );
 
@@ -96,11 +96,11 @@ export function useVaultOperatorEnterPosition(
 
     const actionUnderlyingBalance = await getTokenBalance(
       false,
-      potionBuyAction
+      PotionBuyAction
     );
     const inputVaultUnderlyingBalance = await getTokenBalance(
       false,
-      roundsInputVault
+      RoundsInputVault
     );
 
     const totalPrincipalBeforeWithdrawalInUnderlying =
@@ -364,8 +364,8 @@ export function useVaultOperatorEnterPosition(
 
       const newOtokenAddress = await getTargetOtokenAddress(
         underlyingToken.value.address,
-        usdc,
-        usdc,
+        USDC,
+        USDC,
         strikePrice.value,
         expirationTimestamp,
         true

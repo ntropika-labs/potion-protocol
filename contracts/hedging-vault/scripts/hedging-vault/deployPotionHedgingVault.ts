@@ -41,6 +41,10 @@ export interface HedgingVaultDeployParams {
     hedgingRate: BigNumber; // 6 decimals
     hedgingRateSlippage: BigNumber; // 6 decimals
 
+    // Shares configuration
+    sharesName: string;
+    sharesSymbol: string;
+
     // Fees configuration
     managementFee: BigNumber;
     performanceFee: BigNumber;
@@ -99,6 +103,9 @@ export function printHedgingVaultDeployParams(deployParams: HedgingVaultDeployPa
             deployParams.hedgingRateSlippage,
         )})`,
     );
+    console.log(`--------------------------------------`);
+    console.log(` sharesName: ${deployParams.sharesName}`);
+    console.log(` sharesSymbol: ${deployParams.sharesSymbol}`);
     console.log(`--------------------------------------`);
     console.log(` managementFee: ${deployParams.managementFee}`);
     console.log(` performanceFee: ${deployParams.performanceFee}`);
@@ -177,6 +184,8 @@ async function deployContracts(parameters: HedgingVaultDeployParams): Promise<He
         feesRecipient: parameters.feesRecipient,
         actions: [potionBuyContract.address, swapToUSDCContract.address],
         principalPercentages: [toSolidityPercentage(100), toSolidityPercentage(0)],
+        sharesName: parameters.sharesName,
+        sharesSymbol: parameters.sharesSymbol,
     };
 
     const investmentVaultContract: InvestmentVault = await deployInvestmentVault(investmentVaultParams);
@@ -264,8 +273,6 @@ export async function deployHedgingVault(parameters: HedgingVaultDeployParams): 
     const deploymentResult: HedgingVaultDeploymentResult = await deployContracts(parameters);
 
     await configureContracts(parameters, deploymentResult);
-
-    // TODO: verify deployment
 
     return deploymentResult;
 }

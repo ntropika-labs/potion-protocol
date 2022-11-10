@@ -1,0 +1,83 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "inputToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "outputToken",
+        "type": "address"
+      }
+    ],
+    "name": "getSwapInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "info",
+        "type": "tuple"
+      }
+    ],
+    "name": "setSwapInfo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

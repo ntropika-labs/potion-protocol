@@ -1,0 +1,489 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "actionsIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "principalPercentages",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct IVaultV0.Strategy",
+        "name": "potionBuyStrategy_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "actionsIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "principalPercentages",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct IVaultV0.Strategy",
+        "name": "swapToUSDCStrategy_",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "canEnterNextRound",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "investmentVault",
+    "outputs": [
+      {
+        "internalType": "contract IVault",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "potionBuyExitSwapInfo",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "lp",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "poolId",
+                "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "int256",
+                    "name": "a_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "b_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "c_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "d_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "max_util_59x18",
+                    "type": "int256"
+                  }
+                ],
+                "internalType": "struct ICurveManager.Curve",
+                "name": "curve",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "underlyingAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "strikeAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isPut",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "maxStrikePercent",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "maxDurationInDays",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ICriteriaManager.Criteria",
+                "name": "criteria",
+                "type": "tuple"
+              },
+              {
+                "internalType": "uint256",
+                "name": "orderSizeInOtokens",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct IPotionLiquidityPool.CounterpartyDetails[]",
+            "name": "sellers",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "address",
+            "name": "targetPotionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceInUSDC",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expirationTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPremiumInUSDC",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionBuyInfo",
+        "name": "potionBuyEnterBuyInfo",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "potionBuyEnterSwapInfo",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "swapToUSDCExitSwapInfo",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "inputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "outputToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedPriceRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "swapPath",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IUniswapV3Oracle.SwapInfo",
+        "name": "swapToUSDCEnterSwapInfo",
+        "type": "tuple"
+      }
+    ],
+    "name": "nextRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "potionBuyAction",
+    "outputs": [
+      {
+        "internalType": "contract IPotionBuyAction",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "potionBuyStrategy",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "actionsIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "principalPercentages",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct IVaultV0.Strategy",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "roundsInputVault",
+    "outputs": [
+      {
+        "internalType": "contract IRoundsInputVault",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "roundsOutputVault",
+    "outputs": [
+      {
+        "internalType": "contract IRoundsOutputVault",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investmentVault_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "potionBuyAction_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "swapToUSDCAction_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "roundsInputVault_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "roundsOutputVault_",
+        "type": "address"
+      }
+    ],
+    "name": "setSystemAddresses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "swapToUSDCAction",
+    "outputs": [
+      {
+        "internalType": "contract ISwapToUSDCAction",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "swapToUSDCStrategy",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "actionsIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "principalPercentages",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct IVaultV0.Strategy",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

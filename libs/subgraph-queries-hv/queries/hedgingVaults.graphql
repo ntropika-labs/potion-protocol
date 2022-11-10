@@ -1,0 +1,82 @@
+fragment VaultInfo on HedgingVault {
+  id
+  currentRound
+  lastAssetToShareRate
+  lastAssetsInvested
+  lastShareToAssetRate
+  totalAssets
+}
+
+fragment ActionInfo on PotionBuyAction {
+  id
+  cycleDurationSecs
+  hedgingRate
+  maxPremiumPercentage
+  maxSwapDurationSecs
+  nextCycleStartTimestamp
+  premiumSlippage
+  strikePercentage
+  swapSlippage
+}
+
+fragment TokenInfo on Token {
+  id
+  name
+  symbol
+  decimals
+}
+
+fragment DepositRequestInfo on DepositRequest {
+  amount
+  amountRedeemed
+  shares
+  remainingShares
+}
+
+fragment WithdrawalRequestInfo on WithdrawalRequest {
+  amount
+  amountRedeemed
+  assets
+  remainingAssets
+}
+
+query getHedgingVault($vault: ID!, $investor: String!) {
+  hedgingVault(id: $vault) {
+    ...VaultInfo
+    action {
+      ...ActionInfo
+    }
+    asset {
+      ...TokenInfo
+    }
+    shareToken {
+      ...TokenInfo
+    }
+    rounds(orderBy: roundNumber) {
+      roundNumber
+      assetToShareRate
+      shareToAssetRate
+      depositRequests(where: { investor: $investor }) {
+        ...DepositRequestInfo
+      }
+      withdrawalRequests(where: { investor: $investor }) {
+        ...WithdrawalRequestInfo
+      }
+    }
+  }
+}
+
+query getHedgingVaults {
+  hedgingVaults {
+    ...VaultInfo
+    action {
+      ...ActionInfo
+    }
+    asset {
+      ...TokenInfo
+    }
+    shareToken {
+      ...TokenInfo
+    }
+  }
+}

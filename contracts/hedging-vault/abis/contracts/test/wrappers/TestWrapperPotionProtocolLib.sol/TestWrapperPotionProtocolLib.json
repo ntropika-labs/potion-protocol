@@ -1,0 +1,177 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract IPotionLiquidityPool",
+        "name": "potionLiquidityPoolManager",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IOpynFactory",
+        "name": "opynFactory",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceInUSDC",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expirationTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPremiumInUSDC",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "targetPotionAddress",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "lp",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "poolId",
+                "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "int256",
+                    "name": "a_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "b_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "c_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "d_59x18",
+                    "type": "int256"
+                  },
+                  {
+                    "internalType": "int256",
+                    "name": "max_util_59x18",
+                    "type": "int256"
+                  }
+                ],
+                "internalType": "struct ICurveManager.Curve",
+                "name": "curve",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "underlyingAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "strikeAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isPut",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "maxStrikePercent",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "maxDurationInDays",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ICriteriaManager.Criteria",
+                "name": "criteria",
+                "type": "tuple"
+              },
+              {
+                "internalType": "uint256",
+                "name": "orderSizeInOtokens",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct IPotionLiquidityPool.CounterpartyDetails[]",
+            "name": "sellers",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "contract IERC20Upgradeable",
+            "name": "USDC",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct TestWrapperPotionProtocolLib.BuyPotionParams",
+        "name": "params",
+        "type": "tuple"
+      }
+    ],
+    "name": "buyPotion",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "actualPremiumInUSDC",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IPotionLiquidityPool",
+        "name": "potionLiquidityPoolManager",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IOpynController",
+        "name": "opynController",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "targetPotionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalSizeInPotions",
+        "type": "uint256"
+      }
+    ],
+    "name": "redeemPotion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

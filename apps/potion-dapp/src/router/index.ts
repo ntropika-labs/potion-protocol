@@ -40,7 +40,7 @@ const router = createRouter({
       path: "/templates",
       name: "discover-templates",
       component: DiscoverTemplates,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
     },
     {
       path: "/hedging-vaults",
@@ -92,37 +92,37 @@ const router = createRouter({
       path: "/templates/:id",
       name: "pool-template",
       component: PoolTemplate,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
     },
     {
       path: "/custom-pool-creation",
       name: "custom-pool-creation",
       component: CustomPoolCreation,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
     },
     {
       path: "/custom-potion-creation",
       name: "custom-potion-creation",
       component: CustomPotionCreation,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
     },
     {
       path: "/liquidity-provider/:lp",
       name: "liquidity-provider",
       component: ViewPools,
-      meta: { requireWallet: true, layout: BaseLayout },
+      meta: { requireWallet: true, layout: BaseLayout, sublink: "pools" },
     },
     {
       path: "/liquidity-provider/:lp/:id",
       name: "liquidity-provider-pool",
       component: ShowPool,
-      meta: { requiredWallet: false, layout: BaseLayout },
+      meta: { requiredWallet: false, layout: BaseLayout, sublink: "pools" },
     },
     {
       path: "/liquidity-provider/:lp/:id/edit",
       name: "liquidity-provider-pool-edit",
       component: EditPool,
-      meta: { requiredWallet: true, layout: BaseLayout },
+      meta: { requiredWallet: true, layout: BaseLayout, sublink: "pools" },
       beforeEnter: (to, from, next) => {
         const { connectedWallet } = useOnboard();
         if (
@@ -139,19 +139,19 @@ const router = createRouter({
       path: "/buyer/:address",
       name: "buyer",
       component: ViewPotions,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
     },
     {
       path: "/potions",
       name: "discover-potions",
       component: DiscoverPotions,
-      meta: { requireWallet: false, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
     },
     {
       path: "/potions/:id",
       name: "show-potion",
       component: ShowPotion,
-      meta: { requiredWallet: false, layout: BaseLayout },
+      meta: { requiredWallet: false, layout: BaseLayout, sublink: "potions" },
     },
   ],
 });

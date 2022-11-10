@@ -5,7 +5,7 @@ import * as HedgingVaultUtils from "hedging-vault-sdk";
 import { CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { ifMocksEnabled, asMock, DAY_IN_SECONDS } from "contracts-utils";
 
-import { TestingEnvironmentDeployment } from "./testingEnv";
+import { HedgingVaultEnvironmentDeployment } from "../hedging-vault/deployHedgingVaultEnvironment";
 
 import { IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
@@ -54,7 +54,7 @@ export function calculatePremium(
 }
 
 export async function getPotionBuyInfo(
-    tEnv: TestingEnvironmentDeployment,
+    tEnv: HedgingVaultEnvironmentDeployment,
     amountToBeInvested: BigNumber,
     underlyingAssetPriceInUSD: BigNumber,
     USDCPriceInUSD: BigNumber,
@@ -113,7 +113,7 @@ export async function getPotionBuyInfo(
 }
 
 export async function getSwapInfo(
-    tEnv: TestingEnvironmentDeployment,
+    tEnv: HedgingVaultEnvironmentDeployment,
     underlyingAssetPriceInUSD: BigNumber,
     USDCPriceInUSD: BigNumber,
 ): Promise<{
@@ -183,7 +183,7 @@ export async function getSwapInfo(
 }
 
 export async function setupTestConditions(
-    tEnv: TestingEnvironmentDeployment,
+    tEnv: HedgingVaultEnvironmentDeployment,
     underlyingAssetPriceInUSD: BigNumber,
     USDCPriceInUSD: BigNumber,
     amountToBeInvested: BigNumber,

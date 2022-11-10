@@ -18,7 +18,7 @@
       @valid-input="validInput = $event"
     >
       <BaseButton
-        test-next
+        test-back
         class="uppercase"
         palette="plain"
         :inline="true"
@@ -35,7 +35,7 @@
         palette="secondary"
         :inline="true"
         :label="deployLabel"
-        :disabled="!canEdit || isLoading"
+        :disabled="!canEdit"
         :loading="isLoading"
         @click="handleDeployPool"
       >
@@ -64,6 +64,7 @@ import { useI18n } from "vue-i18n";
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { watchDebounced } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 
 import { BaseButton } from "potion-ui";
 
@@ -82,7 +83,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { usePool } from "@/composables/usePool";
 import { useRoutePoolId } from "@/composables/useRoutePoolId";
 import { usePoolTokens } from "@/composables/usePoolTokens";
-import { useUserData } from "@/composables/useUserData";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -92,7 +93,9 @@ const router = useRouter();
  * Data setup
  */
 const collateral: string = contractsAddresses.USDC.address.toLowerCase();
-const { userCollateralBalance } = useUserData();
+const { userCollateralBalance, approveReceipt, approveTx } = storeToRefs(
+  useUserDataStore()
+);
 const { poolId, id, validPoolId } = useRoutePoolId(route.params);
 const {
   pool,
@@ -163,12 +166,9 @@ watchDebounced(criterias, loadEmergingCurves);
 const {
   deployLabel,
   handleDeployPool,
-  approveDeployPoolTx,
-  approveDeployPoolLoading,
-  approveDeployPoolReceipt,
+  isLoading,
   deployPoolTx,
   deployPoolReceipt,
-  deployPoolLoading,
 } = useDeployPool(
   poolId,
   liquidity,
@@ -187,9 +187,6 @@ const canEdit = computed(
     validCriterias.value &&
     validLiquidity.value &&
     validCurve.value
-);
-const isLoading = computed(
-  () => deployPoolLoading.value || approveDeployPoolLoading.value
 );
 
 /*
@@ -210,11 +207,11 @@ watch(deployPoolReceipt, (receipt) => {
   createReceiptNotification(receipt, t("pool_created"));
 });
 
-watch(approveDeployPoolTx, (transaction) => {
+watch(approveTx, (transaction) => {
   createTransactionNotification(transaction, t("approving_usdc"));
 });
 
-watch(approveDeployPoolReceipt, (receipt) => {
+watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 </script>

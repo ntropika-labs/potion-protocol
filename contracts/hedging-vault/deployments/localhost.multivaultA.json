@@ -1,0 +1,70 @@
+{
+  "timestamp": 1667830090,
+  "network": "develop",
+  "contracts": {
+    "USDC": {
+      "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+      "blockNumber": 0
+    },
+    "UnderlyingAsset": {
+      "address": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+      "blockNumber": 0
+    },
+    "PotionLiquidityPool": {
+      "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+      "blockNumber": 0
+    },
+    "OpynAddressBook": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "blockNumber": 0
+    },
+    "OpynController": {
+      "address": "0xa16E02E87b7454126E5E10d957A927A7F5B5d2be",
+      "blockNumber": 0
+    },
+    "OpynFactory": {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "blockNumber": 0
+    },
+    "OpynOracle": {
+      "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+      "blockNumber": 0
+    },
+    "MockOpynOracle": {
+      "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+      "blockNumber": 0
+    },
+    "UniswapV3Router": {
+      "address": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
+      "blockNumber": 99
+    },
+    "HedgingVaultOrchestrator": {
+      "address": "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B",
+      "blockNumber": 102
+    },
+    "PotionBuyAction": {
+      "address": "0x2B0d36FACD61B71CC05ab8F3D2355ec3631C0dd5",
+      "blockNumber": 105
+    },
+    "SwapToUSDCAction": {
+      "address": "0x46b142DD1E924FAb83eCc3c08e4D46E82f005e0E",
+      "blockNumber": 107
+    },
+    "InvestmentVault": {
+      "address": "0x1c85638e118b37167e9298c2268758e058DdfDA0",
+      "blockNumber": 109
+    },
+    "RoundsInputVault": {
+      "address": "0x4C2F7092C2aE51D986bEFEe378e50BD4dB99C901",
+      "blockNumber": 111
+    },
+    "RoundsOutputVault": {
+      "address": "0x49fd2BE640DB2910c2fAb69bB8531Ab6E76127ff",
+      "blockNumber": 113
+    },
+    "RoundsVaultExchanger": {
+      "address": "0x4631BCAbD6dF18D94796344963cB60d44a4136b6",
+      "blockNumber": 114
+    }
+  }
+}

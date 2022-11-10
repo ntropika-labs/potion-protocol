@@ -12,20 +12,10 @@
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
-        <div>
-          <p class="capitalize">{{ t("status") }}</p>
-          <BaseTag :is-loading="strategyLoading">
-            <div
-              class="h-2 w-2 rounded-full mr-1"
-              :class="statusInfo.class"
-            ></div>
-            <span>{{ statusInfo.label }}</span>
-          </BaseTag>
-        </div>
-        <div>
+        <!-- <div>
           <p class="capitalize">{{ t("admin") }}</p>
           <a :href="getEtherscanUrl(admin)">
-            <BaseTag :is-loading="strategyLoading">
+            <BaseTag :is-loading="vaultLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ admin }}</span>
             </BaseTag>
@@ -34,12 +24,12 @@
         <div>
           <p class="capitalize">{{ t("operator") }}</p>
           <a :href="getEtherscanUrl(operator)">
-            <BaseTag :is-loading="strategyLoading">
+            <BaseTag :is-loading="vaultLoading">
               <i class="i-ph-arrow-square-in mr-1"></i>
               <span class="truncate max-w-[15ch]">{{ operator }}</span>
             </BaseTag>
           </a>
-        </div>
+        </div> -->
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
         <LabelValue
@@ -47,21 +37,21 @@
           :title="t('share_price')"
           :value="shareToAssetRatio.toString()"
           :symbol="`${assetSymbol}/Share`"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          :value="totalAssets?.toString()"
+          :value="vault.totalAssets"
           :symbol="assetSymbol"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
           :symbol="`= ${balanceInAsset} ${assetSymbol}`"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
       </div>
     </BaseCard>
@@ -70,53 +60,53 @@
         <AssetTag
           :title="t('asset')"
           :token="{
-            name: assetName,
-            symbol: assetSymbol,
-            address: assetAddress,
+            name: vault.asset.name,
+            symbol: vault.asset.symbol,
+            address: vault.asset.address,
           }"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('hedging_level')"
-          :value="hedgingRate.toString()"
+          :value="vault.hedgingRate"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('strike')"
-          :value="strikePercentage.toString()"
+          :value="vault.strikePercentage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('cycle_duration')"
-          :value="cycleDurationDays.toString()"
+          :value="vault.cycleDurationSecs"
           symbol="days"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium')"
-          :value="maxPremiumPercentage.toString()"
+          :value="vault.maxPremiumPercentage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_premium_slippage')"
-          :value="premiumSlippage.toString()"
+          :value="vault.premiumSlippage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
         <LabelValue
           size="sm"
           :title="t('max_swap_slippage')"
-          :value="swapSlippage.toString()"
+          :value="vault.swapSlippage"
           symbol="%"
-          :loading="strategyLoading"
+          :loading="vaultLoading"
         />
       </BaseCard>
       <div class="col-span-4 self-start">
@@ -126,27 +116,74 @@
               :horizontal="true"
               :title="t('time_left_until_next_cycle')"
               :time-from="blockTimestamp.toString()"
-              :time-to="nextCycleTimestamp.toString()"
-              :loading="strategyLoading"
+              :time-to="vault.nextCycleTimestamp"
+              :loading="vaultLoading"
             />
           </div>
           <div class="flex gap-6 w-full mt-5">
             <div class="w-1/2 flex flex-col items-center gap-4">
+              <h3 v-if="currentDepositAmount > 0">
+                {{
+                  t("current_deposit_request_info", {
+                    currentDepositAmount,
+                    assetSymbol,
+                  })
+                }}
+              </h3>
               <InputNumber
                 v-model="depositAmount"
                 class="self-stretch"
-                :max="assetUserBalance"
+                :max="userCollateralBalance"
                 :min="0.1"
                 :step="0.01"
                 :unit="assetSymbol"
               />
+              <div class="flex gap-4">
+                <BaseButton
+                  palette="secondary"
+                  :label="depositLabel"
+                  :disabled="invalidDepositAmount || isLoading"
+                  :loading="approveLoading || updateDepositLoading"
+                  @click="handleUpdateDeposit"
+                />
+                <BaseButton
+                  v-if="canDeleteDepositRequest"
+                  palette="secondary-o"
+                  :label="t('delete')"
+                  :disabled="isLoading"
+                  :loading="deleteDepositLoading"
+                  @click="handleDeleteDeposit"
+                />
+              </div>
+            </div>
+            <div
+              v-if="estimatedAssets > 0"
+              class="w-1/2 flex flex-col items-center gap-4"
+            >
+              <h3>{{ t("estimated_exchange_assets", { estimatedAssets }) }}</h3>
               <BaseButton
                 palette="secondary"
-                :label="depositButtonState.label"
-                :disabled="depositButtonState.disabled || isLoading"
-                :loading="depositLoading || approveLoading"
-                @click="handleDeposit()"
+                :label="exchangeLabel"
+                :disabled="isLoading"
+                :loading="approveExchangeLoading || exchangeTicketsLoading"
+                @click="handleExchange"
               />
+              <template v-if="false && canDeleteWithdrawalRequest">
+                <h4>
+                  {{
+                    t("current_withdrawal_request_info", {
+                      currentWithdrawalAmount,
+                    })
+                  }}
+                </h4>
+                <BaseButton
+                  palette="secondary-o"
+                  :label="t('delete')"
+                  :disabled="isLoading"
+                  :loading="deleteWithdrawalLoading"
+                  @click="handleDeleteWithdrawal"
+                />
+              </template>
             </div>
             <div class="w-1/2 flex flex-col items-center gap-4">
               <InputNumber
@@ -155,7 +192,7 @@
                 :max="userBalance"
                 :min="0.1"
                 :step="0.01"
-                :unit="vaultSymbol"
+                :unit="vault.shareToken.symbol"
               />
               <BaseButton
                 palette="secondary"
@@ -178,12 +215,13 @@
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import {
   BaseCard,
-  BaseTag,
+  // BaseTag,
   LabelValue,
   AssetTag,
   InputNumber,
@@ -191,84 +229,188 @@ import {
   TimeTag,
   getEtherscanUrl,
 } from "potion-ui";
-import { LifecycleStates } from "hedging-vault-sdk";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
-import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
-
-import { useOnboard } from "@onboard-composable";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
-import { useErc20Contract } from "@/composables/useErc20Contract";
+import { useDepositRequests } from "@/composables/useDepositRequests";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useHedgingVault } from "@/composables/useHedgingVault";
+import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
+import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useNotifications } from "@/composables/useNotifications";
-import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultDeposit } from "@/composables/useVaultDeposit";
 import { useVaultRedeem } from "@/composables/useVaultRedeem";
+import { useWithdrawalRequests } from "@/composables/useWithdrawalRequests";
+
+import {
+  getRoundsExchangerFromVault,
+  getRoundsInputFromVault,
+  getRoundsOutputFromVault,
+} from "@/helpers/hedgingVaultContracts";
+
+import { useUserDataStore } from "@/stores/useUserDataStore";
+import { useVaultStore } from "@/stores/useVaultStore";
 
 const { t } = useI18n();
-const { connectedWallet } = useOnboard();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const potionBuyAction = getPotionBuyActionFromVault(
-  vaultId.value.toLowerCase()
-);
+const roundsExchangerAddress = getRoundsExchangerFromVault(vaultId.value);
+const roundsInputAddress = getRoundsInputFromVault(vaultId.value);
+const roundsOutputAddress = getRoundsOutputFromVault(vaultId.value);
 
+// current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
 
-const {
-  strikePercentage,
-  maxPremiumPercentage,
-  cycleDurationDays,
-  nextCycleTimestamp,
-  premiumSlippage,
-  swapSlippage,
-  strategyLoading,
-  hedgingRate,
-} = usePotionBuyActionContract(potionBuyAction, true);
-
-const { operator, admin, vaultStatus } = useInvestmentVaultContract(
-  vaultId,
-  true,
-  true
+// user info
+const { walletAddress, userCollateralBalance } = storeToRefs(
+  useUserDataStore()
 );
 
+// vault info
 const {
-  assetAddress,
-  assetName,
-  assetSymbol,
-  assetToShare,
-  totalAssets,
-  userBalance,
-  vaultSymbol,
-} = useErc4626Contract(vaultId, true, true);
+  vault,
+  loading: vaultLoading,
+  loadVault,
+} = useHedgingVault(vaultId, walletAddress);
+const currentRound = computed(() => vault.value.currentRound);
+const assetSymbol = computed(() => vault.value.asset.symbol);
+const assetAddress = computed(() => vault.value.asset.address);
+const vaultRounds = computed(() => vault.value.rounds);
+const lastShareToAssetRate = computed(() => vault.value.lastShareToAssetRate);
 
-const {
-  userBalance: assetUserBalance,
-  fetchUserAllowance,
-  getTokenBalance,
-  fetchErc20Info,
-} = useErc20Contract(assetAddress, false);
+// InputsRoundsVault
+const roundsInputStore = useVaultStore(
+  roundsInputAddress,
+  "RoundsInputVault",
+  assetAddress
+);
+const roundsInputState = roundsInputStore();
 
+const { approveLoading, approveReceipt, approveTx, userAllowance } =
+  storeToRefs(roundsInputState);
+
+// Deposit requests
 const {
-  approveTx,
-  approveReceipt,
-  approveLoading,
-  depositLoading,
-  depositReceipt,
-  depositTx,
-  handleDeposit,
-  amount: depositAmount,
-  buttonState: depositButtonState,
-} = useVaultDeposit(
-  assetUserBalance,
+  canDeleteDepositRequest,
+  currentDepositAmount,
+  deleteDepositLoading,
+  deleteDepositRequest,
+  deleteDepositReceipt,
+  deleteDepositTransaction,
+  updateDepositLoading,
+  updateDepositRequest,
+  updateDepositReceipt,
+  updateDepositTransaction,
+} = useDepositRequests(
+  roundsInputAddress,
   assetAddress,
-  assetSymbol,
-  vaultId,
-  vaultStatus
+  currentRound,
+  vaultRounds
+);
+
+const depositAmount = ref(0.1);
+const invalidDepositAmount = computed(
+  () =>
+    depositAmount.value <= 0 ||
+    depositAmount.value > userCollateralBalance.value
+);
+const depositLabel = computed(() => {
+  if (depositAmount.value > userAllowance.value) {
+    return t("approve");
+  }
+  if (currentDepositAmount.value > 0) {
+    return t("update");
+  }
+  return t("deposit");
+});
+
+const handleUpdateDeposit = async () => {
+  if (!invalidDepositAmount.value) {
+    if (depositAmount.value > userAllowance.value) {
+      await roundsInputState.approve(depositAmount.value);
+      roundsInputState.fetchUserData();
+    } else {
+      await updateDepositRequest(depositAmount);
+      setTimeout(loadVault, 5000);
+    }
+  }
+};
+
+const handleDeleteDeposit = async () => {
+  if (currentDepositAmount.value > 0) {
+    await deleteDepositRequest();
+    setTimeout(loadVault, 5000);
+  }
+};
+
+// Input output exchange
+const {
+  estimatedAssets,
+  approveExchange,
+  approveExchangeLoading,
+  approveExchangeReceipt,
+  approveExchangeTransaction,
+  canExchange,
+  exchangeTickets,
+  exchangeTicketsLoading,
+  exchangeTicketsReceipt,
+  exchangeTicketsTransaction,
+} = useInputOutputVaultExchange(
+  walletAddress,
+  roundsExchangerAddress,
+  roundsInputAddress,
+  roundsOutputAddress,
+  assetAddress,
+  vaultRounds,
+  currentRound,
+  lastShareToAssetRate
+);
+
+const exchangeLabel = computed(() =>
+  canExchange.value ? t("exchange") : t("approve")
+);
+
+const handleExchange = async () => {
+  if (canExchange.value) {
+    exchangeTickets();
+  } else {
+    approveExchange();
+  }
+};
+
+// withdrawal requests
+const {
+  canDeleteWithdrawalRequest,
+  currentWithdrawalAmount,
+  deleteWithdrawalLoading,
+  deleteWithdrawalReceipt,
+  deleteWithdrawalRequest,
+  deleteWithdrawalTransaction,
+} = useWithdrawalRequests(
+  roundsOutputAddress,
+  assetAddress,
+  currentRound,
+  vaultRounds
+);
+
+const handleDeleteWithdrawal = async () => {
+  if (currentWithdrawalAmount.value > 0) {
+    await deleteWithdrawalRequest();
+    setTimeout(loadVault, 5000);
+  }
+};
+
+/* 
+  Legacy code
+*/
+const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
+const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
+
+const shareToAssetRatio = computed(() => 1 / assetToShare.value);
+const balanceInAsset = computed(
+  () => userBalance.value * shareToAssetRatio.value
 );
 
 const {
@@ -279,50 +421,21 @@ const {
   amount: redeemAmount,
   buttonState: redeemButtonState,
 } = useVaultRedeem(userBalance, vaultId, vaultStatus);
-
-const shareToAssetRatio = computed(() => 1 / assetToShare.value);
-const balanceInAsset = computed(
-  () => userBalance.value * shareToAssetRatio.value
-);
+/* 
+  End of legacy code
+*/
 
 const isLoading = computed(
   () =>
-    strategyLoading.value ||
+    approveExchangeLoading.value ||
+    approveLoading.value ||
+    deleteDepositLoading.value ||
+    deleteWithdrawalLoading.value ||
+    exchangeTicketsLoading.value ||
     redeemLoading.value ||
-    depositLoading.value ||
-    approveLoading.value
+    updateDepositLoading.value ||
+    vaultLoading.value
 );
-
-const statusInfo = computed(() => {
-  switch (vaultStatus.value) {
-    case LifecycleStates.Unlocked:
-      return {
-        label: t("unlocked"),
-        class: "bg-accent-500",
-      };
-    case LifecycleStates.Committed:
-      return {
-        label: t("committed"),
-        class: "bg-orange-500",
-      };
-    case LifecycleStates.Locked:
-    default:
-      return {
-        label: t("locked"),
-        class: "bg-error",
-      };
-  }
-});
-
-watch(assetAddress, async () => {
-  if (connectedWallet.value) {
-    await Promise.all([
-      fetchErc20Info(),
-      getTokenBalance(true),
-      fetchUserAllowance(vaultId.value),
-    ]);
-  }
-});
 
 onMounted(() => {
   getBlock("latest");
@@ -344,11 +457,43 @@ watch(approveReceipt, (receipt) => {
   createReceiptNotification(receipt, t("usdc_approved"));
 });
 
-watch(depositTx, (transaction) => {
+watch(approveExchangeTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("approving_exchange"));
+});
+
+watch(approveExchangeReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("exchange_approved"));
+});
+
+watch(deleteDepositTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("deleting_deposit"));
+});
+
+watch(deleteDepositReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("deleted_deposit"));
+});
+
+watch(deleteWithdrawalTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("deleting_withdrawal"));
+});
+
+watch(deleteWithdrawalReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("deleted_withdrawal"));
+});
+
+watch(exchangeTicketsTransaction, (transaction) => {
+  createTransactionNotification(transaction, t("exchanging_tickets"));
+});
+
+watch(exchangeTicketsReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("tickets_exchanged"));
+});
+
+watch(updateDepositTransaction, (transaction) => {
   createTransactionNotification(transaction, t("depositing"));
 });
 
-watch(depositReceipt, (receipt) => {
+watch(updateDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deposited"));
 });
 

@@ -185,8 +185,8 @@ export function createOptionSettlementDistributed(
   const event = changetype<OptionSettlementDistributed>(newMockEvent());
 
   event.parameters = [
-    new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
     new ethereum.EventParam("otoken", ethereum.Value.fromAddress(otoken)),
+    new ethereum.EventParam("lp", ethereum.Value.fromAddress(lp)),
     new ethereum.EventParam(
       "poolid",
       ethereum.Value.fromUnsignedBigInt(poolId)

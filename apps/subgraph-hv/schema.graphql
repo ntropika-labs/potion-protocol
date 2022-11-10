@@ -27,7 +27,8 @@ type HedgingVault @entity {
   totalAssets: BigInt!
   #investors: [Investor!] @derivedFrom(field: "user")
   lastAssetsInvested: BigInt
-  lastShareRatio: BigInt
+  lastAssetToShareRate: BigInt
+  lastShareToAssetRate: BigInt
   currentRound: BigInt
   # PotionBuyAction settings - we might create a separate entity for this
   rounds: [Round!] @derivedFrom(field: "vault")
@@ -37,13 +38,14 @@ type HedgingVault @entity {
 type PotionBuyAction @entity {
   id: Bytes!
   vault: HedgingVault
-  nextCycleStartTimestamp: BigInt!
   cycleDurationSecs: BigInt!
+  hedgingRate: BigInt!
   maxPremiumPercentage: BigInt!
-  premiumSlippage: BigInt!
-  swapSlippage: BigInt!
   maxSwapDurationSecs: BigInt!
+  nextCycleStartTimestamp: BigInt!
+  premiumSlippage: BigInt!
   strikePercentage: BigInt!
+  swapSlippage: BigInt!
 }
 
 type Round @entity {
@@ -51,7 +53,8 @@ type Round @entity {
   vault: HedgingVault!
   roundNumber: BigInt!
   #NextRound()
-  exchangeRate: BigInt
+  assetToShareRate: BigInt
+  shareToAssetRate: BigInt
   # VaultPositionExited()
   totalAssetsAtRoundEnd: BigInt
   # VaultPositionEntered()

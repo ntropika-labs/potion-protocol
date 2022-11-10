@@ -13,9 +13,10 @@ import BaseButton from "../BaseButton/BaseButton.vue";
 export interface Props {
   headings: Array<string>;
   dataset: OtokenDataset;
+  loading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { loading: false });
 const { t } = useI18n();
 
 const emits = defineEmits<{
@@ -41,7 +42,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
         <th
           v-for="(label, index) in props.headings"
           :key="`heading-${index}`"
-          class="font-medium py-3 text-right first:pl-4 px-2 last:pr-4 w-[120px] last:w-[150px]"
+          class="font-medium py-3 text-right first:pl-4 px-2 last:pr-4 w-[120px] last:w-[150px] capitalize"
         >
           {{ label }}
         </th>
@@ -62,7 +63,7 @@ const onButtonPressed = (index: number, cellIndex: number) =>
               test-table-claim-button
               :palette="cell.color"
               :label="cell.value"
-              :disabled="!cell.claimable"
+              :disabled="!cell.claimable || props.loading"
               :inline="true"
               size="sm"
               @click="onButtonPressed(index, cellIndex)"

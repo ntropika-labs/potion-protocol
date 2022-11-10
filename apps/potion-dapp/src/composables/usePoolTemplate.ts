@@ -23,6 +23,25 @@ export function usePoolTemplate(id: Ref<string> | ComputedRef<string>) {
         maxDuration: parseInt(criteria.maxDurationInDays),
       })) ?? []
   );
+  const dailyData = computed(
+    () =>
+      template?.value?.dailyData?.map(
+        ({ timestamp, pnl, liquidity, utilization }) => ({
+          timestamp,
+          pnl: parseFloat(pnl),
+          liquidity: parseFloat(liquidity),
+          utilization: parseFloat(utilization),
+        })
+      ) ?? []
+  );
 
-  return { error, fetching, template, curve, criteriaSet, criterias };
+  return {
+    error,
+    fetching,
+    template,
+    curve,
+    criteriaSet,
+    criterias,
+    dailyData,
+  };
 }

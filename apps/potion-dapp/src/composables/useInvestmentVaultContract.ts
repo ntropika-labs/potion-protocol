@@ -1,18 +1,18 @@
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
+import { formatUnits } from "@ethersproject/units";
 
-import { LifecycleStates, Roles } from "hedging-vault-sdk";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
 
+import { LifecycleStates } from "hedging-vault-sdk";
 import { useEthersContract } from "@/composables/useEthersContract";
 import { ContractInitError } from "@/helpers/errors";
 
-import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
+import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "ethers";
-import type { Ref } from "vue";
-import { formatUnits } from "@ethersproject/units";
+import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 
 export function useInvestmentVaultContract(
-  address: string | Ref<string>,
+  address: MaybeRef<string>,
   fetchInitialData = true,
   eventListeners = false
 ) {
@@ -45,61 +45,7 @@ export function useInvestmentVaultContract(
     }
   };
 
-  const operator = ref("");
-  const operatorLoading = ref(false);
-  const getOperator = async () => {
-    try {
-      operatorLoading.value = true;
-      const contract = initContractProvider();
-      operator.value = await contract.getRoleMember(Roles.Operator, 0);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the operator: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the operator: ${error}`);
-      }
-    } finally {
-      operatorLoading.value = false;
-    }
-  };
-
-  const admin = ref("");
-  const adminLoading = ref(false);
-  const getAdmin = async () => {
-    try {
-      adminLoading.value = true;
-      const contract = initContractProvider();
-      admin.value = await contract.getRoleMember(Roles.Admin, 0);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the admin: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the admin: ${error}`);
-      }
-    } finally {
-      adminLoading.value = false;
-    }
-  };
-
-  const strategist = ref("");
-  const strategistLoading = ref(false);
-  const getStrategist = async () => {
-    try {
-      strategistLoading.value = true;
-      const contract = initContractProvider();
-      strategist.value = await contract.getRoleMember(Roles.Strategist, 0);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`cannot get the strategist: ${error.message}`);
-      } else {
-        throw new Error(`cannot get the strategist: ${error}`);
-      }
-    } finally {
-      strategistLoading.value = false;
-    }
-  };
-
-  const vaultStatus = ref<number>(0);
+  const vaultStatus = ref<LifecycleStates>(LifecycleStates.Unlocked);
   const vaultStatusLoading = ref(false);
   const getVaultStatus = async () => {
     try {
@@ -162,17 +108,6 @@ export function useInvestmentVaultContract(
     }
   };
 
-  const fetchInfo = async () => {
-    if (unref(address)) {
-      return await Promise.all([
-        getOperator(),
-        getAdmin(),
-        getStrategist(),
-        getVaultStatus(),
-      ]);
-    }
-  };
-
   if (eventListeners) {
     const wsContract = initContractProviderWS();
     wsContract.on(
@@ -191,29 +126,20 @@ export function useInvestmentVaultContract(
 
   if (fetchInitialData) {
     onMounted(async () => {
-      await fetchInfo();
+      await getVaultStatus();
     });
   }
 
   if (isRef(address)) {
     watch(address, async () => {
-      await fetchInfo();
+      await getVaultStatus();
     });
   }
 
   return {
-    operator,
-    operatorLoading,
-    getOperator,
-    admin,
-    adminLoading,
-    getAdmin,
-    strategist,
-    strategistLoading,
-    getStrategist,
+    getVaultStatus,
     vaultStatus,
     vaultStatusLoading,
-    getVaultStatus,
     totalSupply,
     totalSupplyLoading,
     getTotalSupply,

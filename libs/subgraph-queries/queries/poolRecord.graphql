@@ -10,13 +10,16 @@ fragment PoolRecordOtokenInfo on PoolRecord {
     expiry
     underlyingAsset {
       address
+      symbol
+      decimals
+      name
     }
   }
 }
 
 query getPoolRecordsByPool(
   $pool: String
-  $alreadyLoadedIds: [ID!]
+  $alreadyLoadedIds: [Bytes!]
   $num: Int = 1000
 ) {
   poolRecords(

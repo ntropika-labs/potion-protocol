@@ -1,0 +1,67 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "prevState",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "newState",
+        "type": "uint8"
+      }
+    ],
+    "name": "LifecycleStateChanged",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "getLifecycleState",
+    "outputs": [
+      {
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "newState",
+        "type": "uint8"
+      }
+    ],
+    "name": "setLifecycleState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

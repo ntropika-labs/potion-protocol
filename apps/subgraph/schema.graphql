@@ -3,7 +3,7 @@ Describes a curve evaluated at 0 <= x <= maxUtil:
   a * x * cosh(b*x^c) + d
 """
 type Curve @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   a: BigDecimal!
   b: BigDecimal!
   c: BigDecimal!
@@ -11,21 +11,6 @@ type Curve @entity(immutable: true) {
   maxUtil: BigDecimal!
   # links the templates that have use the same instance of the curve
   templates: [Template!] @derivedFrom(field: "curve")
-}
-
-"""
-All Criteria's in the registry of criterias.
-"""
-type Criteria @entity(immutable: true) {
-  id: ID!
-  underlyingAsset: Token!
-  strikeAsset: Token!
-  isPut: Boolean!
-  # describes maximum strike percent as a percent (eg xx%)
-  maxStrikePercent: BigDecimal!
-  maxDurationInDays: BigInt!
-  # links this criteria to all criteriaSets that have it as one of the criterias
-  criteriaSets: [CriteriaJoinedCriteriaSet!] @derivedFrom(field: "criteria")
 }
 
 """
@@ -51,11 +36,54 @@ type Template @entity {
   # the cumulative liquidity at the pool associated with a template at the time of each trade
   liquidityAtTrades: BigDecimal!
   pools: [Pool!] @derivedFrom(field: "template")
+  hourlyData: [HourlyTemplateData!] @derivedFrom(field: "template")
+  dailyData: [DailyTemplateData!] @derivedFrom(field: "template")
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Template at a specific
+point in time; precision is one hour
+"""
+type HourlyTemplateData @entity {
+  id: ID!
+  timestamp: Int!
+  template: Template!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Template at a specific
+point in time; precision is one day
+"""
+type DailyTemplateData @entity {
+  id: ID!
+  timestamp: Int!
+  template: Template!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
+}
+
+"""
+All Criteria's in the registry of criterias.
+"""
+type Criteria @entity(immutable: true) {
+  id: Bytes!
+  underlyingAsset: Token!
+  strikeAsset: Token!
+  isPut: Boolean!
+  # describes maximum strike percent as a percent (eg xx%)
+  maxStrikePercent: BigDecimal!
+  maxDurationInDays: BigInt!
+  # links this criteria to all criteriaSets that have it as one of the criterias
+  criteriaSets: [CriteriaJoinedCriteriaSet!] @derivedFrom(field: "criteria")
 }
 
 # describes a criteria set
-type CriteriaSet @entity {
-  id: ID! # hash of the CriteriaSet
+type CriteriaSet @entity(immutable: true) {
+  id: Bytes! # hash of the CriteriaSet
   criterias: [CriteriaJoinedCriteriaSet!]! @derivedFrom(field: "criteriaSet")
   templates: [Template!] @derivedFrom(field: "criteriaSet")
 }
@@ -65,8 +93,8 @@ Each CriteriaJoinedCriteriaSet entity describes one Criteria that belongs
 to a CriteriaSet. This entity allows for searches from Criterias to CriteriaSets
 to be completed.
 """
-type CriteriaJoinedCriteriaSet @entity {
-  id: ID!
+type CriteriaJoinedCriteriaSet @entity(immutable: true) {
+  id: Bytes!
   criteriaSet: CriteriaSet!
   criteria: Criteria!
 }
@@ -95,6 +123,34 @@ type Pool @entity {
   initialBalance: BigDecimal
   snapshots: [PoolSnapshot!] @derivedFrom(field: "currentPool")
   poolRecords: [PoolRecord!] @derivedFrom(field: "pool")
+  hourlyData: [HourlyPoolData!] @derivedFrom(field: "pool")
+  dailyData: [DailyPoolData!] @derivedFrom(field: "pool")
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Pool at a specific
+point in time; precision is one hour
+"""
+type HourlyPoolData @entity {
+  id: ID!
+  timestamp: Int!
+  pool: Pool!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
+}
+
+""" 
+Used to keep track of the liquidity, pnl and utilization of a Pool at a specific
+point in time; precision is one day
+"""
+type DailyPoolData @entity {
+  id: ID!
+  timestamp: Int!
+  pool: Pool!
+  liquidity: BigDecimal!
+  pnl: BigDecimal!
+  utilization: BigDecimal!
 }
 
 """
@@ -152,7 +208,7 @@ and oToken. It tracks the amount of oTokens purchased (for this specific oToken)
 and the amount of premium paid to the LPs.
 """
 type BuyerRecord @entity {
-  id: ID! # transaction hash
+  id: Bytes! # transaction hash
   buyer: Bytes!
   expiry: BigInt!
   otoken: OToken!
@@ -172,7 +228,7 @@ It also contains the field poolRecords, for every pool by the same LP that has b
 the same oToken, there exists an entry that describes the collateral of each pool.
 """
 type LPRecord @entity {
-  id: ID!
+  id: Bytes!
   lp: Bytes!
   otoken: OToken!
   numberOfOTokens: BigDecimal!
@@ -189,8 +245,9 @@ and the amount returned to the pool after settlement.
 The lpRecord field is used to join with LPRecord.
 """
 type PoolRecord @entity {
-  id: ID!
+  id: Bytes!
   pool: Pool!
+  template: Template!
   lpRecord: LPRecord!
   otoken: OToken!
   collateral: BigDecimal!
@@ -204,7 +261,7 @@ Tracks the oTokens created via the OtokenFactoryContract. This tracks all inform
 related to the oToken.
 """
 type OToken @entity {
-  id: ID!
+  id: Bytes!
   tokenAddress: Bytes!
   creator: Bytes!
   underlyingAsset: Token!
@@ -226,7 +283,7 @@ type OToken @entity {
 }
 
 type OrderBookEntry @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   otoken: OToken!
   timestamp: BigInt!
   buyer: Bytes!
@@ -240,7 +297,7 @@ enum TokenType @entity {
 }
 
 type Token @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   address: Bytes!
   decimals: BigInt!
   symbol: String!
@@ -249,7 +306,7 @@ type Token @entity(immutable: true) {
 }
 
 type Product @entity(immutable: true) {
-  id: ID!
+  id: Bytes!
   underlying: Token!
   strike: Token!
   collateral: Token!

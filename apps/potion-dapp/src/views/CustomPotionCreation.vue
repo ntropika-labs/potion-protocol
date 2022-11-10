@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-
+import { storeToRefs } from "pinia";
 import { BaseCard } from "potion-ui";
-
+import { onMounted, onUnmounted } from "vue";
 import TokenSelectionPanel from "@/components/CustomPotion/TokenSelectionPanel.vue";
 import StrikeSelectionPanel from "@/components/CustomPotion/StrikeSelectionPanel.vue";
 import DurationSelectionPanel from "@/components/CustomPotion/DurationSelectionPanel.vue";
@@ -24,13 +24,14 @@ import { usePotionTokens } from "@/composables/usePotionTokens";
 import { useRouterCriterias } from "@/composables/useRouterCriterias";
 import { useSlippage } from "@/composables/useSlippage";
 import { useStrikeSelection } from "@/composables/useStrikeSelection";
-import { useUserData } from "@/composables/useUserData";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 import { CustomPotionStep } from "dapp-types";
 
 const { t } = useI18n();
 
-const { userAllowance, userCollateralBalance } = useUserData();
+const { userAllowance, userCollateralBalance, approveTx, approveReceipt } =
+  storeToRefs(useUserDataStore());
 const { ethPrice } = useEthereumPrice();
 
 // gas units to deploy an otoken: 840000
@@ -81,7 +82,18 @@ const {
   formattedMarketSize,
   formattedPremium,
   numberOfTransactions,
+  runRouter,
 } = useDepthRouter(criterias, orderSize, strikeSelected, gasPrice, ethPrice);
+
+const intervalRouter = ref<ReturnType<typeof setInterval> | null>(null);
+onMounted(async () => {
+  intervalRouter.value = setInterval(() => {
+    runRouter();
+  }, 30000);
+});
+onUnmounted(() => {
+  clearInterval(intervalRouter.value ?? 0);
+});
 
 const {
   slippage,
@@ -95,27 +107,23 @@ const currentStep = ref<CustomPotionStep>(CustomPotionStep.ASSET);
 const handleChangeStep = (step: CustomPotionStep) => {
   if (step === CustomPotionStep.STRIKE && strikeSelected.value === 0) {
     strikeSelected.value = maxSelectableStrikeAbsolute.value * 0.9;
-  }
-  if (step === CustomPotionStep.EXPIRATION && durationSelected.value === 0) {
+  } else if (
+    step === CustomPotionStep.EXPIRATION &&
+    durationSelected.value === 0
+  ) {
     durationSelected.value = 1;
   }
   currentStep.value = step;
 };
 
 // Buy logic
-const {
-  handleBuyOrCreatePotions,
-  buyPotionTx,
-  buyPotionReceipt,
-  approveTx,
-  approveReceipt,
-  isLoading,
-} = useBuyPotions(
-  tokenSelectedAddress,
-  strikeSelected,
-  durationSelected,
-  routerResult
-);
+const { handleBuyOrCreatePotions, buyPotionTx, buyPotionReceipt, isLoading } =
+  useBuyPotions(
+    tokenSelectedAddress,
+    strikeSelected,
+    durationSelected,
+    routerResult
+  );
 
 // Notifications
 const {

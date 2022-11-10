@@ -9,7 +9,11 @@ import {
   MOCKED_LP,
   COLLATERAL_PRECISION_DECIMALS,
 } from "../constants";
-import { assertEntity, createNewOtoken, formatStrike } from "../helpers";
+import {
+  assertBytesEntity as assertEntity,
+  createNewOtoken,
+  formatStrike,
+} from "../helpers";
 import { createOtokenCreated } from "../events";
 import { mockDecimals } from "../mocks";
 import { handleOtokenCreate } from "../../src/otoken";
@@ -19,7 +23,7 @@ test("It can create an otoken", () => {
   createNewOtoken(
     MOCKED_OTOKEN_ID,
     MOCKED_TOKEN_A_ID,
-    MOCKED_LP.toHexString(),
+    MOCKED_LP,
     MOCKED_TOKEN_B_ID,
     MOCKED_TOKEN_C_ID,
     MOCKED_TOKEN_C_ID,
@@ -35,7 +39,7 @@ test("It can create an otoken", () => {
     BigInt.fromString("12")
   );
   assertEntity("OToken", MOCKED_OTOKEN_ID, [
-    ["collateralAsset", MOCKED_TOKEN_C_ID],
+    ["collateralAsset", MOCKED_TOKEN_C_ID.toHexString()],
     ["collateralized", "100"],
     ["creator", MOCKED_LP.toHexString()],
     ["decimals", "18"],
@@ -46,10 +50,10 @@ test("It can create an otoken", () => {
     ["premium", "200"],
     ["purchasesCount", "12"],
     ["settled", "false"],
-    ["strikeAsset", MOCKED_TOKEN_C_ID],
+    ["strikeAsset", MOCKED_TOKEN_C_ID.toHexString()],
     ["strikePrice", "100"],
-    ["tokenAddress", MOCKED_TOKEN_A_ID],
-    ["underlyingAsset", MOCKED_TOKEN_B_ID],
+    ["tokenAddress", MOCKED_TOKEN_A_ID.toHexString()],
+    ["underlyingAsset", MOCKED_TOKEN_B_ID.toHexString()],
   ]);
   clearStore();
 });
@@ -57,11 +61,11 @@ test("It can create an otoken", () => {
 // OtokenCreated event
 test("It can handle the OtokenCreated event", () => {
   const mockedEvent = createOtokenCreated(
-    Address.fromString(MOCKED_TOKEN_A_ID),
+    Address.fromBytes(MOCKED_TOKEN_A_ID),
     MOCKED_LP,
-    Address.fromString(MOCKED_TOKEN_B_ID),
-    Address.fromString(MOCKED_TOKEN_C_ID),
-    Address.fromString(MOCKED_TOKEN_C_ID),
+    Address.fromBytes(MOCKED_TOKEN_B_ID),
+    Address.fromBytes(MOCKED_TOKEN_C_ID),
+    Address.fromBytes(MOCKED_TOKEN_C_ID),
     formatStrike("1000"),
     BigInt.fromString("30"),
     true
@@ -74,7 +78,7 @@ test("It can handle the OtokenCreated event", () => {
   );
   handleOtokenCreate(mockedEvent);
   assertEntity("OToken", MOCKED_TOKEN_A_ID, [
-    ["collateralAsset", MOCKED_TOKEN_C_ID],
+    ["collateralAsset", MOCKED_TOKEN_C_ID.toHexString()],
     ["collateralized", "0"],
     ["creator", MOCKED_LP.toHexString()],
     ["decimals", COLLATERAL_PRECISION_DECIMALS.toString()],
@@ -85,10 +89,10 @@ test("It can handle the OtokenCreated event", () => {
     ["premium", "0"],
     ["purchasesCount", "0"],
     ["settled", "false"],
-    ["strikeAsset", MOCKED_TOKEN_C_ID],
+    ["strikeAsset", MOCKED_TOKEN_C_ID.toHexString()],
     ["strikePrice", "1000"],
-    ["tokenAddress", MOCKED_TOKEN_A_ID],
-    ["underlyingAsset", MOCKED_TOKEN_B_ID],
+    ["tokenAddress", MOCKED_TOKEN_A_ID.toHexString()],
+    ["underlyingAsset", MOCKED_TOKEN_B_ID.toHexString()],
   ]);
   clearStore();
 });

@@ -1,14 +1,5 @@
 import { wrap } from "comlink";
-import {
-  getUniswapRoute,
-  getPotionRoute,
-  //  runPremiumSwapRouter
-} from "@premium-swap-router";
-interface AlphaRouter {
-  getUniswapRoute: typeof getUniswapRoute;
-  getPotionRoute: typeof getPotionRoute;
-  //runPremiumSwapRouter: typeof runPremiumSwapRouter;
-}
+import type { AlphaRouter } from "./alpha-router-functions";
 
 const webWorker = new Worker(
   new URL("./alpha-router-functions.ts", import.meta.url),

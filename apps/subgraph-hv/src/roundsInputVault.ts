@@ -11,7 +11,7 @@ import { DepositRequest } from "../generated/schema";
 import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
-import { setCurrentRound } from "./investmentVault";
+import { setCurrentRound, setLastAssetToShareRate } from "./investmentVault";
 import {
   getOrCreateDepositRequest,
   getDepositRequest,
@@ -31,6 +31,7 @@ function handleNextRound(event: NextRound): void {
       vaultAddress,
       event.params.prevRoundExchangeRate
     );
+    setLastAssetToShareRate(vaultAddress, event.params.prevRoundExchangeRate);
   }
   log.info("NextRound {} for InputVault {}", [
     event.params.newRoundNumber.toString(),

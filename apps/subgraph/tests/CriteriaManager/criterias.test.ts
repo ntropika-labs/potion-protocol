@@ -4,9 +4,9 @@ import {
   handleCriteriaAdded,
   handleCriteriaSetAdded,
 } from "../../src/criterias";
-import { BigDecimal, BigInt, Bytes, Address } from "@graphprotocol/graph-ts";
+import { BigDecimal, BigInt, Address } from "@graphprotocol/graph-ts";
 import {
-  assertEntity,
+  assertBytesEntity as assertEntity,
   createNewCriteria,
   createNewCriteriaSet,
   createNewCriteriaJoinedCriteriaSet,
@@ -74,9 +74,9 @@ test("It can join a criteria with a CriteriaSet", () => {
 // CriteriaAdded event
 test("In can handle the CriteriaAdded event whn the criteria doesn't exist", () => {
   const mockedEvent = createCriteriaAdded(
-    Bytes.fromHexString(MOCKED_CRITERIA_ID),
-    Address.fromString(MOCKED_TOKEN_A_ID),
-    Address.fromString(MOCKED_TOKEN_B_ID),
+    MOCKED_CRITERIA_ID,
+    Address.fromBytes(MOCKED_TOKEN_A_ID),
+    Address.fromBytes(MOCKED_TOKEN_B_ID),
     true,
     BigInt.fromString("100"),
     BigInt.fromString("30")
@@ -107,9 +107,9 @@ test("In can handle the CriteriaAdded event when the criteria is already present
     []
   );
   const mockedEvent = createCriteriaAdded(
-    Bytes.fromHexString(MOCKED_CRITERIA_ID),
-    Address.fromString(MOCKED_TOKEN_A_ID),
-    Address.fromString(MOCKED_TOKEN_B_ID),
+    MOCKED_CRITERIA_ID,
+    Address.fromBytes(MOCKED_TOKEN_A_ID),
+    Address.fromBytes(MOCKED_TOKEN_B_ID),
     true,
     BigInt.fromString("100"),
     BigInt.fromString("30")
@@ -153,13 +153,10 @@ test("In can handle CriteriaSetAdded", () => {
     "Created criteria with maxStrikePercent 200 and maxDurationInDays 13",
     []
   );
-  const mockedEvent = createCriteriaSetAdded(
-    Bytes.fromHexString(MOCKED_CRITERIA_SET_ID),
-    [
-      Bytes.fromHexString(MOCKED_CRITERIA_A_ID),
-      Bytes.fromHexString(MOCKED_CRITERIA_B_ID),
-    ]
-  );
+  const mockedEvent = createCriteriaSetAdded(MOCKED_CRITERIA_SET_ID, [
+    MOCKED_CRITERIA_A_ID,
+    MOCKED_CRITERIA_B_ID,
+  ]);
   log.info(
     "Invoking handleCriteriaSetAdded passing criteriaSetId '0x0000000000000000000000000000000000001000' and as criterias ['0x0000000000000000000000000000000000000200', '0x0000000000000000000000000000000000000300']",
     []

@@ -1,0 +1,34 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "prevState",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "newState",
+        "type": "uint8"
+      }
+    ],
+    "name": "LifecycleStateChanged",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "getLifecycleState",
+    "outputs": [
+      {
+        "internalType": "enum ILifecycleStates.LifecycleState",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

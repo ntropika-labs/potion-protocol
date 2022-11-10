@@ -45,7 +45,7 @@ export function useVaultOperatorExitPosition(
   const lowercaseVaultAddress = computed(() =>
     vaultAddress.value.toLowerCase()
   );
-  const { swapToUSDCAction, usdc } = getContractsFromVault(
+  const { SwapToUSDCAction, USDC } = getContractsFromVault(
     lowercaseVaultAddress.value
   );
 
@@ -56,7 +56,7 @@ export function useVaultOperatorExitPosition(
   } = useAlphaRouter(getChainId());
 
   const { balance: fallbackUSDCBalance, getTokenBalance: getUSDCBalance } =
-    useErc20Contract(usdc as string, false);
+    useErc20Contract(USDC, false);
 
   const exitPositionData: Ref<{
     uniswapRouterData: UniswapRouterReturn | null;
@@ -143,7 +143,7 @@ export function useVaultOperatorExitPosition(
       } else {
         uniswapExitRoute = null;
       }
-      await getUSDCBalance(false, swapToUSDCAction as string);
+      await getUSDCBalance(false, SwapToUSDCAction);
 
       const totalFallbackBalance = fallbackUSDCBalance.value;
       console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
