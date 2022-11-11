@@ -184,23 +184,18 @@
                   @click="handleDeleteWithdrawal"
                 />
               </template>
-            </div>
-            <div class="w-1/2 flex flex-col items-center gap-4">
-              <InputNumber
-                v-model="redeemAmount"
-                class="self-stretch"
-                :max="userBalance"
-                :min="0.1"
-                :step="0.01"
-                :unit="vault.shareToken.symbol"
-              />
-              <BaseButton
-                palette="secondary"
-                :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled || isLoading"
-                :loading="redeemLoading"
-                @click="handleRedeem()"
-              />
+              <template v-if="availableAssets > 0">
+                <h4>
+                  {{ t("available_assets_to_redeem", { availableAssets }) }}
+                </h4>
+                <BaseButton
+                  palette="secondary"
+                  :label="t('redeem')"
+                  :disabled="isLoading"
+                  :loading="redeemAssetsLoading"
+                  @click="handleRedeemAssets"
+                />
+              </template>
             </div>
           </div>
         </BaseCard>
@@ -237,10 +232,8 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultRedeem } from "@/composables/useVaultRedeem";
 import { useWithdrawalRequests } from "@/composables/useWithdrawalRequests";
 
 import {
@@ -388,6 +381,11 @@ const {
   deleteWithdrawalReceipt,
   deleteWithdrawalRequest,
   deleteWithdrawalTransaction,
+  availableAssets,
+  redeemAssets,
+  redeemAssetsLoading,
+  redeemAssetsReceipt,
+  redeemAssetsTransaction,
 } = useWithdrawalRequests(
   roundsOutputAddress,
   assetAddress,
@@ -402,25 +400,22 @@ const handleDeleteWithdrawal = async () => {
   }
 };
 
+const handleRedeemAssets = async () => {
+  if (availableAssets.value > 0) {
+    await redeemAssets();
+    setTimeout(loadVault, 5000);
+  }
+};
+
 /* 
   Legacy code
 */
-const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
 const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
 const shareToAssetRatio = computed(() => 1 / assetToShare.value);
 const balanceInAsset = computed(
   () => userBalance.value * shareToAssetRatio.value
 );
-
-const {
-  redeemLoading,
-  redeemReceipt,
-  redeemTx,
-  handleRedeem,
-  amount: redeemAmount,
-  buttonState: redeemButtonState,
-} = useVaultRedeem(userBalance, vaultId, vaultStatus);
 /* 
   End of legacy code
 */
@@ -432,7 +427,7 @@ const isLoading = computed(
     deleteDepositLoading.value ||
     deleteWithdrawalLoading.value ||
     exchangeTicketsLoading.value ||
-    redeemLoading.value ||
+    redeemAssetsLoading.value ||
     updateDepositLoading.value ||
     vaultLoading.value
 );
@@ -497,11 +492,11 @@ watch(updateDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deposited"));
 });
 
-watch(redeemTx, (transaction) => {
+watch(redeemAssetsTransaction, (transaction) => {
   createTransactionNotification(transaction, t("redeeming"));
 });
 
-watch(redeemReceipt, (receipt) => {
+watch(redeemAssetsReceipt, (receipt) => {
   createReceiptNotification(receipt, t("redeemed"));
 });
 </script>

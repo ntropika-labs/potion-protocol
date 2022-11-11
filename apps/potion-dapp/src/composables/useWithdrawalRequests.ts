@@ -4,6 +4,18 @@ import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { RoundsFragment } from "@/types";
+import type { BigNumberish } from "ethers";
+
+const formatAmount = (amount?: MaybeRef<BigNumberish>) =>
+  parseFloat(formatUnits(unref(amount ?? "0"), 18));
+
+const calcAssets = (
+  assets?: MaybeRef<BigNumberish>,
+  exchangeRate?: MaybeRef<BigNumberish>
+) => {
+  const amount = formatAmount(assets) * formatAmount(exchangeRate);
+  return parseFloat(amount.toFixed(2));
+};
 
 function useWithdrawalRequests(
   vaultAddress: MaybeRef<string>,
@@ -11,17 +23,51 @@ function useWithdrawalRequests(
   currentRound: MaybeRef<string>,
   rounds: MaybeRef<RoundsFragment[]>
 ) {
-  const { redeem, redeemLoading, redeemReceipt, redeemTx } =
-    useRoundsVaultContract(vaultAddress, assetAddress, false);
+  const {
+    redeem,
+    redeemLoading,
+    redeemReceipt,
+    redeemTx,
+    redeemExchangeAsset,
+    redeemExchangeAssetLoading,
+    redeemExchangeAssetReceipt,
+    redeemExchangeAssetTx,
+    redeemExchangeAssetBatch,
+    redeemExchangeAssetBatchLoading,
+    redeemExchangeAssetBatchReceipt,
+    redeemExchangeAssetBatchTx,
+  } = useRoundsVaultContract(vaultAddress, assetAddress, false);
 
   const round = computed(() =>
     unref(rounds)?.find((round) => round.roundNumber === unref(currentRound))
   );
 
-  const withdrawalRequest = computed(() => round?.value?.withdrawalRequests[0]);
+  const pastRounds = computed(() =>
+    unref(rounds).filter(
+      (round) =>
+        round.roundNumber !== unref(currentRound) &&
+        (round.withdrawalRequests?.[0]?.remainingAssets ?? "0") !== "0"
+    )
+  );
+
+  const availableAssets = computed(() =>
+    unref(rounds).reduce(
+      (acc, round) =>
+        acc +
+        calcAssets(
+          round?.withdrawalRequests?.[0]?.remainingAssets,
+          round?.assetToShareRate
+        ),
+      0
+    )
+  );
+
+  const currentWithdrawalRequest = computed(
+    () => round?.value?.withdrawalRequests[0]
+  );
   const currentWithdrawalAmount = computed(() => {
-    const value = withdrawalRequest?.value?.amount ?? "0";
-    return parseInt(formatUnits(value, 18));
+    const value = currentWithdrawalRequest?.value?.amount ?? "0";
+    return formatAmount(value);
   });
 
   const canDeleteWithdrawalRequest = computed(
@@ -33,6 +79,43 @@ function useWithdrawalRequests(
     }
   };
 
+  const getWithdrawalDetails = (round: RoundsFragment) => ({
+    id: round.roundNumber,
+    assets: calcAssets(
+      round?.withdrawalRequests?.[0]?.remainingAssets,
+      round?.assetToShareRate
+    ),
+  });
+
+  const redeemAssets = () => {
+    if (pastRounds.value.length > 0) {
+      if (pastRounds.value.length == 1) {
+        const { id, assets } = getWithdrawalDetails(pastRounds.value[0]);
+        return redeemExchangeAsset(id, assets);
+      } else {
+        const ids = new Array<string>();
+        const allAssets = new Array<number>();
+        pastRounds.value.forEach((round) => {
+          const { id, assets } = getWithdrawalDetails(round);
+          ids.push(id);
+          allAssets.push(assets);
+        });
+        return redeemExchangeAssetBatch(ids, allAssets);
+      }
+    }
+  };
+  const redeemAssetsLoading = computed(
+    () =>
+      redeemExchangeAssetLoading.value || redeemExchangeAssetBatchLoading.value
+  );
+  const redeemAssetsReceipt = computed(
+    () =>
+      redeemExchangeAssetReceipt.value || redeemExchangeAssetBatchReceipt.value
+  );
+  const redeemAssetsTransaction = computed(
+    () => redeemExchangeAssetTx.value || redeemExchangeAssetBatchTx.value
+  );
+
   return {
     canDeleteWithdrawalRequest,
     currentWithdrawalAmount,
@@ -40,6 +123,11 @@ function useWithdrawalRequests(
     deleteWithdrawalReceipt: redeemReceipt,
     deleteWithdrawalRequest,
     deleteWithdrawalTransaction: redeemTx,
+    availableAssets,
+    redeemAssets,
+    redeemAssetsLoading,
+    redeemAssetsReceipt,
+    redeemAssetsTransaction,
   };
 }
 
