@@ -158,7 +158,7 @@ function handleWithdrawExchangeAsset(event: WithdrawExchangeAsset): void {
   withdraw(
     event.params.receiptId,
     vaultAddress,
-    event.params.receiver,
+    event.params.owner,
     event.params.receiptAmount,
     event.params.exchangeAssetAmount
   );
@@ -173,7 +173,7 @@ function handleWithdrawExchangeAssetBatch(
     withdraw(
       event.params.receiptIds[i],
       vaultAddress,
-      event.params.receiver,
+      event.params.owner,
       event.params.receiptAmounts[i],
       event.params.exchangeAssetAmount
     );
@@ -183,15 +183,15 @@ function handleWithdrawExchangeAssetBatch(
 function withdraw(
   receiptId: BigInt,
   vaultAddress: Address,
-  receiver: Address,
+  investor: Address,
   receiptAmount: BigInt,
   exchangeAssetAmount: BigInt
 ): void {
-  const depositRequest = getDepositRequest(receiptId, vaultAddress, receiver);
+  const depositRequest = getDepositRequest(receiptId, vaultAddress, investor);
   if (depositRequest == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
-      receiver.toHexString(),
+      investor.toHexString(),
     ]);
   } else {
     depositRequest.amount = depositRequest.amount.minus(receiptAmount);

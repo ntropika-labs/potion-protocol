@@ -974,9 +974,9 @@ describe("roundsOutputVault", () => {
         contractAddress
       );
       const mockedEvent = createOutputWithdrawExchangeAsset(
-        mockedCaller,
         mockedInvestor,
-        mockedCaller,
+        mockedInvestor,
+        mockedInvestor,
         BigInt.fromString("15"),
         BigInt.fromString("2"),
         BigInt.fromString("30")
@@ -1018,7 +1018,7 @@ describe("roundsOutputVault", () => {
         contractAddress
       );
       const mockedEvent = createOutputWithdrawExchangeAssetBatch(
-        mockedCaller,
+        mockedInvestor,
         mockedInvestor,
         mockedInvestor,
         BigInt.fromString("5"),

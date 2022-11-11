@@ -950,8 +950,8 @@ describe("roundsInputVault", () => {
       );
       const mockedEvent = createWithdrawExchangeAsset(
         mockedCaller,
-        mockedInvestor,
         mockedCaller,
+        mockedInvestor,
         BigInt.fromString("15"),
         BigInt.fromString("2"),
         BigInt.fromString("30")
@@ -994,7 +994,7 @@ describe("roundsInputVault", () => {
       );
       const mockedEvent = createWithdrawExchangeAssetBatch(
         mockedCaller,
-        mockedInvestor,
+        mockedCaller,
         mockedInvestor,
         BigInt.fromString("5"),
         [
