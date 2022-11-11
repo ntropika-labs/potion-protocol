@@ -7,8 +7,8 @@ import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
 import type { RoundsFragment } from "@/types";
 
-const formatAmount = (amount: MaybeRef<BigNumberish>) =>
-  parseFloat(formatUnits(unref(amount), 18));
+const formatAmount = (amount?: MaybeRef<BigNumberish>) =>
+  parseFloat(formatUnits(unref(amount ?? "0"), 18));
 
 function useInputOutputVaultExchange(
   walletAddress: MaybeRef<string>,
@@ -49,11 +49,11 @@ function useInputOutputVaultExchange(
     unref(rounds).filter(
       (round) =>
         round.roundNumber !== unref(currentRound) &&
-        round.depositRequests.length > 0
+        (round.depositRequests?.[0]?.remainingShares ?? "0") !== "0"
     )
   );
 
-  const calcAssets = (shares: string) => {
+  const calcAssets = (shares?: string) => {
     const assets = formatAmount(shares) * formatAmount(shareToAssetRate);
     return parseFloat(assets.toFixed(2));
   };
@@ -61,7 +61,7 @@ function useInputOutputVaultExchange(
   const estimatedAssets = computed(() =>
     pastRounds.value.reduce(
       (acc, round) =>
-        acc + calcAssets(round?.depositRequests?.[0]?.shares ?? "0"),
+        acc + calcAssets(round?.depositRequests?.[0]?.remainingShares),
       0
     )
   );
@@ -74,7 +74,7 @@ function useInputOutputVaultExchange(
 
   const getExchangeDetails = (round: RoundsFragment) => ({
     id: round.roundNumber,
-    amount: formatAmount(round.depositRequests[0].amount),
+    amount: formatAmount(round.depositRequests[0].remainingShares),
   });
 
   const exchangeTickets = async () => {
