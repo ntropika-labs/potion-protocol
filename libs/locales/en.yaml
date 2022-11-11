@@ -11,6 +11,7 @@ approve: approve
 approving_usdc: approving usdc
 asset: Asset
 assets: Assets
+available_assets_to_redeem: You can redeem {availableAssets} assets
 available_payout: Available Payout
 available_potions: available potions
 average_pnl: average pnl
