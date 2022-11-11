@@ -57,9 +57,9 @@ const getExpectedPriceRate = (
  * @returns The address to use as an intermediate recipient in multihop swaps
  */
 const getRecipientAddress = (vaultAddress: string): string => {
-  const { potionBuyAction } = getContractsFromVault(vaultAddress);
+  const { PotionBuyAction } = getContractsFromVault(vaultAddress);
 
-  return potionBuyAction;
+  return PotionBuyAction;
 };
 
 export {

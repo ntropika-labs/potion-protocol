@@ -42,6 +42,9 @@ import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useVaultOperatorEnterPosition } from "@/composables/useVaultOperatorEnterPosition";
 import { useVaultOperatorExitPosition } from "@/composables/useVaultOperatorExitPosition";
 import { useOracleContract } from "@/composables/useOracleContract";
+import { useHedgingVault } from "@/composables/useHedgingVault";
+import { storeToRefs } from "pinia";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -74,6 +77,10 @@ const {
   getShareBalance,
   shareBalance,
 } = useInvestmentVaultContract(vaultId, true, true);
+
+const { walletAddress } = storeToRefs(useUserDataStore());
+// vault info
+const { vault } = useHedgingVault(vaultId, walletAddress);
 
 const { vaultName, assetSymbol, assetAddress, tokenAsset } = useErc4626Contract(
   vaultId,
@@ -593,7 +600,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('vault_size')"
-              value="0"
+              :value="vault.totalAssets.toString()"
               :symbol="assetSymbol"
             />
             <div class="flex flex-col gap-2">

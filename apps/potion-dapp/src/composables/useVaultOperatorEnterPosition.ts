@@ -91,6 +91,12 @@ export function useVaultOperatorEnterPosition(
       ? totalPayoutUSDC.value.currentPayout
       : 0;
     const exitSwapAmountInUnderlying = totalPayout / oraclePrice.value;
+    console.log(
+      "CHECK exitSwapAmountInUnderlying",
+      totalPayout,
+      oraclePrice.value,
+      exitSwapAmountInUnderlying
+    );
 
     const actionUnderlyingBalance = await getTokenBalance(
       false,
@@ -101,9 +107,11 @@ export function useVaultOperatorEnterPosition(
       RoundsInputVault
     );
 
+    const totalPrincipalBeforeWithdrawalAndDepositInUnderlying =
+      exitSwapAmountInUnderlying + (actionUnderlyingBalance as number);
+
     const totalPrincipalBeforeWithdrawalInUnderlying =
-      exitSwapAmountInUnderlying +
-      (actionUnderlyingBalance as number) +
+      totalPrincipalBeforeWithdrawalAndDepositInUnderlying +
       (inputVaultUnderlyingBalance as number);
 
     console.log("getTotalPrincipalInUnderlying");
@@ -111,6 +119,8 @@ export function useVaultOperatorEnterPosition(
       {
         totalPayoutUSDC: totalPayoutUSDC.value,
         totalPrincipalBeforeWithdrawalInUnderlying,
+        actionPlusExit:
+          exitSwapAmountInUnderlying + (actionUnderlyingBalance as number),
         exitSwapAmountInUnderlying,
         actionUnderlyingBalance,
         inputVaultUnderlyingBalance,
@@ -120,19 +130,28 @@ export function useVaultOperatorEnterPosition(
     // When the vault is still not initialized the vaultTotalSupply is 0
     if (vaultTotalSupply.value !== 0) {
       const investmentVaultTotalShares = vaultTotalSupply.value;
-      console.log(
-        "- INVESTMENT VAULT TOTAL SHARES",
-        totalPrincipalBeforeWithdrawalInUnderlying,
-        investmentVaultTotalShares
-      );
+
       price =
-        totalPrincipalBeforeWithdrawalInUnderlying / investmentVaultTotalShares;
+        totalPrincipalBeforeWithdrawalAndDepositInUnderlying /
+        investmentVaultTotalShares;
+
+      console.log(
+        "- INVESTMENT VAULT TOTAL SHARES (principal b4 d-w|investment vault total shares|sharePrice)",
+        totalPrincipalBeforeWithdrawalAndDepositInUnderlying,
+        investmentVaultTotalShares,
+        price
+      );
     }
 
     const totalSharesToWithdraw = outputVaultTotalShares.value;
 
     const totalAssetsToWithdrawInUnderlying = totalSharesToWithdraw * price;
-
+    console.log(
+      "totalAssetsToWithdrawInUnderlying|totalSharesToWithdraw",
+      totalAssetsToWithdrawInUnderlying,
+      totalSharesToWithdraw,
+      price
+    );
     return (
       totalPrincipalBeforeWithdrawalInUnderlying -
       totalAssetsToWithdrawInUnderlying
@@ -254,7 +273,7 @@ export function useVaultOperatorEnterPosition(
       // POTION ROUTER
       const potionRouterWithEstimatedPremium = await worker.getPotionRoute(
         principalHedgedAmountInUSDC,
-        potionRouterParameters.value.pools, // TODO: check pools may not match the order size
+        potionRouterParameters.value.pools,
         potionRouterParameters.value.strikePriceUSDC,
         potionRouterParameters.value.gas,
         potionRouterParameters.value.ethPrice
