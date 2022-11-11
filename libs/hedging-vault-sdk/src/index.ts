@@ -4,3 +4,5 @@ export * from "./PRBMathUtils";
 export * from "./revertMessages";
 export * from "./vaultCollateralization";
 export * from "./utils";
+export * from "./vaultEstimations";
+export * from "./exchangeInputForOutput";
