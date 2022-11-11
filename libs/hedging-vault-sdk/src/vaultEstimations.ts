@@ -108,7 +108,7 @@ export const calculateCurrentTotalShares = (
  * @param {number} potionsQuantity - The amount of potions bought
  * @returns {number} - The estimated Share To Asset Rate of the Vault at the current underlying price, at the end of the current round
  */
-export const currentShareToAssetRate = (
+export const calculateCurrentShareToAssetRate = (
     usdcBalanceActionContract: number,
     underlyingBalanceActionContract: number,
     underlyingBalanceRoundsInputVaultContract: number,
