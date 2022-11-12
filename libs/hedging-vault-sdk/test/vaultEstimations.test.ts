@@ -87,7 +87,7 @@ describe("vaultEstimations", () => {
             investmentVaultContractShares,
             roundsOutputVaultContractShares,
         );
-        const result = vaultEstimations.currentShareToAssetRate(
+        const result = vaultEstimations.calculateCurrentShareToAssetRate(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
             underlyingBalanceRoundsInputVaultContract,
