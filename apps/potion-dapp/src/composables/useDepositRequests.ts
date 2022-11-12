@@ -1,6 +1,6 @@
 import { computed, unref } from "vue";
-import { formatUnits } from "@ethersproject/units";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
+import { formatAmount } from "@/helpers/deferredRequests";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { RoundsFragment } from "@/types";
@@ -27,14 +27,12 @@ function useDepositRequests(
   );
   const depositRequest = computed(() => round?.value?.depositRequests[0]);
 
-  const currentDepositAmount = computed(() => {
-    const value = depositRequest?.value?.amount ?? "0";
-    return parseInt(formatUnits(value, 18));
-  });
+  const currentDepositAmount = computed(() =>
+    formatAmount(depositRequest?.value?.amount)
+  );
 
-  const updateDepositRequest = async (amount: MaybeRef<number>) => {
+  const updateDepositRequest = async (amount: MaybeRef<number>) =>
     deposit(unref(amount));
-  };
 
   const canDeleteDepositRequest = computed(
     () => currentDepositAmount.value > 0

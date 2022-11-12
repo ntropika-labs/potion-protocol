@@ -1,14 +1,14 @@
 import { computed, unref, isRef, watch } from "vue";
-import { formatUnits } from "@ethersproject/units";
 import { useRoundsVaultExchanger } from "@/composables/useRoundsVaultExchanger";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
+import {
+  hasShares,
+  calcAssets as _calcAssets,
+} from "@/helpers/deferredRequests";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
 import type { RoundsFragment } from "@/types";
-
-const formatAmount = (amount?: MaybeRef<BigNumberish>) =>
-  parseFloat(formatUnits(unref(amount ?? "0"), 18));
 
 function useInputOutputVaultExchange(
   walletAddress: MaybeRef<string>,
@@ -49,14 +49,12 @@ function useInputOutputVaultExchange(
     unref(rounds).filter(
       (round) =>
         round.roundNumber !== unref(currentRound) &&
-        (round.depositRequests?.[0]?.remainingShares ?? "0") !== "0"
+        hasShares(round.depositRequests?.[0])
     )
   );
 
-  const calcAssets = (shares?: string) => {
-    const assets = formatAmount(shares) * formatAmount(shareToAssetRate);
-    return parseFloat(assets.toFixed(2));
-  };
+  const calcAssets = (shares?: BigNumberish) =>
+    _calcAssets(shares, shareToAssetRate);
 
   const estimatedAssets = computed(() =>
     pastRounds.value.reduce(
@@ -86,7 +84,6 @@ function useInputOutputVaultExchange(
         const ids = new Array<string>();
         const amounts = new Array<string>();
         pastRounds.value.forEach((round) => {
-          console.log(round.depositRequests);
           const { id, amount } = getExchangeDetails(round);
           ids.push(id);
           amounts.push(amount);

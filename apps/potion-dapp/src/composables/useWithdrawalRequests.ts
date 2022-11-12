@@ -1,31 +1,14 @@
 import { computed, unref } from "vue";
-import { formatUnits } from "@ethersproject/units";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
+import {
+  formatAmount,
+  hasAssets,
+  calcAssets,
+  calcAssetsBN,
+} from "@/helpers/deferredRequests";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { RoundsFragment } from "@/types";
-import { BigNumber, type BigNumberish } from "ethers";
-
-const formatAmount = (amount?: MaybeRef<BigNumberish>) =>
-  parseFloat(formatUnits(unref(amount ?? "0"), 18));
-
-const calcAssets = (
-  assets?: MaybeRef<BigNumberish>,
-  exchangeRate?: MaybeRef<BigNumberish>
-) => {
-  const amount = formatAmount(assets) * formatAmount(exchangeRate);
-  return parseFloat(amount.toFixed(2));
-};
-
-const calcAssetsBN = (
-  assets?: MaybeRef<BigNumberish>,
-  exchangeRate?: MaybeRef<BigNumberish>
-) => {
-  const amount = BigNumber.from(assets ?? "0")
-    .mul(BigNumber.from(exchangeRate ?? "0"))
-    .div(BigNumber.from(10).pow(18));
-  return amount.toString();
-};
 
 function useWithdrawalRequests(
   vaultAddress: MaybeRef<string>,
@@ -48,15 +31,15 @@ function useWithdrawalRequests(
     redeemExchangeAssetBatchTx,
   } = useRoundsVaultContract(vaultAddress, assetAddress, false);
 
-  const round = computed(() =>
-    unref(rounds)?.find((round) => round.roundNumber === unref(currentRound))
-  );
+  const isCurrentRound = (round: RoundsFragment) =>
+    round.roundNumber === unref(currentRound);
+
+  const round = computed(() => unref(rounds)?.find(isCurrentRound));
 
   const pastRounds = computed(() =>
     unref(rounds).filter(
       (round) =>
-        round.roundNumber !== unref(currentRound) &&
-        (round.withdrawalRequests?.[0]?.remainingAssets ?? "0") !== "0"
+        !isCurrentRound(round) && hasAssets(round.withdrawalRequests?.[0])
     )
   );
 
@@ -75,14 +58,15 @@ function useWithdrawalRequests(
   const currentWithdrawalRequest = computed(
     () => round?.value?.withdrawalRequests[0]
   );
-  const currentWithdrawalAmount = computed(() => {
-    const value = currentWithdrawalRequest?.value?.amount ?? "0";
-    return formatAmount(value);
-  });
+
+  const currentWithdrawalAmount = computed(() =>
+    formatAmount(currentWithdrawalRequest?.value?.amount)
+  );
 
   const canDeleteWithdrawalRequest = computed(
     () => currentWithdrawalAmount.value > 0
   );
+
   const deleteWithdrawalRequest = async () => {
     if (canDeleteWithdrawalRequest.value) {
       await redeem(unref(currentRound), currentWithdrawalAmount.value);
@@ -101,14 +85,12 @@ function useWithdrawalRequests(
     if (pastRounds.value.length > 0) {
       if (pastRounds.value.length == 1) {
         const { id, assets } = getWithdrawalDetails(pastRounds.value[0]);
-        console.log(id, assets);
         return redeemExchangeAsset(id, assets);
       } else {
         const ids = new Array<string>();
         const allAssets = new Array<string>();
         pastRounds.value.forEach((round) => {
           const { id, assets } = getWithdrawalDetails(round);
-          console.log(id, assets);
           ids.push(id);
           allAssets.push(assets);
         });
