@@ -74,7 +74,7 @@ function useInputOutputVaultExchange(
 
   const getExchangeDetails = (round: RoundsFragment) => ({
     id: round.roundNumber,
-    amount: formatAmount(round.depositRequests[0].remainingShares),
+    amount: round.depositRequests[0].remainingShares,
   });
 
   const exchangeTickets = async () => {
@@ -84,7 +84,7 @@ function useInputOutputVaultExchange(
         await exchangeInputForOutput(id, amount);
       } else {
         const ids = new Array<string>();
-        const amounts = new Array<number>();
+        const amounts = new Array<string>();
         pastRounds.value.forEach((round) => {
           console.log(round.depositRequests);
           const { id, amount } = getExchangeDetails(round);
