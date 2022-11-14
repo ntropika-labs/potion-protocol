@@ -25,7 +25,7 @@ import { CreateOtokens, InitializeSamplePurchases } from "./postDeployActions/Ot
 import { SettleAllExpiredOtokens } from "./postDeployActions/SettleAllExpiredOtokens";
 import { priceHistory1 } from "./postDeployActions/dataForImport/priceHistory.json";
 import { WhitelistUnderlying } from "./postDeployActions/WhitelistUnderlying";
-import { DeployChainlinkPricer, PricerConfig } from "./postDeployActions/DeployChainlinkPricer";
+import { DeployChainlinkPricer } from "./postDeployActions/DeployChainlinkPricer";
 
 function parseUsdcAmount(dollars: BigNumberish): BigNumber {
     return BigNumber.from(dollars).mul(1e6);

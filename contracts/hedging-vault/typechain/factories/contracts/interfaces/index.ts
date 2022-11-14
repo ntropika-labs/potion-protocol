@@ -4,6 +4,7 @@
 export { IAction__factory } from "./IAction__factory";
 export { IActionsManager__factory } from "./IActionsManager__factory";
 export { IBaseRoundsVault__factory } from "./IBaseRoundsVault__factory";
+export { IChainlinkAggregatorV3__factory } from "./IChainlinkAggregatorV3__factory";
 export { IEmergencyLock__factory } from "./IEmergencyLock__factory";
 export { IFeeManager__factory } from "./IFeeManager__factory";
 export { IHedgingVaultOrchestrator__factory } from "./IHedgingVaultOrchestrator__factory";

@@ -160,7 +160,7 @@
     "graphql": "^16.6.0",
     "graphql-config": "^4.3.5",
     "graphql-tag": "^2.12.6",
-    "hardhat": "^2.11.1",
+    "hardhat": "2.12.2",
     "hardhat-abi-exporter": "^2.10.0",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-gas-reporter": "^1.0.9",

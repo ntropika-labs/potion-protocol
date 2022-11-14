@@ -4,6 +4,7 @@
 export type { IAction } from "./IAction";
 export type { IActionsManager } from "./IActionsManager";
 export type { IBaseRoundsVault } from "./IBaseRoundsVault";
+export type { IChainlinkAggregatorV3 } from "./IChainlinkAggregatorV3";
 export type { IEmergencyLock } from "./IEmergencyLock";
 export type { IFeeManager } from "./IFeeManager";
 export type { IHedgingVaultOrchestrator } from "./IHedgingVaultOrchestrator";

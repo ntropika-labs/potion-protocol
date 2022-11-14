@@ -12,7 +12,7 @@ import "../utils/UniswapV3Path.sol";
 
     @author Roberto Cano <robercano>
 
-    @notice Mock contract for the Opyn contoller
+    @notice Mock contract for the Uniswap Router
 */
 contract MockUniswapV3Router is ISwapRouter {
     using UniswapV3Path for bytes;
@@ -22,10 +22,6 @@ contract MockUniswapV3Router is ISwapRouter {
     constructor(address[] memory assets_) {
         for (uint256 i = 0; i < assets_.length; i++) {
             assets.push(assets_[i]);
-
-            // Approve the deployer to spend our assets. This enables the definition of Smock
-            // functions where the transfer logic is modified and run by the deployer
-            IERC20(assets_[i]).approve(msg.sender, type(uint256).max);
         }
     }
 

@@ -265,12 +265,8 @@ describe("FallbackStrategy", function () {
             tCond.swapToUSDCSwapEnterPosition,
         );
 
-        const swapToUSDCAmountUSDCAfterSlippage = HedgingVaultUtils.subtractPercentage(
-            tCond.swapToUSDCAmountUSDC,
-            tEnv.swapSlippage,
-        );
         const amountUnderlyingReturned = HedgingVaultUtils.convertAmount(
-            swapToUSDCAmountUSDCAfterSlippage,
+            tCond.swapToUSDCAmountUSDC,
             underlyingDecimals,
             USDCDecimals,
             USDCPriceInUSD,
