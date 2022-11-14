@@ -99,13 +99,7 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
         swapToUSDCAction.setSwapInfo(swapToUSDCEnterSwapInfo);
 
         // Main strategy
-        /* solhint-disable-next-line no-empty-blocks */
-        try investmentVault.enterPositionWith(_potionBuyStrategy) {
-            // Empty on purpose
-        } catch {
-            // Fallback strategy
-            investmentVault.enterPositionWith(_swapToUSDCStrategy);
-        }
+        investmentVault.enterPositionWith(_potionBuyStrategy);
     }
 
     /// GETTERS
