@@ -27,23 +27,23 @@ const hasShares = (depositRequest?: DepositRequestInfoFragment) =>
 const hasAssets = (withdrawalRequest?: WithdrawalRequestInfoFragment) =>
   valueOrZero(withdrawalRequest?.remainingAssets) !== "0";
 
-const _calcAssets = (assets: BigNumberish, exchangeRate: BigNumberish) =>
-  BigNumber.from(assets)
+const _calcAssets = (amount: BigNumberish, exchangeRate: BigNumberish) =>
+  BigNumber.from(amount)
     .mul(BigNumber.from(exchangeRate))
     .div(BigNumber.from(10).pow(ROUNDS_VAULT_DECIMALS));
 
 const calcAssets = (
-  assets?: MaybeRef<BigNumberish>,
+  amount?: MaybeRef<BigNumberish>,
   exchangeRate?: MaybeRef<BigNumberish>
 ) => {
-  const amount = _calcAssets(valueOrZero(assets), valueOrZero(exchangeRate));
-  return parseFloat(formatAmount(amount).toFixed(2));
+  const assets = _calcAssets(valueOrZero(amount), valueOrZero(exchangeRate));
+  return parseFloat(formatAmount(assets).toFixed(2));
 };
 
 const calcAssetsBN = (
-  assets?: MaybeRef<BigNumberish>,
+  amount?: MaybeRef<BigNumberish>,
   exchangeRate?: MaybeRef<BigNumberish>
-) => _calcAssets(valueOrZero(assets), valueOrZero(exchangeRate)).toString();
+) => _calcAssets(valueOrZero(amount), valueOrZero(exchangeRate)).toString();
 
 export {
   formatAmount,

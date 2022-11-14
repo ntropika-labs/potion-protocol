@@ -72,7 +72,7 @@ function useInputOutputVaultExchange(
 
   const getExchangeDetails = (round: RoundsFragment) => ({
     id: round.roundNumber,
-    amount: round.depositRequests[0].remainingShares,
+    amount: round.depositRequests[0].amount,
   });
 
   const exchangeTickets = async () => {

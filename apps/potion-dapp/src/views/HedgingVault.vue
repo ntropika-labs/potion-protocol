@@ -184,18 +184,21 @@
                   @click="handleDeleteWithdrawal"
                 />
               </template>
-              <template v-if="availableAssets > 0">
-                <h4>
-                  {{ t("available_assets_to_redeem", { availableAssets }) }}
-                </h4>
-                <BaseButton
-                  palette="secondary"
-                  :label="t('redeem')"
-                  :disabled="isLoading"
-                  :loading="redeemAssetsLoading"
-                  @click="handleRedeemAssets"
-                />
-              </template>
+            </div>
+            <div
+              v-if="availableAssets > 0"
+              class="w-1/2 flex flex-col items-center gap-4"
+            >
+              <h4>
+                {{ t("available_assets_to_redeem", { availableAssets }) }}
+              </h4>
+              <BaseButton
+                palette="secondary"
+                :label="t('redeem')"
+                :disabled="isLoading"
+                :loading="redeemAssetsLoading"
+                @click="handleRedeemAssets"
+              />
             </div>
           </div>
         </BaseCard>

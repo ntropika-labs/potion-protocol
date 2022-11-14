@@ -4,7 +4,6 @@ import {
   formatAmount,
   hasAssets,
   calcAssets,
-  calcAssetsBN,
 } from "@/helpers/deferredRequests";
 
 import type { MaybeRef } from "@vueuse/core";
@@ -75,10 +74,7 @@ function useWithdrawalRequests(
 
   const getWithdrawalDetails = (round: RoundsFragment) => ({
     id: round.roundNumber,
-    assets: calcAssetsBN(
-      round?.withdrawalRequests?.[0]?.remainingAssets,
-      round?.assetToShareRate
-    ),
+    assets: round.withdrawalRequests[0].amount,
   });
 
   const redeemAssets = () => {
