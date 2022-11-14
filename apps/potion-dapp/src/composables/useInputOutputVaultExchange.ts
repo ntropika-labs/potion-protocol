@@ -5,10 +5,20 @@ import {
   hasShares,
   calcAssets as _calcAssets,
 } from "@/helpers/deferredRequests";
+import { getDepositTicketsBurnInfo } from "hedging-vault-sdk";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
+import type { DepositTicket } from "hedging-vault-sdk";
 import type { RoundsFragment } from "@/types";
+
+const roundToDepositTicket = (round: RoundsFragment): DepositTicket => ({
+  id: parseInt(round.roundNumber),
+  amount: parseInt(round.depositRequests[0].amount),
+  amountRedeemed: parseInt(round.depositRequests[0].amountRedeemed),
+  shares: parseInt(round.depositRequests[0].shares),
+  remainingShares: parseInt(round.depositRequests[0].remainingShares),
+});
 
 function useInputOutputVaultExchange(
   walletAddress: MaybeRef<string>,
@@ -70,24 +80,18 @@ function useInputOutputVaultExchange(
     }
   };
 
-  const getExchangeDetails = (round: RoundsFragment) => ({
-    id: round.roundNumber,
-    amount: round.depositRequests[0].amount,
-  });
-
-  const exchangeTickets = async () => {
+  const exchangeTickets = async (percentage: number | string = 100) => {
     if (isApprovedForAll.value && pastRounds.value.length > 0) {
-      if (pastRounds.value.length === 1) {
-        const { id, amount } = getExchangeDetails(pastRounds.value[0]);
-        await exchangeInputForOutput(id, amount);
+      const depositTickets = pastRounds.value.map(roundToDepositTicket);
+      const result = getDepositTicketsBurnInfo(
+        depositTickets,
+        Number(percentage)
+      );
+      const ids = result.ids.map(String);
+      const amounts = result.amounts.map(String);
+      if (ids.length === 1) {
+        await exchangeInputForOutput(ids[0], amounts[0]);
       } else {
-        const ids = new Array<string>();
-        const amounts = new Array<string>();
-        pastRounds.value.forEach((round) => {
-          const { id, amount } = getExchangeDetails(round);
-          ids.push(id);
-          amounts.push(amount);
-        });
         await exchangeInputForOutputBatch(ids, amounts);
       }
     }
