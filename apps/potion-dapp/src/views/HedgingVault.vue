@@ -270,6 +270,7 @@ const {
 const currentRound = computed(() => vault.value.currentRound);
 const assetSymbol = computed(() => vault.value.asset.symbol);
 const assetAddress = computed(() => vault.value.asset.address);
+const assetDecimals = computed(() => vault.value.asset.decimals);
 const vaultRounds = computed(() => vault.value.rounds);
 const lastShareToAssetRate = computed(() => vault.value.lastShareToAssetRate);
 
@@ -299,6 +300,7 @@ const {
 } = useDepositRequests(
   roundsInputAddress,
   assetAddress,
+  assetDecimals,
   currentRound,
   vaultRounds
 );

@@ -206,7 +206,11 @@ export function useRoundsVaultContract(
   const depositTx = ref<ContractTransaction | null>(null);
   const depositReceipt = ref<ContractReceipt | null>(null);
   const depositLoading = ref(false);
-  const deposit = async (amount: number, self = true, receiver?: string) => {
+  const deposit = async (
+    amount: BigNumberish,
+    self = true,
+    receiver?: string
+  ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
       try {
