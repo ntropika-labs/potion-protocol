@@ -4,6 +4,7 @@
 export { ERC1155FullSupplyUpgradeableMock__factory } from "./ERC1155FullSupplyUpgradeableMock__factory";
 export { ERC1155UpgradeableMock__factory } from "./ERC1155UpgradeableMock__factory";
 export { ERC20DecimalsUpgradeableMock__factory } from "./ERC20DecimalsUpgradeableMock__factory";
+export { MockChainlinkAggregatorV3__factory } from "./MockChainlinkAggregatorV3__factory";
 export { MockERC20PresetMinterPauser__factory } from "./MockERC20PresetMinterPauser__factory";
 export { MockERC4626__factory } from "./MockERC4626__factory";
 export { MockOpynAddressBook__factory } from "./MockOpynAddressBook__factory";
@@ -12,3 +13,4 @@ export { MockOpynFactory__factory } from "./MockOpynFactory__factory";
 export { MockOpynOracle__factory } from "./MockOpynOracle__factory";
 export { MockPotionLiquidityPool__factory } from "./MockPotionLiquidityPool__factory";
 export { MockUniswapV3Router__factory } from "./MockUniswapV3Router__factory";
+export { MockUniswapV3RouterWithOracle__factory } from "./MockUniswapV3RouterWithOracle__factory";

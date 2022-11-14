@@ -7,7 +7,7 @@ import { ifMocksEnabled, asMock, DAY_IN_SECONDS } from "contracts-utils";
 
 import { HedgingVaultEnvironmentDeployment } from "../hedging-vault/deployHedgingVaultEnvironment";
 
-import { IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
+import { IPotionLiquidityPool, IUniswapV3Oracle, MockChainlinkAggregatorV3 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { getEncodedSwapPath } from "./uniswapV3Utils";
 
@@ -22,7 +22,9 @@ import { getEncodedSwapPath } from "./uniswapV3Utils";
  */
 interface TestConditions {
     uniswapEnterPositionInputAmount: BigNumber;
+    uniswapEnterPositionInputAmountWithSlippage: BigNumber;
     uniswapExitPositionOutputAmount: BigNumber;
+    uniswapExitPositionOutputAmountWithSlippage: BigNumber;
     potionBuyInfo: PotionBuyInfoStruct;
     potionBuySwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
     potionBuySwapExitPosition: IUniswapV3Oracle.SwapInfoStruct;
@@ -188,6 +190,17 @@ export async function setupTestConditions(
     USDCPriceInUSD: BigNumber,
     amountToBeInvested: BigNumber,
 ): Promise<TestConditions> {
+    // Setup Chainlink Oracles
+    const PriceDecimals = 8;
+    const PriceUnit = BigNumber.from(10).pow(PriceDecimals);
+    const PriceConversionFactor = BigNumber.from(10).pow(PriceDecimals);
+
+    const USDPerUSDC = PriceUnit.mul(PriceConversionFactor).div(USDCPriceInUSD);
+    const USDCPerUnderlying = PriceUnit.mul(PriceConversionFactor).div(underlyingAssetPriceInUSD);
+
+    (tEnv.chainlinkAggregatorUSDC as unknown as MockChainlinkAggregatorV3).setAnswer(USDPerUSDC);
+    (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(USDCPerUnderlying);
+
     const { potionBuyInfo, expectedPremiumInUSDC } = await getPotionBuyInfo(
         tEnv,
         amountToBeInvested,
@@ -215,11 +228,13 @@ export async function setupTestConditions(
     const nextCycleStartTimestamp = await tEnv.potionBuyAction.nextCycleStartTimestamp();
     const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
-    const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
-        maxPremiumWithSlippageInUSDC
-            .mul(BigNumber.from(1000000000000))
-            .mul(USDCPriceInUSD)
-            .div(underlyingAssetPriceInUSD),
+    const uniswapEnterPositionInputAmount = maxPremiumWithSlippageInUSDC
+        .mul(BigNumber.from(1000000000000))
+        .mul(USDCPriceInUSD)
+        .div(underlyingAssetPriceInUSD);
+
+    const uniswapEnterPositionInputAmountWithSlippage = HedgingVaultUtils.addPercentage(
+        uniswapEnterPositionInputAmount,
         tEnv.swapSlippage,
     );
 
@@ -245,8 +260,10 @@ export async function setupTestConditions(
         .mul(USDCPriceInUSD)
         .div(underlyingAssetPriceInUSD);
 
-    const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
-        extraUnderlyingAssetInVaultAfterPayout,
+    const uniswapExitPositionOutputAmount = extraUnderlyingAssetInVaultAfterPayout;
+
+    const uniswapExitPositionOutputAmountWithSlippage = HedgingVaultUtils.subtractPercentage(
+        uniswapExitPositionOutputAmount,
         tEnv.swapSlippage,
     );
 
@@ -294,9 +311,8 @@ export async function setupTestConditions(
 
     // Swap To USDC swapped amount
     const underlyingDecimals = await tEnv.underlyingAsset.decimals();
-    const amountToBeInvestedAfterSlippage = HedgingVaultUtils.subtractPercentage(amountToBeInvested, tEnv.swapSlippage);
     const swapToUSDCAmountUSDC = HedgingVaultUtils.convertAmountToUSDC(
-        amountToBeInvestedAfterSlippage,
+        amountToBeInvested,
         underlyingDecimals,
         underlyingAssetPriceInUSD,
         USDCPriceInUSD,
@@ -304,7 +320,9 @@ export async function setupTestConditions(
 
     return {
         uniswapEnterPositionInputAmount,
+        uniswapEnterPositionInputAmountWithSlippage,
         uniswapExitPositionOutputAmount,
+        uniswapExitPositionOutputAmountWithSlippage,
         potionBuyInfo,
         potionBuySwapEnterPosition,
         potionBuySwapExitPosition,

@@ -7,6 +7,8 @@ import {
     MockOpynOracle,
     MockOpynAddressBook,
     MockERC4626,
+    MockChainlinkAggregatorV3,
+    MockUniswapV3RouterWithOracle,
 } from "../../typechain";
 
 import { MockContract } from "@defi-wonderland/smock";
@@ -47,10 +49,27 @@ export async function mockOpynFactory(): Promise<MockContract<MockOpynFactory> |
     return mockContract<MockOpynFactory>("MockOpynFactory", [], "OpynFactory");
 }
 
+export async function mockChainlinkAggregator(
+    alias: string,
+): Promise<MockContract<MockChainlinkAggregatorV3> | MockChainlinkAggregatorV3> {
+    return mockContract<MockChainlinkAggregatorV3>("MockChainlinkAggregatorV3", [], alias);
+}
+
 export async function mockUniswapV3SwapRouter(
     tokens: string[] = [],
 ): Promise<MockContract<MockUniswapV3Router> | MockUniswapV3Router> {
     return mockContract<MockUniswapV3Router>("MockUniswapV3Router", [tokens], "UniswapV3Router");
+}
+
+export async function mockUniswapV3SwapRouterWithOracle(
+    tokens: string[] = [],
+    oracles: string[] = [],
+): Promise<MockContract<MockUniswapV3RouterWithOracle> | MockUniswapV3RouterWithOracle> {
+    return mockContract<MockUniswapV3RouterWithOracle>(
+        "MockUniswapV3RouterWithOracle",
+        [tokens, oracles],
+        "UniswapV3Router",
+    );
 }
 
 export async function mockOpynOracle(): Promise<MockContract<MockOpynOracle> | MockOpynOracle> {

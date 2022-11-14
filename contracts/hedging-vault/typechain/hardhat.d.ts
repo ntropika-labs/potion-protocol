@@ -261,6 +261,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBaseRoundsVault__factory>;
     getContractFactory(
+      name: "IChainlinkAggregatorV3",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IChainlinkAggregatorV3__factory>;
+    getContractFactory(
       name: "IEmergencyLock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IEmergencyLock__factory>;
@@ -405,6 +409,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20DecimalsUpgradeableMock__factory>;
     getContractFactory(
+      name: "MockChainlinkAggregatorV3",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockChainlinkAggregatorV3__factory>;
+    getContractFactory(
       name: "MockERC20PresetMinterPauser",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20PresetMinterPauser__factory>;
@@ -436,6 +444,10 @@ declare module "hardhat/types/runtime" {
       name: "MockUniswapV3Router",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockUniswapV3Router__factory>;
+    getContractFactory(
+      name: "MockUniswapV3RouterWithOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockUniswapV3RouterWithOracle__factory>;
     getContractFactory(
       name: "TestWrapperActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -832,6 +844,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IBaseRoundsVault>;
     getContractAt(
+      name: "IChainlinkAggregatorV3",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IChainlinkAggregatorV3>;
+    getContractAt(
       name: "IEmergencyLock",
       address: string,
       signer?: ethers.Signer
@@ -1012,6 +1029,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20DecimalsUpgradeableMock>;
     getContractAt(
+      name: "MockChainlinkAggregatorV3",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockChainlinkAggregatorV3>;
+    getContractAt(
       name: "MockERC20PresetMinterPauser",
       address: string,
       signer?: ethers.Signer
@@ -1051,6 +1073,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MockUniswapV3Router>;
+    getContractAt(
+      name: "MockUniswapV3RouterWithOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockUniswapV3RouterWithOracle>;
     getContractAt(
       name: "TestWrapperActionsManager",
       address: string,

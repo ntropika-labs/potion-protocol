@@ -18,15 +18,17 @@ import {
     RoundsOutputVault,
     RoundsVaultExchanger,
     SwapToUSDCAction,
+    IChainlinkAggregatorV3,
 } from "../../typechain";
 import {
     mockERC20,
     mockPotionLiquidityPoolManager,
-    mockUniswapV3SwapRouter,
+    mockUniswapV3SwapRouterWithOracle,
     mockOpynController,
     mockOpynFactory,
     mockOpynOracle,
     mockOpynAddressBook,
+    mockChainlinkAggregator,
 } from "../test/contractsMocks";
 import { asMock, Deployments } from "contracts-utils";
 import type { DeploymentType } from "contracts-utils";
@@ -61,6 +63,8 @@ export interface HedgingVaultEnvironmentDeployment {
     opynOracle: IOpynOracle | MockContract<IOpynOracle>;
     opynMockOracle: MockOpynOracle | MockContract<MockOpynOracle>;
     uniswapV3SwapRouter: ISwapRouter | MockContract<ISwapRouter>;
+    chainlinkAggregatorUSDC: IChainlinkAggregatorV3 | MockContract<IChainlinkAggregatorV3>;
+    chainlinkAggregatorUnderlying: IChainlinkAggregatorV3 | MockContract<IChainlinkAggregatorV3>;
 
     // Config
     adminAddress: string;
@@ -233,10 +237,16 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouter([
-            testingEnvironmentDeployment.USDC.address,
-            testingEnvironmentDeployment.underlyingAsset.address,
-        ]);
+        const chainlinkAggregatorUSDC = await mockChainlinkAggregator("ChainlinkAggregatorUSDC");
+        const chainlinkAggregatorUnderlying = await mockChainlinkAggregator("ChainlinkAggregatorUnderlying");
+
+        testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouterWithOracle(
+            [testingEnvironmentDeployment.USDC.address, testingEnvironmentDeployment.underlyingAsset.address],
+            [chainlinkAggregatorUSDC.address, chainlinkAggregatorUnderlying.address],
+        );
+
+        testingEnvironmentDeployment.chainlinkAggregatorUSDC = chainlinkAggregatorUSDC;
+        testingEnvironmentDeployment.chainlinkAggregatorUnderlying = chainlinkAggregatorUnderlying;
 
         // Mint some tokens to the Uniswap Router
         await testingEnvironmentDeployment.USDC.mint(

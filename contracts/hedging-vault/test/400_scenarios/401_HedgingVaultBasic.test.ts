@@ -331,7 +331,7 @@ describe("HedgingVaultBasic", function () {
             );
             expect(asMock(tEnv.underlyingAsset).approve.atCall(2)).to.have.been.calledWith(
                 tEnv.uniswapV3SwapRouter.address,
-                tCond.uniswapEnterPositionInputAmount,
+                tCond.uniswapEnterPositionInputAmountWithSlippage,
             );
             expect(asMock(tEnv.underlyingAsset).approve.atCall(3)).to.have.been.calledWith(potionBuy.address, 0);
 
@@ -342,7 +342,7 @@ describe("HedgingVaultBasic", function () {
                 potionBuy.address,
                 tEnv.maxSwapDurationSecs.add(cycleStartTimestamp),
                 BigNumber.from(tCond.maxPremiumWithSlippageInUSDC),
-                BigNumber.from(tCond.uniswapEnterPositionInputAmount),
+                BigNumber.from(tCond.uniswapEnterPositionInputAmountWithSlippage),
             ]);
             expect(asMock(tEnv.uniswapV3SwapRouter).exactInput).to.have.been.calledOnce;
             expect(asMock(tEnv.uniswapV3SwapRouter).exactInput.getCall(0).args[0]).to.be.deep.equal([
@@ -350,7 +350,7 @@ describe("HedgingVaultBasic", function () {
                 potionBuy.address,
                 tEnv.maxSwapDurationSecs.add(cycleEndTimestamp),
                 tCond.totalUSDCInActionAfterPayout,
-                tCond.uniswapExitPositionOutputAmount,
+                tCond.uniswapExitPositionOutputAmountWithSlippage,
             ]);
 
             // Potion Liquidity Manager calls
