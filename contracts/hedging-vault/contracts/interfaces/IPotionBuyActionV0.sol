@@ -20,6 +20,7 @@ interface IPotionBuyActionV0 {
     event StrikePercentageChanged(uint256 strikePercentage);
     event HedgingRateChanged(uint256 hedgingRate);
     event HedgingRateSlippageChanged(uint256 hedgingRateSlippage);
+    event HedgingRateValidated(uint256 expectedHedgingRate, uint256 hedgingRateSlippage, uint256 actualHedgingRate);
 
     /// ERRORS
     error MaxPremiumPercentageOutOfRange(uint256 maxPremiumPercentage);

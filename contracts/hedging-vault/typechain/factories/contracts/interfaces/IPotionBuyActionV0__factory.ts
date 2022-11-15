@@ -151,6 +151,31 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "expectedHedgingRate",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "hedgingRateSlippage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "actualHedgingRate",
+        type: "uint256",
+      },
+    ],
+    name: "HedgingRateValidated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "maxPremiumPercentage",
         type: "uint256",
       },
