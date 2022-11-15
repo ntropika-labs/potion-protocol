@@ -161,6 +161,13 @@
               class="w-1/2 flex flex-col items-center gap-4"
             >
               <h3>{{ t("estimated_exchange_assets", { estimatedAssets }) }}</h3>
+              <InputSlider
+                class="my-4"
+                symbol="%"
+                :step="0.1"
+                :model-value="exchangePercentage"
+                @update:model-value="updateExchangePercentage"
+              />
               <BaseButton
                 palette="secondary"
                 :label="exchangeLabel"
@@ -225,6 +232,7 @@ import {
   InputNumber,
   BaseButton,
   TimeTag,
+  InputSlider,
   getEtherscanUrl,
 } from "potion-ui";
 
@@ -365,6 +373,12 @@ const {
   currentRound,
   lastShareToAssetRate
 );
+const exchangePercentage = ref(100);
+const updateExchangePercentage = (value: number) => {
+  if (value > 0 && value < 101) {
+    exchangePercentage.value = value;
+  }
+};
 
 const exchangeLabel = computed(() =>
   canExchange.value ? t("exchange") : t("approve")
@@ -372,7 +386,7 @@ const exchangeLabel = computed(() =>
 
 const handleExchange = async () => {
   if (canExchange.value) {
-    exchangeTickets();
+    exchangeTickets(exchangePercentage.value);
   } else {
     approveExchange();
   }
