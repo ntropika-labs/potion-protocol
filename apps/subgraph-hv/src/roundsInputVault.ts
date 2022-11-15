@@ -203,7 +203,7 @@ function withdraw(
     depositRequest.amountRedeemed =
       depositRequest.amountRedeemed.plus(exchangeAssetAmount);
     depositRequest.remainingShares =
-      depositRequest.shares.minus(exchangeAssetAmount);
+      depositRequest.remainingShares.minus(exchangeAssetAmount);
     depositRequest.save();
     log.info(
       "DepositRequest {} now has {} amount, {} amountRedeemed and {} remainingShares",

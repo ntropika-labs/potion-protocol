@@ -69,7 +69,7 @@ const mockedDepositParams: DepositRequestParams = {
   amount: BigInt.fromString("100"),
   amountRedeemed: BigInt.fromString("0"),
   shares: BigInt.fromString("50"),
-  remainingShares: BigInt.fromString("0"),
+  remainingShares: BigInt.fromString("50"),
 };
 
 const mockedDepositParamsArray: DepositRequestParams[] = [
@@ -78,28 +78,28 @@ const mockedDepositParamsArray: DepositRequestParams[] = [
     amount: BigInt.fromString("10"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("5"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("5"),
   },
   {
     depositId: BigInt.fromString("2"),
     amount: BigInt.fromString("100"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("50"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("50"),
   },
   {
     depositId: BigInt.fromString("3"),
     amount: BigInt.fromString("500"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("250"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("250"),
   },
   {
     depositId: BigInt.fromString("4"),
     amount: BigInt.fromString("1000"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("500"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("500"),
   },
 ];
 

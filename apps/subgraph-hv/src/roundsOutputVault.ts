@@ -213,7 +213,7 @@ function withdraw(
     withdrawalRequest.amountRedeemed =
       withdrawalRequest.amountRedeemed.plus(exchangeAssetAmount);
     withdrawalRequest.remainingAssets =
-      withdrawalRequest.assets.minus(exchangeAssetAmount);
+      withdrawalRequest.remainingAssets.minus(exchangeAssetAmount);
     withdrawalRequest.save();
     log.info(
       "WithdrawalRequest {} now has {} amount, {} amountRedeemed and {} remainingAssets",
