@@ -14,6 +14,7 @@ import {
 import { MockContract } from "@defi-wonderland/smock";
 import { Deployments, DeploymentFlags } from "contracts-utils";
 import { Contract } from "ethers";
+import { parseUnits } from "@ethersproject/units";
 
 const MockOptions = DeploymentFlags.Export | DeploymentFlags.Mock;
 
@@ -51,8 +52,13 @@ export async function mockOpynFactory(): Promise<MockContract<MockOpynFactory> |
 
 export async function mockChainlinkAggregator(
     alias: string,
+    initialPrice: number,
 ): Promise<MockContract<MockChainlinkAggregatorV3> | MockChainlinkAggregatorV3> {
-    return mockContract<MockChainlinkAggregatorV3>("MockChainlinkAggregatorV3", [], alias);
+    return mockContract<MockChainlinkAggregatorV3>(
+        "MockChainlinkAggregatorV3",
+        [parseUnits(initialPrice.toString(), 8)],
+        alias,
+    );
 }
 
 export async function mockUniswapV3SwapRouter(

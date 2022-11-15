@@ -64,7 +64,8 @@
         "lint-ts": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --ext .js,.ts .",
         "format": "prettier --config ./.prettierrc.js --write \"**/*.{js,json,md,sol,ts}\"",
         "format-check": "prettier --check --config ./.prettierrc.js \"**/*.{js,json,md,sol,ts}\"",
-        "fast-forward": "yarn run -T hardhat fastForward"
+        "fast-forward": "yarn run -T hardhat fastForward",
+        "set-oracle-price": "hardhat setOraclePrice"
     },
     "dependencies": {
         "@potion-protocol/core": "workspace:^",

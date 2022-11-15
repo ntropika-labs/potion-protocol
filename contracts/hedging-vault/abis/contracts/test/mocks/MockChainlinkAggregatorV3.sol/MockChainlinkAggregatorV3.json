@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "initialAnswer",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "inputs": [],
     "name": "decimals",
     "outputs": [

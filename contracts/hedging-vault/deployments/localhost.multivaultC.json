@@ -1,5 +1,5 @@
 {
-  "timestamp": 1667830099,
+  "timestamp": 1668527841,
   "network": "develop",
   "contracts": {
     "USDC": {
@@ -34,37 +34,45 @@
       "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
       "blockNumber": 0
     },
-    "UniswapV3Router": {
-      "address": "0xE3011A37A904aB90C8881a99BD1F6E21401f1522",
-      "blockNumber": 143
-    },
-    "HedgingVaultOrchestrator": {
-      "address": "0x525C7063E7C20997BaaE9bDa922159152D0e8417",
-      "blockNumber": 146
-    },
-    "PotionBuyAction": {
+    "ChainlinkAggregatorUSDC": {
       "address": "0x38a024C0b412B9d1db8BC398140D00F5Af3093D4",
       "blockNumber": 147
     },
-    "SwapToUSDCAction": {
+    "ChainlinkAggregatorUnderlyingAsset": {
       "address": "0x5fc748f1FEb28d7b76fa1c6B07D8ba2d5535177c",
       "blockNumber": 148
     },
-    "InvestmentVault": {
+    "UniswapV3Router": {
       "address": "0xB82008565FdC7e44609fA118A4a681E92581e680",
       "blockNumber": 149
     },
-    "RoundsInputVault": {
-      "address": "0x2a810409872AfC346F9B5b26571Fd6eC42EA4849",
-      "blockNumber": 150
-    },
-    "RoundsOutputVault": {
-      "address": "0xb9bEECD1A582768711dE1EE7B0A1d582D9d72a6C",
-      "blockNumber": 151
-    },
-    "RoundsVaultExchanger": {
+    "HedgingVaultOrchestrator": {
       "address": "0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8",
       "blockNumber": 152
+    },
+    "PotionBuyAction": {
+      "address": "0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849",
+      "blockNumber": 153
+    },
+    "SwapToUSDCAction": {
+      "address": "0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55",
+      "blockNumber": 154
+    },
+    "InvestmentVault": {
+      "address": "0xd6e1afe5cA8D00A2EFC01B89997abE2De47fdfAf",
+      "blockNumber": 155
+    },
+    "RoundsInputVault": {
+      "address": "0x99dBE4AEa58E518C50a1c04aE9b48C9F6354612f",
+      "blockNumber": 156
+    },
+    "RoundsOutputVault": {
+      "address": "0x6F6f570F45833E249e27022648a26F4076F48f78",
+      "blockNumber": 157
+    },
+    "RoundsVaultExchanger": {
+      "address": "0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9",
+      "blockNumber": 158
     }
   }
 }

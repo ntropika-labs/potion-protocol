@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs, { existsSync, readFileSync } from "fs";
 import path, { resolve } from "path";
 
 import "@nomiclabs/hardhat-ethers";
@@ -389,6 +389,19 @@ export class Deployments {
     const deploymentsFileName = this.getLegacyDeploymentsName(timestamp);
 
     return resolve(deploymentsDir, deploymentsFileName);
+  }
+
+  public static retrieveDeployments() {
+    const deploymentsPath = this.getDeploymentsPath();
+    const legacyDeploymentsPath = this.getLegacyDeploymentsPath();
+
+    if (existsSync(deploymentsPath)) {
+      return JSON.parse(readFileSync(deploymentsPath));
+    } else if (existsSync(legacyDeploymentsPath)) {
+      return JSON.parse(readFileSync(legacyDeploymentsPath));
+    } else {
+      return undefined;
+    }
   }
 
   /**

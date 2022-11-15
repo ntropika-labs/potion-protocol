@@ -10,6 +10,10 @@ import "../../interfaces/IChainlinkAggregatorV3.sol";
 contract MockChainlinkAggregatorV3 is IChainlinkAggregatorV3 {
     int256 public latestAnswer = 100000000;
 
+    constructor(int256 initialAnswer) {
+        latestAnswer = initialAnswer;
+    }
+
     function decimals() external pure returns (uint8) {
         return 8;
     }

@@ -237,8 +237,11 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
-        const chainlinkAggregatorUSDC = await mockChainlinkAggregator("ChainlinkAggregatorUSDC");
-        const chainlinkAggregatorUnderlying = await mockChainlinkAggregator("ChainlinkAggregatorUnderlying");
+        const chainlinkAggregatorUSDC = await mockChainlinkAggregator("ChainlinkAggregatorUSDC", 1.0);
+        const chainlinkAggregatorUnderlying = await mockChainlinkAggregator(
+            "ChainlinkAggregatorUnderlyingAsset",
+            0.001,
+        );
 
         testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouterWithOracle(
             [testingEnvironmentDeployment.USDC.address, testingEnvironmentDeployment.underlyingAsset.address],
@@ -502,6 +505,14 @@ export async function printDeploymentEnvironment(environmentDeployment: HedgingV
     console.log(`  - Underlying Asset: ${environmentDeployment.underlyingAsset.address}`);
     console.log(`  - USDC: ${environmentDeployment.USDC.address}`);
     console.log(`------------------------------------------------------`);
+    if (environmentDeployment.chainlinkAggregatorUSDC !== undefined) {
+        console.log(`  - Chainlink Aggregator USDC: ${environmentDeployment.chainlinkAggregatorUSDC.address}`);
+    }
+    if (environmentDeployment.chainlinkAggregatorUnderlying !== undefined) {
+        console.log(
+            `  - Chainlink Aggregator Underlying Asset: ${environmentDeployment.chainlinkAggregatorUnderlying.address}`,
+        );
+    }
     console.log(`  - Potion Liquidity Pool Manager: ${environmentDeployment.potionLiquidityPoolManager.address}`);
     console.log(`  - Opyn Oracle: ${environmentDeployment.opynOracle.address}`);
     console.log(`  - Opyn Address Book: ${environmentDeployment.opynAddressBook.address}`);
