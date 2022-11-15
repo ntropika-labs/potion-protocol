@@ -32,7 +32,6 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/extensions/IERC20M
 
     @author Roberto Cano <robercano>
  */
-import "hardhat/console.sol";
 
 abstract contract VaultWithReceiptsUpgradeable is
     Initializable,

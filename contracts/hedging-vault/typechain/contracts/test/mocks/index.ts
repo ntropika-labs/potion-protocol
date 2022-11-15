@@ -4,6 +4,7 @@
 export type { ERC1155FullSupplyUpgradeableMock } from "./ERC1155FullSupplyUpgradeableMock";
 export type { ERC1155UpgradeableMock } from "./ERC1155UpgradeableMock";
 export type { ERC20DecimalsUpgradeableMock } from "./ERC20DecimalsUpgradeableMock";
+export type { MockChainlinkAggregatorV3 } from "./MockChainlinkAggregatorV3";
 export type { MockERC20PresetMinterPauser } from "./MockERC20PresetMinterPauser";
 export type { MockERC4626 } from "./MockERC4626";
 export type { MockOpynAddressBook } from "./MockOpynAddressBook";
@@ -12,3 +13,4 @@ export type { MockOpynFactory } from "./MockOpynFactory";
 export type { MockOpynOracle } from "./MockOpynOracle";
 export type { MockPotionLiquidityPool } from "./MockPotionLiquidityPool";
 export type { MockUniswapV3Router } from "./MockUniswapV3Router";
+export type { MockUniswapV3RouterWithOracle } from "./MockUniswapV3RouterWithOracle";

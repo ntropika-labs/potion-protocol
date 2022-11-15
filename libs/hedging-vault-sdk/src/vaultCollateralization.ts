@@ -1,6 +1,12 @@
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { parseAmount, parsePercentage, parsePriceInUSDC } from "./utils";
-import { applyPercentage, fromFraction, PERCENTAGE_100_BN, divByPercentage } from "./percentageUtils";
+import {
+    applyPercentage,
+    fromFraction,
+    PERCENTAGE_100_BN,
+    divByPercentage,
+    toSolidityPercentage,
+} from "./percentageUtils";
 
 export const OTOKEN_DECIMALS = BigNumber.from(8);
 
@@ -62,6 +68,14 @@ export function calculateOrderSize(
             quotedPremiumInUSDC: quotedPremiumInUSDC.toString(),
         },
     ]);
+
+    if (vaultSize.isZero()) {
+        return {
+            effectiveVaultSize: vaultSize,
+            premiumPercent: toSolidityPercentage(0),
+        };
+    }
+
     // Calculate the premium percent
     const premiumPercent = _calculatePremiumPercent(
         vaultSize,

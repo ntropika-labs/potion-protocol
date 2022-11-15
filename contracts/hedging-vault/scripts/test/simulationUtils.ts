@@ -7,9 +7,10 @@ import { ifMocksEnabled, asMock, DAY_IN_SECONDS } from "contracts-utils";
 
 import { HedgingVaultEnvironmentDeployment } from "../hedging-vault/deployHedgingVaultEnvironment";
 
-import { IPotionLiquidityPool, IUniswapV3Oracle } from "../../typechain";
+import { IPotionLiquidityPool, IUniswapV3Oracle, MockChainlinkAggregatorV3 } from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { getEncodedSwapPath } from "./uniswapV3Utils";
+import { calculateOrderSize } from "hedging-vault-sdk";
 
 /**
     @notice Miscelaneous calculations utils to simulate the behaviour of the vault given some input parameters
@@ -22,7 +23,9 @@ import { getEncodedSwapPath } from "./uniswapV3Utils";
  */
 interface TestConditions {
     uniswapEnterPositionInputAmount: BigNumber;
+    uniswapEnterPositionInputAmountWithSlippage: BigNumber;
     uniswapExitPositionOutputAmount: BigNumber;
+    uniswapExitPositionOutputAmountWithSlippage: BigNumber;
     potionBuyInfo: PotionBuyInfoStruct;
     potionBuySwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
     potionBuySwapExitPosition: IUniswapV3Oracle.SwapInfoStruct;
@@ -53,12 +56,12 @@ export function calculatePremium(
     return BigNumber.from(Math.floor(newPremium - previousPremium));
 }
 
-export async function getPotionBuyInfo(
+export async function getRouterPremium(
     tEnv: HedgingVaultEnvironmentDeployment,
     amountToBeInvested: BigNumber,
     underlyingAssetPriceInUSD: BigNumber,
     USDCPriceInUSD: BigNumber,
-): Promise<{ potionBuyInfo: PotionBuyInfoStruct; expectedPremiumInUSDC: BigNumber }> {
+) {
     // The Potion Protocol sample deployment creates some pools of capitals using the default ethers signers. We
     // use the first pool of capital and copy its curve and criteria here. The lp address is the address of the
     // deployer of the contracts (i.e.: signer[0]). And the pool id is always 0
@@ -71,12 +74,49 @@ export async function getPotionBuyInfo(
     const collateralRequiredInUSDC = HedgingVaultUtils.applyPercentage(amountProtectedInUSDC, tEnv.strikePercentage);
 
     const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
-    const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
 
     const lpAddress = (await ethers.getSigners())[0].address;
     const pool = await tEnv.potionLiquidityPoolManager.lpPools(lpAddress, 0);
-    const expectedPremiumInUSDC = calculatePremium(pool, curve, collateralRequiredInUSDC);
-    const otokensAmount = amountToBeInvested.div(10000000000); // oToken uses 8 decimals
+
+    return calculatePremium(pool, curve, collateralRequiredInUSDC);
+}
+
+export async function getPotionBuyInfo(
+    tEnv: HedgingVaultEnvironmentDeployment,
+    amountToBeInvested: BigNumber,
+    underlyingAssetPriceInUSD: BigNumber,
+    USDCPriceInUSD: BigNumber,
+): Promise<{ potionBuyInfo: PotionBuyInfoStruct; expectedPremiumInUSDC: BigNumber }> {
+    const spotPriceUSDC = BigNumber.from(10).pow(6).mul(underlyingAssetPriceInUSD).div(USDCPriceInUSD);
+    const curve = new HyperbolicCurve(0.1, 0.1, 0.1, 0.1);
+    const criteria = new CurveCriteria(tEnv.underlyingAsset.address, tEnv.USDC.address, true, 120, 365); // PUT, max 120% strike & max 1 year duration
+
+    const lpAddress = (await ethers.getSigners())[0].address;
+
+    const undelyingDecimals = await tEnv.underlyingAsset.decimals();
+
+    const initialPremiumInUSDC = await getRouterPremium(
+        tEnv,
+        amountToBeInvested,
+        underlyingAssetPriceInUSD,
+        USDCPriceInUSD,
+    );
+    const { effectiveVaultSize } = await calculateOrderSize(
+        amountToBeInvested,
+        undelyingDecimals,
+        tEnv.hedgingRate,
+        tEnv.strikePercentage,
+        spotPriceUSDC,
+        initialPremiumInUSDC,
+    );
+    const expectedPremiumInUSDC = await getRouterPremium(
+        tEnv,
+        effectiveVaultSize,
+        underlyingAssetPriceInUSD,
+        USDCPriceInUSD,
+    );
+
+    const otokensAmount = effectiveVaultSize.div(10000000000); // oToken uses 8 decimals
     const strikePriceInUSDC = HedgingVaultUtils.applyPercentage(underlyingAssetPriceInUSD, tEnv.strikePercentage);
     const nextCycleStartTimestamp = await tEnv.potionBuyAction.nextCycleStartTimestamp();
     const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
@@ -188,6 +228,17 @@ export async function setupTestConditions(
     USDCPriceInUSD: BigNumber,
     amountToBeInvested: BigNumber,
 ): Promise<TestConditions> {
+    // Setup Chainlink Oracles
+    const PriceDecimals = 8;
+    const PriceUnit = BigNumber.from(10).pow(PriceDecimals);
+    const PriceConversionFactor = BigNumber.from(10).pow(PriceDecimals);
+
+    const USDPerUSDC = PriceUnit.mul(PriceConversionFactor).div(USDCPriceInUSD);
+    const USDCPerUnderlying = PriceUnit.mul(PriceConversionFactor).div(underlyingAssetPriceInUSD);
+
+    (tEnv.chainlinkAggregatorUSDC as unknown as MockChainlinkAggregatorV3).setAnswer(USDPerUSDC);
+    (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(USDCPerUnderlying);
+
     const { potionBuyInfo, expectedPremiumInUSDC } = await getPotionBuyInfo(
         tEnv,
         amountToBeInvested,
@@ -215,11 +266,13 @@ export async function setupTestConditions(
     const nextCycleStartTimestamp = await tEnv.potionBuyAction.nextCycleStartTimestamp();
     const expirationTimestamp = nextCycleStartTimestamp.add(DAY_IN_SECONDS);
 
-    const uniswapEnterPositionInputAmount = HedgingVaultUtils.addPercentage(
-        maxPremiumWithSlippageInUSDC
-            .mul(BigNumber.from(1000000000000))
-            .mul(USDCPriceInUSD)
-            .div(underlyingAssetPriceInUSD),
+    const uniswapEnterPositionInputAmount = maxPremiumWithSlippageInUSDC
+        .mul(BigNumber.from(1000000000000))
+        .mul(USDCPriceInUSD)
+        .div(underlyingAssetPriceInUSD);
+
+    const uniswapEnterPositionInputAmountWithSlippage = HedgingVaultUtils.addPercentage(
+        uniswapEnterPositionInputAmount,
         tEnv.swapSlippage,
     );
 
@@ -245,8 +298,10 @@ export async function setupTestConditions(
         .mul(USDCPriceInUSD)
         .div(underlyingAssetPriceInUSD);
 
-    const uniswapExitPositionOutputAmount = HedgingVaultUtils.subtractPercentage(
-        extraUnderlyingAssetInVaultAfterPayout,
+    const uniswapExitPositionOutputAmount = extraUnderlyingAssetInVaultAfterPayout;
+
+    const uniswapExitPositionOutputAmountWithSlippage = HedgingVaultUtils.subtractPercentage(
+        uniswapExitPositionOutputAmount,
         tEnv.swapSlippage,
     );
 
@@ -294,9 +349,8 @@ export async function setupTestConditions(
 
     // Swap To USDC swapped amount
     const underlyingDecimals = await tEnv.underlyingAsset.decimals();
-    const amountToBeInvestedAfterSlippage = HedgingVaultUtils.subtractPercentage(amountToBeInvested, tEnv.swapSlippage);
     const swapToUSDCAmountUSDC = HedgingVaultUtils.convertAmountToUSDC(
-        amountToBeInvestedAfterSlippage,
+        amountToBeInvested,
         underlyingDecimals,
         underlyingAssetPriceInUSD,
         USDCPriceInUSD,
@@ -304,7 +358,9 @@ export async function setupTestConditions(
 
     return {
         uniswapEnterPositionInputAmount,
+        uniswapEnterPositionInputAmountWithSlippage,
         uniswapExitPositionOutputAmount,
+        uniswapExitPositionOutputAmountWithSlippage,
         potionBuyInfo,
         potionBuySwapEnterPosition,
         potionBuySwapExitPosition,

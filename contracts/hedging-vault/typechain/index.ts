@@ -126,6 +126,8 @@ export type { IActionsManager } from "./contracts/interfaces/IActionsManager";
 export { IActionsManager__factory } from "./factories/contracts/interfaces/IActionsManager__factory";
 export type { IBaseRoundsVault } from "./contracts/interfaces/IBaseRoundsVault";
 export { IBaseRoundsVault__factory } from "./factories/contracts/interfaces/IBaseRoundsVault__factory";
+export type { IChainlinkAggregatorV3 } from "./contracts/interfaces/IChainlinkAggregatorV3";
+export { IChainlinkAggregatorV3__factory } from "./factories/contracts/interfaces/IChainlinkAggregatorV3__factory";
 export type { IEmergencyLock } from "./contracts/interfaces/IEmergencyLock";
 export { IEmergencyLock__factory } from "./factories/contracts/interfaces/IEmergencyLock__factory";
 export type { IFeeManager } from "./contracts/interfaces/IFeeManager";
@@ -198,6 +200,8 @@ export type { ERC1155UpgradeableMock } from "./contracts/test/mocks/ERC1155Upgra
 export { ERC1155UpgradeableMock__factory } from "./factories/contracts/test/mocks/ERC1155UpgradeableMock__factory";
 export type { ERC20DecimalsUpgradeableMock } from "./contracts/test/mocks/ERC20DecimalsUpgradeableMock";
 export { ERC20DecimalsUpgradeableMock__factory } from "./factories/contracts/test/mocks/ERC20DecimalsUpgradeableMock__factory";
+export type { MockChainlinkAggregatorV3 } from "./contracts/test/mocks/MockChainlinkAggregatorV3";
+export { MockChainlinkAggregatorV3__factory } from "./factories/contracts/test/mocks/MockChainlinkAggregatorV3__factory";
 export type { MockERC20PresetMinterPauser } from "./contracts/test/mocks/MockERC20PresetMinterPauser";
 export { MockERC20PresetMinterPauser__factory } from "./factories/contracts/test/mocks/MockERC20PresetMinterPauser__factory";
 export type { MockERC4626 } from "./contracts/test/mocks/MockERC4626";
@@ -214,6 +218,8 @@ export type { MockPotionLiquidityPool } from "./contracts/test/mocks/MockPotionL
 export { MockPotionLiquidityPool__factory } from "./factories/contracts/test/mocks/MockPotionLiquidityPool__factory";
 export type { MockUniswapV3Router } from "./contracts/test/mocks/MockUniswapV3Router";
 export { MockUniswapV3Router__factory } from "./factories/contracts/test/mocks/MockUniswapV3Router__factory";
+export type { MockUniswapV3RouterWithOracle } from "./contracts/test/mocks/MockUniswapV3RouterWithOracle";
+export { MockUniswapV3RouterWithOracle__factory } from "./factories/contracts/test/mocks/MockUniswapV3RouterWithOracle__factory";
 export type { TestWrapperActionsManager } from "./contracts/test/wrappers/TestWrapperActionsManager";
 export { TestWrapperActionsManager__factory } from "./factories/contracts/test/wrappers/TestWrapperActionsManager__factory";
 export type { TestWrapperBaseRoundsVaultUpgradeable } from "./contracts/test/wrappers/TestWrapperBaseRoundsVault.sol/TestWrapperBaseRoundsVaultUpgradeable";

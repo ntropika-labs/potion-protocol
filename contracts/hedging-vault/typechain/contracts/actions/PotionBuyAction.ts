@@ -734,6 +734,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
     "CycleDurationChanged(uint256)": EventFragment;
     "HedgingRateChanged(uint256)": EventFragment;
     "HedgingRateSlippageChanged(uint256)": EventFragment;
+    "HedgingRateValidated(uint256,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LifecycleStateChanged(uint8,uint8)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
@@ -753,6 +754,7 @@ export interface PotionBuyActionInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateValidated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LifecycleStateChanged"): EventFragment;
   getEvent(
@@ -825,6 +827,19 @@ export type HedgingRateSlippageChangedEvent = TypedEvent<
 
 export type HedgingRateSlippageChangedEventFilter =
   TypedEventFilter<HedgingRateSlippageChangedEvent>;
+
+export interface HedgingRateValidatedEventObject {
+  expectedHedgingRate: BigNumber;
+  hedgingRateSlippage: BigNumber;
+  actualHedgingRate: BigNumber;
+}
+export type HedgingRateValidatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  HedgingRateValidatedEventObject
+>;
+
+export type HedgingRateValidatedEventFilter =
+  TypedEventFilter<HedgingRateValidatedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -1704,6 +1719,17 @@ export interface PotionBuyAction extends BaseContract {
     HedgingRateSlippageChanged(
       hedgingRateSlippage?: null
     ): HedgingRateSlippageChangedEventFilter;
+
+    "HedgingRateValidated(uint256,uint256,uint256)"(
+      expectedHedgingRate?: null,
+      hedgingRateSlippage?: null,
+      actualHedgingRate?: null
+    ): HedgingRateValidatedEventFilter;
+    HedgingRateValidated(
+      expectedHedgingRate?: null,
+      hedgingRateSlippage?: null,
+      actualHedgingRate?: null
+    ): HedgingRateValidatedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
