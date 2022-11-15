@@ -131,6 +131,7 @@ const {
   loadEnterPositionRoute,
   evaluateEnterPositionData,
   effectiveVaultSizeInUnderlying,
+  debugData,
 } = useVaultOperatorEnterPosition(
   vaultId,
   tokenAsset,
@@ -226,8 +227,8 @@ const callbackEnterNextRound = async () => {
       exitSwapInfo,
       enterFallbackSwapInfo,
       exitFallbackSwapInfo,
-      counterparties: potionBuyInfo.sellers.map((s) =>
-        formatUnits(s.orderSizeInOtokens, 8)
+      counterparties: potionBuyInfo.sellers.map(async (s) =>
+        formatUnits(await s.orderSizeInOtokens, 8)
       ),
     },
   ]);
@@ -374,7 +375,7 @@ const { records, loadBuyerRecords } = useBuyerRecords(
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
 const setPriceCommand = computed(
   () =>
-    `yarn set-price --otoken ${potionAddress.value} --price 500 --network localhost`
+    `yarn set-price --otoken ${potionAddress.value} --price 700 --network localhost`
 );
 
 const copySetPriceCommand = async () => {
@@ -495,7 +496,7 @@ watch(blockTimestamp, async () => {
             </td>
             <td>
               {{
-                enterPositionData?.potionRouterInitialData.premium
+                debugData?.potionRouterInitialData?.premium
                   .toFixed(7)
                   .slice(0, -1)
               }}
@@ -512,14 +513,20 @@ watch(blockTimestamp, async () => {
       </table>
       <table>
         <thead>
-          <th>RoundsInput shares</th>
+          <th>totalAssetsToWithdraw(WETH)</th>
           <th>Order size (OT)</th>
-          <th>Action Underl. balance</th>
-          <th>Action USDC balance</th>
+          <th>Action balance (WETH)</th>
+          <th>Action balance (USDC)</th>
         </thead>
         <tbody class="text-center">
           <tr>
-            <td>-</td>
+            <td>
+              {{
+                debugData.totalAssetsToWithdrawInUnderlying
+                  ?.toFixed(19)
+                  .slice(0, -1)
+              }}
+            </td>
             <td>
               {{ effectiveVaultSizeInUnderlying.toFixed(9).slice(0, -1) }}
             </td>

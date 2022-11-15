@@ -65,6 +65,28 @@ export function useVaultOperatorEnterPosition(
   cycleDurationDays: Ref<number>
 ) {
   const effectiveVaultSizeInUnderlying = ref(0);
+  const enterPositionData: Ref<{
+    potionRouterData: DepthRouterReturn;
+    uniswapRouterData: UniswapRouterReturn;
+    fallbackUniswapRouterData: UniswapRouterReturn;
+  } | null> = ref(null);
+
+  // TODO: DEBUG PURPOSE- REMOVE
+  const debugData: Ref<{
+    potionRouterInitialData?: DepthRouterReturn;
+    totalPrincipalBeforeWithdrawalAndDepositInUnderlying?: number;
+    exitSwapAmountInUnderlying?: number;
+    inputVaultUnderlyingBalance?: number;
+    potionBuyActionUnderlyingBalance?: number;
+    swapToUSDCActionUnderlyingBalance?: number;
+    swapToUSDCActionUSDCBalance?: number;
+    investmentVaultTotalShares?: number;
+    totalSharesToWithdraw?: number;
+    shareToUnderlyingPrice?: number;
+    totalAssetsToWithdrawInUnderlying?: number;
+    totalPrincipalBeforeWithdrawalInUnderlying?: number;
+  }> = ref({});
+  // END TODO: DEBUG PURPOSE- REMOVE
 
   const { PotionBuyAction, RoundsInputVault, USDC } = getContractsFromVault(
     vaultAddress.value
@@ -81,77 +103,88 @@ export function useVaultOperatorEnterPosition(
   } = useAlphaRouter(getChainId());
 
   const { getTokenBalance } = useErc20Contract(underlyingTokenAddress, false);
+  //const { getTokenBalance: getUSDCBalance } = useErc20Contract(USDC, false);
   const { getGas, gasPrice } = useBlockNative();
 
   const { getTargetOtokenAddress } = useOtokenFactory();
 
   const getTotalPrincipalInUnderlying = async () => {
-    let price = 1;
     const totalPayout = totalPayoutUSDC.value
       ? totalPayoutUSDC.value.currentPayout
       : 0;
     const exitSwapAmountInUnderlying = totalPayout / oraclePrice.value;
-    console.log(
-      "CHECK exitSwapAmountInUnderlying",
-      totalPayout,
-      oraclePrice.value,
-      exitSwapAmountInUnderlying
-    );
 
-    const actionUnderlyingBalance = await getTokenBalance(
-      false,
-      PotionBuyAction
-    );
     const inputVaultUnderlyingBalance = await getTokenBalance(
       false,
       RoundsInputVault
     );
 
+    const potionBuyActionUnderlyingBalance = await getTokenBalance(
+      false,
+      PotionBuyAction
+    );
+    // TODO: based on the strategy used for the  previous round get the token
+    // balance for the strategy applied (PotionBuyAction or SwapToUSDCAction)
+    // const swapToUSDCActionUnderlyingBalance = await getTokenBalance(
+    //   false,
+    //   SwapToUSDCAction
+    // );
+    // const swapToUSDCActionUSDCBalance = await getUSDCBalance(
+    //   false,
+    //   SwapToUSDCAction
+    // );
+    // const swapToUSDCActionExitSwapAmountInUnderlying =
+    //   (swapToUSDCActionUnderlyingBalance as number) +
+    //   (swapToUSDCActionUSDCBalance as number) / oraclePrice.value;
+
+    // const totalPrincipalBeforeWithdrawalAndDepositInUnderlying =
+    // exitSwapAmountInUnderlying +
+    // (potionBuyActionUnderlyingBalance as number) +
+    // swapToUSDCActionExitSwapAmountInUnderlying;
+
     const totalPrincipalBeforeWithdrawalAndDepositInUnderlying =
-      exitSwapAmountInUnderlying + (actionUnderlyingBalance as number);
+      exitSwapAmountInUnderlying + (potionBuyActionUnderlyingBalance as number);
 
     const totalPrincipalBeforeWithdrawalInUnderlying =
       totalPrincipalBeforeWithdrawalAndDepositInUnderlying +
       (inputVaultUnderlyingBalance as number);
 
-    console.log("getTotalPrincipalInUnderlying");
-    console.table([
-      {
-        totalPayoutUSDC: totalPayoutUSDC.value,
-        totalPrincipalBeforeWithdrawalInUnderlying,
-        actionPlusExit:
-          exitSwapAmountInUnderlying + (actionUnderlyingBalance as number),
-        exitSwapAmountInUnderlying,
-        actionUnderlyingBalance,
-        inputVaultUnderlyingBalance,
-      },
-    ]);
+    debugData.value.totalPrincipalBeforeWithdrawalInUnderlying =
+      totalPrincipalBeforeWithdrawalInUnderlying;
+    debugData.value.totalPrincipalBeforeWithdrawalAndDepositInUnderlying =
+      totalPrincipalBeforeWithdrawalAndDepositInUnderlying;
+    debugData.value.exitSwapAmountInUnderlying = exitSwapAmountInUnderlying;
+    debugData.value.inputVaultUnderlyingBalance =
+      inputVaultUnderlyingBalance as number;
+    debugData.value.potionBuyActionUnderlyingBalance =
+      potionBuyActionUnderlyingBalance as number;
+    // debugData.value.swapToUSDCActionUnderlyingBalance =
+    //   swapToUSDCActionUnderlyingBalance as number;
+    // debugData.value.swapToUSDCActionUSDCBalance =
+    //   swapToUSDCActionUSDCBalance as number;
 
     // When the vault is still not initialized the vaultTotalSupply is 0
+    let shareToUnderlyingPrice = 1;
     if (vaultTotalSupply.value !== 0) {
       const investmentVaultTotalShares = vaultTotalSupply.value;
 
-      price =
+      shareToUnderlyingPrice =
         totalPrincipalBeforeWithdrawalAndDepositInUnderlying /
         investmentVaultTotalShares;
 
-      console.log(
-        "- INVESTMENT VAULT TOTAL SHARES (principal b4 d-w|investment vault total shares|sharePrice)",
-        totalPrincipalBeforeWithdrawalAndDepositInUnderlying,
-        investmentVaultTotalShares,
-        price
-      );
+      debugData.value.investmentVaultTotalShares = investmentVaultTotalShares;
+      debugData.value.shareToUnderlyingPrice = shareToUnderlyingPrice;
     }
 
     const totalSharesToWithdraw = outputVaultTotalShares.value;
 
-    const totalAssetsToWithdrawInUnderlying = totalSharesToWithdraw * price;
-    console.log(
-      "totalAssetsToWithdrawInUnderlying|totalSharesToWithdraw",
-      totalAssetsToWithdrawInUnderlying,
-      totalSharesToWithdraw,
-      price
-    );
+    const totalAssetsToWithdrawInUnderlying =
+      totalSharesToWithdraw * shareToUnderlyingPrice;
+
+    debugData.value.totalSharesToWithdraw = totalSharesToWithdraw;
+    debugData.value.totalAssetsToWithdrawInUnderlying =
+      totalAssetsToWithdrawInUnderlying;
+
     return (
       totalPrincipalBeforeWithdrawalInUnderlying -
       totalAssetsToWithdrawInUnderlying
@@ -185,13 +218,6 @@ export function useVaultOperatorEnterPosition(
       gasPrice,
       oraclePrice
     );
-
-  const enterPositionData: Ref<{
-    potionRouterData: DepthRouterReturn;
-    uniswapRouterData: UniswapRouterReturn;
-    fallbackUniswapRouterData: UniswapRouterReturn;
-    potionRouterInitialData: DepthRouterReturn; // TODO: remove
-  } | null> = ref(null);
 
   const isLoading = ref(false);
 
@@ -279,6 +305,11 @@ export function useVaultOperatorEnterPosition(
         potionRouterParameters.value.ethPrice
       );
 
+      console.log(
+        "potionRouterWithEstimatedPremium",
+        potionRouterWithEstimatedPremium
+      );
+
       const actualVaultSizeInUnderlying = calculateOrderSize(
         principalHedgedAmountInUnderlying,
         underlyingTokenValue.decimals as number,
@@ -349,11 +380,13 @@ export function useVaultOperatorEnterPosition(
         throw new Error("No fallback route found");
       }
 
+      debugData.value.potionRouterInitialData =
+        potionRouterWithEstimatedPremium;
+
       enterPositionData.value = {
         potionRouterData: potionRouterForEffectiveSize,
         uniswapRouterData: uniswapResult,
         fallbackUniswapRouterData: fallbackRoute,
-        potionRouterInitialData: potionRouterWithEstimatedPremium,
       };
     } finally {
       isLoading.value = false;
@@ -474,5 +507,6 @@ export function useVaultOperatorEnterPosition(
     loadEnterPositionRoute,
     evaluateEnterPositionData,
     effectiveVaultSizeInUnderlying,
+    debugData,
   };
 }
