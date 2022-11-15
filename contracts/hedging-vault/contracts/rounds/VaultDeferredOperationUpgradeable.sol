@@ -69,8 +69,6 @@ abstract contract VaultDeferredOperationUpgradeable is
         @return The amount of target vault shares received
      */
     function _redeemFromTarget(uint256 amount) internal returns (uint256) {
-        SafeERC20Upgradeable.safeApprove(IERC20Upgradeable(_proxiedVault), address(_proxiedVault), amount);
-
         return _proxiedVault.redeem(amount, address(this), address(this));
     }
 
