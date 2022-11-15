@@ -21,11 +21,7 @@
           :class="[
             {
               'shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400':
-                r.name === 'discover-templates' && isPoolRoute,
-            },
-            {
-              'shadow-md rounded-md bg-gradient-to-r from-primary-500 to-primary-400 text-dwhite-400':
-                r.name === 'discover-potions' && !isPoolRoute,
+                isActiveRoute(r.name),
             },
           ]"
           >{{ r.label }}</router-link
@@ -76,11 +72,27 @@ const routes = [
     name: "discover-templates",
     label: "Pool Liquidity",
   },
+  {
+    name: "discover-hedging-vaults",
+    label: "Hedging Vaults",
+  },
 ];
 
-const isPoolRoute = computed(() => {
-  return route.meta.sublink === "pools";
-});
+const activeRouteNameAliases = new Map([
+  ["discover-potions", "discover-potions"],
+  ["buyer", "discover-potions"],
+  ["discover-templates", "discover-templates"],
+  ["liquidity-provider", "discover-templates"],
+  ["discover-hedging-vaults", "discover-hedging-vaults"],
+]);
+
+const isActiveRoute = (navRouteName: string) => {
+  const currentRouteName = route.name as string;
+  const aliasedActiveRouteName = activeRouteNameAliases.get(currentRouteName);
+
+  return navRouteName == aliasedActiveRouteName;
+};
+
 const connectButtonLabel = computed(() => {
   const account = connectedWallet?.value?.accounts[0] ?? null;
   return account?.ens?.name ?? account?.address ?? t("connect_wallet");
