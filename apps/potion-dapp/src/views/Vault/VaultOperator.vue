@@ -373,14 +373,28 @@ const { records, loadBuyerRecords } = useBuyerRecords(
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
+
+// TODO: Change this loading the options from vaults.json or similar
+const deploymentName = ref("hardhat.develop.multivaultA");
+
 const setPriceCommand = computed(
   () =>
-    `yarn set-price --otoken ${potionAddress.value} --price 700 --network localhost`
+    `yarn set-core-price --otoken ${potionAddress.value} --price 700 --network localhost`
+);
+const setOracleCommand = computed(
+  () =>
+    `yarn set-hv-price --deployment ${deploymentName.value} --price 1000 --network localhost`
 );
 
 const copySetPriceCommand = async () => {
   if (potionAddress.value) {
     await navigator.clipboard.writeText(setPriceCommand.value);
+  }
+};
+
+const copySetOracleCommand = async () => {
+  if (potionAddress.value) {
+    await navigator.clipboard.writeText(setOracleCommand.value);
   }
 };
 
@@ -461,6 +475,23 @@ watch(blockTimestamp, async () => {
             label="copy"
             size="sm"
             @click="copySetPriceCommand"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
+        </div>
+        <p>Set chainlink oracle command:</p>
+        <div class="flex flex-row items-center gap-4">
+          <pre
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            >{{ setOracleCommand }}</pre
+          >
+          <BaseButton
+            palette="primary"
+            label="copy"
+            size="sm"
+            @click="copySetOracleCommand"
           >
             <template #pre-icon>
               <i class="i-ph-test-tube-fill"></i>
