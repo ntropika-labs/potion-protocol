@@ -157,6 +157,9 @@ spin_up_environment() {
   yarn nx run @potion-protocol/hedging-vault:deploy-local.multivault
   msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
     
+  yarn nx run potion-dapp:prepare-multivault
+  msg "${GREEN}- - Multivault deployment created ${NOFORMAT}"
+
   yarn nx run potion-subgraph:prepare-hedging
   msg "${GREEN}- Potion subgraph.yaml is ready ${NOFORMAT}"
 
