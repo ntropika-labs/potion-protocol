@@ -463,7 +463,7 @@ contract PotionBuyAction is
         uint256 amountToInvestInAssets,
         uint256 amountPotionsInAssets,
         uint256 actualPremiumInUSDC
-    ) private view {
+    ) private {
         if (amountToInvestInAssets == 0) {
             return;
         }
@@ -474,10 +474,13 @@ contract PotionBuyAction is
 
         uint256 actualHedgingRate = PercentageUtils.toPercentage(amountPotionsInAssets, actualHedgedAmountInAssets);
 
-        uint256 hedgingRateWithSlippage = hedgingRate.subtractPercentage(hedgingRateSlippage);
+        uint256 hedgingRateMinimumValue = hedgingRate.subtractPercentage(hedgingRateSlippage);
+        uint256 hedgingRateMaximumValue = hedgingRate.addPercentage(hedgingRateSlippage);
 
-        if (actualHedgingRate < hedgingRateWithSlippage) {
+        if (actualHedgingRate < hedgingRateMinimumValue || actualHedgingRate > hedgingRateMaximumValue) {
             revert HedgingRateOutOfRange(hedgingRate, actualHedgingRate, hedgingRateSlippage);
         }
+
+        emit HedgingRateValidated(hedgingRate, hedgingRateSlippage, actualHedgingRate);
     }
 }

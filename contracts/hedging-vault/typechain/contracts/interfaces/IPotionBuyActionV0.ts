@@ -131,6 +131,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
     "CycleDurationChanged(uint256)": EventFragment;
     "HedgingRateChanged(uint256)": EventFragment;
     "HedgingRateSlippageChanged(uint256)": EventFragment;
+    "HedgingRateValidated(uint256,uint256,uint256)": EventFragment;
     "MaxPremiumPercentageChanged(uint256)": EventFragment;
     "MaxSwapDurationChanged(uint256)": EventFragment;
     "PremiumSlippageChanged(uint256)": EventFragment;
@@ -141,6 +142,7 @@ export interface IPotionBuyActionV0Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "CycleDurationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "HedgingRateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "HedgingRateSlippageChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "HedgingRateValidated"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MaxPremiumPercentageChanged"
   ): EventFragment;
@@ -182,6 +184,19 @@ export type HedgingRateSlippageChangedEvent = TypedEvent<
 
 export type HedgingRateSlippageChangedEventFilter =
   TypedEventFilter<HedgingRateSlippageChangedEvent>;
+
+export interface HedgingRateValidatedEventObject {
+  expectedHedgingRate: BigNumber;
+  hedgingRateSlippage: BigNumber;
+  actualHedgingRate: BigNumber;
+}
+export type HedgingRateValidatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  HedgingRateValidatedEventObject
+>;
+
+export type HedgingRateValidatedEventFilter =
+  TypedEventFilter<HedgingRateValidatedEvent>;
 
 export interface MaxPremiumPercentageChangedEventObject {
   maxPremiumPercentage: BigNumber;
@@ -440,6 +455,17 @@ export interface IPotionBuyActionV0 extends BaseContract {
     HedgingRateSlippageChanged(
       hedgingRateSlippage?: null
     ): HedgingRateSlippageChangedEventFilter;
+
+    "HedgingRateValidated(uint256,uint256,uint256)"(
+      expectedHedgingRate?: null,
+      hedgingRateSlippage?: null,
+      actualHedgingRate?: null
+    ): HedgingRateValidatedEventFilter;
+    HedgingRateValidated(
+      expectedHedgingRate?: null,
+      hedgingRateSlippage?: null,
+      actualHedgingRate?: null
+    ): HedgingRateValidatedEventFilter;
 
     "MaxPremiumPercentageChanged(uint256)"(
       maxPremiumPercentage?: null
