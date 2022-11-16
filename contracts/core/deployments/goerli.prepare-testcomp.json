@@ -1,0 +1,22 @@
+{
+  "timestamp": 1668585964,
+  "network": "goerli",
+  "contracts": {
+    "WETH": {
+      "address": "0x06BD5AB3c3272f8E210F5D5e3AC869890bD4699C",
+      "blockNumber": 7962549
+    },
+    "WBTC": {
+      "address": "0x4FEb584db02401c9C3Fa2EFB6097794Fc58f1f30",
+      "blockNumber": 7962559
+    },
+    "LINK": {
+      "address": "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
+      "blockNumber": 7962567
+    },
+    "USDC": {
+      "address": "0x51E857Dd537e9B9125d3025eC8051Bda4d9510d9",
+      "blockNumber": 7962573
+    }
+  }
+}

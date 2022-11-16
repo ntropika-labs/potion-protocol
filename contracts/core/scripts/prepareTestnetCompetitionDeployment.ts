@@ -27,8 +27,8 @@ async function init() {
     console.log(`---------------------------------------------------\n`);
 }
 
-async function deployUnderlyingToken(name: string, symbol: string, decimals = 18): Promise<string> {
-    console.log(`--- Deploying test underlying token ${symbol} (${name}) with ${decimals} decimals ---`);
+async function deployToken(name: string, symbol: string, decimals = 18): Promise<string> {
+    console.log(`--- Deploying token ${symbol} (${name}) with ${decimals} decimals ---`);
     const token = await Deployments.deploy("TestERC20MinterPauser", [name, symbol, decimals], {
         alias: symbol,
         contract: "contracts/test/TestERC20MinterPauser.sol:TestERC20MinterPauser",
@@ -36,14 +36,6 @@ async function deployUnderlyingToken(name: string, symbol: string, decimals = 18
 
     console.log(`\nToken ${symbol} (${name}) deployed at ${token.address}\n`);
     return token.address;
-}
-
-async function deployChainlinkAggregatorUSDC(): Promise<string> {
-    console.log(`--- Deploying Chainlink Aggregator for USDC ---`);
-    const aggregator = await Deployments.deploy("ChainlinkAggregatorUSDC", [], {});
-
-    console.log(`\nChainlink Aggregator for USDC deployed at ${aggregator.address}\n`);
-    return aggregator.address;
 }
 
 async function main() {
@@ -58,6 +50,11 @@ async function main() {
         {
             name: "PotionTestWBTC",
             symbol: "WBTC",
+            decimals: 8,
+        },
+        {
+            name: "PotionTestLINK",
+            symbol: "LINK",
             decimals: 18,
         },
         {
@@ -69,10 +66,8 @@ async function main() {
 
     for (const underlyingToken of underlyingTokens) {
         const { name, symbol, decimals } = underlyingToken;
-        await deployUnderlyingToken(name, symbol, decimals);
+        await deployToken(name, symbol, decimals);
     }
-
-    await deployChainlinkAggregatorUSDC();
 
     Deployments.persist(true);
 }
