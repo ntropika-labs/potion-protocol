@@ -378,25 +378,23 @@ const { records, loadBuyerRecords } = useBuyerRecords(
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
 
 const deploymentName = getHardhatDeploymentNameFromVault(vaultId.value);
-
+const desiredPriceForSetCommandPrice = ref(700);
 const setPriceCommand = computed(
   () =>
-    `yarn set-core-price --otoken ${potionAddress.value} --price 700 --network localhost`
+    `yarn set-core-price --otoken ${potionAddress.value} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
 );
 const setOracleCommand = computed(
   () =>
-    `yarn set-hv-price --deployment ${deploymentName} --price 1000 --network localhost`
+    `yarn set-hv-price --deployment ${deploymentName} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
+);
+
+const fullPriceCommand = computed(
+  () => `${setPriceCommand.value} && ${setOracleCommand.value}`
 );
 
 const copySetPriceCommand = async () => {
   if (potionAddress.value) {
-    await navigator.clipboard.writeText(setPriceCommand.value);
-  }
-};
-
-const copySetOracleCommand = async () => {
-  if (potionAddress.value) {
-    await navigator.clipboard.writeText(setOracleCommand.value);
+    await navigator.clipboard.writeText(fullPriceCommand.value);
   }
 };
 
@@ -463,37 +461,30 @@ watch(blockTimestamp, async () => {
         </template>
       </BaseButton>
     </div>
-    <div class="flex flex-col mt-4 gap-2">
-      <p>Underlying asset: {{ assetAddress }}</p>
+    <div v-if="!canEnterNextRound" class="flex flex-col mt-4 gap-2">
+      <div class="flex flex-row gap-8">
+        <p>Underlying asset: {{ assetAddress }}</p>
+        <div>
+          <label>Desired price</label>
+          <input
+            v-model.number="desiredPriceForSetCommandPrice"
+            class="block p-1 text-black"
+          />
+        </div>
+      </div>
+
       <div v-if="potionAddress">
-        <p>Set price command:</p>
+        <p>Set price + set chainlink oracle command:</p>
         <div class="flex flex-row items-center gap-4">
           <pre
             class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ setPriceCommand }}</pre
+            >{{ fullPriceCommand }}</pre
           >
           <BaseButton
             palette="primary"
             label="copy"
             size="sm"
             @click="copySetPriceCommand"
-          >
-            <template #pre-icon>
-              <i class="i-ph-test-tube-fill"></i>
-            </template>
-          </BaseButton>
-        </div>
-        <p>Set chainlink oracle command:</p>
-        <div class="flex flex-row items-center gap-4">
-          <pre
-            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ setOracleCommand }}</pre
-          >
-          <BaseButton
-            palette="primary"
-            label="copy"
-            size="sm"
-            @click="copySetOracleCommand"
           >
             <template #pre-icon>
               <i class="i-ph-test-tube-fill"></i>
