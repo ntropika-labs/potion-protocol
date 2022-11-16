@@ -381,6 +381,10 @@ const deploymentName = getHardhatDeploymentNameFromVault(vaultId.value);
 const desiredPriceForSetCommandPrice = ref(700);
 const setPriceCommand = computed(
   () =>
+    `yarn set-core-price --token ${assetAddress.value} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
+);
+const setOtokenPriceCommand = computed(
+  () =>
     `yarn set-core-price --otoken ${potionAddress.value} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
 );
 const setOracleCommand = computed(
@@ -389,7 +393,8 @@ const setOracleCommand = computed(
 );
 
 const fullPriceCommand = computed(
-  () => `${setPriceCommand.value} && ${setOracleCommand.value}`
+  () =>
+    `${setPriceCommand.value} && ${setOtokenPriceCommand.value} && ${setOracleCommand.value}`
 );
 
 const copySetPriceCommand = async () => {
@@ -461,10 +466,10 @@ watch(blockTimestamp, async () => {
         </template>
       </BaseButton>
     </div>
-    <div v-if="!canEnterNextRound" class="flex flex-col mt-4 gap-2">
+    <div class="flex flex-col mt-4 gap-2">
       <div class="flex flex-row gap-8">
         <p>Underlying asset: {{ assetAddress }}</p>
-        <div>
+        <div v-if="!canEnterNextRound">
           <label>Desired price</label>
           <input
             v-model.number="desiredPriceForSetCommandPrice"
@@ -473,7 +478,7 @@ watch(blockTimestamp, async () => {
         </div>
       </div>
 
-      <div v-if="potionAddress">
+      <div v-if="potionAddress && !canEnterNextRound">
         <p>Set price + set chainlink oracle command:</p>
         <div class="flex flex-row items-center gap-4">
           <pre
