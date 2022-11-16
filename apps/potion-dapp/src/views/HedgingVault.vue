@@ -171,26 +171,10 @@
               <BaseButton
                 palette="secondary"
                 :label="exchangeLabel"
-                :disabled="isLoading"
+                :disabled="isLoading || canDeleteWithdrawalRequest"
                 :loading="approveExchangeLoading || exchangeTicketsLoading"
                 @click="handleExchange"
               />
-              <template v-if="false && canDeleteWithdrawalRequest">
-                <h4>
-                  {{
-                    t("current_withdrawal_request_info", {
-                      currentWithdrawalAmount,
-                    })
-                  }}
-                </h4>
-                <BaseButton
-                  palette="secondary-o"
-                  :label="t('delete')"
-                  :disabled="isLoading"
-                  :loading="deleteWithdrawalLoading"
-                  @click="handleDeleteWithdrawal"
-                />
-              </template>
             </div>
             <div
               v-if="availableAssets > 0"
@@ -386,7 +370,8 @@ const exchangeLabel = computed(() =>
 
 const handleExchange = async () => {
   if (canExchange.value) {
-    exchangeTickets(exchangePercentage.value);
+    await exchangeTickets(exchangePercentage.value);
+    setTimeout(loadVault, 5000);
   } else {
     approveExchange();
   }
@@ -395,10 +380,10 @@ const handleExchange = async () => {
 // withdrawal requests
 const {
   canDeleteWithdrawalRequest,
-  currentWithdrawalAmount,
   deleteWithdrawalLoading,
   deleteWithdrawalReceipt,
-  deleteWithdrawalRequest,
+  // currentWithdrawalAmount,
+  // deleteWithdrawalRequest,
   deleteWithdrawalTransaction,
   availableAssets,
   redeemAssets,
@@ -412,12 +397,12 @@ const {
   vaultRounds
 );
 
-const handleDeleteWithdrawal = async () => {
-  if (currentWithdrawalAmount.value > 0) {
-    await deleteWithdrawalRequest();
-    setTimeout(loadVault, 5000);
-  }
-};
+// const handleDeleteWithdrawal = async () => {
+//   if (currentWithdrawalAmount.value > 0) {
+//     await deleteWithdrawalRequest();
+//     setTimeout(loadVault, 5000);
+//   }
+// };
 
 const handleRedeemAssets = async () => {
   if (availableAssets.value > 0) {
