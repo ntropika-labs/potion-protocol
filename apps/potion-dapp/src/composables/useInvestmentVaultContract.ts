@@ -1,14 +1,15 @@
 import { isRef, onMounted, onUnmounted, ref, unref, watch } from "vue";
+import { formatUnits } from "@ethersproject/units";
 
-import { LifecycleStates } from "hedging-vault-sdk";
 import { InvestmentVault__factory } from "@potion-protocol/hedging-vault/typechain";
 
+import { LifecycleStates } from "hedging-vault-sdk";
 import { useEthersContract } from "@/composables/useEthersContract";
 import { ContractInitError } from "@/helpers/errors";
 
-import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "ethers";
+import type { InvestmentVault } from "@potion-protocol/hedging-vault/typechain";
 
 export function useInvestmentVaultContract(
   address: MaybeRef<string>,
@@ -64,6 +65,49 @@ export function useInvestmentVaultContract(
     }
   };
 
+  const totalSupply = ref<number>(0);
+  const totalSupplyLoading = ref(false);
+  const getTotalSupply = async () => {
+    try {
+      totalSupplyLoading.value = true;
+      const contract = initContractProvider();
+
+      const totalSupplyBN = await contract.totalSupply();
+
+      totalSupply.value = parseFloat(formatUnits(totalSupplyBN, 18));
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? `Cannot get total supply: ${error.message}`
+          : `Cannot get total supply: ${error}`;
+
+      throw new Error(message);
+    } finally {
+      totalSupplyLoading.value = false;
+    }
+  };
+
+  const shareBalance = ref<number>(0);
+  const shareBalanceLoading = ref(false);
+  const getShareBalance = async (address: string) => {
+    try {
+      const contract = initContractProvider();
+
+      const shareBalanceBN = await contract.balanceOf(address);
+
+      shareBalance.value = parseFloat(formatUnits(shareBalanceBN, 18));
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? `Cannot get share balance: ${error.message}`
+          : `Cannot get share balance: ${error}`;
+
+      throw new Error(message);
+    } finally {
+      shareBalanceLoading.value = false;
+    }
+  };
+
   if (eventListeners) {
     const wsContract = initContractProviderWS();
     wsContract.on(
@@ -96,5 +140,11 @@ export function useInvestmentVaultContract(
     getVaultStatus,
     vaultStatus,
     vaultStatusLoading,
+    totalSupply,
+    totalSupplyLoading,
+    getTotalSupply,
+    shareBalance,
+    shareBalanceLoading,
+    getShareBalance,
   };
 }

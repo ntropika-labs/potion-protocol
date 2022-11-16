@@ -1,14 +1,24 @@
 import { computed, unref, isRef, watch } from "vue";
-import { formatUnits } from "@ethersproject/units";
 import { useRoundsVaultExchanger } from "@/composables/useRoundsVaultExchanger";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
+import {
+  hasShares,
+  calcAssets as _calcAssets,
+} from "@/helpers/deferredRequests";
+import { getDepositTicketsBurnInfo } from "hedging-vault-sdk";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
+import type { DepositTicket } from "hedging-vault-sdk";
 import type { RoundsFragment } from "@/types";
 
-const formatAmount = (amount: MaybeRef<BigNumberish>) =>
-  parseFloat(formatUnits(unref(amount), 18));
+const roundToDepositTicket = (round: RoundsFragment): DepositTicket => ({
+  id: parseInt(round.roundNumber),
+  amount: parseInt(round.depositRequests[0].amount),
+  amountRedeemed: parseInt(round.depositRequests[0].amountRedeemed),
+  shares: parseInt(round.depositRequests[0].shares),
+  remainingShares: parseInt(round.depositRequests[0].remainingShares),
+});
 
 function useInputOutputVaultExchange(
   walletAddress: MaybeRef<string>,
@@ -46,18 +56,20 @@ function useInputOutputVaultExchange(
   );
 
   const pastRounds = computed(() =>
-    unref(rounds).filter((round) => round.roundNumber !== unref(currentRound))
+    unref(rounds).filter(
+      (round) =>
+        round.roundNumber !== unref(currentRound) &&
+        hasShares(round.depositRequests?.[0])
+    )
   );
 
-  const calcAssets = (shares: string) => {
-    const assets = formatAmount(shares) * formatAmount(shareToAssetRate);
-    return parseFloat(assets.toFixed(2));
-  };
+  const calcAssets = (shares?: BigNumberish) =>
+    _calcAssets(shares, shareToAssetRate);
 
   const estimatedAssets = computed(() =>
     pastRounds.value.reduce(
       (acc, round) =>
-        acc + calcAssets(round?.depositRequests?.[0]?.shares ?? "0"),
+        acc + calcAssets(round?.depositRequests?.[0]?.remainingShares),
       0
     )
   );
@@ -68,25 +80,18 @@ function useInputOutputVaultExchange(
     }
   };
 
-  const getExchangeDetails = (round: RoundsFragment) => ({
-    id: round.roundNumber,
-    amount: formatAmount(round.depositRequests[0].amount),
-  });
-
-  const exchangeTickets = async () => {
+  const exchangeTickets = async (percentage: number | string = 100) => {
     if (isApprovedForAll.value && pastRounds.value.length > 0) {
-      if (pastRounds.value.length === 1) {
-        const { id, amount } = getExchangeDetails(pastRounds.value[0]);
-        await exchangeInputForOutput(id, amount);
+      const depositTickets = pastRounds.value.map(roundToDepositTicket);
+      const result = getDepositTicketsBurnInfo(
+        depositTickets,
+        Number(percentage)
+      );
+      const ids = result.ids.map(String);
+      const amounts = result.amounts.map(String);
+      if (ids.length === 1) {
+        await exchangeInputForOutput(ids[0], amounts[0]);
       } else {
-        const ids = new Array<string>();
-        const amounts = new Array<number>();
-        pastRounds.value.forEach((round) => {
-          console.log(round.depositRequests);
-          const { id, amount } = getExchangeDetails(round);
-          ids.push(id);
-          amounts.push(amount);
-        });
         await exchangeInputForOutputBatch(ids, amounts);
       }
     }

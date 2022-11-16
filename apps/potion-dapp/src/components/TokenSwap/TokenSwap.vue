@@ -175,7 +175,7 @@ const isTradeExactInput = computed(
           <hr class="opacity-40 my-4" />
           <h3 class="text-xl font-bold">Trade</h3>
           <pre
-            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap max-h-12 hover:max-h-full overflow-hidden"
             >{{ JSON.stringify(props.routeData?.trade, null, 2) }}</pre
           >
           <!-- <p>token path:</p>

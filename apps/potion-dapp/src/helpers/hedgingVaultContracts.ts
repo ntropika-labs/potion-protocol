@@ -1,48 +1,38 @@
-import { Deployments } from "@potion-protocol/hedging-vault";
 import multivault from "../../multivault.json";
-import { ethereumNetwork } from "./";
 
-//@ts-expect-error iterator is not defined
-export const contractsAddresses = Deployments[ethereumNetwork].contracts;
-
-function getPotionBuyActionFromVault(vault: string) {
+function getContractsFromVault(vault: string) {
   const data = multivault.find(
     (mv) => mv.InvestmentVault.toLowerCase() === vault.toLowerCase()
   );
   if (data) {
-    return data.PotionBuyAction;
+    return data;
   }
   throw `${vault} isn't a recognized vault`;
 }
 
-function getRoundsExchangerFromVault(vault: string) {
-  const data = multivault.find(
-    (mv) => mv.InvestmentVault.toLowerCase() === vault.toLowerCase()
-  );
-  if (data) {
-    return data.RoundsVaultExchanger;
-  }
-  throw `${vault} isn't a recognized vault`;
+function getHardhatDeploymentNameFromVault(vault: string) {
+  const data = getContractsFromVault(vault);
+  return data.hardhatDeploymentName;
+}
+
+function getPotionBuyActionFromVault(vault: string) {
+  const data = getContractsFromVault(vault);
+  return data.PotionBuyAction;
 }
 
 function getRoundsInputFromVault(vault: string) {
-  const data = multivault.find(
-    (mv) => mv.InvestmentVault.toLowerCase() === vault.toLowerCase()
-  );
-  if (data) {
-    return data.RoundsInputVault;
-  }
-  throw `${vault} isn't a recognized vault`;
+  const data = getContractsFromVault(vault);
+  return data.RoundsInputVault;
+}
+
+function getRoundsExchangerFromVault(vault: string) {
+  const data = getContractsFromVault(vault);
+  return data.RoundsVaultExchanger;
 }
 
 function getRoundsOutputFromVault(vault: string) {
-  const data = multivault.find(
-    (mv) => mv.InvestmentVault.toLowerCase() === vault.toLowerCase()
-  );
-  if (data) {
-    return data.RoundsOutputVault;
-  }
-  throw `${vault} isn't a recognized vault`;
+  const data = getContractsFromVault(vault);
+  return data.RoundsOutputVault;
 }
 
 export {
@@ -50,4 +40,6 @@ export {
   getRoundsExchangerFromVault,
   getRoundsInputFromVault,
   getRoundsOutputFromVault,
+  getContractsFromVault,
+  getHardhatDeploymentNameFromVault,
 };

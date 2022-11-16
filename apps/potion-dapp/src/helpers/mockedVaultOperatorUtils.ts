@@ -1,62 +1,64 @@
-import type { Ref } from "vue";
-import { Token as UniswapToken } from "@uniswap/sdk-core";
-import { Trade } from "@uniswap/router-sdk";
-
 import type { Token } from "dapp-types";
 
-import { contractsAddresses } from "@/helpers/contracts";
-import { getChainId, getWETHAddress } from "@/helpers/uniswap";
+import { contractsAddresses } from "./contracts";
+import { getWETHAddress } from "@/helpers/uniswap";
 import { mockWeb3Onboard } from "@/helpers/onboard";
+import { UniswapActionType } from "@/types";
+import type { BigNumberish } from "ethers";
 
 console.log("Running a mocked version of 'vaultOperatorUtils'");
 
-const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
-  return new UniswapToken(
-    getChainId(),
-    getWETHAddress(),
-    token.decimals || 0,
-    token.symbol,
-    token.name
-  );
-};
-
-const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This replaces the official address of the collateral token with the one for USDC from the local deployment
+ * @param token Potion token we are using as a collateral
+ * @returns Potion token with the address mocked with the one from the local deployment
+ */
+const mockCollateralToken = (token: Token): Token => {
   return {
-    name: uniToken.name || "",
-    symbol: uniToken.symbol || "",
-    address: contractsAddresses.USDC.address,
-    decimals: uniToken.decimals,
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: contractsAddresses.USDC.address.toLowerCase(),
+    decimals: token.decimals,
   };
 };
 
-const getEnterExpectedPriceRate = (
-  oraclePrice: Ref<number>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _: Trade<never, never, never>
-) => {
-  return oraclePrice.value; // default to 1000
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This replaces the alocal deployment ddress of the underlying token with the official one for WETH
+ * @param token Potion token we are using as underlying
+ * @returns Potion token with the address mocked with the official one
+ */
+const mockUnderlyingToken = (token: Token): Token => {
+  console.log(getWETHAddress());
+  return {
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: getWETHAddress(),
+    decimals: token.decimals,
+  };
 };
 
-const getExitExpectedPriceRate = (
-  oraclePrice: Ref<number>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _: Trade<never, never, never>
+const getExpectedPriceRate = (
+  oraclePrice: number,
+  _tradePrice: BigNumberish,
+  actionType: UniswapActionType
 ) => {
-  return 1 / oraclePrice.value; // default to 0.001,
+  if (actionType === UniswapActionType.ENTER_POSITION) {
+    return oraclePrice; // default to 1000
+  } else {
+    return 1 / oraclePrice; // default to 0.001,
+  }
 };
 
-const getRecipientAddress = (): string => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getRecipientAddress = (_: string): string => {
   return mockWeb3Onboard.wallets[0]?.accounts[0]?.address;
 };
 
-const evaluatePremium = (routerPremium: number, premiumSlippage: number) =>
-  routerPremium + (premiumSlippage * routerPremium) / 100;
-
 export {
-  convertCollateralToUniswapToken,
-  convertQuoteUniswapTokenToToken,
-  getEnterExpectedPriceRate,
-  getExitExpectedPriceRate,
+  getExpectedPriceRate,
   getRecipientAddress,
-  evaluatePremium,
+  mockCollateralToken,
+  mockUnderlyingToken,
 };

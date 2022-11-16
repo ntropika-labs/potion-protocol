@@ -10,6 +10,7 @@ import { mockVault, mockCurrentRound } from "./contractCalls";
 import {
   assertEntity,
   mockHedgingVault,
+  mockToken,
   mockDepositRequest,
   mockDepositRequests,
   DepositRequestParams,
@@ -50,13 +51,17 @@ const actionAddress = Address.fromString(
   "0x0000000000000000000000000000000000000001"
 );
 
+const underlyingAddress = Address.fromString(
+  "0x0000000000000000000000000000000000000002"
+);
+
 const mockedRoundId = createRoundId(BigInt.fromString("1"), vaultAddress);
 const mockedRoundId_B = createRoundId(BigInt.fromString("5"), vaultAddress);
 const mockedCaller = Address.fromString(
-  "0x0000000000000000000000000000000000000001"
+  "0x0000000000000000000000000000000000000010"
 );
 const mockedInvestor = Address.fromString(
-  "0x0000000000000000000000000000000000000002"
+  "0x0000000000000000000000000000000000000020"
 );
 
 const mockedDepositParams: DepositRequestParams = {
@@ -64,7 +69,7 @@ const mockedDepositParams: DepositRequestParams = {
   amount: BigInt.fromString("100"),
   amountRedeemed: BigInt.fromString("0"),
   shares: BigInt.fromString("50"),
-  remainingShares: BigInt.fromString("0"),
+  remainingShares: BigInt.fromString("50"),
 };
 
 const mockedDepositParamsArray: DepositRequestParams[] = [
@@ -73,28 +78,28 @@ const mockedDepositParamsArray: DepositRequestParams[] = [
     amount: BigInt.fromString("10"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("5"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("5"),
   },
   {
     depositId: BigInt.fromString("2"),
     amount: BigInt.fromString("100"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("50"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("50"),
   },
   {
     depositId: BigInt.fromString("3"),
     amount: BigInt.fromString("500"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("250"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("250"),
   },
   {
     depositId: BigInt.fromString("4"),
     amount: BigInt.fromString("1000"),
     amountRedeemed: BigInt.fromString("0"),
     shares: BigInt.fromString("500"),
-    remainingShares: BigInt.fromString("0"),
+    remainingShares: BigInt.fromString("500"),
   },
 ];
 
@@ -144,10 +149,16 @@ describe("roundsInputVault", () => {
       );
       mockHedgingVault(
         vaultAddress,
-        vaultAddress,
         actionAddress,
+        underlyingAddress,
         BigInt.fromString("30"),
         BigInt.fromString("0")
+      );
+      mockToken(
+        underlyingAddress,
+        "MOCKED UNDERLYING",
+        "MUND",
+        BigInt.fromI32(6)
       );
       const mockedEvent = createNextRound(
         BigInt.fromString("2"),
@@ -187,8 +198,8 @@ describe("roundsInputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "shares", value: "100" },
-          { field: "remainingShares", value: "100" },
+          { field: "shares", value: "100000000000000" },
+          { field: "remainingShares", value: "100000000000000" },
         ]
       );
     });
@@ -202,8 +213,8 @@ describe("roundsInputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "shares", value: "1000" },
-          { field: "remainingShares", value: "1000" },
+          { field: "shares", value: "1000000000000000" },
+          { field: "remainingShares", value: "1000000000000000" },
         ]
       );
     });
@@ -217,8 +228,8 @@ describe("roundsInputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "shares", value: "5000" },
-          { field: "remainingShares", value: "5000" },
+          { field: "shares", value: "5000000000000000" },
+          { field: "remainingShares", value: "5000000000000000" },
         ]
       );
     });
@@ -232,8 +243,8 @@ describe("roundsInputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "shares", value: "10000" },
-          { field: "remainingShares", value: "10000" },
+          { field: "shares", value: "10000000000000000" },
+          { field: "remainingShares", value: "10000000000000000" },
         ]
       );
     });
@@ -950,8 +961,8 @@ describe("roundsInputVault", () => {
       );
       const mockedEvent = createWithdrawExchangeAsset(
         mockedCaller,
-        mockedInvestor,
         mockedCaller,
+        mockedInvestor,
         BigInt.fromString("15"),
         BigInt.fromString("2"),
         BigInt.fromString("30")
@@ -994,7 +1005,7 @@ describe("roundsInputVault", () => {
       );
       const mockedEvent = createWithdrawExchangeAssetBatch(
         mockedCaller,
-        mockedInvestor,
+        mockedCaller,
         mockedInvestor,
         BigInt.fromString("5"),
         [

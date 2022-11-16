@@ -5,6 +5,7 @@ import {
   HedgingVault,
   PotionBuyAction,
   Round,
+  Token,
   WithdrawalRequest,
 } from "../generated/schema";
 import { createRoundId } from "../src/rounds";
@@ -57,6 +58,20 @@ function mockHedgingVault(
   vault.currentRound = currentRound;
   vault.save();
   return vault;
+}
+
+function mockToken(
+  id: Address,
+  name: string,
+  symbol: string,
+  decimals: BigInt
+): Token {
+  const token = new Token(id);
+  token.name = name;
+  token.symbol = symbol;
+  token.decimals = decimals;
+  token.save();
+  return token;
 }
 
 function mockPotionBuyAction(
@@ -220,4 +235,5 @@ export {
   mockWithdrawalRequests,
   WithdrawalRequestParams,
   arrayToString,
+  mockToken,
 };

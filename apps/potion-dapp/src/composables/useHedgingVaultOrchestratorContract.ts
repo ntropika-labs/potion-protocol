@@ -8,37 +8,19 @@ import type {
 } from "@potion-protocol/hedging-vault/typechain";
 import { utils } from "ethers";
 import { getRateInUD60x18 } from "hedging-vault-sdk";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, unref } from "vue";
 
-import { contractsAddresses } from "@/helpers/hedgingVaultContracts";
+import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 import { HedgingVaultOrchestrator__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import { useEthersContract } from "./useEthersContract";
 
-import type { BigNumberish } from "@ethersproject/bignumber";
-import type { IPotionLiquidityPool } from "@potion-protocol/hedging-vault/typechain";
 import type { PotionBuyInfoStruct } from "@potion-protocol/hedging-vault/typechain/contracts/helpers/HedgingVaultOrchestrator";
-import type { Token } from "dapp-types";
+import type { PotionBuyInfo, UniSwapInfo } from "@/types";
+import type { MaybeRef } from "@vueuse/core";
 
-export type Sellers = IPotionLiquidityPool.CounterpartyDetailsStruct[];
-
-export interface UniSwapInfo {
-  steps: Array<{ inputToken: Token; fee: number }>;
-  outputToken: Token;
-  expectedPriceRate: BigNumberish; //The expected price of the swap as a fixed point SD59x18 number
-}
-
-interface PotionBuyInfo {
-  targetPotionAddress: string;
-  underlyingAsset: string;
-  strikePriceInUSDC: string;
-  expirationTimestamp: BigNumberish;
-  sellers: Sellers;
-  expectedPremiumInUSDC: string;
-  totalSizeInPotions: BigNumberish;
-}
 export type VaultStatus = "locked" | "unlocked" | "suspended";
 
 export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
@@ -58,10 +40,14 @@ export function getEncodedSwapPath(tokensPath: string[], fee = 3000): string {
   return utils.solidityPack(types, values);
 }
 
-export function useHedgingVaultOrchestratorContract() {
+export function useHedgingVaultOrchestratorContract(
+  vaultAddress: MaybeRef<string>
+) {
   const { initContract } = useEthersContract();
   const { connectedWallet } = useOnboard();
-  const { HedgingVaultOrchestrator } = contractsAddresses;
+  const { HedgingVaultOrchestrator } = getContractsFromVault(
+    unref(vaultAddress)
+  );
 
   //Provider initialization
   const initContractSigner = () => {
@@ -69,7 +55,7 @@ export function useHedgingVaultOrchestratorContract() {
       true,
       false,
       HedgingVaultOrchestrator__factory,
-      HedgingVaultOrchestrator.address.toLowerCase()
+      HedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 
@@ -78,22 +64,10 @@ export function useHedgingVaultOrchestratorContract() {
       false,
       false,
       HedgingVaultOrchestrator__factory,
-      HedgingVaultOrchestrator.address.toLowerCase()
+      HedgingVaultOrchestrator
     ) as HedgingVaultOrchestrator;
   };
 
-  /**
-   * Contract Vars
-   */
-
-  const hedgingVaultAddress = ref("");
-  const actionsAddress = ref("");
-
-  //
-
-  /**
-   * Contract methods
-   **/
   const getSwapData = (
     swapInfo: UniSwapInfo
   ): IUniswapV3Oracle.SwapInfoStruct => {
@@ -131,158 +105,136 @@ export function useHedgingVaultOrchestratorContract() {
     return swapData;
   };
 
-  //Enter Position
-  const enterPositionTx = ref<ContractTransaction | null>(null);
-  const enterPositionReceipt = ref<ContractReceipt | null>(null);
-  const enterPositionLoading = ref(false);
-  const enterPositionError = ref<string | null>(null);
-  const enterPosition = async (
-    swapInfo: UniSwapInfo,
+  const getPotionBuyActionData = (
     potionBuyInfo: PotionBuyInfo
+  ): PotionBuyInfoStruct => {
+    console.log("potionBuyInfo", potionBuyInfo);
+
+    return {
+      sellers: potionBuyInfo.sellers,
+      targetPotionAddress: potionBuyInfo.targetPotionAddress,
+      underlyingAsset: potionBuyInfo.underlyingAsset,
+      strikePriceInUSDC: parseUnits(
+        potionBuyInfo.strikePriceInUSDC.toFixed(8), // 8 digits are required for the strike price
+        8
+      ),
+      expirationTimestamp: potionBuyInfo.expirationTimestamp,
+      expectedPremiumInUSDC: parseUnits(
+        potionBuyInfo.expectedPremiumInUSDC.toFixed(6),
+        6
+      ),
+    };
+  };
+
+  /**
+   * Contract Vars
+   */
+
+  const actionsAddress = ref("");
+
+  //
+
+  /**
+   * Contract methods
+   **/
+
+  //Next Round
+  const nextRoundTx = ref<ContractTransaction | null>(null);
+  const nextRoundReceipt = ref<ContractReceipt | null>(null);
+  const nextRoundLoading = ref(false);
+  const nextRoundError = ref<string | null>(null);
+  const enterNextRound = async (
+    enterSwapInfo: UniSwapInfo,
+    enterPotionBuyInfo: PotionBuyInfo,
+    exitSwapInfo: UniSwapInfo,
+    fallbackEnterSwapInfoUSDC: UniSwapInfo,
+    fallbackExitSwapInfoUSDC: UniSwapInfo
   ) => {
-    if (connectedWallet.value) {
-      try {
-        const contractSigner = initContractSigner();
-        enterPositionError.value = null;
-        enterPositionLoading.value = true;
+    if (!connectedWallet.value) {
+      throw new Error("Connect your wallet first");
+    }
 
-        const swapData = getSwapData(swapInfo);
-
-        const potionBuyActionData: PotionBuyInfoStruct = {
-          targetPotionAddress: potionBuyInfo.targetPotionAddress,
-          underlyingAsset: potionBuyInfo.underlyingAsset,
-          strikePriceInUSDC: parseUnits(potionBuyInfo.strikePriceInUSDC, 8),
-          expirationTimestamp: potionBuyInfo.expirationTimestamp,
-          sellers: potionBuyInfo.sellers,
-          expectedPremiumInUSDC: parseUnits(
-            potionBuyInfo.expectedPremiumInUSDC,
-            6
-          ),
-          totalSizeInPotions: potionBuyInfo.totalSizeInPotions,
-        };
-
-        enterPositionTx.value = await contractSigner.enterPosition(
-          swapData,
-          potionBuyActionData
-        );
-        enterPositionReceipt.value = await enterPositionTx.value.wait();
-      } catch (error) {
-        const errorMessage = `Cannot enter Position: ${
-          error instanceof Error ? error.message : error
-        }`;
-        enterPositionError.value = errorMessage;
-
-        throw new Error(errorMessage);
-      } finally {
-        enterPositionLoading.value = false;
-      }
-    } else throw new Error("Connect your wallet first");
-  };
-
-  //Exit Position
-  const exitPositionTx = ref<ContractTransaction | null>(null);
-  const exitPositionReceipt = ref<ContractReceipt | null>(null);
-  const exitPositionLoading = ref(false);
-  const exitPositionError = ref<string | null>(null);
-  const exitPosition = async (swapInfo: UniSwapInfo) => {
-    if (connectedWallet.value) {
-      try {
-        const contractSigner = initContractSigner();
-        exitPositionError.value = null;
-        exitPositionLoading.value = true;
-
-        const swapData = getSwapData(swapInfo);
-
-        exitPositionTx.value = await contractSigner.exitPosition(swapData);
-        exitPositionReceipt.value = await exitPositionTx.value.wait();
-      } catch (error) {
-        const errorMessage = `Cannot exit Position: ${
-          error instanceof Error ? error.message : error
-        }`;
-        exitPositionError.value = errorMessage;
-
-        throw new Error(errorMessage);
-      } finally {
-        exitPositionLoading.value = false;
-      }
-    } else throw new Error("Connect your wallet first");
-  };
-
-  //Can be entered
-  const canPositionBeEntered = ref(false);
-  const canPositionBeEnteredLoading = ref(false);
-  const canPositionBeEnteredError = ref<string | null>(null);
-  const fetchCanPositionBeEntered = async () => {
     try {
-      canPositionBeEnteredLoading.value = true;
-      canPositionBeEnteredError.value = null;
+      const contractSigner = initContractSigner();
+      nextRoundError.value = null;
+      nextRoundLoading.value = true;
 
-      const provider = initContractProvider();
-      canPositionBeEntered.value = await provider.canPositionBeEntered();
+      const enterSwapData = getSwapData(enterSwapInfo),
+        exitSwapData = getSwapData(exitSwapInfo),
+        fallbackEnterSwapData = getSwapData(fallbackEnterSwapInfoUSDC),
+        fallbackExitSwapData = getSwapData(fallbackExitSwapInfoUSDC);
+
+      const potionBuyActionData = getPotionBuyActionData(enterPotionBuyInfo);
+
+      console.log(
+        "FINAL DATA",
+        potionBuyActionData,
+        enterSwapData,
+        exitSwapData,
+        fallbackEnterSwapData,
+        fallbackExitSwapData
+      );
+      nextRoundTx.value = await contractSigner.nextRound(
+        exitSwapData,
+        potionBuyActionData,
+        enterSwapData,
+        fallbackExitSwapData,
+        fallbackEnterSwapData
+      );
+      nextRoundReceipt.value = await nextRoundTx.value.wait();
     } catch (error) {
-      const errorMessage = `Position can not be entered: ${
+      const errorMessage = `Cannot enter NextRound: ${
         error instanceof Error ? error.message : error
       }`;
-      canPositionBeEnteredError.value = errorMessage;
-      canPositionBeEntered.value = false;
+      nextRoundError.value = errorMessage;
+
       throw new Error(errorMessage);
     } finally {
-      canPositionBeEnteredLoading.value = false;
+      nextRoundLoading.value = false;
     }
   };
 
-  //Can be exited
-  const canPositionBeExited = ref(false);
-  const canPositionBeExitedLoading = ref(false);
-  const canPositionBeExitedError = ref<string | null>(null);
-  const fetchCanPositionBeExited = async () => {
+  // Can next cycle
+  const canEnterNextRound = ref(false);
+  const canEnterNextRoundLoading = ref(false);
+  const canEnterNextRoundError = ref<string | null>(null);
+  const fetchCanEnterNextRound = async () => {
     try {
-      canPositionBeExitedLoading.value = true;
-      canPositionBeExitedError.value = null;
+      canEnterNextRoundLoading.value = true;
+      canEnterNextRoundError.value = null;
 
       const provider = initContractProvider();
-      canPositionBeExited.value = await provider.canPositionBeExited();
+      canEnterNextRound.value = await provider.canEnterNextRound();
     } catch (error) {
-      const errorMessage = `Position can not be exited: ${
+      const errorMessage = `Cannot enter next cycle: ${
         error instanceof Error ? error.message : error
       }`;
-      canPositionBeExitedError.value = errorMessage;
-      canPositionBeExited.value = false;
+      canEnterNextRoundError.value = errorMessage;
+      canEnterNextRound.value = false;
       throw new Error(errorMessage);
     } finally {
-      canPositionBeExitedLoading.value = false;
+      canEnterNextRoundLoading.value = false;
     }
   };
 
   // Automatically fetch current position on composable init
   onMounted(async () => {
     const provider = initContractProvider();
-    hedgingVaultAddress.value = await provider.hedgingVault();
+    //hedgingVaultAddress.value = await provider.hedgingVault();
     actionsAddress.value = await provider.potionBuyAction();
-    await fetchCanPositionBeEntered();
-    await fetchCanPositionBeExited();
+
+    await fetchCanEnterNextRound();
   });
 
   return {
-    enterPositionTx,
-    enterPositionReceipt,
-    enterPositionLoading,
-    enterPositionError,
-    enterPosition,
-    exitPositionTx,
-    exitPositionReceipt,
-    exitPositionLoading,
-    exitPositionError,
-    exitPosition,
-    canPositionBeEntered,
-    canPositionBeEnteredLoading,
-    canPositionBeEnteredError,
-    fetchCanPositionBeEntered,
-    canPositionBeExited,
-    canPositionBeExitedLoading,
-    canPositionBeExitedError,
-    fetchCanPositionBeExited,
-    hedgingVaultAddress,
+    nextRoundTx,
+    nextRoundReceipt,
+    nextRoundLoading,
+    nextRoundError,
+    canEnterNextRound,
+    enterNextRound,
+    fetchCanEnterNextRound,
+    //hedgingVaultAddress,
     actionsAddress,
   };
 }

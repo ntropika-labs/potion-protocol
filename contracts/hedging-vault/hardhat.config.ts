@@ -4,6 +4,7 @@ import { getHardhatConfig } from "hardhat-helpers";
 import "./tasks/accounts";
 import "./tasks/clean";
 import "./tasks/fast-forward";
+import "./tasks/set-oracle-price";
 
 const userConfig: HardhatUserConfig = {
     solidity: {

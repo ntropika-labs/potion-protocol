@@ -1,13 +1,13 @@
 import { expose } from "comlink";
 
-import { getUniswapRoute, runPremiumSwapRouter } from "@premium-swap-router";
+import { getUniswapRoute, getPotionRoute } from "@premium-swap-router";
 
 expose({
   getUniswapRoute,
-  runPremiumSwapRouter,
+  getPotionRoute,
 });
 
 export interface AlphaRouter {
   getUniswapRoute: typeof getUniswapRoute;
-  runPremiumSwapRouter: typeof runPremiumSwapRouter;
+  getPotionRoute: typeof getPotionRoute;
 }

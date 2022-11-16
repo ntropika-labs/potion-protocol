@@ -206,22 +206,22 @@ export function useRoundsVaultContract(
   const depositTx = ref<ContractTransaction | null>(null);
   const depositReceipt = ref<ContractReceipt | null>(null);
   const depositLoading = ref(false);
-  const deposit = async (amount: number, self = true, receiver?: string) => {
+  const deposit = async (
+    amount: BigNumberish,
+    self = true,
+    receiver?: string
+  ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString());
       try {
         depositLoading.value = true;
         if (self === true) {
           depositTx.value = await contractSigner.deposit(
-            parsedAmount,
+            amount,
             connectedWallet.value.accounts[0].address
           );
         } else if (self === false && receiver) {
-          depositTx.value = await contractSigner.deposit(
-            parsedAmount,
-            receiver
-          );
+          depositTx.value = await contractSigner.deposit(amount, receiver);
         } else {
           throw new Error("Invalid deposit parameters");
         }
@@ -300,14 +300,13 @@ export function useRoundsVaultContract(
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString());
       try {
         redeemExchangeAssetLoading.value = true;
         if (self === true) {
           redeemExchangeAssetTx.value =
             await contractSigner.redeemExchangeAsset(
               id,
-              parsedAmount,
+              amount,
               connectedWallet.value.accounts[0].address,
               connectedWallet.value.accounts[0].address
             );
@@ -315,7 +314,7 @@ export function useRoundsVaultContract(
           redeemExchangeAssetTx.value =
             await contractSigner.redeemExchangeAsset(
               id,
-              parsedAmount,
+              amount,
               receiver,
               connectedWallet.value.accounts[0].address
             );

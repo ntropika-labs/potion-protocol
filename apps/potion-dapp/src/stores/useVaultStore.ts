@@ -1,11 +1,12 @@
 import { defineStore, storeToRefs } from "pinia";
-import { onMounted, readonly, watch, isRef } from "vue";
+import { onMounted, readonly, watch, unref, isRef } from "vue";
 
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useUserDataStore } from "@/stores/useUserDataStore";
 
 import type { Ref } from "vue";
 import type { MaybeRef } from "@vueuse/core";
+import { isValidAddress } from "@/helpers/addresses";
 
 const useVaultStore = (
   address: string,
@@ -27,7 +28,11 @@ const useVaultStore = (
 
     const approve = (amount: number) =>
       approveSpending(address, infiniteApproval.value, amount);
-    const fetchUserData = () => fetchUserAllowance(address);
+    const fetchUserData = async () => {
+      if (isValidAddress(unref(underlyingAddress))) {
+        await fetchUserAllowance(address);
+      }
+    };
 
     onMounted(fetchUserData);
 

@@ -182,6 +182,12 @@ function handleWithdraw(event: Withdraw): void {
   }
 }
 
+function getAssetDecimals(id: Address): BigInt {
+  const vault = getOrCreateHedgingVault(id);
+  const token = getOrCreateToken(Address.fromBytes(vault.asset));
+  return token.decimals;
+}
+
 export {
   setCurrentRound,
   setLastAssetToShareRate,
@@ -191,4 +197,5 @@ export {
   handleVaultPositionExited,
   handleDeposit,
   handleWithdraw,
+  getAssetDecimals,
 };
