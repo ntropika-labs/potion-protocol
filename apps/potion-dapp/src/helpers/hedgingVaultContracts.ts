@@ -9,6 +9,12 @@ function getContractsFromVault(vault: string) {
   }
   throw `${vault} isn't a recognized vault`;
 }
+
+function getHardhatDeploymentNameFromVault(vault: string) {
+  const data = getContractsFromVault(vault);
+  return data.hardhatDeploymentName;
+}
+
 function getPotionBuyActionFromVault(vault: string) {
   const data = getContractsFromVault(vault);
   return data.PotionBuyAction;
@@ -35,4 +41,5 @@ export {
   getRoundsInputFromVault,
   getRoundsOutputFromVault,
   getContractsFromVault,
+  getHardhatDeploymentNameFromVault,
 };

@@ -32,7 +32,10 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
-import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
+import {
+  getContractsFromVault,
+  getHardhatDeploymentNameFromVault,
+} from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 
@@ -374,8 +377,7 @@ const { records, loadBuyerRecords } = useBuyerRecords(
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
 
-// TODO: Change this loading the options from vaults.json or similar
-const deploymentName = ref("hardhat.develop.multivaultA");
+const deploymentName = getHardhatDeploymentNameFromVault(vaultId.value);
 
 const setPriceCommand = computed(
   () =>
@@ -383,7 +385,7 @@ const setPriceCommand = computed(
 );
 const setOracleCommand = computed(
   () =>
-    `yarn set-hv-price --deployment ${deploymentName.value} --price 1000 --network localhost`
+    `yarn set-hv-price --deployment ${deploymentName} --price 1000 --network localhost`
 );
 
 const copySetPriceCommand = async () => {
