@@ -141,6 +141,7 @@
     "crossenv": "^0.0.2-security",
     "cypress": "^10.8.0",
     "cypress-fail-fast": "^5.0.1",
+    "defender-autotask-client": "^1.37.0",
     "dotenv": "^16.0.2",
     "dprint": "^0.32.1",
     "eslint": "^8.23.1",

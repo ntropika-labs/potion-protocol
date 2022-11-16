@@ -75,7 +75,8 @@
         "test-curvePricing": "hardhat test test/CurvePricing.test.ts",
         "test-poolConfig": "hardhat test test/PotionLiquidityPool.Config.test.ts",
         "test-purchases": "hardhat test test/PotionLiquidityPool.PurchaseTestGenerator.test.ts",
-        "typechain": "hardhat typechain"
+        "typechain": "hardhat typechain",
+        "update-autotask-testcomp": "ts-node ./scripts/openzeppelin/testcompPricerUpdater.ts"
     },
     "dependencies": {
         "contracts-math": "workspace:^",
