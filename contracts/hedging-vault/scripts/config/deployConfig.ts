@@ -237,4 +237,94 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
         opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
     },
+    "goerli.testcomp-1": {
+        // Asset address
+        USDC: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853", //            Custom USDC
+        underlyingAsset: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9", // Custom WETH
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HV-80-100-1D-WETH",
+        sharesSymbol: "HVP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
+
+        // Third-party dependencies
+        potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+        opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "remote.goerli.testcomp",
+    },
+    "goerli.testcomp-2": {
+        // Asset address
+        USDC: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853", //            Custom USDC
+        underlyingAsset: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707", // Custom WBTC
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HV-80-100-1D-WETH",
+        sharesSymbol: "HVP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
+
+        // Third-party dependencies
+        potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+        opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "remote.goerli.testcomp",
+    },
+    "goerli.testcomp-3": {
+        // Asset address
+        USDC: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853", //            Custom USDC
+        underlyingAsset: "0x0165878A594ca255338adfa4d48449f69242Eb8F", // Custom LINK
+
+        // Investment configuration
+        maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
+        premiumSlippage: PercentageUtils.toSolidityPercentage(2), //            2%
+        swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
+        maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
+        cycleDurationSecs: BigNumber.from(86400), //                            1 day
+        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          80%
+        hedgingRate: PercentageUtils.toSolidityPercentage(100), //              100%
+        hedgingRateSlippage: PercentageUtils.toSolidityPercentage(2), // 2%
+
+        // Shares configuration
+        sharesName: "HV-80-100-1D-WETH",
+        sharesSymbol: "HVP1",
+
+        // Fees configuration
+        managementFee: PercentageUtils.toSolidityPercentage(0), //              0%
+        performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
+
+        // Third-party dependencies
+        potionLiquidityPoolManager: "0x8a450F4C1aF53a5b41F6ec8f05036bE1F7383fEc",
+        opynAddressBook: "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd",
+
+        // Third-party dependencies
+        potionProtocolDeployConfigName: "remote.goerli.testcomp",
+    },
 };
