@@ -64,6 +64,15 @@ export function usePotionBuyActionContract(
   const { USDC } = contractsAddresses;
   const { balance: potionActionUSDCBalance, getTokenBalance: getUSDCBalance } =
     useErc20Contract(USDC.address, false);
+
+  const hedgingRateValidation: Ref<
+    | {
+        actualHedgingRate: number;
+        hedgingRateSlippage: number;
+        expectedHedgingRate: number;
+      }
+    | undefined
+  > = ref();
   /**
    * Contract methods
    **/
@@ -399,6 +408,21 @@ export function usePotionBuyActionContract(
       swapSlippage.value = parseFloat(formatUnits(slip, 6));
     });
 
+    wsContract.on(
+      "HedgingRateValidated",
+      (
+        expectedHedgingRate: BigNumber,
+        hedgingRateSlippage: BigNumber,
+        actualHedgingRate: BigNumber
+      ) => {
+        hedgingRateValidation.value = {
+          expectedHedgingRate: parseFloat(formatUnits(expectedHedgingRate, 6)),
+          hedgingRateSlippage: parseFloat(formatUnits(hedgingRateSlippage, 6)),
+          actualHedgingRate: parseFloat(formatUnits(actualHedgingRate, 6)),
+        };
+      }
+    );
+
     onUnmounted(() => {
       wsContract.removeAllListeners();
       //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
@@ -449,5 +473,6 @@ export function usePotionBuyActionContract(
     getHedgingRate,
     totalPayoutUSDC,
     getTotalPayoutInUSDC,
+    hedgingRateValidation,
   };
 }

@@ -124,6 +124,7 @@ const {
   getTotalPayoutInUSDC,
   getNextCycleTimestamp,
   strategyLoading,
+  hedgingRateValidation,
 } = usePotionBuyActionContract(PotionBuyAction, true);
 
 const {
@@ -498,11 +499,11 @@ watch(blockTimestamp, async () => {
         </div>
       </div>
     </div>
-    <div class="flex flex-col mt-4 gap-2">
-      <table>
+    <div class="flex flex-col mt-4 gap-2 text-left">
+      <table class="table-fixed border-collapse">
         <thead>
-          <th>Total deposit</th>
-          <th>Total withdrawal</th>
+          <th>Total deposit (WETH)</th>
+          <th>Total withdrawal (WETH)</th>
           <th>Spot price at round end</th>
           <th>
             Potion initial premium
@@ -513,10 +514,16 @@ watch(blockTimestamp, async () => {
             <span class="small"> 2nd run</span>
           </th>
         </thead>
-        <tbody class="text-center">
+        <tbody>
           <tr>
-            <td>0 (10 if not in a round yet)</td>
-            <td>0</td>
+            <td>
+              {{
+                (debugData.totalPrincipalBeforeWithdrawalInUnderlying || 0) -
+                (debugData.totalPrincipalBeforeWithdrawalAndDepositInUnderlying ||
+                  0)
+              }}
+            </td>
+            <td>{{ debugData.totalAssetsToWithdrawInUnderlying || 0 }}</td>
             <td>
               <span v-if="vaultStatus === LifecycleStates.Locked">{{
                 oraclePrice
@@ -540,22 +547,14 @@ watch(blockTimestamp, async () => {
           </tr>
         </tbody>
       </table>
-      <table>
+      <table class="table-fixed border-collapse">
         <thead>
-          <th>totalAssetsToWithdraw(WETH)</th>
           <th>Order size (OT)</th>
           <th>Action balance (WETH)</th>
           <th>Action balance (USDC)</th>
         </thead>
-        <tbody class="text-center">
+        <tbody>
           <tr>
-            <td>
-              {{
-                debugData.totalAssetsToWithdrawInUnderlying
-                  ?.toFixed(19)
-                  .slice(0, -1)
-              }}
-            </td>
             <td>
               {{ effectiveVaultSizeInUnderlying.toFixed(9).slice(0, -1) }}
             </td>
@@ -566,6 +565,15 @@ watch(blockTimestamp, async () => {
           </tr>
         </tbody>
       </table>
+      <pre
+        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap max-h-12 hover:max-h-full overflow-hidden"
+        >{{ JSON.stringify(debugData, null, 2) }}</pre
+      >
+      <pre
+        v-if="hedgingRateValidation"
+        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+        >{{ JSON.stringify(hedgingRateValidation, null, 2) }}</pre
+      >
     </div>
   </div>
   <!-- END TEST COMMANDS -->
