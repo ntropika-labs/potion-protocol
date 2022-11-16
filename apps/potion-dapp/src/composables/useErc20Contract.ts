@@ -7,6 +7,7 @@ import { isArray } from "lodash";
 import { isRef, onMounted, ref, unref, watch } from "vue";
 
 import { useTokenList } from "@/composables/useTokenList";
+import { isValidAddress } from "@/helpers/addresses";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
@@ -93,14 +94,14 @@ export function useErc20Contract(
 
   if (fetchInitialData === true) {
     onMounted(async () => {
-      if (unref(address)) {
+      if (isValidAddress(unref(address))) {
         await fetchErc20Info();
       }
     });
 
     if (isRef(address)) {
       watch(address, async () => {
-        if (unref(address)) {
+        if (isValidAddress(unref(address))) {
           await fetchErc20Info();
         }
       });
