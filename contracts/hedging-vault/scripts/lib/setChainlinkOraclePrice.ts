@@ -34,7 +34,8 @@ export async function setChainlinkOraclePrice(config: string, asset: string, USD
     )) as MockChainlinkAggregatorV3;
 
     const decimals = await chainlinkAggregator.decimals();
-    const priceBN = parseUnits((1.0 / USDPerAsset).toString(), decimals);
+    const inversePrice = 1.0 / USDPerAsset;
+    const priceBN = parseUnits(inversePrice.toFixed(decimals), decimals);
 
     console.log(
         `Setting price for ${asset} to ${USDPerAsset} USD/asset (${priceBN.toString()} asset/USD, 8 decimals) on ${contractName} at ${contractAddress}`,
