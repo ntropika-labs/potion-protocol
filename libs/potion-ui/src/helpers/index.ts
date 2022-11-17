@@ -78,7 +78,7 @@ export const getPnlColor = (pnl: number) =>
 
 export const pnlFormatter = (pnl: number) => {
   const symbol = trendToSymbolMap.get(getPnlTrend(pnl));
-  return `${symbol} ${pnl.toFixed(2)}%`;
+  return `${symbol} ${Math.abs(pnl).toFixed(2)}%`;
 };
 
 export const getTimeDifference = (
