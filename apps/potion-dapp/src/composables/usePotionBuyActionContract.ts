@@ -8,7 +8,10 @@ import { useEthersContract } from "./useEthersContract";
 
 import type { Ref } from "vue";
 
+import { contractsAddresses } from "@/helpers/contracts";
+
 import type { PotionBuyAction } from "@potion-protocol/hedging-vault/typechain";
+import { useErc20Contract } from "./useErc20Contract";
 export interface ActionPayout {
   currentPayout: number;
   isFinal: boolean;
@@ -58,6 +61,18 @@ export function usePotionBuyActionContract(
     ) as PotionBuyAction;
   };
 
+  const { USDC } = contractsAddresses;
+  const { balance: potionActionUSDCBalance, getTokenBalance: getUSDCBalance } =
+    useErc20Contract(USDC.address, false);
+
+  const hedgingRateValidation: Ref<
+    | {
+        actualHedgingRate: number;
+        hedgingRateSlippage: number;
+        expectedHedgingRate: number;
+      }
+    | undefined
+  > = ref();
   /**
    * Contract methods
    **/
@@ -277,6 +292,47 @@ export function usePotionBuyActionContract(
   };
   errorRegistry["currentPayout"] = currentPayoutError;
 
+  //Hedging Rate
+  const hedgingRate = ref<number>(0);
+  const hedgingRateLoading = ref(false);
+  const hedgingRateError = ref<string | null>(null);
+  const getHedgingRate = async () => {
+    hedgingRateLoading.value = true;
+    hedgingRateError.value = null;
+    try {
+      const provider = initContractProvider();
+      const rate = await provider.hedgingRate();
+      hedgingRate.value = parseFloat(formatUnits(rate, 6));
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Cannot get hedging rate: ${error.message}`
+          : "Cannot get hedging rate";
+      hedgingRateError.value = errorMessage;
+
+      //throw new Error(errorMessage);
+    } finally {
+      hedgingRateLoading.value = false;
+    }
+  };
+  errorRegistry["hedgingRate"] = hedgingRateError;
+
+  /**
+   * Calculate the current total payout in USDC
+   * @returns Returns the total payout calculated as the current payout we get from the Potion Buy Actions and any leftover
+   * still in the contract from previous runs
+   */
+  const totalPayoutUSDC = ref<ActionPayout | undefined>();
+  const getTotalPayoutInUSDC = async () => {
+    const payout = currentPayout.value?.currentPayout || 0;
+    await getUSDCBalance(false, contractAddress);
+
+    totalPayoutUSDC.value = {
+      currentPayout: payout + potionActionUSDCBalance.value,
+      isFinal: currentPayout.value?.isFinal || false,
+    };
+  };
+
   // Get strategy info
 
   const strategyLoading = ref(false);
@@ -291,6 +347,7 @@ export function usePotionBuyActionContract(
         getPremiumSlippage(),
         getSwapSlippage(),
         getStrikePercentage(),
+        getHedgingRate(),
       ]);
     } catch (error) {
       const errorMessage =
@@ -351,6 +408,21 @@ export function usePotionBuyActionContract(
       swapSlippage.value = parseFloat(formatUnits(slip, 6));
     });
 
+    wsContract.on(
+      "HedgingRateValidated",
+      (
+        expectedHedgingRate: BigNumber,
+        hedgingRateSlippage: BigNumber,
+        actualHedgingRate: BigNumber
+      ) => {
+        hedgingRateValidation.value = {
+          expectedHedgingRate: parseFloat(formatUnits(expectedHedgingRate, 6)),
+          hedgingRateSlippage: parseFloat(formatUnits(hedgingRateSlippage, 6)),
+          actualHedgingRate: parseFloat(formatUnits(actualHedgingRate, 6)),
+        };
+      }
+    );
+
     onUnmounted(() => {
       wsContract.removeAllListeners();
       //@ts-expect-error the contract instance is not typed. The provider here is a websocket provider
@@ -361,6 +433,7 @@ export function usePotionBuyActionContract(
   return {
     strategyLoading,
     strategyError,
+    cycleDurationDays,
     getStrategyInfo,
     nextCycleTimestampLoading,
     nextCycleTimestampError,
@@ -394,6 +467,12 @@ export function usePotionBuyActionContract(
     currentPayoutError,
     currentPayout,
     getCurrentPayout,
-    cycleDurationDays,
+    hedgingRateLoading,
+    hedgingRateError,
+    hedgingRate,
+    getHedgingRate,
+    totalPayoutUSDC,
+    getTotalPayoutInUSDC,
+    hedgingRateValidation,
   };
 }

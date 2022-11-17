@@ -1,7 +1,7 @@
 import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { Round } from "../generated/schema";
 import { updateDepositRequestShares } from "./deposits";
-import { addItemToArray, removeItemFromArray } from "./helpers";
+import { addItemToArray, removeItemFromArray, BigIntPow } from "./helpers";
 import { updateWithdrawalRequestAssets } from "./withdrawals";
 
 function createRoundId(roundNumber: BigInt, vault: Bytes): Bytes {
@@ -106,7 +106,8 @@ function removeWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
 function updateShares(
   roundNumber: BigInt,
   vault: Bytes,
-  exchangeRate: BigInt
+  exchangeRate: BigInt,
+  amountDecimals: BigInt
 ): void {
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
@@ -115,8 +116,13 @@ function updateShares(
       id.toHexString(),
     ]);
   } else {
+    const decimals = BigIntPow(BigInt.fromI32(10), amountDecimals);
     for (let i = 0; i < round.depositRequests.length; i += 1) {
-      updateDepositRequestShares(round.depositRequests[i], exchangeRate);
+      updateDepositRequestShares(
+        round.depositRequests[i],
+        exchangeRate,
+        decimals
+      );
     }
     round.assetToShareRate = exchangeRate;
     round.save();

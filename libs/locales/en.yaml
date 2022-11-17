@@ -11,6 +11,7 @@ approve: approve
 approving_usdc: approving usdc
 asset: Asset
 assets: Assets
+available_assets_to_redeem: You can redeem {availableAssets} assets
 available_payout: Available Payout
 available_potions: available potions
 average_pnl: average pnl
@@ -23,7 +24,9 @@ buy_potion: buy potion
 buying_potion: buying potion
 check_pool: check pool
 choose_pool_assets: Choose one or more assets this pool will insure
-choose_pool_curve: Curve the pool will use to determine sell prices, as a function of your pool utilization.
+choose_pool_curve: >-
+  Curve the pool will use to determine sell prices, as a function of your pool
+  utilization.
 claimable: Claimable
 claimed: Claimed
 claiming_collateral: claiming collateral
@@ -33,7 +36,7 @@ collateral_claimed: collateral claimed
 committed: committed
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: "Connected Wallet:"
+connected_wallet: 'Connected Wallet:'
 contracts_addresses: Contracts Addresses
 counterparties: Counterparties
 counterparty: Counterparty
@@ -46,10 +49,14 @@ create_potion_title: Create protective potions by selecting asset, strike and du
 creating_pool: creating pool
 creator: Creator
 currency: Currency
-current_deposit_request_info: You have already deposited {currentDepositAmount} {assetSymbol} inside this vault
+current_deposit_request_info: >-
+  You have already deposited {currentDepositAmount} {assetSymbol} inside this
+  vault
 current_payout: Current Payout
 current_price: current price
-current_withdrawal_request_info: You have a withdrawal request of {currentWithdrawalAmount} assets inside this vault
+current_withdrawal_request_info: >-
+  You have a withdrawal request of {currentWithdrawalAmount} assets inside this
+  vault
 curve_formula_title: Equation
 curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
 curve_parameters: Parameters defining the curve.
@@ -138,7 +145,7 @@ position_entered: Position Entered
 position_exited: Position Exited
 potion_bought: potion bought
 premium: Premium
-price_changed: The price of { token } went from { oldPrice } to { newPrice } 
+price_changed: The price of { token } went from { oldPrice } to { newPrice }
 price_not_in_tollerance: The new price is outside of the slippage tollerance
 price_per_potion: price per potion
 profit_and_loss: Profit & Loss
@@ -200,3 +207,9 @@ your_potion_expires_in: your potion expires in
 your_put_recipe: Your put recipe
 your_shares: your shares
 your_strike_price: your strike price
+entering_round: Entering new round
+round_entered: Round entered
+hedging_vault: Read More
+strike_percentage: Strike Percentage
+hedging_rate: Hedging Rate
+view_hedging_vault: show

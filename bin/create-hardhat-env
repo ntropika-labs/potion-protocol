@@ -138,7 +138,10 @@ spin_up_environment() {
 
   msg "${GREEN}Starting local environment...${NOFORMAT}"
   # Spin up the docker environment containers listed in docker-compose.yml file and flag volumes as ephemeral by using -V
-  docker compose --profile hardhat up -d -V
+  # This got replaced by: yarn nx run @potion-protocol/hedging-vault:hardhat-localnode (to issue manually)
+  #docker compose --profile hardhat up -d -V
+  docker compose up -d -V
+  
   msg "${GREEN}- - Containers started ${NOFORMAT}"
   msg "${GREEN}- Run and deploy the contracts and subgraph on local env ${NOFORMAT}"
 
@@ -151,9 +154,12 @@ spin_up_environment() {
   yarn nx run @potion-protocol/hedging-vault:compile
   msg "${GREEN}- - Hedging vault contracts compiled ${NOFORMAT}"
 
-  yarn nx run @potion-protocol/hedging-vault:deploy-local.hedging
+  yarn nx run @potion-protocol/hedging-vault:deploy-local.multivault
   msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
     
+  yarn nx run potion-dapp:prepare-multivault
+  msg "${GREEN}- - Multivault deployment created ${NOFORMAT}"
+
   yarn nx run potion-subgraph:prepare-hedging
   msg "${GREEN}- Potion subgraph.yaml is ready ${NOFORMAT}"
 
@@ -165,6 +171,15 @@ spin_up_environment() {
 
   yarn nx run subgraph-queries:codegen
   msg "${GREEN}- Subgraph queries generated ${NOFORMAT}"
+
+  yarn nx run subgraph-queries-hv:codegen
+
+  yarn nx run potion-subgraph-hv:prepare-local
+
+  yarn nx run potion-subgraph-hv:create-local
+  msg "${GREEN}- Hedging Vault subgraph created ${NOFORMAT}"
+
+  yarn nx run potion-subgraph-hv:deploy-local --version-label 0.0.1
 
   return 0
 }

@@ -1,5 +1,5 @@
 import JSBI from "jsbi";
-import { BigNumber } from "ethers";
+import { BigNumber, type BigNumberish } from "ethers";
 import { Token, TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import {
@@ -10,12 +10,12 @@ import {
 import { type MethodParameters, Pool } from "@uniswap/v3-sdk";
 
 import { runDepthRouter } from "potion-router";
-import { evaluatePremium } from "@vault-operator-utils";
 
 import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
 
 import { UniswapActionType, type UniswapRouterReturn } from "@/types";
+import { addPercentage, calculateOrderSize } from "hedging-vault-sdk";
 
 console.log("Running a mocked version of 'premiumSwapRouter'");
 
@@ -97,8 +97,10 @@ const getUniswapRoute = async (
 };
 
 const runPremiumSwapRouter = async (
+  hedgingRate: BigNumberish,
+  strikePercent: BigNumberish,
   pools: IPoolUntyped[],
-  initialOrderSize: number,
+  principalHedgedAmount: number,
   strikePriceUSDC: number,
   gas: number,
   ethPrice: number,
@@ -116,31 +118,53 @@ const runPremiumSwapRouter = async (
   potionRouterResult: DepthRouterReturn;
   uniswapRouterResult: UniswapRouterReturn;
 }> => {
-  const potionRouter = runDepthRouter(
+  // POTION ROUTER
+  const potionRouterWithPremium = runDepthRouter(
     pools,
-    initialOrderSize,
+    principalHedgedAmount,
     strikePriceUSDC,
     gas,
     ethPrice
   );
 
-  const totalAmountToSwap = evaluatePremium(
-    potionRouter.premium,
-    premiumSlippage
+  // TODO: check
+  const orderSize = calculateOrderSize(
+    principalHedgedAmount,
+    inputToken.decimals || "6",
+    hedgingRate,
+    strikePercent,
+    strikePriceUSDC,
+    potionRouterWithPremium.premium
   );
 
-  console.log(
-    "totalAmountToSwap",
-    inputToken,
-    outputToken,
-    chainId,
+  const potionRouter = runDepthRouter(
     pools,
-    initialOrderSize,
+    orderSize.effectiveVaultSize.toNumber(),
     strikePriceUSDC,
     gas,
-    ethPrice,
-    potionRouter.premium,
-    totalAmountToSwap
+    ethPrice
+  );
+
+  console.table([
+    {
+      inputToken: [inputToken.address, inputToken.decimals, inputToken.symbol],
+      outputToken: [
+        outputToken.address,
+        outputToken.decimals,
+        outputToken.symbol,
+      ],
+      chainId,
+      pools: pools.map((p) => p.poolId),
+      orderSize,
+      routerPremium: potionRouterWithPremium,
+      finalOrderSize: orderSize.effectiveVaultSize.toNumber(),
+    },
+  ]);
+
+  // UNISWAP ROUTE
+  const totalAmountToSwap = addPercentage(
+    BigNumber.from(potionRouterWithPremium.premium),
+    BigNumber.from(premiumSlippage)
   );
 
   const uniswapResult = await getUniswapRoute(
@@ -148,7 +172,7 @@ const runPremiumSwapRouter = async (
     inputToken,
     outputToken,
     tradeType,
-    totalAmountToSwap,
+    totalAmountToSwap.toNumber(),
     maxSplits,
     recipientAddress,
     slippageToleranceInteger,

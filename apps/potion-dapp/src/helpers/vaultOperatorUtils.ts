@@ -1,56 +1,70 @@
-import type { Ref } from "vue";
 import type { BigNumberish } from "ethers";
-import { Token as UniswapToken } from "@uniswap/sdk-core";
 
 import type { Token } from "dapp-types";
 
-import { contractsAddresses } from "./hedgingVaultContracts";
-import { getChainId } from "@/helpers/uniswap";
+import { getContractsFromVault } from "./hedgingVaultContracts";
+import { UniswapActionType } from "@/types";
 
-const convertCollateralToUniswapToken = (token: Token): UniswapToken => {
-  return new UniswapToken(
-    getChainId(),
-    token.address,
-    token.decimals || 0,
-    token.symbol,
-    token.name
-  );
-};
-
-const convertQuoteUniswapTokenToToken = (uniToken: UniswapToken): Token => {
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const mockCollateralToken = (token: Token): Token => {
   return {
-    name: uniToken.name || "",
-    symbol: uniToken.symbol || "",
-    address: uniToken.address,
-    decimals: uniToken.decimals,
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: token.address,
+    decimals: token.decimals,
   };
 };
 
-const getEnterExpectedPriceRate = (
-  _: Ref<number>,
-  tradePrice: BigNumberish
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const mockUnderlyingToken = (token: Token): Token => {
+  return {
+    name: token.name || "",
+    symbol: token.symbol || "",
+    address: token.address,
+    decimals: token.decimals,
+  };
+};
+
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because the expected price rate must match the one from the oracle for local development
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const getExpectedPriceRate = (
+  _oraclePrice: number,
+  tradePrice: BigNumberish,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _actionType: UniswapActionType
 ) => {
   return tradePrice.toString(); //The expected price of the swap as a fixed point SD59x18 number
 };
 
-const getExitExpectedPriceRate = (_: Ref<number>, tradePrice: BigNumberish) => {
-  return tradePrice.toString(); //The expected price of the swap as a fixed point SD59x18 number
+/**
+ * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This is required because we need a valid address for uniswap to run the router
+ * @param vaultAddress Address of the vault we are acting on
+ * @returns The address to use as an intermediate recipient in multihop swaps
+ */
+const getRecipientAddress = (vaultAddress: string): string => {
+  const { PotionBuyAction } = getContractsFromVault(vaultAddress);
+
+  return PotionBuyAction;
 };
-
-const getRecipientAddress = (): string => {
-  const { PotionBuyAction } = contractsAddresses;
-
-  return PotionBuyAction.address;
-};
-
-const evaluatePremium = (routerPremium: number, premiumSlippage: number) =>
-  routerPremium + (premiumSlippage * routerPremium) / 100;
 
 export {
-  convertCollateralToUniswapToken,
-  convertQuoteUniswapTokenToToken,
-  getEnterExpectedPriceRate,
-  getExitExpectedPriceRate,
+  getExpectedPriceRate,
   getRecipientAddress,
-  evaluatePremium,
+  mockCollateralToken,
+  mockUnderlyingToken,
 };

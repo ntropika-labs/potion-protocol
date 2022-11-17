@@ -64,7 +64,7 @@ const mockedWithdrawalParams: WithdrawalRequestParams = {
   amount: BigInt.fromString("100"),
   amountRedeemed: BigInt.fromString("0"),
   assets: BigInt.fromString("50"),
-  remainingAssets: BigInt.fromString("0"),
+  remainingAssets: BigInt.fromString("50"),
 };
 
 const mockedWithdrawalParamsArray: WithdrawalRequestParams[] = [
@@ -73,28 +73,28 @@ const mockedWithdrawalParamsArray: WithdrawalRequestParams[] = [
     amount: BigInt.fromString("10"),
     amountRedeemed: BigInt.fromString("0"),
     assets: BigInt.fromString("5"),
-    remainingAssets: BigInt.fromString("0"),
+    remainingAssets: BigInt.fromString("5"),
   },
   {
     depositId: BigInt.fromString("2"),
     amount: BigInt.fromString("100"),
     amountRedeemed: BigInt.fromString("0"),
     assets: BigInt.fromString("50"),
-    remainingAssets: BigInt.fromString("0"),
+    remainingAssets: BigInt.fromString("50"),
   },
   {
     depositId: BigInt.fromString("3"),
     amount: BigInt.fromString("500"),
     amountRedeemed: BigInt.fromString("0"),
     assets: BigInt.fromString("250"),
-    remainingAssets: BigInt.fromString("0"),
+    remainingAssets: BigInt.fromString("250"),
   },
   {
     depositId: BigInt.fromString("4"),
     amount: BigInt.fromString("1000"),
     amountRedeemed: BigInt.fromString("0"),
     assets: BigInt.fromString("500"),
-    remainingAssets: BigInt.fromString("0"),
+    remainingAssets: BigInt.fromString("500"),
   },
 ];
 
@@ -974,9 +974,9 @@ describe("roundsOutputVault", () => {
         contractAddress
       );
       const mockedEvent = createOutputWithdrawExchangeAsset(
-        mockedCaller,
         mockedInvestor,
-        mockedCaller,
+        mockedInvestor,
+        mockedInvestor,
         BigInt.fromString("15"),
         BigInt.fromString("2"),
         BigInt.fromString("30")
@@ -1018,7 +1018,7 @@ describe("roundsOutputVault", () => {
         contractAddress
       );
       const mockedEvent = createOutputWithdrawExchangeAssetBatch(
-        mockedCaller,
+        mockedInvestor,
         mockedInvestor,
         mockedInvestor,
         BigInt.fromString("5"),

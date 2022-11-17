@@ -5,7 +5,6 @@ import type {
 import { ref, unref } from "vue";
 
 import { useEthersContract } from "@/composables/useEthersContract";
-import { parseUnits } from "@ethersproject/units";
 import { RoundsVaultExchanger__factory } from "@potion-protocol/hedging-vault/typechain";
 
 import type { RoundsVaultExchanger } from "@potion-protocol/hedging-vault/typechain";
@@ -31,7 +30,10 @@ export function useRoundsVaultExchanger(
   const exchangeInputForOutputLoading = ref(false);
   const exchangeInputForOutputTx = ref<ContractTransaction | null>(null);
   const exchangeInputForOutputReceipt = ref<ContractReceipt | null>(null);
-  const exchangeInputForOutput = async (id: BigNumberish, amount: number) => {
+  const exchangeInputForOutput = async (
+    id: BigNumberish,
+    amount: BigNumberish
+  ) => {
     try {
       exchangeInputForOutputLoading.value = true;
       const contract = initContractSigner();
@@ -39,7 +41,7 @@ export function useRoundsVaultExchanger(
         unref(roundsInputAddress),
         unref(roundsOutputAddress),
         id,
-        parseUnits(amount.toString())
+        amount
       );
       exchangeInputForOutputTx.value = tx;
       exchangeInputForOutputReceipt.value = await tx.wait();
@@ -59,7 +61,7 @@ export function useRoundsVaultExchanger(
   const exchangeInputForOutputBatchReceipt = ref<ContractReceipt | null>(null);
   const exchangeInputForOutputBatch = async (
     ids: BigNumberish[],
-    amounts: number[]
+    amounts: BigNumberish[]
   ) => {
     try {
       exchangeInputForOutputBatchLoading.value = true;
@@ -68,7 +70,7 @@ export function useRoundsVaultExchanger(
         unref(roundsInputAddress),
         unref(roundsOutputAddress),
         ids,
-        amounts.map((x) => parseUnits(x.toString()))
+        amounts
       );
       exchangeInputForOutputBatchTx.value = tx;
       exchangeInputForOutputBatchReceipt.value = await tx.wait();
@@ -79,7 +81,7 @@ export function useRoundsVaultExchanger(
         throw new Error(`Cannot exchange`);
       }
     } finally {
-      exchangeInputForOutputLoading.value = false;
+      exchangeInputForOutputBatchLoading.value = false;
     }
   };
 

@@ -60,7 +60,6 @@ export const calculatePotionPayoutInUnderlying = (
  *
  * @param {number} usdcBalanceActionContract - The USDC balance of the action contract
  * @param {number} underlyingBalanceActionContract - The Underlying Balance of the action contract
- * @param {number} underlyingBalanceRoundsInputVaultContract - The Underlying Balance of the input vault contract
  * @param {number} underlyingPrice - The Underlying Price in USDC
  * @param {number} strikePrice - The Strike Price of the option, in USDC
  * @param {number} potionsQuantity - The amount of potions bought
@@ -69,7 +68,6 @@ export const calculatePotionPayoutInUnderlying = (
 export const calculateCurrentTotalUnderlyings = (
     usdcBalanceActionContract: number,
     underlyingBalanceActionContract: number,
-    underlyingBalanceRoundsInputVaultContract: number,
     underlyingPrice: number,
     strikePrice: number,
     potionsQuantity: number,
@@ -79,30 +77,14 @@ export const calculateCurrentTotalUnderlyings = (
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
             underlyingPrice,
-        ) +
-        calculatePotionPayoutInUnderlying(strikePrice, underlyingPrice, potionsQuantity) +
-        underlyingBalanceRoundsInputVaultContract
+        ) + calculatePotionPayoutInUnderlying(strikePrice, underlyingPrice, potionsQuantity)
     );
 };
 
 /**
  * @param {number} investmentVaultContractShares - the amount of shares emitted by the vault
- * @param {number} roundsOutputVaultContractShares - The amount of shares deposited into the rounds output vault. This is the amount of shares that will be burned
- * @returns {number} - The amount of shares at round end;
- */
-export const calculateCurrentTotalShares = (
-    investmentVaultContractShares: number,
-    roundsOutputVaultContractShares: number,
-): number => {
-    return investmentVaultContractShares - roundsOutputVaultContractShares;
-};
-
-/**
- * @param {number} investmentVaultContractShares - the amount of shares emitted by the vault
- * @param {number} roundsOutputVaultContractShares - The amount of shares deposited into the rounds output vault. This is the amount of shares that will be burned
  * @param {number} usdcBalanceActionContract - The USDC balance of the action contract
  * @param {number} underlyingBalanceActionContract - The Underlying Balance of the action contract
- * @param {number} underlyingBalanceRoundsInputVaultContract - The Underlying Balance of the input vault contract
  * @param {number} underlyingPrice - The Underlying Price in USDC
  * @param {number} strikePrice - The Strike Price of the option, in USDC
  * @param {number} potionsQuantity - The amount of potions bought
@@ -111,24 +93,17 @@ export const calculateCurrentTotalShares = (
 export const calculateCurrentShareToAssetRate = (
     usdcBalanceActionContract: number,
     underlyingBalanceActionContract: number,
-    underlyingBalanceRoundsInputVaultContract: number,
     underlyingPrice: number,
     strikePrice: number,
     potionsQuantity: number,
     investmentVaultContractShares: number,
-    roundsOutputVaultContractShares: number,
 ): number => {
     const currentTotalUnderlyings = calculateCurrentTotalUnderlyings(
         usdcBalanceActionContract,
         underlyingBalanceActionContract,
-        underlyingBalanceRoundsInputVaultContract,
         underlyingPrice,
         strikePrice,
         potionsQuantity,
     );
-    const currentTotalShares = calculateCurrentTotalShares(
-        investmentVaultContractShares,
-        roundsOutputVaultContractShares,
-    );
-    return currentTotalUnderlyings / currentTotalShares;
+    return currentTotalUnderlyings / investmentVaultContractShares;
 };

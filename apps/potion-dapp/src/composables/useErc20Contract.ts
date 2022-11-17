@@ -7,16 +7,17 @@ import { isArray } from "lodash";
 import { isRef, onMounted, ref, unref, watch } from "vue";
 
 import { useTokenList } from "@/composables/useTokenList";
+import { isValidAddress } from "@/helpers/addresses";
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 
 import { useEthersContract } from "./useEthersContract";
+import type { MaybeRef } from "@vueuse/core";
 
-import type { Ref } from "vue";
 export function useErc20Contract(
-  address: string | Ref<string>,
+  address: MaybeRef<string>,
   fetchInitialData = true
 ) {
   const { initContract } = useEthersContract();
@@ -93,14 +94,14 @@ export function useErc20Contract(
 
   if (fetchInitialData === true) {
     onMounted(async () => {
-      if (unref(address)) {
+      if (isValidAddress(unref(address))) {
         await fetchErc20Info();
       }
     });
 
     if (isRef(address)) {
       watch(address, async () => {
-        if (unref(address)) {
+        if (isValidAddress(unref(address))) {
           await fetchErc20Info();
         }
       });
@@ -122,6 +123,11 @@ export function useErc20Contract(
   ) => {
     try {
       const contractProvider = initContractProvider();
+
+      if (!decimals.value) {
+        await getDecimals();
+      }
+
       if (self === true && connectedWallet.value) {
         const result = await contractProvider.balanceOf(
           connectedWallet.value.accounts[0].address

@@ -11,7 +11,11 @@ import { DepositRequest } from "../generated/schema";
 import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
-import { setCurrentRound, setLastAssetToShareRate } from "./investmentVault";
+import {
+  getAssetDecimals,
+  setCurrentRound,
+  setLastAssetToShareRate,
+} from "./investmentVault";
 import {
   getOrCreateDepositRequest,
   getDepositRequest,
@@ -29,7 +33,8 @@ function handleNextRound(event: NextRound): void {
     updateShares(
       event.params.newRoundNumber.minus(BigInt.fromString("1")),
       vaultAddress,
-      event.params.prevRoundExchangeRate
+      event.params.prevRoundExchangeRate,
+      getAssetDecimals(vaultAddress)
     );
     setLastAssetToShareRate(vaultAddress, event.params.prevRoundExchangeRate);
   }
@@ -158,7 +163,7 @@ function handleWithdrawExchangeAsset(event: WithdrawExchangeAsset): void {
   withdraw(
     event.params.receiptId,
     vaultAddress,
-    event.params.receiver,
+    event.params.owner,
     event.params.receiptAmount,
     event.params.exchangeAssetAmount
   );
@@ -173,7 +178,7 @@ function handleWithdrawExchangeAssetBatch(
     withdraw(
       event.params.receiptIds[i],
       vaultAddress,
-      event.params.receiver,
+      event.params.owner,
       event.params.receiptAmounts[i],
       event.params.exchangeAssetAmount
     );
@@ -183,22 +188,22 @@ function handleWithdrawExchangeAssetBatch(
 function withdraw(
   receiptId: BigInt,
   vaultAddress: Address,
-  receiver: Address,
+  investor: Address,
   receiptAmount: BigInt,
   exchangeAssetAmount: BigInt
 ): void {
-  const depositRequest = getDepositRequest(receiptId, vaultAddress, receiver);
+  const depositRequest = getDepositRequest(receiptId, vaultAddress, investor);
   if (depositRequest == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
-      receiver.toHexString(),
+      investor.toHexString(),
     ]);
   } else {
     depositRequest.amount = depositRequest.amount.minus(receiptAmount);
     depositRequest.amountRedeemed =
       depositRequest.amountRedeemed.plus(exchangeAssetAmount);
     depositRequest.remainingShares =
-      depositRequest.shares.minus(exchangeAssetAmount);
+      depositRequest.remainingShares.minus(exchangeAssetAmount);
     depositRequest.save();
     log.info(
       "DepositRequest {} now has {} amount, {} amountRedeemed and {} remainingShares",

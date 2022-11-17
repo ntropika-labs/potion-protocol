@@ -1,4 +1,5 @@
 import { accessSync } from "fs";
+import { basename } from "path";
 import { readFile, writeFile } from "fs/promises";
 
 const canAccess = (path) => {
@@ -9,6 +10,11 @@ const canAccess = (path) => {
     return false;
   }
 };
+
+const getHardhatTarget = (path) => {
+  const base = basename(path);
+  return base.replace(/localhost/, 'hardhat.develop').replace(/\.json/, '');
+}
 
 async function main() {
   // read the vault stacks files
@@ -25,6 +31,7 @@ async function main() {
     for (const [key, value] of Object.entries(source.contracts)) {
       result[key] = value.address;
     }
+    result.hardhatDeploymentName = getHardhatTarget(path);
     return result;
   });
 

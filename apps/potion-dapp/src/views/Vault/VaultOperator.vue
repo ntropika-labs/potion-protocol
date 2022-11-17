@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  unref,
+  watch,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { formatUnits } from "@ethersproject/units";
-import { createValidExpiry } from "@/helpers/time";
 import {
   AssetTag,
   BaseButton,
@@ -14,11 +21,10 @@ import {
 } from "potion-ui";
 import { LifecycleStates } from "hedging-vault-sdk";
 
+import { contractsAddresses } from "@/helpers/contracts";
+
 import { useHedgingVaultOrchestratorContract } from "@/composables/useHedgingVaultOrchestratorContract";
 import { useNotifications } from "@/composables/useNotifications";
-// import { useCoinGecko } from "@/composables/useCoinGecko";
-import { useDepthRouter } from "@/composables/useDepthRouter";
-import { useBlockNative } from "@/composables/useBlockNative";
 
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import TokenSwap from "@/components/TokenSwap/TokenSwap.vue";
@@ -26,15 +32,22 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { usePotionBuyActionContract } from "@/composables/usePotionBuyActionContract";
 import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 
-import { getPotionBuyActionFromVault } from "@/helpers/hedgingVaultContracts";
-import { contractsAddresses as coreContractsAddresses } from "@/helpers/contracts";
+import {
+  getContractsFromVault,
+  getHardhatDeploymentNameFromVault,
+} from "@/helpers/hedgingVaultContracts";
 import { useEthersProvider } from "@/composables/useEthersProvider";
+import { useErc20Contract } from "@/composables/useErc20Contract";
 
-import { useOtokenFactory } from "@/composables/useOtokenFactory";
 import { useBuyerRecords } from "@/composables/useBuyerRecords";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultOperatorCalculations } from "@/composables/useVaultOperatorCalculations";
-import { useVaultOperatorActions } from "@/composables/useVaultOperatorActions";
+
+import { useVaultOperatorEnterPosition } from "@/composables/useVaultOperatorEnterPosition";
+import { useVaultOperatorExitPosition } from "@/composables/useVaultOperatorExitPosition";
+import { useOracleContract } from "@/composables/useOracleContract";
+import { useHedgingVault } from "@/composables/useHedgingVault";
+import { storeToRefs } from "pinia";
+import { useUserDataStore } from "@/stores/useUserDataStore";
 
 const TabNavigationComponent = defineAsyncComponent(
   () =>
@@ -45,54 +58,55 @@ const TabNavigationComponent = defineAsyncComponent(
 
 const rerunRequired = ref(false);
 const IS_DEV_ENV = import.meta.env;
+const { USDC } = contractsAddresses;
 
 const { t } = useI18n();
 const router = useRouter();
 
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
-const potionBuyAction = getPotionBuyActionFromVault(
-  vaultId.value.toLowerCase()
+const { PotionBuyAction, RoundsOutputVault } = getContractsFromVault(
+  vaultId.value
 );
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
-const { getGas, gasPrice } = useBlockNative();
+const { polledPrice, startPolling, stopPolling } = useOracleContract();
+const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
 
-const { principalPercentages, vaultStatus } = useInvestmentVaultContract(
+const {
+  vaultStatus,
+  getTotalSupply,
+  totalSupply,
+  getShareBalance,
+  shareBalance,
+} = useInvestmentVaultContract(vaultId, true, true);
+
+const { walletAddress } = storeToRefs(useUserDataStore());
+// vault info
+const { vault } = useHedgingVault(vaultId, walletAddress);
+
+const { vaultName, assetSymbol, assetAddress, tokenAsset } = useErc4626Contract(
   vaultId,
   true,
   true
 );
 
-const principalPercentage = computed(() =>
-  principalPercentages.value && principalPercentages.value.length
-    ? principalPercentages.value[0]
-    : 0
-);
+const {
+  enterNextRound: vaultEnterNextRound,
+  fetchCanEnterNextRound,
+  canEnterNextRound,
+  nextRoundLoading,
+  //  nextRoundError,
+  nextRoundTx,
+  nextRoundReceipt,
+} = useHedgingVaultOrchestratorContract(vaultId.value.toLowerCase());
 
 const {
-  vaultName,
-  assetSymbol,
-  assetAddress,
-  totalAssets,
-  tokenAsset,
-  getTotalAssets,
-} = useErc4626Contract(vaultId, true, true);
-
-const {
-  enterPositionTx,
-  enterPositionReceipt,
-  enterPositionLoading,
-  enterPosition: vaultEnterPosition,
-  canPositionBeEntered,
-  exitPositionTx,
-  exitPositionReceipt,
-  exitPositionLoading,
-  exitPosition: vaultExitPosition,
-  canPositionBeExited,
-  fetchCanPositionBeEntered,
-  fetchCanPositionBeExited,
-} = useHedgingVaultOrchestratorContract();
+  balance: potionActionUnderlyingBalance,
+  getTokenBalance: getUnderlyingBalance,
+} = useErc20Contract(assetAddress, false);
+const { balance: potionActionUSDCBalance, getTokenBalance: getUSDCBalance } =
+  useErc20Contract(USDC.address, false);
 
 const {
   nextCycleTimestamp,
@@ -103,22 +117,48 @@ const {
   maxSwapDurationSecs,
   strikePercentage,
   currentPayout,
+  hedgingRate,
+  totalPayoutUSDC,
   getCurrentPayout,
   getStrategyInfo,
+  getTotalPayoutInUSDC,
+  getNextCycleTimestamp,
   strategyLoading,
-} = usePotionBuyActionContract(potionBuyAction, true);
+  hedgingRateValidation,
+} = usePotionBuyActionContract(PotionBuyAction, true);
 
 const {
-  oraclePrice,
-  oraclePriceUpdated,
-  strikePrice,
-  orderSize,
-  numberOfOtokensToBuyBN,
-} = useVaultOperatorCalculations(
-  assetAddress,
+  enterPositionData, // Raw data to use when entering the position
+  isActionLoading: isEnterPositionLoading,
+  hasCounterparties,
+  isEnterPositionOperationValid,
+  loadEnterPositionRoute,
+  evaluateEnterPositionData,
+  effectiveVaultSizeInUnderlying,
+  debugData,
+} = useVaultOperatorEnterPosition(
+  vaultId,
+  tokenAsset,
+  totalPayoutUSDC,
+  totalSupply,
+  shareBalance,
+  hedgingRate,
   strikePercentage,
-  principalPercentage,
-  totalAssets
+  oraclePrice,
+  cycleDurationDays
+);
+
+const {
+  exitPositionData, // Raw data to use when entering the position
+  isActionLoading: isExitPositionLoading,
+  isExitPositionOperationValid,
+  loadExitPositionRoute,
+  evaluateExitPositionData,
+} = useVaultOperatorExitPosition(
+  vaultId,
+  tokenAsset,
+  totalPayoutUSDC,
+  oraclePrice
 );
 
 const statusInfo = computed(() => {
@@ -142,135 +182,150 @@ const statusInfo = computed(() => {
   }
 });
 
-const criteriasParam = computed(() => {
-  return [
-    {
-      token: tokenAsset.value,
-      maxStrike: strikePercentage.value,
-      maxDuration: cycleDurationDays.value,
-    },
-  ];
-});
-
-const { getPoolsFromCriterias, routerParams: potionRouterParameters } =
-  useDepthRouter(
-    criteriasParam,
-    orderSize,
-    strikePrice,
-    gasPrice,
-    oraclePrice,
-    false
-  );
-
-const {
-  //uniswapRouterResult,
-  enterPositionData,
-  exitPositionData,
-  isActionLoading,
-  hasCounterparties,
-  isEnterPositionOperationValid,
-  isExitPositionOperationValid,
-  loadEnterPositionRoute,
-  loadExitPositionRoute,
-  evaluateEnterPositionData,
-  evaluateExitPositionData,
-} = useVaultOperatorActions(currentPayout);
-
 const counterpartiesText = computed(() => {
   return enterPositionData.value &&
-    enterPositionData.value.potionRouterResult.counterparties.length > 1
+    enterPositionData.value.potionRouterData.counterparties.length > 1
     ? t("counterparties")
     : t("counterparty");
 });
 
-const { getTargetOtokenAddress } = useOtokenFactory();
-
-const enterPosition = async () => {
-  if (!isEnterPositionOperationValid.value) {
+/**
+ * Callback to enter the next round.
+ * It requires the user to manually load routes ('callbackLoadRoutes') for the enter and exit positions before being able to issue this command.
+ *
+ * Executes the following steps:
+ * 1. Evaluates previously loaded data for the exit position. This results in an object containing encoded data, suitable for the contracts,
+ *    for the uniswap route and fallback route
+ * 2. Gets a new otoken address
+ * 3. Evaluates previously loaded data for the enter position. This results in an object containing encoded data, suitable for the contracts,
+ *    for the uniswap route, the potion buy info and the fallback route
+ */
+const callbackEnterNextRound = async () => {
+  if (
+    nextRoundLoading.value ||
+    !canEnterNextRound.value ||
+    !isEnterPositionOperationValid.value ||
+    !isExitPositionOperationValid.value
+  ) {
     throw new Error(
-      "A uniswap route and a set of counterparties is required to enter position"
+      "2 uniswap routes and a set of counterparties are required to enter the next round"
     );
   }
 
-  const expirationTimestamp = createValidExpiry(
-    blockTimestamp.value,
-    cycleDurationDays.value
-  );
-  const newOtokenAddress = await getTargetOtokenAddress(
-    tokenAsset.value.address,
-    coreContractsAddresses.USDC.address,
-    coreContractsAddresses.USDC.address,
-    strikePrice.value,
-    expirationTimestamp,
-    true
+  // EXIT POSITION DATA
+  const { swapInfo: exitSwapInfo, fallback: exitFallbackSwapInfo } =
+    evaluateExitPositionData();
+
+  // ENTER POSITION DATA
+  const {
+    swapInfo: enterSwapInfo,
+    potionBuyInfo,
+    fallback: enterFallbackSwapInfo,
+  } = await evaluateEnterPositionData(blockTimestamp);
+
+  console.log("NEXT ROUND");
+  console.table([
+    {
+      enterSwapInfo,
+      potionBuyInfo,
+      exitSwapInfo,
+      enterFallbackSwapInfo,
+      exitFallbackSwapInfo,
+      counterparties: potionBuyInfo.sellers.map(async (s) =>
+        formatUnits(await s.orderSizeInOtokens, 8)
+      ),
+    },
+  ]);
+
+  await vaultEnterNextRound(
+    enterSwapInfo,
+    potionBuyInfo,
+    exitSwapInfo,
+    enterFallbackSwapInfo,
+    exitFallbackSwapInfo
   );
 
-  const { swapInfo, potionBuyInfo } = evaluateEnterPositionData(
-    tokenAsset,
-    oraclePrice,
-    strikePrice,
-    numberOfOtokensToBuyBN,
-    newOtokenAddress,
-    expirationTimestamp
-  );
+  // Reset data from routers
+  enterPositionData.value = null;
+  exitPositionData.value = null;
 
-  await vaultEnterPosition(swapInfo, potionBuyInfo);
+  await getTotalPayoutInUSDC();
 };
 
-const exitPosition = async () => {
-  const swapData = evaluateExitPositionData(tokenAsset, oraclePrice);
-  await vaultExitPosition(swapData);
-};
-
-const callbackLoadEnterRoute = async () => {
-  await loadEnterPositionRoute(
-    potionRouterParameters,
-    tokenAsset,
-    premiumSlippage,
-    swapSlippage
-  );
+const callbackLoadRoutes = async () => {
+  await getTotalPayoutInUSDC();
+  await Promise.all([
+    loadEnterPositionRoute(premiumSlippage.value, swapSlippage.value),
+    loadExitPositionRoute(swapSlippage.value),
+  ]);
   rerunRequired.value = false;
 };
 
-const callbackLoadExitRoute = async () => {
-  await loadExitPositionRoute(tokenAsset, swapSlippage);
+const addOraclePolling = (address: string | null) => {
+  stopPolling();
+  if (address) {
+    startPolling(address);
+  }
 };
 
 watch(vaultStatus, async () => {
-  await getStrategyInfo();
+  await Promise.all([getStrategyInfo(), fetchCanEnterNextRound()]);
 
-  await Promise.all([fetchCanPositionBeEntered(), fetchCanPositionBeExited()]);
+  await getCurrentPayout(assetAddress.value);
 
-  await Promise.all([getCurrentPayout(assetAddress.value), getTotalAssets()]);
+  getTotalSupply();
+  getShareBalance(RoundsOutputVault);
 });
 
 watch(assetAddress, async (address) => {
   if (!address) return;
 
+  addOraclePolling(address);
+
   await getCurrentPayout(address);
-  await getPoolsFromCriterias();
+  await getTotalPayoutInUSDC();
 });
 
 // Tab navigation
 const currentFormStep = ref(0);
 const tabs = ref([
   {
-    title: t("counterparties"),
+    title: t("enter_position"),
     subtitle: "",
-    isValid: hasCounterparties,
+    isValid: isEnterPositionOperationValid,
     enabled: true,
   },
   {
-    title: t("enter_position"),
+    title: t("exit_position"),
     subtitle: "",
-    isValid: true,
-    enabled: hasCounterparties,
+    isValid: isExitPositionOperationValid,
+    enabled: true,
   },
 ]);
 
 onMounted(async () => {
-  await Promise.all([getGas(), getBlock("latest")]);
+  addOraclePolling(unref(assetAddress));
+  await getBlock("latest");
+  await getUnderlyingBalance(false, PotionBuyAction);
+
+  // TODO: test env only
+  await getUSDCBalance(false, PotionBuyAction);
+
+  await getNextCycleTimestamp();
+  console.log(
+    "POTION BUY ACTIONS BALANCES (underlying/usdc)",
+    potionActionUnderlyingBalance.value,
+    potionActionUSDCBalance.value
+  );
+
+  console.log(
+    "POTION EXPIRY CHECK (nextCycleTimestamp/blockTimestamp)",
+    nextCycleTimestamp.value,
+    blockTimestamp.value
+  );
 });
+
+onBeforeUnmount(stopPolling);
 
 // Toast notifications
 const {
@@ -281,23 +336,15 @@ const {
   removeToast,
 } = useNotifications();
 
-watch(enterPositionTx, (transaction) => {
-  createTransactionNotification(transaction, t("entering_position"));
+watch(nextRoundTx, (transaction) => {
+  createTransactionNotification(transaction, t("entering_round"));
 });
 
-watch(enterPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("position_entered"));
+watch(nextRoundReceipt, (receipt) => {
+  createReceiptNotification(receipt, t("round_entered"));
 });
 
-watch(exitPositionTx, (transaction) => {
-  createTransactionNotification(transaction, t("exiting_position"));
-});
-
-watch(exitPositionReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("position_exited"));
-});
-
-watch(oraclePriceUpdated, ({ newPrice, oldPrice }) => {
+watch(polledPrice, ({ newPrice, oldPrice }) => {
   if (
     oldPrice !== undefined &&
     newPrice !== undefined &&
@@ -326,17 +373,34 @@ const testAddBlock = async (addHours: number) => {
 };
 
 const { records, loadBuyerRecords } = useBuyerRecords(
-  potionBuyAction,
+  PotionBuyAction,
   nextCycleTimestamp
 );
 const potionAddress = computed(() => records?.value?.[0]?.otoken?.id ?? null);
+
+const deploymentName = getHardhatDeploymentNameFromVault(vaultId.value);
+const desiredPriceForSetCommandPrice = ref(700);
 const setPriceCommand = computed(
   () =>
-    `yarn set-price --otoken ${potionAddress.value} --price 500 --network localhost`
+    `yarn set-core-price --token ${assetAddress.value} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
 );
+const setOtokenPriceCommand = computed(
+  () =>
+    `yarn set-core-price --otoken ${potionAddress.value} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
+);
+const setOracleCommand = computed(
+  () =>
+    `yarn set-hv-price --deployment ${deploymentName} --price ${desiredPriceForSetCommandPrice.value} --network localhost`
+);
+
+const fullPriceCommand = computed(
+  () =>
+    `${setPriceCommand.value} && ${setOtokenPriceCommand.value} && ${setOracleCommand.value}`
+);
+
 const copySetPriceCommand = async () => {
   if (potionAddress.value) {
-    await navigator.clipboard.writeText(setPriceCommand.value);
+    await navigator.clipboard.writeText(fullPriceCommand.value);
   }
 };
 
@@ -348,12 +412,12 @@ watch(blockTimestamp, async () => {
   await Promise.all([
     getStrategyInfo(),
     getCurrentPayout(assetAddress.value),
-    fetchCanPositionBeEntered(),
-    fetchCanPositionBeExited(),
+    fetchCanEnterNextRound(),
   ]);
 
   loadBuyerRecords();
 });
+
 // END TODO: DELETE
 </script>
 
@@ -364,6 +428,15 @@ watch(blockTimestamp, async () => {
       <div class="border-1 p-2 rounded border-color-white border-opacity-20">
         <p class="text-sm">TEST ADD BLOCK</p>
         <div class="flex flex-row gap-4">
+          <BaseButton
+            palette="primary"
+            label="+4H"
+            @click="() => testAddBlock(4)"
+          >
+            <template #pre-icon>
+              <i class="i-ph-test-tube-fill"></i>
+            </template>
+          </BaseButton>
           <BaseButton
             palette="primary"
             label="+1D"
@@ -384,15 +457,34 @@ watch(blockTimestamp, async () => {
           </BaseButton>
         </div>
       </div>
+      <BaseButton
+        palette="primary"
+        label="totalsupply"
+        @click="() => getTotalSupply()"
+      >
+        <template #pre-icon>
+          <i class="i-ph-test-tube-fill"></i>
+        </template>
+      </BaseButton>
     </div>
     <div class="flex flex-col mt-4 gap-2">
-      <p>Underlying asset: {{ assetAddress }}</p>
-      <div v-if="potionAddress">
-        <p>Set price command:</p>
+      <div class="flex flex-row gap-8">
+        <p>Underlying asset: {{ assetAddress }}</p>
+        <div v-if="!canEnterNextRound">
+          <label>Desired price</label>
+          <input
+            v-model.number="desiredPriceForSetCommandPrice"
+            class="block p-1 text-black"
+          />
+        </div>
+      </div>
+
+      <div v-if="potionAddress && !canEnterNextRound">
+        <p>Set price + set chainlink oracle command:</p>
         <div class="flex flex-row items-center gap-4">
           <pre
             class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-            >{{ setPriceCommand }}</pre
+            >{{ fullPriceCommand }}</pre
           >
           <BaseButton
             palette="primary"
@@ -406,6 +498,82 @@ watch(blockTimestamp, async () => {
           </BaseButton>
         </div>
       </div>
+    </div>
+    <div class="flex flex-col mt-4 gap-2 text-left">
+      <table class="table-fixed border-collapse">
+        <thead>
+          <th>Total deposit (WETH)</th>
+          <th>Total withdrawal (WETH)</th>
+          <th>Spot price at round end</th>
+          <th>
+            Potion initial premium
+            <span class="small">1st run</span>
+          </th>
+          <th>
+            Potion estimated premium
+            <span class="small"> 2nd run</span>
+          </th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {{
+                (debugData.totalPrincipalBeforeWithdrawalInUnderlying || 0) -
+                (debugData.totalPrincipalBeforeWithdrawalAndDepositInUnderlying ||
+                  0)
+              }}
+            </td>
+            <td>{{ debugData.totalAssetsToWithdrawInUnderlying || 0 }}</td>
+            <td>
+              <span v-if="vaultStatus === LifecycleStates.Locked">{{
+                oraclePrice
+              }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              {{
+                debugData?.potionRouterInitialData?.premium
+                  .toFixed(7)
+                  .slice(0, -1)
+              }}
+            </td>
+            <td>
+              {{
+                enterPositionData?.potionRouterData.premium
+                  .toFixed(7)
+                  .slice(0, -1)
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table-fixed border-collapse">
+        <thead>
+          <th>Order size (OT)</th>
+          <th>Action balance (WETH)</th>
+          <th>Action balance (USDC)</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {{ effectiveVaultSizeInUnderlying.toFixed(9).slice(0, -1) }}
+            </td>
+            <td>
+              {{ potionActionUnderlyingBalance.toFixed(19).slice(0, -1) }}
+            </td>
+            <td>{{ potionActionUSDCBalance.toFixed(7).slice(0, -1) }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <pre
+        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap max-h-12 hover:max-h-full overflow-hidden"
+        >{{ JSON.stringify(debugData, null, 2) }}</pre
+      >
+      <pre
+        v-if="hedgingRateValidation"
+        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+        >{{ JSON.stringify(hedgingRateValidation, null, 2) }}</pre
+      >
     </div>
   </div>
   <!-- END TEST COMMANDS -->
@@ -476,7 +644,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('vault_size')"
-              :value="totalAssets.toString()"
+              :value="vault.totalAssets.toString()"
               :symbol="assetSymbol"
             />
             <div class="flex flex-col gap-2">
@@ -492,7 +660,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('hedging_level')"
-              :value="principalPercentage.toString()"
+              :value="hedgingRate.toString()"
               symbol="%"
             />
             <LabelValue
@@ -545,271 +713,248 @@ watch(blockTimestamp, async () => {
     </div>
     <!-- END FIXED SIDEBAR -->
     <div class="lg:col-span-2">
-      <!-- START ENTER POSITION -->
-      <div v-if="canPositionBeEntered">
+      <!-- START ENTER NEXT ROUND -->
+      <div v-if="canEnterNextRound">
+        <div class="flex flex-row justify-end mb-4 w-full">
+          <div class="flex flex-row items-start gap-4 justify-end">
+            <BaseButton
+              palette="primary"
+              label="Load data"
+              :disabled="isEnterPositionLoading"
+              @click="callbackLoadRoutes()"
+            >
+              <template #pre-icon
+                ><i
+                  class="i-ph-arrows-clockwise mr-1"
+                  :class="isEnterPositionLoading && 'animate-spin'"
+                ></i
+              ></template>
+            </BaseButton>
+            <div class="flex flex-col justify-end items-end">
+              <BaseButton
+                label="enter next round"
+                palette="secondary"
+                :disabled="
+                  !isEnterPositionOperationValid ||
+                  !isExitPositionOperationValid ||
+                  rerunRequired
+                "
+                :loading="nextRoundLoading || isEnterPositionLoading"
+                @click="callbackEnterNextRound()"
+              ></BaseButton>
+              <p
+                v-if="
+                  !isEnterPositionOperationValid ||
+                  !isExitPositionOperationValid
+                "
+                class="text-secondary-500 text-xs text-right mt-2"
+              >
+                Data to exit the current position and enter the new one are
+                required
+              </p>
+              <p
+                v-if="rerunRequired"
+                class="text-secondary-500 text-xs text-right mt-2"
+              >
+                The spot price has changed significantly since data was loaded,
+                please load it again.
+              </p>
+            </div>
+          </div>
+        </div>
         <TabNavigationComponent
-          title="Enter position"
+          title="Enter next round"
           :tabs="tabs"
           :default-index="currentFormStep"
           :show-quit-tabs="false"
           @navigate-tab="(index) => (currentFormStep = index)"
         >
           <BaseCard class="p-6">
+            <!-- START ENTER POSITION TAB -->
+            <!-- START POTION INFO -->
             <div class="flex flex-col gap-8">
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
                   <p>
                     Premium + gas:
-                    {{ enterPositionData?.potionRouterResult?.premiumGas }}
+                    {{ enterPositionData?.potionRouterData?.premiumGas }}
                   </p>
                   <p>
                     Premium:
-                    {{ enterPositionData?.potionRouterResult?.premium }}
+                    {{ enterPositionData?.potionRouterData?.premium }}
                   </p>
                 </div>
-                <div v-else class="text-center">
-                  <p class="text-white/40 uppercase">No result found</p>
-                </div>
-                <div>
-                  <BaseButton
-                    palette="primary"
-                    label="Load data"
-                    :disabled="isActionLoading"
-                    @click="callbackLoadEnterRoute()"
-                  >
-                    <template #pre-icon
-                      ><i
-                        class="i-ph-arrows-clockwise mr-1"
-                        :class="isActionLoading && 'animate-spin'"
-                      ></i
-                    ></template>
-                  </BaseButton>
-                </div>
               </div>
-              <div>
-                <div class="flex flex-row items-center gap-2 mb-4">
-                  <div
-                    class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
-                  >
-                    <span v-if="hasCounterparties">
-                      {{
-                        enterPositionData?.potionRouterResult?.counterparties
-                          .length
-                      }}
-                    </span>
-                    <span v-else-if="isActionLoading || strategyLoading"
-                      ><i class="i-ph-arrows-clockwise animate-spin"></i
-                    ></span>
-                    <span v-else>no</span>
-                  </div>
-                  <h3 class="text-xl font-bold capitalize">
-                    {{ counterpartiesText }}
-                  </h3>
-                </div>
-                <div v-if="hasCounterparties" class="flex flex-col gap-4">
-                  <BaseCard
-                    v-for="(cp, index) in enterPositionData?.potionRouterResult
-                      ?.counterparties"
-                    :key="index"
-                    class="p-6 relative"
-                  >
-                    <div class="grid md:grid-cols-3 pl-4 justify-between">
-                      <div class="md:col-span-2">
-                        <p class="font-medium text-lg">
-                          LP: <span class="font-semibold">{{ cp.lp }}</span>
-                        </p>
-                        <p class="font-medium text-lg">
-                          Pool id:
-                          <span class="font-semibold">{{ cp.poolId }}</span>
-                        </p>
-                      </div>
-                      <div class="flex justify-end">
-                        <div
-                          class="flex flex-col items-end rounded-lg ring-1 ring-white ring-opacity-5 p-2"
-                        >
-                          <p>order size in otokens:</p>
-                          <pre
-                            class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
-                            >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <hr class="opacity-40 mx-4 mb-2 mt-3" />
-                    <p class="">> Curve</p>
-                    <div class="flex flex-row gap-4">
-                      <div class="text-center">
-                        <p>a</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.a_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>b</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.b_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>c</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.c_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>d</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.d_number, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                      <div class="text-center">
-                        <p>max_util</p>
-                        <pre
-                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                          >{{
-                            JSON.stringify(cp.curveAs64x64.max_util, null, 2)
-                          }}</pre
-                        >
-                      </div>
-                    </div>
 
-                    <p class="">> Criteria</p>
-                    <pre
-                      class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
-                      >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
-                    >
-                  </BaseCard>
+              <!-- START COUNTERPARTIES HEADER -->
+              <div class="flex flex-row items-center gap-2 mb-4">
+                <div
+                  class="w-12 h-12 inline-flex items-center justify-center bg-primary-500 text-2xl font-bold rounded-full"
+                >
+                  <span v-if="hasCounterparties">
+                    {{
+                      enterPositionData?.potionRouterData?.counterparties.length
+                    }}
+                  </span>
+                  <span v-else-if="isEnterPositionLoading || strategyLoading"
+                    ><i class="i-ph-arrows-clockwise animate-spin"></i
+                  ></span>
+                  <span v-else>no</span>
                 </div>
-                <div v-else-if="isActionLoading">
-                  <div class="animate-pulse flex space-x-4">
-                    <div class="rounded-full bg-slate-700 h-10 w-10"></div>
-                    <div class="flex-1 space-y-6 py-1">
-                      <div class="h-2 bg-slate-700 rounded"></div>
-                      <div class="space-y-3">
-                        <div class="grid grid-cols-3 gap-4">
-                          <div
-                            class="h-2 bg-slate-700 rounded col-span-2"
-                          ></div>
-                          <div
-                            class="h-2 bg-slate-700 rounded col-span-1"
-                          ></div>
-                        </div>
-                        <div class="h-2 bg-slate-700 rounded"></div>
+                <h3 class="text-xl font-bold capitalize">
+                  {{ counterpartiesText }}
+                </h3>
+              </div>
+              <!-- END COUNTERPARTIES HEADER -->
+              <!-- START COUNTERPARTIES LIST -->
+              <div v-if="hasCounterparties" class="flex flex-col gap-4">
+                <BaseCard
+                  v-for="(cp, index) in enterPositionData?.potionRouterData
+                    ?.counterparties"
+                  :key="index"
+                  class="p-6 relative"
+                >
+                  <div class="grid md:grid-cols-3 pl-4 justify-between">
+                    <div class="md:col-span-2">
+                      <p class="font-medium text-lg">
+                        LP: <span class="font-semibold">{{ cp.lp }}</span>
+                      </p>
+                      <p class="font-medium text-lg">
+                        Pool id:
+                        <span class="font-semibold">{{ cp.poolId }}</span>
+                      </p>
+                    </div>
+                    <div class="flex justify-end">
+                      <div
+                        class="flex flex-col items-end rounded-lg ring-1 ring-white ring-opacity-5 p-2"
+                      >
+                        <p>order size in otokens:</p>
+                        <pre
+                          class="bg-white/10 broder-1 border-white rounded-lg m-2 p-1 break-all whitespace-pre-wrap"
+                          >{{ formatUnits(cp.orderSizeInOtokens, 8) }}</pre
+                        >
                       </div>
                     </div>
                   </div>
-                </div>
-                <div v-else class="text-center">
-                  <p class="text-white/40 text-3xl uppercase">
-                    No result found
-                  </p>
+                  <hr class="opacity-40 mx-4 mb-2 mt-3" />
+                  <p class="">> Curve</p>
+                  <div class="flex flex-row gap-4">
+                    <div class="text-center">
+                      <p>a</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.a_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>b</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.b_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>c</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.c_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>d</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.d_number, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                    <div class="text-center">
+                      <p>max_util</p>
+                      <pre
+                        class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                        >{{
+                          JSON.stringify(cp.curveAs64x64.max_util, null, 2)
+                        }}</pre
+                      >
+                    </div>
+                  </div>
+
+                  <p class="">> Criteria</p>
+                  <pre
+                    class="bg-white/10 broder-1 border-white rounded-lg m-2 p-4 break-all whitespace-pre-wrap"
+                    >{{ JSON.stringify(cp.criteria, null, 2) }}</pre
+                  >
+                </BaseCard>
+              </div>
+              <div v-else-if="isEnterPositionLoading">
+                <div class="animate-pulse flex space-x-4">
+                  <div class="rounded-full bg-slate-700 h-10 w-10"></div>
+                  <div class="flex-1 space-y-6 py-1">
+                    <div class="h-2 bg-slate-700 rounded"></div>
+                    <div class="space-y-3">
+                      <div class="grid grid-cols-3 gap-4">
+                        <div class="h-2 bg-slate-700 rounded col-span-2"></div>
+                        <div class="h-2 bg-slate-700 rounded col-span-1"></div>
+                      </div>
+                      <div class="h-2 bg-slate-700 rounded"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div v-else class="text-center">
+                <p class="text-white/40 text-3xl uppercase">No result found</p>
+              </div>
+              <!-- END COUNTERPARTIES LIST -->
             </div>
+            <!-- END POTION INFO -->
+            <!-- START ENTER UNI ROUTE -->
+            <div class="mt-4">
+              <!-- START ROUTE HEADER -->
+              <div>
+                <h1 class="text-xl font-semibold">Uniswap route</h1>
+              </div>
+              <!-- END ROUTE HEADER -->
+              <TokenSwap
+                :route-data="enterPositionData?.uniswapRouterData"
+                :router-loading="isEnterPositionLoading"
+              />
+              <h3 class="text-xl font-semibold">Fallback route</h3>
+              <TokenSwap
+                :route-data="enterPositionData?.fallbackUniswapRouterData"
+                :router-loading="isEnterPositionLoading"
+              />
+            </div>
+            <!-- END ENTER UNI ROUTE -->
+            <!-- END ENTER POSITION TAB -->
           </BaseCard>
+
           <BaseCard class="p-6">
-            <h1 class="text-xl font-semibold">Uniswap route</h1>
-            <div
-              class="flex flex-row-reverse md:flex-row items-start justify-between gap-4 my-4"
-            >
-              <div class="flex md:flex-row gap-4">
-                <BaseButton
-                  label="route"
-                  :disabled="isActionLoading || enterPositionLoading"
-                  @click="callbackLoadEnterRoute()"
-                >
-                  <template #pre-icon>
-                    <i
-                      class="i-ph-arrows-clockwise mr-1"
-                      :class="isActionLoading && 'animate-spin'"
-                    ></i>
-                  </template>
-                </BaseButton>
-              </div>
-              <div class="flex flex-col items-end">
-                <BaseButton
-                  label="enter position"
-                  palette="secondary"
-                  :disabled="!isEnterPositionOperationValid || isActionLoading"
-                  :loading="enterPositionLoading"
-                  @click="enterPosition()"
-                ></BaseButton>
-                <p
-                  v-if="!isEnterPositionOperationValid"
-                  class="text-secondary-500 text-xs text-right mt-2"
-                >
-                  A route is required to enter the position
-                </p>
-              </div>
-            </div>
+            <!-- START EXIT POSITION TAB -->
+            <h1 class="text-xl font-semibold">Exit position</h1>
+            <hr class="opacity-40 my-4" />
+            <h3 class="text-xl font-semibold">Uniswap route</h3>
             <TokenSwap
-              :route-data="enterPositionData?.uniswapRouterResult"
-              :router-loading="isActionLoading"
+              :route-data="exitPositionData?.uniswapRouterData"
+              :router-loading="isExitPositionLoading"
             />
+            <h3 class="text-xl font-semibold">Fallback route</h3>
+            <TokenSwap
+              :route-data="exitPositionData?.fallbackUniswapRouterData"
+              :router-loading="isExitPositionLoading"
+            />
+            <!-- END EXIT POSITION TAB -->
           </BaseCard>
         </TabNavigationComponent>
       </div>
-      <!-- END ENTER POSITION -->
-      <!-- START EXIT POSITION -->
-      <BaseCard v-else-if="canPositionBeExited" class="p-6">
-        <h1 class="text-xl font-semibold">Exit position</h1>
-        <hr class="opacity-40 my-4" />
-        <h3 class="text-xl font-semibold">Uniswap route</h3>
-        <div
-          class="flex flex-row-reverse md:flex-row justify-between items-start gap-4 my-4"
-        >
-          <div class="flex md:flex-row gap-4">
-            <BaseButton
-              label="route"
-              :disabled="isActionLoading || exitPositionLoading"
-              @click="callbackLoadExitRoute()"
-            >
-              <template #pre-icon>
-                <i
-                  class="i-ph-arrows-clockwise mr-1"
-                  :class="isActionLoading && 'animate-spin'"
-                ></i> </template
-            ></BaseButton>
-          </div>
-          <div class="flex flex-col items-end">
-            <BaseButton
-              label="exit position"
-              palette="secondary"
-              :disabled="
-                !isExitPositionOperationValid ||
-                isActionLoading ||
-                exitPositionLoading
-              "
-              :loading="exitPositionLoading"
-              @click="exitPosition()"
-            ></BaseButton>
-            <p
-              v-if="!isExitPositionOperationValid"
-              class="text-secondary-500 text-xs text-right mt-2"
-            >
-              A route is required to exit the position
-            </p>
-          </div>
-        </div>
-        <TokenSwap
-          :route-data="exitPositionData"
-          :router-loading="isActionLoading"
-        />
-      </BaseCard>
-      <!-- END EXIT POSITION -->
+      <!-- END ENTER NEXT ROUND -->
       <div v-else class="flex items-center justify-center h-full">
         <p class="text-4xl text-dwhite-400 text-opacity-20">
           No action available

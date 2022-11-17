@@ -4,12 +4,10 @@ import * as vaultEstimations from "../src/vaultEstimations";
 describe("vaultEstimations", () => {
     const usdcBalanceActionContract = 100;
     const underlyingBalanceActionContract = 10;
-    const underlyingBalanceRoundsInputVaultContract = 100;
     const underlyingPrice = 10;
     const strikePrice = 100;
     const potionsQuantity = 2;
     const investmentVaultContractShares = 100;
-    const roundsOutputVaultContractShares = 10;
 
     it("calculate the underlying balance action contract correctly", () => {
         const result = vaultEstimations.calculateEstimatedUnderlyingBalanceActionContract(
@@ -56,47 +54,29 @@ describe("vaultEstimations", () => {
         const result = vaultEstimations.calculateCurrentTotalUnderlyings(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
-            underlyingBalanceRoundsInputVaultContract,
             underlyingPrice,
             strikePrice,
             potionsQuantity,
         );
-        expect(result).toEqual(
-            estimatedUnderlyingBalanceActionContract +
-                potionPayoutInUnderlying +
-                underlyingBalanceRoundsInputVaultContract,
-        );
+        expect(result).toEqual(estimatedUnderlyingBalanceActionContract + potionPayoutInUnderlying);
     });
-    it("calculate the current total shares correctly", () => {
-        const result = vaultEstimations.calculateCurrentTotalShares(
-            investmentVaultContractShares,
-            roundsOutputVaultContractShares,
-        );
-        expect(result).toEqual(90);
-    });
+
     it("calculate the current Share To Asset Rate correctly", () => {
         const currentTotalUnderlyings = vaultEstimations.calculateCurrentTotalUnderlyings(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
-            underlyingBalanceRoundsInputVaultContract,
             underlyingPrice,
             strikePrice,
             potionsQuantity,
-        );
-        const currentTotalShares = vaultEstimations.calculateCurrentTotalShares(
-            investmentVaultContractShares,
-            roundsOutputVaultContractShares,
         );
         const result = vaultEstimations.calculateCurrentShareToAssetRate(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
-            underlyingBalanceRoundsInputVaultContract,
             underlyingPrice,
             strikePrice,
             potionsQuantity,
             investmentVaultContractShares,
-            roundsOutputVaultContractShares,
         );
-        expect(result).toEqual(currentTotalUnderlyings / currentTotalShares);
+        expect(result).toEqual(currentTotalUnderlyings / investmentVaultContractShares);
     });
 });

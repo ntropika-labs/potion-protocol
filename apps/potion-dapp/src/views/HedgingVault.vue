@@ -161,45 +161,34 @@
               class="w-1/2 flex flex-col items-center gap-4"
             >
               <h3>{{ t("estimated_exchange_assets", { estimatedAssets }) }}</h3>
+              <InputSlider
+                class="my-4"
+                symbol="%"
+                :step="0.1"
+                :model-value="exchangePercentage"
+                @update:model-value="updateExchangePercentage"
+              />
               <BaseButton
                 palette="secondary"
                 :label="exchangeLabel"
-                :disabled="isLoading"
+                :disabled="isLoading || canDeleteWithdrawalRequest"
                 :loading="approveExchangeLoading || exchangeTicketsLoading"
                 @click="handleExchange"
               />
-              <template v-if="false && canDeleteWithdrawalRequest">
-                <h4>
-                  {{
-                    t("current_withdrawal_request_info", {
-                      currentWithdrawalAmount,
-                    })
-                  }}
-                </h4>
-                <BaseButton
-                  palette="secondary-o"
-                  :label="t('delete')"
-                  :disabled="isLoading"
-                  :loading="deleteWithdrawalLoading"
-                  @click="handleDeleteWithdrawal"
-                />
-              </template>
             </div>
-            <div class="w-1/2 flex flex-col items-center gap-4">
-              <InputNumber
-                v-model="redeemAmount"
-                class="self-stretch"
-                :max="userBalance"
-                :min="0.1"
-                :step="0.01"
-                :unit="vault.shareToken.symbol"
-              />
+            <div
+              v-if="availableAssets > 0"
+              class="w-1/2 flex flex-col items-center gap-4"
+            >
+              <h4>
+                {{ t("available_assets_to_redeem", { availableAssets }) }}
+              </h4>
               <BaseButton
                 palette="secondary"
-                :label="redeemButtonState.label"
-                :disabled="redeemButtonState.disabled || isLoading"
-                :loading="redeemLoading"
-                @click="handleRedeem()"
+                :label="t('redeem')"
+                :disabled="isLoading"
+                :loading="redeemAssetsLoading"
+                @click="handleRedeemAssets"
               />
             </div>
           </div>
@@ -227,6 +216,7 @@ import {
   InputNumber,
   BaseButton,
   TimeTag,
+  InputSlider,
   getEtherscanUrl,
 } from "potion-ui";
 
@@ -237,10 +227,8 @@ import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
-import { useInvestmentVaultContract } from "@/composables/useInvestmentVaultContract";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useVaultRedeem } from "@/composables/useVaultRedeem";
 import { useWithdrawalRequests } from "@/composables/useWithdrawalRequests";
 
 import {
@@ -277,6 +265,7 @@ const {
 const currentRound = computed(() => vault.value.currentRound);
 const assetSymbol = computed(() => vault.value.asset.symbol);
 const assetAddress = computed(() => vault.value.asset.address);
+const assetDecimals = computed(() => vault.value.asset.decimals);
 const vaultRounds = computed(() => vault.value.rounds);
 const lastShareToAssetRate = computed(() => vault.value.lastShareToAssetRate);
 
@@ -306,6 +295,7 @@ const {
 } = useDepositRequests(
   roundsInputAddress,
   assetAddress,
+  assetDecimals,
   currentRound,
   vaultRounds
 );
@@ -367,6 +357,12 @@ const {
   currentRound,
   lastShareToAssetRate
 );
+const exchangePercentage = ref(100);
+const updateExchangePercentage = (value: number) => {
+  if (value > 0 && value < 101) {
+    exchangePercentage.value = value;
+  }
+};
 
 const exchangeLabel = computed(() =>
   canExchange.value ? t("exchange") : t("approve")
@@ -374,7 +370,8 @@ const exchangeLabel = computed(() =>
 
 const handleExchange = async () => {
   if (canExchange.value) {
-    exchangeTickets();
+    await exchangeTickets(exchangePercentage.value);
+    setTimeout(loadVault, 5000);
   } else {
     approveExchange();
   }
@@ -383,11 +380,16 @@ const handleExchange = async () => {
 // withdrawal requests
 const {
   canDeleteWithdrawalRequest,
-  currentWithdrawalAmount,
   deleteWithdrawalLoading,
   deleteWithdrawalReceipt,
-  deleteWithdrawalRequest,
+  // currentWithdrawalAmount,
+  // deleteWithdrawalRequest,
   deleteWithdrawalTransaction,
+  availableAssets,
+  redeemAssets,
+  redeemAssetsLoading,
+  redeemAssetsReceipt,
+  redeemAssetsTransaction,
 } = useWithdrawalRequests(
   roundsOutputAddress,
   assetAddress,
@@ -395,9 +397,16 @@ const {
   vaultRounds
 );
 
-const handleDeleteWithdrawal = async () => {
-  if (currentWithdrawalAmount.value > 0) {
-    await deleteWithdrawalRequest();
+// const handleDeleteWithdrawal = async () => {
+//   if (currentWithdrawalAmount.value > 0) {
+//     await deleteWithdrawalRequest();
+//     setTimeout(loadVault, 5000);
+//   }
+// };
+
+const handleRedeemAssets = async () => {
+  if (availableAssets.value > 0) {
+    await redeemAssets();
     setTimeout(loadVault, 5000);
   }
 };
@@ -405,22 +414,12 @@ const handleDeleteWithdrawal = async () => {
 /* 
   Legacy code
 */
-const { vaultStatus } = useInvestmentVaultContract(vaultId, true, true);
 const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
 const shareToAssetRatio = computed(() => 1 / assetToShare.value);
 const balanceInAsset = computed(
   () => userBalance.value * shareToAssetRatio.value
 );
-
-const {
-  redeemLoading,
-  redeemReceipt,
-  redeemTx,
-  handleRedeem,
-  amount: redeemAmount,
-  buttonState: redeemButtonState,
-} = useVaultRedeem(userBalance, vaultId, vaultStatus);
 /* 
   End of legacy code
 */
@@ -432,7 +431,7 @@ const isLoading = computed(
     deleteDepositLoading.value ||
     deleteWithdrawalLoading.value ||
     exchangeTicketsLoading.value ||
-    redeemLoading.value ||
+    redeemAssetsLoading.value ||
     updateDepositLoading.value ||
     vaultLoading.value
 );
@@ -497,11 +496,11 @@ watch(updateDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deposited"));
 });
 
-watch(redeemTx, (transaction) => {
+watch(redeemAssetsTransaction, (transaction) => {
   createTransactionNotification(transaction, t("redeeming"));
 });
 
-watch(redeemReceipt, (receipt) => {
+watch(redeemAssetsReceipt, (receipt) => {
   createReceiptNotification(receipt, t("redeemed"));
 });
 </script>

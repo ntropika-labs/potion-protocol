@@ -88,8 +88,8 @@ export function useErc4626Contract(
       assetAddressLoading.value = true;
       const contractProvider = initContractProvider();
       const response = await contractProvider.asset();
-      assetAddress.value = response;
-      console.log("assetAddress: ", response);
+      assetAddress.value = response.toLowerCase();
+      console.log("assetAddress: ", response.toLowerCase());
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Cannot fetch the asset address: ${error.message}`);
