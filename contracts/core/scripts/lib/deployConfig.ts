@@ -215,6 +215,42 @@ export const config: NetworkDeployConfigMap = {
             }),
         ],
     },
+    // The ply-mumbai.testcomp deployment is based on the independent deployment and is aimed for the Testnet Competition.
+    // It uses pre-deployed tokens for the different products and deploys Opyn pricers for those tokens
+    "ply-mumbai.testcomp": {
+        collateralToken: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", // Custom USDC
+        opynAddressBook: "0xF55277d2608C69DE9A7904c8318C497f62460ef2", // Opyn Address Book Mumbai
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14"), // Custom WETH
+            new WhitelistUnderlying("0x9649071fb3875b68C88c60b172e2F6ADa5717634"), // Custom WBTC
+            new WhitelistUnderlying("0xBB2bc2c224139512a7525a83955567FD2C3a0c1F"), // Custom LINK
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14", // Custom WETH
+                chainlinkAggregatorAddress: "0x0715A7794a1dc8e42615F059dD6e406A6594651A", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x9649071fb3875b68C88c60b172e2F6ADa5717634", // Custom WBTC
+                chainlinkAggregatorAddress: "0x007A22900a3B98143368Bd5906f8E17e9867581b", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "LINK",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F", // Custom LINK
+                chainlinkAggregatorAddress: "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408", // LINK/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", // Custom USDC
+                chainlinkAggregatorAddress: "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0", // USDC/USD aggregator
+            }),
+        ],
+    },
     localhost: newSelfContainedEcosystemConfig,
     "localhost.hedging": {
         postDeployActions: [

@@ -154,8 +154,6 @@ async function main() {
 
     if (!deployConfig.collateralToken) {
         deployConfig.collateralToken = await deployCollateralToken();
-    } else {
-        Deployments.attach("ERC20", deployConfig.collateralToken, "USDC");
     }
 
     process.stdout.write(`Deploying CurveManager... `);
