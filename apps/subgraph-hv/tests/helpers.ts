@@ -1,36 +1,40 @@
 import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { assert } from "matchstick-as/assembly/index";
 import {
-  DepositRequest,
+  DepositTicket,
   HedgingVault,
   PotionBuyAction,
   Round,
   Token,
-  WithdrawalRequest,
+  WithdrawalTicket,
 } from "../generated/schema";
 import { createRoundId } from "../src/rounds";
-import { createDepositRequestId } from "../src/deposits";
-import { createWithdrawalRequestId } from "../src/withdrawals";
+import { createDepositTicketId } from "../src/deposits";
+import { createWithdrawalTicketId } from "../src/withdrawals";
 
 class FieldValuePair {
   field: string;
   value: string;
 }
 
-class DepositRequestParams {
+class DepositTicketParams {
   depositId: BigInt;
   amount: BigInt;
+  amountRemaining: BigInt;
   amountRedeemed: BigInt;
-  remainingShares: BigInt;
+  sharesRemaining: BigInt;
+  sharesRedeemed: BigInt;
   shares: BigInt;
 }
 
-class WithdrawalRequestParams {
+class WithdrawalTicketParams {
   depositId: BigInt;
   amount: BigInt;
+  amountRemaining: BigInt;
   amountRedeemed: BigInt;
-  remainingAssets: BigInt;
-  assets: BigInt;
+  underlyingsRemaining: BigInt;
+  underlyingsRedeemed: BigInt;
+  underlyings: BigInt;
 }
 
 function assertEntity(
@@ -46,15 +50,15 @@ function assertEntity(
 function mockHedgingVault(
   id: Address,
   action: Address,
-  asset: Address,
-  totalAssets: BigInt,
+  underlying: Address,
+  totalShares: BigInt,
   currentRound: BigInt
 ): HedgingVault {
   const vault = new HedgingVault(id);
   vault.shareToken = id;
-  vault.asset = asset;
+  vault.underlying = underlying;
   vault.action = action;
-  vault.totalAssets = totalAssets;
+  vault.totalShares = totalShares;
   vault.currentRound = currentRound;
   vault.save();
   return vault;
@@ -101,58 +105,60 @@ function mockPotionBuyAction(
 function mockRound(
   roundNumber: BigInt,
   vault: Bytes,
-  depositRequests: Bytes[] = [],
-  withdrawalRequests: Bytes[] = [],
+  depositTickets: Bytes[] = [],
+  withdrawalTickets: Bytes[] = [],
   exchangeRate: BigInt = BigInt.fromString("0")
 ): Round {
   const id = createRoundId(roundNumber, vault);
   const round = new Round(id);
   round.vault = vault;
   round.roundNumber = roundNumber;
-  round.depositRequests = depositRequests;
-  round.withdrawalRequests = withdrawalRequests;
-  round.assetToShareRate = exchangeRate;
-  round.shareToAssetRate = exchangeRate;
+  round.depositTickets = depositTickets;
+  round.withdrawalTickets = withdrawalTickets;
+  round.underlyingToShareRate = exchangeRate;
+  round.shareToUnderlyingRate = exchangeRate;
   round.save();
   return round;
 }
 
-function mockDepositRequest(
+function mockDepositTicket(
   round: Bytes,
   vaultAddress: Address,
   investor: Address,
   sender: Address,
-  params: DepositRequestParams,
+  params: DepositTicketParams,
   block: Bytes,
   tx: Bytes
-): DepositRequest {
-  const id = createDepositRequestId(params.depositId, vaultAddress, investor);
-  const depositRequest = new DepositRequest(id);
-  depositRequest.round = round;
-  depositRequest.investor = investor;
-  depositRequest.sender = sender;
-  depositRequest.amount = params.amount;
-  depositRequest.amountRedeemed = params.amountRedeemed;
-  depositRequest.shares = params.shares;
-  depositRequest.remainingShares = params.remainingShares;
-  depositRequest.block = block;
-  depositRequest.tx = tx;
-  depositRequest.save();
-  return depositRequest;
+): DepositTicket {
+  const id = createDepositTicketId(params.depositId, vaultAddress, investor);
+  const depositTicket = new DepositTicket(id);
+  depositTicket.round = round;
+  depositTicket.investor = investor;
+  depositTicket.sender = sender;
+  depositTicket.amount = params.amount;
+  depositTicket.amountRemaining = params.amountRemaining;
+  depositTicket.amountRedeemed = params.amountRedeemed;
+  depositTicket.shares = params.shares;
+  depositTicket.sharesRemaining = params.sharesRemaining;
+  depositTicket.sharesRedeemed = params.sharesRedeemed;
+  depositTicket.block = block;
+  depositTicket.tx = tx;
+  depositTicket.save();
+  return depositTicket;
 }
 
-function mockDepositRequests(
+function mockDepositTickets(
   round: Bytes,
   vaultAddress: Address,
   investor: Address,
   sender: Address,
-  params: DepositRequestParams[],
+  params: DepositTicketParams[],
   block: Bytes,
   tx: Bytes
-): DepositRequest[] {
-  const result: DepositRequest[] = [];
+): DepositTicket[] {
+  const result: DepositTicket[] = [];
   for (let i = 0; i < params.length; i += 1) {
-    const depositRequest = mockDepositRequest(
+    const depositTicket = mockDepositTicket(
       round,
       vaultAddress,
       investor,
@@ -161,51 +167,49 @@ function mockDepositRequests(
       block,
       tx
     );
-    result.push(depositRequest);
+    result.push(depositTicket);
   }
   return result;
 }
 
-function mockWithdrawalRequest(
+function mockWithdrawalTicket(
   round: Bytes,
   vaultAddress: Address,
   investor: Address,
   sender: Address,
-  params: WithdrawalRequestParams,
+  params: WithdrawalTicketParams,
   block: Bytes,
   tx: Bytes
-): WithdrawalRequest {
-  const id = createWithdrawalRequestId(
-    params.depositId,
-    vaultAddress,
-    investor
-  );
-  const withdrawalRequest = new WithdrawalRequest(id);
-  withdrawalRequest.round = round;
-  withdrawalRequest.investor = investor;
-  withdrawalRequest.sender = sender;
-  withdrawalRequest.amount = params.amount;
-  withdrawalRequest.amountRedeemed = params.amountRedeemed;
-  withdrawalRequest.assets = params.assets;
-  withdrawalRequest.remainingAssets = params.remainingAssets;
-  withdrawalRequest.block = block;
-  withdrawalRequest.tx = tx;
-  withdrawalRequest.save();
-  return withdrawalRequest;
+): WithdrawalTicket {
+  const id = createWithdrawalTicketId(params.depositId, vaultAddress, investor);
+  const withdrawalTicket = new WithdrawalTicket(id);
+  withdrawalTicket.round = round;
+  withdrawalTicket.investor = investor;
+  withdrawalTicket.sender = sender;
+  withdrawalTicket.amount = params.amount;
+  withdrawalTicket.amountRemaining = params.amountRemaining;
+  withdrawalTicket.amountRedeemed = params.amountRedeemed;
+  withdrawalTicket.underlyings = params.underlyings;
+  withdrawalTicket.underlyingsRemaining = params.underlyingsRemaining;
+  withdrawalTicket.underlyingsRedeemed = params.underlyingsRedeemed;
+  withdrawalTicket.block = block;
+  withdrawalTicket.tx = tx;
+  withdrawalTicket.save();
+  return withdrawalTicket;
 }
 
-function mockWithdrawalRequests(
+function mockWithdrawalTickets(
   round: Bytes,
   vaultAddress: Address,
   investor: Address,
   sender: Address,
-  params: WithdrawalRequestParams[],
+  params: WithdrawalTicketParams[],
   block: Bytes,
   tx: Bytes
-): WithdrawalRequest[] {
-  const result: WithdrawalRequest[] = [];
+): WithdrawalTicket[] {
+  const result: WithdrawalTicket[] = [];
   for (let i = 0; i < params.length; i += 1) {
-    const withdrawalRequest = mockWithdrawalRequest(
+    const withdrawalTicket = mockWithdrawalTicket(
       round,
       vaultAddress,
       investor,
@@ -214,7 +218,7 @@ function mockWithdrawalRequests(
       block,
       tx
     );
-    result.push(withdrawalRequest);
+    result.push(withdrawalTicket);
   }
   return result;
 }
@@ -228,12 +232,12 @@ export {
   mockHedgingVault,
   mockPotionBuyAction,
   mockRound,
-  mockDepositRequest,
-  mockDepositRequests,
-  DepositRequestParams,
-  mockWithdrawalRequest,
-  mockWithdrawalRequests,
-  WithdrawalRequestParams,
+  mockDepositTicket,
+  mockDepositTickets,
+  DepositTicketParams,
+  mockWithdrawalTicket,
+  mockWithdrawalTickets,
+  WithdrawalTicketParams,
   arrayToString,
   mockToken,
 };

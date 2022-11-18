@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
-import { Withdrawal, WithdrawalRequest } from "../generated/schema";
-import { addWithdrawalRequest, removeWithdrawalRequest } from "./rounds";
+import { Withdrawal, WithdrawalTicket } from "../generated/schema";
+import { addWithdrawalTicket, removeWithdrawalTicket } from "./rounds";
 
 const decimals = BigInt.fromI32(10).pow(18);
 
@@ -21,7 +21,7 @@ function createWithdrawal(
   return withdrawal;
 }
 
-function createWithdrawalRequestId(
+function createWithdrawalTicketId(
   withdrawalId: BigInt,
   vaultAddress: Address,
   investor: Address
@@ -29,7 +29,7 @@ function createWithdrawalRequestId(
   return vaultAddress.concat(investor).concatI32(withdrawalId.toI32());
 }
 
-function createWithdrawalRequest(
+function createWithdrawalTicket(
   withdrawalId: BigInt,
   vaultAddress: Address,
   round: Bytes,
@@ -37,24 +37,26 @@ function createWithdrawalRequest(
   sender: Address,
   block: Bytes,
   tx: Bytes
-): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
-  const withdrawalRequest = new WithdrawalRequest(id);
-  withdrawalRequest.round = round;
-  withdrawalRequest.investor = investor;
-  withdrawalRequest.sender = sender;
-  withdrawalRequest.amount = BigInt.fromString("0");
-  withdrawalRequest.amountRedeemed = BigInt.fromString("0");
-  withdrawalRequest.assets = BigInt.fromString("0");
-  withdrawalRequest.remainingAssets = BigInt.fromString("0");
-  withdrawalRequest.block = block;
-  withdrawalRequest.tx = tx;
-  withdrawalRequest.save();
-  addWithdrawalRequest(round, id);
-  return withdrawalRequest;
+): WithdrawalTicket {
+  const id = createWithdrawalTicketId(withdrawalId, vaultAddress, investor);
+  const withdrawalTicket = new WithdrawalTicket(id);
+  withdrawalTicket.round = round;
+  withdrawalTicket.investor = investor;
+  withdrawalTicket.sender = sender;
+  withdrawalTicket.amount = BigInt.fromString("0");
+  withdrawalTicket.amountRemaining = BigInt.fromString("0");
+  withdrawalTicket.amountRedeemed = BigInt.fromString("0");
+  withdrawalTicket.underlyings = BigInt.fromString("0");
+  withdrawalTicket.underlyingsRemaining = BigInt.fromString("0");
+  withdrawalTicket.underlyingsRedeemed = BigInt.fromString("0");
+  withdrawalTicket.block = block;
+  withdrawalTicket.tx = tx;
+  withdrawalTicket.save();
+  addWithdrawalTicket(round, id);
+  return withdrawalTicket;
 }
 
-function getOrCreateWithdrawalRequest(
+function getOrCreateWithdrawalTicket(
   withdrawalId: BigInt,
   vaultAddress: Address,
   round: Bytes,
@@ -62,11 +64,11 @@ function getOrCreateWithdrawalRequest(
   sender: Address,
   block: Bytes,
   tx: Bytes
-): WithdrawalRequest {
-  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
-  const withdrawalRequest = WithdrawalRequest.load(id);
-  if (withdrawalRequest == null) {
-    return createWithdrawalRequest(
+): WithdrawalTicket {
+  const id = createWithdrawalTicketId(withdrawalId, vaultAddress, investor);
+  const withdrawalTicket = WithdrawalTicket.load(id);
+  if (withdrawalTicket == null) {
+    return createWithdrawalTicket(
       withdrawalId,
       vaultAddress,
       round,
@@ -76,49 +78,51 @@ function getOrCreateWithdrawalRequest(
       tx
     );
   }
-  return withdrawalRequest;
+  return withdrawalTicket;
 }
 
-function getWithdrawalRequest(
+function getWithdrawalTicket(
   withdrawalId: BigInt,
   vaultAddress: Address,
   investor: Address
-): WithdrawalRequest | null {
-  const id = createWithdrawalRequestId(withdrawalId, vaultAddress, investor);
-  return WithdrawalRequest.load(id);
+): WithdrawalTicket | null {
+  const id = createWithdrawalTicketId(withdrawalId, vaultAddress, investor);
+  return WithdrawalTicket.load(id);
 }
 
-function deleteWithdrawalRequest(id: Bytes): void {
-  const withdrawalRequest = WithdrawalRequest.load(id);
-  if (withdrawalRequest) {
-    removeWithdrawalRequest(withdrawalRequest.round, id);
-    store.remove("WithdrawalRequest", id.toHexString());
+function deleteWithdrawalTicket(id: Bytes): void {
+  const withdrawalTicket = WithdrawalTicket.load(id);
+  if (withdrawalTicket) {
+    removeWithdrawalTicket(withdrawalTicket.round, id);
+    store.remove("WithdrawalTicket", id.toHexString());
   }
-  log.info("WithdrawalRequest {} has been removed", [id.toHexString()]);
+  log.info("WithdrawalTicket {} has been removed", [id.toHexString()]);
 }
 
-function updateWithdrawalRequestAssets(id: Bytes, exchangeRate: BigInt): void {
-  const withdrawalRequest = WithdrawalRequest.load(id);
-  if (withdrawalRequest == null) {
-    log.error("withdrawalRequest {} doesn't exists", [id.toHexString()]);
+function updateWithdrawalTicketAssets(id: Bytes, exchangeRate: BigInt): void {
+  const withdrawalTicket = WithdrawalTicket.load(id);
+  if (withdrawalTicket == null) {
+    log.error("withdrawalTicket {} doesn't exists", [id.toHexString()]);
   } else {
-    log.info("updated WithdrawalRequest {}", [id.toHexString()]);
-    withdrawalRequest.assets = withdrawalRequest.amount
+    const underlyings = withdrawalTicket.amount
       .times(exchangeRate)
       .div(decimals);
-    withdrawalRequest.remainingAssets = withdrawalRequest.amount
-      .times(exchangeRate)
-      .div(decimals);
-    withdrawalRequest.save();
+    withdrawalTicket.underlyings = underlyings;
+    withdrawalTicket.underlyingsRemaining = underlyings;
+    withdrawalTicket.save();
+    log.info("updated WithdrawalTicket {}, underlyings are {}", [
+      id.toHexString(),
+      underlyings.toString(),
+    ]);
   }
 }
 
 export {
   createWithdrawal,
-  createWithdrawalRequest,
-  getOrCreateWithdrawalRequest,
-  createWithdrawalRequestId,
-  getWithdrawalRequest,
-  deleteWithdrawalRequest,
-  updateWithdrawalRequestAssets,
+  createWithdrawalTicket,
+  getOrCreateWithdrawalTicket,
+  createWithdrawalTicketId,
+  getWithdrawalTicket,
+  deleteWithdrawalTicket,
+  updateWithdrawalTicketAssets,
 };

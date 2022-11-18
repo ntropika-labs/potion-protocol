@@ -39,7 +39,7 @@ import { createRoundId } from "../src/rounds";
 const contractAddress = Address.fromString(
   "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
 );
-const assetAddress = Address.fromString(
+const underlyingAddress = Address.fromString(
   "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"
 );
 const actionAddress = Address.fromString(
@@ -57,16 +57,16 @@ const mockedRoundId = createRoundId(
 describe("InvestmentVault tests", () => {
   beforeAll(() => {
     // mock contracts calls
-    mockAsset(contractAddress, assetAddress);
+    mockAsset(contractAddress, underlyingAddress);
     mockTotalAssets(contractAddress, BigInt.fromString("10"));
     // mock erc20 properties
     mockTokenName(contractAddress, "TEST_HV");
     mockTokenSymbol(contractAddress, "THV");
     mockTokenDecimals(contractAddress, BigInt.fromString("6"));
     //  mock underlying asset
-    mockTokenName(assetAddress, "TEST_TOKEN");
-    mockTokenSymbol(assetAddress, "TET");
-    mockTokenDecimals(assetAddress, BigInt.fromString("18"));
+    mockTokenName(underlyingAddress, "TEST_TOKEN");
+    mockTokenSymbol(underlyingAddress, "TET");
+    mockTokenDecimals(underlyingAddress, BigInt.fromString("18"));
   });
 
   describe("handleActionsAdded", () => {
@@ -99,9 +99,9 @@ describe("InvestmentVault tests", () => {
           field: "action",
           value: "0x0000000000000000000000000000000000000001",
         },
-        { field: "asset", value: assetAddress.toHexString() },
+        { field: "underlying", value: underlyingAddress.toHexString() },
         { field: "shareToken", value: contractAddress.toHexString() },
-        { field: "totalAssets", value: "10" },
+        { field: "totalShares", value: "10" },
       ]);
     });
 
@@ -120,7 +120,7 @@ describe("InvestmentVault tests", () => {
         { field: "symbol", value: "THV" },
         { field: "decimals", value: "6" },
       ]);
-      assertEntity("Token", assetAddress.toHexString(), [
+      assertEntity("Token", underlyingAddress.toHexString(), [
         { field: "name", value: "TEST_TOKEN" },
         { field: "symbol", value: "TET" },
         { field: "decimals", value: "18" },
@@ -132,7 +132,7 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        assetAddress,
+        underlyingAddress,
         actionAddress,
         BigInt.fromString("30"),
         BigInt.fromString("0")
@@ -155,15 +155,15 @@ describe("InvestmentVault tests", () => {
 
     test("Round has been updated correctly", () => {
       assertEntity("Round", mockedRoundId, [
-        { field: "assetsInvested", value: "50" },
+        { field: "underlyingsInvested", value: "50" },
         { field: "blockEntered", value: contractAddress.toHexString() },
       ]);
     });
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", contractAddress.toHexString(), [
-        { field: "lastAssetsInvested", value: "50" },
-        { field: "totalAssets", value: "100" },
+        { field: "lastUnderlyingsInvested", value: "50" },
+        { field: "totalShares", value: "100" },
       ]);
     });
   });
@@ -172,7 +172,7 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        assetAddress,
+        underlyingAddress,
         actionAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")
@@ -192,14 +192,14 @@ describe("InvestmentVault tests", () => {
 
     test("Round has been updated correctly", () => {
       assertEntity("Round", mockedRoundId, [
-        { field: "totalAssetsAtRoundEnd", value: "60" },
+        { field: "totalUnderlyingsAtRoundEnd", value: "60" },
         { field: "blockExited", value: contractAddress.toHexString() },
       ]);
     });
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", contractAddress.toHexString(), [
-        { field: "totalAssets", value: "60" },
+        { field: "totalShares", value: "60" },
       ]);
     });
   });
@@ -208,7 +208,7 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        assetAddress,
+        underlyingAddress,
         actionAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")
@@ -242,7 +242,7 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        assetAddress,
+        underlyingAddress,
         actionAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")

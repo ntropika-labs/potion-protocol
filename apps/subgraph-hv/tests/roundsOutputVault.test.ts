@@ -10,9 +10,9 @@ import { mockVault, mockCurrentRound } from "./contractCalls";
 import {
   assertEntity,
   mockHedgingVault,
-  mockWithdrawalRequest,
-  mockWithdrawalRequests,
-  WithdrawalRequestParams,
+  mockWithdrawalTicket,
+  mockWithdrawalTickets,
+  WithdrawalTicketParams,
   mockRound,
   arrayToString,
 } from "./helpers";
@@ -33,7 +33,7 @@ import {
   assert,
 } from "matchstick-as/assembly/index";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
-import { createWithdrawalRequestId } from "../src/withdrawals";
+import { createWithdrawalTicketId } from "../src/withdrawals";
 import { createRoundId } from "../src/rounds";
 
 const decimals = BigInt.fromI32(10).pow(18);
@@ -59,42 +59,52 @@ const mockedInvestor = Address.fromString(
   "0x0000000000000000000000000000000000000002"
 );
 
-const mockedWithdrawalParams: WithdrawalRequestParams = {
+const mockedWithdrawalParams: WithdrawalTicketParams = {
   depositId: BigInt.fromString("2"),
   amount: BigInt.fromString("100"),
+  amountRemaining: BigInt.fromString("100"),
   amountRedeemed: BigInt.fromString("0"),
-  assets: BigInt.fromString("50"),
-  remainingAssets: BigInt.fromString("50"),
+  underlyings: BigInt.fromString("50"),
+  underlyingsRemaining: BigInt.fromString("50"),
+  underlyingsRedeemed: BigInt.fromString("0"),
 };
 
-const mockedWithdrawalParamsArray: WithdrawalRequestParams[] = [
+const mockedWithdrawalParamsArray: WithdrawalTicketParams[] = [
   {
     depositId: BigInt.fromString("1"),
     amount: BigInt.fromString("10"),
+    amountRemaining: BigInt.fromString("10"),
     amountRedeemed: BigInt.fromString("0"),
-    assets: BigInt.fromString("5"),
-    remainingAssets: BigInt.fromString("5"),
+    underlyings: BigInt.fromString("5"),
+    underlyingsRemaining: BigInt.fromString("5"),
+    underlyingsRedeemed: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("2"),
     amount: BigInt.fromString("100"),
+    amountRemaining: BigInt.fromString("100"),
     amountRedeemed: BigInt.fromString("0"),
-    assets: BigInt.fromString("50"),
-    remainingAssets: BigInt.fromString("50"),
+    underlyings: BigInt.fromString("50"),
+    underlyingsRemaining: BigInt.fromString("50"),
+    underlyingsRedeemed: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("3"),
     amount: BigInt.fromString("500"),
+    amountRemaining: BigInt.fromString("500"),
     amountRedeemed: BigInt.fromString("0"),
-    assets: BigInt.fromString("250"),
-    remainingAssets: BigInt.fromString("250"),
+    underlyings: BigInt.fromString("250"),
+    underlyingsRemaining: BigInt.fromString("250"),
+    underlyingsRedeemed: BigInt.fromString("0"),
   },
   {
     depositId: BigInt.fromString("4"),
     amount: BigInt.fromString("1000"),
+    amountRemaining: BigInt.fromString("1000"),
     amountRedeemed: BigInt.fromString("0"),
-    assets: BigInt.fromString("500"),
-    remainingAssets: BigInt.fromString("500"),
+    underlyings: BigInt.fromString("500"),
+    underlyingsRemaining: BigInt.fromString("500"),
+    underlyingsRedeemed: BigInt.fromString("0"),
   },
 ];
 
@@ -105,7 +115,7 @@ describe("roundsOutputVault", () => {
 
   describe("NextRound", () => {
     beforeAll(() => {
-      mockWithdrawalRequests(
+      mockWithdrawalTickets(
         mockedRoundId,
         vaultAddress,
         mockedInvestor,
@@ -119,22 +129,22 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         [],
         [
-          createWithdrawalRequestId(
+          createWithdrawalTicketId(
             BigInt.fromString("1"),
             vaultAddress,
             mockedInvestor
           ),
-          createWithdrawalRequestId(
+          createWithdrawalTicketId(
             BigInt.fromString("2"),
             vaultAddress,
             mockedInvestor
           ),
-          createWithdrawalRequestId(
+          createWithdrawalTicketId(
             BigInt.fromString("3"),
             vaultAddress,
             mockedInvestor
           ),
-          createWithdrawalRequestId(
+          createWithdrawalTicketId(
             BigInt.fromString("4"),
             vaultAddress,
             mockedInvestor
@@ -160,13 +170,13 @@ describe("roundsOutputVault", () => {
 
     test("can handle event", () => {
       assert.entityCount("Round", 2);
-      assert.entityCount("WithdrawalRequest", 4);
+      assert.entityCount("WithdrawalTicket", 4);
     });
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", vaultAddress.toHexString(), [
         { field: "currentRound", value: "2" },
-        { field: "lastShareToAssetRate", value: "10000000000000000000" },
+        { field: "lastShareToUnderlyingRate", value: "10000000000000000000" },
       ]);
     });
 
@@ -174,73 +184,73 @@ describe("roundsOutputVault", () => {
       assertEntity(
         "Round",
         createRoundId(BigInt.fromString("1"), vaultAddress).toHexString(),
-        [{ field: "shareToAssetRate", value: "10000000000000000000" }]
+        [{ field: "shareToUnderlyingRate", value: "10000000000000000000" }]
       );
     });
 
-    test("WithdrawalRequest 1 assets has been updated correctly", () => {
+    test("WithdrawalTicket 1 underlyings has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("1"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "assets", value: "100" },
-          { field: "remainingAssets", value: "100" },
+          { field: "underlyings", value: "100" },
+          { field: "underlyingsRemaining", value: "100" },
         ]
       );
     });
 
-    test("WithdrawalRequest 2 assets has been updated correctly", () => {
+    test("WithdrawalTicket 2 underlyings has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("2"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "assets", value: "1000" },
-          { field: "remainingAssets", value: "1000" },
+          { field: "underlyings", value: "1000" },
+          { field: "underlyingsRemaining", value: "1000" },
         ]
       );
     });
 
-    test("WithdrawalRequest 3 assets has been updated correctly", () => {
+    test("WithdrawalTicket 3 underlyings has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("3"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "assets", value: "5000" },
-          { field: "remainingAssets", value: "5000" },
+          { field: "underlyings", value: "5000" },
+          { field: "underlyingsRemaining", value: "5000" },
         ]
       );
     });
 
-    test("WithdrawalRequest 4 assets has been updated correctly", () => {
+    test("WithdrawalTicket 4 underlyings has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("4"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "assets", value: "10000" },
-          { field: "remainingAssets", value: "10000" },
+          { field: "underlyings", value: "10000" },
+          { field: "underlyingsRemaining", value: "10000" },
         ]
       );
     });
   });
 
   describe("DepositWithReceipt", () => {
-    describe("new WithdrawalRequest", () => {
+    describe("new WithdrawalTicket", () => {
       beforeAll(() => {
         mockRound(BigInt.fromString("1"), vaultAddress);
         mockCurrentRound(contractAddress, BigInt.fromString("1"));
@@ -255,41 +265,45 @@ describe("roundsOutputVault", () => {
       afterAll(clearStore);
 
       test("can handle event", () => {
-        assert.entityCount("WithdrawalRequest", 1);
+        assert.entityCount("WithdrawalTicket", 1);
         assert.entityCount("Investor", 1);
         assert.entityCount("Block", 1);
         assert.entityCount("Round", 1);
       });
 
-      test("WithdrawalRequest has been populated correctly", () => {
+      test("WithdrawalTicket has been populated correctly", () => {
         assertEntity(
-          "WithdrawalRequest",
-          createWithdrawalRequestId(
+          "WithdrawalTicket",
+          createWithdrawalTicketId(
             BigInt.fromString("5"),
             vaultAddress,
             mockedInvestor
           ).toHexString(),
-          [{ field: "amount", value: "10" }]
+          [
+            { field: "amount", value: "10" },
+            { field: "amountRemaining", value: "10" },
+            { field: "amountRedeemed", value: "0" },
+          ]
         );
       });
 
-      test("WithdrawalRequest has been added to the Round", () => {
+      test("WithdrawalTicket has been added to the Round", () => {
         const ids = [
-          createWithdrawalRequestId(
+          createWithdrawalTicketId(
             BigInt.fromString("5"),
             vaultAddress,
             mockedInvestor
           ).toHexString(),
         ];
         assertEntity("Round", mockedRoundId.toHexString(), [
-          { field: "withdrawalRequests", value: arrayToString(ids) },
+          { field: "withdrawalTickets", value: arrayToString(ids) },
         ]);
       });
     });
 
-    describe("WithdrawalRequest already exists", () => {
+    describe("WithdrawalTicket already exists", () => {
       beforeAll(() => {
-        mockWithdrawalRequest(
+        mockWithdrawalTicket(
           mockedRoundId,
           vaultAddress,
           mockedInvestor,
@@ -310,20 +324,24 @@ describe("roundsOutputVault", () => {
       afterAll(clearStore);
 
       test("can handle event", () => {
-        assert.entityCount("WithdrawalRequest", 1);
+        assert.entityCount("WithdrawalTicket", 1);
         assert.entityCount("Investor", 1);
         assert.entityCount("Block", 1);
       });
 
-      test("WithdrawalRequest has been updated correctly", () => {
+      test("WithdrawalTicket has been updated correctly", () => {
         assertEntity(
-          "WithdrawalRequest",
-          createWithdrawalRequestId(
+          "WithdrawalTicket",
+          createWithdrawalTicketId(
             BigInt.fromString("2"),
             vaultAddress,
             mockedInvestor
           ).toHexString(),
-          [{ field: "amount", value: "110" }]
+          [
+            { field: "amount", value: "110" },
+            { field: "amountRemaining", value: "110" },
+            { field: "amountRedeemed", value: "0" },
+          ]
         );
       });
     });
@@ -332,7 +350,7 @@ describe("roundsOutputVault", () => {
   describe("RedeemReceipt", () => {
     describe("RedeemReceipt has been called in a different round", () => {
       beforeAll(() => {
-        mockWithdrawalRequest(
+        mockWithdrawalTicket(
           mockedRoundId,
           vaultAddress,
           mockedInvestor,
@@ -354,18 +372,22 @@ describe("roundsOutputVault", () => {
       afterAll(clearStore);
 
       test("can handle event", () => {
-        assert.entityCount("WithdrawalRequest", 1);
+        assert.entityCount("WithdrawalTicket", 1);
       });
 
-      test("WithdrawalRequest has been updated correctly", () => {
+      test("WithdrawalTicket has been updated correctly", () => {
         assertEntity(
-          "WithdrawalRequest",
-          createWithdrawalRequestId(
+          "WithdrawalTicket",
+          createWithdrawalTicketId(
             BigInt.fromString("2"),
             vaultAddress,
             mockedInvestor
           ).toHexString(),
-          [{ field: "amountRedeemed", value: "10" }]
+          [
+            { field: "amount", value: "100" },
+            { field: "amountRemaining", value: "90" },
+            { field: "amountRedeemed", value: "10" },
+          ]
         );
       });
     });
@@ -374,9 +396,9 @@ describe("roundsOutputVault", () => {
       beforeAll(() => {
         mockCurrentRound(contractAddress, BigInt.fromString("1"));
       });
-      describe("user has requested a WithdrawalRequest reduption", () => {
+      describe("user has requested a WithdrawalTicket reduption", () => {
         beforeAll(() => {
-          mockWithdrawalRequest(
+          mockWithdrawalTicket(
             mockedRoundId,
             vaultAddress,
             mockedInvestor,
@@ -397,37 +419,40 @@ describe("roundsOutputVault", () => {
         afterAll(clearStore);
 
         test("can handle event", () => {
-          assert.entityCount("WithdrawalRequest", 1);
+          assert.entityCount("WithdrawalTicket", 1);
         });
 
-        test("WithdrawalRequest has been updated correctly", () => {
+        test("WithdrawalTicket has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("2"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amount", value: "60" }]
+            [
+              { field: "amount", value: "60" },
+              { field: "amountRemaining", value: "60" },
+            ]
           );
         });
       });
 
-      describe("user has requested a WithdrawalRequest deletion", () => {
+      describe("user has requested a WithdrawalTicket deletion", () => {
         beforeAll(() => {
           mockRound(
             BigInt.fromString("1"),
             vaultAddress,
             [],
             [
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("2"),
                 vaultAddress,
                 mockedInvestor
               ),
             ]
           );
-          mockWithdrawalRequest(
+          mockWithdrawalTicket(
             mockedRoundId,
             vaultAddress,
             mockedInvestor,
@@ -448,14 +473,14 @@ describe("roundsOutputVault", () => {
         afterAll(clearStore);
 
         test("can handle event", () => {
-          assert.entityCount("WithdrawalRequest", 0);
+          assert.entityCount("WithdrawalTicket", 0);
           assert.entityCount("Round", 1);
         });
 
-        test("WithdrawalRequest has been deleted", () => {
+        test("WithdrawalTicket has been deleted", () => {
           assert.notInStore(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("2"),
               vaultAddress,
               mockedInvestor
@@ -463,9 +488,9 @@ describe("roundsOutputVault", () => {
           );
         });
 
-        test("WithdrawalRequest has been removed from the Round", () => {
+        test("WithdrawalTicket has been removed from the Round", () => {
           assertEntity("Round", mockedRoundId.toHexString(), [
-            { field: "withdrawalRequests", value: "[]" },
+            { field: "withdrawalTickets", value: "[]" },
           ]);
         });
       });
@@ -474,13 +499,13 @@ describe("roundsOutputVault", () => {
 
   describe("RedeemReceiptBatch", () => {
     describe("redeems are all in the same round", () => {
-      describe("redeems are all in the round where WithdrawalRequests have been created", () => {
+      describe("redeems are all in the round where WithdrawalTickets have been created", () => {
         beforeAll(() => {
           mockCurrentRound(contractAddress, BigInt.fromString("1"));
         });
-        describe("requests are all to reduce WithdrawalRequests", () => {
+        describe("requests are all to reduce WithdrawalTickets", () => {
           beforeAll(() => {
-            mockWithdrawalRequests(
+            mockWithdrawalTickets(
               mockedRoundId,
               vaultAddress,
               mockedInvestor,
@@ -501,63 +526,69 @@ describe("roundsOutputVault", () => {
           afterAll(clearStore);
 
           test("can handle the event", () => {
-            assert.entityCount("WithdrawalRequest", 4);
+            assert.entityCount("WithdrawalTicket", 4);
           });
 
-          test("WithdrawalRequest 1 has been updated correctly", () => {
+          test("WithdrawalTicket 1 has been updated correctly", () => {
             assertEntity(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("1"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
-              [{ field: "amount", value: "5" }]
+              [
+                { field: "amount", value: "5" },
+                { field: "amountRemaining", value: "5" },
+              ]
             );
           });
 
-          test("WithdrawalRequest 3 has been updated correctly", () => {
+          test("WithdrawalTicket 3 has been updated correctly", () => {
             assertEntity(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("3"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
-              [{ field: "amount", value: "450" }]
+              [
+                { field: "amount", value: "450" },
+                { field: "amountRemaining", value: "450" },
+              ]
             );
           });
         });
-        describe("requests are all to delete WithdrawalRequests", () => {
+        describe("requests are all to delete WithdrawalTickets", () => {
           beforeAll(() => {
             mockRound(
               BigInt.fromString("1"),
               vaultAddress,
               [],
               [
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("1"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("2"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("3"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("4"),
                   vaultAddress,
                   mockedInvestor
                 ),
               ]
             );
-            mockWithdrawalRequests(
+            mockWithdrawalTickets(
               mockedRoundId,
               vaultAddress,
               mockedInvestor,
@@ -578,14 +609,14 @@ describe("roundsOutputVault", () => {
           afterAll(clearStore);
 
           test("can handle the event", () => {
-            assert.entityCount("WithdrawalRequest", 2);
+            assert.entityCount("WithdrawalTicket", 2);
             assert.entityCount("Round", 1);
           });
 
-          test("WithdrawalRequest 2 has been deleted", () => {
+          test("WithdrawalTicket 2 has been deleted", () => {
             assert.notInStore(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("2"),
                 vaultAddress,
                 mockedInvestor
@@ -593,10 +624,10 @@ describe("roundsOutputVault", () => {
             );
           });
 
-          test("WithdrawalRequest 3 has been deleted", () => {
+          test("WithdrawalTicket 3 has been deleted", () => {
             assert.notInStore(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("3"),
                 vaultAddress,
                 mockedInvestor
@@ -604,54 +635,54 @@ describe("roundsOutputVault", () => {
             );
           });
 
-          test("WithdrawalRequest 2 and 3 have been removed from the Round", () => {
+          test("WithdrawalTicket 2 and 3 have been removed from the Round", () => {
             const ids = [
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("1"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("4"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
             ];
             assertEntity("Round", mockedRoundId.toHexString(), [
-              { field: "withdrawalRequests", value: arrayToString(ids) },
+              { field: "withdrawalTickets", value: arrayToString(ids) },
             ]);
           });
         });
-        describe("requests are a mix between reduce and delete WithdrawalRequests", () => {
+        describe("requests are a mix between reduce and delete WithdrawalTickets", () => {
           beforeAll(() => {
             mockRound(
               BigInt.fromString("1"),
               vaultAddress,
               [],
               [
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("1"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("2"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("3"),
                   vaultAddress,
                   mockedInvestor
                 ),
-                createWithdrawalRequestId(
+                createWithdrawalTicketId(
                   BigInt.fromString("4"),
                   vaultAddress,
                   mockedInvestor
                 ),
               ]
             );
-            mockWithdrawalRequests(
+            mockWithdrawalTickets(
               mockedRoundId,
               vaultAddress,
               mockedInvestor,
@@ -680,14 +711,14 @@ describe("roundsOutputVault", () => {
           afterAll(clearStore);
 
           test("can handle the event", () => {
-            assert.entityCount("WithdrawalRequest", 2);
+            assert.entityCount("WithdrawalTicket", 2);
             assert.entityCount("Round", 1);
           });
 
-          test("WithdrawalRequest 2 has been deleted", () => {
+          test("WithdrawalTicket 2 has been deleted", () => {
             assert.notInStore(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("2"),
                 vaultAddress,
                 mockedInvestor
@@ -695,10 +726,10 @@ describe("roundsOutputVault", () => {
             );
           });
 
-          test("WithdrawalRequest 3 has been deleted", () => {
+          test("WithdrawalTicket 3 has been deleted", () => {
             assert.notInStore(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("3"),
                 vaultAddress,
                 mockedInvestor
@@ -706,42 +737,45 @@ describe("roundsOutputVault", () => {
             );
           });
 
-          test("WithdrawalRequest 4 has been updated correctly", () => {
+          test("WithdrawalTicket 4 has been updated correctly", () => {
             assertEntity(
-              "WithdrawalRequest",
-              createWithdrawalRequestId(
+              "WithdrawalTicket",
+              createWithdrawalTicketId(
                 BigInt.fromString("4"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
-              [{ field: "amount", value: "500" }]
+              [
+                { field: "amount", value: "500" },
+                { field: "amountRemaining", value: "500" },
+              ]
             );
           });
 
-          test("WithdrawalRequest 2 and 3 have been removed from the Round", () => {
+          test("WithdrawalTicket 2 and 3 have been removed from the Round", () => {
             const ids = [
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("1"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("4"),
                 vaultAddress,
                 mockedInvestor
               ).toHexString(),
             ];
             assertEntity("Round", mockedRoundId.toHexString(), [
-              { field: "withdrawalRequests", value: arrayToString(ids) },
+              { field: "withdrawalTickets", value: arrayToString(ids) },
             ]);
           });
         });
       });
 
-      describe("requests are all to redeem WithdrawalRequests", () => {
+      describe("requests are all to redeem WithdrawalTickets", () => {
         beforeAll(() => {
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
-          mockWithdrawalRequests(
+          mockWithdrawalTickets(
             mockedRoundId,
             vaultAddress,
             mockedInvestor,
@@ -762,40 +796,48 @@ describe("roundsOutputVault", () => {
         afterAll(clearStore);
 
         test("can handle the event", () => {
-          assert.entityCount("WithdrawalRequest", 4);
+          assert.entityCount("WithdrawalTicket", 4);
         });
 
-        test("WithdrawalRequest 1 has been updated correctly", () => {
+        test("WithdrawalTicket 1 has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("1"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amountRedeemed", value: "5" }]
+            [
+              { field: "amount", value: "10" },
+              { field: "amountRemaining", value: "5" },
+              { field: "amountRedeemed", value: "5" },
+            ]
           );
         });
 
-        test("WithdrawalRequest 3 has been updated correctly", () => {
+        test("WithdrawalTicket 3 has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("3"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amountRedeemed", value: "50" }]
+            [
+              { field: "amount", value: "500" },
+              { field: "amountRemaining", value: "450" },
+              { field: "amountRedeemed", value: "50" },
+            ]
           );
         });
       });
     });
 
     describe("redeems are in multiple rounds", () => {
-      describe("requests are a mix between redeem and reduce WithdrawalRequests", () => {
+      describe("requests are a mix between redeem and reduce WithdrawalTickets", () => {
         beforeAll(() => {
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
-          mockWithdrawalRequests(
+          mockWithdrawalTickets(
             mockedRoundId,
             vaultAddress,
             mockedInvestor,
@@ -804,7 +846,7 @@ describe("roundsOutputVault", () => {
             contractAddress,
             contractAddress
           );
-          mockWithdrawalRequests(
+          mockWithdrawalTickets(
             mockedRoundId_B,
             vaultAddress,
             mockedInvestor,
@@ -825,46 +867,53 @@ describe("roundsOutputVault", () => {
         afterAll(clearStore);
 
         test("can handle the event", () => {
-          assert.entityCount("WithdrawalRequest", 4);
+          assert.entityCount("WithdrawalTicket", 4);
         });
 
-        test("WithdrawalRequest 1 has been updated correctly", () => {
+        test("WithdrawalTicket 1 has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("1"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amountRedeemed", value: "5" }]
+            [
+              { field: "amount", value: "10" },
+              { field: "amountRemaining", value: "5" },
+              { field: "amountRedeemed", value: "5" },
+            ]
           );
         });
 
-        test("WithdrawalRequest 3 has been updated correctly", () => {
+        test("WithdrawalTicket 3 has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("3"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amount", value: "450" }]
+            [
+              { field: "amount", value: "450" },
+              { field: "amountRemaining", value: "450" },
+            ]
           );
         });
       });
-      describe("requests are a mix between redeem and delete WithdrawalRequests", () => {
+      describe("requests are a mix between redeem and delete WithdrawalTickets", () => {
         beforeAll(() => {
           mockRound(
             BigInt.fromString("1"),
             vaultAddress,
             [],
             [
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("1"),
                 vaultAddress,
                 mockedInvestor
               ),
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("2"),
                 vaultAddress,
                 mockedInvestor
@@ -876,12 +925,12 @@ describe("roundsOutputVault", () => {
             vaultAddress,
             [],
             [
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("3"),
                 vaultAddress,
                 mockedInvestor
               ),
-              createWithdrawalRequestId(
+              createWithdrawalTicketId(
                 BigInt.fromString("4"),
                 vaultAddress,
                 mockedInvestor
@@ -889,7 +938,7 @@ describe("roundsOutputVault", () => {
             ]
           );
           mockCurrentRound(contractAddress, BigInt.fromString("5"));
-          mockWithdrawalRequests(
+          mockWithdrawalTickets(
             mockedRoundId,
             vaultAddress,
             mockedInvestor,
@@ -898,7 +947,7 @@ describe("roundsOutputVault", () => {
             contractAddress,
             contractAddress
           );
-          mockWithdrawalRequests(
+          mockWithdrawalTickets(
             mockedRoundId_B,
             vaultAddress,
             mockedInvestor,
@@ -919,26 +968,30 @@ describe("roundsOutputVault", () => {
         afterAll(clearStore);
 
         test("can handle the event", () => {
-          assert.entityCount("WithdrawalRequest", 3);
+          assert.entityCount("WithdrawalTicket", 3);
           assert.entityCount("Round", 2);
         });
 
-        test("WithdrawalRequest 1 has been updated correctly", () => {
+        test("WithdrawalTicket 1 has been updated correctly", () => {
           assertEntity(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("1"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
-            [{ field: "amountRedeemed", value: "10" }]
+            [
+              { field: "amount", value: "10" },
+              { field: "amountRemaining", value: "0" },
+              { field: "amountRedeemed", value: "10" },
+            ]
           );
         });
 
-        test("WithdrawalRequest 3 has been deleted", () => {
+        test("WithdrawalTicket 3 has been deleted", () => {
           assert.notInStore(
-            "WithdrawalRequest",
-            createWithdrawalRequestId(
+            "WithdrawalTicket",
+            createWithdrawalTicketId(
               BigInt.fromString("3"),
               vaultAddress,
               mockedInvestor
@@ -946,16 +999,16 @@ describe("roundsOutputVault", () => {
           );
         });
 
-        test("WithdrawalRequest 3 has been removed from Round 5", () => {
+        test("WithdrawalTicket 3 has been removed from Round 5", () => {
           const ids = [
-            createWithdrawalRequestId(
+            createWithdrawalTicketId(
               BigInt.fromString("4"),
               vaultAddress,
               mockedInvestor
             ).toHexString(),
           ];
           assertEntity("Round", mockedRoundId_B.toHexString(), [
-            { field: "withdrawalRequests", value: arrayToString(ids) },
+            { field: "withdrawalTickets", value: arrayToString(ids) },
           ]);
         });
       });
@@ -964,7 +1017,7 @@ describe("roundsOutputVault", () => {
 
   describe("WithdrawExchangeAsset", () => {
     beforeAll(() => {
-      mockWithdrawalRequest(
+      mockWithdrawalTicket(
         mockedRoundId,
         vaultAddress,
         mockedInvestor,
@@ -986,21 +1039,24 @@ describe("roundsOutputVault", () => {
     afterAll(clearStore);
 
     test("can handle event", () => {
-      assert.entityCount("WithdrawalRequest", 1);
+      assert.entityCount("WithdrawalTicket", 1);
     });
 
-    test("WithdrawalRequest has been updated correctly", () => {
+    test("WithdrawalTicket has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("2"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "70" },
-          { field: "amountRedeemed", value: "15" },
-          { field: "remainingAssets", value: "35" },
+          { field: "amount", value: "100" },
+          { field: "amountRemaining", value: "70" },
+          { field: "amountRedeemed", value: "30" },
+          { field: "underlyings", value: "50" },
+          { field: "underlyingsRemaining", value: "35" },
+          { field: "underlyingsRedeemed", value: "15" },
         ]
       );
     });
@@ -1008,7 +1064,7 @@ describe("roundsOutputVault", () => {
 
   describe("WithdrawExchangeAssetBatch", () => {
     beforeAll(() => {
-      mockWithdrawalRequests(
+      mockWithdrawalTickets(
         mockedRoundId,
         vaultAddress,
         mockedInvestor,
@@ -1038,51 +1094,60 @@ describe("roundsOutputVault", () => {
     afterAll(clearStore);
 
     test("can handle event", () => {
-      assert.entityCount("WithdrawalRequest", 4);
+      assert.entityCount("WithdrawalTicket", 4);
     });
 
-    test("WithdrawalRequest 1 has been updated correctly", () => {
+    test("WithdrawalTicket 1 has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("1"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "9" },
-          { field: "amountRedeemed", value: "5" },
-          { field: "remainingAssets", value: "0" },
+          { field: "amount", value: "10" },
+          { field: "amountRemaining", value: "9" },
+          { field: "amountRedeemed", value: "1" },
+          { field: "underlyings", value: "5" },
+          { field: "underlyingsRemaining", value: "0" },
+          { field: "underlyingsRedeemed", value: "5" },
         ]
       );
     });
-    test("WithdrawalRequest 2 has been updated correctly", () => {
+    test("WithdrawalTicket 2 has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("2"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "0" },
-          { field: "amountRedeemed", value: "5" },
-          { field: "remainingAssets", value: "45" },
+          { field: "amount", value: "100" },
+          { field: "amountRemaining", value: "0" },
+          { field: "amountRedeemed", value: "100" },
+          { field: "underlyings", value: "50" },
+          { field: "underlyingsRemaining", value: "45" },
+          { field: "underlyingsRedeemed", value: "5" },
         ]
       );
     });
-    test("WithdrawalRequest 4 has been updated correctly", () => {
+    test("WithdrawalTicket 4 has been updated correctly", () => {
       assertEntity(
-        "WithdrawalRequest",
-        createWithdrawalRequestId(
+        "WithdrawalTicket",
+        createWithdrawalTicketId(
           BigInt.fromString("4"),
           vaultAddress,
           mockedInvestor
         ).toHexString(),
         [
           { field: "amount", value: "1000" },
-          { field: "amountRedeemed", value: "5" },
-          { field: "remainingAssets", value: "495" },
+          { field: "amountRemaining", value: "1000" },
+          { field: "amountRedeemed", value: "0" },
+          { field: "underlyings", value: "500" },
+          { field: "underlyingsRemaining", value: "495" },
+          { field: "underlyingsRedeemed", value: "5" },
         ]
       );
     });
