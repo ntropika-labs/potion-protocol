@@ -356,6 +356,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
 
         // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
+        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
     },
     "remote.ply-mumbai.testcomp-2": {
         // Asset address
@@ -386,6 +387,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
 
         // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
+        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
     },
     "remote.ply-mumbai.testcomp-3": {
         // Asset address
@@ -416,5 +418,6 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
 
         // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
+        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
     },
 };

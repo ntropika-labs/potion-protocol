@@ -12,7 +12,7 @@ async function init() {
         type: deploymentType,
         options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
-        indexDir: resolve(__dirname, "../src"),
+        indexDir: resolve(__dirname, "../../src"),
     });
 
     const deployer = (await ethers.provider.listAccounts())[0];
@@ -27,49 +27,41 @@ async function init() {
     console.log(`---------------------------------------------------\n`);
 }
 
-async function deployToken(name: string, symbol: string, decimals = 18): Promise<string> {
-    console.log(`--- Deploying token ${symbol} (${name}) with ${decimals} decimals ---`);
-    const token = await Deployments.deploy("TestERC20MinterPauser", [name, symbol, decimals], {
-        alias: symbol,
-        contract: "contracts/test/TestERC20MinterPauser.sol:TestERC20MinterPauser",
-    });
-
-    console.log(`\nToken ${symbol} (${name}) deployed at ${token.address}\n`);
-    return token.address;
-}
-
 async function main() {
     await init();
 
-    const underlyingTokens = [
-        {
-            name: "PotionTestWETH",
-            symbol: "WETH",
-            decimals: 18,
-        },
-        {
-            name: "PotionTestWBTC",
-            symbol: "WBTC",
-            decimals: 8,
-        },
-        {
-            name: "PotionTestLINK",
-            symbol: "LINK",
-            decimals: 18,
-        },
-        {
-            name: "PotionTestUSDC",
-            symbol: "USDC",
-            decimals: 6,
-        },
+    const tokens: string[] = [
+        "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14",
+        "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
+        "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F",
+        "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
     ];
+    const aggregators: string[] = [
+        "0x0715A7794a1dc8e42615F059dD6e406A6594651A",
+        "0x007A22900a3B98143368Bd5906f8E17e9867581b",
+        "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408",
+        "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0",
+    ];
+    const mintAmount = "100000000";
 
-    for (const underlyingToken of underlyingTokens) {
-        const { name, symbol, decimals } = underlyingToken;
-        await deployToken(name, symbol, decimals);
+    const uniswapRouter = await Deployments.deploy("MockRouterWithOracle", [tokens, aggregators], {
+        alias: "UniswapV3Router",
+    });
+
+    console.log(`\nUniswap Router deployed at ${uniswapRouter.address}\n`);
+
+    for (let i = 0; i < tokens.length; i++) {
+        console.log(`- Minting ${mintAmount} of token ${tokens[i]} to Uniswap Router...`);
+        const token = await ethers.getContractAt("MockERC20PresetMinterPauser", tokens[i]);
+
+        const decimals = await token.decimals();
+
+        token.mint(uniswapRouter.address, ethers.utils.parseUnits(mintAmount, decimals));
     }
 
     Deployments.persist(true);
+
+    console.log(`\nDONE!\n`);
 }
 
 main()
