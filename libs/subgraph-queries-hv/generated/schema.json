@@ -654,7 +654,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "DepositRequest",
+        "name": "DepositTicket",
         "description": null,
         "fields": [
           {
@@ -675,6 +675,22 @@
           },
           {
             "name": "amountRedeemed",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining",
             "description": null,
             "args": [],
             "type": {
@@ -738,22 +754,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingShares",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BigInt",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "args": [],
@@ -802,6 +802,38 @@
             "deprecationReason": null
           },
           {
+            "name": "sharesRedeemed",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "tx",
             "description": null,
             "args": [],
@@ -825,7 +857,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "DepositRequest_filter",
+        "name": "DepositTicket_filter",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -947,6 +979,118 @@
           },
           {
             "name": "amountRedeemed_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -1690,118 +1834,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingShares",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingShares_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "type": {
@@ -2170,6 +2202,230 @@
             "deprecationReason": null
           },
           {
+            "name": "sharesRedeemed",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "shares_gt",
             "description": null,
             "type": {
@@ -2364,7 +2620,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "DepositRequest_orderBy",
+        "name": "DepositTicket_orderBy",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -2378,6 +2634,12 @@
           },
           {
             "name": "amountRedeemed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2401,12 +2663,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingShares",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "isDeprecated": false,
@@ -2420,6 +2676,18 @@
           },
           {
             "name": "shares",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRedeemed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sharesRemaining",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3457,22 +3725,6 @@
             "deprecationReason": null
           },
           {
-            "name": "asset",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Token",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "currentRound",
             "description": null,
             "args": [],
@@ -3501,7 +3753,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate",
+            "name": "lastShareToUnderlyingRate",
             "description": null,
             "args": [],
             "type": {
@@ -3513,7 +3765,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested",
+            "name": "lastUnderlyingToShareRate",
             "description": null,
             "args": [],
             "type": {
@@ -3525,7 +3777,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate",
+            "name": "lastUnderlyingsInvested",
             "description": null,
             "args": [],
             "type": {
@@ -3634,7 +3886,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets",
+            "name": "totalShares",
             "description": null,
             "args": [],
             "type": {
@@ -3643,6 +3895,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Token",
                 "ofType": null
               }
             },
@@ -3942,274 +4210,6 @@
             "deprecationReason": null
           },
           {
-            "name": "asset",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "Token_filter",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_contains_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_ends_with",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_ends_with_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_contains_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_ends_with",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_ends_with_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_starts_with",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_not_starts_with_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_starts_with",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "asset_starts_with_nocase",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "currentRound",
             "description": null,
             "type": {
@@ -4410,7 +4410,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate",
+            "name": "lastShareToUnderlyingRate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4422,7 +4422,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_gt",
+            "name": "lastShareToUnderlyingRate_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4434,7 +4434,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_gte",
+            "name": "lastShareToUnderlyingRate_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4446,7 +4446,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_in",
+            "name": "lastShareToUnderlyingRate_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -4466,7 +4466,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_lt",
+            "name": "lastShareToUnderlyingRate_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4478,7 +4478,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_lte",
+            "name": "lastShareToUnderlyingRate_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4490,7 +4490,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_not",
+            "name": "lastShareToUnderlyingRate_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4502,7 +4502,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate_not_in",
+            "name": "lastShareToUnderlyingRate_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -4522,7 +4522,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested",
+            "name": "lastUnderlyingToShareRate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4534,7 +4534,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_gt",
+            "name": "lastUnderlyingToShareRate_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4546,7 +4546,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_gte",
+            "name": "lastUnderlyingToShareRate_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4558,7 +4558,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_in",
+            "name": "lastUnderlyingToShareRate_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -4578,7 +4578,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_lt",
+            "name": "lastUnderlyingToShareRate_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4590,7 +4590,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_lte",
+            "name": "lastUnderlyingToShareRate_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4602,7 +4602,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_not",
+            "name": "lastUnderlyingToShareRate_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4614,7 +4614,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested_not_in",
+            "name": "lastUnderlyingToShareRate_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -4634,7 +4634,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate",
+            "name": "lastUnderlyingsInvested",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4646,7 +4646,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_gt",
+            "name": "lastUnderlyingsInvested_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4658,7 +4658,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_gte",
+            "name": "lastUnderlyingsInvested_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4670,7 +4670,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_in",
+            "name": "lastUnderlyingsInvested_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -4690,7 +4690,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_lt",
+            "name": "lastUnderlyingsInvested_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4702,7 +4702,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_lte",
+            "name": "lastUnderlyingsInvested_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4714,7 +4714,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_not",
+            "name": "lastUnderlyingsInvested_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4726,7 +4726,7 @@
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate_not_in",
+            "name": "lastUnderlyingsInvested_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5026,7 +5026,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets",
+            "name": "totalShares",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5038,7 +5038,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_gt",
+            "name": "totalShares_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5050,7 +5050,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_gte",
+            "name": "totalShares_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5062,7 +5062,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_in",
+            "name": "totalShares_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5082,7 +5082,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_lt",
+            "name": "totalShares_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5094,7 +5094,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_lte",
+            "name": "totalShares_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5106,7 +5106,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_not",
+            "name": "totalShares_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5118,7 +5118,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets_not_in",
+            "name": "totalShares_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5132,6 +5132,274 @@
                   "ofType": null
                 }
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Token_filter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_contains_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_ends_with_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_contains_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_ends_with_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_not_starts_with_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying_starts_with_nocase",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -5157,12 +5425,6 @@
             "deprecationReason": null
           },
           {
-            "name": "asset",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "currentRound",
             "description": null,
             "isDeprecated": false,
@@ -5175,19 +5437,19 @@
             "deprecationReason": null
           },
           {
-            "name": "lastAssetToShareRate",
+            "name": "lastShareToUnderlyingRate",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "lastAssetsInvested",
+            "name": "lastUnderlyingToShareRate",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "lastShareToAssetRate",
+            "name": "lastUnderlyingsInvested",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5205,7 +5467,13 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssets",
+            "name": "totalShares",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlying",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5239,7 +5507,7 @@
         "description": null,
         "fields": [
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "args": [
               {
@@ -5259,7 +5527,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "DepositRequest_orderBy",
+                  "name": "DepositTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -5295,7 +5563,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "DepositRequest_filter",
+                  "name": "DepositTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -5311,7 +5579,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "DepositRequest",
+                  "name": "DepositTicket",
                   "ofType": null
                 }
               }
@@ -5437,7 +5705,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "args": [
               {
@@ -5457,7 +5725,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "WithdrawalRequest_orderBy",
+                  "name": "WithdrawalTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -5493,7 +5761,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "WithdrawalRequest_filter",
+                  "name": "WithdrawalTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -5509,7 +5777,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "WithdrawalRequest",
+                  "name": "WithdrawalTicket",
                   "ofType": null
                 }
               }
@@ -5542,11 +5810,11 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_",
+            "name": "depositTickets_",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "DepositRequest_filter",
+              "name": "DepositTicket_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -5862,11 +6130,11 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_",
+            "name": "withdrawalTickets_",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "WithdrawalRequest_filter",
+              "name": "WithdrawalTicket_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -5887,7 +6155,7 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5911,7 +6179,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -7713,7 +7981,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequest",
+            "name": "depositTicket",
             "description": null,
             "args": [
               {
@@ -7763,14 +8031,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "DepositRequest",
+              "name": "DepositTicket",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "args": [
               {
@@ -7802,7 +8070,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "DepositRequest_orderBy",
+                  "name": "DepositTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -7854,7 +8122,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "DepositRequest_filter",
+                  "name": "DepositTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -7873,7 +8141,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepositRequest",
+                    "name": "DepositTicket",
                     "ofType": null
                   }
                 }
@@ -8903,7 +9171,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequest",
+            "name": "withdrawalTicket",
             "description": null,
             "args": [
               {
@@ -8953,14 +9221,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WithdrawalRequest",
+              "name": "WithdrawalTicket",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "args": [
               {
@@ -8992,7 +9260,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "WithdrawalRequest_orderBy",
+                  "name": "WithdrawalTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9044,7 +9312,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "WithdrawalRequest_filter",
+                  "name": "WithdrawalTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9063,7 +9331,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "WithdrawalRequest",
+                    "name": "WithdrawalTicket",
                     "ofType": null
                   }
                 }
@@ -9197,30 +9465,6 @@
         "description": null,
         "fields": [
           {
-            "name": "assetToShareRate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "blockEntered",
             "description": null,
             "args": [],
@@ -9257,7 +9501,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "args": [
               {
@@ -9277,7 +9521,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "DepositRequest_orderBy",
+                  "name": "DepositTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9313,7 +9557,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "DepositRequest_filter",
+                  "name": "DepositTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9332,7 +9576,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepositRequest",
+                    "name": "DepositTicket",
                     "ofType": null
                   }
                 }
@@ -9374,7 +9618,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate",
+            "name": "shareToUnderlyingRate",
             "description": null,
             "args": [],
             "type": {
@@ -9386,7 +9630,31 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd",
+            "name": "totalUnderlyingsAtRoundEnd",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested",
             "description": null,
             "args": [],
             "type": {
@@ -9426,7 +9694,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "args": [
               {
@@ -9446,7 +9714,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "WithdrawalRequest_orderBy",
+                  "name": "WithdrawalTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9482,7 +9750,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "WithdrawalRequest_filter",
+                  "name": "WithdrawalTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -9501,7 +9769,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "WithdrawalRequest",
+                    "name": "WithdrawalTicket",
                     "ofType": null
                   }
                 }
@@ -9529,230 +9797,6 @@
               "kind": "INPUT_OBJECT",
               "name": "BlockChangedFilter",
               "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetToShareRate_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -10307,7 +10351,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10327,11 +10371,11 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_",
+            "name": "depositTickets_",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "DepositRequest_filter",
+              "name": "DepositTicket_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -10339,7 +10383,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_contains",
+            "name": "depositTickets_contains",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10359,7 +10403,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_contains_nocase",
+            "name": "depositTickets_contains_nocase",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10379,7 +10423,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_not",
+            "name": "depositTickets_not",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10399,7 +10443,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_not_contains",
+            "name": "depositTickets_not_contains",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10419,7 +10463,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests_not_contains_nocase",
+            "name": "depositTickets_not_contains_nocase",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10895,7 +10939,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate",
+            "name": "shareToUnderlyingRate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10907,7 +10951,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_gt",
+            "name": "shareToUnderlyingRate_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10919,7 +10963,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_gte",
+            "name": "shareToUnderlyingRate_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10931,7 +10975,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_in",
+            "name": "shareToUnderlyingRate_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -10951,7 +10995,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_lt",
+            "name": "shareToUnderlyingRate_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10963,7 +11007,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_lte",
+            "name": "shareToUnderlyingRate_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10975,7 +11019,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_not",
+            "name": "shareToUnderlyingRate_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10987,7 +11031,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate_not_in",
+            "name": "shareToUnderlyingRate_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11007,7 +11051,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd",
+            "name": "totalUnderlyingsAtRoundEnd",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11019,7 +11063,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_gt",
+            "name": "totalUnderlyingsAtRoundEnd_gt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11031,7 +11075,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_gte",
+            "name": "totalUnderlyingsAtRoundEnd_gte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11043,7 +11087,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_in",
+            "name": "totalUnderlyingsAtRoundEnd_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11063,7 +11107,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_lt",
+            "name": "totalUnderlyingsAtRoundEnd_lt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11075,7 +11119,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_lte",
+            "name": "totalUnderlyingsAtRoundEnd_lte",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11087,7 +11131,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_not",
+            "name": "totalUnderlyingsAtRoundEnd_not",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11099,7 +11143,231 @@
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd_not_in",
+            "name": "totalUnderlyingsAtRoundEnd_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11399,7 +11667,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11419,11 +11687,11 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_",
+            "name": "withdrawalTickets_",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "WithdrawalRequest_filter",
+              "name": "WithdrawalTicket_filter",
               "ofType": null
             },
             "defaultValue": null,
@@ -11431,7 +11699,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_contains",
+            "name": "withdrawalTickets_contains",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11451,7 +11719,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_contains_nocase",
+            "name": "withdrawalTickets_contains_nocase",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11471,7 +11739,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_not",
+            "name": "withdrawalTickets_not",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11491,7 +11759,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_not_contains",
+            "name": "withdrawalTickets_not_contains",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11511,7 +11779,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests_not_contains_nocase",
+            "name": "withdrawalTickets_not_contains_nocase",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -11800,18 +12068,6 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "assetToShareRate",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assetsInvested",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "blockEntered",
             "description": null,
             "isDeprecated": false,
@@ -11830,7 +12086,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11848,13 +12104,25 @@
             "deprecationReason": null
           },
           {
-            "name": "shareToAssetRate",
+            "name": "shareToUnderlyingRate",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "totalAssetsAtRoundEnd",
+            "name": "totalUnderlyingsAtRoundEnd",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingToShareRate",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsInvested",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11872,7 +12140,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -12148,7 +12416,7 @@
             "deprecationReason": null
           },
           {
-            "name": "depositRequest",
+            "name": "depositTicket",
             "description": null,
             "args": [
               {
@@ -12198,14 +12466,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "DepositRequest",
+              "name": "DepositTicket",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "depositRequests",
+            "name": "depositTickets",
             "description": null,
             "args": [
               {
@@ -12237,7 +12505,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "DepositRequest_orderBy",
+                  "name": "DepositTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -12289,7 +12557,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "DepositRequest_filter",
+                  "name": "DepositTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -12308,7 +12576,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepositRequest",
+                    "name": "DepositTicket",
                     "ofType": null
                   }
                 }
@@ -13338,7 +13606,7 @@
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequest",
+            "name": "withdrawalTicket",
             "description": null,
             "args": [
               {
@@ -13388,14 +13656,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WithdrawalRequest",
+              "name": "WithdrawalTicket",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "withdrawalRequests",
+            "name": "withdrawalTickets",
             "description": null,
             "args": [
               {
@@ -13427,7 +13695,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "WithdrawalRequest_orderBy",
+                  "name": "WithdrawalTicket_orderBy",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -13479,7 +13747,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "WithdrawalRequest_filter",
+                  "name": "WithdrawalTicket_filter",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -13498,7 +13766,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "WithdrawalRequest",
+                    "name": "WithdrawalTicket",
                     "ofType": null
                   }
                 }
@@ -14580,7 +14848,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "WithdrawalRequest",
+        "name": "WithdrawalTicket",
         "description": null,
         "fields": [
           {
@@ -14616,7 +14884,7 @@
             "deprecationReason": null
           },
           {
-            "name": "assets",
+            "name": "amountRemaining",
             "description": null,
             "args": [],
             "type": {
@@ -14680,22 +14948,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingAssets",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BigInt",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "args": [],
@@ -14742,6 +14994,54 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "underlyings",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -14751,7 +15051,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "WithdrawalRequest_filter",
+        "name": "WithdrawalTicket_filter",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -14892,6 +15192,118 @@
             "deprecationReason": null
           },
           {
+            "name": "amountRemaining",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountRemaining_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "amount_gt",
             "description": null,
             "type": {
@@ -14973,118 +15385,6 @@
           },
           {
             "name": "amount_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "assets_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -15728,118 +16028,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingAssets",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_gt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_gte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_lt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_lte",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingAssets_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "type": {
@@ -16282,6 +16470,342 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "underlyings",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -16290,7 +16814,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "WithdrawalRequest_orderBy",
+        "name": "WithdrawalTicket_orderBy",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -16309,7 +16833,7 @@
             "deprecationReason": null
           },
           {
-            "name": "assets",
+            "name": "amountRemaining",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -16333,12 +16857,6 @@
             "deprecationReason": null
           },
           {
-            "name": "remainingAssets",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "round",
             "description": null,
             "isDeprecated": false,
@@ -16352,6 +16870,24 @@
           },
           {
             "name": "tx",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyings",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRedeemed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "underlyingsRemaining",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
