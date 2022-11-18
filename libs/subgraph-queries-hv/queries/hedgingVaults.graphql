@@ -66,7 +66,7 @@ query getHedgingVault($vault: ID!, $investor: String!) {
   }
 }
 
-query getHedgingVaults {
+query getHedgingVaults($investor: String) {
   hedgingVaults {
     ...VaultInfo
     action {
@@ -77,6 +77,11 @@ query getHedgingVaults {
     }
     shareToken {
       ...TokenInfo
+    }
+    rounds(orderBy: roundNumber) {
+      depositRequests(where: { investor: $investor }) {
+        id
+      }
     }
   }
 }
