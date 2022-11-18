@@ -7,7 +7,7 @@ import { formatUnits } from "@ethersproject/units";
 
 interface VaultData {
   address: string;
-  asset: Token;
+  underlying: Token;
   shareToken: Token;
   size: string;
   hedgingRate: string;
@@ -18,11 +18,11 @@ type HedgingVaultFragment = GetHedgingVaultsQuery["hedgingVaults"][0];
 
 const fragmentToData = (fragment: HedgingVaultFragment): VaultData => ({
   address: fragment.id,
-  asset: {
-    address: fragment.asset.id,
-    name: fragment.asset.name,
-    symbol: fragment.asset.symbol,
-    decimals: parseInt(fragment.asset.decimals),
+  underlying: {
+    address: fragment.underlying.id,
+    name: fragment.underlying.name,
+    symbol: fragment.underlying.symbol,
+    decimals: parseInt(fragment.underlying.decimals),
   },
   shareToken: {
     address: fragment.shareToken.id,
@@ -30,7 +30,7 @@ const fragmentToData = (fragment: HedgingVaultFragment): VaultData => ({
     symbol: fragment.shareToken.symbol,
     decimals: parseInt(fragment.shareToken.decimals),
   },
-  size: fragment.totalAssets,
+  size: fragment.totalShares,
   hedgingRate: formatUnits(fragment?.action?.hedgingRate ?? "0", 6),
   strikePercentage: formatUnits(fragment.action?.strikePercentage ?? "0", 6),
 });

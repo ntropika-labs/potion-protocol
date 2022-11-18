@@ -1,6 +1,6 @@
 import type {
-  DepositRequestInfoFragment,
-  WithdrawalRequestInfoFragment,
+  DepositTicketInfoFragment,
+  WithdrawalTicketInfoFragment,
 } from "subgraph-queries-hv/generated/operations";
 
 export * from "@/types/web3Onboard";
@@ -8,10 +8,10 @@ export * from "@/types/uniswapAlphaRouter";
 
 export interface RoundsFragment {
   roundNumber: string;
-  assetToShareRate: string;
-  shareToAssetRate: string;
-  depositRequests: DepositRequestInfoFragment[];
-  withdrawalRequests: WithdrawalRequestInfoFragment[];
+  underlyingToShareRate: string;
+  shareToUnderlyingRate: string;
+  depositTickets: DepositTicketInfoFragment[];
+  withdrawalTickets: WithdrawalTicketInfoFragment[];
 }
 
 export interface EstimatedPrice {

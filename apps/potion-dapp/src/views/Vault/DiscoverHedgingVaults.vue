@@ -43,7 +43,7 @@ const toVault = (id: string) => {
     <VaultCard
       v-for="vault in vaults"
       :key="vault.address"
-      :asset="vault.asset"
+      :asset="vault.underlying"
       :hedging-rate="vault.hedgingRate"
       :size="vault.size"
       :strike="vault.strikePercentage"
