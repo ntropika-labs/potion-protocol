@@ -17,7 +17,7 @@ import "../../library/PriceUtils.sol";
 
     @notice Mock contract for the Uniswap Router with support for Chainlink Oracle
 */
-contract MockUniswapV3RouterWithOracle is ISwapRouter {
+contract MockRouterWithOracle is ISwapRouter {
     using UniswapV3Path for bytes;
 
     mapping(address => address) public oracles;

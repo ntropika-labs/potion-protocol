@@ -12,5 +12,5 @@ export { MockOpynController__factory } from "./MockOpynController__factory";
 export { MockOpynFactory__factory } from "./MockOpynFactory__factory";
 export { MockOpynOracle__factory } from "./MockOpynOracle__factory";
 export { MockPotionLiquidityPool__factory } from "./MockPotionLiquidityPool__factory";
+export { MockRouterWithOracle__factory } from "./MockRouterWithOracle__factory";
 export { MockUniswapV3Router__factory } from "./MockUniswapV3Router__factory";
-export { MockUniswapV3RouterWithOracle__factory } from "./MockUniswapV3RouterWithOracle__factory";

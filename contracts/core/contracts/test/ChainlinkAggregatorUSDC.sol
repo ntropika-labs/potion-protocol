@@ -5,15 +5,15 @@ pragma solidity 0.8.4;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract ChainlinkAggregatorUSDC is AggregatorV3Interface {
-    function decimals() external view override returns (uint8) {
+    function decimals() external pure override returns (uint8) {
         return 8;
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "Potion Chainlink Aggregator for USDC";
     }
 
-    function version() external view override returns (uint256) {
+    function version() external pure override returns (uint256) {
         return 1;
     }
 

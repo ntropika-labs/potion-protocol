@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { PotionLiquidityPool } from "../typechain";
+import { AddressBook, PotionLiquidityPool } from "../typechain";
 import { config as deployConfiguration } from "./lib/deployConfig";
 import type { NetworkDeployConfig } from "./lib/deployConfig";
 import { Deployment } from "../deployments/deploymentConfig";
@@ -7,7 +7,6 @@ import { executePostDeployActions } from "./lib/postDeploy";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { DeploymentFlags, Deployments, getDeploymentType } from "contracts-utils";
-import type { DeploymentContract } from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -77,7 +76,7 @@ async function deployCollateralToken(): Promise<string> {
     return token.address;
 }
 
-async function updateAddressBook(addressbook: DeploymentContract) {
+async function updateAddressBook(addressbook: AddressBook) {
     console.log(`Updating address book at ${addressbook.address}:`);
     let trx = await addressbook.setOtokenFactory(contractAddresses.get(OTOKEN_FACTORY_CONTRACT_NAME));
     await trx.wait();
@@ -107,7 +106,7 @@ async function deployOpynContracts(): Promise<string> {
     console.log("Deploying Opyn Gamma protocol...");
 
     // Deploy the address book and other Opyn contracts
-    const addressbook = await Deployments.deploy(ADDRESS_BOOK_CONTRACT_NAME);
+    const addressbook = (await Deployments.deploy(ADDRESS_BOOK_CONTRACT_NAME)) as AddressBook;
 
     // Deploy contracts that take no constructor params
     for (const contractName of CONTRACTS_TO_DEPLOY_WITH_NO_PARAM) {
@@ -155,8 +154,6 @@ async function main() {
 
     if (!deployConfig.collateralToken) {
         deployConfig.collateralToken = await deployCollateralToken();
-    } else {
-        Deployments.attach("ERC20", deployConfig.collateralToken, "USDC");
     }
 
     process.stdout.write(`Deploying CurveManager... `);
