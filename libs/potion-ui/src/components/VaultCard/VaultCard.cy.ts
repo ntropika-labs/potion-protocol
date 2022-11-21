@@ -4,25 +4,29 @@ import VaultCard from "./VaultCard.vue";
 
 describe("VaultCard.cy.ts", () => {
   const props = {
+    address: "0x1234",
     asset: {
       name: "Hello",
       symbol: "AST",
       address: "0x123",
     },
-    hedgingRate: "100",
-    size: "3000",
+    cycleDurationSecs: "86400",
     strike: "10",
+    maxPremium: "10",
     currency: "TST",
+    strategy: "PROTECTIVE_PUT",
     onSelected: {},
   };
 
   it("Renders correctly", () => {
     cy.mount(VaultCard, { props });
     cy.get("[test-vault-card]").should("be.visible");
+    cy.get("[test-strategy]").should("be.visible");
+    cy.get("[test-address]").should("be.visible");
     cy.get("[test-asset]").should("be.visible");
     cy.get("[test-strike-percentage]").should("be.visible");
-    cy.get("[test-hedging-rate]").should("be.visible");
-    cy.get("[test-vault-size]").should("be.visible");
+    cy.get("[test-round-length]").should("be.visible");
+    cy.get("[test-max-premium]").should("be.visible");
     cy.get("[test-button]").should("be.visible");
   });
 

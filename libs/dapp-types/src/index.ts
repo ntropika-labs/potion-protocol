@@ -121,3 +121,9 @@ export interface Slippage {
   label: string;
   selected: boolean;
 }
+
+export enum VaultStrategy {
+  PROTECTIVE_PUT = "PROTECTIVE_PUT",
+  STRADDLE = "STRADDLE",
+  DELTA_NEUTRAL = "DELTA_NEUTRAL",
+}
