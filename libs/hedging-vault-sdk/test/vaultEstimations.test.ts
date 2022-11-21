@@ -61,7 +61,7 @@ describe("vaultEstimations", () => {
         expect(result).toEqual(estimatedUnderlyingBalanceActionContract + potionPayoutInUnderlying);
     });
 
-    it("calculate the current Share To Asset Rate correctly", () => {
+    it("calculate the current Share To Underlying Rate correctly", () => {
         const currentTotalUnderlyings = vaultEstimations.calculateCurrentTotalUnderlyings(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
@@ -69,7 +69,7 @@ describe("vaultEstimations", () => {
             strikePrice,
             potionsQuantity,
         );
-        const result = vaultEstimations.calculateCurrentShareToAssetRate(
+        const result = vaultEstimations.calculateCurrentShareToUnderlyingRate(
             usdcBalanceActionContract,
             underlyingBalanceActionContract,
             underlyingPrice,

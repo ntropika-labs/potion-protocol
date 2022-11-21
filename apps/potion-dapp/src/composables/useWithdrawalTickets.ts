@@ -2,14 +2,14 @@ import { computed, unref } from "vue";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
 import {
   formatAmount,
-  hasAssets,
-  calcAssets,
-} from "@/helpers/deferredRequests";
+  hasUnderlyings,
+  calcUnderlyings,
+} from "@/helpers/deferredTickets";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { RoundsFragment } from "@/types";
 
-function useWithdrawalRequests(
+function useWithdrawalTickets(
   vaultAddress: MaybeRef<string>,
   assetAddress: MaybeRef<string>,
   currentRound: MaybeRef<string>,
@@ -38,87 +38,87 @@ function useWithdrawalRequests(
   const pastRounds = computed(() =>
     unref(rounds).filter(
       (round) =>
-        !isCurrentRound(round) && hasAssets(round.withdrawalRequests?.[0])
+        !isCurrentRound(round) && hasUnderlyings(round.withdrawalTickets?.[0])
     )
   );
 
-  const availableAssets = computed(() =>
+  const availableUnderlyings = computed(() =>
     unref(rounds).reduce(
       (acc, round) =>
         acc +
-        calcAssets(
-          round?.withdrawalRequests?.[0]?.remainingAssets,
-          round?.assetToShareRate
+        calcUnderlyings(
+          round?.withdrawalTickets?.[0]?.underlyingsRemaining,
+          round?.underlyingToShareRate
         ),
       0
     )
   );
 
-  const currentWithdrawalRequest = computed(
-    () => round?.value?.withdrawalRequests[0]
+  const currentWithdrawalTicket = computed(
+    () => round?.value?.withdrawalTickets[0]
   );
 
   const currentWithdrawalAmount = computed(() =>
-    formatAmount(currentWithdrawalRequest?.value?.amount)
+    formatAmount(currentWithdrawalTicket?.value?.amountRemaining)
   );
 
-  const canDeleteWithdrawalRequest = computed(
+  const canDeleteWithdrawalTicket = computed(
     () => currentWithdrawalAmount.value > 0
   );
 
-  const deleteWithdrawalRequest = async () => {
-    if (canDeleteWithdrawalRequest.value) {
+  const deleteWithdrawalTicket = async () => {
+    if (canDeleteWithdrawalTicket.value) {
       await redeem(unref(currentRound), currentWithdrawalAmount.value);
     }
   };
 
   const getWithdrawalDetails = (round: RoundsFragment) => ({
     id: round.roundNumber,
-    assets: round.withdrawalRequests[0].amount,
+    assets: round.withdrawalTickets[0].amountRemaining,
   });
 
-  const redeemAssets = () => {
+  const redeemUnderlyings = () => {
     if (pastRounds.value.length > 0) {
       if (pastRounds.value.length == 1) {
         const { id, assets } = getWithdrawalDetails(pastRounds.value[0]);
         return redeemExchangeAsset(id, assets);
       } else {
         const ids = new Array<string>();
-        const allAssets = new Array<string>();
+        const allUnderlyings = new Array<string>();
         pastRounds.value.forEach((round) => {
           const { id, assets } = getWithdrawalDetails(round);
           ids.push(id);
-          allAssets.push(assets);
+          allUnderlyings.push(assets);
         });
-        return redeemExchangeAssetBatch(ids, allAssets);
+        return redeemExchangeAssetBatch(ids, allUnderlyings);
       }
     }
   };
-  const redeemAssetsLoading = computed(
+  const redeemUnderlyingsLoading = computed(
     () =>
       redeemExchangeAssetLoading.value || redeemExchangeAssetBatchLoading.value
   );
-  const redeemAssetsReceipt = computed(
+  const redeemUnderlyingsReceipt = computed(
     () =>
       redeemExchangeAssetReceipt.value || redeemExchangeAssetBatchReceipt.value
   );
-  const redeemAssetsTransaction = computed(
+  const redeemUnderlyingsTransaction = computed(
     () => redeemExchangeAssetTx.value || redeemExchangeAssetBatchTx.value
   );
 
   return {
-    canDeleteWithdrawalRequest,
+    canDeleteWithdrawalTicket,
     currentWithdrawalAmount,
     deleteWithdrawalLoading: redeemLoading,
     deleteWithdrawalReceipt: redeemReceipt,
-    deleteWithdrawalRequest,
+    deleteWithdrawalTicket,
     deleteWithdrawalTransaction: redeemTx,
-    availableAssets,
-    redeemAssets,
-    redeemAssetsLoading,
-    redeemAssetsReceipt,
-    redeemAssetsTransaction,
+    availableUnderlyings,
+    redeemUnderlyings,
+    redeemUnderlyingsLoading,
+    redeemUnderlyingsReceipt,
+    redeemUnderlyingsTransaction,
   };
 }
 
-export { useWithdrawalRequests };
+export { useWithdrawalTickets };

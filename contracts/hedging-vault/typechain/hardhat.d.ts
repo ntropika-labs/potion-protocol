@@ -441,13 +441,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockPotionLiquidityPool__factory>;
     getContractFactory(
+      name: "MockRouterWithOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockRouterWithOracle__factory>;
+    getContractFactory(
       name: "MockUniswapV3Router",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockUniswapV3Router__factory>;
-    getContractFactory(
-      name: "MockUniswapV3RouterWithOracle",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MockUniswapV3RouterWithOracle__factory>;
     getContractFactory(
       name: "TestWrapperActionsManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -1069,15 +1069,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockPotionLiquidityPool>;
     getContractAt(
+      name: "MockRouterWithOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockRouterWithOracle>;
+    getContractAt(
       name: "MockUniswapV3Router",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MockUniswapV3Router>;
-    getContractAt(
-      name: "MockUniswapV3RouterWithOracle",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MockUniswapV3RouterWithOracle>;
     getContractAt(
       name: "TestWrapperActionsManager",
       address: string,

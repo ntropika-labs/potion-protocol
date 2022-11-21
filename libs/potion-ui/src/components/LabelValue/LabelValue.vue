@@ -6,7 +6,7 @@ export default defineComponent({
 });
 
 type TextAlignment = "center" | "left" | "right";
-type TextSize = "sm" | "md" | "lg" | "xl";
+type TextSize = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 type ValueType = "raw" | "number" | "timestamp" | "date" | "pnl" | "currency";
 </script>
 <script lang="ts" setup>
@@ -20,6 +20,7 @@ export interface Props {
   value: string;
   valueType?: ValueType;
   size?: TextSize;
+  valueSize?: TextSize;
   symbol?: string;
   loading?: boolean;
 }
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
   trend: undefined,
   size: "md",
   valueType: "number",
+  valueSize: undefined,
   loading: false,
 });
 
@@ -62,12 +64,17 @@ const valueSizeMap: Map<TextSize, string> = new Map([
   ["md", "text-base"],
   ["lg", "text-lg"],
   ["xl", "text-xl"],
+  ["2xl", "text-2xl"],
+  ["3xl", "text-3xl"],
+  ["4xl", "text-4xl"],
 ]);
 
 const labelAlignment = computed(() => labelAlignmentMap.get(props.alignment));
 const labelSize = computed(() => labelSizeMap.get(props.size));
 const valueAlignment = computed(() => valueAlignmentMap.get(props.alignment));
-const valueSize = computed(() => valueSizeMap.get(props.size));
+const valueSize = computed(() =>
+  valueSizeMap.get(props.valueSize || props.size)
+);
 const formattedValue = computed(() => {
   switch (props.valueType) {
     case "number":
@@ -123,8 +130,10 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
           props.valueType === 'pnl' ? pnlColorClass : '',
         ]"
       >
-        <span>{{ formattedValue }}</span>
-        <span v-if="props.symbol" class="ml-1"> {{ props.symbol }}</span>
+        <span :class="valueSize">{{ formattedValue }}</span>
+        <span v-if="props.symbol" class="ml-1" :class="labelSize">
+          {{ props.symbol }}</span
+        >
       </div>
     </div>
   </div>

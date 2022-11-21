@@ -6,8 +6,8 @@ import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
 
 import type {
-  DepositRequestInfoFragment,
-  WithdrawalRequestInfoFragment,
+  DepositTicketInfoFragment,
+  WithdrawalTicketInfoFragment,
 } from "subgraph-queries-hv/generated/operations";
 
 const ROUNDS_VAULT_DECIMALS = 18;
@@ -22,34 +22,38 @@ const parseAmount = (
   decimals = ROUNDS_VAULT_DECIMALS
 ) => parseUnits(valueOrZero(amount).toString(), decimals);
 
-const hasShares = (depositRequest?: DepositRequestInfoFragment) =>
-  valueOrZero(depositRequest?.remainingShares) !== "0";
-const hasAssets = (withdrawalRequest?: WithdrawalRequestInfoFragment) =>
-  valueOrZero(withdrawalRequest?.remainingAssets) !== "0";
+const hasShares = (depositTicket?: DepositTicketInfoFragment) =>
+  valueOrZero(depositTicket?.sharesRemaining) !== "0";
+const hasUnderlyings = (withdrawalTicket?: WithdrawalTicketInfoFragment) =>
+  valueOrZero(withdrawalTicket?.underlyingsRemaining) !== "0";
 
-const _calcAssets = (amount: BigNumberish, exchangeRate: BigNumberish) =>
+const _calcUnderlyings = (amount: BigNumberish, exchangeRate: BigNumberish) =>
   BigNumber.from(amount)
     .mul(BigNumber.from(exchangeRate))
     .div(BigNumber.from(10).pow(ROUNDS_VAULT_DECIMALS));
 
-const calcAssets = (
+const calcUnderlyings = (
   amount?: MaybeRef<BigNumberish>,
   exchangeRate?: MaybeRef<BigNumberish>
 ) => {
-  const assets = _calcAssets(valueOrZero(amount), valueOrZero(exchangeRate));
+  const assets = _calcUnderlyings(
+    valueOrZero(amount),
+    valueOrZero(exchangeRate)
+  );
   return parseFloat(formatAmount(assets).toFixed(2));
 };
 
-const calcAssetsBN = (
+const calcUnderlyingsBN = (
   amount?: MaybeRef<BigNumberish>,
   exchangeRate?: MaybeRef<BigNumberish>
-) => _calcAssets(valueOrZero(amount), valueOrZero(exchangeRate)).toString();
+) =>
+  _calcUnderlyings(valueOrZero(amount), valueOrZero(exchangeRate)).toString();
 
 export {
   formatAmount,
   parseAmount,
   hasShares,
-  hasAssets,
-  calcAssets,
-  calcAssetsBN,
+  hasUnderlyings,
+  calcUnderlyings,
+  calcUnderlyingsBN,
 };

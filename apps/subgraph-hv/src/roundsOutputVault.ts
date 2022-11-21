@@ -7,15 +7,18 @@ import {
   WithdrawExchangeAssetBatch,
   RoundsOutputVault,
 } from "../generated/RoundsOutputVault/RoundsOutputVault";
-import { WithdrawalRequest } from "../generated/schema";
+import { WithdrawalTicket } from "../generated/schema";
 import { getOrCreateRound, createRoundId, updateAssets } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
-import { setCurrentRound, setLastShareToAssetRate } from "./investmentVault";
 import {
-  getOrCreateWithdrawalRequest,
-  getWithdrawalRequest,
-  deleteWithdrawalRequest,
+  setCurrentRound,
+  setLastShareToUnderlyingRate,
+} from "./investmentVault";
+import {
+  getOrCreateWithdrawalTicket,
+  getWithdrawalTicket,
+  deleteWithdrawalTicket,
 } from "./withdrawals";
 import { createBlock } from "./blocks";
 
@@ -31,7 +34,10 @@ function handleNextRound(event: NextRound): void {
       vaultAddress,
       event.params.prevRoundExchangeRate
     );
-    setLastShareToAssetRate(vaultAddress, event.params.prevRoundExchangeRate);
+    setLastShareToUnderlyingRate(
+      vaultAddress,
+      event.params.prevRoundExchangeRate
+    );
   }
   log.info("NextRound {} for OutputVault {}", [
     event.params.newRoundNumber.toString(),
@@ -48,8 +54,8 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
   const roundId = createRoundId(roundNumber, vaultAddress);
   // add the vault to the investor
   addInvestorVault(event.params.receiver, vaultAddress);
-  // load the withdrawalRequest, if it doesn't exists it will be initialized to an empty one
-  const withdrawalRequest = getOrCreateWithdrawalRequest(
+  // load the withdrawalTicket, if it doesn't exists it will be initialized to an empty one
+  const withdrawalTicket = getOrCreateWithdrawalTicket(
     event.params.id,
     vaultAddress,
     roundId,
@@ -58,8 +64,11 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
     event.block.hash,
     event.transaction.hash
   );
-  withdrawalRequest.amount = withdrawalRequest.amount.plus(event.params.assets);
-  withdrawalRequest.save();
+  withdrawalTicket.amount = withdrawalTicket.amount.plus(event.params.assets);
+  withdrawalTicket.amountRemaining = withdrawalTicket.amountRemaining.plus(
+    event.params.assets
+  );
+  withdrawalTicket.save();
 }
 
 function handleRedeemReceipt(event: RedeemReceipt): void {
@@ -104,19 +113,19 @@ function redeem(
   amount: BigInt,
   receiver: Address
 ): void {
-  const withdrawalRequest = getWithdrawalRequest(
+  const withdrawalTicket = getWithdrawalTicket(
     receiptId,
     vaultAddress,
     receiver
   );
-  if (withdrawalRequest == null) {
+  if (withdrawalTicket == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
       receiver.toHexString(),
     ]);
   } else {
     _redeem(
-      withdrawalRequest,
+      withdrawalTicket,
       receiptId,
       roundId,
       roundNumber,
@@ -127,7 +136,7 @@ function redeem(
 }
 
 function _redeem(
-  withdrawalRequest: WithdrawalRequest,
+  withdrawalTicket: WithdrawalTicket,
   receiptId: BigInt,
   roundId: Bytes,
   roundNumber: BigInt,
@@ -135,27 +144,32 @@ function _redeem(
   receiver: Address
 ): void {
   // check if we are in the same round, same round means that we are updating the current request
-  if (roundId == withdrawalRequest.round) {
-    // if the amount in the event is the same that we have already put inside it means that we want to delete the withdrawalRequest
-    if (withdrawalRequest.amount == amount) {
-      deleteWithdrawalRequest(withdrawalRequest.id);
+  if (roundId == withdrawalTicket.round) {
+    // if the amount in the event is the same that we have already put inside it means that we want to delete the withdrawalTicket
+    if (withdrawalTicket.amount == amount) {
+      deleteWithdrawalTicket(withdrawalTicket.id);
     } else {
-      withdrawalRequest.amount = withdrawalRequest.amount.minus(amount);
-      withdrawalRequest.save();
+      withdrawalTicket.amount = withdrawalTicket.amount.minus(amount);
+      withdrawalTicket.amountRemaining =
+        withdrawalTicket.amountRemaining.minus(amount);
+      withdrawalTicket.save();
       log.info(
-        "updated WithdrawalRequest of {} for round {}, the new amount is {}",
+        "updated WithdrawalTicket of {} for round {}, the new amount is {}",
         [
           receiver.toHexString(),
           roundNumber.toString(),
-          withdrawalRequest.amount.toString(),
+          withdrawalTicket.amount.toString(),
         ]
       );
     }
-    // different round means that we are redeeming assets
+    // different round means that we are redeeming underlyings
   } else {
-    withdrawalRequest.amountRedeemed = amount;
-    withdrawalRequest.save();
-    log.info("redeemed {} for {} from withdrawalRequest {}", [
+    withdrawalTicket.amountRemaining =
+      withdrawalTicket.amountRemaining.minus(amount);
+    withdrawalTicket.amountRedeemed =
+      withdrawalTicket.amountRedeemed.plus(amount);
+    withdrawalTicket.save();
+    log.info("redeemed {} for {} from withdrawalTicket {}", [
       amount.toString(),
       receiver.toHexString(),
       receiptId.toString(),
@@ -198,30 +212,34 @@ function withdraw(
   receiptAmount: BigInt,
   exchangeAssetAmount: BigInt
 ): void {
-  const withdrawalRequest = getWithdrawalRequest(
+  const withdrawalTicket = getWithdrawalTicket(
     receiptId,
     vaultAddress,
     investor
   );
-  if (withdrawalRequest == null) {
+  if (withdrawalTicket == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
       investor.toHexString(),
     ]);
   } else {
-    withdrawalRequest.amount = withdrawalRequest.amount.minus(receiptAmount);
-    withdrawalRequest.amountRedeemed =
-      withdrawalRequest.amountRedeemed.plus(exchangeAssetAmount);
-    withdrawalRequest.remainingAssets =
-      withdrawalRequest.remainingAssets.minus(exchangeAssetAmount);
-    withdrawalRequest.save();
+    withdrawalTicket.amountRemaining =
+      withdrawalTicket.amountRemaining.minus(receiptAmount);
+    withdrawalTicket.amountRedeemed =
+      withdrawalTicket.amountRedeemed.plus(receiptAmount);
+    withdrawalTicket.underlyingsRemaining =
+      withdrawalTicket.underlyingsRemaining.minus(exchangeAssetAmount);
+    withdrawalTicket.underlyingsRedeemed =
+      withdrawalTicket.underlyingsRedeemed.plus(exchangeAssetAmount);
+    withdrawalTicket.save();
     log.info(
-      "WithdrawalRequest {} now has {} amount, {} amountRedeemed and {} remainingAssets",
+      "WithdrawalTicket {} now has {} amountRemaining, {} amountRedeemed, {} underlyingsRemaining and {} underlyingsRedeemed",
       [
-        withdrawalRequest.id.toHexString(),
-        withdrawalRequest.amount.toString(),
-        withdrawalRequest.amountRedeemed.toString(),
-        withdrawalRequest.remainingAssets.toString(),
+        withdrawalTicket.id.toHexString(),
+        withdrawalTicket.amountRemaining.toString(),
+        withdrawalTicket.amountRedeemed.toString(),
+        withdrawalTicket.underlyingsRemaining.toString(),
+        withdrawalTicket.underlyingsRedeemed.toString(),
       ]
     );
   }

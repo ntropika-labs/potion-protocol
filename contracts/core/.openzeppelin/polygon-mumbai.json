@@ -1,0 +1,305 @@
+{
+    "manifestVersion": "3.2",
+    "admin": {
+        "address": "0x7e28Daa0a5C80F5dc4E4a53421dceCE430434aF9",
+        "txHash": "0x24e5f13b5176b58792f3b0c75f3d8dbca36e96600564eb1a6dffa9bc21bf3a3b"
+    },
+    "proxies": [
+        {
+            "address": "0x7e26484f6d9383a3c16DEaab8C7D1Fc7b0e88a66",
+            "txHash": "0x9747e18fc5f541abb44f4f52867904a9f1c696a1ffdd03590c35b61620ecf996",
+            "kind": "transparent"
+        }
+    ],
+    "impls": {
+        "2dc8bb36189890190e990b6e7ef5d6ee9eba415acf6873db39599be25b0c3afe": {
+            "address": "0x06fcDD279c3A297864C93f45d34ffcDBD834f3D9",
+            "txHash": "0xe826a25df648ee54f730cd845b3e78e880038c0b47dcbe2378aeb28dae2c1411",
+            "layout": {
+                "storage": [
+                    {
+                        "label": "_initialized",
+                        "offset": 0,
+                        "slot": "0",
+                        "type": "t_uint8",
+                        "contract": "Initializable",
+                        "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+                        "retypedFrom": "bool"
+                    },
+                    {
+                        "label": "_initializing",
+                        "offset": 1,
+                        "slot": "0",
+                        "type": "t_bool",
+                        "contract": "Initializable",
+                        "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+                    },
+                    {
+                        "label": "__gap",
+                        "offset": 0,
+                        "slot": "1",
+                        "type": "t_array(t_uint256)50_storage",
+                        "contract": "ContextUpgradeable",
+                        "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+                    },
+                    {
+                        "label": "_paused",
+                        "offset": 0,
+                        "slot": "51",
+                        "type": "t_bool",
+                        "contract": "PausableUpgradeable",
+                        "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+                    },
+                    {
+                        "label": "__gap",
+                        "offset": 0,
+                        "slot": "52",
+                        "type": "t_array(t_uint256)49_storage",
+                        "contract": "PausableUpgradeable",
+                        "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:102"
+                    },
+                    {
+                        "label": "_owner",
+                        "offset": 0,
+                        "slot": "101",
+                        "type": "t_address",
+                        "contract": "OwnableUpgradeable",
+                        "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+                    },
+                    {
+                        "label": "__gap",
+                        "offset": 0,
+                        "slot": "102",
+                        "type": "t_array(t_uint256)49_storage",
+                        "contract": "OwnableUpgradeable",
+                        "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+                    },
+                    {
+                        "label": "maxTotalValueLocked",
+                        "offset": 0,
+                        "slot": "151",
+                        "type": "t_uint256",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:191"
+                    },
+                    {
+                        "label": "vaultCount",
+                        "offset": 0,
+                        "slot": "152",
+                        "type": "t_uint256",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:194"
+                    },
+                    {
+                        "label": "vaults",
+                        "offset": 0,
+                        "slot": "153",
+                        "type": "t_mapping(t_address,t_struct(VaultInfo)4980_storage)",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:197"
+                    },
+                    {
+                        "label": "lpPools",
+                        "offset": 0,
+                        "slot": "154",
+                        "type": "t_mapping(t_address,t_mapping(t_uint256,t_struct(PoolOfCapital)4994_storage))",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:200"
+                    },
+                    {
+                        "label": "sumOfAllUnlockedBalances",
+                        "offset": 0,
+                        "slot": "155",
+                        "type": "t_uint256",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:203"
+                    },
+                    {
+                        "label": "sumOfAllLockedBalances",
+                        "offset": 0,
+                        "slot": "156",
+                        "type": "t_uint256",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:206"
+                    },
+                    {
+                        "label": "opynController",
+                        "offset": 0,
+                        "slot": "157",
+                        "type": "t_contract(ControllerInterface)11368",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:210"
+                    },
+                    {
+                        "label": "opynAddressBook",
+                        "offset": 0,
+                        "slot": "158",
+                        "type": "t_contract(AddressBookInterface)10620",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:212"
+                    },
+                    {
+                        "label": "crv",
+                        "offset": 0,
+                        "slot": "159",
+                        "type": "t_contract(ICurveManager)7707",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:215"
+                    },
+                    {
+                        "label": "crit",
+                        "offset": 0,
+                        "slot": "160",
+                        "type": "t_contract(ICriteriaManager)7639",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:218"
+                    },
+                    {
+                        "label": "poolCollateralToken",
+                        "offset": 0,
+                        "slot": "161",
+                        "type": "t_contract(IERC20Upgradeable)500",
+                        "contract": "PotionLiquidityPool",
+                        "src": "contracts/PotionLiquidityPool.sol:221"
+                    }
+                ],
+                "types": {
+                    "t_address": {
+                        "label": "address",
+                        "numberOfBytes": "20"
+                    },
+                    "t_array(t_uint256)49_storage": {
+                        "label": "uint256[49]",
+                        "numberOfBytes": "1568"
+                    },
+                    "t_array(t_uint256)50_storage": {
+                        "label": "uint256[50]",
+                        "numberOfBytes": "1600"
+                    },
+                    "t_bool": {
+                        "label": "bool",
+                        "numberOfBytes": "1"
+                    },
+                    "t_bytes32": {
+                        "label": "bytes32",
+                        "numberOfBytes": "32"
+                    },
+                    "t_contract(AddressBookInterface)10620": {
+                        "label": "contract AddressBookInterface",
+                        "numberOfBytes": "20"
+                    },
+                    "t_contract(ControllerInterface)11368": {
+                        "label": "contract ControllerInterface",
+                        "numberOfBytes": "20"
+                    },
+                    "t_contract(ICriteriaManager)7639": {
+                        "label": "contract ICriteriaManager",
+                        "numberOfBytes": "20"
+                    },
+                    "t_contract(ICurveManager)7707": {
+                        "label": "contract ICurveManager",
+                        "numberOfBytes": "20"
+                    },
+                    "t_contract(IERC20Upgradeable)500": {
+                        "label": "contract IERC20Upgradeable",
+                        "numberOfBytes": "20"
+                    },
+                    "t_mapping(t_address,t_mapping(t_uint256,t_struct(PoolOfCapital)4994_storage))": {
+                        "label": "mapping(address => mapping(uint256 => struct PotionLiquidityPool.PoolOfCapital))",
+                        "numberOfBytes": "32"
+                    },
+                    "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+                        "label": "mapping(address => mapping(uint256 => uint256))",
+                        "numberOfBytes": "32"
+                    },
+                    "t_mapping(t_address,t_struct(VaultInfo)4980_storage)": {
+                        "label": "mapping(address => struct PotionLiquidityPool.VaultInfo)",
+                        "numberOfBytes": "32"
+                    },
+                    "t_mapping(t_uint256,t_struct(PoolOfCapital)4994_storage)": {
+                        "label": "mapping(uint256 => struct PotionLiquidityPool.PoolOfCapital)",
+                        "numberOfBytes": "32"
+                    },
+                    "t_mapping(t_uint256,t_uint256)": {
+                        "label": "mapping(uint256 => uint256)",
+                        "numberOfBytes": "32"
+                    },
+                    "t_struct(PoolOfCapital)4994_storage": {
+                        "label": "struct PotionLiquidityPool.PoolOfCapital",
+                        "members": [
+                            {
+                                "label": "total",
+                                "type": "t_uint256",
+                                "offset": 0,
+                                "slot": "0"
+                            },
+                            {
+                                "label": "locked",
+                                "type": "t_uint256",
+                                "offset": 0,
+                                "slot": "1"
+                            },
+                            {
+                                "label": "curveHash",
+                                "type": "t_bytes32",
+                                "offset": 0,
+                                "slot": "2"
+                            },
+                            {
+                                "label": "criteriaSetHash",
+                                "type": "t_bytes32",
+                                "offset": 0,
+                                "slot": "3"
+                            }
+                        ],
+                        "numberOfBytes": "128"
+                    },
+                    "t_struct(VaultInfo)4980_storage": {
+                        "label": "struct PotionLiquidityPool.VaultInfo",
+                        "members": [
+                            {
+                                "label": "vaultId",
+                                "type": "t_uint256",
+                                "offset": 0,
+                                "slot": "0"
+                            },
+                            {
+                                "label": "totalContributions",
+                                "type": "t_uint256",
+                                "offset": 0,
+                                "slot": "1"
+                            },
+                            {
+                                "label": "settled",
+                                "type": "t_bool",
+                                "offset": 0,
+                                "slot": "2"
+                            },
+                            {
+                                "label": "settledAmount",
+                                "type": "t_uint256",
+                                "offset": 0,
+                                "slot": "3"
+                            },
+                            {
+                                "label": "contributionsByLp",
+                                "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+                                "offset": 0,
+                                "slot": "4"
+                            }
+                        ],
+                        "numberOfBytes": "160"
+                    },
+                    "t_uint256": {
+                        "label": "uint256",
+                        "numberOfBytes": "32"
+                    },
+                    "t_uint8": {
+                        "label": "uint8",
+                        "numberOfBytes": "1"
+                    }
+                }
+            }
+        }
+    }
+}

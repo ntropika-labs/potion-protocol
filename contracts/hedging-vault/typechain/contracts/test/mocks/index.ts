@@ -12,5 +12,5 @@ export type { MockOpynController } from "./MockOpynController";
 export type { MockOpynFactory } from "./MockOpynFactory";
 export type { MockOpynOracle } from "./MockOpynOracle";
 export type { MockPotionLiquidityPool } from "./MockPotionLiquidityPool";
+export type { MockRouterWithOracle } from "./MockRouterWithOracle";
 export type { MockUniswapV3Router } from "./MockUniswapV3Router";
-export type { MockUniswapV3RouterWithOracle } from "./MockUniswapV3RouterWithOracle";
