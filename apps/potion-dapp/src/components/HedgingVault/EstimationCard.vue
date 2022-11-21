@@ -11,7 +11,7 @@
       <p class="text-secondary-500 text-2xl mt-10">
         {{ userVaultRelativeShares.toFixed(2) }}%
       </p>
-      <p class="text-secondary-500">{{ t("estimated_share_vaule") }}</p>
+      <p class="text-secondary-500">{{ t("estimated_share_value") }}</p>
       <p class="text-secondary-500 text-2xl">
         {{ userEstimatedSharesToUnderlying.formatted }}
       </p>

@@ -213,3 +213,6 @@ hedging_vault: Read More
 strike_percentage: Strike Percentage
 hedging_rate: Hedging Rate
 view_hedging_vault: show
+estimated_share_value: Estimated share value
+your_vault_share: Your vault shar
+last_round_vault_size: Last round vault size
