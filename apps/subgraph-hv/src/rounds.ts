@@ -1,8 +1,8 @@
 import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import { Round } from "../generated/schema";
-import { updateDepositRequestShares } from "./deposits";
+import { updateDepositTicketShares } from "./deposits";
 import { addItemToArray, removeItemFromArray, BigIntPow } from "./helpers";
-import { updateWithdrawalRequestAssets } from "./withdrawals";
+import { updateWithdrawalTicketAssets } from "./withdrawals";
 
 function createRoundId(roundNumber: BigInt, vault: Bytes): Bytes {
   return vault.concatI32(roundNumber.toI32());
@@ -13,8 +13,8 @@ function createRound(roundNumber: BigInt, vault: Bytes): Round {
   const round = new Round(id);
   round.vault = vault;
   round.roundNumber = roundNumber;
-  round.depositRequests = [];
-  round.withdrawalRequests = [];
+  round.depositTickets = [];
+  round.withdrawalTickets = [];
   round.save();
   return round;
 }
@@ -28,17 +28,17 @@ function getOrCreateRound(roundNumber: BigInt, vault: Bytes): Round {
   return round;
 }
 
-function addDepositRequest(id: Bytes, depositRequest: Bytes): boolean {
+function addDepositTicket(id: Bytes, depositTicket: Bytes): boolean {
   const round = Round.load(id);
   if (round == null) {
-    log.error("Tried to add a depositRequest to round {} that doesn't exists", [
+    log.error("Tried to add a depositTicket to round {} that doesn't exists", [
       id.toHexString(),
     ]);
   } else {
-    if (round.depositRequests.indexOf(depositRequest) == -1) {
-      round.depositRequests = addItemToArray(
-        round.depositRequests,
-        depositRequest
+    if (round.depositTickets.indexOf(depositTicket) == -1) {
+      round.depositTickets = addItemToArray(
+        round.depositTickets,
+        depositTicket
       );
       round.save();
     }
@@ -47,18 +47,18 @@ function addDepositRequest(id: Bytes, depositRequest: Bytes): boolean {
   return false;
 }
 
-function addWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
+function addWithdrawalTicket(id: Bytes, withdrawalTicket: Bytes): boolean {
   const round = Round.load(id);
   if (round == null) {
     log.error(
-      "Tried to add a withdrawalRequest to round {} that doesn't exists",
+      "Tried to add a withdrawalTicket to round {} that doesn't exists",
       [id.toHexString()]
     );
   } else {
-    if (round.withdrawalRequests.indexOf(withdrawalRequest) == -1) {
-      round.withdrawalRequests = addItemToArray(
-        round.withdrawalRequests,
-        withdrawalRequest
+    if (round.withdrawalTickets.indexOf(withdrawalTicket) == -1) {
+      round.withdrawalTickets = addItemToArray(
+        round.withdrawalTickets,
+        withdrawalTicket
       );
       round.save();
     }
@@ -67,17 +67,17 @@ function addWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
   return false;
 }
 
-function removeDepositRequest(id: Bytes, depositRequest: Bytes): boolean {
+function removeDepositTicket(id: Bytes, depositTicket: Bytes): boolean {
   const round = Round.load(id);
   if (round == null) {
     log.error(
-      "Tried to remove a depositRequest from round {} that doesn't exists",
+      "Tried to remove a depositTicket from round {} that doesn't exists",
       [id.toHexString()]
     );
   } else {
-    round.depositRequests = removeItemFromArray(
-      round.depositRequests,
-      depositRequest
+    round.depositTickets = removeItemFromArray(
+      round.depositTickets,
+      depositTicket
     );
     round.save();
     return true;
@@ -85,17 +85,17 @@ function removeDepositRequest(id: Bytes, depositRequest: Bytes): boolean {
   return false;
 }
 
-function removeWithdrawalRequest(id: Bytes, withdrawalRequest: Bytes): boolean {
+function removeWithdrawalTicket(id: Bytes, withdrawalTicket: Bytes): boolean {
   const round = Round.load(id);
   if (round == null) {
     log.error(
-      "Tried to remove a withdrawalRequest from round {} that doesn't exists",
+      "Tried to remove a withdrawalTicket from round {} that doesn't exists",
       [id.toHexString()]
     );
   } else {
-    round.withdrawalRequests = removeItemFromArray(
-      round.withdrawalRequests,
-      withdrawalRequest
+    round.withdrawalTickets = removeItemFromArray(
+      round.withdrawalTickets,
+      withdrawalTicket
     );
     round.save();
     return true;
@@ -117,14 +117,14 @@ function updateShares(
     ]);
   } else {
     const decimals = BigIntPow(BigInt.fromI32(10), amountDecimals);
-    for (let i = 0; i < round.depositRequests.length; i += 1) {
-      updateDepositRequestShares(
-        round.depositRequests[i],
+    for (let i = 0; i < round.depositTickets.length; i += 1) {
+      updateDepositTicketShares(
+        round.depositTickets[i],
         exchangeRate,
         decimals
       );
     }
-    round.assetToShareRate = exchangeRate;
+    round.underlyingToShareRate = exchangeRate;
     round.save();
   }
 }
@@ -137,14 +137,15 @@ function updateAssets(
   const id = createRoundId(roundNumber, vault);
   const round = Round.load(id);
   if (round == null) {
-    log.error("Tried to update the assets of round {} that doesn't exists", [
-      id.toHexString(),
-    ]);
+    log.error(
+      "Tried to update the underlyings of round {} that doesn't exists",
+      [id.toHexString()]
+    );
   } else {
-    for (let i = 0; i < round.withdrawalRequests.length; i += 1) {
-      updateWithdrawalRequestAssets(round.withdrawalRequests[i], exchangeRate);
+    for (let i = 0; i < round.withdrawalTickets.length; i += 1) {
+      updateWithdrawalTicketAssets(round.withdrawalTickets[i], exchangeRate);
     }
-    round.shareToAssetRate = exchangeRate;
+    round.shareToUnderlyingRate = exchangeRate;
     round.save();
   }
 }
@@ -152,10 +153,10 @@ function updateAssets(
 export {
   createRoundId,
   getOrCreateRound,
-  addDepositRequest,
-  addWithdrawalRequest,
-  removeDepositRequest,
-  removeWithdrawalRequest,
+  addDepositTicket,
+  addWithdrawalTicket,
+  removeDepositTicket,
+  removeWithdrawalTicket,
   updateShares,
   updateAssets,
 };

@@ -132,8 +132,7 @@ export declare namespace ISwapRouter {
   };
 }
 
-export interface MockUniswapV3RouterWithOracleInterface
-  extends utils.Interface {
+export interface MockRouterWithOracleInterface extends utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
     "exactInput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
@@ -223,12 +222,12 @@ export interface MockUniswapV3RouterWithOracleInterface
   events: {};
 }
 
-export interface MockUniswapV3RouterWithOracle extends BaseContract {
+export interface MockRouterWithOracle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MockUniswapV3RouterWithOracleInterface;
+  interface: MockRouterWithOracleInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

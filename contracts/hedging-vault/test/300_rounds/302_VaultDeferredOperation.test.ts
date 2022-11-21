@@ -96,7 +96,6 @@ describe("VaultDeferredOperation", function () {
                 vaultDeferredOperation.address,
                 vaultDeferredOperation.address,
             );
-            expect(asMock(targetVault).approve).to.be.calledOnceWith(targetVault.address, shares);
         });
     });
 });

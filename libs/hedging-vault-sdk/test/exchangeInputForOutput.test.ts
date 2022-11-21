@@ -8,21 +8,21 @@ describe("exchangeInputForOutput", () => {
             amount: 100,
             amountRedeemed: 50,
             shares: 100,
-            remainingShares: 50,
+            sharesRemaining: 50,
         },
         {
             id: 2,
             amount: 10,
             amountRedeemed: 0,
             shares: 50,
-            remainingShares: 13,
+            sharesRemaining: 13,
         },
         {
             id: 3,
             amount: 15,
             amountRedeemed: 0,
             shares: 35,
-            remainingShares: 35,
+            sharesRemaining: 35,
         },
     ];
 
@@ -32,21 +32,21 @@ describe("exchangeInputForOutput", () => {
 
     it("calculates the correct withdrawal request amount in shares", () => {
         const totalRemainingShares = exchangeInputForOutput.calculateTotalRemainingShares(depositTickets);
-        const withdrawalRequestAmountInShares = exchangeInputForOutput.calculateWithdrawalRequestAmountInShares(
+        const withdrawalTicketAmountInShares = exchangeInputForOutput.calculateWithdrawalTicketAmountInShares(
             totalRemainingShares,
             50,
         );
-        expect(withdrawalRequestAmountInShares).toBe(49);
+        expect(withdrawalTicketAmountInShares).toBe(49);
     });
 
-    it("calculates the correct withdrawal request amount in assets", () => {
+    it("calculates the correct withdrawal request amount in underlyings", () => {
         const totalRemainingShares = exchangeInputForOutput.calculateTotalRemainingShares(depositTickets);
-        const withdrawalRequestAmountInAssets = exchangeInputForOutput.calculateWithdrawalRequestAmountInAssets(
+        const withdrawalTicketAmountInUnderlyings = exchangeInputForOutput.calculateWithdrawalTicketAmountInUnderlyings(
             totalRemainingShares,
             50,
             1.5,
         );
-        expect(withdrawalRequestAmountInAssets).toBe(73.5);
+        expect(withdrawalTicketAmountInUnderlyings).toBe(73.5);
     });
 
     it("calculates the correct share to ticket amount rate", () => {
@@ -72,21 +72,21 @@ describe("exchangeInputForOutput", () => {
                 amount: 100,
                 amountRedeemed: 50,
                 shares: 100,
-                remainingShares: 50,
+                sharesRemaining: 50,
             },
             {
                 id: 3,
                 amount: 15,
                 amountRedeemed: 0,
                 shares: 35,
-                remainingShares: 35,
+                sharesRemaining: 35,
             },
             {
                 id: 2,
                 amount: 10,
                 amountRedeemed: 0,
                 shares: 50,
-                remainingShares: 13,
+                sharesRemaining: 13,
             },
         ]);
     });

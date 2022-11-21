@@ -3,7 +3,7 @@ export interface DepositTicket {
     amount: number;
     amountRedeemed: number;
     shares: number;
-    remainingShares: number;
+    sharesRemaining: number;
 }
 
 /**
@@ -12,7 +12,7 @@ export interface DepositTicket {
  * @returns the total amount of shares in the deposit tickets that have not been redeemed yet.
  */
 export const calculateTotalRemainingShares = (depositTickets: DepositTicket[]): number => {
-    return depositTickets.reduce((acc, ticket) => acc + ticket.remainingShares, 0);
+    return depositTickets.reduce((acc, ticket) => acc + ticket.sharesRemaining, 0);
 };
 
 /**
@@ -21,24 +21,24 @@ export const calculateTotalRemainingShares = (depositTickets: DepositTicket[]): 
  * @param {number} percentage - The percentage of the remaining shares to redeem.
  * @returns the amount of shares to redeem.
  */
-export const calculateWithdrawalRequestAmountInShares = (totalRemainingShares: number, percentage: number): number => {
+export const calculateWithdrawalTicketAmountInShares = (totalRemainingShares: number, percentage: number): number => {
     return (totalRemainingShares * percentage) / 100;
 };
 
 /**
- * Calculates the amount of assets requested to be redeemed for a given percentage of the remaining shares.
+ * Calculates the amount of underlyings requested to be redeemed for a given percentage of the remaining shares.
  * @param {number} totalRemainingShares - The amount of shares not redeemed yet.
  * @param {number} percentage - The percentage of the remaining shares to redeem.
- * @param {number} currentShareToAssetRate - The current share to asset rate.
- * @returns the amount of assets to redeem.
+ * @param {number} currentShareToUnderlyingRate - The current share to underlying rate.
+ * @returns the amount of underlyings to redeem.
  */
-export const calculateWithdrawalRequestAmountInAssets = (
+export const calculateWithdrawalTicketAmountInUnderlyings = (
     totalRemainingShares: number,
     percentage: number,
-    currentShareToAssetRate: number,
+    currentShareToUnderlyingRate: number,
 ): number => {
-    const withdrawalRequestAmountInShares = calculateWithdrawalRequestAmountInShares(totalRemainingShares, percentage);
-    return withdrawalRequestAmountInShares * currentShareToAssetRate;
+    const withdrawalTicketAmountInShares = calculateWithdrawalTicketAmountInShares(totalRemainingShares, percentage);
+    return withdrawalTicketAmountInShares * currentShareToUnderlyingRate;
 };
 
 /**
@@ -53,16 +53,16 @@ export const calculateShareToTicketAmountRate = (amount: number, shares: number)
 
 /**
  *
- * @param withdrawalRequestAmountInShares - The amount of shares to redeem.
+ * @param withdrawalTicketAmountInShares - The amount of shares to redeem.
  * @param shareToTicketAmountRate - The share to ticket amount rate.
  * @returns the amount of tickets to burn.
  */
 
 export const calculateAmountToBurn = (
-    withdrawalRequestAmountInShares: number,
+    withdrawalTicketAmountInShares: number,
     shareToTicketAmountRate: number,
 ): number => {
-    return withdrawalRequestAmountInShares * shareToTicketAmountRate;
+    return withdrawalTicketAmountInShares * shareToTicketAmountRate;
 };
 
 /**
@@ -81,7 +81,7 @@ export const calculateRemainingAmount = (amount: number, amountRedeemed: number)
  * @returns a sorted DepositTicket array by the amount of remaining shares in the ticket.
  */
 export const sortDepositTickets = (depositTickets: DepositTicket[]): DepositTicket[] => {
-    return depositTickets.sort((a, b) => b.remainingShares - a.remainingShares);
+    return depositTickets.sort((a, b) => b.sharesRemaining - a.sharesRemaining);
 };
 
 /**
@@ -95,14 +95,14 @@ export const getDepositTicketsBurnInfo = (
     percentage: number,
 ): { ids: number[]; amounts: number[] } => {
     const totalRemainingShares = calculateTotalRemainingShares(depositTickets);
-    const withdrawalRequestAmountInShares = calculateWithdrawalRequestAmountInShares(totalRemainingShares, percentage);
+    const withdrawalTicketAmountInShares = calculateWithdrawalTicketAmountInShares(totalRemainingShares, percentage);
     const sortedDepositTickets = sortDepositTickets(depositTickets);
 
     const burnInfo: { ids: number[]; amounts: number[] } = { ids: [], amounts: [] };
     sortedDepositTickets.every((ticket: DepositTicket) => {
         const shareToTicketAmountRate = calculateShareToTicketAmountRate(ticket.amount, ticket.shares);
         const remainingAmount = calculateRemainingAmount(ticket.amount, ticket.amountRedeemed);
-        const amountToBurn = calculateAmountToBurn(withdrawalRequestAmountInShares, shareToTicketAmountRate);
+        const amountToBurn = calculateAmountToBurn(withdrawalTicketAmountInShares, shareToTicketAmountRate);
         if (remainingAmount >= amountToBurn) {
             burnInfo.ids.push(ticket.id);
             burnInfo.amounts.push(amountToBurn);

@@ -1,4 +1,4 @@
-// The file has all the methods we need to estimate the asset size of the vault at a given time
+// The file has all the methods we need to estimate the underlying size of the vault at a given time
 
 /** This method is used to get the estimated Underlying Balance of the Action that triggered the round
  * @param {number} usdcBalanceActionContract - The USDC balance of the contract
@@ -88,9 +88,9 @@ export const calculateCurrentTotalUnderlyings = (
  * @param {number} underlyingPrice - The Underlying Price in USDC
  * @param {number} strikePrice - The Strike Price of the option, in USDC
  * @param {number} potionsQuantity - The amount of potions bought
- * @returns {number} - The estimated Share To Asset Rate of the Vault at the current underlying price, at the end of the current round
+ * @returns {number} - The estimated Share To Underlying Rate of the Vault at the current underlying price, at the end of the current round
  */
-export const calculateCurrentShareToAssetRate = (
+export const calculateCurrentShareToUnderlyingRate = (
     usdcBalanceActionContract: number,
     underlyingBalanceActionContract: number,
     underlyingPrice: number,

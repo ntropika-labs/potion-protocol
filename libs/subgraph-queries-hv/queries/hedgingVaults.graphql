@@ -1,10 +1,10 @@
 fragment VaultInfo on HedgingVault {
   id
   currentRound
-  lastAssetToShareRate
-  lastAssetsInvested
-  lastShareToAssetRate
-  totalAssets
+  lastUnderlyingToShareRate
+  lastUnderlyingsInvested
+  lastShareToUnderlyingRate
+  totalShares
 }
 
 fragment ActionInfo on PotionBuyAction {
@@ -26,18 +26,20 @@ fragment TokenInfo on Token {
   decimals
 }
 
-fragment DepositRequestInfo on DepositRequest {
-  amount
+fragment DepositTicketInfo on DepositTicket {
+  amountRemaining
   amountRedeemed
   shares
-  remainingShares
+  sharesRemaining
+  sharesRedeemed
 }
 
-fragment WithdrawalRequestInfo on WithdrawalRequest {
-  amount
+fragment WithdrawalTicketInfo on WithdrawalTicket {
+  amountRemaining
   amountRedeemed
-  assets
-  remainingAssets
+  underlyings
+  underlyingsRemaining
+  underlyingsRedeemed
 }
 
 query getHedgingVault($vault: ID!, $investor: String!) {
@@ -46,7 +48,7 @@ query getHedgingVault($vault: ID!, $investor: String!) {
     action {
       ...ActionInfo
     }
-    asset {
+    underlying {
       ...TokenInfo
     }
     shareToken {
@@ -54,13 +56,13 @@ query getHedgingVault($vault: ID!, $investor: String!) {
     }
     rounds(orderBy: roundNumber) {
       roundNumber
-      assetToShareRate
-      shareToAssetRate
-      depositRequests(where: { investor: $investor }) {
-        ...DepositRequestInfo
+      underlyingToShareRate
+      shareToUnderlyingRate
+      depositTickets(where: { investor: $investor }) {
+        ...DepositTicketInfo
       }
-      withdrawalRequests(where: { investor: $investor }) {
-        ...WithdrawalRequestInfo
+      withdrawalTickets(where: { investor: $investor }) {
+        ...WithdrawalTicketInfo
       }
     }
   }
@@ -72,14 +74,14 @@ query getHedgingVaults($investor: String) {
     action {
       ...ActionInfo
     }
-    asset {
+    underlying {
       ...TokenInfo
     }
     shareToken {
       ...TokenInfo
     }
     rounds(orderBy: roundNumber) {
-      depositRequests(where: { investor: $investor }) {
+      depositTickets(where: { investor: $investor }) {
         id
       }
     }

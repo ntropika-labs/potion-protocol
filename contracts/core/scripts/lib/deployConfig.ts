@@ -163,7 +163,7 @@ export const config: NetworkDeployConfigMap = {
             new DeployChainlinkPricer({
                 assetName: "WETH",
                 relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
-                assetAddress: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WBTC
+                assetAddress: "0x9889DfADE1d68488590DF17bbA882914535a8F92", // Custom WETH
                 chainlinkAggregatorAddress: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e", // ETH/USD aggregator
             }),
             new DeployChainlinkPricer({
@@ -177,6 +177,77 @@ export const config: NetworkDeployConfigMap = {
                 relayerAddress: "0x64a69e2f7643dbf511ea1636496d4af5e654e445", // OZ Relayer
                 assetAddress: "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7", // Custom USDC
                 chainlinkAggregatorAddress: "0x5fea417c193828eCF578933121De0B943E356a92", // Custom USDC/USD aggregator
+            }),
+        ],
+    },
+    // The goerli.testcomp deployment is based on the independent deployment and is aimed for the Testnet Competition. It uses pre-deployed
+    // tokens for the different products and deploys Opyn pricers for those tokens
+    "goerli.testcomp": {
+        collateralToken: "0x51E857Dd537e9B9125d3025eC8051Bda4d9510d9", // Custom USDC
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x06BD5AB3c3272f8E210F5D5e3AC869890bD4699C"), // Custom WETH
+            new WhitelistUnderlying("0x4FEb584db02401c9C3Fa2EFB6097794Fc58f1f30"), // Custom WBTC
+            new WhitelistUnderlying("0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8"), // Custom LINK
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0x3a0000fc364d0a73407e5edbb8da777c183e1a22", // OZ Relayer
+                assetAddress: "0x06BD5AB3c3272f8E210F5D5e3AC869890bD4699C", // Custom WETH
+                chainlinkAggregatorAddress: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0x3a0000fc364d0a73407e5edbb8da777c183e1a22", // OZ Relayer
+                assetAddress: "0x4FEb584db02401c9C3Fa2EFB6097794Fc58f1f30", // Custom WBTC
+                chainlinkAggregatorAddress: "0x779877A7B0D9E8603169DdbD7836e478b4624789", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "LINK",
+                relayerAddress: "0x3a0000fc364d0a73407e5edbb8da777c183e1a22", // OZ Relayer
+                assetAddress: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8", // Custom LINK
+                chainlinkAggregatorAddress: "0x48731cF7e84dc94C5f84577882c14Be11a5B7456", // LINK/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0x3a0000fc364d0a73407e5edbb8da777c183e1a22", // OZ Relayer
+                assetAddress: "0x51E857Dd537e9B9125d3025eC8051Bda4d9510d9", // Custom USDC
+                chainlinkAggregatorAddress: "0xAb5c49580294Aff77670F839ea425f5b78ab3Ae7", // USDC/USD aggregator
+            }),
+        ],
+    },
+    // The ply-mumbai.testcomp deployment is based on the independent deployment and is aimed for the Testnet Competition.
+    // It uses pre-deployed tokens for the different products and deploys Opyn pricers for those tokens
+    "ply-mumbai.testcomp": {
+        collateralToken: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", // Custom USDC
+        opynAddressBook: "0xF55277d2608C69DE9A7904c8318C497f62460ef2", // Opyn Address Book Mumbai
+        postDeployActions: [
+            new WhitelistCollateral(),
+            new WhitelistUnderlying("0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14"), // Custom WETH
+            new WhitelistUnderlying("0x9649071fb3875b68C88c60b172e2F6ADa5717634"), // Custom WBTC
+            new WhitelistUnderlying("0xBB2bc2c224139512a7525a83955567FD2C3a0c1F"), // Custom LINK
+            new DeployChainlinkPricer({
+                assetName: "WETH",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14", // Custom WETH
+                chainlinkAggregatorAddress: "0x0715A7794a1dc8e42615F059dD6e406A6594651A", // ETH/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "WBTC",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x9649071fb3875b68C88c60b172e2F6ADa5717634", // Custom WBTC
+                chainlinkAggregatorAddress: "0x007A22900a3B98143368Bd5906f8E17e9867581b", // WBTC/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "LINK",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F", // Custom LINK
+                chainlinkAggregatorAddress: "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408", // LINK/USD aggregator
+            }),
+            new DeployChainlinkPricer({
+                assetName: "USDC",
+                relayerAddress: "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249", // OZ Relayer
+                assetAddress: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", // Custom USDC
+                chainlinkAggregatorAddress: "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0", // USDC/USD aggregator
             }),
         ],
     },

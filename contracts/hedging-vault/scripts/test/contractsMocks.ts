@@ -8,7 +8,7 @@ import {
     MockOpynAddressBook,
     MockERC4626,
     MockChainlinkAggregatorV3,
-    MockUniswapV3RouterWithOracle,
+    MockRouterWithOracle,
 } from "../../typechain";
 
 import { MockContract } from "@defi-wonderland/smock";
@@ -70,12 +70,8 @@ export async function mockUniswapV3SwapRouter(
 export async function mockUniswapV3SwapRouterWithOracle(
     tokens: string[] = [],
     oracles: string[] = [],
-): Promise<MockContract<MockUniswapV3RouterWithOracle> | MockUniswapV3RouterWithOracle> {
-    return mockContract<MockUniswapV3RouterWithOracle>(
-        "MockUniswapV3RouterWithOracle",
-        [tokens, oracles],
-        "UniswapV3Router",
-    );
+): Promise<MockContract<MockRouterWithOracle> | MockRouterWithOracle> {
+    return mockContract<MockRouterWithOracle>("MockRouterWithOracle", [tokens, oracles], "UniswapV3Router");
 }
 
 export async function mockOpynOracle(): Promise<MockContract<MockOpynOracle> | MockOpynOracle> {

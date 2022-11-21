@@ -1,7 +1,7 @@
 import { VaultStrategy, type Token } from "dapp-types";
 import type {
-  DepositRequestInfoFragment,
-  WithdrawalRequestInfoFragment,
+  DepositTicketInfoFragment,
+  WithdrawalTicketInfoFragment,
 } from "subgraph-queries-hv/generated/operations";
 
 export * from "@/types/web3Onboard";
@@ -9,10 +9,10 @@ export * from "@/types/uniswapAlphaRouter";
 
 export interface RoundsFragment {
   roundNumber: string;
-  assetToShareRate: string;
-  shareToAssetRate: string;
-  depositRequests: DepositRequestInfoFragment[];
-  withdrawalRequests: WithdrawalRequestInfoFragment[];
+  underlyingToShareRate: string;
+  shareToUnderlyingRate: string;
+  depositTickets: DepositTicketInfoFragment[];
+  withdrawalTickets: WithdrawalTicketInfoFragment[];
 }
 
 export interface EstimatedPrice {
@@ -55,7 +55,7 @@ export interface BlocknativeGasApiReturn {
 
 export interface VaultData {
   address: string;
-  asset: Token;
+  underlying: Token;
   shareToken: Token;
   action: { maxPremium: string; cycleDurationInSecs: string };
   rounds: RoundsFragment[];
