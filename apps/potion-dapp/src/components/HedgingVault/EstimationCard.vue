@@ -23,7 +23,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { BaseCard } from "potion-ui";
 import {
-  calculateCurrentShareToAssetRate,
+  calculateCurrentShareToUnderlyingRate,
   calculateTotalRemainingShares,
 } from "hedging-vault-sdk";
 import type { DepositTicket } from "hedging-vault-sdk";
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const currentShareToAssetRate = computed(() => {
-  const currentShareToAssetRate = calculateCurrentShareToAssetRate(
+  const currentShareToAssetRate = calculateCurrentShareToUnderlyingRate(
     props.usdcBalanceActionContract,
     props.underlyingBalanceActionContract,
     props.underlyingPrice,
