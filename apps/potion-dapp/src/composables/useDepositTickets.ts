@@ -1,11 +1,11 @@
 import { computed, unref } from "vue";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
-import { formatAmount, parseAmount } from "@/helpers/deferredRequests";
+import { formatAmount, parseAmount } from "@/helpers/deferredTickets";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { RoundsFragment } from "@/types";
 
-function useDepositRequests(
+function useDepositTickets(
   vaultAddress: MaybeRef<string>,
   assetAddress: MaybeRef<string>,
   assetDecimals: MaybeRef<number>,
@@ -26,36 +26,34 @@ function useDepositRequests(
   const round = computed(() =>
     unref(rounds)?.find((round) => round.roundNumber === unref(currentRound))
   );
-  const depositRequest = computed(() => round?.value?.depositRequests[0]);
+  const depositTicket = computed(() => round?.value?.depositTickets[0]);
 
   const currentDepositAmount = computed(() =>
-    formatAmount(depositRequest?.value?.amount)
+    formatAmount(depositTicket?.value?.amountRemaining)
   );
 
-  const updateDepositRequest = async (amount: MaybeRef<number>) =>
+  const updateDepositTicket = async (amount: MaybeRef<number>) =>
     deposit(parseAmount(amount, unref(assetDecimals)));
 
-  const canDeleteDepositRequest = computed(
-    () => currentDepositAmount.value > 0
-  );
-  const deleteDepositRequest = async () => {
-    if (canDeleteDepositRequest.value) {
+  const canDeleteDepositTicket = computed(() => currentDepositAmount.value > 0);
+  const deleteDepositTicket = async () => {
+    if (canDeleteDepositTicket.value) {
       await redeem(unref(currentRound), currentDepositAmount.value);
     }
   };
 
   return {
-    canDeleteDepositRequest,
+    canDeleteDepositTicket,
     currentDepositAmount,
     deleteDepositLoading: redeemLoading,
     deleteDepositReceipt: redeemReceipt,
-    deleteDepositRequest,
+    deleteDepositTicket,
     deleteDepositTransaction: redeemTx,
     updateDepositLoading: depositLoading,
     updateDepositReceipt: depositReceipt,
-    updateDepositRequest,
+    updateDepositTicket,
     updateDepositTransaction: depositTx,
   };
 }
 
-export { useDepositRequests };
+export { useDepositTickets };

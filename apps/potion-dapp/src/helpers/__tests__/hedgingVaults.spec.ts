@@ -6,7 +6,7 @@ describe("hedgingVault helper", () => {
     const vaultsRes = [
       {
         address: "0x4c2f7092c2ae51d986befee378e50bd4db99c901",
-        asset: {
+        underlying: {
           address: "0xMock1",
           name: "Mock 1",
           symbol: "MCK1",
@@ -18,10 +18,10 @@ describe("hedgingVault helper", () => {
         },
         rounds: [
           {
-            depositRequests: [
+            depositTickets: [
               {
                 id: "0xmock",
-                __typename: "DepositRequest",
+                __typename: "DepositTicket",
               },
             ],
           },
@@ -32,7 +32,7 @@ describe("hedgingVault helper", () => {
       },
       {
         address: "0xa7c59f010700930003b33ab25a7a0679c860f29c",
-        asset: {
+        underlying: {
           address: "0xMock1",
           name: "Mock 1",
           symbol: "MCK1",
@@ -49,7 +49,7 @@ describe("hedgingVault helper", () => {
       },
       {
         address: "0xd6e1afe5ca8d00a2efc01b89997abe2de47fdfaf",
-        asset: {
+        underlying: {
           address: "0xMock2",
           name: "Mock 2",
           symbol: "MCK2",
@@ -59,7 +59,7 @@ describe("hedgingVault helper", () => {
           maxPremium: "15.0",
           cycleDurationInSecs: "172800",
         },
-        rounds: [{ depositRequests: [] }],
+        rounds: [{ depositTickets: [] }],
         size: "0",
         hedgingRate: "100.0",
         strikePercentage: "80.0",

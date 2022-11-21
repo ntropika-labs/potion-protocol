@@ -86,7 +86,7 @@ export function createActionsAdded(actions: Array<Address>): ActionsAdded {
 export function createDeposit(
   caller: Address,
   owner: Address,
-  assets: BigInt,
+  underlyings: BigInt,
   shares: BigInt
 ): Deposit {
   const event = changetype<Deposit>(newMockEvent());
@@ -95,8 +95,8 @@ export function createDeposit(
     new ethereum.EventParam("caller", ethereum.Value.fromAddress(caller)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "underlyings",
+      ethereum.Value.fromUnsignedBigInt(underlyings)
     ),
     new ethereum.EventParam(
       "shares",
@@ -111,7 +111,7 @@ export function createWithdraw(
   caller: Address,
   receiver: Address,
   owner: Address,
-  assets: BigInt,
+  underlyings: BigInt,
   shares: BigInt
 ): Withdraw {
   const event = changetype<Withdraw>(newMockEvent());
@@ -121,8 +121,8 @@ export function createWithdraw(
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "underlyings",
+      ethereum.Value.fromUnsignedBigInt(underlyings)
     ),
     new ethereum.EventParam(
       "shares",
@@ -264,7 +264,7 @@ export function createDepositWithReceipt(
   caller: Address,
   receiver: Address,
   id: BigInt,
-  assets: BigInt
+  underlyings: BigInt
 ): DepositWithReceipt {
   const event = changetype<DepositWithReceipt>(newMockEvent());
 
@@ -273,8 +273,8 @@ export function createDepositWithReceipt(
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("id", ethereum.Value.fromUnsignedBigInt(id)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "underlyings",
+      ethereum.Value.fromUnsignedBigInt(underlyings)
     ),
   ];
 
@@ -413,7 +413,7 @@ export function createOutputDepositWithReceipt(
   caller: Address,
   receiver: Address,
   id: BigInt,
-  assets: BigInt
+  underlyings: BigInt
 ): OutputDepositWithReceipt {
   const event = changetype<OutputDepositWithReceipt>(newMockEvent());
 
@@ -422,8 +422,8 @@ export function createOutputDepositWithReceipt(
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("id", ethereum.Value.fromUnsignedBigInt(id)),
     new ethereum.EventParam(
-      "assets",
-      ethereum.Value.fromUnsignedBigInt(assets)
+      "underlyings",
+      ethereum.Value.fromUnsignedBigInt(underlyings)
     ),
   ];
 

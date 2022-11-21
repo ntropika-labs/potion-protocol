@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes, store, log } from "@graphprotocol/graph-ts";
-import { Deposit, DepositRequest } from "../generated/schema";
-import { addDepositRequest, removeDepositRequest } from "./rounds";
+import { Deposit, DepositTicket } from "../generated/schema";
+import { addDepositTicket, removeDepositTicket } from "./rounds";
 
 function createDeposit(
   round: Bytes,
@@ -19,7 +19,7 @@ function createDeposit(
   return deposit;
 }
 
-function createDepositRequestId(
+function createDepositTicketId(
   depositId: BigInt,
   vaultAddress: Address,
   investor: Address
@@ -27,7 +27,7 @@ function createDepositRequestId(
   return vaultAddress.concat(investor).concatI32(depositId.toI32());
 }
 
-function createDepositRequest(
+function createDepositTicket(
   depositId: BigInt,
   vaultAddress: Address,
   round: Bytes,
@@ -35,24 +35,26 @@ function createDepositRequest(
   sender: Address,
   block: Bytes,
   tx: Bytes
-): DepositRequest {
-  const id = createDepositRequestId(depositId, vaultAddress, investor);
-  const depositRequest = new DepositRequest(id);
-  depositRequest.round = round;
-  depositRequest.investor = investor;
-  depositRequest.sender = sender;
-  depositRequest.amount = BigInt.fromString("0");
-  depositRequest.amountRedeemed = BigInt.fromString("0");
-  depositRequest.shares = BigInt.fromString("0");
-  depositRequest.remainingShares = BigInt.fromString("0");
-  depositRequest.block = block;
-  depositRequest.tx = tx;
-  depositRequest.save();
-  addDepositRequest(round, id);
-  return depositRequest;
+): DepositTicket {
+  const id = createDepositTicketId(depositId, vaultAddress, investor);
+  const depositTicket = new DepositTicket(id);
+  depositTicket.round = round;
+  depositTicket.investor = investor;
+  depositTicket.sender = sender;
+  depositTicket.amount = BigInt.fromString("0");
+  depositTicket.amountRemaining = BigInt.fromString("0");
+  depositTicket.amountRedeemed = BigInt.fromString("0");
+  depositTicket.shares = BigInt.fromString("0");
+  depositTicket.sharesRemaining = BigInt.fromString("0");
+  depositTicket.sharesRedeemed = BigInt.fromString("0");
+  depositTicket.block = block;
+  depositTicket.tx = tx;
+  depositTicket.save();
+  addDepositTicket(round, id);
+  return depositTicket;
 }
 
-function getOrCreateDepositRequest(
+function getOrCreateDepositTicket(
   depositId: BigInt,
   vaultAddress: Address,
   round: Bytes,
@@ -60,11 +62,11 @@ function getOrCreateDepositRequest(
   sender: Address,
   block: Bytes,
   tx: Bytes
-): DepositRequest {
-  const id = createDepositRequestId(depositId, vaultAddress, investor);
-  const depositRequest = DepositRequest.load(id);
-  if (depositRequest == null) {
-    return createDepositRequest(
+): DepositTicket {
+  const id = createDepositTicketId(depositId, vaultAddress, investor);
+  const depositTicket = DepositTicket.load(id);
+  if (depositTicket == null) {
+    return createDepositTicket(
       depositId,
       vaultAddress,
       round,
@@ -74,52 +76,53 @@ function getOrCreateDepositRequest(
       tx
     );
   }
-  return depositRequest;
+  return depositTicket;
 }
 
-function getDepositRequest(
+function getDepositTicket(
   depositId: BigInt,
   vaultAddress: Address,
   investor: Address
-): DepositRequest | null {
-  const id = createDepositRequestId(depositId, vaultAddress, investor);
-  return DepositRequest.load(id);
+): DepositTicket | null {
+  const id = createDepositTicketId(depositId, vaultAddress, investor);
+  return DepositTicket.load(id);
 }
 
-function deleteDepositRequest(id: Bytes): void {
-  const depositRequest = DepositRequest.load(id);
-  if (depositRequest) {
-    removeDepositRequest(depositRequest.round, id);
-    store.remove("DepositRequest", id.toHexString());
+function deleteDepositTicket(id: Bytes): void {
+  const depositTicket = DepositTicket.load(id);
+  if (depositTicket) {
+    removeDepositTicket(depositTicket.round, id);
+    store.remove("DepositTicket", id.toHexString());
   }
-  log.info("DepositRequest {} has been removed", [id.toHexString()]);
+  log.info("DepositTicket {} has been removed", [id.toHexString()]);
 }
 
-function updateDepositRequestShares(
+function updateDepositTicketShares(
   id: Bytes,
   exchangeRate: BigInt,
   decimals: BigInt
 ): void {
-  const depositRequest = DepositRequest.load(id);
-  if (depositRequest == null) {
-    log.error("depositRequest {} doesn't exists", [id.toHexString()]);
+  const depositTicket = DepositTicket.load(id);
+  if (depositTicket == null) {
+    log.error("depositTicket {} doesn't exists", [id.toHexString()]);
   } else {
-    depositRequest.shares = depositRequest.amount
-      .times(exchangeRate)
-      .div(decimals);
-    depositRequest.remainingShares = depositRequest.amount
-      .times(exchangeRate)
-      .div(decimals);
-    depositRequest.save();
+    const shares = depositTicket.amount.times(exchangeRate).div(decimals);
+    depositTicket.shares = shares;
+    depositTicket.sharesRemaining = shares;
+    depositTicket.save();
+    log.info("Updated depositTicket {}, shares are {}", [
+      id.toHexString(),
+      shares.toString(),
+    ]);
   }
 }
 
 export {
   createDeposit,
-  createDepositRequest,
-  getOrCreateDepositRequest,
-  createDepositRequestId,
-  getDepositRequest,
-  deleteDepositRequest,
-  updateDepositRequestShares,
+  createDepositTicket,
+  getOrCreateDepositTicket,
+  createDepositTicketId,
+  getDepositTicket,
+  deleteDepositTicket,
+  updateDepositTicketShares,
 };

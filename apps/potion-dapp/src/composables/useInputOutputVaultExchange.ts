@@ -3,8 +3,8 @@ import { useRoundsVaultExchanger } from "@/composables/useRoundsVaultExchanger";
 import { useRoundsVaultContract } from "@/composables/useRoundsVaultContract";
 import {
   hasShares,
-  calcAssets as _calcAssets,
-} from "@/helpers/deferredRequests";
+  calcUnderlyings as _calcUnderlyings,
+} from "@/helpers/deferredTickets";
 import { getDepositTicketsBurnInfo } from "hedging-vault-sdk";
 
 import type { MaybeRef } from "@vueuse/core";
@@ -14,10 +14,10 @@ import type { RoundsFragment } from "@/types";
 
 const roundToDepositTicket = (round: RoundsFragment): DepositTicket => ({
   id: parseInt(round.roundNumber),
-  amount: parseInt(round.depositRequests[0].amount),
-  amountRedeemed: parseInt(round.depositRequests[0].amountRedeemed),
-  shares: parseInt(round.depositRequests[0].shares),
-  remainingShares: parseInt(round.depositRequests[0].remainingShares),
+  amount: parseInt(round.depositTickets[0].amountRemaining),
+  amountRedeemed: parseInt(round.depositTickets[0].amountRedeemed),
+  shares: parseInt(round.depositTickets[0].shares),
+  sharesRemaining: parseInt(round.depositTickets[0].sharesRemaining),
 });
 
 function useInputOutputVaultExchange(
@@ -28,7 +28,7 @@ function useInputOutputVaultExchange(
   assetAddress: MaybeRef<string>,
   rounds: MaybeRef<RoundsFragment[]>,
   currentRound: MaybeRef<string>,
-  shareToAssetRate: MaybeRef<BigNumberish>
+  shareToUnderlyingRate: MaybeRef<BigNumberish>
 ) {
   const {
     isApprovedForAll,
@@ -59,17 +59,17 @@ function useInputOutputVaultExchange(
     unref(rounds).filter(
       (round) =>
         round.roundNumber !== unref(currentRound) &&
-        hasShares(round.depositRequests?.[0])
+        hasShares(round.depositTickets?.[0])
     )
   );
 
-  const calcAssets = (shares?: BigNumberish) =>
-    _calcAssets(shares, shareToAssetRate);
+  const calcUnderlyings = (shares?: BigNumberish) =>
+    _calcUnderlyings(shares, shareToUnderlyingRate);
 
-  const estimatedAssets = computed(() =>
+  const estimatedUnderlyings = computed(() =>
     pastRounds.value.reduce(
       (acc, round) =>
-        acc + calcAssets(round?.depositRequests?.[0]?.remainingShares),
+        acc + calcUnderlyings(round?.depositTickets?.[0]?.sharesRemaining),
       0
     )
   );
@@ -126,7 +126,7 @@ function useInputOutputVaultExchange(
   }
 
   return {
-    estimatedAssets,
+    estimatedUnderlyings,
     approveExchange,
     approveExchangeLoading:
       getIsApprovedForAllLoading || setApprovalForAllLoading,

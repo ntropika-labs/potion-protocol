@@ -644,7 +644,7 @@ watch(blockTimestamp, async () => {
             <LabelValue
               size="lg"
               :title="t('vault_size')"
-              :value="vault.totalAssets.toString()"
+              :value="vault.totalShares.toString()"
               :symbol="assetSymbol"
             />
             <div class="flex flex-col gap-2">
