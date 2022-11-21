@@ -17,10 +17,10 @@ export default {
   title: "Potion UI/Cards/VaultCard",
   component: VaultCard,
   argTypes: {
-    hedgingRate: {
-      name: "Hedging Rate",
+    address: {
+      name: "Vault Address",
       control: {
-        type: "number",
+        type: "string",
       },
     },
     strike: {
@@ -29,15 +29,21 @@ export default {
         type: "number",
       },
     },
-    size: {
-      name: "Size of the Vault",
+    maxPremium: {
+      name: "Max Premium",
       control: {
         type: "number",
       },
     },
-    currency: {
-      name: "Currency",
-      options: ["USDC"],
+    cycleDurationSecs: {
+      name: "Cycle duration in seconds",
+      control: {
+        type: "number",
+      },
+    },
+    strategy: {
+      name: "Strategy",
+      options: ["PROTECTIVE_PUT", "STRADDLE"],
       control: {
         type: "select",
       },
@@ -46,10 +52,12 @@ export default {
 };
 
 const defArgs = {
+  address: "0x1234",
   asset: token,
-  hedgingRate: 10,
   strike: 50,
-  size: 5000,
+  maxPremium: 10,
+  cycleDurationSecs: 86400,
+  strategy: "PROTECTIVE_PUT",
   currency: "USDC",
 };
 

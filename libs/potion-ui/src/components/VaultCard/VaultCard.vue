@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { getEtherscanUrl } from "../../helpers";
 
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
@@ -8,8 +10,6 @@ import LabelValue from "../LabelValue/LabelValue.vue";
 import BaseTag from "../BaseTag/BaseTag.vue";
 
 import { VaultStrategy, type Token } from "dapp-types";
-import { computed } from "vue";
-import { getEtherscanUrl } from "@/helpers";
 
 const props = withDefaults(
   defineProps<{
@@ -54,7 +54,7 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
     :full-height="false"
     test-vault-card
   >
-    <a href="#" @click.prevent="emits('selected')">
+    <a href="#" test-button @click.prevent="emits('selected')">
       <div
         class="group relative grid grid-flow-row grid-cols-2 justify-between items-center gap-6 p-6 bg-gradient-to-br transition-all hover:(bg-opacity-100 from-primary-500 via-primary-400 to-primary-600)"
       >
@@ -62,6 +62,7 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
           <BaseTag
             size="md"
             class="!capitalize group-hover:bg-black/20 transition-none"
+            test-strategy
             >{{ strategyName }}</BaseTag
           >
           <a
@@ -71,6 +72,7 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
             <BaseTag
               size="md"
               class="group-hover:bg-black/20 hover:!bg-black/70 transition-none"
+              test-address
             >
               {{ props.address.substring(0, 8) }}...
               <i class="i-ph-arrow-square-in mr-1"></i>
@@ -105,7 +107,7 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
           value-type="number"
           value-size="3xl"
           symbol="%"
-          test-strike-percentage
+          test-max-premium
         ></LabelValue>
         <LabelValue
           size="lg"
@@ -114,7 +116,7 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
           value-type="raw"
           value-size="3xl"
           symbol="d"
-          test-strike-percentage
+          test-round-length
         ></LabelValue>
       </div>
     </a>
