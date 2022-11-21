@@ -50,13 +50,14 @@ const vaultEtherscanLink = getEtherscanUrl(props.address);
 
 <template>
   <BaseCard
+    color="glass"
     class="text-dwhite-400 overflow-hidden"
     :full-height="false"
     test-vault-card
   >
     <a href="#" test-button @click.prevent="emits('selected')">
       <div
-        class="group relative grid grid-flow-row grid-cols-2 justify-between items-center gap-6 p-6 bg-gradient-to-br transition-all hover:(bg-opacity-100 from-primary-500 via-primary-400 to-primary-600)"
+        class="group relative grid grid-flow-row grid-cols-2 justify-between items-center gap-6 p-6 transition-all hover:(bg-gradient-to-br bg-opacity-100 from-primary-500 via-primary-400 to-primary-600)"
       >
         <div class="col-span-2 grid grid-cols-2 justify-between gap-6">
           <BaseTag
