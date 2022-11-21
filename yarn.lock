@@ -9460,6 +9460,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/countdown@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@types/countdown@npm:0.0.8"
+  checksum: 4357537c8eee3a32a6be3c2fa2735a1f216d8e6a5b5aa9338d1dff2b3d825c3ed16fd90a82b2f6d7c028513b537aef36a34e1731e0797a9b623b1e0919a94a00
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.3":
   version: 3.7.4
   resolution: "@types/eslint-scope@npm:3.7.4"
@@ -15818,6 +15825,13 @@ __metadata:
     js-yaml: ^3.13.1
     parse-json: ^4.0.0
   checksum: 8b6f1d3c8a5ffdf663a952f17af0761adf210b7a5933d0fe8988f3ca3a1f0e1e5cbbb74d5b419c15933dd2fdcaec31dbc5cc85cb8259a822342b93b529eff89c
+  languageName: node
+  linkType: hard
+
+"countdown@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "countdown@npm:2.6.0"
+  checksum: 7da982bf73f0b66bbc04b1e9d76789f792218a94f6a36d14e3e3ff709bbeef79943c43792cb2371d5a22cd1f8f5af9ea66cde8cf0b6b9e00fe8cec7dbb9ce0ab
   languageName: node
   linkType: hard
 
@@ -29915,6 +29929,7 @@ __metadata:
     "@types/bn.js": ^5
     "@types/chai": ^4.3.3
     "@types/cli-progress": ^3.11.0
+    "@types/countdown": ^0.0.8
     "@types/eslint": ^8.4.6
     "@types/fs-extra": ^9.0.13
     "@types/js-yaml": ^4
@@ -29957,6 +29972,7 @@ __metadata:
     cli-progress: ^3.11.2
     comlink: ^4.3.1
     console-log-colors: ^0.2.3
+    countdown: ^2.6.0
     cross-env: ^7.0.3
     crossenv: ^0.0.2-security
     cypress: ^10.8.0
