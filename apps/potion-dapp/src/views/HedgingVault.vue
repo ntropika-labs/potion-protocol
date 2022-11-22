@@ -101,59 +101,18 @@
             />
           </div>
           <TabMenu v-model="selectedTab"></TabMenu>
-          <div
+          <DepositTab
             v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
-            class="flex justify-center gap-4"
-          >
-            <div class="flex flex-col items-center gap-4">
-              <InputNumber
-                v-model="depositAmount"
-                class="self-stretch"
-                :max="userCollateralBalance"
-                :title="t('choose_deposit_amount')"
-                :subtitle="t('deposits_processed_next_round')"
-                :min="0.1"
-                :step="0.01"
-                :unit="underlyingSymbol"
-              />
-              <BaseButton
-                palette="secondary"
-                :label="depositLabel"
-                :disabled="invalidDepositAmount || isLoading"
-                :loading="approveLoading || updateDepositLoading"
-                @click="handleUpdateDeposit"
-              >
-                <template #pre-icon>
-                  <i class="i-ph-download-simple-bold"></i>
-                </template>
-              </BaseButton>
-            </div>
-            <div class="flex flex-col items-center gap-4">
-              <InputNumber
-                v-model="currentDepositAmount"
-                class="self-stretch"
-                :title="t('current_round_deposit')"
-                subtitle="&nbsp;"
-                :footer-description="t('cancel_request_to_retrieve_funds')"
-                :readonly="true"
-                :min="0"
-                :show-max="false"
-                :show-balance="false"
-                :unit="underlyingSymbol"
-              />
-              <BaseButton
-                palette="glass"
-                :label="t('cancel_request')"
-                :disabled="isLoading || currentDepositAmount === 0"
-                :loading="deleteDepositLoading"
-                @click="handleDeleteDeposit"
-              >
-                <template #pre-icon>
-                  <i class="i-ph-x-bold"></i>
-                </template>
-              </BaseButton>
-            </div>
-          </div>
+            :current-deposit-amount="currentDepositAmount"
+            :is-delete-loading="deleteDepositLoading"
+            :is-loading="isLoading"
+            :is-update-loading="approveLoading || updateDepositLoading"
+            :underlying-symbol="underlyingSymbol"
+            :user-allowance="userAllowance"
+            :user-collateral-balance="userCollateralBalance"
+            @update-deposit="handleUpdateDeposit"
+            @delete-deposit="handleDeleteDeposit"
+          ></DepositTab>
           <div
             v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
             class="w-1/2 flex flex-col items-center gap-4"
@@ -220,10 +179,8 @@ import { storeToRefs } from "pinia";
 
 import {
   BaseCard,
-  // BaseTag,
   LabelValue,
   AssetTag,
-  InputNumber,
   BaseButton,
   TimeTag,
   InputSlider,
@@ -231,6 +188,7 @@ import {
 } from "potion-ui";
 
 import TabMenu from "@/components/HedgingVault/TabMenu.vue";
+import DepositTab from "@/components/HedgingVault/DepositTab.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
@@ -316,31 +274,13 @@ const {
   vaultRounds
 );
 
-const depositAmount = ref(0.1);
-const invalidDepositAmount = computed(
-  () =>
-    depositAmount.value <= 0 ||
-    depositAmount.value > userCollateralBalance.value
-);
-const depositLabel = computed(() => {
-  if (depositAmount.value > userAllowance.value) {
-    return t("approve");
-  }
-  if (currentDepositAmount.value > 0) {
-    return t("update");
-  }
-  return t("deposit");
-});
-
-const handleUpdateDeposit = async () => {
-  if (!invalidDepositAmount.value) {
-    if (depositAmount.value > userAllowance.value) {
-      await roundsInputState.approve(depositAmount.value);
-      roundsInputState.fetchUserData();
-    } else {
-      await updateDepositTicket(depositAmount);
-      setTimeout(loadVault, 5000);
-    }
+const handleUpdateDeposit = async (depositAmount: number) => {
+  if (depositAmount > userAllowance.value) {
+    await roundsInputState.approve(depositAmount);
+    roundsInputState.fetchUserData();
+  } else {
+    await updateDepositTicket(depositAmount);
+    setTimeout(loadVault, 5000);
   }
 };
 
