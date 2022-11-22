@@ -14,23 +14,9 @@
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
         <LabelValue
           size="lg"
-          :title="t('share_price')"
-          :value="shareToUnderlyingRatio.toString()"
-          :symbol="`${underlyingSymbol}/Share`"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="lg"
           :title="t('vault_size')"
           :value="vault.totalShares"
           :symbol="underlyingSymbol"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="lg"
-          :title="t('your_shares')"
-          :value="userBalance.toString()"
-          :symbol="`= ${balanceInUnderlying} ${underlyingSymbol}`"
           :loading="vaultLoading"
         />
       </div>
@@ -136,6 +122,7 @@
   >
   </NotificationDisplay>
 </template>
+
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { ref, computed, watch, onMounted } from "vue";
@@ -155,7 +142,6 @@ import DepositTab from "@/components/HedgingVault/DepositTab.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
-import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
@@ -318,19 +304,6 @@ const handleRedeemUnderlyings = async () => {
     setTimeout(loadVault, 5000);
   }
 };
-
-/* 
-  Legacy code
-*/
-const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
-
-const shareToUnderlyingRatio = computed(() => 1 / assetToShare.value);
-const balanceInUnderlying = computed(
-  () => userBalance.value * shareToUnderlyingRatio.value
-);
-/* 
-  End of legacy code
-*/
 
 const isLoading = computed(
   () =>
