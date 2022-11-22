@@ -66,3 +66,8 @@ export interface VaultData {
 export interface VaultDataWithStrategy extends VaultData {
   strategy: VaultStrategy;
 }
+
+export enum AVAILABLE_TABS {
+  DEPOSIT,
+  WITHDRAWAL,
+}

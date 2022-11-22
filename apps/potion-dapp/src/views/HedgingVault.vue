@@ -11,26 +11,6 @@
           <span class="truncate max-w-[15ch]">{{ vaultId }}</span>
         </a>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
-        <!-- <div>
-          <p class="capitalize">{{ t("admin") }}</p>
-          <a :href="getEtherscanUrl(admin)">
-            <BaseTag :is-loading="vaultLoading">
-              <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ admin }}</span>
-            </BaseTag>
-          </a>
-        </div>
-        <div>
-          <p class="capitalize">{{ t("operator") }}</p>
-          <a :href="getEtherscanUrl(operator)">
-            <BaseTag :is-loading="vaultLoading">
-              <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ operator }}</span>
-            </BaseTag>
-          </a>
-        </div> -->
-      </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
         <LabelValue
           size="lg"
@@ -120,20 +100,7 @@
               :loading="vaultLoading"
             />
           </div>
-          <div class="p-4 flex justify-center gap-4 lg:gap-6">
-            <TabItem
-              class="w-1/3"
-              :is-active="selectedTab === AVAILABLE_TABS.DEPOSIT"
-              @click="selectedTab = AVAILABLE_TABS.DEPOSIT"
-              >{{ t("deposit") }}</TabItem
-            >
-            <TabItem
-              class="w-1/3"
-              :is-active="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
-              @click="selectedTab = AVAILABLE_TABS.WITHDRAWAL"
-              >{{ t("withdrawal") }}</TabItem
-            >
-          </div>
+          <TabMenu v-model="selectedTab"></TabMenu>
           <div
             v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
             class="flex justify-center gap-4"
@@ -258,12 +225,12 @@ import {
   AssetTag,
   InputNumber,
   BaseButton,
-  TabItem,
   TimeTag,
   InputSlider,
   getEtherscanUrl,
 } from "potion-ui";
 
+import TabMenu from "@/components/HedgingVault/TabMenu.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
@@ -284,10 +251,7 @@ import {
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
 
-enum AVAILABLE_TABS {
-  DEPOSIT,
-  WITHDRAWAL,
-}
+import { AVAILABLE_TABS } from "@/types";
 
 const selectedTab = ref<AVAILABLE_TABS>(AVAILABLE_TABS.DEPOSIT);
 
