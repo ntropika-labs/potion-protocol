@@ -113,54 +113,19 @@
             @update-deposit="handleUpdateDeposit"
             @delete-deposit="handleDeleteDeposit"
           ></DepositTab>
-          <div
+          <WithdrawalTab
             v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
-            class="w-1/2 flex flex-col items-center gap-4"
-          >
-            <h3>
-              {{
-                t("estimated_exchange_assets", {
-                  estimatedAssets: estimatedUnderlyings,
-                })
-              }}
-            </h3>
-            <InputSlider
-              class="my-4"
-              symbol="%"
-              :step="0.1"
-              :model-value="exchangePercentage"
-              @update:model-value="updateExchangePercentage"
-            />
-            <BaseButton
-              palette="secondary"
-              :label="exchangeLabel"
-              :disabled="isLoading || canDeleteWithdrawalTicket"
-              :loading="approveExchangeLoading || exchangeTicketsLoading"
-              @click="handleExchange"
-            >
-              <template #pre-icon>
-                <i class="i-ph-upload-simple-bold"></i>
-              </template>
-            </BaseButton>
-            <h4>
-              {{
-                t("available_assets_to_redeem", {
-                  availableAssets: availableUnderlyings,
-                })
-              }}
-            </h4>
-            <BaseButton
-              palette="secondary"
-              :label="t('redeem')"
-              :disabled="isLoading"
-              :loading="redeemUnderlyingsLoading"
-              @click="handleRedeemUnderlyings"
-            >
-              <template #pre-icon>
-                <i class="i-ph-lightning-fill-bold"></i>
-              </template>
-            </BaseButton>
-          </div>
+            :available-underlyings="availableUnderlyings"
+            :can-exchange="canExchange"
+            :estimated-underlyings="estimatedUnderlyings"
+            :is-loading="isLoading"
+            :is-exchange-loading="
+              approveExchangeLoading || exchangeTicketsLoading
+            "
+            :is-redeem-loading="redeemUnderlyingsLoading"
+            @exchange-tickets="handleExchange"
+            @redeem="handleRedeemUnderlyings"
+          ></WithdrawalTab>
         </BaseCard>
       </div>
     </div>
@@ -181,9 +146,7 @@ import {
   BaseCard,
   LabelValue,
   AssetTag,
-  BaseButton,
   TimeTag,
-  InputSlider,
   getEtherscanUrl,
 } from "potion-ui";
 
@@ -313,20 +276,10 @@ const {
   currentRound,
   lastShareToUnderlyingRate
 );
-const exchangePercentage = ref(100);
-const updateExchangePercentage = (value: number) => {
-  if (value > 0 && value < 101) {
-    exchangePercentage.value = value;
-  }
-};
 
-const exchangeLabel = computed(() =>
-  canExchange.value ? t("exchange") : t("approve")
-);
-
-const handleExchange = async () => {
+const handleExchange = async (exchangePercentage: number) => {
   if (canExchange.value) {
-    await exchangeTickets(exchangePercentage.value);
+    await exchangeTickets(exchangePercentage);
     setTimeout(loadVault, 5000);
   } else {
     approveExchange();
@@ -335,7 +288,6 @@ const handleExchange = async () => {
 
 // withdrawal requests
 const {
-  canDeleteWithdrawalTicket,
   deleteWithdrawalLoading,
   deleteWithdrawalReceipt,
   // currentWithdrawalAmount,
