@@ -15,7 +15,7 @@ async function main() {
 
     Deployments.initialize({
         type: deploymentType,
-        options: DeploymentFlags.Export | DeploymentFlags.Verify,
+        options: DeploymentFlags.Export,
         deploymentsDir: resolve(__dirname, "../deployments"),
         indexDir: resolve(__dirname, "../src"),
     });

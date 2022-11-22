@@ -17,7 +17,7 @@ export interface SwapToUSDCActionDeployParams {
 export async function deploySwapToUSDCAction(parameters: SwapToUSDCActionDeployParams): Promise<SwapToUSDCAction> {
     console.log("- Deploying SwapToUSDCAction...");
     const swapToUSDCAction = (await Deployments.deploy("SwapToUSDCAction", [parameters], {
-        options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
+        options: DeploymentFlags.Export | DeploymentFlags.Upgradeable,
     })) as SwapToUSDCAction;
     console.log(`    ...deployed to: ${swapToUSDCAction.address}`);
     return swapToUSDCAction;

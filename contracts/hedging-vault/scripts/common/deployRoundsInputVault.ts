@@ -14,7 +14,7 @@ export async function deployRoundsInputVault(parameters: RoundsInputVaultDeployP
         "RoundsInputVault",
         [parameters.adminAddress, parameters.operatorAddress, parameters.investmentVault, parameters.receiptsURI],
         {
-            options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
+            options: DeploymentFlags.Export | DeploymentFlags.Upgradeable,
         },
     )) as RoundsInputVault;
     console.log(`    ...deployed to: ${roundsInputVault.address}`);

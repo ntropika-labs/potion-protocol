@@ -14,6 +14,7 @@ const userConfig: HardhatUserConfig = {
                 settings: {
                     optimizer: {
                         enabled: true,
+                        runs: 250,
                     },
                     outputSelection: {
                         "*": {
