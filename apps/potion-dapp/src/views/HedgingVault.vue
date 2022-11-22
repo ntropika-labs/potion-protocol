@@ -110,7 +110,7 @@
         />
       </BaseCard>
       <div class="col-span-4 self-start">
-        <BaseCard class="p-4">
+        <BaseCard class="p-4 gap-4">
           <div class="flex items-center gap-4">
             <TimeTag
               :horizontal="true"
@@ -120,87 +120,120 @@
               :loading="vaultLoading"
             />
           </div>
-          <div class="flex gap-6 w-full mt-5">
-            <div class="w-1/2 flex flex-col items-center gap-4">
-              <h3 v-if="currentDepositAmount > 0">
-                {{
-                  t("current_deposit_request_info", {
-                    currentDepositAmount,
-                    underlyingSymbol,
-                  })
-                }}
-              </h3>
+          <div class="p-4 flex justify-center gap-4 lg:gap-6">
+            <TabItem
+              class="w-1/3"
+              :is-active="selectedTab === AVAILABLE_TABS.DEPOSIT"
+              @click="selectedTab = AVAILABLE_TABS.DEPOSIT"
+              >{{ t("deposit") }}</TabItem
+            >
+            <TabItem
+              class="w-1/3"
+              :is-active="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
+              @click="selectedTab = AVAILABLE_TABS.WITHDRAWAL"
+              >{{ t("withdrawal") }}</TabItem
+            >
+          </div>
+          <div
+            v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
+            class="flex justify-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-4">
               <InputNumber
                 v-model="depositAmount"
                 class="self-stretch"
                 :max="userCollateralBalance"
+                :title="t('choose_deposit_amount')"
+                :subtitle="t('deposits_processed_next_round')"
                 :min="0.1"
                 :step="0.01"
                 :unit="underlyingSymbol"
               />
-              <div class="flex gap-4">
-                <BaseButton
-                  palette="secondary"
-                  :label="depositLabel"
-                  :disabled="invalidDepositAmount || isLoading"
-                  :loading="approveLoading || updateDepositLoading"
-                  @click="handleUpdateDeposit"
-                />
-                <BaseButton
-                  v-if="canDeleteDepositTicket"
-                  palette="secondary-o"
-                  :label="t('delete')"
-                  :disabled="isLoading"
-                  :loading="deleteDepositLoading"
-                  @click="handleDeleteDeposit"
-                />
-              </div>
-            </div>
-            <div
-              v-if="estimatedUnderlyings > 0"
-              class="w-1/2 flex flex-col items-center gap-4"
-            >
-              <h3>
-                {{
-                  t("estimated_exchange_assets", {
-                    estimatedAssets: estimatedUnderlyings,
-                  })
-                }}
-              </h3>
-              <InputSlider
-                class="my-4"
-                symbol="%"
-                :step="0.1"
-                :model-value="exchangePercentage"
-                @update:model-value="updateExchangePercentage"
-              />
               <BaseButton
                 palette="secondary"
-                :label="exchangeLabel"
-                :disabled="isLoading || canDeleteWithdrawalTicket"
-                :loading="approveExchangeLoading || exchangeTicketsLoading"
-                @click="handleExchange"
-              />
+                :label="depositLabel"
+                :disabled="invalidDepositAmount || isLoading"
+                :loading="approveLoading || updateDepositLoading"
+                @click="handleUpdateDeposit"
+              >
+                <template #pre-icon>
+                  <i class="i-ph-download-simple-bold"></i>
+                </template>
+              </BaseButton>
             </div>
-            <div
-              v-if="availableUnderlyings > 0"
-              class="w-1/2 flex flex-col items-center gap-4"
-            >
-              <h4>
-                {{
-                  t("available_assets_to_redeem", {
-                    availableAssets: availableUnderlyings,
-                  })
-                }}
-              </h4>
+            <div class="flex flex-col items-center gap-4">
+              <InputNumber
+                v-model="currentDepositAmount"
+                class="self-stretch"
+                :title="t('current_round_deposit')"
+                subtitle="&nbsp;"
+                :footer-description="t('cancel_request_to_retrieve_funds')"
+                :readonly="true"
+                :min="0"
+                :show-max="false"
+                :show-balance="false"
+                :unit="underlyingSymbol"
+              />
               <BaseButton
-                palette="secondary"
-                :label="t('redeem')"
-                :disabled="isLoading"
-                :loading="redeemUnderlyingsLoading"
-                @click="handleRedeemUnderlyings"
-              />
+                palette="glass"
+                :label="t('cancel_request')"
+                :disabled="isLoading || currentDepositAmount === 0"
+                :loading="deleteDepositLoading"
+                @click="handleDeleteDeposit"
+              >
+                <template #pre-icon>
+                  <i class="i-ph-x-bold"></i>
+                </template>
+              </BaseButton>
             </div>
+          </div>
+          <div
+            v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
+            class="w-1/2 flex flex-col items-center gap-4"
+          >
+            <h3>
+              {{
+                t("estimated_exchange_assets", {
+                  estimatedAssets: estimatedUnderlyings,
+                })
+              }}
+            </h3>
+            <InputSlider
+              class="my-4"
+              symbol="%"
+              :step="0.1"
+              :model-value="exchangePercentage"
+              @update:model-value="updateExchangePercentage"
+            />
+            <BaseButton
+              palette="secondary"
+              :label="exchangeLabel"
+              :disabled="isLoading || canDeleteWithdrawalTicket"
+              :loading="approveExchangeLoading || exchangeTicketsLoading"
+              @click="handleExchange"
+            >
+              <template #pre-icon>
+                <i class="i-ph-upload-simple-bold"></i>
+              </template>
+            </BaseButton>
+            <h4>
+              {{
+                t("available_assets_to_redeem", {
+                  availableAssets: availableUnderlyings,
+                })
+              }}
+            </h4>
+            <BaseButton
+              palette="secondary"
+              :label="t('redeem')"
+              :disabled="isLoading"
+              :loading="redeemUnderlyingsLoading"
+              @click="handleRedeemUnderlyings"
+            >
+              <template #pre-icon>
+                <i class="i-ph-lightning-fill-bold"></i>
+              </template>
+            </BaseButton>
           </div>
         </BaseCard>
       </div>
@@ -225,6 +258,7 @@ import {
   AssetTag,
   InputNumber,
   BaseButton,
+  TabItem,
   TimeTag,
   InputSlider,
   getEtherscanUrl,
@@ -249,6 +283,13 @@ import {
 
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
+
+enum AVAILABLE_TABS {
+  DEPOSIT,
+  WITHDRAWAL,
+}
+
+const selectedTab = ref<AVAILABLE_TABS>(AVAILABLE_TABS.DEPOSIT);
 
 const { t } = useI18n();
 
@@ -294,7 +335,6 @@ const { approveLoading, approveReceipt, approveTx, userAllowance } =
 
 // Deposit requests
 const {
-  canDeleteDepositTicket,
   currentDepositAmount,
   deleteDepositLoading,
   deleteDepositTicket,
