@@ -23,7 +23,8 @@ export const buttonPaletteMap: Map<ButtonPalette, string> = new Map([
   [ButtonPalette["warning"],      "btn-warning"],
   [ButtonPalette["error"],        "btn-error"],
   [ButtonPalette.transparent,     "uppercase transition-all text-dwhite-300 hover:(shadow-sm bg-dwhite-300 bg-opacity-10)"],
-  [ButtonPalette.flat,            "ring-0 ring-transparent text-center"]
+  [ButtonPalette.flat,            "ring-0 ring-transparent text-center"],
+  [ButtonPalette.glass,           btnSolidClasses + " uppercase text-dwhite-300 bg-radial-glass blurred ring-white/10 ring-1 transition hover:(bg-white bg-opacity-10)"]
 ]);
 
 // prettier-ignore

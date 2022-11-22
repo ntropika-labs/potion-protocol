@@ -185,6 +185,18 @@ export const Overview = () => ({
       </div><div>
         <BaseButton label="button" palette="white-o" size="icon"><template #pre-icon>👍</template></BaseButton>
       </div>
+
+      <div>
+        <BaseButton label="button" palette="glass" size="lg"></BaseButton>
+      </div><div>
+        <BaseButton label="button" palette="glass"></BaseButton>
+      </div><div>
+        <BaseButton label="button" palette="glass" size="sm"></BaseButton>
+      </div><div>
+        <BaseButton label="button" palette="glass" size="xs"></BaseButton>
+      </div><div>
+        <BaseButton label="button" palette="glass" size="icon"><template #pre-icon>👍</template></BaseButton>
+      </div>
     </div>
   `,
 });
