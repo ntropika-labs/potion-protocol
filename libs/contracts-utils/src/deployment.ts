@@ -27,6 +27,7 @@ import type {
   ConfigName,
   ImportPair,
   DeploymentExportPair,
+  LegacyDeploymentObject,
 } from "./types";
 import {
   DeploymentFlags,
@@ -210,7 +211,7 @@ export class Deployments {
     includeLegacy = false
   ): void {
     // Legacy Index
-    let legacyIndex = undefined;
+    let legacyIndex: LegacyDeploymentObject = undefined;
     if (includeLegacy) {
       legacyIndex = this._buildLegacyIndex(deploymentsDir);
     }
@@ -416,7 +417,7 @@ export class Deployments {
     indexFileName: string,
     imports: ImportPair[],
     indexObject: DeploymentExportPair[],
-    legacyIndex?: unknown
+    legacyIndex?: LegacyDeploymentObject
   ) {
     const indexFilePath = resolve(indexDir, indexFileName);
 
@@ -439,17 +440,24 @@ export class Deployments {
     indexObject.forEach((deploymentExport) => {
       fs.appendFileSync(
         indexFilePath,
-        `\n    "${deploymentExport.name}": ${deploymentExport.value},`,
+        `\n  "${deploymentExport.name}": ${deploymentExport.value},`,
         "utf8"
       );
     });
 
     if (legacyIndex) {
+      // Remove already exported keys
+      indexObject.forEach((deploymentExport) => {
+        if (legacyIndex[deploymentExport.name]) {
+          delete legacyIndex[deploymentExport.name];
+        }
+      });
+
       const objectString = JSON.stringify(legacyIndex, null, 2);
 
       fs.appendFileSync(
         indexFilePath,
-        `\n    ${objectString.slice(2, -2)},`,
+        `\n  ${objectString.slice(4, -2)},`,
         "utf8"
       );
     }
@@ -583,7 +591,7 @@ export class Deployments {
     directoriesList: string[],
     filterType: DirectoryFilterType,
     canInclude: (deployment: DeploymentObject) => boolean,
-    extraIndex: unknown = undefined
+    extraIndex: LegacyDeploymentObject = undefined
   ): void {
     const indexImports: ImportPair[] = [];
     const deploymentsIndex: DeploymentExportPair[] = [];
@@ -653,7 +661,9 @@ export class Deployments {
     );
   }
 
-  private static _buildLegacyIndex(deploymentsDir: string): unknown {
+  private static _buildLegacyIndex(
+    deploymentsDir: string
+  ): LegacyDeploymentObject {
     let legacyIndex = {};
 
     const legacyFiles = fs
@@ -678,7 +688,7 @@ export class Deployments {
       });
     });
 
-    return legacyIndex;
+    return legacyIndex as LegacyDeploymentObject;
   }
 
   private static _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {
