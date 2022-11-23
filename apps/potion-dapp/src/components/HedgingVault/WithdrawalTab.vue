@@ -28,7 +28,7 @@ const updateExchangePercentage = (value: number) => {
 };
 
 const label = computed(() =>
-  props.canExchange ? t("exchange") : t("approve")
+  props.canExchange ? t("withdraw_request") : t("approve")
 );
 </script>
 

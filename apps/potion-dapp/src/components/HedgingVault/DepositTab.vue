@@ -33,9 +33,9 @@ const label = computed(() => {
     return t("approve");
   }
   if (props.currentDepositAmount) {
-    return t("update");
+    return t("update_request");
   }
-  return t("deposit");
+  return t("deposit_request");
 });
 </script>
 
