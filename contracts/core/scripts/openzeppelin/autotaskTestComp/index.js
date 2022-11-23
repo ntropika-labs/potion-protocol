@@ -14,16 +14,35 @@ var ChainlinkPricerAbiString =
 var AggregatorInterfaceAbiString =
     '[{"anonymous":false,"inputs":[{"indexed":true,"internalType":"int256","name":"current","type":"int256"},{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"AnswerUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":true,"internalType":"address","name":"startedBy","type":"address"},{"indexed":false,"internalType":"uint256","name":"startedAt","type":"uint256"}],"name":"NewRound","type":"event"},{"inputs":[],"name":"latestAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"roundId","type":"uint256"}],"name":"getAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"roundId","type":"uint256"}],"name":"getTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]';
 
-var tokenNamesList = ["WETH", "WBTC", "USDC"];
-//                         Custom wETH pricer                         Custom wBTC pricer                         Custom USDC pricer
-var pricerAddressString =
-    "0x54235B44Ebb8F8Bf1bc248339ebAF06f7829307C,0xb64c7dE03c87DcA86bb9d8f2a6ee00ced1a5bd5F,0x29D3bbB8088d3962B80ca06cE04EE43db46B2AEc";
-//                       Custom wETH Contract                       Custom wBTC Contract                       Custom USDC Contract
-var pricerAssetString =
-    "0x9889DfADE1d68488590DF17bbA882914535a8F92,0x667c04420C2B8D319ac24f6E605dCC28759C55f4,0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7";
-//                             ETH/USD aggregator                         BTC/USD aggregator                         Custom USDC/USDC Aggregator
-var aggregatorAddressString =
-    "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e,0xA39434A63A52E749F02807ae27335515BA4b07F7,0x5fea417c193828eCF578933121De0B943E356a92";
+const RelayerAddress = "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249";
+const AddressbookAddress = "0xF55277d2608C69DE9A7904c8318C497f62460ef2"; // AddressBook module
+
+var TokenConfigs = [
+    {
+        tokenName: "WETH",
+        pricerAddress: "0xB7125B8178B60b3F9cF6f9C2cDa03119c5F4b2D7",
+        pricerAsset: "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14",
+        aggregatorAddress: "0x0715A7794a1dc8e42615F059dD6e406A6594651A",
+    },
+    {
+        tokenName: "WBTC",
+        pricerAddress: "0xD77399aEf4d4c7A54eA20eF0943b9e722dEf1339",
+        pricerAsset: "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
+        aggregatorAddress: "0x007A22900a3B98143368Bd5906f8E17e9867581b",
+    },
+    {
+        tokenName: "LINK",
+        pricerAddress: "0xaadD9De5c06AA107501413228F898C1E6A6D770e",
+        pricerAsset: "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F",
+        aggregatorAddress: "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408",
+    },
+    {
+        tokenName: "USDC",
+        pricerAddress: "0xAF112F090e6132c23D7275c60a96CF48672f8dd1",
+        pricerAsset: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
+        aggregatorAddress: "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0",
+    },
+];
 
 const AddressBookAbi = JSON.parse(AddressBookAbiString);
 const OracleAbi = JSON.parse(OracleAbiString);
@@ -33,11 +52,9 @@ const AggregatorInterfaceAbi = JSON.parse(AggregatorInterfaceAbiString);
 // Entrypoint for the Autotask
 exports.handler = async function (credentials) {
     // config
-    const relayerAddress = "0x3a0000fc364d0a73407e5edbb8da777c183e1a22"; // Relayer address
-    const addressbookAddress = "0x1B6e08713D2853e20f1F3370B9F809d3B20944Bd"; // AddressBook module
-    const pricerAddress = pricerAddressString.split(","); // [wbtc, weth, usdc]
-    const pricerAsset = pricerAssetString.split(","); // [wbtc, weth, usdc]
-    const chainlinkAggregatorAddress = aggregatorAddressString.split(","); // [wbtc, weth, usdc]
+    // const pricerAddress = pricerAddressString.split(","); // [wbtc, weth, usdc]
+    // const pricerAsset = pricerAssetString.split(","); // [wbtc, weth, usdc]
+    // const chainlinkAggregatorAddress = aggregatorAddressString.split(","); // [wbtc, weth, usdc]
 
     console.log("Starting Autotask!");
 
@@ -45,33 +62,31 @@ exports.handler = async function (credentials) {
     const provider = new DefenderRelayProvider(credentials);
     const signer = new DefenderRelaySigner(credentials, provider, {
         speed: "fast",
-        from: relayerAddress,
+        from: RelayerAddress,
     });
 
-    // addressbook instance
+    // AddressBook
     console.log("Connecting AddressBook instance...");
-    const addressbook = new ethers.Contract(addressbookAddress, AddressBookAbi, signer);
+    const addressbook = new ethers.Contract(AddressbookAddress, AddressBookAbi, signer);
     console.log(`...connected at address ${addressbook.address}`);
 
-    // oracle address
-    console.log("Getting Oracle");
-    const oracleAddress = await addressbook.getOracle();
-    // oracle instance
+    // Oracle
     console.log("Connecting Oracle instance...");
+    const oracleAddress = await addressbook.getOracle();
     const oracle = new ethers.Contract(oracleAddress, OracleAbi, signer);
     console.log(`...connected at address ${oracle.address}`);
 
     // Otoken expiry hour in UTC
     const expiryHour = 8;
 
-    // set expiry timestamp
+    // Set expiry timestamp
     let expiryTimestamp = new Date();
     expiryTimestamp.setHours(expiryHour);
     expiryTimestamp.setMinutes(0);
     expiryTimestamp.setSeconds(0);
     expiryTimestamp = Math.floor(expiryTimestamp.getTime() / 1000);
 
-    // current timestamp in UTC seconds
+    // Current timestamp in UTC seconds
     let currentTimestamp = new Date();
     const hour = currentTimestamp.getHours();
     const weekday = currentTimestamp.toLocaleString("default", { weekday: "long" });
@@ -82,93 +97,87 @@ exports.handler = async function (credentials) {
     console.log("Current hour: ", hour);
     console.log("Current dat: ", weekday);
 
-    if (hour >= expiryHour) {
-        for (let i = 0; i < pricerAddress.length; i++) {
-            const tokenName = tokenNamesList[i];
+    if (hour < expiryHour) {
+        console.log("Current hour is before expiry hour, skipping...");
+        return;
+    }
 
-            console.log("-----------------------------------------");
-            console.log(`       Processing ${tokenName} token`);
-            console.log("-----------------------------------------");
+    for (let i = 0; i < TokenConfigs.length; i++) {
+        const config = TokenConfigs[i];
 
-            // pricer instance
-            const pricer = new ethers.Contract(pricerAddress[i], ChainlinkPricerAbi, signer);
-            // chainlink price feed instance
-            const chainlinkAggregator = new ethers.Contract(
-                chainlinkAggregatorAddress[i],
-                AggregatorInterfaceAbi,
-                signer,
+        console.log("-----------------------------------------");
+        console.log(`       Processing ${config.tokenName} token`);
+        console.log("-----------------------------------------");
+
+        // pricer instance
+        const pricer = new ethers.Contract(config.pricerAddress, ChainlinkPricerAbi, signer);
+        // chainlink price feed instance
+        const chainlinkAggregator = new ethers.Contract(config.aggregatorAddress, AggregatorInterfaceAbi, signer);
+
+        console.log("Pricer: ", pricer.address);
+        console.log("Pricer asset: ", config.pricerAsset);
+        console.log("Chainlink aggregator: ", chainlinkAggregator.address);
+
+        let expiryPrice = await oracle.getExpiryPrice(config.pricerAsset, expiryTimestamp);
+        let isDisputePeriodOver = await oracle.isDisputePeriodOver(config.pricerAsset, expiryTimestamp);
+        let isLockingPeriodOver = await oracle.isLockingPeriodOver(config.pricerAsset, expiryTimestamp);
+
+        console.log("Oracle expiry price: ", expiryPrice[0].toString());
+        console.log("Is dispute period over: ", isDisputePeriodOver);
+        console.log("Is locking period over: ", isLockingPeriodOver);
+
+        if (expiryPrice[0].toString() != "0" || !isLockingPeriodOver) {
+            console.log("Oracle has already set the expiry price, skipping...");
+            continue;
+        }
+
+        // round id for expiry timestamp
+        let priceRoundId = await chainlinkAggregator.latestRound();
+        let priceRoundTimestamp = await chainlinkAggregator.getTimestamp(priceRoundId);
+
+        // check if otoken price is not on-chain, and latest chainlink round timestamp is greater than otoken expiry timestamp and locking period over
+        if (priceRoundTimestamp.toString() < expiryTimestamp) {
+            console.log(
+                `Chainlink latest round timestamp ${priceRoundTimestamp} is not grater than or equal the expiry timestamp `,
             );
+            continue;
+        }
 
-            console.log("Pricer: ", pricer.address);
-            console.log("Pricer asset: ", pricerAsset[i]);
-            console.log("Chainlink aggregator: ", chainlinkAggregator.address);
+        // round id before price round id
+        let previousRoundId;
+        let previousRoundTimestamp;
 
-            let expiryPrice = await oracle.getExpiryPrice(pricerAsset[i], expiryTimestamp);
-            let isDisputePeriodOver = await oracle.isDisputePeriodOver(pricerAsset[i], expiryTimestamp);
-            let isLockingPeriodOver = await oracle.isLockingPeriodOver(pricerAsset[i], expiryTimestamp);
+        // loop and decrease round id until previousRoundTimestamp < expiryTimestamp && priceRoundTimestamp >= expiryTimestamp
+        // if previous round timestamp != 0 && less than expiry timestamp then exit => price round id found
+        // else store previous round id in price round id (as we are searching for the first round id that it timestamp >= expiry timestamp)
+        for (let j = priceRoundId.sub(1); j > 0; j = j.sub(1)) {
+            previousRoundId = j;
+            previousRoundTimestamp = await chainlinkAggregator.getTimestamp(j);
 
-            console.log("Oracle expiry price: ", expiryPrice[0].toString());
-            console.log("Is dispute period over: ", isDisputePeriodOver);
-            console.log("Is locking period over: ", isLockingPeriodOver);
-
-            if (expiryPrice[0].toString() == "0" && isLockingPeriodOver) {
-                if (tokenName !== "USDC") {
-                    // round id for expiry timestamp
-                    let priceRoundId = await chainlinkAggregator.latestRound();
-                    let priceRoundTimestamp = await chainlinkAggregator.getTimestamp(priceRoundId);
-                    // round id before price round id
-                    let previousRoundId;
-                    let previousRoundTimestamp;
-
-                    // check if otoken price is not on-chain, and latest chainlink round timestamp is greater than otoken expiry timestamp and locking period over
-                    if (priceRoundTimestamp.toString() >= expiryTimestamp) {
-                        // loop and decrease round id until previousRoundTimestamp < expiryTimestamp && priceRoundTimestamp >= expiryTimestamp
-                        // if previous round timestamp != 0 && less than expiry timestamp then exit => price round id found
-                        // else store previous round id in price round id (as we are searching for the first round id that it timestamp >= expiry timestamp)
-                        for (let j = priceRoundId.sub(1); j > 0; j = j.sub(1)) {
-                            previousRoundId = j;
-                            previousRoundTimestamp = await chainlinkAggregator.getTimestamp(j);
-
-                            if (previousRoundTimestamp.toString() != "0") {
-                                if (previousRoundTimestamp.toString() < expiryTimestamp.toString()) {
-                                    break;
-                                } else {
-                                    priceRoundId = previousRoundId;
-                                    priceRoundTimestamp = previousRoundTimestamp;
-                                }
-                            }
-                        }
-
-                        console.log("Found round id: ", priceRoundId.toString());
-                        console.log("Found round timestamp: ", priceRoundTimestamp.toString());
-                        console.log("Expiration timestamp: ", expiryTimestamp);
-
-                        let tx = await pricer.setExpiryPriceInOracle(expiryTimestamp, priceRoundId, {
-                            gasLimit: "1000000",
-                        });
-
-                        console.log("Tx hash: ", tx.hash);
-
-                        await tx.wait();
-
-                        let newPrice = await oracle.getExpiryPrice(pricerAsset[i], expiryTimestamp);
-                        console.log("New price set: ", newPrice[0].toString());
-                    } else {
-                        console.log(
-                            `Chainlink latest round timestamp ${priceRoundTimestamp} is not grater than or equal the expiry timestamp `,
-                        );
-                    }
+            if (previousRoundTimestamp.toString() != "0") {
+                if (previousRoundTimestamp.toString() < expiryTimestamp.toString()) {
+                    break;
                 } else {
-                    console.log("Setting expiry price in Oracle for USDC");
-                    let tx = await pricer.setExpiryPriceInOracle(expiryTimestamp, 0, { gasLimit: "1000000" });
-                    console.log("Tx hash: ", tx.hash);
-                    await tx.wait();
-
-                    let newPrice = await oracle.getExpiryPrice(pricerAsset[i], expiryTimestamp);
-                    console.log("New price set: ", newPrice[0].toString());
+                    priceRoundId = previousRoundId;
+                    priceRoundTimestamp = previousRoundTimestamp;
                 }
             }
         }
+
+        console.log("Found round id: ", priceRoundId.toString());
+        console.log("Found round timestamp: ", priceRoundTimestamp.toString());
+        console.log("Expiration timestamp: ", expiryTimestamp);
+
+        let tx = await pricer.setExpiryPriceInOracle(expiryTimestamp, priceRoundId, {
+            gasLimit: "1000000",
+        });
+
+        console.log("Tx hash: ", tx.hash);
+
+        await tx.wait();
+
+        let newPrice = await oracle.getExpiryPrice(config.pricerAsset, expiryTimestamp);
+        console.log("New price set: ", newPrice[0].toString());
     }
 };
 

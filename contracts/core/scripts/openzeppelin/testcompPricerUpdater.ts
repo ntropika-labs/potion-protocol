@@ -5,9 +5,9 @@ import { AutotaskClient, CreateAutotaskRequest, UpdateAutotaskRequest } from "de
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-const AutotaskName = "[Goerli] Potion Testnet Competition";
+const AutotaskName = "[Mumbai] Potion Testnet Competition";
 const LocalAutotaskFolder = "./autotaskTestComp";
-const RelayerId = "5d34227d-a696-4ec6-a50d-b76854ff2b78";
+const RelayerId = "ff869f4f-9755-4f2d-8f28-b2c6ca43a3e7";
 const Trigger = {
     type: "schedule" as CreateAutotaskRequest["trigger"]["type"],
     cron: "0 9 * * *",
@@ -29,11 +29,11 @@ async function main(): Promise<void> {
         if (autotask.name === AutotaskName) {
             // Update Autotask
             const request: UpdateAutotaskRequest = {
-                name: autotask.name,
+                name: AutotaskName,
                 autotaskId: autotask.autotaskId,
                 encodedZippedCode: await client.getEncodedZippedCodeFromFolder(resolve(__dirname, LocalAutotaskFolder)),
-                relayerId: autotask.relayerId,
-                trigger: autotask.trigger,
+                relayerId: RelayerId,
+                trigger: Trigger,
                 paused: autotask.paused,
             };
 
