@@ -3457,6 +3457,18 @@
             "deprecationReason": null
           },
           {
+            "name": "admin",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "asset",
             "description": null,
             "args": [],
@@ -3531,6 +3543,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3629,6 +3653,18 @@
                 "name": "Token",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3936,6 +3972,94 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "admin_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4746,6 +4870,94 @@
             "deprecationReason": null
           },
           {
+            "name": "operator",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operator_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "rounds_",
             "description": null,
             "type": {
@@ -5026,6 +5238,94 @@
             "deprecationReason": null
           },
           {
+            "name": "strategist",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "totalAssets",
             "description": null,
             "type": {
@@ -5157,6 +5457,12 @@
             "deprecationReason": null
           },
           {
+            "name": "admin",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "asset",
             "description": null,
             "isDeprecated": false,
@@ -5193,6 +5499,12 @@
             "deprecationReason": null
           },
           {
+            "name": "operator",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "rounds",
             "description": null,
             "isDeprecated": false,
@@ -5200,6 +5512,12 @@
           },
           {
             "name": "shareToken",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "strategist",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
