@@ -6,14 +6,15 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { onMounted, ref, type Ref } from "vue";
+import { computed, onMounted, ref, type Ref } from "vue";
 import countdown from "countdown";
 
 export interface Props {
   label: string;
-  endDate: Date;
-  startDate?: Date;
+  endDate: number;
+  startDate: number;
   direction?: "row" | "column";
+  expirationMessage?: string;
 }
 
 const unitsShown =
@@ -26,31 +27,50 @@ const unitsShown =
   countdown.SECONDS;
 
 const props = withDefaults(defineProps<Props>(), {
-  startDate: undefined,
   direction: "row",
+  expirationMessage: "",
 });
 const timespan: Ref<any> = ref(
   countdown(props.endDate, props.startDate, unitsShown)
 );
 
-const update = () => {
-  timespan.value = countdown(props.endDate, props.startDate, unitsShown, 6, 0);
+const update = (t = 0) => {
+  timespan.value = countdown(props.startDate + t, props.endDate, unitsShown);
 
   requestAnimationFrame(update);
 };
 
 onMounted(() => {
-  update();
+  update(0);
 });
+
+const daysString = computed(() =>
+  timespan.value.days.toString().padStart(2, "0")
+);
+const hoursString = computed(() =>
+  timespan.value.hours.toString().padStart(2, "0")
+);
+const minutesString = computed(() =>
+  timespan.value.minutes.toString().padStart(2, "0")
+);
+const secondsString = computed(() =>
+  timespan.value.seconds.toString().padStart(2, "0")
+);
 </script>
 <template>
   <div
     class="flex gap-4 text-dwhite-300 items-end"
     :class="[direction === 'row' ? 'flex-row' : 'flex-col']"
   >
-    <span class="text-sm" test-label>{{ label }}</span>
+    <span v-if="timespan.value > 0" class="text-sm" test-label>{{
+      label
+    }}</span>
+    <span v-else class="text-xl font-semibold">
+      {{ expirationMessage }}
+    </span>
     <div
-      class="flex flex-row font-semibold text-2xl leading-none"
+      v-if="timespan.value > 0"
+      class="flex flex-row font-mono font-semibold text-2xl leading-none"
       test-countdown
     >
       <template v-if="timespan.years">
@@ -62,16 +82,16 @@ onMounted(() => {
         <span>:</span>
       </template>
       <template v-if="timespan.days">
-        <span test-countdown-day>{{ timespan.days }}d</span>
+        <span test-countdown-day>{{ daysString }}d</span>
         <span>:</span>
       </template>
       <template v-if="timespan.hours">
-        <span test-countdown-hour>{{ timespan.hours }}h</span>
+        <span test-countdown-hour>{{ hoursString }}h</span>
         <span>:</span>
       </template>
-      <span test-countdown-minute>{{ timespan.minutes }}m</span>
+      <span test-countdown-minute>{{ minutesString }}m</span>
       <span>:</span>
-      <span test-countdown-second>{{ timespan.seconds }}s</span>
+      <span test-countdown-second>{{ secondsString }}s</span>
     </div>
   </div>
 </template>
