@@ -2,7 +2,7 @@
   <InputWrapper
     test-input-number
     :color="props.color"
-    :decimals="decimalCount"
+    :decimals="decimals"
     :footer-description="props.footerDescription"
     :footer-value="props.footerValue"
     :is-input-valid="inputIsValid"
@@ -61,8 +61,8 @@ export interface Props {
   subtitle?: string;
   unit?: string;
   step?: number;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
   disabled?: boolean;
   readonly?: boolean;
   modelValue: number;
@@ -108,13 +108,15 @@ const decimalCount = (num: number) => {
   return 0;
 };
 
+const decimals = computed(() => decimalCount(props.modelValue));
+
 const inputIsValid = computed(() => {
   if (
     typeof props.modelValue !== "number" ||
     Number.isNaN(props.modelValue) ||
     props.modelValue < props.min ||
     props.modelValue > props.max ||
-    decimalCount(props.modelValue) > props.maxDecimals
+    decimals.value > props.maxDecimals
   ) {
     return false;
   }
