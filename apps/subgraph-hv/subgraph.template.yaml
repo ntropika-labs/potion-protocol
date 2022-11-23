@@ -89,9 +89,9 @@ dataSources:
         - HedgingVault
         - Investor
         - Deposit
-        - DepositRequest
+        - DepositTicket
         - Withdrawal
-        - WithdrawalRequest
+        - WithdrawalTicket
         - Block
       abis:
         - name: RoundsInputVault
@@ -125,9 +125,9 @@ dataSources:
         - HedgingVault
         - Investor
         - Deposit
-        - DepositRequest
+        - DepositTicket
         - Withdrawal
-        - WithdrawalRequest
+        - WithdrawalTicket
         - Block
       abis:
         - name: RoundsOutputVault

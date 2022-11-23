@@ -7,19 +7,19 @@ import {
   WithdrawExchangeAssetBatch,
   RoundsInputVault,
 } from "../generated/RoundsInputVault/RoundsInputVault";
-import { DepositRequest } from "../generated/schema";
+import { DepositTicket } from "../generated/schema";
 import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
-  getAssetDecimals,
+  getUnderlyingDecimals,
   setCurrentRound,
-  setLastAssetToShareRate,
+  setLastUnderlyingToShareRate,
 } from "./investmentVault";
 import {
-  getOrCreateDepositRequest,
-  getDepositRequest,
-  deleteDepositRequest,
+  getOrCreateDepositTicket,
+  getDepositTicket,
+  deleteDepositTicket,
 } from "./deposits";
 import { createBlock } from "./blocks";
 
@@ -34,9 +34,12 @@ function handleNextRound(event: NextRound): void {
       event.params.newRoundNumber.minus(BigInt.fromString("1")),
       vaultAddress,
       event.params.prevRoundExchangeRate,
-      getAssetDecimals(vaultAddress)
+      getUnderlyingDecimals(vaultAddress)
     );
-    setLastAssetToShareRate(vaultAddress, event.params.prevRoundExchangeRate);
+    setLastUnderlyingToShareRate(
+      vaultAddress,
+      event.params.prevRoundExchangeRate
+    );
   }
   log.info("NextRound {} for InputVault {}", [
     event.params.newRoundNumber.toString(),
@@ -53,8 +56,8 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
   const roundId = createRoundId(roundNumber, vaultAddress);
   // add the vault to the investor
   addInvestorVault(event.params.receiver, vaultAddress);
-  // load the depositRequest, if it doesn't exists it will be initialized to an empty one
-  const depositRequest = getOrCreateDepositRequest(
+  // load the depositTicket, if it doesn't exists it will be initialized to an empty one
+  const depositTicket = getOrCreateDepositTicket(
     event.params.id,
     vaultAddress,
     roundId,
@@ -63,8 +66,11 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
     event.block.hash,
     event.transaction.hash
   );
-  depositRequest.amount = depositRequest.amount.plus(event.params.assets);
-  depositRequest.save();
+  depositTicket.amount = depositTicket.amount.plus(event.params.assets);
+  depositTicket.amountRemaining = depositTicket.amountRemaining.plus(
+    event.params.assets
+  );
+  depositTicket.save();
 }
 
 function handleRedeemReceipt(event: RedeemReceipt): void {
@@ -109,19 +115,19 @@ function redeem(
   amount: BigInt,
   receiver: Address
 ): void {
-  const depositRequest = getDepositRequest(receiptId, vaultAddress, receiver);
-  if (depositRequest == null) {
+  const depositTicket = getDepositTicket(receiptId, vaultAddress, receiver);
+  if (depositTicket == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
       receiver.toHexString(),
     ]);
   } else {
-    _redeem(depositRequest, receiptId, roundId, roundNumber, amount, receiver);
+    _redeem(depositTicket, receiptId, roundId, roundNumber, amount, receiver);
   }
 }
 
 function _redeem(
-  depositRequest: DepositRequest,
+  depositTicket: DepositTicket,
   receiptId: BigInt,
   roundId: Bytes,
   roundNumber: BigInt,
@@ -129,27 +135,30 @@ function _redeem(
   receiver: Address
 ): void {
   // check if we are in the same round, same round means that we are updating the current request
-  if (roundId == depositRequest.round) {
-    // if the amount in the event is the same that we have already put inside it means that we want to delete the depositRequest
-    if (depositRequest.amount == amount) {
-      deleteDepositRequest(depositRequest.id);
+  if (roundId == depositTicket.round) {
+    // if the amount in the event is the same that we have already put inside it means that we want to delete the depositTicket
+    if (depositTicket.amount == amount) {
+      deleteDepositTicket(depositTicket.id);
     } else {
-      depositRequest.amount = depositRequest.amount.minus(amount);
-      depositRequest.save();
+      depositTicket.amount = depositTicket.amount.minus(amount);
+      depositTicket.amountRemaining =
+        depositTicket.amountRemaining.minus(amount);
+      depositTicket.save();
       log.info(
-        "updated DepositRequest of {} for round {}, the new amount is {}",
+        "updated DepositTicket of {} for round {}, amountRemaining is {}",
         [
           receiver.toHexString(),
           roundNumber.toString(),
-          depositRequest.amount.toString(),
+          depositTicket.amountRemaining.toString(),
         ]
       );
     }
-    // different round means that we are redeeming assets
+    // different round means that we are redeeming underlyings
   } else {
-    depositRequest.amountRedeemed = amount;
-    depositRequest.save();
-    log.info("redeemed {} for {} from depositRequest {}", [
+    depositTicket.amountRemaining = depositTicket.amountRemaining.minus(amount);
+    depositTicket.amountRedeemed = depositTicket.amountRedeemed.plus(amount);
+    depositTicket.save();
+    log.info("redeemed {} for {} from depositTicket {}", [
       amount.toString(),
       receiver.toHexString(),
       receiptId.toString(),
@@ -192,26 +201,30 @@ function withdraw(
   receiptAmount: BigInt,
   exchangeAssetAmount: BigInt
 ): void {
-  const depositRequest = getDepositRequest(receiptId, vaultAddress, investor);
-  if (depositRequest == null) {
+  const depositTicket = getDepositTicket(receiptId, vaultAddress, investor);
+  if (depositTicket == null) {
     log.error("receipt {} doesn't exist for {}", [
       receiptId.toString(),
       investor.toHexString(),
     ]);
   } else {
-    depositRequest.amount = depositRequest.amount.minus(receiptAmount);
-    depositRequest.amountRedeemed =
-      depositRequest.amountRedeemed.plus(exchangeAssetAmount);
-    depositRequest.remainingShares =
-      depositRequest.remainingShares.minus(exchangeAssetAmount);
-    depositRequest.save();
+    depositTicket.amountRemaining =
+      depositTicket.amountRemaining.minus(receiptAmount);
+    depositTicket.amountRedeemed =
+      depositTicket.amountRedeemed.plus(receiptAmount);
+    depositTicket.sharesRemaining =
+      depositTicket.sharesRemaining.minus(exchangeAssetAmount);
+    depositTicket.sharesRedeemed =
+      depositTicket.sharesRedeemed.plus(exchangeAssetAmount);
+    depositTicket.save();
     log.info(
-      "DepositRequest {} now has {} amount, {} amountRedeemed and {} remainingShares",
+      "DepositTicket {} now has {} amountRemaining, {} amountRedeemed, {} sharesRemaining and {} sharesRedeemed",
       [
-        depositRequest.id.toHexString(),
-        depositRequest.amount.toString(),
-        depositRequest.amountRedeemed.toString(),
-        depositRequest.remainingShares.toString(),
+        depositTicket.id.toHexString(),
+        depositTicket.amountRemaining.toString(),
+        depositTicket.amountRedeemed.toString(),
+        depositTicket.sharesRemaining.toString(),
+        depositTicket.sharesRedeemed.toString(),
       ]
     );
   }

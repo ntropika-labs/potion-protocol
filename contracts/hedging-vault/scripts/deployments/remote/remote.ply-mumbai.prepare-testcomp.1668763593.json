@@ -1,0 +1,13 @@
+{
+  "timestamp": 1668763593,
+  "provider": "remote",
+  "network": "ply-mumbai",
+  "config": "prepare-testcomp",
+  "contracts": {
+    "UniswapV3Router": {
+      "address": "0x7488e98ac657e57DBAf9906b6E6303f4D9Ef6974",
+      "blockNumber": 29209790
+    }
+  },
+  "dependencies": {}
+}

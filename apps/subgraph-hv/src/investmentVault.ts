@@ -26,8 +26,8 @@ function createHedgingVault(id: Address): HedgingVault {
   const vault = new HedgingVault(id);
   getOrCreateToken(contract.asset());
   getOrCreateToken(id);
-  vault.asset = contract.asset();
-  vault.totalAssets = contract.totalAssets();
+  vault.underlying = contract.asset();
+  vault.totalShares = contract.totalAssets();
   vault.shareToken = id;
   vault.save();
   return vault;
@@ -47,22 +47,22 @@ function setAction(id: Address, action: Address): void {
   vault.save();
 }
 
-function setLastShareToAssetRate(id: Address, exchangeRate: BigInt): void {
+function setLastShareToUnderlyingRate(id: Address, exchangeRate: BigInt): void {
   const vault = HedgingVault.load(id);
   if (vault == null) {
     log.error("vault {} doesn't exists", [id.toHexString()]);
   } else {
-    vault.lastShareToAssetRate = exchangeRate;
+    vault.lastShareToUnderlyingRate = exchangeRate;
     vault.save();
   }
 }
 
-function setLastAssetToShareRate(id: Address, exchangeRate: BigInt): void {
+function setLastUnderlyingToShareRate(id: Address, exchangeRate: BigInt): void {
   const vault = HedgingVault.load(id);
   if (vault == null) {
     log.error("vault {} doesn't exists", [id.toHexString()]);
   } else {
-    vault.lastAssetToShareRate = exchangeRate;
+    vault.lastUnderlyingToShareRate = exchangeRate;
     vault.save();
   }
 }
@@ -96,11 +96,11 @@ function handleVaultPositionEntered(event: VaultPositionEntered): void {
   if (currentRound.gt(BIGINT_MINUS_ONE)) {
     createBlock(event.block.hash, event.block.number, event.block.timestamp);
     const round = getOrCreateRound(currentRound, vault.id);
-    round.assetsInvested = event.params.principalAmountInvested;
+    round.underlyingsInvested = event.params.principalAmountInvested;
     round.blockEntered = event.block.hash;
     round.save();
-    vault.lastAssetsInvested = event.params.principalAmountInvested;
-    vault.totalAssets = event.params.totalPrincipalAmount;
+    vault.lastUnderlyingsInvested = event.params.principalAmountInvested;
+    vault.totalShares = event.params.totalPrincipalAmount;
     vault.save();
     log.info(
       "PositionEntered for vault {}, with principalAmountInvested {} and totalPrincipalAmount {}",
@@ -123,11 +123,10 @@ function handleVaultPositionExited(event: VaultPositionExited): void {
   if (currentRound.gt(BIGINT_MINUS_ONE)) {
     createBlock(event.block.hash, event.block.number, event.block.timestamp);
     const round = getOrCreateRound(currentRound, vault.id);
-    round.totalAssetsAtRoundEnd = event.params.newPrincipalAmount;
+    round.totalUnderlyingsAtRoundEnd = event.params.newPrincipalAmount;
     round.blockExited = event.block.hash;
     round.save();
-
-    vault.totalAssets = event.params.newPrincipalAmount;
+    vault.totalShares = event.params.newPrincipalAmount;
     vault.save();
     log.info("PositionExited for vault {} with newPrincipalAmount {}", [
       vault.id.toHexString(),
@@ -148,12 +147,15 @@ function handleDeposit(event: Deposit): void {
       event.block.hash,
       event.transaction.hash
     );
-    log.info("Deposit created for vault {} round {}, assets {} and shares {}", [
-      event.address.toHexString(),
-      currentRound.toString(),
-      event.params.assets.toString(),
-      event.params.shares.toString(),
-    ]);
+    log.info(
+      "Deposit created for vault {} round {}, underlyings {} and shares {}",
+      [
+        event.address.toHexString(),
+        currentRound.toString(),
+        event.params.assets.toString(),
+        event.params.shares.toString(),
+      ]
+    );
   } else {
     log.error(
       "Tried to create a Deposit for vault {} that doesn't have yet a round",
@@ -175,7 +177,7 @@ function handleWithdraw(event: Withdraw): void {
       event.transaction.hash
     );
     log.info(
-      "Withdrawal created for vault {} round {}, assets {} and shares {}",
+      "Withdrawal created for vault {} round {}, underlyings {} and shares {}",
       [
         event.address.toHexString(),
         currentRound.toString(),
@@ -199,9 +201,9 @@ function handleRoleRevoked(event: RoleRevoked): void {
   removeRoleVault(event.params.role, event.address, event.params.account);
 }
 
-function getAssetDecimals(id: Address): BigInt {
+function getUnderlyingDecimals(id: Address): BigInt {
   const vault = getOrCreateHedgingVault(id);
-  const token = getOrCreateToken(Address.fromBytes(vault.asset));
+  const token = getOrCreateToken(Address.fromBytes(vault.underlying));
   return token.decimals;
 }
 
@@ -291,14 +293,14 @@ function removeRoleVault(
 
 export {
   setCurrentRound,
-  setLastAssetToShareRate,
-  setLastShareToAssetRate,
+  setLastUnderlyingToShareRate,
+  setLastShareToUnderlyingRate,
   handleActionsAdded,
   handleVaultPositionEntered,
   handleVaultPositionExited,
   handleDeposit,
   handleWithdraw,
-  getAssetDecimals,
   handleRoleGranted,
   handleRoleRevoked,
+  getUnderlyingDecimals,
 };

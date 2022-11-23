@@ -15,11 +15,11 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   address: result?.id ?? "",
   admin: result?.admin ?? "",
   operator: result?.operator ?? "",
-  asset: {
-    address: result?.asset.id ?? "",
-    name: result?.asset.name ?? "",
-    symbol: result?.asset.symbol ?? "",
-    decimals: parseInt(result?.asset.decimals ?? "0"),
+  underlying: {
+    address: result?.underlying.id ?? "",
+    name: result?.underlying.name ?? "",
+    symbol: result?.underlying.symbol ?? "",
+    decimals: parseInt(result?.underlying.decimals ?? "0"),
   },
   shareToken: {
     address: result?.shareToken.id ?? "",
@@ -27,7 +27,7 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
     symbol: result?.shareToken.symbol ?? "",
     decimals: parseInt(result?.shareToken.decimals ?? "0"),
   },
-  totalAssets: result?.totalAssets ?? "0",
+  totalShares: result?.totalShares ?? "0",
   hedgingRate: formatUnits(result?.action?.hedgingRate ?? "0", 6),
   strikePercentage: formatUnits(result?.action?.strikePercentage ?? "0", 6),
   cycleDurationSecs: secsToDays(result?.action?.cycleDurationSecs ?? "0"),
@@ -40,7 +40,7 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
   currentRound: result?.currentRound ?? "0",
   rounds: (result?.rounds ?? []) as unknown as RoundsFragment,
-  lastShareToAssetRate: result?.lastShareToAssetRate ?? "0",
+  lastShareToUnderlyingRate: result?.lastShareToUnderlyingRate ?? "0",
 });
 
 const useHedgingVault = (

@@ -1,42 +1,36 @@
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
-import {
-    deploy,
-    initDeployment,
-    exportDeployments,
-    DeploymentOptions,
-    getHardhatNetworkName,
-    getDeploymentsNetworkName,
-} from "contracts-utils";
+import { Deployments, DeploymentFlags, getDeploymentType } from "contracts-utils";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-const networkName = getDeploymentsNetworkName();
-
 async function init() {
-    await initDeployment({
-        options: DeploymentOptions.DeployAndExport,
+    const deploymentType = getDeploymentType();
+
+    await Deployments.initialize({
+        type: deploymentType,
+        options: DeploymentFlags.Export | DeploymentFlags.Verify,
         deploymentsDir: resolve(__dirname, "../deployments"),
-        indexDir: resolve(__dirname, "../src"),
+        indexDir: resolve(__dirname, "../../src"),
     });
 
     const deployer = (await ethers.provider.listAccounts())[0];
 
-    console.log(`Using network ${networkName}`);
-    console.log(`Deploying from ${deployer}\n`);
+    console.log(`---------------------------------------------------`);
+    console.log(` Independent Deployment Preparation Script`);
+    console.log(`---------------------------------------------------`);
+    console.log(`- Provider: ${deploymentType.provider}`);
+    console.log(`- Network: ${deploymentType.network}`);
+    console.log(`- Config: ${deploymentType.config}`);
+    console.log(`- Deployer: ${deployer}`);
+    console.log(`---------------------------------------------------\n`);
 }
 
 async function deployUnderlyingToken(name: string, symbol: string, decimals = 18): Promise<string> {
-    const networkName = getHardhatNetworkName();
-
     console.log(`--- Deploying test underlying token ${symbol} (${name}) with ${decimals} decimals ---`);
-    const token = await deploy("TestERC20MinterPauser", [name, symbol, decimals], {
+    const token = await Deployments.deploy("TestERC20MinterPauser", [name, symbol, decimals], {
         alias: symbol,
-        options:
-            networkName === "localhost"
-                ? DeploymentOptions.DeployAndExport
-                : DeploymentOptions.DeployAndExportAndVerify,
         contract: "contracts/test/TestERC20MinterPauser.sol:TestERC20MinterPauser",
     });
 
@@ -45,15 +39,8 @@ async function deployUnderlyingToken(name: string, symbol: string, decimals = 18
 }
 
 async function deployChainlinkAggregatorUSDC(): Promise<string> {
-    const networkName = getHardhatNetworkName();
-
     console.log(`--- Deploying Chainlink Aggregator for USDC ---`);
-    const aggregator = await deploy("ChainlinkAggregatorUSDC", [], {
-        options:
-            networkName === "localhost"
-                ? DeploymentOptions.DeployAndExport
-                : DeploymentOptions.DeployAndExportAndVerify,
-    });
+    const aggregator = await Deployments.deploy("ChainlinkAggregatorUSDC", [], {});
 
     console.log(`\nChainlink Aggregator for USDC deployed at ${aggregator.address}\n`);
     return aggregator.address;
@@ -87,7 +74,7 @@ async function main() {
 
     await deployChainlinkAggregatorUSDC();
 
-    await exportDeployments();
+    Deployments.persist(true);
 }
 
 main()

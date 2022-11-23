@@ -21,19 +21,19 @@ function groupVaultsByUnderlyingAndDeposit(vaults: VaultData[]) {
   for (let i = 0; i < vaults.length; i++) {
     const vault = convertToVaultWithStrategy(vaults[i]);
 
-    let underlyingVaults = vaultsByUnderlying[vault.asset.address];
+    let underlyingVaults = vaultsByUnderlying[vault.underlying.address];
     if (!underlyingVaults) {
       underlyingVaults = [];
-      availableUnderlyings.push(vault.asset);
+      availableUnderlyings.push(vault.underlying);
     }
 
     underlyingVaults.push(vault);
 
-    vaultsByUnderlying[vault.asset.address] = underlyingVaults;
+    vaultsByUnderlying[vault.underlying.address] = underlyingVaults;
 
     if (vault.rounds) {
       const roundWithDeposits = vault.rounds.filter(
-        (r) => r.depositRequests && r.depositRequests.length
+        (r) => r.depositTickets && r.depositTickets.length
       );
 
       if (roundWithDeposits.length) personalVaults.push(vault);

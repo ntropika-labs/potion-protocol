@@ -11,7 +11,7 @@
       <p class="text-secondary-500 text-2xl mt-10">
         {{ userVaultRelativeShares.toFixed(2) }}%
       </p>
-      <p class="text-secondary-500">{{ t("estimated_share_vaule") }}</p>
+      <p class="text-secondary-500">{{ t("estimated_share_value") }}</p>
       <p class="text-secondary-500 text-2xl">
         {{ userEstimatedSharesToUnderlying.formatted }}
       </p>
@@ -23,7 +23,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { BaseCard } from "potion-ui";
 import {
-  calculateCurrentShareToAssetRate,
+  calculateCurrentShareToUnderlyingRate,
   calculateTotalRemainingShares,
 } from "hedging-vault-sdk";
 import type { DepositTicket } from "hedging-vault-sdk";
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const currentShareToAssetRate = computed(() => {
-  const currentShareToAssetRate = calculateCurrentShareToAssetRate(
+  const currentShareToAssetRate = calculateCurrentShareToUnderlyingRate(
     props.usdcBalanceActionContract,
     props.underlyingBalanceActionContract,
     props.underlyingPrice,

@@ -23,12 +23,12 @@ type HedgingVault @entity {
   admin: Bytes
   strategist: Bytes
   shareToken: Token!
-  asset: Token!
-  totalAssets: BigInt!
+  underlying: Token!
+  totalShares: BigInt!
   #investors: [Investor!] @derivedFrom(field: "user")
-  lastAssetsInvested: BigInt
-  lastAssetToShareRate: BigInt
-  lastShareToAssetRate: BigInt
+  lastUnderlyingsInvested: BigInt
+  lastUnderlyingToShareRate: BigInt
+  lastShareToUnderlyingRate: BigInt
   currentRound: BigInt
   # PotionBuyAction settings - we might create a separate entity for this
   rounds: [Round!] @derivedFrom(field: "vault")
@@ -53,17 +53,17 @@ type Round @entity {
   vault: HedgingVault!
   roundNumber: BigInt!
   #NextRound()
-  assetToShareRate: BigInt
-  shareToAssetRate: BigInt
+  underlyingToShareRate: BigInt
+  shareToUnderlyingRate: BigInt
   # VaultPositionExited()
-  totalAssetsAtRoundEnd: BigInt
+  totalUnderlyingsAtRoundEnd: BigInt
   # VaultPositionEntered()
-  assetsInvested: BigInt
+  underlyingsInvested: BigInt
   # otokenPremium: BigDecimal!
   # uniswapEnterFees: BigDecimal!
   # uniswapExitFees: BigDecimal!
-  depositRequests: [DepositRequest!]!
-  withdrawalRequests: [WithdrawalRequest!]!
+  depositTickets: [DepositTicket!]!
+  withdrawalTickets: [WithdrawalTicket!]!
   # VaultPositionExited() VaultPositionEntered()
   blockEntered: Block
   blockExited: Block
@@ -74,11 +74,10 @@ type Round @entity {
 # Receiver
 type Investor @entity {
   id: Bytes!
-  # maybe it is better to add a join entity VaultInvestors?
   vaults: [HedgingVault!]!
   user: Bytes!
-  depositRequests: [DepositRequest!] @derivedFrom(field: "investor")
-  withdrawalRequests: [WithdrawalRequest!] @derivedFrom(field: "investor")
+  depositTickets: [DepositTicket!] @derivedFrom(field: "investor")
+  withdrawalTickets: [WithdrawalTicket!] @derivedFrom(field: "investor")
 }
 
 #InvestmentVault contract
@@ -101,32 +100,32 @@ type Withdrawal @entity {
   tx: Bytes!
 }
 
-# we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsInputVault
-# _deposit() vault with receipt in the OutputVault contract
-type DepositRequest @entity {
+type DepositTicket @entity {
   id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
   amount: BigInt!
+  amountRemaining: BigInt!
   amountRedeemed: BigInt!
-  shares: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
-  remainingShares: BigInt!
+  shares: BigInt! # calculated at nextRound() multiplying amount with the round underlyingToShareRate
+  sharesRemaining: BigInt!
+  sharesRedeemed: BigInt!
   block: Block!
   tx: Bytes!
 }
 
-# we can track this by listening to transferSingle and transferBatch events from the 1155 contract RoundsOutputVault
-# _deposit()  with receipt in the OnputVault contract
-type WithdrawalRequest @entity {
+type WithdrawalTicket @entity {
   id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
   amount: BigInt!
-  assets: BigInt! #we get this at the end of the round by multiplying the amount by the share ratio
   amountRedeemed: BigInt!
-  remainingAssets: BigInt!
+  amountRemaining: BigInt!
+  underlyings: BigInt! # calculated at nextRound() multiplying amount with the round shareToUnderlyingRate
+  underlyingsRedeemed: BigInt!
+  underlyingsRemaining: BigInt!
   block: Block!
   tx: Bytes!
 }

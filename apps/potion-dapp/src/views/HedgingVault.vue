@@ -49,22 +49,22 @@
         <LabelValue
           size="lg"
           :title="t('share_price')"
-          :value="shareToAssetRatio.toString()"
-          :symbol="`${assetSymbol}/Share`"
+          :value="shareToUnderlyingRatio.toString()"
+          :symbol="`${underlyingSymbol}/Share`"
           :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('vault_size')"
-          :value="vault.totalAssets"
-          :symbol="assetSymbol"
+          :value="vault.totalShares"
+          :symbol="underlyingSymbol"
           :loading="vaultLoading"
         />
         <LabelValue
           size="lg"
           :title="t('your_shares')"
           :value="userBalance.toString()"
-          :symbol="`= ${balanceInAsset} ${assetSymbol}`"
+          :symbol="`= ${balanceInUnderlying} ${underlyingSymbol}`"
           :loading="vaultLoading"
         />
       </div>
@@ -74,9 +74,9 @@
         <AssetTag
           :title="t('asset')"
           :token="{
-            name: vault.asset.name,
-            symbol: vault.asset.symbol,
-            address: vault.asset.address,
+            name: vault.underlying.name,
+            symbol: vault.underlying.symbol,
+            address: vault.underlying.address,
           }"
           :loading="vaultLoading"
         />
@@ -140,7 +140,7 @@
                 {{
                   t("current_deposit_request_info", {
                     currentDepositAmount,
-                    assetSymbol,
+                    underlyingSymbol,
                   })
                 }}
               </h3>
@@ -150,7 +150,7 @@
                 :max="userCollateralBalance"
                 :min="0.1"
                 :step="0.01"
-                :unit="assetSymbol"
+                :unit="underlyingSymbol"
               />
               <div class="flex gap-4">
                 <BaseButton
@@ -161,7 +161,7 @@
                   @click="handleUpdateDeposit"
                 />
                 <BaseButton
-                  v-if="canDeleteDepositRequest"
+                  v-if="canDeleteDepositTicket"
                   palette="secondary-o"
                   :label="t('delete')"
                   :disabled="isLoading"
@@ -171,10 +171,16 @@
               </div>
             </div>
             <div
-              v-if="estimatedAssets > 0"
+              v-if="estimatedUnderlyings > 0"
               class="w-1/2 flex flex-col items-center gap-4"
             >
-              <h3>{{ t("estimated_exchange_assets", { estimatedAssets }) }}</h3>
+              <h3>
+                {{
+                  t("estimated_exchange_assets", {
+                    estimatedAssets: estimatedUnderlyings,
+                  })
+                }}
+              </h3>
               <InputSlider
                 class="my-4"
                 symbol="%"
@@ -185,24 +191,28 @@
               <BaseButton
                 palette="secondary"
                 :label="exchangeLabel"
-                :disabled="isLoading || canDeleteWithdrawalRequest"
+                :disabled="isLoading || canDeleteWithdrawalTicket"
                 :loading="approveExchangeLoading || exchangeTicketsLoading"
                 @click="handleExchange"
               />
             </div>
             <div
-              v-if="availableAssets > 0"
+              v-if="availableUnderlyings > 0"
               class="w-1/2 flex flex-col items-center gap-4"
             >
               <h4>
-                {{ t("available_assets_to_redeem", { availableAssets }) }}
+                {{
+                  t("available_assets_to_redeem", {
+                    availableAssets: availableUnderlyings,
+                  })
+                }}
               </h4>
               <BaseButton
                 palette="secondary"
                 :label="t('redeem')"
                 :disabled="isLoading"
-                :loading="redeemAssetsLoading"
-                @click="handleRedeemAssets"
+                :loading="redeemUnderlyingsLoading"
+                @click="handleRedeemUnderlyings"
               />
             </div>
           </div>
@@ -237,14 +247,14 @@ import {
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 import HedgingVaultHeader from "@/components/HedgingVault/HedgingVaultHeader.vue";
 
-import { useDepositRequests } from "@/composables/useDepositRequests";
+import { useDepositTickets } from "@/composables/useDepositTickets";
 import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useWithdrawalRequests } from "@/composables/useWithdrawalRequests";
+import { useWithdrawalTickets } from "@/composables/useWithdrawalTickets";
 
 import {
   getRoundsExchangerFromVault,
@@ -279,17 +289,19 @@ const {
   loadVault,
 } = useHedgingVault(vaultId, walletAddress);
 const currentRound = computed(() => vault.value.currentRound);
-const assetSymbol = computed(() => vault.value.asset.symbol);
-const assetAddress = computed(() => vault.value.asset.address);
-const assetDecimals = computed(() => vault.value.asset.decimals);
+const underlyingSymbol = computed(() => vault.value.underlying.symbol);
+const underlyingAddress = computed(() => vault.value.underlying.address);
+const underlyingDecimals = computed(() => vault.value.underlying.decimals);
 const vaultRounds = computed(() => vault.value.rounds);
-const lastShareToAssetRate = computed(() => vault.value.lastShareToAssetRate);
+const lastShareToUnderlyingRate = computed(
+  () => vault.value.lastShareToUnderlyingRate
+);
 
 // InputsRoundsVault
 const roundsInputStore = useVaultStore(
   roundsInputAddress,
   "RoundsInputVault",
-  assetAddress
+  underlyingAddress
 );
 const roundsInputState = roundsInputStore();
 
@@ -298,20 +310,20 @@ const { approveLoading, approveReceipt, approveTx, userAllowance } =
 
 // Deposit requests
 const {
-  canDeleteDepositRequest,
+  canDeleteDepositTicket,
   currentDepositAmount,
   deleteDepositLoading,
-  deleteDepositRequest,
+  deleteDepositTicket,
   deleteDepositReceipt,
   deleteDepositTransaction,
   updateDepositLoading,
-  updateDepositRequest,
+  updateDepositTicket,
   updateDepositReceipt,
   updateDepositTransaction,
-} = useDepositRequests(
+} = useDepositTickets(
   roundsInputAddress,
-  assetAddress,
-  assetDecimals,
+  underlyingAddress,
+  underlyingDecimals,
   currentRound,
   vaultRounds
 );
@@ -338,7 +350,7 @@ const handleUpdateDeposit = async () => {
       await roundsInputState.approve(depositAmount.value);
       roundsInputState.fetchUserData();
     } else {
-      await updateDepositRequest(depositAmount);
+      await updateDepositTicket(depositAmount);
       setTimeout(loadVault, 5000);
     }
   }
@@ -346,14 +358,14 @@ const handleUpdateDeposit = async () => {
 
 const handleDeleteDeposit = async () => {
   if (currentDepositAmount.value > 0) {
-    await deleteDepositRequest();
+    await deleteDepositTicket();
     setTimeout(loadVault, 5000);
   }
 };
 
 // Input output exchange
 const {
-  estimatedAssets,
+  estimatedUnderlyings,
   approveExchange,
   approveExchangeLoading,
   approveExchangeReceipt,
@@ -368,10 +380,10 @@ const {
   roundsExchangerAddress,
   roundsInputAddress,
   roundsOutputAddress,
-  assetAddress,
+  underlyingAddress,
   vaultRounds,
   currentRound,
-  lastShareToAssetRate
+  lastShareToUnderlyingRate
 );
 const exchangePercentage = ref(100);
 const updateExchangePercentage = (value: number) => {
@@ -395,34 +407,34 @@ const handleExchange = async () => {
 
 // withdrawal requests
 const {
-  canDeleteWithdrawalRequest,
+  canDeleteWithdrawalTicket,
   deleteWithdrawalLoading,
   deleteWithdrawalReceipt,
   // currentWithdrawalAmount,
-  // deleteWithdrawalRequest,
+  // deleteWithdrawalTicket,
   deleteWithdrawalTransaction,
-  availableAssets,
-  redeemAssets,
-  redeemAssetsLoading,
-  redeemAssetsReceipt,
-  redeemAssetsTransaction,
-} = useWithdrawalRequests(
+  availableUnderlyings,
+  redeemUnderlyings,
+  redeemUnderlyingsLoading,
+  redeemUnderlyingsReceipt,
+  redeemUnderlyingsTransaction,
+} = useWithdrawalTickets(
   roundsOutputAddress,
-  assetAddress,
+  underlyingAddress,
   currentRound,
   vaultRounds
 );
 
 // const handleDeleteWithdrawal = async () => {
 //   if (currentWithdrawalAmount.value > 0) {
-//     await deleteWithdrawalRequest();
+//     await deleteWithdrawalTicket();
 //     setTimeout(loadVault, 5000);
 //   }
 // };
 
-const handleRedeemAssets = async () => {
-  if (availableAssets.value > 0) {
-    await redeemAssets();
+const handleRedeemUnderlyings = async () => {
+  if (availableUnderlyings.value > 0) {
+    await redeemUnderlyings();
     setTimeout(loadVault, 5000);
   }
 };
@@ -436,9 +448,9 @@ const handleNavigateBack = () => {
 */
 const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
 
-const shareToAssetRatio = computed(() => 1 / assetToShare.value);
-const balanceInAsset = computed(
-  () => userBalance.value * shareToAssetRatio.value
+const shareToUnderlyingRatio = computed(() => 1 / assetToShare.value);
+const balanceInUnderlying = computed(
+  () => userBalance.value * shareToUnderlyingRatio.value
 );
 /* 
   End of legacy code
@@ -451,7 +463,7 @@ const isLoading = computed(
     deleteDepositLoading.value ||
     deleteWithdrawalLoading.value ||
     exchangeTicketsLoading.value ||
-    redeemAssetsLoading.value ||
+    redeemUnderlyingsLoading.value ||
     updateDepositLoading.value ||
     vaultLoading.value
 );
@@ -516,11 +528,11 @@ watch(updateDepositReceipt, (receipt) => {
   createReceiptNotification(receipt, t("deposited"));
 });
 
-watch(redeemAssetsTransaction, (transaction) => {
+watch(redeemUnderlyingsTransaction, (transaction) => {
   createTransactionNotification(transaction, t("redeeming"));
 });
 
-watch(redeemAssetsReceipt, (receipt) => {
+watch(redeemUnderlyingsReceipt, (receipt) => {
   createReceiptNotification(receipt, t("redeemed"));
 });
 </script>
