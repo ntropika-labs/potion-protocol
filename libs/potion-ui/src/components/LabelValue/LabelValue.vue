@@ -23,6 +23,7 @@ export interface Props {
   valueSize?: TextSize;
   symbol?: string;
   loading?: boolean;
+  direction?: "row" | "column";
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   valueType: "number",
   valueSize: undefined,
   loading: false,
+  direction: "column",
 });
 
 // prettier-ignore
@@ -95,9 +97,17 @@ const formattedValue = computed(() => {
 const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
 </script>
 <template>
-  <div class="text-dwhite-300" test-label-value>
+  <div
+    class="text-dwhite-300"
+    :class="[
+      props.direction === 'row'
+        ? 'flex flex-row justify-between items-end'
+        : 'flex flex-col',
+    ]"
+    test-label-value
+  >
     <h6
-      class="capitalize font-medium mb-2"
+      class="capitalize font-medium leading-loose"
       :class="[labelAlignment, labelSize]"
       test-label-value-title
     >
@@ -109,7 +119,7 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
     ></div>
     <div
       v-else
-      class="flex flex-wrap items-center space-x-1"
+      class="flex flex-wrap items-end space-x-1"
       :class="valueAlignment"
       test-label-value-value
     >
@@ -123,7 +133,7 @@ const pnlColorClass = computed(() => getPnlColor(parseFloat(props.value)));
       </div>
       <div
         v-else
-        class="font-bold font-serif"
+        class="font-bold font-serif leading-none"
         :class="[
           valueSize,
           valueColorClass,
