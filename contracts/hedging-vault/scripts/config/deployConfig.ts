@@ -329,8 +329,8 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
     },
     "remote.ply-mumbai.testcomp-1": {
         // Asset address
-        USDC: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", //            Custom USDC
-        underlyingAsset: "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14", // Custom WETH
+        USDC: "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3", //            Custom USDC
+        underlyingAsset: "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0", // Custom WETH
 
         // Investment configuration
         maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
@@ -351,17 +351,13 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
 
         // Third-party dependencies
-        potionLiquidityPoolManager: "0x7e26484f6d9383a3c16DEaab8C7D1Fc7b0e88a66",
-        opynAddressBook: "0xF55277d2608C69DE9A7904c8318C497f62460ef2",
-
-        // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
-        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
+        uniswapV3SwapRouter: "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
     },
     "remote.ply-mumbai.testcomp-2": {
         // Asset address
-        USDC: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", //            Custom USDC
-        underlyingAsset: "0x9649071fb3875b68C88c60b172e2F6ADa5717634", // Custom WBTC
+        USDC: "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3", //            Custom USDC
+        underlyingAsset: "0xb3086e79c2f6328676899E01C883B51830594A64", // Custom WBTC
 
         // Investment configuration
         maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
@@ -382,17 +378,13 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
 
         // Third-party dependencies
-        potionLiquidityPoolManager: "0x7e26484f6d9383a3c16DEaab8C7D1Fc7b0e88a66",
-        opynAddressBook: "0xF55277d2608C69DE9A7904c8318C497f62460ef2",
-
-        // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
-        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
+        uniswapV3SwapRouter: "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
     },
     "remote.ply-mumbai.testcomp-3": {
         // Asset address
-        USDC: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6", //            Custom USDC
-        underlyingAsset: "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F", // Custom LINK
+        USDC: "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3", //            Custom USDC
+        underlyingAsset: "0xe59914ED345212190778F8e7427B0B6f73332D50", // Custom LINK
 
         // Investment configuration
         maxPremiumPercentage: PercentageUtils.toSolidityPercentage(15), //      15%
@@ -413,11 +405,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         performanceFee: PercentageUtils.toSolidityPercentage(0), //             0%
 
         // Third-party dependencies
-        potionLiquidityPoolManager: "0x7e26484f6d9383a3c16DEaab8C7D1Fc7b0e88a66",
-        opynAddressBook: "0xF55277d2608C69DE9A7904c8318C497f62460ef2",
-
-        // Third-party dependencies
         potionProtocolDeployConfigName: "remote.ply-mumbai.testcomp",
-        uniswapV3SwapRouter: "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
+        uniswapV3SwapRouter: "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
     },
 };

@@ -11,7 +11,7 @@ async function init() {
     await Deployments.initialize({
         type: deploymentType,
         options: DeploymentFlags.Export | DeploymentFlags.Verify,
-        deploymentsDir: resolve(__dirname, "../deployments"),
+        deploymentsDir: resolve(__dirname, "../../deployments"),
         indexDir: resolve(__dirname, "../../src"),
     });
 
@@ -31,10 +31,10 @@ async function main() {
     await init();
 
     const tokens: string[] = [
-        "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14",
-        "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
-        "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F",
-        "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
+        "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0",
+        "0xb3086e79c2f6328676899E01C883B51830594A64",
+        "0xe59914ED345212190778F8e7427B0B6f73332D50",
+        "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3",
     ];
     const aggregators: string[] = [
         "0x0715A7794a1dc8e42615F059dD6e406A6594651A",

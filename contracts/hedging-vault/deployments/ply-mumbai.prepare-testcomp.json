@@ -1,0 +1,10 @@
+{
+  "timestamp": 1669190807,
+  "network": "ply-mumbai",
+  "contracts": {
+    "UniswapV3Router": {
+      "address": "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
+      "blockNumber": 29292985
+    }
+  }
+}

@@ -78,7 +78,8 @@
         "test-poolConfig": "hardhat test test/PotionLiquidityPool.Config.test.ts",
         "test-purchases": "hardhat test test/PotionLiquidityPool.PurchaseTestGenerator.test.ts",
         "typechain": "hardhat typechain",
-        "update-autotask-testcomp": "ts-node ./scripts/openzeppelin/testcompPricerUpdater.ts"
+        "update-autotask-testcomp": "ts-node ./scripts/openzeppelin/testcompPricerUpdater.ts",
+        "rebuild-deployments-index": "hardhat run ./scripts/lib/rebuildIndex.ts"
     },
     "dependencies": {
         "contracts-math": "workspace:^",
