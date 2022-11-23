@@ -109,6 +109,7 @@
               approveExchangeLoading || exchangeTicketsLoading
             "
             :is-redeem-loading="redeemUnderlyingsLoading"
+            :underlying-symbol="underlyingSymbol"
             @exchange-tickets="handleExchange"
             @redeem="handleRedeemUnderlyings"
           ></WithdrawalTab>
@@ -139,6 +140,7 @@ import {
 
 import TabMenu from "@/components/HedgingVault/TabMenu.vue";
 import DepositTab from "@/components/HedgingVault/DepositTab.vue";
+import WithdrawalTab from "@/components/HedgingVault/WithdrawalTab.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";

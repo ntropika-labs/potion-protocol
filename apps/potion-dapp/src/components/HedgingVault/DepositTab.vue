@@ -45,18 +45,18 @@ const label = computed(() => {
       <InputNumber
         v-model="depositAmount"
         class="self-stretch"
-        :max="userCollateralBalance"
+        :max="props.userCollateralBalance"
         :title="t('choose_deposit_amount')"
         :subtitle="t('deposits_processed_next_round')"
         :min="0.1"
         :step="0.01"
-        :unit="underlyingSymbol"
+        :unit="props.underlyingSymbol"
       />
       <BaseButton
         palette="secondary"
         :label="label"
-        :disabled="invalidAmount || isLoading"
-        :loading="isUpdateLoading"
+        :disabled="invalidAmount || props.isLoading"
+        :loading="props.isUpdateLoading"
         @click="emit('updateDeposit', depositAmount)"
       >
         <template #pre-icon>
@@ -66,7 +66,7 @@ const label = computed(() => {
     </div>
     <div class="flex flex-col items-center gap-4">
       <InputNumber
-        :value="currentDepositAmount"
+        :model-value="props.currentDepositAmount"
         class="self-stretch"
         :title="t('current_round_deposit')"
         subtitle="&nbsp;"
@@ -75,13 +75,13 @@ const label = computed(() => {
         :min="0"
         :show-max="false"
         :show-balance="false"
-        :unit="underlyingSymbol"
+        :unit="props.underlyingSymbol"
       />
       <BaseButton
         palette="glass"
         :label="t('cancel_request')"
-        :disabled="isLoading || currentDepositAmount === 0"
-        :loading="isDeleteLoading"
+        :disabled="props.isLoading || props.currentDepositAmount === 0"
+        :loading="props.isDeleteLoading"
         @click="emit('deleteDeposit')"
       >
         <template #pre-icon>

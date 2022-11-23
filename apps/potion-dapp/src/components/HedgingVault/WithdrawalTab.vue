@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { InputSlider, BaseButton } from "potion-ui";
+import { BaseButton, InputNumber, InputSlider, InputWrapper } from "potion-ui";
 
 interface Props {
   availableUnderlyings: number;
@@ -10,6 +10,7 @@ interface Props {
   isLoading: boolean;
   isExchangeLoading: boolean;
   isRedeemLoading: boolean;
+  underlyingSymbol: string;
 }
 
 const props = defineProps<Props>();
@@ -26,55 +27,66 @@ const updateExchangePercentage = (value: number) => {
   }
 };
 
-const exchangeLabel = computed(() =>
+const label = computed(() =>
   props.canExchange ? t("exchange") : t("approve")
 );
 </script>
 
 <template>
-  <div class="w-1/2 flex flex-col items-center gap-4">
-    <h3>
-      {{
-        t("estimated_exchange_assets", {
-          estimatedAssets: estimatedUnderlyings,
-        })
-      }}
-    </h3>
-    <InputSlider
-      class="my-4"
-      symbol="%"
-      :step="0.1"
-      :model-value="exchangePercentage"
-      @update:model-value="updateExchangePercentage"
-    />
-    <BaseButton
-      palette="secondary"
-      :label="exchangeLabel"
-      :disabled="isLoading"
-      :loading="isExchangeLoading"
-      @click="emit('exchangeTickets', exchangePercentage)"
-    >
-      <template #pre-icon>
-        <i class="i-ph-upload-simple-bold"></i>
-      </template>
-    </BaseButton>
-    <h4>
-      {{
-        t("available_assets_to_redeem", {
-          availableAssets: availableUnderlyings,
-        })
-      }}
-    </h4>
-    <BaseButton
-      palette="secondary"
-      :label="t('redeem')"
-      :disabled="isLoading"
-      :loading="isRedeemLoading"
-      @click="emit('redeem')"
-    >
-      <template #pre-icon>
-        <i class="i-ph-lightning-fill-bold"></i>
-      </template>
-    </BaseButton>
+  <div class="flex justify-center gap-4">
+    <div class="flex flex-col items-center gap-4">
+      <InputWrapper
+        :footer-description="t('estimated_exchange_assets')"
+        :subtitle="t('withdrawals_processed_next_round')"
+        :title="t('choose_withdrawal_amount')"
+        :value="props.estimatedUnderlyings"
+        :max="props.estimatedUnderlyings"
+        :unit="props.underlyingSymbol"
+      >
+        <InputSlider
+          class="my-4"
+          symbol="%"
+          :step="0.1"
+          :model-value="exchangePercentage"
+          @update:model-value="updateExchangePercentage"
+        />
+      </InputWrapper>
+      <BaseButton
+        palette="secondary"
+        :label="label"
+        :disabled="props.estimatedUnderlyings === 0 || props.isLoading"
+        :loading="props.isExchangeLoading"
+        @click="emit('exchangeTickets', exchangePercentage)"
+      >
+        <template #pre-icon>
+          <i class="i-ph-upload-simple-bold"></i>
+        </template>
+      </BaseButton>
+    </div>
+    <div class="flex flex-col items-center gap-4">
+      <InputNumber
+        :model-value="props.availableUnderlyings"
+        class="self-stretch"
+        :title="t('available_assets_to_redeem')"
+        subtitle="&nbsp;"
+        :footer-description="t('assets_will_be_withdrawn')"
+        :readonly="true"
+        :min="0"
+        :show-max="false"
+        :show-balance="false"
+        :unit="props.underlyingSymbol"
+      />
+      <BaseButton
+        palette="glass"
+        :label="t('redeem')"
+        :disabled="props.availableUnderlyings === 0 || props.isLoading"
+        :loading="props.isRedeemLoading"
+        @click="emit('redeem')"
+      >
+        <template #pre-icon>
+          <i class="i-ph-lightning-fill"></i>
+        </template>
+      </BaseButton>
+    </div>
   </div>
 </template>
