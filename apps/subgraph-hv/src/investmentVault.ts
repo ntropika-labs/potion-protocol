@@ -238,6 +238,8 @@ function addRoleVault(
         vaultAddress.toHexString(),
       ]);
     }
+  } else {
+    log.error("vault {} doesn't exists", [vaultAddress.toHexString()]);
   }
 }
 
@@ -288,6 +290,8 @@ function removeRoleVault(
         vaultAddress.toHexString(),
       ]);
     }
+  } else {
+    log.error("vault {} doesn't exists", [vaultAddress.toHexString()]);
   }
 }
 

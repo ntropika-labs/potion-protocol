@@ -52,7 +52,16 @@ function mockHedgingVault(
   action: Address,
   underlying: Address,
   totalShares: BigInt,
-  currentRound: BigInt
+  currentRound: BigInt,
+  admin: Address = Address.fromString(
+    "0x0000000000000000000000000000000000000000"
+  ),
+  operator: Address = Address.fromString(
+    "0x0000000000000000000000000000000000000000"
+  ),
+  strategist: Address = Address.fromString(
+    "0x0000000000000000000000000000000000000000"
+  )
 ): HedgingVault {
   const vault = new HedgingVault(id);
   vault.shareToken = id;
@@ -60,6 +69,9 @@ function mockHedgingVault(
   vault.action = action;
   vault.totalShares = totalShares;
   vault.currentRound = currentRound;
+  vault.admin = admin;
+  vault.operator = operator;
+  vault.strategist = strategist;
   vault.save();
   return vault;
 }
