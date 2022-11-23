@@ -19,7 +19,7 @@ interface Props {
   operatorAddress: string;
   underlyingAsset: Token;
   strikePercent: string;
-  cycleDurationSecs: string;
+  roundLength: string;
   premiumPercentage: string;
   slippagePercentage: string;
   uniswapSlippagePercentage: string;
@@ -31,18 +31,15 @@ const props = defineProps<Props>();
 const vaultEtherscanLink = getEtherscanUrl(props.address);
 const adminEtherscanLink = getEtherscanUrl(props.adminAddress);
 const operatorEtherscanLink = getEtherscanUrl(props.operatorAddress);
-const roundLength = computed(() =>
-  (parseInt(props.cycleDurationSecs) / 86400).toString()
-);
 const emits = defineEmits<{
   (e: "back"): void;
 }>();
 
-const nextCycle = computed(() => parseInt(props.nextCycleTimestamp));
-const current = computed(() => parseInt(props.currentTimestamp));
+const nextCycle = computed(() => parseInt(props.nextCycleTimestamp) * 1000);
+const current = computed(() => parseInt(props.currentTimestamp) * 1000);
 </script>
 <template>
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 items-center mb-4 md:mb-8">
+  <div class="grid gap-8 md:grid-cols-3 lg:grid-cols-9 items-center mb-8">
     <div>
       <BaseButton
         :label="t('back')"
@@ -60,6 +57,8 @@ const current = computed(() => parseInt(props.currentTimestamp));
       :label="t('current_round_ends_in')"
       :start-date="current"
       :end-date="nextCycle"
+      :expiration-message="t('next_round_will_start_soon')"
+      class="justify-center md:col-span-2 lg:(col-start-3 col-end-8)"
     />
   </div>
   <BaseCard class="px-12 py-8" test-header>
@@ -124,12 +123,12 @@ const current = computed(() => parseInt(props.currentTimestamp));
       >
         <div class="flex flex-row justify-between items-end">
           <p>Hedged Asset</p>
-          <TokenIcon size="md" :image="props.underlyingAsset.image" name="" />
+          <TokenIcon size="lg" :image="props.underlyingAsset.image" name="" />
         </div>
         <div>
           <LabelValue
             size="lg"
-            title="Put Strike"
+            :title="t('put_strike')"
             :value="props.strikePercent"
             value-type="number"
             value-size="3xl"
@@ -142,10 +141,10 @@ const current = computed(() => parseInt(props.currentTimestamp));
           <LabelValue
             size="lg"
             :title="t('put_duration')"
-            :value="roundLength"
-            value-type="number"
+            :value="props.roundLength"
+            value-type="raw"
             value-size="3xl"
-            symbol="%"
+            :symbol="t('days')"
             direction="row"
             test-header-strike-percent
           ></LabelValue>
@@ -156,9 +155,42 @@ const current = computed(() => parseInt(props.currentTimestamp));
       <div
         class="lg:(col-start-8 col-end-10) flex flex-col justify-between md:py-8"
       >
-        <div><p>Max Premium</p></div>
-        <div><p>Max Potion Slippage</p></div>
-        <div><p>Max Uniswap Slippage</p></div>
+        <div>
+          <LabelValue
+            size="lg"
+            :title="t('max_premium')"
+            :value="props.premiumPercentage"
+            value-type="number"
+            value-size="3xl"
+            symbol="%"
+            direction="row"
+            test-header-max-premium
+          ></LabelValue>
+        </div>
+        <div>
+          <LabelValue
+            size="lg"
+            :title="t('max_potion_slippage')"
+            :value="props.slippagePercentage"
+            value-type="number"
+            value-size="3xl"
+            symbol="%"
+            direction="row"
+            test-header-potion-slippage
+          ></LabelValue>
+        </div>
+        <div>
+          <LabelValue
+            size="lg"
+            :title="t('max_uniswap_slippage')"
+            :value="props.uniswapSlippagePercentage"
+            value-type="number"
+            value-size="3xl"
+            symbol="%"
+            direction="row"
+            test-header-swap-slippage
+          ></LabelValue>
+        </div>
       </div>
       <!-- END COLUMN 3 -->
     </div>

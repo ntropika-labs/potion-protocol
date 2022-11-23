@@ -13,6 +13,8 @@ const secsToDays = (secs: string) =>
 
 const queryResultToVault = (result: HedgingVaultFragment) => ({
   address: result?.id ?? "",
+  admin: result?.admin ?? "",
+  operator: result?.operator ?? "",
   asset: {
     address: result?.asset.id ?? "",
     name: result?.asset.name ?? "",

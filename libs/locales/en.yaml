@@ -36,7 +36,7 @@ collateral_claimed: collateral claimed
 committed: committed
 connect_wallet: Connect Wallet
 connected_chain: Connected Chain
-connected_wallet: 'Connected Wallet:'
+connected_wallet: "Connected Wallet:"
 contracts_addresses: Contracts Addresses
 counterparties: Counterparties
 counterparty: Counterparty
@@ -62,7 +62,7 @@ curve_formula_tooltip: a = Scale b = End Point c = Convexity d = Offset
 curve_parameters: Parameters defining the curve.
 curve_setup: Curve Setup
 cycle_duration: cycle duration
-days: days
+days: Days
 deposit: deposit
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer: Balance
@@ -222,3 +222,9 @@ straddle: Straddle
 protective_put: Protective Put
 covered_asset: Covered Asset
 round_length: Round Length
+put_strike: Put Strike
+put_duration: Put Duration
+max_potion_slippage: Max Potion Slippage
+max_uniswap_slippage: Max Uniswap Slippage
+current_round_ends_in: Current Round ends in
+next_round_will_start_soon: Next Round wil start soon
