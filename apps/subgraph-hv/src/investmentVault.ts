@@ -233,7 +233,7 @@ function addRoleVault(
       ]);
     } else {
       log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
-        vaultRole,
+        role.toHexString(),
         account.toHexString(),
         vaultAddress.toHexString(),
       ]);
@@ -283,7 +283,7 @@ function removeRoleVault(
       }
     } else {
       log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
-        vaultRole,
+        role.toHexString(),
         account.toHexString(),
         vaultAddress.toHexString(),
       ]);
