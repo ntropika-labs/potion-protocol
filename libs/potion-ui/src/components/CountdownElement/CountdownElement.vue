@@ -61,6 +61,7 @@ const secondsString = computed(() =>
   <div
     class="flex gap-4 text-dwhite-300 items-end"
     :class="[direction === 'row' ? 'flex-row' : 'flex-col']"
+    test-countdown-element
   >
     <span v-if="timespan.value > 0" class="text-sm" test-label>{{
       label
