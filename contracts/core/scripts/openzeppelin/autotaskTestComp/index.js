@@ -15,31 +15,31 @@ var AggregatorInterfaceAbiString =
     '[{"anonymous":false,"inputs":[{"indexed":true,"internalType":"int256","name":"current","type":"int256"},{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"AnswerUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":true,"internalType":"address","name":"startedBy","type":"address"},{"indexed":false,"internalType":"uint256","name":"startedAt","type":"uint256"}],"name":"NewRound","type":"event"},{"inputs":[],"name":"latestAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"roundId","type":"uint256"}],"name":"getAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"roundId","type":"uint256"}],"name":"getTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]';
 
 const RelayerAddress = "0xa5b9f311ea1d9785872c5f7e538804c0cdf29249";
-const AddressbookAddress = "0xF55277d2608C69DE9A7904c8318C497f62460ef2"; // AddressBook module
+const AddressbookAddress = "0x0003f387d1e1428D277d1EbF9eAfBF2Dc2daDDA8"; // AddressBook module
 
 var TokenConfigs = [
     {
         tokenName: "WETH",
-        pricerAddress: "0xB7125B8178B60b3F9cF6f9C2cDa03119c5F4b2D7",
-        pricerAsset: "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14",
+        pricerAddress: "0xA9e8ca8C1A44E217667069a16d9ae1342A110AB0",
+        pricerAsset: "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0",
         aggregatorAddress: "0x0715A7794a1dc8e42615F059dD6e406A6594651A",
     },
     {
         tokenName: "WBTC",
-        pricerAddress: "0xD77399aEf4d4c7A54eA20eF0943b9e722dEf1339",
-        pricerAsset: "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
+        pricerAddress: "0x700E5c824540e3Ea3eB432013eA298659b8a4Aad",
+        pricerAsset: "0xb3086e79c2f6328676899E01C883B51830594A64",
         aggregatorAddress: "0x007A22900a3B98143368Bd5906f8E17e9867581b",
     },
     {
         tokenName: "LINK",
-        pricerAddress: "0xaadD9De5c06AA107501413228F898C1E6A6D770e",
-        pricerAsset: "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F",
+        pricerAddress: "0x90DC40A504Ca934f0fe60b321EDd530299266437",
+        pricerAsset: "0xe59914ED345212190778F8e7427B0B6f73332D50",
         aggregatorAddress: "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408",
     },
     {
         tokenName: "USDC",
-        pricerAddress: "0xAF112F090e6132c23D7275c60a96CF48672f8dd1",
-        pricerAsset: "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
+        pricerAddress: "0xb37c503B74e9d661E94E7fC7D07DBc672C0681a6",
+        pricerAsset: "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3",
         aggregatorAddress: "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0",
     },
 ];
