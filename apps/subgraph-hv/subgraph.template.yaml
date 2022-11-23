@@ -22,6 +22,10 @@ dataSources:
           file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
         - name: ERC20
           file: ../../contracts/hedging-vault/abis/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: RolesManagerUpgradeable
+          file: ../../contracts/hedging-vault/abis/contracts/common/RolesManagerUpgradeable.sol/RolesManagerUpgradeable.json
+        - name: PotionBuyAction
+          file: ../../contracts/hedging-vault/abis/contracts/actions/PotionBuyAction.sol/PotionBuyAction.json
       eventHandlers:
         - event: ActionsAdded(address[])
           handler: handleActionsAdded
@@ -33,6 +37,10 @@ dataSources:
           handler: handleDeposit
         - event: Withdraw(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleWithdraw
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
       file: ./src/investmentVault.ts
   
   - kind: ethereum/contract
@@ -138,3 +146,4 @@ dataSources:
         - event: WithdrawExchangeAssetBatch(indexed address,indexed address,indexed address,uint256,uint256[],uint256[])
           handler: handleWithdrawExchangeAssetBatch
       file: ./src/roundsOutputVault.ts
+      

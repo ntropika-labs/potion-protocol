@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
   ActionsAdded,
   VaultPositionEntered,
@@ -6,14 +6,18 @@ import {
   InvestmentVault,
   Deposit,
   Withdraw,
+  RoleGranted,
+  RoleRevoked,
 } from "../generated/InvestmentVault/InvestmentVault";
+
 import { HedgingVault } from "../generated/schema";
 import { getOrCreateToken } from "./token";
-import { setVault } from "./potionBuyAction";
+import { setVault, updateNextCycleTimestamp } from "./potionBuyAction";
 import { getOrCreateRound, createRoundId } from "./rounds";
 import { createBlock } from "./blocks";
 import { createDeposit } from "./deposits";
 import { createWithdrawal } from "./withdrawals";
+import { getVaultRole } from "./roles";
 
 const BIGINT_MINUS_ONE = BigInt.fromString("-1");
 
@@ -107,6 +111,10 @@ function handleVaultPositionEntered(event: VaultPositionEntered): void {
       ]
     );
   }
+  if (vault.action) {
+    const actionAddress = Address.fromBytes(vault.action as Bytes);
+    updateNextCycleTimestamp(actionAddress);
+  }
 }
 
 function handleVaultPositionExited(event: VaultPositionExited): void {
@@ -118,6 +126,7 @@ function handleVaultPositionExited(event: VaultPositionExited): void {
     round.totalAssetsAtRoundEnd = event.params.newPrincipalAmount;
     round.blockExited = event.block.hash;
     round.save();
+
     vault.totalAssets = event.params.newPrincipalAmount;
     vault.save();
     log.info("PositionExited for vault {} with newPrincipalAmount {}", [
@@ -182,10 +191,102 @@ function handleWithdraw(event: Withdraw): void {
   }
 }
 
+function handleRoleGranted(event: RoleGranted): void {
+  addRoleVault(event.params.role, event.address, event.params.account);
+}
+
+function handleRoleRevoked(event: RoleRevoked): void {
+  removeRoleVault(event.params.role, event.address, event.params.account);
+}
+
 function getAssetDecimals(id: Address): BigInt {
   const vault = getOrCreateHedgingVault(id);
   const token = getOrCreateToken(Address.fromBytes(vault.asset));
   return token.decimals;
+}
+
+function addRoleVault(
+  role: Bytes,
+  vaultAddress: Address,
+  account: Address
+): void {
+  const vaultRole = getVaultRole(role, vaultAddress);
+  const vault = HedgingVault.load(vaultAddress);
+  if (vault != null) {
+    if (vaultRole != "") {
+      if (vaultRole == "admin") {
+        vault.admin = account;
+      } else if (vaultRole == "strategist") {
+        vault.strategist = account;
+      } else if (vaultRole == "operator") {
+        vault.operator = account;
+      }
+
+      vault.save();
+
+      log.info("Role {} set to account {} for vault {}", [
+        vaultRole,
+        account.toHexString(),
+        vaultAddress.toHexString(),
+      ]);
+    } else {
+      log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
+        vaultRole,
+        account.toHexString(),
+        vaultAddress.toHexString(),
+      ]);
+    }
+  }
+}
+
+function removeRoleVault(
+  role: Bytes,
+  vaultAddress: Address,
+  account: Address
+): void {
+  const vaultRole = getVaultRole(role, vaultAddress);
+  const vault = HedgingVault.load(vaultAddress);
+  if (vault != null) {
+    if (vaultRole != "") {
+      if (vaultRole == "admin") {
+        if (vault.admin == account) {
+          vault.admin = null;
+          vault.save();
+        } else {
+          log.error(
+            "Tried to remove role admin for account {} and vault {} that is not assigned to that account",
+            [account.toHexString(), vaultAddress.toHexString()]
+          );
+        }
+      } else if (vaultRole == "strategist") {
+        if (vault.strategist == account) {
+          vault.strategist = null;
+          vault.save();
+        } else {
+          log.error(
+            "Tried to remove role strategist for account {} and vault {} that is not assigned to that account",
+            [account.toHexString(), vaultAddress.toHexString()]
+          );
+        }
+      } else if (vaultRole == "operator") {
+        if (vault.operator == account) {
+          vault.operator = null;
+          vault.save();
+        } else {
+          log.error(
+            "Tried to remove role operator for account {} and vault {} that is not assigned to that account",
+            [account.toHexString(), vaultAddress.toHexString()]
+          );
+        }
+      }
+    } else {
+      log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
+        vaultRole,
+        account.toHexString(),
+        vaultAddress.toHexString(),
+      ]);
+    }
+  }
 }
 
 export {
@@ -198,4 +299,6 @@ export {
   handleDeposit,
   handleWithdraw,
   getAssetDecimals,
+  handleRoleGranted,
+  handleRoleRevoked,
 };
