@@ -115,6 +115,17 @@ function handleSwapSlippageChanged(event: SwapSlippageChanged): void {
   ]);
 }
 
+function updateNextCycleTimestamp(id: Address): void {
+  const contract = ActionContract.bind(id);
+  const action = getOrCreateAction(id);
+  action.nextCycleStartTimestamp = contract.nextCycleStartTimestamp();
+  action.save();
+  log.info("update next cycle timestamp of action {} to {}", [
+    id.toHexString(),
+    action.nextCycleStartTimestamp.toString(),
+  ]);
+}
+
 export {
   handleCycleDurationChanged,
   handleHedgingRateChanged,
@@ -123,4 +134,5 @@ export {
   handlePremiumSlippageChanged,
   handleStrikePercentageChanged,
   handleSwapSlippageChanged,
+  updateNextCycleTimestamp,
 };

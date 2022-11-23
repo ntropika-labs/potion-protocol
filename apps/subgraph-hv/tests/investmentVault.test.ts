@@ -11,6 +11,7 @@ import {
   mockTokenName,
   mockTokenSymbol,
   mockTokenDecimals,
+  mockNextCycleStartTimestamp,
 } from "./contractCalls";
 import {
   assertEntity,
@@ -132,11 +133,23 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        underlyingAddress,
         actionAddress,
+        underlyingAddress,
         BigInt.fromString("30"),
         BigInt.fromString("0")
       );
+      mockPotionBuyAction(
+        actionAddress,
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0"),
+        BigInt.fromString("0")
+      );
+      mockNextCycleStartTimestamp(actionAddress, BigInt.fromString("33"));
       mockRound(BigInt.fromString("0"), contractAddress);
       const mockedEvent = createVaultPositionEntered(
         BigInt.fromString("100"),
@@ -149,6 +162,7 @@ describe("InvestmentVault tests", () => {
 
     test("can handle the event", () => {
       assert.entityCount("HedgingVault", 1);
+      assert.entityCount("PotionBuyAction", 1);
       assert.entityCount("Round", 1);
       assert.entityCount("Block", 1);
     });
@@ -166,14 +180,23 @@ describe("InvestmentVault tests", () => {
         { field: "totalShares", value: "100" },
       ]);
     });
+
+    test("PotionBuyAction has been updated correctly", () => {
+      assertEntity("PotionBuyAction", actionAddress.toHexString(), [
+        {
+          field: "nextCycleStartTimestamp",
+          value: "33",
+        },
+      ]);
+    });
   });
 
   describe("handleVaultPositionExited", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        underlyingAddress,
         actionAddress,
+        underlyingAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")
       );
@@ -208,8 +231,8 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        underlyingAddress,
         actionAddress,
+        underlyingAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")
       );
@@ -242,8 +265,8 @@ describe("InvestmentVault tests", () => {
     beforeAll(() => {
       mockHedgingVault(
         contractAddress,
-        underlyingAddress,
         actionAddress,
+        underlyingAddress,
         BigInt.fromString("20"),
         BigInt.fromString("0")
       );

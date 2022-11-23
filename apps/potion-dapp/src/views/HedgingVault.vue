@@ -1,5 +1,19 @@
 <template>
   <div>
+    <HedgingVaultHeader
+      :address="vaultId"
+      :admin-address="vault.admin"
+      :operator-address="vault.operator"
+      :underlying-asset="vault.underlying"
+      :strike-percent="vault.strikePercentage"
+      :round-length="vault.cycleDurationSecs"
+      :premium-percentage="vault.maxPremiumPercentage"
+      :slippage-percentage="vault.premiumSlippage"
+      :uniswap-slippage-percentage="vault.swapSlippage"
+      :next-cycle-timestamp="vault.nextCycleTimestamp"
+      :current-timestamp="blockTimestamp.toString()"
+      @back="handleNavigateBack"
+    />
     <BaseCard class="p-4 items-center md:items-start">
       <div class="mb-3">
         <p class="capitalize">{{ t("protective_put_vault") }}</p>
@@ -127,7 +141,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { ref, computed, watch, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import {
@@ -142,6 +156,7 @@ import TabMenu from "@/components/HedgingVault/TabMenu.vue";
 import DepositTab from "@/components/HedgingVault/DepositTab.vue";
 import WithdrawalTab from "@/components/HedgingVault/WithdrawalTab.vue";
 import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import HedgingVaultHeader from "@/components/HedgingVault/HedgingVaultHeader.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -166,6 +181,7 @@ const selectedTab = ref<AVAILABLE_TABS>(AVAILABLE_TABS.DEPOSIT);
 
 const { t } = useI18n();
 
+const router = useRouter();
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
 const roundsExchangerAddress = getRoundsExchangerFromVault(vaultId.value);
@@ -305,6 +321,10 @@ const handleRedeemUnderlyings = async () => {
     await redeemUnderlyings();
     setTimeout(loadVault, 5000);
   }
+};
+
+const handleNavigateBack = () => {
+  router.push({ name: "discover-hedging-vaults" });
 };
 
 const isLoading = computed(

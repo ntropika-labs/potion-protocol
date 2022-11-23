@@ -45,6 +45,8 @@ fragment WithdrawalTicketInfo on WithdrawalTicket {
 query getHedgingVault($vault: ID!, $investor: String!) {
   hedgingVault(id: $vault) {
     ...VaultInfo
+    admin
+    operator
     action {
       ...ActionInfo
     }

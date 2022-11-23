@@ -41,6 +41,7 @@ import UnderlyingList from "./components/UnderlyingList/UnderlyingList.vue";
 import TimeTag from "./components/TimeTag/TimeTag.vue";
 import TokenCard from "./components/TokenCard/TokenCard.vue";
 import VaultCard from "./components/VaultCard/VaultCard.vue";
+import CountdownElement from "./components/CountdownElement/CountdownElement.vue";
 
 export type {
   IconStrokeWeight,
@@ -96,4 +97,5 @@ export {
   TimeTag,
   TokenCard,
   VaultCard,
+  CountdownElement,
 };

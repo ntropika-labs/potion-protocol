@@ -1,24 +1,24 @@
 {
-  "timestamp": 1668698191,
+  "timestamp": 1669188824,
   "provider": "remote",
   "network": "ply-mumbai",
   "config": "prepare-testcomp",
   "contracts": {
     "WETH": {
-      "address": "0x798e9C98e24faBcCf04cF6d31381B1CFC75CBe14",
-      "blockNumber": 29200200
+      "address": "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0",
+      "blockNumber": 29292567
     },
     "WBTC": {
-      "address": "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
-      "blockNumber": 29200208
+      "address": "0xb3086e79c2f6328676899E01C883B51830594A64",
+      "blockNumber": 29292576
     },
     "LINK": {
-      "address": "0xBB2bc2c224139512a7525a83955567FD2C3a0c1F",
-      "blockNumber": 29200216
+      "address": "0xe59914ED345212190778F8e7427B0B6f73332D50",
+      "blockNumber": 29292585
     },
     "USDC": {
-      "address": "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
-      "blockNumber": 29200224
+      "address": "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3",
+      "blockNumber": 29292594
     }
   },
   "dependencies": {}

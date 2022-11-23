@@ -1,66 +1,66 @@
 {
-  "timestamp": 1669100907,
+  "timestamp": 1669191375,
   "network": "ply-mumbai",
   "contracts": {
     "USDC": {
-      "address": "0x45902f8c0a64A19ff849DAD5277Af72F68C746D6",
+      "address": "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3",
       "blockNumber": 0
     },
     "UnderlyingAsset": {
-      "address": "0x9649071fb3875b68C88c60b172e2F6ADa5717634",
+      "address": "0xb3086e79c2f6328676899E01C883B51830594A64",
       "blockNumber": 0
     },
     "PotionLiquidityPool": {
-      "address": "0x7e26484f6d9383a3c16DEaab8C7D1Fc7b0e88a66",
+      "address": "0x7Bd7326E8D783FA8223F74F38703D922E8bD2707",
       "blockNumber": 0
     },
     "OpynAddressBook": {
-      "address": "0xF55277d2608C69DE9A7904c8318C497f62460ef2",
+      "address": "0x0003f387d1e1428D277d1EbF9eAfBF2Dc2daDDA8",
       "blockNumber": 0
     },
     "OpynController": {
-      "address": "0xD82DED161c6Bfcf0DdCc3D63a846612ad25cbc73",
+      "address": "0xF9D89F231004FE22902e4c3cBDFb2ca0f0b2dB8D",
       "blockNumber": 0
     },
     "OpynFactory": {
-      "address": "0x543dC5Df16d8A47E9aF1669D773D2544131557ea",
+      "address": "0xc5f401Ff932652800A458afAE9ef5a30BB51093D",
       "blockNumber": 0
     },
     "OpynOracle": {
-      "address": "0x14b101c16132377b6476Fb7228C21420C7fdd7DF",
+      "address": "0x24e565eB62F873Fb48953E8b42fDD11779091883",
       "blockNumber": 0
     },
     "SwapRouter": {
-      "address": "0xA5fE5Cd087538Bcf85baCAb570FacF95bddec1A8",
+      "address": "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
       "blockNumber": 0
     },
     "HedgingVaultOrchestrator": {
-      "address": "0x3097e9130A6833A2286D7bd2d430113C13c3B331",
-      "blockNumber": 29275039
+      "address": "0x477DEC373776fd41a1E415CF79e68AE3A1901BBE",
+      "blockNumber": 29293080
     },
     "PotionBuyAction": {
-      "address": "0xe75dC28E13fE11eFb87Bb87FC345ef1C9C902ee9",
-      "blockNumber": 29275042
+      "address": "0xD7242394c2B65913f0b75Bf113E01f5D4d0F0d87",
+      "blockNumber": 29293082
     },
     "SwapToUSDCAction": {
-      "address": "0x10ACC16e7A09425001466a6b399b11d4079bC910",
-      "blockNumber": 29275045
+      "address": "0xb0db5D7fbECFa46F31e72276C201B5a58293a130",
+      "blockNumber": 29293084
     },
     "InvestmentVault": {
-      "address": "0x68d089a7D28AF906Cf3EE565402f764C5f130b9d",
-      "blockNumber": 29275048
+      "address": "0x9e9B11a75052c8FacE9D807E1aC4A09F9b1D6Ba8",
+      "blockNumber": 29293086
     },
     "RoundsInputVault": {
-      "address": "0xBF4342Eef5Aa79D2e2e691617344aFfC16bB8268",
-      "blockNumber": 29275050
+      "address": "0xD30256CCFB8115646C8a8ca54C3b630C54Ce66AC",
+      "blockNumber": 29293088
     },
     "RoundsOutputVault": {
-      "address": "0x21518c4158A8DAee4FDfa6487C125fE245217c29",
-      "blockNumber": 29275052
+      "address": "0x2845a403c1eDA764eC449E19CaD3fa8cd90195FE",
+      "blockNumber": 29293090
     },
     "RoundsVaultExchanger": {
-      "address": "0x2185049fb714d58Cf0f65B883475c91D8EDE364a",
-      "blockNumber": 29275054
+      "address": "0xb7FE9976040B6BC094D3Ac9b31BdDc85B9EFbBbd",
+      "blockNumber": 29293092
     }
   }
 }

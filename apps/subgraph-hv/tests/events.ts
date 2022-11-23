@@ -6,6 +6,8 @@ import {
   ActionsAdded,
   Deposit,
   Withdraw,
+  RoleGranted,
+  RoleRevoked,
 } from "../generated/InvestmentVault/InvestmentVault";
 import {
   CycleDurationChanged,
@@ -32,7 +34,7 @@ import {
   WithdrawExchangeAsset as OutputWithdrawExchangeAsset,
   WithdrawExchangeAssetBatch as OutputWithdrawExchangeAssetBatch,
 } from "../generated/RoundsOutputVault/RoundsOutputVault";
-import { ethereum, BigInt, Address } from "@graphprotocol/graph-ts";
+import { ethereum, BigInt, Address, Bytes } from "@graphprotocol/graph-ts";
 import { newMockEvent } from "matchstick-as/assembly/index";
 
 // InvestmentVault events
@@ -128,6 +130,38 @@ export function createWithdraw(
       "shares",
       ethereum.Value.fromUnsignedBigInt(shares)
     ),
+  ];
+
+  return event;
+}
+
+export function createRoleGranted(
+  role: Bytes,
+  account: Address,
+  sender: Address
+): RoleGranted {
+  const event = changetype<RoleGranted>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam("role", ethereum.Value.fromBytes(role)),
+    new ethereum.EventParam("account", ethereum.Value.fromAddress(account)),
+    new ethereum.EventParam("sender", ethereum.Value.fromAddress(sender)),
+  ];
+
+  return event;
+}
+
+export function createRoleRevoked(
+  role: Bytes,
+  account: Address,
+  sender: Address
+): RoleRevoked {
+  const event = changetype<RoleRevoked>(newMockEvent());
+
+  event.parameters = [
+    new ethereum.EventParam("role", ethereum.Value.fromBytes(role)),
+    new ethereum.EventParam("account", ethereum.Value.fromAddress(account)),
+    new ethereum.EventParam("sender", ethereum.Value.fromAddress(sender)),
   ];
 
   return event;

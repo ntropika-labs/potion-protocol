@@ -27,6 +27,7 @@ import type {
   ConfigName,
   ImportPair,
   DeploymentExportPair,
+  LegacyDeploymentObject,
 } from "./types";
 import {
   DeploymentFlags,
@@ -151,6 +152,9 @@ export class Deployments {
   }
 
   public static persist(includeLegacy = false): void {
+    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
+      throw new Error("Deployments directory not set");
+    }
     if (this._isInternalProvider()) {
       return;
     }
@@ -198,27 +202,24 @@ export class Deployments {
       );
     }
 
-    this.rebuildIndex(includeLegacy);
+    this.rebuildIndex(this.deploymentsDir, this.indexDir, includeLegacy);
   }
 
-  public static rebuildIndex(includeLegacy = false): void {
-    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
-      return;
-    }
-
-    const indexFileName = this.getIndexFileName();
-    if (indexFileName === undefined) {
-      return;
-    }
-
+  public static rebuildIndex(
+    deploymentsDir: string,
+    indexDir: string,
+    includeLegacy = false
+  ): void {
     // Legacy Index
-    let legacyIndex = undefined;
+    let legacyIndex: LegacyDeploymentObject = undefined;
     if (includeLegacy) {
-      legacyIndex = this._buildLegacyIndex(this.deploymentsDir);
+      legacyIndex = this._buildLegacyIndex(deploymentsDir);
     }
 
     // Remote Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.RemoteExportsFileName,
       [ProviderTypes.Hardhat, ProviderTypes.Ganache],
       DirectoryFilterType.Exclude,
@@ -228,6 +229,8 @@ export class Deployments {
 
     // Local Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.LocalExportsFileName,
       [ProviderTypes.Hardhat, ProviderTypes.Ganache],
       DirectoryFilterType.Include,
@@ -236,6 +239,8 @@ export class Deployments {
 
     // DbSeeds Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.DbSeedsExportsFileName,
       [],
       DirectoryFilterType.None,
@@ -412,7 +417,7 @@ export class Deployments {
     indexFileName: string,
     imports: ImportPair[],
     indexObject: DeploymentExportPair[],
-    legacyIndex?: unknown
+    legacyIndex?: LegacyDeploymentObject
   ) {
     const indexFilePath = resolve(indexDir, indexFileName);
 
@@ -435,17 +440,24 @@ export class Deployments {
     indexObject.forEach((deploymentExport) => {
       fs.appendFileSync(
         indexFilePath,
-        `\n    "${deploymentExport.name}": ${deploymentExport.value},`,
+        `\n  "${deploymentExport.name}": ${deploymentExport.value},`,
         "utf8"
       );
     });
 
     if (legacyIndex) {
+      // Remove already exported keys
+      indexObject.forEach((deploymentExport) => {
+        if (legacyIndex[deploymentExport.name]) {
+          delete legacyIndex[deploymentExport.name];
+        }
+      });
+
       const objectString = JSON.stringify(legacyIndex, null, 2);
 
       fs.appendFileSync(
         indexFilePath,
-        `\n    ${objectString.slice(2, -2)},`,
+        `\n  ${objectString.slice(4, -2)},`,
         "utf8"
       );
     }
@@ -573,25 +585,20 @@ export class Deployments {
   }
 
   private static _rebuildIndex(
+    deploymentsDir: string,
+    indexDir: string,
     indexFileName: string,
     directoriesList: string[],
     filterType: DirectoryFilterType,
     canInclude: (deployment: DeploymentObject) => boolean,
-    extraIndex: unknown = undefined
+    extraIndex: LegacyDeploymentObject = undefined
   ): void {
-    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
-      return;
-    }
-
-    const deploymentsDir = this.deploymentsDir;
-    const indexDir = this.indexDir;
-
     const indexImports: ImportPair[] = [];
     const deploymentsIndex: DeploymentExportPair[] = [];
 
     // Loop through all the inner directories
     const deploymentDirs = fs
-      .readdirSync(this.deploymentsDir, {
+      .readdirSync(deploymentsDir, {
         withFileTypes: true,
       })
       .filter((dirent) => dirent.isDirectory())
@@ -614,7 +621,7 @@ export class Deployments {
         .filter(
           (fileName) =>
             fileName.endsWith(Deployments.DeploymentFileExtension) &&
-            !/\d/.test(fileName)
+            !/\.\d+\.json/.test(fileName)
         );
 
       // Read the contents of each file
@@ -630,7 +637,7 @@ export class Deployments {
           const importName = toCamelCase(
             deploymentTypeName,
             this.DeploymentTypeSeparator
-          ).replace(/-/g, "");
+          ).replace(/-/g, "_");
 
           indexImports.push({
             name: importName,
@@ -654,7 +661,9 @@ export class Deployments {
     );
   }
 
-  private static _buildLegacyIndex(deploymentsDir: string): unknown {
+  private static _buildLegacyIndex(
+    deploymentsDir: string
+  ): LegacyDeploymentObject {
     let legacyIndex = {};
 
     const legacyFiles = fs
@@ -679,7 +688,7 @@ export class Deployments {
       });
     });
 
-    return legacyIndex;
+    return legacyIndex as LegacyDeploymentObject;
   }
 
   private static _getLegacyDeploymentObjectTemplate(): DeploymentObjectLegacy {

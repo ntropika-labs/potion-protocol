@@ -1,5 +1,5 @@
 import { createMockedFunction } from "matchstick-as/assembly/index";
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, ethereum } from "@graphprotocol/graph-ts";
 
 function mockAsset(contractAddress: Address, assetAddress: Address): void {
   createMockedFunction(contractAddress, "asset", "asset():(address)").returns([
@@ -137,6 +137,30 @@ function mockHedgingRate(contractAddress: Address, hedgingRate: BigInt): void {
   ).returns([ethereum.Value.fromUnsignedBigInt(hedgingRate)]);
 }
 
+function mockAdminRole(contractAddress: Address, role: Bytes): void {
+  createMockedFunction(
+    contractAddress,
+    "ADMIN_ROLE",
+    "ADMIN_ROLE():(bytes32)"
+  ).returns([ethereum.Value.fromBytes(role)]);
+}
+
+function mockOperatorRole(contractAddress: Address, role: Bytes): void {
+  createMockedFunction(
+    contractAddress,
+    "OPERATOR_ROLE",
+    "OPERATOR_ROLE():(bytes32)"
+  ).returns([ethereum.Value.fromBytes(role)]);
+}
+
+function mockStrategistRole(contractAddress: Address, role: Bytes): void {
+  createMockedFunction(
+    contractAddress,
+    "STRATEGIST_ROLE",
+    "STRATEGIST_ROLE():(bytes32)"
+  ).returns([ethereum.Value.fromBytes(role)]);
+}
+
 export {
   mockAsset,
   mockTotalAssets,
@@ -153,4 +177,7 @@ export {
   mockVault,
   mockCurrentRound,
   mockHedgingRate,
+  mockAdminRole,
+  mockOperatorRole,
+  mockStrategistRole,
 };

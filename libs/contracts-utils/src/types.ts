@@ -74,6 +74,8 @@ export interface DeploymentObject {
   };
 }
 
+export type LegacyDeploymentObject = { [key: string]: string } | undefined;
+
 export interface DeploymentParams extends FactoryOptions {
   options?: DeploymentOptions;
   alias?: string; // The deployed contract will be exported in the JSON file with this alias
