@@ -4,7 +4,7 @@
       :address="vaultId"
       :admin-address="vault.admin"
       :operator-address="vault.operator"
-      :underlying-asset="vault.asset"
+      :underlying-asset="vault.underlying"
       :strike-percent="vault.strikePercentage"
       :round-length="vault.cycleDurationSecs"
       :premium-percentage="vault.maxPremiumPercentage"
