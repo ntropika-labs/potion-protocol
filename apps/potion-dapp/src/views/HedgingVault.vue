@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="grid gap-6">
     <HedgingVaultHeader
       :address="vaultId"
       :admin-address="vault.admin"
@@ -14,121 +14,41 @@
       :current-timestamp="blockTimestamp.toString()"
       @back="handleNavigateBack"
     />
-    <BaseCard class="p-4 items-center md:items-start">
-      <div class="mb-3">
-        <p class="capitalize">{{ t("protective_put_vault") }}</p>
-        <a
-          class="text-xs flex items-center font-normal text-white/50 hover:text-white transition"
-          :href="getEtherscanUrl(vaultId)"
-        >
-          <i class="i-ph-arrow-square-in mr-1 text-xs"></i>
-          <span class="truncate max-w-[15ch]">{{ vaultId }}</span>
-        </a>
-      </div>
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
-        <LabelValue
-          size="lg"
-          :title="t('vault_size')"
-          :value="vault.totalShares"
-          :symbol="underlyingSymbol"
-          :loading="vaultLoading"
-        />
-      </div>
-    </BaseCard>
-    <div class="grid grid-cols-5 gap-4 mt-4">
-      <BaseCard class="p-4 grid gap-4">
-        <AssetTag
-          :title="t('asset')"
-          :token="{
-            name: vault.underlying.name,
-            symbol: vault.underlying.symbol,
-            address: vault.underlying.address,
-          }"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('hedging_level')"
-          :value="vault.hedgingRate"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('strike')"
-          :value="vault.strikePercentage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('cycle_duration')"
-          :value="vault.cycleDurationSecs"
-          symbol="days"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_premium')"
-          :value="vault.maxPremiumPercentage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_premium_slippage')"
-          :value="vault.premiumSlippage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_swap_slippage')"
-          :value="vault.swapSlippage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
+    <div class="grid grid-cols-6 gap-6">
+      <EstimationCard
+        class="col-span-2"
+        :underlying-symbol="underlyingSymbol"
+        :deposit-tickets="depositTickets"
+      ></EstimationCard>
+      <BaseCard class="p-4 col-span-4">
+        <TabMenu v-model="selectedTab"></TabMenu>
+        <DepositTab
+          v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
+          :current-deposit-amount="currentDepositAmount"
+          :is-delete-loading="deleteDepositLoading"
+          :is-loading="isLoading"
+          :is-update-loading="approveLoading || updateDepositLoading"
+          :underlying-symbol="underlyingSymbol"
+          :user-allowance="userAllowance"
+          :user-collateral-balance="userCollateralBalance"
+          @update-deposit="handleUpdateDeposit"
+          @delete-deposit="handleDeleteDeposit"
+        ></DepositTab>
+        <WithdrawalTab
+          v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
+          :available-underlyings="availableUnderlyings"
+          :can-exchange="canExchange"
+          :estimated-underlyings="estimatedUnderlyings"
+          :is-loading="isLoading"
+          :is-exchange-loading="
+            approveExchangeLoading || exchangeTicketsLoading
+          "
+          :is-redeem-loading="redeemUnderlyingsLoading"
+          :underlying-symbol="underlyingSymbol"
+          @exchange-tickets="handleExchange"
+          @redeem="handleRedeemUnderlyings"
+        ></WithdrawalTab>
       </BaseCard>
-      <div class="col-span-4 self-start">
-        <BaseCard class="p-4 gap-4">
-          <div class="flex items-center gap-4">
-            <TimeTag
-              :horizontal="true"
-              :title="t('time_left_until_next_cycle')"
-              :time-from="blockTimestamp.toString()"
-              :time-to="vault.nextCycleTimestamp"
-              :loading="vaultLoading"
-            />
-          </div>
-          <TabMenu v-model="selectedTab"></TabMenu>
-          <DepositTab
-            v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
-            :current-deposit-amount="currentDepositAmount"
-            :is-delete-loading="deleteDepositLoading"
-            :is-loading="isLoading"
-            :is-update-loading="approveLoading || updateDepositLoading"
-            :underlying-symbol="underlyingSymbol"
-            :user-allowance="userAllowance"
-            :user-collateral-balance="userCollateralBalance"
-            @update-deposit="handleUpdateDeposit"
-            @delete-deposit="handleDeleteDeposit"
-          ></DepositTab>
-          <WithdrawalTab
-            v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
-            :available-underlyings="availableUnderlyings"
-            :can-exchange="canExchange"
-            :estimated-underlyings="estimatedUnderlyings"
-            :is-loading="isLoading"
-            :is-exchange-loading="
-              approveExchangeLoading || exchangeTicketsLoading
-            "
-            :is-redeem-loading="redeemUnderlyingsLoading"
-            :underlying-symbol="underlyingSymbol"
-            @exchange-tickets="handleExchange"
-            @redeem="handleRedeemUnderlyings"
-          ></WithdrawalTab>
-        </BaseCard>
-      </div>
     </div>
   </div>
   <NotificationDisplay
@@ -144,19 +64,14 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
-import {
-  BaseCard,
-  LabelValue,
-  AssetTag,
-  TimeTag,
-  getEtherscanUrl,
-} from "potion-ui";
+import { BaseCard } from "potion-ui";
 
-import TabMenu from "@/components/HedgingVault/TabMenu.vue";
 import DepositTab from "@/components/HedgingVault/DepositTab.vue";
-import WithdrawalTab from "@/components/HedgingVault/WithdrawalTab.vue";
-import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import EstimationCard from "@/components/HedgingVault/EstimationCard.vue";
 import HedgingVaultHeader from "@/components/HedgingVault/HedgingVaultHeader.vue";
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import TabMenu from "@/components/HedgingVault/TabMenu.vue";
+import WithdrawalTab from "@/components/HedgingVault/WithdrawalTab.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
 import { useEthersProvider } from "@/composables/useEthersProvider";
@@ -222,8 +137,9 @@ const roundsInputState = roundsInputStore();
 const { approveLoading, approveReceipt, approveTx, userAllowance } =
   storeToRefs(roundsInputState);
 
-// Deposit requests
+// Deposit tickets
 const {
+  depositTickets,
   currentDepositAmount,
   deleteDepositLoading,
   deleteDepositTicket,

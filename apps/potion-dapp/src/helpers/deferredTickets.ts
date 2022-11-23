@@ -4,11 +4,14 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
+import type { DepositTicket } from "hedging-vault-sdk";
 
 import type {
   DepositTicketInfoFragment,
   WithdrawalTicketInfoFragment,
 } from "subgraph-queries-hv/generated/operations";
+
+import type { RoundsFragment } from "@/types";
 
 const ROUNDS_VAULT_DECIMALS = 18;
 
@@ -49,6 +52,22 @@ const calcUnderlyingsBN = (
 ) =>
   _calcUnderlyings(valueOrZero(amount), valueOrZero(exchangeRate)).toString();
 
+const getDepositTicketsFromRounds = (
+  rounds: RoundsFragment[]
+): DepositTicket[] =>
+  rounds
+    .filter((round) => round.depositTickets.length > 0)
+    .map((round) => {
+      const ticket = round.depositTickets[0];
+      return {
+        id: parseInt(round.roundNumber),
+        amount: parseFloat(ticket.amountRemaining),
+        amountRedeemed: parseFloat(ticket.amountRedeemed),
+        shares: parseFloat(ticket.shares),
+        sharesRemaining: parseFloat(ticket.sharesRemaining),
+      };
+    });
+
 export {
   formatAmount,
   parseAmount,
@@ -56,4 +75,5 @@ export {
   hasUnderlyings,
   calcUnderlyings,
   calcUnderlyingsBN,
+  getDepositTicketsFromRounds,
 };
