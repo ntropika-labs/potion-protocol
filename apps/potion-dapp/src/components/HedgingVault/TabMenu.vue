@@ -16,15 +16,15 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div class="p-4 flex justify-center gap-4 lg:gap-6">
+  <div class="p-4 grid grid-cols-2 gap-4 lg:gap-6">
     <TabItem
-      class="w-1/3"
+      class="mx-auto w-2/3"
       :is-active="props.modelValue === AVAILABLE_TABS.DEPOSIT"
       @click="emit('update:modelValue', AVAILABLE_TABS.DEPOSIT)"
       >{{ t("deposit") }}</TabItem
     >
     <TabItem
-      class="w-1/3"
+      class="mx-auto w-2/3"
       :is-active="props.modelValue === AVAILABLE_TABS.WITHDRAWAL"
       @click="emit('update:modelValue', AVAILABLE_TABS.WITHDRAWAL)"
       >{{ t("withdrawal") }}</TabItem

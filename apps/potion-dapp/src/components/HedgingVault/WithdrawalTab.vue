@@ -33,9 +33,10 @@ const label = computed(() =>
 </script>
 
 <template>
-  <div class="flex justify-center gap-4">
+  <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col items-center gap-4">
       <InputWrapper
+        class="w-full"
         :footer-description="t('estimated_exchange_assets')"
         :subtitle="t('withdrawals_processed_next_round')"
         :title="t('choose_withdrawal_amount')"

@@ -40,7 +40,7 @@ const label = computed(() => {
 </script>
 
 <template>
-  <div class="flex justify-center gap-4">
+  <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col items-center gap-4">
       <InputNumber
         v-model="depositAmount"
