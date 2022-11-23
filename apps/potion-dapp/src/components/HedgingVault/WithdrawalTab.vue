@@ -37,7 +37,7 @@ const label = computed(() =>
     <div class="flex flex-col items-center gap-4">
       <InputWrapper
         class="w-full"
-        :footer-description="t('estimated_exchange_assets')"
+        :footer-description="t('withdraw_estimated_value')"
         :subtitle="t('withdrawals_processed_next_round')"
         :title="t('choose_withdrawal_amount')"
         :value="props.estimatedUnderlyings"
@@ -79,7 +79,7 @@ const label = computed(() =>
       />
       <BaseButton
         palette="glass"
-        :label="t('redeem')"
+        :label="t('instant_withdraw')"
         :disabled="props.availableUnderlyings === 0 || props.isLoading"
         :loading="props.isRedeemLoading"
         @click="emit('redeem')"
