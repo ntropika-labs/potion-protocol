@@ -151,6 +151,9 @@ export class Deployments {
   }
 
   public static persist(includeLegacy = false): void {
+    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
+      throw new Error("Deployments directory not set");
+    }
     if (this._isInternalProvider()) {
       return;
     }
@@ -198,27 +201,24 @@ export class Deployments {
       );
     }
 
-    this.rebuildIndex(includeLegacy);
+    this.rebuildIndex(this.deploymentsDir, this.indexDir, includeLegacy);
   }
 
-  public static rebuildIndex(includeLegacy = false): void {
-    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
-      return;
-    }
-
-    const indexFileName = this.getIndexFileName();
-    if (indexFileName === undefined) {
-      return;
-    }
-
+  public static rebuildIndex(
+    deploymentsDir: string,
+    indexDir: string,
+    includeLegacy = false
+  ): void {
     // Legacy Index
     let legacyIndex = undefined;
     if (includeLegacy) {
-      legacyIndex = this._buildLegacyIndex(this.deploymentsDir);
+      legacyIndex = this._buildLegacyIndex(deploymentsDir);
     }
 
     // Remote Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.RemoteExportsFileName,
       [ProviderTypes.Hardhat, ProviderTypes.Ganache],
       DirectoryFilterType.Exclude,
@@ -228,6 +228,8 @@ export class Deployments {
 
     // Local Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.LocalExportsFileName,
       [ProviderTypes.Hardhat, ProviderTypes.Ganache],
       DirectoryFilterType.Include,
@@ -236,6 +238,8 @@ export class Deployments {
 
     // DbSeeds Index
     this._rebuildIndex(
+      deploymentsDir,
+      indexDir,
       this.DbSeedsExportsFileName,
       [],
       DirectoryFilterType.None,
@@ -573,25 +577,20 @@ export class Deployments {
   }
 
   private static _rebuildIndex(
+    deploymentsDir: string,
+    indexDir: string,
     indexFileName: string,
     directoriesList: string[],
     filterType: DirectoryFilterType,
     canInclude: (deployment: DeploymentObject) => boolean,
     extraIndex: unknown = undefined
   ): void {
-    if (this.deploymentsDir === undefined || this.indexDir === undefined) {
-      return;
-    }
-
-    const deploymentsDir = this.deploymentsDir;
-    const indexDir = this.indexDir;
-
     const indexImports: ImportPair[] = [];
     const deploymentsIndex: DeploymentExportPair[] = [];
 
     // Loop through all the inner directories
     const deploymentDirs = fs
-      .readdirSync(this.deploymentsDir, {
+      .readdirSync(deploymentsDir, {
         withFileTypes: true,
       })
       .filter((dirent) => dirent.isDirectory())
@@ -614,7 +613,7 @@ export class Deployments {
         .filter(
           (fileName) =>
             fileName.endsWith(Deployments.DeploymentFileExtension) &&
-            !/\d/.test(fileName)
+            !/\.\d+\.json/.test(fileName)
         );
 
       // Read the contents of each file
@@ -630,7 +629,7 @@ export class Deployments {
           const importName = toCamelCase(
             deploymentTypeName,
             this.DeploymentTypeSeparator
-          ).replace(/-/g, "");
+          ).replace(/-/g, "_");
 
           indexImports.push({
             name: importName,

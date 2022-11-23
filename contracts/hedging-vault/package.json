@@ -68,6 +68,7 @@
         "deploy-goerli": "hardhat --network goerli run ./scripts/deploy.ts",
         "deploy-mainnet": "hardhat --network mainnet run ./scripts/deploy.ts",
         "prepare-mumbai.testcomp": "DEPLOYMENT_TYPE='remote.ply-mumbai.prepare-testcomp' hardhat --network ply-mumbai run ./scripts/prerequisites/prepareTestnetCompetitionDeployment.ts",
+        "rebuild-deployments-index": "hardhat run ./scripts/lib/rebuildIndex.ts",
         "lint": "yarn lint-sol && yarn lint-ts && yarn format",
         "lint-sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
         "lint-ts": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --ext .js,.ts .",
