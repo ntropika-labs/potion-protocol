@@ -29,7 +29,7 @@ EOF
 cleanup() {
   trap - SIGINT SIGTERM ERR
   # script cleanup here
-  docker compose down -v
+  docker compose --profile hardhat --profile ganache down -v
 }
 
 setup_colors() {

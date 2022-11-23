@@ -19,9 +19,9 @@ type HedgingVault @entity {
   id: Bytes!
   action: PotionBuyAction
   # RoleGranted() from roles manager upgradeable
-  #operator: Bytes!
-  #admin: Bytes!
-  #strategist: Bytes!
+  operator: Bytes
+  admin: Bytes
+  strategist: Bytes
   shareToken: Token!
   underlying: Token!
   totalShares: BigInt!
