@@ -21,6 +21,7 @@ import DropdownMenu from "./components/DropdownMenu/DropdownMenu.vue";
 import InlineMenu from "./components/InlineMenu/InlineMenu.vue";
 import InputNumber from "./components/InputNumber/InputNumber.vue";
 import InputSlider from "./components/InputSlider/InputSlider.vue";
+import InputWrapper from "./components/InputWrapper/InputWrapper.vue";
 import JumboHeader from "./components/JumboHeader/JumboHeader.vue";
 import LabelValue from "./components/LabelValue/LabelValue.vue";
 import HeaderComponent from "./components/layout/Header/HeaderComponent.vue";
@@ -76,6 +77,7 @@ export {
   InlineMenu,
   InputNumber,
   InputSlider,
+  InputWrapper,
   JumboHeader,
   LabelValue,
   PerformanceChart,
