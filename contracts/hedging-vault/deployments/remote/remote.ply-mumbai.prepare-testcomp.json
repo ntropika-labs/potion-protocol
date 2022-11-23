@@ -1,12 +1,12 @@
 {
-  "timestamp": 1668764015,
+  "timestamp": 1669190807,
   "provider": "remote",
   "network": "ply-mumbai",
   "config": "prepare-testcomp",
   "contracts": {
     "UniswapV3Router": {
-      "address": "0x51D8bFc77Ee21d93975CfA5f539f32fB511B2c38",
-      "blockNumber": 29209829
+      "address": "0xBCe5E926081B7dFC312D608FBD12e25aa5D82EC0",
+      "blockNumber": 29292985
     }
   },
   "dependencies": {}

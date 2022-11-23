@@ -20,7 +20,7 @@ export interface InvestmentVaultDeployParams {
 export async function deployInvestmentVault(parameters: InvestmentVaultDeployParams): Promise<InvestmentVault> {
     console.log("- Deploying InvestmentVault...");
     const investmentVault = (await Deployments.deploy("InvestmentVault", [parameters], {
-        options: DeploymentFlags.Export | DeploymentFlags.Upgradeable | DeploymentFlags.Verify,
+        options: DeploymentFlags.Export | DeploymentFlags.Upgradeable,
     })) as InvestmentVault;
     console.log(`    ...deployed to: ${investmentVault.address}`);
     return investmentVault;

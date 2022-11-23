@@ -2504,6 +2504,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ethereum-waffle/provider@patch:@ethereum-waffle/provider@npm:4.0.4#.yarn/patches/@ethereum-waffle-provider-npm-4.0.4-47760376c2.patch::locator=potion-protocol%40workspace%3A.":
+  version: 4.0.4
+  resolution: "@ethereum-waffle/provider@patch:@ethereum-waffle/provider@npm%3A4.0.4#.yarn/patches/@ethereum-waffle-provider-npm-4.0.4-47760376c2.patch::version=4.0.4&hash=ebe023&locator=potion-protocol%40workspace%3A."
+  dependencies:
+    "@ethereum-waffle/ens": 4.0.2
+    "@ganache/ethereum-options": 0.1.4
+    debug: ^4.3.4
+    ethers: 5.6.2
+    ganache: 7.4.0
+  checksum: 0553aaf808ce73026d30fce5e5b442d04398eda12724756597b9583beac7f34df8cbf96a5b06288e0ecd965a4dc828431fc8dd8c1fa6ee6c29d655f94ff23a13
+  languageName: node
+  linkType: hard
+
 "@ethereumjs/block@npm:^3.5.0, @ethereumjs/block@npm:^3.6.0, @ethereumjs/block@npm:^3.6.2":
   version: 3.6.3
   resolution: "@ethereumjs/block@npm:3.6.3"
