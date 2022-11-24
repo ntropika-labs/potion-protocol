@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import { useOnboard } from "@onboard-composable";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
-import { useErc4626Contract } from "@/composables/useErc4626Contract";
+import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
@@ -60,8 +60,7 @@ const router = createRouter({
         }
 
         try {
-          const { getAssetAddress } = useErc4626Contract(vaultId, false, false);
-          await getAssetAddress();
+          getContractsFromVault(vaultId.value);
           next();
         } catch {
           next({ name: "NotFound", params: { pathMatch: "404" } });
@@ -80,8 +79,7 @@ const router = createRouter({
         }
 
         try {
-          const { getAssetAddress } = useErc4626Contract(vaultId, false, false);
-          await getAssetAddress();
+          getContractsFromVault(vaultId.value);
           next();
         } catch {
           next({ name: "NotFound", params: { pathMatch: "404" } });
