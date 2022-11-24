@@ -1,0 +1,10 @@
+diff --git a/countdown.js b/countdown.js
+index c03a032dacf6bb9408f4d7981c065491567962dd..dc4e1410264845072b6eeabf6a39617e3fa9f4ad 100644
+--- a/countdown.js
++++ b/countdown.js
+@@ -1364,3 +1364,5 @@ function(module) {
+ 	return countdown;
+ 
+ })(module);
++
++export default countdown;

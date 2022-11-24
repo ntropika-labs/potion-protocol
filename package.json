@@ -222,6 +222,7 @@
   "packageManager": "yarn@3.2.0",
   "resolutions": {
     "@uniswap/router-sdk@^1.3.0": "patch:@uniswap/router-sdk@npm:1.3.0#.yarn/patches/@uniswap-router-sdk-npm-1.3.0-92dc9391c5.patch",
-    "@ethereum-waffle/provider@4.0.4": "patch:@ethereum-waffle/provider@npm:4.0.4#.yarn/patches/@ethereum-waffle-provider-npm-4.0.4-47760376c2.patch"
+    "@ethereum-waffle/provider@4.0.4": "patch:@ethereum-waffle/provider@npm:4.0.4#.yarn/patches/@ethereum-waffle-provider-npm-4.0.4-47760376c2.patch",
+    "countdown@^2.6.0": "patch:countdown@npm:2.6.0#.yarn/patches/countdown-npm-2.6.0-24dbd1a6a1.patch"
   }
 }

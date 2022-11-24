@@ -15854,10 +15854,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"countdown@npm:^2.6.0":
+"countdown@npm:2.6.0":
   version: 2.6.0
   resolution: "countdown@npm:2.6.0"
   checksum: 7da982bf73f0b66bbc04b1e9d76789f792218a94f6a36d14e3e3ff709bbeef79943c43792cb2371d5a22cd1f8f5af9ea66cde8cf0b6b9e00fe8cec7dbb9ce0ab
+  languageName: node
+  linkType: hard
+
+"countdown@patch:countdown@npm:2.6.0#.yarn/patches/countdown-npm-2.6.0-24dbd1a6a1.patch::locator=potion-protocol%40workspace%3A.":
+  version: 2.6.0
+  resolution: "countdown@patch:countdown@npm%3A2.6.0#.yarn/patches/countdown-npm-2.6.0-24dbd1a6a1.patch::version=2.6.0&hash=317866&locator=potion-protocol%40workspace%3A."
+  checksum: 486b34a4e0582a6f4bf5c94e40ae2c3367db4cf2ee7bba94c5efa9242f6f45294f9bc4f29999b5c1860f18e45ac1bee1118a6e12834c9eacbc05fceee7cd16e6
   languageName: node
   linkType: hard
 
