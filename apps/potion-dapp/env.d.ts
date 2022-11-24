@@ -14,6 +14,7 @@ interface ImportMetaEnv {
     | "localhost.multivault"
     | "ganache"
     | "goerli"
+    | "ply-mumbai.testcomp"
     | "mainnet";
   readonly VITE_SUBGRAPH_ADDRESS: string;
   readonly VITE_SUBGRAPH_HV_ADDRESS: string;
