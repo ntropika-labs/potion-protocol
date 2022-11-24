@@ -11,16 +11,16 @@ export default {
         type: "string",
       },
     },
-    endDate: {
-      name: "End date",
+    endTimestampSeconds: {
+      name: "End date timestamp in seconds",
       control: {
-        type: "date",
+        type: "number",
       },
     },
-    startDate: {
-      name: "Start date",
+    startTimestampSeconds: {
+      name: "Start date timestamp in seconds",
       control: {
-        type: "date",
+        type: "number",
       },
     },
     direction: {
@@ -33,12 +33,15 @@ export default {
   },
 };
 
-const date = new Date();
-date.setDate(date.getDate() + 1);
+const startDate = new Date();
+const endDate = new Date(startDate);
+endDate.setDate(startDate.getDate() + 1);
 
 const defArgs = {
   label: "Current Round ends in",
-  endDate: date,
+  endTimestampSeconds: endDate.getTime() / 1000,
+  startTimestampSeconds: startDate.getTime() / 1000,
+  expirationMessage: "expired",
 };
 
 const Template: Story = (args: Args) => ({

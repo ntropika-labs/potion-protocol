@@ -35,8 +35,10 @@ const emits = defineEmits<{
   (e: "back"): void;
 }>();
 
-const nextCycle = computed(() => parseInt(props.nextCycleTimestamp) * 1000);
-const current = computed(() => parseInt(props.currentTimestamp) * 1000);
+const nextCycleUnixTimestamp = computed(() =>
+  parseInt(props.nextCycleTimestamp)
+);
+const currentUnixTimestamp = computed(() => parseInt(props.currentTimestamp));
 </script>
 <template>
   <div class="grid gap-8 md:grid-cols-3 lg:grid-cols-9 items-center mb-8">
@@ -55,8 +57,8 @@ const current = computed(() => parseInt(props.currentTimestamp) * 1000);
 
     <CountdownElement
       :label="t('current_round_ends_in')"
-      :start-date="current"
-      :end-date="nextCycle"
+      :start-timestamp-seconds="currentUnixTimestamp"
+      :end-timestamp-seconds="nextCycleUnixTimestamp"
       :expiration-message="t('next_round_will_start_soon')"
       class="justify-center md:col-span-2 lg:(col-start-3 col-end-8)"
     />
