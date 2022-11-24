@@ -1,0 +1,5 @@
+[
+  "../../contracts/hedging-vault/deployments/remote/remote.ply-mumbai.testcomp-1.json", 
+  "../../contracts/hedging-vault/deployments/remote/remote.ply-mumbai.testcomp-2.json", 
+  "../../contracts/hedging-vault/deployments/remote/remote.ply-mumbai.testcomp-3.json"
+]

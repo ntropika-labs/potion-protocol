@@ -1,6 +1,10 @@
 import { accessSync } from "fs";
 import { basename } from "path";
 import { readFile, writeFile } from "fs/promises";
+import _yargs from "yargs";
+
+// istance yargs
+const yargs = _yargs()
 
 const canAccess = (path) => {
   try {
@@ -17,8 +21,17 @@ const getHardhatTarget = (path) => {
 }
 
 async function main() {
+  const args = await yargs
+    .option("vaults", {
+      alias: "v",
+      description:
+        "path to a JSON file with an array of paths to deployment configurations",
+      default: "./vaults.json",
+    })
+    .help()
+    .alias("help", "h").argv;
   // read the vault stacks files
-  const sources = JSON.parse(await readFile("./vaults.json", "utf8"));
+  const sources = JSON.parse(await readFile(args.vaults, "utf8"));
 
   // keep only the paths that the user can read
   const accessibleSources = sources.filter(canAccess);
