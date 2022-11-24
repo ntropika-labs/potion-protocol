@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="grid gap-6">
     <HedgingVaultHeader
       :address="vaultId"
       :admin-address="vault.admin"
@@ -14,210 +14,48 @@
       :current-timestamp="blockTimestamp.toString()"
       @back="handleNavigateBack"
     />
-    <BaseCard class="p-4 items-center md:items-start">
-      <div class="mb-3">
-        <p class="capitalize">{{ t("protective_put_vault") }}</p>
-        <a
-          class="text-xs flex items-center font-normal text-white/50 hover:text-white transition"
-          :href="getEtherscanUrl(vaultId)"
-        >
-          <i class="i-ph-arrow-square-in mr-1 text-xs"></i>
-          <span class="truncate max-w-[15ch]">{{ vaultId }}</span>
-        </a>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
-        <!-- <div>
-          <p class="capitalize">{{ t("admin") }}</p>
-          <a :href="getEtherscanUrl(admin)">
-            <BaseTag :is-loading="vaultLoading">
-              <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ admin }}</span>
-            </BaseTag>
-          </a>
-        </div>
-        <div>
-          <p class="capitalize">{{ t("operator") }}</p>
-          <a :href="getEtherscanUrl(operator)">
-            <BaseTag :is-loading="vaultLoading">
-              <i class="i-ph-arrow-square-in mr-1"></i>
-              <span class="truncate max-w-[15ch]">{{ operator }}</span>
-            </BaseTag>
-          </a>
-        </div> -->
-      </div>
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-3 w-full">
-        <LabelValue
-          size="lg"
-          :title="t('share_price')"
-          :value="shareToUnderlyingRatio.toString()"
-          :symbol="`${underlyingSymbol}/Share`"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="lg"
-          :title="t('vault_size')"
-          :value="vault.totalShares"
-          :symbol="underlyingSymbol"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="lg"
-          :title="t('your_shares')"
-          :value="userBalance.toString()"
-          :symbol="`= ${balanceInUnderlying} ${underlyingSymbol}`"
-          :loading="vaultLoading"
-        />
-      </div>
-    </BaseCard>
-    <div class="grid grid-cols-5 gap-4 mt-4">
-      <BaseCard class="p-4 grid gap-4">
-        <AssetTag
-          :title="t('asset')"
-          :token="{
-            name: vault.underlying.name,
-            symbol: vault.underlying.symbol,
-            address: vault.underlying.address,
-          }"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('hedging_level')"
-          :value="vault.hedgingRate"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('strike')"
-          :value="vault.strikePercentage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('cycle_duration')"
-          :value="vault.cycleDurationSecs"
-          symbol="days"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_premium')"
-          :value="vault.maxPremiumPercentage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_premium_slippage')"
-          :value="vault.premiumSlippage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
-        <LabelValue
-          size="sm"
-          :title="t('max_swap_slippage')"
-          :value="vault.swapSlippage"
-          symbol="%"
-          :loading="vaultLoading"
-        />
+    <div class="grid grid-cols-6 gap-6">
+      <EstimationCard
+        class="col-span-2"
+        :deposit-tickets="depositTickets"
+        :investment-vault-contract-shares="parseFloat(vault.totalShares)"
+        :potions-quantity="potionsQuantity"
+        :strike-price="strikePrice"
+        :total-underlyings-at-round-end="vault.lastTotalUnderlyingsAtRoundEnd"
+        :underlying-balance-action-contract="potionBuyActionBalance"
+        :underlying-price="polledPrice"
+        :underlying-symbol="underlyingSymbol"
+        :usdc-balance-action-contract="potionBuyActionUSDC"
+      ></EstimationCard>
+      <BaseCard class="p-4 col-span-4">
+        <TabMenu v-model="selectedTab"></TabMenu>
+        <DepositTab
+          v-if="selectedTab === AVAILABLE_TABS.DEPOSIT"
+          :current-deposit-amount="currentDepositAmount"
+          :is-delete-loading="deleteDepositLoading"
+          :is-loading="isLoading"
+          :is-update-loading="approveLoading || updateDepositLoading"
+          :underlying-symbol="underlyingSymbol"
+          :user-allowance="userAllowance"
+          :user-collateral-balance="userCollateralBalance"
+          @update-deposit="handleUpdateDeposit"
+          @delete-deposit="handleDeleteDeposit"
+        ></DepositTab>
+        <WithdrawalTab
+          v-if="selectedTab === AVAILABLE_TABS.WITHDRAWAL"
+          :available-underlyings="availableUnderlyings"
+          :can-exchange="canExchange"
+          :estimated-underlyings="estimatedUnderlyings"
+          :is-loading="isLoading"
+          :is-exchange-loading="
+            approveExchangeLoading || exchangeTicketsLoading
+          "
+          :is-redeem-loading="redeemUnderlyingsLoading"
+          :underlying-symbol="underlyingSymbol"
+          @exchange-tickets="handleExchange"
+          @redeem="handleRedeemUnderlyings"
+        ></WithdrawalTab>
       </BaseCard>
-      <div class="col-span-4 self-start">
-        <BaseCard class="p-4">
-          <div class="flex items-center gap-4">
-            <TimeTag
-              :horizontal="true"
-              :title="t('time_left_until_next_cycle')"
-              :time-from="blockTimestamp.toString()"
-              :time-to="vault.nextCycleTimestamp"
-              :loading="vaultLoading"
-            />
-          </div>
-          <div class="flex gap-6 w-full mt-5">
-            <div class="w-1/2 flex flex-col items-center gap-4">
-              <h3 v-if="currentDepositAmount > 0">
-                {{
-                  t("current_deposit_request_info", {
-                    currentDepositAmount,
-                    underlyingSymbol,
-                  })
-                }}
-              </h3>
-              <InputNumber
-                v-model="depositAmount"
-                class="self-stretch"
-                :max="userCollateralBalance"
-                :min="0.1"
-                :step="0.01"
-                :unit="underlyingSymbol"
-              />
-              <div class="flex gap-4">
-                <BaseButton
-                  palette="secondary"
-                  :label="depositLabel"
-                  :disabled="invalidDepositAmount || isLoading"
-                  :loading="approveLoading || updateDepositLoading"
-                  @click="handleUpdateDeposit"
-                />
-                <BaseButton
-                  v-if="canDeleteDepositTicket"
-                  palette="secondary-o"
-                  :label="t('delete')"
-                  :disabled="isLoading"
-                  :loading="deleteDepositLoading"
-                  @click="handleDeleteDeposit"
-                />
-              </div>
-            </div>
-            <div
-              v-if="estimatedUnderlyings > 0"
-              class="w-1/2 flex flex-col items-center gap-4"
-            >
-              <h3>
-                {{
-                  t("estimated_exchange_assets", {
-                    estimatedAssets: estimatedUnderlyings,
-                  })
-                }}
-              </h3>
-              <InputSlider
-                class="my-4"
-                symbol="%"
-                :step="0.1"
-                :model-value="exchangePercentage"
-                @update:model-value="updateExchangePercentage"
-              />
-              <BaseButton
-                palette="secondary"
-                :label="exchangeLabel"
-                :disabled="isLoading || canDeleteWithdrawalTicket"
-                :loading="approveExchangeLoading || exchangeTicketsLoading"
-                @click="handleExchange"
-              />
-            </div>
-            <div
-              v-if="availableUnderlyings > 0"
-              class="w-1/2 flex flex-col items-center gap-4"
-            >
-              <h4>
-                {{
-                  t("available_assets_to_redeem", {
-                    availableAssets: availableUnderlyings,
-                  })
-                }}
-              </h4>
-              <BaseButton
-                palette="secondary"
-                :label="t('redeem')"
-                :disabled="isLoading"
-                :loading="redeemUnderlyingsLoading"
-                @click="handleRedeemUnderlyings"
-              />
-            </div>
-          </div>
-        </BaseCard>
-      </div>
     </div>
   </div>
   <NotificationDisplay
@@ -226,33 +64,28 @@
   >
   </NotificationDisplay>
 </template>
+
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
-import {
-  BaseCard,
-  // BaseTag,
-  LabelValue,
-  AssetTag,
-  InputNumber,
-  BaseButton,
-  TimeTag,
-  InputSlider,
-  getEtherscanUrl,
-} from "potion-ui";
+import { BaseCard } from "potion-ui";
 
-import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import DepositTab from "@/components/HedgingVault/DepositTab.vue";
+import EstimationCard from "@/components/HedgingVault/EstimationCard.vue";
 import HedgingVaultHeader from "@/components/HedgingVault/HedgingVaultHeader.vue";
+import NotificationDisplay from "@/components/NotificationDisplay.vue";
+import TabMenu from "@/components/HedgingVault/TabMenu.vue";
+import WithdrawalTab from "@/components/HedgingVault/WithdrawalTab.vue";
 
 import { useDepositTickets } from "@/composables/useDepositTickets";
-import { useErc4626Contract } from "@/composables/useErc4626Contract";
 import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
 import { useNotifications } from "@/composables/useNotifications";
+import { useOracleContract } from "@/composables/useOracleContract";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useWithdrawalTickets } from "@/composables/useWithdrawalTickets";
 
@@ -260,19 +93,30 @@ import {
   getRoundsExchangerFromVault,
   getRoundsInputFromVault,
   getRoundsOutputFromVault,
+  getPotionBuyActionFromVault,
 } from "@/helpers/hedgingVaultContracts";
 
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { usePotionBuyActionStore } from "@/stores/usePotionBuyActionStore";
+
+import { AVAILABLE_TABS } from "@/types";
+import { useVaultPotion } from "@/composables/useVaultPotion";
+
+const selectedTab = ref<AVAILABLE_TABS>(AVAILABLE_TABS.DEPOSIT);
 
 const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+
 const roundsExchangerAddress = getRoundsExchangerFromVault(vaultId.value);
 const roundsInputAddress = getRoundsInputFromVault(vaultId.value);
 const roundsOutputAddress = getRoundsOutputFromVault(vaultId.value);
+const potionBuyActionAddress = getPotionBuyActionFromVault(vaultId.value);
+
+const { polledPrice, stopPolling, startPolling } = useOracleContract();
 
 // current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
@@ -288,6 +132,7 @@ const {
   loading: vaultLoading,
   loadVault,
 } = useHedgingVault(vaultId, walletAddress);
+
 const currentRound = computed(() => vault.value.currentRound);
 const underlyingSymbol = computed(() => vault.value.underlying.symbol);
 const underlyingAddress = computed(() => vault.value.underlying.address);
@@ -296,6 +141,34 @@ const vaultRounds = computed(() => vault.value.rounds);
 const lastShareToUnderlyingRate = computed(
   () => vault.value.lastShareToUnderlyingRate
 );
+const nextCycleTimestamp = computed(() =>
+  parseInt(vault.value.nextCycleTimestamp)
+);
+
+watch(underlyingAddress, () => {
+  stopPolling();
+  if (underlyingAddress.value) {
+    startPolling(underlyingAddress.value);
+  }
+});
+
+// Purchased potion vault info
+const { potionsQuantity, strikePrice } = useVaultPotion(
+  potionBuyActionAddress,
+  nextCycleTimestamp
+);
+
+// potionBuyAction balances
+const potionBuyActionStore = usePotionBuyActionStore(
+  potionBuyActionAddress,
+  underlyingAddress
+);
+const potionBuyActionState = potionBuyActionStore();
+
+const {
+  underlyingBalance: potionBuyActionBalance,
+  collateralBalance: potionBuyActionUSDC,
+} = storeToRefs(potionBuyActionState);
 
 // InputsRoundsVault
 const roundsInputStore = useVaultStore(
@@ -308,9 +181,9 @@ const roundsInputState = roundsInputStore();
 const { approveLoading, approveReceipt, approveTx, userAllowance } =
   storeToRefs(roundsInputState);
 
-// Deposit requests
+// Deposit tickets
 const {
-  canDeleteDepositTicket,
+  depositTickets,
   currentDepositAmount,
   deleteDepositLoading,
   deleteDepositTicket,
@@ -328,31 +201,13 @@ const {
   vaultRounds
 );
 
-const depositAmount = ref(0.1);
-const invalidDepositAmount = computed(
-  () =>
-    depositAmount.value <= 0 ||
-    depositAmount.value > userCollateralBalance.value
-);
-const depositLabel = computed(() => {
-  if (depositAmount.value > userAllowance.value) {
-    return t("approve");
-  }
-  if (currentDepositAmount.value > 0) {
-    return t("update");
-  }
-  return t("deposit");
-});
-
-const handleUpdateDeposit = async () => {
-  if (!invalidDepositAmount.value) {
-    if (depositAmount.value > userAllowance.value) {
-      await roundsInputState.approve(depositAmount.value);
-      roundsInputState.fetchUserData();
-    } else {
-      await updateDepositTicket(depositAmount);
-      setTimeout(loadVault, 5000);
-    }
+const handleUpdateDeposit = async (depositAmount: number) => {
+  if (depositAmount > userAllowance.value) {
+    await roundsInputState.approve(depositAmount);
+    roundsInputState.fetchUserData();
+  } else {
+    await updateDepositTicket(depositAmount);
+    setTimeout(loadVault, 5000);
   }
 };
 
@@ -385,20 +240,10 @@ const {
   currentRound,
   lastShareToUnderlyingRate
 );
-const exchangePercentage = ref(100);
-const updateExchangePercentage = (value: number) => {
-  if (value > 0 && value < 101) {
-    exchangePercentage.value = value;
-  }
-};
 
-const exchangeLabel = computed(() =>
-  canExchange.value ? t("exchange") : t("approve")
-);
-
-const handleExchange = async () => {
+const handleExchange = async (exchangePercentage: number) => {
   if (canExchange.value) {
-    await exchangeTickets(exchangePercentage.value);
+    await exchangeTickets(exchangePercentage);
     setTimeout(loadVault, 5000);
   } else {
     approveExchange();
@@ -407,7 +252,6 @@ const handleExchange = async () => {
 
 // withdrawal requests
 const {
-  canDeleteWithdrawalTicket,
   deleteWithdrawalLoading,
   deleteWithdrawalReceipt,
   // currentWithdrawalAmount,
@@ -442,19 +286,6 @@ const handleRedeemUnderlyings = async () => {
 const handleNavigateBack = () => {
   router.push({ name: "discover-hedging-vaults" });
 };
-
-/* 
-  Legacy code
-*/
-const { assetToShare, userBalance } = useErc4626Contract(vaultId, true, true);
-
-const shareToUnderlyingRatio = computed(() => 1 / assetToShare.value);
-const balanceInUnderlying = computed(
-  () => userBalance.value * shareToUnderlyingRatio.value
-);
-/* 
-  End of legacy code
-*/
 
 const isLoading = computed(
   () =>

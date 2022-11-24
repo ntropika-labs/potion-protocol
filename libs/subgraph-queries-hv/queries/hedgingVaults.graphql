@@ -60,6 +60,7 @@ query getHedgingVault($vault: ID!, $investor: String!) {
       roundNumber
       underlyingToShareRate
       shareToUnderlyingRate
+      totalUnderlyingsAtRoundEnd
       depositTickets(where: { investor: $investor }) {
         ...DepositTicketInfo
       }

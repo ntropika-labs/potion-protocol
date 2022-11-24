@@ -1,77 +1,82 @@
 <template>
-  <BaseCard
+  <InputWrapper
     test-input-number
     :color="props.color"
-    :full-height="false"
-    :class="{
-      'focus-within:(ring-primary-500) last-children:focus-within:(bg-primary-500)':
-        inputIsValid,
-      '!ring-error last-children:(bg-error)': !inputIsValid,
-    }"
+    :decimals="decimals"
+    :footer-description="props.footerDescription"
+    :footer-value="props.footerValue"
+    :is-input-valid="inputIsValid"
+    :max="props.max"
+    :max-decimals="props.maxDecimals"
+    :min="props.min"
+    :readonly="props.readonly"
+    :show-balance="props.showBalance"
+    :subtitle="props.subtitle"
+    :title="props.title"
+    :unit="unit"
+    :value="props.modelValue"
   >
-    <label class="p-3">
-      <p class="font-sans font-medium text-sm text-white capitalize">
-        {{ props.title }}
-      </p>
-      <div class="flex justify-between mt-4">
-        <BaseTag>{{ props.unit }}</BaseTag>
-        <BaseInput
-          class="selection:(bg-accent-500 !text-deepBlack-900) text-white bg-transparent focus:(outline-none) px-2 font-serif text-xl font-bold grow"
-          type="number"
-          :readonly="props.readonly"
-          :disabled="props.disabled"
-          :model-value="props.modelValue"
-          :min="props.min"
-          :max="props.max"
-          @update:model-value="handleInput"
-        ></BaseInput>
-        <button @click="emits('update:modelValue', handleSetMax())">
-          <BaseTag class="transition hover:bg-primary-500" :is-empty="true"
-            >MAX</BaseTag
-          >
-        </button>
-      </div>
-    </label>
-
-    <CardFooter class="text-white">
-      <slot name="footerDescription">
-        <p class="capitalize">{{ footerText }}</p>
-      </slot>
-    </CardFooter>
-  </BaseCard>
+    <BaseTag>{{ props.unit }}</BaseTag>
+    <BaseInput
+      class="text-white bg-transparent focus:(outline-none) px-2 font-serif text-xl font-bold grow"
+      type="number"
+      :class="
+        props.readonly ? '' : 'selection:(bg-accent-500 !text-deepBlack-900)'
+      "
+      :readonly="props.readonly"
+      :disabled="props.disabled"
+      :model-value="props.modelValue"
+      :min="props.min"
+      :max="props.max"
+      @update:model-value="handleInput"
+    ></BaseInput>
+    <button
+      v-if="props.showMax"
+      @click="emits('update:modelValue', handleSetMax())"
+    >
+      <BaseTag class="transition hover:bg-primary-500" :is-empty="true"
+        >MAX</BaseTag
+      >
+    </button>
+  </InputWrapper>
 </template>
+
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
   name: "InputNumber",
 });
 </script>
+
 <script lang="ts" setup>
-import { currencyFormatter } from "../../helpers";
+import InputWrapper from "../InputWrapper/InputWrapper.vue";
 import { computed, watch } from "vue";
 import type { CardColor } from "../../types";
 import BaseTag from "../BaseTag/BaseTag.vue";
-import BaseCard from "../BaseCard/BaseCard.vue";
 import BaseInput from "../BaseInput/BaseInput.vue";
-import CardFooter from "../CardFooter/CardFooter.vue";
+
 export interface Props {
   color?: CardColor;
   title?: string;
+  subtitle?: string;
   unit?: string;
   step?: number;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
   disabled?: boolean;
   readonly?: boolean;
   modelValue: number;
   footerDescription?: string;
   footerValue?: string;
   maxDecimals?: number;
+  showMax?: boolean;
+  showBalance?: boolean;
   useUnit?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   color: "glass",
   title: "",
+  subtitle: "",
   unit: "USDC",
   step: 0.1,
   min: 1,
@@ -81,6 +86,8 @@ const props = withDefaults(defineProps<Props>(), {
   footerDescription: "Balance",
   maxDecimals: 6,
   footerValue: "",
+  showMax: true,
+  showBalance: true,
   useUnit: true,
 });
 
@@ -101,13 +108,15 @@ const decimalCount = (num: number) => {
   return 0;
 };
 
+const decimals = computed(() => decimalCount(props.modelValue));
+
 const inputIsValid = computed(() => {
   if (
     typeof props.modelValue !== "number" ||
     Number.isNaN(props.modelValue) ||
     props.modelValue < props.min ||
     props.modelValue > props.max ||
-    decimalCount(props.modelValue) > props.maxDecimals
+    decimals.value > props.maxDecimals
   ) {
     return false;
   }
@@ -118,35 +127,8 @@ emits("validInput", inputIsValid.value);
 watch(inputIsValid, () => {
   emits("validInput", inputIsValid.value);
 });
-const unit = computed(() => {
-  if (props.useUnit) {
-    return props.unit;
-  } else return "";
-});
-const footerText = computed(() => {
-  if (inputIsValid.value && props.footerValue === "") {
-    return `${props.footerDescription}: ${currencyFormatter(
-      props.max,
-      unit.value
-    )}`;
-  } else if (inputIsValid.value && props.footerValue !== "") {
-    return `${props.footerDescription}: ${props.footerValue}`;
-  } else {
-    if (decimalCount(props.modelValue) > props.maxDecimals) {
-      return `The max number of decimals is ${props.maxDecimals}`;
-    } else {
-      return `Please, enter a valid value - Your ${
-        props.footerDescription
-      } is ${currencyFormatter(
-        props.max,
-        unit.value
-      )} - Minimum is ${currencyFormatter(props.min, unit.value)}.`;
-    }
-  }
-});
 
 defineExpose({
   inputIsValid,
-  footerText,
 });
 </script>

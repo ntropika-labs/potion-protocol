@@ -11,6 +11,7 @@ approve: approve
 approving_usdc: approving usdc
 asset: Asset
 assets: Assets
+assets_will_be_withdrawn: Assets will reach your wallet in 1 transaction
 available_assets_to_redeem: You can redeem {availableAssets} assets
 available_payout: Available Payout
 available_potions: available potions
@@ -22,11 +23,15 @@ bonding_curve_x_axis: Utilization
 bonding_curve_y_axis: Premium
 buy_potion: buy potion
 buying_potion: buying potion
+cancel_request: Cancel Request
+cancel_request_to_retrieve_funds: Cancel request to get your deposits back immediatly
 check_pool: check pool
+choose_deposit_amount: "Choose deposit amount:"
 choose_pool_assets: Choose one or more assets this pool will insure
 choose_pool_curve: >-
   Curve the pool will use to determine sell prices, as a function of your pool
   utilization.
+choose_withdrawal_amount: "Choose position % to withdraw:"
 claimable: Claimable
 claimed: Claimed
 claiming_collateral: claiming collateral
@@ -52,6 +57,7 @@ currency: Currency
 current_deposit_request_info: >-
   You have already deposited {currentDepositAmount} {assetSymbol} inside this
   vault
+current_round_deposit: "Deposits requested in the current round:"
 current_payout: Current Payout
 current_price: current price
 current_withdrawal_request_info: >-
@@ -64,12 +70,14 @@ curve_setup: Curve Setup
 cycle_duration: cycle duration
 days: Days
 deposit: deposit
+deposit_request: Deposit Request
 deposit_collateral_description: Amount of stable coin you want to deposit in the pool.
 deposit_collateral_footer: Balance
 deposit_collateral_title: You're providing
 deposited: Deposited
 depositing: Depositing
 depositing_liquidity: depositing liquidity
+deposits_processed_next_round: Requested deposits will be processed next round
 discover_potions: Discover Potions
 discover_templates: Discover Templates
 duration: duration
@@ -90,6 +98,7 @@ hedging_level: hedging level
 hint_duration: The max duration that you are willing sell an Option
 hint_strike: The highest price that a buyer can exercise the Option
 inactive: inactive
+instant_withdraw: Instant Withdraw
 insurance_description: You're selling insurance for
 invalid_potion: invalid potion
 largest_templates_subtitle: LARGEST
@@ -189,6 +198,7 @@ transaction_completed: Your transaction has completed
 transaction_pending: Your transaction is pending
 unlocked: unlocked
 unutilized_capital: Unutilized capital
+update_request: Update Request
 usdc_approved: usdc approved
 user_allowance: User allowance for Potion Liquidity Pool Contract
 user_balance: User collateral balance
@@ -198,8 +208,10 @@ vault_size: vault size
 view_on_etherscan: View on Etherscan
 view_pool_recipe: view pool recipe
 withdraw: Withdraw
+withdraw_request: Withdraw Request
 withdraw_capital: Withdraw capital
 withdraw_expired_potions: Expired Potions ready to be withdrawn.
+withdraw_estimated_value: Withdraw estimated value
 withdrawing_liquidity: withdrawing liquidity
 wrong_bonding_curve_params: parameters aren't valid
 your_liquidity: Your liquidity
@@ -231,3 +243,5 @@ max_potion_slippage: Max Potion Slippage
 max_uniswap_slippage: Max Uniswap Slippage
 current_round_ends_in: Current Round ends in
 next_round_will_start_soon: Next Round wil start soon
+withdrawals_processed_next_round: Requested withdraws will be processed next round
+estimated_vault_size: Estimated Vault Size

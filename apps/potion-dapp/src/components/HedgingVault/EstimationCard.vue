@@ -61,8 +61,10 @@ const currentShareToAssetRate = computed(() => {
     props.investmentVaultContractShares
   );
   return {
-    num: currentShareToAssetRate,
-    formatted: currentShareToAssetRate.toFixed(2),
+    num: isNaN(currentShareToAssetRate) ? 0 : currentShareToAssetRate,
+    formatted: isNaN(currentShareToAssetRate)
+      ? "0"
+      : currentShareToAssetRate.toFixed(2),
   };
 });
 
@@ -70,8 +72,10 @@ const estimatedVaultSize = computed(() => {
   const result =
     props.investmentVaultContractShares * currentShareToAssetRate.value.num;
   return {
-    num: result,
-    formatted: result.toFixed(2) + " " + props.underlyingSymbol,
+    num: isNaN(result) ? 0 : result,
+    formatted: isNaN(result)
+      ? "0" + "props.underlyingSymbol"
+      : result.toFixed(2) + " " + props.underlyingSymbol,
   };
 });
 
@@ -80,15 +84,19 @@ const userVaultRelativeShares = computed(() => {
     props.depositTickets ?? []
   );
 
-  return (100 * totalRemainingShares) / props.investmentVaultContractShares;
+  const result =
+    (100 * totalRemainingShares) / props.investmentVaultContractShares;
+  return isNaN(result) ? 0 : result;
 });
 
 const userEstimatedSharesToUnderlying = computed(() => {
   const result =
     (userVaultRelativeShares.value * estimatedVaultSize.value.num) / 100;
   return {
-    num: result,
-    formatted: result.toFixed(2) + " " + props.underlyingSymbol,
+    num: isNaN(result) ? 0 : result,
+    formatted: isNaN(result)
+      ? "0"
+      : result.toFixed(2) + " " + props.underlyingSymbol,
   };
 });
 </script>

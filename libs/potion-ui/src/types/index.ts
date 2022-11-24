@@ -25,7 +25,8 @@ export enum ButtonPalette {
   warning       = "warning",
   error         = "error",
   transparent   = "transparent",
-  flat          = "flat"
+  flat          = "flat",
+  glass         = "glass"
 }
 
 // prettier-ignore
