@@ -28,6 +28,14 @@ switch (ethereumNetwork) {
       rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${alchemyKey}`,
     });
     break;
+  case "ply-mumbai.testcomp":
+    chains.push({
+      id: "80001",
+      token: "MATIC",
+      label: "Mumbai Testnet",
+      rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/${alchemyKey}",
+    });
+    break;
   case "mainnet":
     chains.push({
       id: "0x1",
