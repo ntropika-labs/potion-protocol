@@ -70,7 +70,7 @@ async function main() {
       alias: "n",
       description: "subgraph network",
       default: "mainnet",
-      choices: ["mainnet", "goerli"],
+      choices: ["mainnet", "goerli", "mumbai"],
     })
     .option("vaults", {
       alias: "v",

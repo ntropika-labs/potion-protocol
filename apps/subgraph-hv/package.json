@@ -6,6 +6,7 @@
     "auth-hosted": "graph auth --hosted-service",
     "auth-studio": "graph auth --studio",
     "prepare-local": "ts-node prepareManifest.ts",
+    "prepare-mumbai": "ts-node prepareManifest.ts -n mumbai -v mumbai-vaults.json",
     "create-local": "graph create potion-hv-subgraph --node http://localhost:8020",
     "remove-local": "graph remove --node http://localhost:8020/",
     "codegen": "graph codegen",
