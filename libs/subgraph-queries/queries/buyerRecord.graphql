@@ -3,6 +3,7 @@ query getBuyerRecords($buyer: Bytes, $expiry: BigInt) {
     id
     buyer
     expiry
+    numberOfOTokens
     otoken {
       expiry
       id

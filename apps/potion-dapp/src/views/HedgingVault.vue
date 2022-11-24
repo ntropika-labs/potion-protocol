@@ -17,8 +17,15 @@
     <div class="grid grid-cols-6 gap-6">
       <EstimationCard
         class="col-span-2"
-        :underlying-symbol="underlyingSymbol"
         :deposit-tickets="depositTickets"
+        :investment-vault-contract-shares="parseFloat(vault.totalShares)"
+        :potions-quantity="potionsQuantity"
+        :strike-price="strikePrice"
+        :total-underlyings-at-round-end="vault.lastTotalUnderlyingsAtRoundEnd"
+        :underlying-balance-action-contract="potionBuyActionBalance"
+        :underlying-price="polledPrice"
+        :underlying-symbol="underlyingSymbol"
+        :usdc-balance-action-contract="potionBuyActionUSDC"
       ></EstimationCard>
       <BaseCard class="p-4 col-span-4">
         <TabMenu v-model="selectedTab"></TabMenu>
@@ -78,6 +85,7 @@ import { useEthersProvider } from "@/composables/useEthersProvider";
 import { useHedgingVault } from "@/composables/useHedgingVault";
 import { useInputOutputVaultExchange } from "@/composables/useInputOutputVaultExchange";
 import { useNotifications } from "@/composables/useNotifications";
+import { useOracleContract } from "@/composables/useOracleContract";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useWithdrawalTickets } from "@/composables/useWithdrawalTickets";
 
@@ -85,12 +93,15 @@ import {
   getRoundsExchangerFromVault,
   getRoundsInputFromVault,
   getRoundsOutputFromVault,
+  getPotionBuyActionFromVault,
 } from "@/helpers/hedgingVaultContracts";
 
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { usePotionBuyActionStore } from "@/stores/usePotionBuyActionStore";
 
 import { AVAILABLE_TABS } from "@/types";
+import { useVaultPotion } from "@/composables/useVaultPotion";
 
 const selectedTab = ref<AVAILABLE_TABS>(AVAILABLE_TABS.DEPOSIT);
 
@@ -99,9 +110,13 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const { vaultId } = useRouteVaultIdentifier(route.params);
+
 const roundsExchangerAddress = getRoundsExchangerFromVault(vaultId.value);
 const roundsInputAddress = getRoundsInputFromVault(vaultId.value);
 const roundsOutputAddress = getRoundsOutputFromVault(vaultId.value);
+const potionBuyActionAddress = getPotionBuyActionFromVault(vaultId.value);
+
+const { polledPrice, stopPolling, startPolling } = useOracleContract();
 
 // current block info
 const { blockTimestamp, getBlock } = useEthersProvider();
@@ -117,6 +132,7 @@ const {
   loading: vaultLoading,
   loadVault,
 } = useHedgingVault(vaultId, walletAddress);
+
 const currentRound = computed(() => vault.value.currentRound);
 const underlyingSymbol = computed(() => vault.value.underlying.symbol);
 const underlyingAddress = computed(() => vault.value.underlying.address);
@@ -125,6 +141,34 @@ const vaultRounds = computed(() => vault.value.rounds);
 const lastShareToUnderlyingRate = computed(
   () => vault.value.lastShareToUnderlyingRate
 );
+const nextCycleTimestamp = computed(() =>
+  parseInt(vault.value.nextCycleTimestamp)
+);
+
+watch(underlyingAddress, () => {
+  stopPolling();
+  if (underlyingAddress.value) {
+    startPolling(underlyingAddress.value);
+  }
+});
+
+// Purchased potion vault info
+const { potionsQuantity, strikePrice } = useVaultPotion(
+  potionBuyActionAddress,
+  nextCycleTimestamp
+);
+
+// potionBuyAction balances
+const potionBuyActionStore = usePotionBuyActionStore(
+  potionBuyActionAddress,
+  underlyingAddress
+);
+const potionBuyActionState = potionBuyActionStore();
+
+const {
+  underlyingBalance: potionBuyActionBalance,
+  collateralBalance: potionBuyActionUSDC,
+} = storeToRefs(potionBuyActionState);
 
 // InputsRoundsVault
 const roundsInputStore = useVaultStore(
