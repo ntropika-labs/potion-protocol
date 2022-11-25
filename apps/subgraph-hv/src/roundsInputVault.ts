@@ -53,14 +53,14 @@ function handleDepositWithReceipt(event: DepositWithReceipt): void {
   const contract = RoundsInputVault.bind(event.address);
   const vaultAddress = contract.vault();
   const roundNumber = contract.getCurrentRound();
-  const roundId = createRoundId(roundNumber, vaultAddress);
+  const round = getOrCreateRound(roundNumber, vaultAddress);
   // add the vault to the investor
   addInvestorVault(event.params.receiver, vaultAddress);
   // load the depositTicket, if it doesn't exists it will be initialized to an empty one
   const depositTicket = getOrCreateDepositTicket(
     event.params.id,
     vaultAddress,
-    roundId,
+    round.id,
     event.params.receiver,
     event.params.caller,
     event.block.hash,
