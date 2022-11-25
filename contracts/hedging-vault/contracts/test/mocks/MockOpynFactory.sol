@@ -5,6 +5,8 @@ pragma solidity 0.8.14;
 
 import "../../interfaces/IOpynFactory.sol";
 
+import "./MockERC20PresetMinterPauser.sol";
+
 /**
     @title MockOpynController
 
@@ -13,6 +15,13 @@ import "../../interfaces/IOpynFactory.sol";
     @notice Mock contract for the Opyn contoller
 */
 contract MockOpynFactory is IOpynFactory {
+    uint8 public constant OTOKEN_DECIMALS = 8;
+    MockERC20PresetMinterPauser public otoken;
+
+    constructor(address otoken_) {
+        otoken = MockERC20PresetMinterPauser(otoken_);
+    }
+
     /**
         @inheritdoc IOpynFactory
     */
@@ -23,9 +32,9 @@ contract MockOpynFactory is IOpynFactory {
         uint256, /*_strikePrice*/
         uint256, /*_expiry*/
         bool /*_isPut*/
-    ) external pure returns (address) {
+    ) external view returns (address) {
         // This address is the address at index 5 of Hardhat's generated addresses for its default seed
-        return address(0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc);
+        return address(otoken);
     }
 
     /**
@@ -38,8 +47,8 @@ contract MockOpynFactory is IOpynFactory {
         uint256, /*_strikePrice*/
         uint256, /*_expiry*/
         bool /*_isPut*/
-    ) external pure returns (address) {
+    ) external view returns (address) {
         // This address is the address at index 5 of Hardhat's generated addresses for its default seed
-        return address(0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc);
+        return address(otoken);
     }
 }

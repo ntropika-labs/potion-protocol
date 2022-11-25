@@ -83,6 +83,9 @@ describe("DeferredDepositsWithdrawals", function () {
         roundsOutputVault = tEnv.roundsOutputVault;
         orchestrator = tEnv.hedgingVaultOrchestrator;
         roundsExchanger = tEnv.roundsVaultExchanger;
+
+        // Mint some otokens for the Potion Buy action so it thinks that it bought some otokens
+        tEnv.opynMockOtoken.mint(potionBuy.address, ethers.utils.parseEther("1000"));
     });
 
     it("DDW0001 - Investment Vault Default Value", async function () {

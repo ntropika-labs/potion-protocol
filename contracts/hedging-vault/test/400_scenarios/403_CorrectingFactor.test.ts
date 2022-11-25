@@ -80,6 +80,9 @@ describe("CorrectingFactor", function () {
         // as we won't be using the orchestrator
         await vault.grantRole(Roles.Operator, ownerAccount.address);
         await action.grantRole(Roles.Operator, ownerAccount.address);
+
+        // Mint some otokens for the Potion Buy action so it thinks that it bought some otokens
+        tEnv.opynMockOtoken.mint(action.address, ethers.utils.parseEther("1000"));
     });
 
     it("CF0001 - Potion Buy Action Hedging Rate Config", async function () {
@@ -230,13 +233,24 @@ describe("CorrectingFactor", function () {
 
             // Uniswap V3 Router calls
             expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput).to.have.been.calledOnce;
-            expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput.getCall(0).args[0]).to.be.deep.equal([
-                tCond.potionBuySwapEnterPosition.swapPath,
-                action.address,
-                tEnv.maxSwapDurationSecs.add(cycleStartTimestamp),
-                BigNumber.from(tCond.maxPremiumWithSlippageInUSDC),
-                BigNumber.from(tCond.uniswapEnterPositionInputAmountWithSlippage),
-            ]);
+            try {
+                expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput.getCall(0).args[0]).to.be.deep.equal([
+                    tCond.potionBuySwapEnterPosition.swapPath,
+                    action.address,
+                    tEnv.maxSwapDurationSecs.add(cycleStartTimestamp),
+                    BigNumber.from(tCond.maxPremiumWithSlippageInUSDC),
+                    BigNumber.from(tCond.uniswapEnterPositionInputAmountWithSlippage),
+                ]);
+            } catch (e) {
+                // Retry with one more second in the timestamp
+                expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput.getCall(0).args[0]).to.be.deep.equal([
+                    tCond.potionBuySwapEnterPosition.swapPath,
+                    action.address,
+                    tEnv.maxSwapDurationSecs.add(cycleStartTimestamp).add(1),
+                    BigNumber.from(tCond.maxPremiumWithSlippageInUSDC),
+                    BigNumber.from(tCond.uniswapEnterPositionInputAmountWithSlippage),
+                ]);
+            }
             expect(asMock(tEnv.uniswapV3SwapRouter).exactInput).to.have.been.calledOnce;
             expect(asMock(tEnv.uniswapV3SwapRouter).exactInput.getCall(0).args[0]).to.be.deep.equal([
                 tCond.potionBuySwapExitPosition.swapPath,

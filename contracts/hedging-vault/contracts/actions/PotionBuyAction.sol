@@ -155,29 +155,37 @@ contract PotionBuyAction is
         _updateNextCycleStart();
         _setLifecycleState(LifecycleState.Locked);
 
-        require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
+        if (amountToInvest != 0) {
+            require(_hasPotionInfo(investmentAsset, nextCycleStartTimestamp), "Potion info not found");
 
-        // At this moment in the lifecycle of the vault, this external call could only come back
-        // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
-        // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
-        // operations performed inside this action
-        IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
+            // At this moment in the lifecycle of the vault, this external call could only come back
+            // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
+            // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
+            // operations performed inside this action
+            IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest);
 
-        uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
-            investmentAsset,
-            nextCycleStartTimestamp,
-            premiumSlippage
-        );
+            uint256 premiumWithSlippageInUSDC = _calculatePremiumWithSlippage(
+                investmentAsset,
+                nextCycleStartTimestamp,
+                premiumSlippage
+            );
 
-        _swapOutput(investmentAsset, address(getUSDC()), premiumWithSlippageInUSDC, swapSlippage, maxSwapDurationSecs);
-        (uint256 amountPotionsInAssets, uint256 actualPremiumInUSDC) = _buyPotions(
-            investmentAsset,
-            nextCycleStartTimestamp,
-            premiumWithSlippageInUSDC
-        );
+            _swapOutput(
+                investmentAsset,
+                address(getUSDC()),
+                premiumWithSlippageInUSDC,
+                swapSlippage,
+                maxSwapDurationSecs
+            );
+            (uint256 amountPotionsInAssets, uint256 actualPremiumInUSDC) = _buyPotions(
+                investmentAsset,
+                nextCycleStartTimestamp,
+                premiumWithSlippageInUSDC
+            );
 
-        _validateMaxPremium(investmentAsset, amountToInvest, actualPremiumInUSDC);
-        _validateHedgingRate(investmentAsset, amountToInvest, amountPotionsInAssets, actualPremiumInUSDC);
+            _validateMaxPremium(investmentAsset, amountToInvest, actualPremiumInUSDC);
+            _validateHedgingRate(investmentAsset, amountToInvest, amountPotionsInAssets, actualPremiumInUSDC);
+        }
 
         emit ActionPositionEntered(investmentAsset, amountToInvest);
     }
@@ -193,19 +201,21 @@ contract PotionBuyAction is
         nonReentrant
         returns (uint256 amountReturned)
     {
-        require(_isPotionRedeemable(investmentAsset, nextCycleStartTimestamp), "The Potion is not redeemable yet");
+        if (_isPotionBought(investmentAsset, nextCycleStartTimestamp)) {
+            require(_isPotionRedeemable(investmentAsset, nextCycleStartTimestamp), "The Potion is not redeemable yet");
 
-        IERC20 investmentAssetERC20 = IERC20(investmentAsset);
-        IERC20 USDC = getUSDC();
+            IERC20 investmentAssetERC20 = IERC20(investmentAsset);
+            IERC20 USDC = getUSDC();
 
-        _redeemPotions(investmentAsset, nextCycleStartTimestamp);
-        uint256 amountToConvertToAssset = USDC.balanceOf(address(this));
+            _redeemPotions(investmentAsset, nextCycleStartTimestamp);
+            uint256 amountToConvertToAssset = USDC.balanceOf(address(this));
 
-        _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
+            _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs);
 
-        amountReturned = investmentAssetERC20.balanceOf(address(this));
+            amountReturned = investmentAssetERC20.balanceOf(address(this));
 
-        SafeERC20.safeTransfer(investmentAssetERC20, _msgSender(), amountReturned);
+            SafeERC20.safeTransfer(investmentAssetERC20, _msgSender(), amountReturned);
+        }
 
         _setLifecycleState(LifecycleState.Unlocked);
 

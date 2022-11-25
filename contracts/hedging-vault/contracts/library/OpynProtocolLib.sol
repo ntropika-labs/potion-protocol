@@ -5,6 +5,7 @@ pragma solidity 0.8.14;
 
 import { IOpynController } from "../interfaces/IOpynController.sol";
 import { IOpynFactory } from "../interfaces/IOpynFactory.sol";
+import { IERC20Upgradeable as IERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/interfaces/IERC20Upgradeable.sol";
 
 /**
     @title OpynProtocolLib
@@ -65,5 +66,39 @@ library OpynProtocolLib {
         uint256 expiry
     ) internal view returns (address) {
         return opynFactory.getTargetOtokenAddress(underlyingAsset, USDC, USDC, strikePrice, expiry, true);
+    }
+
+    /**
+        @notice Retrieves the amount of oTokens that the given account owns
+
+        @param opynFactory Address of the Opyn Factory
+        @param underlyingAsset Address of the underlying asset of the potion to buy
+        @param strikePriceInUSDC Strike price of the potion to buy, in USDC, with 6 decimals
+        @param expirationTimestamp Expiration timestamp of the potion to buy
+
+        @return The amount of oTokens that the given account owns
+     */
+    function getOtokenBalance(
+        IOpynFactory opynFactory,
+        address underlyingAsset,
+        uint256 strikePriceInUSDC,
+        uint256 expirationTimestamp,
+        IERC20 USDC,
+        address account
+    ) internal view returns (uint256) {
+        address oToken = getExistingOtoken(
+            opynFactory,
+            underlyingAsset,
+            address(USDC),
+            strikePriceInUSDC,
+            expirationTimestamp
+        );
+
+        if (oToken == address(0)) {
+            return 0;
+        }
+
+        IERC20 oTokenERC20 = IERC20(oToken);
+        return oTokenERC20.balanceOf(account);
     }
 }

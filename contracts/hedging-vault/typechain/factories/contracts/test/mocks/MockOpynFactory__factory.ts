@@ -14,6 +14,30 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "otoken_",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [],
+    name: "OTOKEN_DECIMALS",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "",
         type: "address",
       },
@@ -51,7 +75,7 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "pure",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -95,13 +119,26 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "pure",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "otoken",
+    outputs: [
+      {
+        internalType: "contract MockERC20PresetMinterPauser",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];
 
 const _bytecode =
-  "0x608060405234801561001057600080fd5b50610145806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063115470541461003b578063b86b9a641461003b575b600080fd5b6100686100493660046100a0565b739965507d1a55bcc2695c58ba16fb37d819b0a4dc9695505050505050565b6040516001600160a01b03909116815260200160405180910390f35b80356001600160a01b038116811461009b57600080fd5b919050565b60008060008060008060c087890312156100b957600080fd5b6100c287610084565b95506100d060208801610084565b94506100de60408801610084565b9350606087013592506080870135915060a0870135801515811461010157600080fd5b80915050929550929550929556fea264697066735822122067b657651af1b42cc12faa97e734c9fb0a3ddd32f8909c2f36c10c5b85e46cb364736f6c634300080e0033";
+  "0x608060405234801561001057600080fd5b5060405161021338038061021383398101604081905261002f91610054565b600080546001600160a01b0319166001600160a01b0392909216919091179055610084565b60006020828403121561006657600080fd5b81516001600160a01b038116811461007d57600080fd5b9392505050565b610180806100936000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80631154705414610051578063179eaf2114610092578063ae8ecf58146100ac578063b86b9a6414610051575b600080fd5b61007561005f3660046100db565b6000546001600160a01b03169695505050505050565b6040516001600160a01b0390911681526020015b60405180910390f35b61009a600881565b60405160ff9091168152602001610089565b600054610075906001600160a01b031681565b80356001600160a01b03811681146100d657600080fd5b919050565b60008060008060008060c087890312156100f457600080fd5b6100fd876100bf565b955061010b602088016100bf565b9450610119604088016100bf565b9350606087013592506080870135915060a0870135801515811461013c57600080fd5b80915050929550929550929556fea26469706673582212201ea7daf442efc8c69095d1ab775d42d61c781cc198aefaf7e91b2574b888cda864736f6c634300080e0033";
 
 type MockOpynFactoryConstructorParams =
   | [signer?: Signer]
@@ -121,14 +158,16 @@ export class MockOpynFactory__factory extends ContractFactory {
   }
 
   override deploy(
+    otoken_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<MockOpynFactory> {
-    return super.deploy(overrides || {}) as Promise<MockOpynFactory>;
+    return super.deploy(otoken_, overrides || {}) as Promise<MockOpynFactory>;
   }
   override getDeployTransaction(
+    otoken_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
-    return super.getDeployTransaction(overrides || {});
+    return super.getDeployTransaction(otoken_, overrides || {});
   }
   override attach(address: string): MockOpynFactory {
     return super.attach(address) as MockOpynFactory;
