@@ -33,7 +33,7 @@ switch (ethereumNetwork) {
       id: "80001",
       token: "MATIC",
       label: "Mumbai Testnet",
-      rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/${alchemyKey}",
+      rpcUrl: `https://polygon-mumbai.g.alchemy.com/v2/${alchemyKey}`,
     });
     break;
   case "mainnet":
