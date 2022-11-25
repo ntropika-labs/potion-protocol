@@ -61,7 +61,8 @@ export default defineConfig({
       ),
       "@premium-swap-router": getLibraryPath(
         "./src/helpers/premiumSwapRouter.ts",
-        "./src/helpers/mockedPremiumSwapRouter.ts"
+        "./src/helpers/mockedPremiumSwapRouter.ts",
+        VITE_MODE === "test" || VITE_MODE === "testnet" || development
       ),
       crypto: "crypto-browserify",
       stream: "stream-browserify",

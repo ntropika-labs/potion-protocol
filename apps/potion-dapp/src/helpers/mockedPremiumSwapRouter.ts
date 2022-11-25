@@ -1,5 +1,5 @@
 import JSBI from "jsbi";
-import { BigNumber, type BigNumberish } from "ethers";
+import { BigNumber } from "ethers";
 import { Token, TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import {
@@ -15,7 +15,6 @@ import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
 
 import { UniswapActionType, type UniswapRouterReturn } from "@/types";
-import { addPercentage, calculateOrderSize } from "hedging-vault-sdk";
 
 console.log("Running a mocked version of 'premiumSwapRouter'");
 
@@ -96,94 +95,43 @@ const getUniswapRoute = async (
   }
 };
 
-const runPremiumSwapRouter = async (
-  hedgingRate: BigNumberish,
-  strikePercent: BigNumberish,
+/**
+ *  Runs the potion depth router and returns the premium and a set of counterparties
+ *
+ * @param orderSizeInUSDC Order size to run the potion router for, expressed as USDC
+ * @param pools Set of pools to use when looking for a match
+ * @param strikePriceUSDC Current strike price in USDC
+ * @param gas The gas price expressed in WEI
+ * @param ethPrice The ETH price expressed in dollars
+ * @returns an object with the premium, the premium + gas and an array of counterparties
+ */
+const getPotionRoute = async (
+  orderSizeInUSDC: number,
   pools: IPoolUntyped[],
-  principalHedgedAmount: number,
   strikePriceUSDC: number,
   gas: number,
-  ethPrice: number,
-  chainId: ChainId,
-  inputToken: PotionToken,
-  outputToken: PotionToken,
-  tradeType: TradeType,
-  maxSplits: number,
-  premiumSlippage: number,
-  recipientAddress: string,
-  slippageToleranceInteger = 1,
-  actionType: UniswapActionType = UniswapActionType.ENTER_POSITION,
-  deadlineTimestamp?: number
-): Promise<{
-  potionRouterResult: DepthRouterReturn;
-  uniswapRouterResult: UniswapRouterReturn;
-}> => {
-  // POTION ROUTER
-  const potionRouterWithPremium = runDepthRouter(
-    pools,
-    principalHedgedAmount,
-    strikePriceUSDC,
-    gas,
-    ethPrice
-  );
-
-  // TODO: check
-  const orderSize = calculateOrderSize(
-    principalHedgedAmount,
-    inputToken.decimals || "6",
-    hedgingRate,
-    strikePercent,
-    strikePriceUSDC,
-    potionRouterWithPremium.premium
-  );
-
-  const potionRouter = runDepthRouter(
-    pools,
-    orderSize.effectiveVaultSize.toNumber(),
-    strikePriceUSDC,
-    gas,
-    ethPrice
-  );
-
+  ethPrice: number
+): Promise<DepthRouterReturn> => {
+  console.log("- MOCKED PREMIUM SWAP ROUTER PARAMS");
   console.table([
     {
-      inputToken: [inputToken.address, inputToken.decimals, inputToken.symbol],
-      outputToken: [
-        outputToken.address,
-        outputToken.decimals,
-        outputToken.symbol,
-      ],
-      chainId,
-      pools: pools.map((p) => p.poolId),
-      orderSize,
-      routerPremium: potionRouterWithPremium,
-      finalOrderSize: orderSize.effectiveVaultSize.toNumber(),
+      orderSizeInUSDC,
+      pools,
+      strikePriceUSDC,
+      gas,
+      ethPrice,
     },
   ]);
 
-  // UNISWAP ROUTE
-  const totalAmountToSwap = addPercentage(
-    BigNumber.from(potionRouterWithPremium.premium),
-    BigNumber.from(premiumSlippage)
+  const potionRouter = runDepthRouter(
+    pools,
+    orderSizeInUSDC,
+    strikePriceUSDC,
+    gas,
+    ethPrice
   );
 
-  const uniswapResult = await getUniswapRoute(
-    chainId,
-    inputToken,
-    outputToken,
-    tradeType,
-    totalAmountToSwap.toNumber(),
-    maxSplits,
-    recipientAddress,
-    slippageToleranceInteger,
-    actionType,
-    deadlineTimestamp
-  );
-
-  return {
-    potionRouterResult: potionRouter,
-    uniswapRouterResult: uniswapResult,
-  };
+  return potionRouter;
 };
 
-export { getUniswapRoute, runPremiumSwapRouter };
+export { getUniswapRoute, getPotionRoute };
