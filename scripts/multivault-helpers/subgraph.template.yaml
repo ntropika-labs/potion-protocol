@@ -1,0 +1,149 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: InvestmentVault
+    network: mainnet
+    source:
+      abi: InvestmentVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - HedgingVault
+        - PotionBuyAction
+        - Token
+        - Block
+        - Round
+      abis:
+        - name: InvestmentVault
+          file: ../../contracts/hedging-vault/abis/contracts/vault/InvestmentVault.sol/InvestmentVault.json
+        - name: ERC20
+          file: ../../contracts/hedging-vault/abis/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: RolesManagerUpgradeable
+          file: ../../contracts/hedging-vault/abis/contracts/common/RolesManagerUpgradeable.sol/RolesManagerUpgradeable.json
+        - name: PotionBuyAction
+          file: ../../contracts/hedging-vault/abis/contracts/actions/PotionBuyAction.sol/PotionBuyAction.json
+      eventHandlers:
+        - event: ActionsAdded(address[])
+          handler: handleActionsAdded
+        - event: VaultPositionEntered(uint256,uint256,(uint256[],uint256[]))
+          handler: handleVaultPositionEntered
+        - event: VaultPositionExited(uint256,(uint256[],uint256[]))
+          handler: handleVaultPositionExited
+        - event: Deposit(indexed address,indexed address,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleWithdraw
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ./src/investmentVault.ts
+  
+  - kind: ethereum/contract
+    name: PotionBuyAction
+    network: mainnet
+    source:
+      abi: PotionBuyAction
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PotionBuyAction
+      abis:
+        - name: PotionBuyAction
+          file: ../../contracts/hedging-vault/abis/contracts/actions/PotionBuyAction.sol/PotionBuyAction.json
+      eventHandlers:
+        - event: MaxPremiumPercentageChanged(uint256)
+          handler: handleMaxPremiumPercentageChanged
+        - event: CycleDurationChanged(uint256)
+          handler: handleCycleDurationChanged
+        - event: HedgingRateChanged(uint256)
+          handler: handleHedgingRateChanged
+        - event: MaxSwapDurationChanged(uint256)
+          handler: handleMaxSwapDurationChanged
+        - event: PremiumSlippageChanged(uint256)
+          handler: handlePremiumSlippageChanged
+        - event: StrikePercentageChanged(uint256)
+          handler: handleStrikePercentageChanged
+        - event: SwapSlippageChanged(uint256)
+          handler: handleSwapSlippageChanged
+      file: ./src/potionBuyAction.ts
+
+  
+  - kind: ethereum/contract
+    name: RoundsInputVault
+    network: mainnet
+    source:
+      abi: RoundsInputVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Round
+        - HedgingVault
+        - Investor
+        - Deposit
+        - DepositTicket
+        - Withdrawal
+        - WithdrawalTicket
+        - Block
+      abis:
+        - name: RoundsInputVault
+          file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsInputVault.sol/RoundsInputVault.json
+      eventHandlers:
+        - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositWithReceipt
+        - event: NextRound(indexed uint256,uint256)
+          handler: handleNextRound
+        - event: RedeemReceipt(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleRedeemReceipt
+        - event: RedeemReceiptBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleRedeemReceiptBatch
+        - event: WithdrawExchangeAsset(indexed address,indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleWithdrawExchangeAsset
+        - event: WithdrawExchangeAssetBatch(indexed address,indexed address,indexed address,uint256,uint256[],uint256[])
+          handler: handleWithdrawExchangeAssetBatch
+      file: ./src/roundsInputVault.ts
+  
+  - kind: ethereum/contract
+    name: RoundsOutputVault
+    network: mainnet
+    source:
+      abi: RoundsOutputVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Round
+        - HedgingVault
+        - Investor
+        - Deposit
+        - DepositTicket
+        - Withdrawal
+        - WithdrawalTicket
+        - Block
+      abis:
+        - name: RoundsOutputVault
+          file: ../../contracts/hedging-vault/abis/contracts/rounds/RoundsOutputVault.sol/RoundsOutputVault.json
+      eventHandlers:
+        - event: DepositWithReceipt(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositWithReceipt
+        - event: NextRound(indexed uint256,uint256)
+          handler: handleNextRound
+        - event: RedeemReceipt(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleRedeemReceipt
+        - event: RedeemReceiptBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleRedeemReceiptBatch
+        - event: WithdrawExchangeAsset(indexed address,indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleWithdrawExchangeAsset
+        - event: WithdrawExchangeAssetBatch(indexed address,indexed address,indexed address,uint256,uint256[],uint256[])
+          handler: handleWithdrawExchangeAssetBatch
+      file: ./src/roundsOutputVault.ts
+      

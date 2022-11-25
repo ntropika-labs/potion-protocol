@@ -27670,6 +27670,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"multivault-helpers@workspace:scripts/multivault-helpers":
+  version: 0.0.0-use.local
+  resolution: "multivault-helpers@workspace:scripts/multivault-helpers"
+  languageName: unknown
+  linkType: soft
+
 "murmurhash3js-revisited@npm:^3.0.0":
   version: 3.0.0
   resolution: "murmurhash3js-revisited@npm:3.0.0"

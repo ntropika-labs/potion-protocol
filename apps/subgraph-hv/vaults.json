@@ -1,6 +1,0 @@
-[
-  "../../contracts/hedging-vault/deployments/localhost.multivaultA.json", 
-  "../../contracts/hedging-vault/deployments/localhost.multivaultB.json", 
-  "../../contracts/hedging-vault/deployments/localhost.multivaultC.json",
-  "file-that-doesnt-exists"
-]

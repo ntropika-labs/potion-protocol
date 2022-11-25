@@ -1,24 +1,14 @@
-import { accessSync } from "fs";
 import { basename } from "path";
 import { readFile, writeFile } from "fs/promises";
-import _yargs from "yargs";
+import yargs from "yargs";
 
-// istance yargs
-const yargs = _yargs()
+import { canAccess } from "./utils";
+import type { VaultSource } from "./types";
 
-const canAccess = (path) => {
-  try {
-    accessSync(path);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const getHardhatTarget = (path) => {
+const getHardhatTarget = (path: string) => {
   const base = basename(path);
-  return base.replace(/localhost/, 'hardhat.develop').replace(/\.json/, '');
-}
+  return base.replace(/localhost/, "hardhat.develop").replace(/\.json/, "");
+};
 
 async function main() {
   const args = await yargs
@@ -31,25 +21,25 @@ async function main() {
     .help()
     .alias("help", "h").argv;
   // read the vault stacks files
-  const sources = JSON.parse(await readFile(args.vaults, "utf8"));
+  const sources = JSON.parse(await readFile(args.vaults, "utf8")) as string[];
 
   // keep only the paths that the user can read
   const accessibleSources = sources.filter(canAccess);
 
   // for every stack declared in the stacks file prepare entries
-  const stacks = accessibleSources.map(async (path) => {
+  const stacks = accessibleSources.map(async (path: string) => {
     // load the JSON file
-    const source = JSON.parse(await readFile(path, "utf8"));
-    const result = {};
+    const source = JSON.parse(await readFile(path, "utf8")) as VaultSource;
+    const result = new Map<string, string>();
     for (const [key, value] of Object.entries(source.contracts)) {
-      result[key] = value.address;
+      result.set(key, value.address);
     }
-    result.hardhatDeploymentName = getHardhatTarget(path);
-    return result;
+    result.set("hardhatDeploymentName", getHardhatTarget(path));
+    return Object.fromEntries(result);
   });
 
   await writeFile(
-    "./multivault.json",
+    "../../apps/potion-dapp/multivault.json",
     JSON.stringify(await Promise.all(stacks))
   );
 }

@@ -9,7 +9,8 @@
     "packages": [
       "apps/*",
       "libs/*",
-      "contracts/*"
+      "contracts/*",
+      "scripts/*"
     ]
   },
   "scripts": {

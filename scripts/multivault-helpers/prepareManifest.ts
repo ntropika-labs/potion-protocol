@@ -1,67 +1,9 @@
 import yaml from "js-yaml";
 import yargs from "yargs";
-import { accessSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 
-// subgraph.yaml format
-interface DataSource {
-  kind: string;
-  name: string;
-  network: string;
-  source: {
-    address: string;
-    abi: string;
-    startBlock: number;
-  };
-  mapping: {
-    kind: string;
-    apiVersion: number;
-    language: string;
-    entities: string[];
-    abis: {
-      name: string;
-      file: string;
-    };
-    eventHandlers: {
-      event: string;
-      handler: string;
-    }[];
-    file: string;
-  };
-}
-
-interface SubgraphManifest {
-  specVersion: number;
-  schema: {
-    file: string;
-  };
-  dataSources: DataSource[];
-}
-
-interface ContractSource {
-  address: string;
-  blockNumber: number;
-}
-
-// JSON file containing all the vault stacks format
-interface VaultSource {
-  contracts: {
-    InvestmentVault: ContractSource;
-    PotionBuyAction: ContractSource;
-    RoundsInputVault: ContractSource;
-    RoundsOutputVault: ContractSource;
-    [key: string]: ContractSource;
-  };
-}
-
-const canAccess = (path: string) => {
-  try {
-    accessSync(path);
-    return true;
-  } catch {
-    return false;
-  }
-};
+import { canAccess } from "./utils";
+import type { SubgraphManifest, VaultSource } from "./types";
 
 async function main() {
   // yargs config
@@ -124,7 +66,7 @@ async function main() {
   };
 
   await writeFile(
-    "./subgraph.yaml",
+    "../../apps/subgraph-hv/subgraph.yaml",
     yaml.dump(outputManifest, { noRefs: true })
   );
 }

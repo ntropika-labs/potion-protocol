@@ -157,7 +157,7 @@ spin_up_environment() {
   yarn nx run @potion-protocol/hedging-vault:deploy-local.multivault
   msg "${GREEN}- - Hedging contracts deployed ${NOFORMAT}"
     
-  yarn nx run potion-dapp:prepare-multivault
+  yarn nx run multivault-helpers:prepare-dapp
   msg "${GREEN}- - Multivault deployment created ${NOFORMAT}"
 
   yarn nx run potion-subgraph:prepare-hedging
@@ -174,7 +174,7 @@ spin_up_environment() {
 
   yarn nx run subgraph-queries-hv:codegen
 
-  yarn nx run potion-subgraph-hv:prepare-local
+  yarn nx run multivault-helpers:prepare-manifest
 
   yarn nx run potion-subgraph-hv:create-local
   msg "${GREEN}- Hedging Vault subgraph created ${NOFORMAT}"
