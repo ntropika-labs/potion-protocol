@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# script used to run the mumbai setup in localhost
+yarn nx run multivault-helpers:prepare-dapp-mumbai
+VITE_ETHEREUM_NETWORK="ply-mumbai.testcomp" VITE_SUBGRAPH_ADDRESS="https://api.thegraph.com/subgraphs/name/dapp-testing/mumc" VITE_SUBGRAPH_HV_ADDRESS="https://api.thegraph.com/subgraphs/name/dapp-testing/mummv" yarn dev potion-dapp
