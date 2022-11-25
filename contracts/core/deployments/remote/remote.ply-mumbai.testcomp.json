@@ -4,6 +4,22 @@
   "network": "ply-mumbai",
   "config": "testcomp",
   "contracts": {
+    "WETH": {
+      "address": "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0",
+      "blockNumber": 29292567
+    },
+    "WBTC": {
+      "address": "0xb3086e79c2f6328676899E01C883B51830594A64",
+      "blockNumber": 29292576
+    },
+    "LINK": {
+      "address": "0xe59914ED345212190778F8e7427B0B6f73332D50",
+      "blockNumber": 29292585
+    },
+    "USDC": {
+      "address": "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3",
+      "blockNumber": 29292594
+    },
     "AddressBook": {
       "address": "0x0003f387d1e1428D277d1EbF9eAfBF2Dc2daDDA8",
       "blockNumber": 29292716
