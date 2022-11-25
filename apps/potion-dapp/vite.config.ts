@@ -10,8 +10,8 @@ import { brotliCompressSync } from "zlib";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vue from "@vitejs/plugin-vue";
 
-const MODE = process.env.NODE_ENV;
-const development = MODE === "development";
+const NODE_ENV = process.env.NODE_ENV;
+const development = NODE_ENV === "development";
 const VITE_MODE = process.env.MODE;
 
 const getFsPath = (path: string) =>
@@ -48,7 +48,7 @@ export default defineConfig({
       "@coingecko-composable": getLibraryPath(
         "./src/composables/useCoinGecko.ts",
         "./src/composables/useMockedCoingecko.ts",
-        VITE_MODE === "test" || VITE_MODE === "testnet"
+        VITE_MODE === "test" || VITE_MODE === "testnet" || development
       ),
       "@onboard-composable": getLibraryPath(
         "./src/composables/useOnboard.ts",
@@ -57,7 +57,7 @@ export default defineConfig({
       "@vault-operator-utils": getLibraryPath(
         "./src/helpers/vaultOperatorUtils.ts",
         "./src/helpers/mockedVaultOperatorUtils.ts",
-        VITE_MODE === "test" || development
+        VITE_MODE === "test" || VITE_MODE === "testnet" || development
       ),
       "@premium-swap-router": getLibraryPath(
         "./src/helpers/premiumSwapRouter.ts",
