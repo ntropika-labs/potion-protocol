@@ -52,7 +52,7 @@ const router = createRouter({
       path: "/hedging-vaults/:id",
       name: "hedging-vault",
       component: HedgingVault,
-      meta: { requireWallet: true, layout: BaseLayout },
+      meta: { requireWallet: false, layout: BaseLayout },
       beforeEnter: async (to, from, next) => {
         const { vaultId, validVaultId } = useRouteVaultIdentifier(to.params);
         if (!validVaultId) {

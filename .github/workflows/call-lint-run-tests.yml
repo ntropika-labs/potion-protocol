@@ -178,7 +178,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Prepare subgraph.yaml
-        run: yarn nx run potion-subgraph-hv:prepare-local
+        run: yarn nx run potion-subgraph-hv:prepare-test-unit
 
       - name: Codegen
         run: yarn codegen potion-subgraph-hv

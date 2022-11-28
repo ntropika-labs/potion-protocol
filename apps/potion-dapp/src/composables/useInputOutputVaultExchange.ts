@@ -11,6 +11,7 @@ import type { MaybeRef } from "@vueuse/core";
 import type { BigNumberish } from "@ethersproject/bignumber";
 import type { DepositTicket } from "hedging-vault-sdk";
 import type { RoundsFragment } from "@/types";
+import { isValidAddress } from "@/helpers";
 
 const roundToDepositTicket = (round: RoundsFragment): DepositTicket => ({
   id: parseInt(round.roundNumber),
@@ -111,18 +112,21 @@ function useInputOutputVaultExchange(
     () => exchangeInputForOutputTx.value || exchangeInputForOutputBatchTx.value
   );
 
-  getIsApprovedForAll(unref(walletAddress), unref(exchangerAddress));
+  const _getIsApprovedForAll = async () => {
+    const wallet = unref(walletAddress);
+    if (isValidAddress(wallet)) {
+      await getIsApprovedForAll(wallet, unref(exchangerAddress));
+    }
+  };
+
+  _getIsApprovedForAll();
 
   if (isRef(walletAddress)) {
-    watch(walletAddress, () =>
-      getIsApprovedForAll(unref(walletAddress), unref(exchangerAddress))
-    );
+    watch(walletAddress, _getIsApprovedForAll);
   }
 
   if (isRef(exchangerAddress)) {
-    watch(exchangerAddress, () =>
-      getIsApprovedForAll(unref(walletAddress), unref(exchangerAddress))
-    );
+    watch(exchangerAddress, _getIsApprovedForAll);
   }
 
   return {

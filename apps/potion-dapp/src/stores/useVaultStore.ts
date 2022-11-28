@@ -28,8 +28,9 @@ const useVaultStore = (
 
     const approve = (amount: number) =>
       approveSpending(address, infiniteApproval.value, amount);
+
     const fetchUserData = async () => {
-      if (isValidAddress(unref(underlyingAddress))) {
+      if (isValidAddress(address) && isValidAddress(unref(underlyingAddress))) {
         await fetchUserAllowance(address);
       }
     };
@@ -37,7 +38,7 @@ const useVaultStore = (
     onMounted(fetchUserData);
 
     watch(walletAddress, async (newWallet) => {
-      if (newWallet) {
+      if (isValidAddress(newWallet)) {
         await fetchUserData();
       } else {
         userAllowance.value = 0;
