@@ -1,6 +1,6 @@
 import JSBI from "jsbi";
 import { BigNumber } from "ethers";
-import { Token, TradeType } from "@uniswap/sdk-core";
+import { TradeType } from "@uniswap/sdk-core";
 import { Protocol } from "@uniswap/router-sdk";
 import {
   CurrencyAmount,
@@ -15,11 +15,13 @@ import type { DepthRouterReturn, IPoolUntyped } from "potion-router";
 import type { Token as PotionToken } from "dapp-types";
 
 import { UniswapActionType, type UniswapRouterReturn } from "@/types";
+import { parseUnits } from "@ethersproject/units";
+import { convertTokenToUniswapToken } from "./uniswap";
 
 console.log("Running a mocked version of 'premiumSwapRouter'");
 
 const getUniswapRoute = async (
-  chainId: ChainId,
+  _chainId: ChainId,
   inputToken: PotionToken,
   outputToken: PotionToken,
   tradeType: TradeType,
@@ -36,21 +38,18 @@ const getUniswapRoute = async (
     const inputTokenSwap =
       tradeType === TradeType.EXACT_INPUT ? inputToken : outputToken;
 
-    const inputUniToken = new Token(
-      chainId,
-      inputTokenSwap.address,
-      inputTokenSwap.decimals || 0,
-      inputTokenSwap.symbol,
-      inputTokenSwap.name
-    );
+    const inputUniToken = convertTokenToUniswapToken(inputTokenSwap);
 
-    const tokenAmountWithDecimals =
-      Math.ceil(tokenAmount) * 10 ** inputUniToken.decimals;
+    // Define a currency amount and a deadline
+    const tokenAmountWithDecimals = parseUnits(
+      tokenAmount.toFixed(inputUniToken.decimals),
+      inputUniToken.decimals
+    );
 
     const currencyAmount = CurrencyAmount.fromRawAmount(
       inputUniToken,
       JSBI.BigInt(tokenAmountWithDecimals.toString())
-    ).toSignificant();
+    ).toFixed(6);
 
     const uniswapRouterResult: UniswapRouterReturn = {
       trade: JSON.parse(JSON.stringify({})),
