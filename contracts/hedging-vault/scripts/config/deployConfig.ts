@@ -365,7 +365,7 @@ export const PotionHedgingVaultDeploymentConfigs: { [key: string]: PotionHedging
         swapSlippage: PercentageUtils.toSolidityPercentage(2), //               2%
         maxSwapDurationSecs: BigNumber.from(60), //                             1 minute
         cycleDurationSecs: BigNumber.from(86400), //                            1 day
-        strikePercentage: PercentageUtils.toSolidityPercentage(80), //          70%
+        strikePercentage: PercentageUtils.toSolidityPercentage(70), //          70%
         hedgingRate: PercentageUtils.toSolidityPercentage(80), //               80%
         hedgingRateSlippage: PercentageUtils.toSolidityPercentage(3), //        3%
 

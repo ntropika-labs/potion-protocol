@@ -157,7 +157,9 @@ if (endpointProvider === "alchemy") {
 }
 
 const configMaxGas: number | undefined = Number(process.env.MAX_GAS);
-const configGasPrice: number | undefined = Number(process.env.GAS_PRICE);
+const configGasPrice: number | undefined = Number(
+  process.env.DEPLOYMENT_GAS_PRICE
+);
 
 export function getHardhatChainConfig(): HardhatNetworkUserConfig {
   return {

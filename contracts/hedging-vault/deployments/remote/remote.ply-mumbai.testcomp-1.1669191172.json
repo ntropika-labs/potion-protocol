@@ -1,36 +1,36 @@
 {
-  "timestamp": 1669624636,
+  "timestamp": 1669191172,
   "provider": "remote",
   "network": "ply-mumbai",
-  "config": "testcomp-2",
+  "config": "testcomp-1",
   "contracts": {
     "HedgingVaultOrchestrator": {
-      "address": "0x316AdE9E60EefC6781273565604D551E14BDD902",
-      "blockNumber": 29378825
+      "address": "0x563f29F25DbAf52A98a9078C99683BB806D05F23",
+      "blockNumber": 29293033
     },
     "PotionBuyAction": {
-      "address": "0x1b43DB0bBFaa79fe8C9206E3B6EC8cdDD7967C84",
-      "blockNumber": 29378827
+      "address": "0x198733ba178C3203dC0789a9b93A8B399aA08434",
+      "blockNumber": 29293036
     },
     "SwapToUSDCAction": {
-      "address": "0x9e0DbDC1022C5878a9f5fA4a377CE4286BE007B7",
-      "blockNumber": 29378829
+      "address": "0x3e34CFB4D92Dcf7aF171E07D314d2556df198684",
+      "blockNumber": 29293039
     },
     "InvestmentVault": {
-      "address": "0xbC010dF43e35452c321cEC1D5599d25b53fC3a08",
-      "blockNumber": 29378831
+      "address": "0xaaAb2968db085231DDe5151E0cB27EEF0108b9a4",
+      "blockNumber": 29293042
     },
     "RoundsInputVault": {
-      "address": "0xA930aB34025713b9f38D3A834dFe5abC80b50c7F",
-      "blockNumber": 29378833
+      "address": "0x9D5835F84649D61b8351f184F82f4A595b907940",
+      "blockNumber": 29293045
     },
     "RoundsOutputVault": {
-      "address": "0x2bedd58Ff3974E9aD0ADE78aAd74c4a1B1E78570",
-      "blockNumber": 29378835
+      "address": "0xF18f587B1F9915a1bf4e5D876C8D80048Fd7Fa26",
+      "blockNumber": 29293048
     },
     "RoundsVaultExchanger": {
-      "address": "0xa3fcf4049410Cd5464867eB8A98e5127AC6C013C",
-      "blockNumber": 29378837
+      "address": "0x22BA5e343B27d3A53F6333149d7BdB563A11a6D9",
+      "blockNumber": 29293051
     }
   },
   "dependencies": {
@@ -38,7 +38,7 @@
       "address": "0x4A9c8d8226E017e8e8da824c567cf41a9F8275C3"
     },
     "UnderlyingAsset": {
-      "address": "0xb3086e79c2f6328676899E01C883B51830594A64"
+      "address": "0x4Ea6Ee9316f1E5DBf7Fc7e63DF3f65764F2b0ac0"
     },
     "PotionLiquidityPool": {
       "address": "0x7Bd7326E8D783FA8223F74F38703D922E8bD2707"
