@@ -7,8 +7,13 @@ import {
   WithdrawExchangeAssetBatch,
   RoundsInputVault,
 } from "../generated/RoundsInputVault/RoundsInputVault";
-import { DepositTicket, Round } from "../generated/schema";
-import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
+import { DepositTicket } from "../generated/schema";
+import {
+  getOrCreateRound,
+  createRoundId,
+  updateShares,
+  getUnderlyingToShareRate,
+} from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
@@ -205,8 +210,7 @@ function withdraw(
       investor.toHexString(),
     ]);
   } else {
-    const round = Round.load(depositTicket.round)!;
-    const exchangeRate = round.shareToUnderlyingRate || BigInt.fromI32(0);
+    const exchangeRate = getUnderlyingToShareRate(depositTicket.round);
     const exchangeAssetAmount = exchangeRate.times(receiptAmount);
     depositTicket.amountRemaining =
       depositTicket.amountRemaining.minus(receiptAmount);
