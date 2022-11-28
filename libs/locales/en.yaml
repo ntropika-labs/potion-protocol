@@ -242,6 +242,6 @@ put_duration: Put Duration
 max_potion_slippage: Max Potion Slippage
 max_uniswap_slippage: Max Uniswap Slippage
 current_round_ends_in: Current Round ends in
-next_round_will_start_soon: Next Round wil start soon
+next_round_will_start_soon: Next Round will start soon
 withdrawals_processed_next_round: Requested withdraws will be processed next round
 estimated_vault_size: Estimated Vault Size
