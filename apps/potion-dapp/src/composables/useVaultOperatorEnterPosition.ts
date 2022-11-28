@@ -4,15 +4,11 @@ import { Protocol } from "@uniswap/router-sdk";
 
 import {
   getChainId,
-  USDCUniToken,
   convertUniswapTokenToToken,
   evaluateUniswapRoute,
+  USDCUniToken,
 } from "@/helpers/uniswap";
-import {
-  getRecipientAddress,
-  mockCollateralToken,
-  mockUnderlyingToken,
-} from "@vault-operator-utils";
+import { getRecipientAddress } from "@vault-operator-utils";
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useAlphaRouter } from "./useAlphaRouter";
@@ -35,7 +31,7 @@ import { useDepthRouter } from "./useDepthRouter";
 import { createValidExpiry } from "@/helpers";
 import { useOtokenFactory } from "./useOtokenFactory";
 import { calculateOrderSize } from "hedging-vault-sdk";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 
 /**
  * The composable returns a set of functions to perform operations to enter a new cycle and exposes references
@@ -49,6 +45,7 @@ import { formatUnits } from "@ethersproject/units";
  * @param hedgingRate Dynamic reference to the vault hedging rate, expressed as percentage integer
  * @param strikePercent Dynamic reference to the vault strike percent, expressed as a percentage integer
  * @param oraclePrice Dynamic reference to the current price for the `underlyingToken`, expressed in USDC
+ * @param cycleDurationDays Dynamic reference to the cycle duration for the hedging vault, expressed in days
  * @returns References to functions and dynamic variables
  * - `loadEnterPositionRoute`: loads data required to enter a new cycle. Saves the raw data into `enterPositionData`
  * - `evaluateEnterPositionData`: evaluates the previously loaded data and synthetizes the information required from the contracts to perform those actions
@@ -64,7 +61,6 @@ export function useVaultOperatorEnterPosition(
   oraclePrice: Ref<number>,
   cycleDurationDays: Ref<number>
 ) {
-  const effectiveVaultSizeInUnderlying = ref(0);
   const enterPositionData: Ref<{
     potionRouterData: DepthRouterReturn;
     uniswapRouterData: UniswapRouterReturn;
@@ -73,6 +69,7 @@ export function useVaultOperatorEnterPosition(
 
   // TODO: DEBUG PURPOSE- REMOVE
   const debugData: Ref<{
+    effectiveVaultSizeInUnderlying?: number;
     potionRouterInitialData?: DepthRouterReturn;
     totalPrincipalBeforeWithdrawalAndDepositInUnderlying?: number;
     exitSwapAmountInUnderlying?: number;
@@ -191,7 +188,7 @@ export function useVaultOperatorEnterPosition(
     );
   };
 
-  const totalAmountToSwap = ref(0);
+  const totalAmountToSwap = ref(-1);
 
   const strikePrice = computed(() => {
     const strikePercentage = strikePercent.value;
@@ -243,14 +240,20 @@ export function useVaultOperatorEnterPosition(
         0) > 0
   );
 
+  const hasValidUniswapRoute = computed(
+    () =>
+      hasRoute(enterPositionData.value?.uniswapRouterData) &&
+      hasRoute(enterPositionData.value?.fallbackUniswapRouterData)
+  );
+
   const isEnterPositionOperationValid = computed(() => {
     // The route is only valid if we have a total amount to swap, a set of counterparties and at
     // least a pair of routes for the uniswap trade and the fallback strategy
+    // Except for round 0 where there is no amount to swap
     return (
       isTotalAmountValid.value &&
-      hasCounterparties.value &&
-      hasRoute(enterPositionData.value?.uniswapRouterData) &&
-      hasRoute(enterPositionData.value?.fallbackUniswapRouterData)
+      ((hasCounterparties.value && hasValidUniswapRoute.value) ||
+        totalAmountToSwap.value === 0)
     );
   });
 
@@ -296,98 +299,125 @@ export function useVaultOperatorEnterPosition(
 
       totalAmountToSwap.value = principalHedgedAmountInUSDC;
 
-      // POTION ROUTER
-      const potionRouterWithEstimatedPremium = await worker.getPotionRoute(
-        principalHedgedAmountInUSDC,
-        potionRouterParameters.value.pools,
-        potionRouterParameters.value.strikePriceUSDC,
-        potionRouterParameters.value.gas,
-        potionRouterParameters.value.ethPrice
-      );
+      if (totalAmountToSwap.value !== 0) {
+        // POTION ROUTER
+        const potionRouterWithEstimatedPremium = await worker.getPotionRoute(
+          principalHedgedAmountInUSDC,
+          potionRouterParameters.value.pools,
+          potionRouterParameters.value.strikePriceUSDC,
+          potionRouterParameters.value.gas,
+          potionRouterParameters.value.ethPrice
+        );
 
-      console.log(
-        "potionRouterWithEstimatedPremium",
-        potionRouterWithEstimatedPremium
-      );
+        console.log(
+          "potionRouterWithEstimatedPremium",
+          potionRouterWithEstimatedPremium
+        );
 
-      const actualVaultSizeInUnderlying = calculateOrderSize(
-        principalHedgedAmountInUnderlying,
-        underlyingTokenValue.decimals as number,
-        hedgingRate.value,
-        strikePercent.value,
-        oraclePrice.value,
-        potionRouterWithEstimatedPremium.premium.toFixed(
-          USDCToken.decimals as number
-        )
-      );
+        console.log(
+          "calculateOrderSize params",
+          principalHedgedAmountInUnderlying,
+          underlyingTokenValue.decimals as number,
+          USDCToken.decimals as number,
+          hedgingRate.value,
+          strikePercent.value,
+          oraclePrice.value,
+          potionRouterWithEstimatedPremium.premium.toFixed(
+            USDCToken.decimals as number
+          ),
+          parseUnits(
+            String(
+              potionRouterWithEstimatedPremium.premium.toFixed(
+                USDCToken.decimals as number
+              )
+            ),
+            USDCToken.decimals as number
+          ).toNumber()
+        );
 
-      effectiveVaultSizeInUnderlying.value = parseFloat(
-        formatUnits(
-          actualVaultSizeInUnderlying.effectiveVaultSize.toString(),
-          underlyingTokenValue.decimals
-        )
-      );
+        const actualVaultSizeInUnderlying = calculateOrderSize(
+          principalHedgedAmountInUnderlying,
+          underlyingTokenValue.decimals as number,
+          hedgingRate.value,
+          strikePercent.value,
+          oraclePrice.value,
+          potionRouterWithEstimatedPremium.premium.toFixed(
+            USDCToken.decimals as number
+          )
+        );
 
-      const effectiveVaultSizeInUSDC =
-        effectiveVaultSizeInUnderlying.value *
-        potionRouterParameters.value.strikePriceUSDC;
+        const effectiveVaultSizeInUnderlying = parseFloat(
+          formatUnits(
+            actualVaultSizeInUnderlying.effectiveVaultSize.toString(),
+            underlyingTokenValue.decimals
+          )
+        );
 
-      const potionRouterForEffectiveSize = await worker.getPotionRoute(
-        effectiveVaultSizeInUSDC,
-        potionRouterParameters.value.pools, // TODO: check pools doesnt match the order size
-        potionRouterParameters.value.strikePriceUSDC,
-        potionRouterParameters.value.gas,
-        potionRouterParameters.value.ethPrice
-      );
+        const effectiveVaultSizeInUSDC =
+          effectiveVaultSizeInUnderlying *
+          potionRouterParameters.value.strikePriceUSDC;
 
-      const premiumWithSlippage =
-        ((100 + premiumSlippage) * potionRouterForEffectiveSize.premium) / 100;
-      console.log(
-        "- PREMIUM WITH SLIPPAGE",
-        premiumWithSlippage,
-        potionRouterForEffectiveSize.premium
-      );
+        const potionRouterForEffectiveSize = await worker.getPotionRoute(
+          effectiveVaultSizeInUSDC,
+          potionRouterParameters.value.pools,
+          potionRouterParameters.value.strikePriceUSDC,
+          potionRouterParameters.value.gas,
+          potionRouterParameters.value.ethPrice
+        );
 
-      // substitute the local address for the underlying token with the official address for WETH
-      // required to to run the uniswap router
-      const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
+        debugData.value.effectiveVaultSizeInUnderlying =
+          effectiveVaultSizeInUnderlying;
 
-      const uniswapResult = await getRoute(
-        underlyingTokenToSwap,
-        USDCToken,
-        TradeType.EXACT_OUTPUT,
-        premiumWithSlippage,
-        maxSplits,
-        recipientAddress,
-        swapSlippage,
-        UniswapActionType.ENTER_POSITION
-      );
-      if (!uniswapResult) {
-        throw new Error("No uniswap route found");
+        const premiumWithSlippage =
+          ((100 + premiumSlippage) * potionRouterForEffectiveSize.premium) /
+          100;
+        console.log(
+          "- PREMIUM WITH SLIPPAGE",
+          premiumWithSlippage,
+          potionRouterForEffectiveSize.premium
+        );
+
+        const underlyingTokenToSwap = underlyingToken.value;
+
+        const uniswapResult = await getRoute(
+          underlyingTokenToSwap,
+          USDCToken,
+          TradeType.EXACT_OUTPUT,
+          premiumWithSlippage,
+          maxSplits,
+          recipientAddress,
+          swapSlippage,
+          UniswapActionType.ENTER_POSITION
+        );
+        if (!uniswapResult) {
+          throw new Error("No uniswap route found");
+        }
+
+        const fallbackRoute = await getRoute(
+          underlyingTokenToSwap,
+          USDCToken,
+          TradeType.EXACT_INPUT,
+          principalHedgedAmountInUnderlying,
+          maxSplits,
+          recipientAddress,
+          swapSlippage,
+          UniswapActionType.EXIT_POSITION
+        );
+        if (!fallbackRoute) {
+          throw new Error("No fallback route found");
+        }
+
+        debugData.value.potionRouterInitialData =
+          potionRouterWithEstimatedPremium;
+
+        enterPositionData.value = {
+          potionRouterData: potionRouterForEffectiveSize,
+          uniswapRouterData: uniswapResult,
+          fallbackUniswapRouterData: fallbackRoute,
+        };
+      } else {
+        enterPositionData.value = null;
       }
-
-      const fallbackRoute = await getRoute(
-        underlyingTokenToSwap,
-        USDCToken,
-        TradeType.EXACT_INPUT,
-        principalHedgedAmountInUnderlying,
-        maxSplits,
-        recipientAddress,
-        swapSlippage,
-        UniswapActionType.EXIT_POSITION
-      );
-      if (!fallbackRoute) {
-        throw new Error("No fallback route found");
-      }
-
-      debugData.value.potionRouterInitialData =
-        potionRouterWithEstimatedPremium;
-
-      enterPositionData.value = {
-        potionRouterData: potionRouterForEffectiveSize,
-        uniswapRouterData: uniswapResult,
-        fallbackUniswapRouterData: fallbackRoute,
-      };
     } finally {
       isLoading.value = false;
     }
@@ -400,7 +430,7 @@ export function useVaultOperatorEnterPosition(
     potionBuyInfo: PotionBuyInfo;
     fallback: UniSwapInfo;
   }> => {
-    if (isEnterPositionOperationValid.value && hasCounterparties.value) {
+    if (isEnterPositionOperationValid.value) {
       toggleUniswapPolling(false);
 
       // Generate a new expiration timestamp that is closest in time (at 8AM)
@@ -426,71 +456,107 @@ export function useVaultOperatorEnterPosition(
         true
       );
 
-      // TODO: extend it to split routes
-      const swapRoute = enterPositionData.value?.uniswapRouterData.routes[0];
-      const executionPrice =
-        enterPositionData.value?.uniswapRouterData.tradeExecutionPrice;
-      const routePremium = enterPositionData?.value?.potionRouterData?.premium;
+      const collateralTokenToSwap = convertUniswapTokenToToken(USDCUniToken);
 
-      const counterparties =
-        enterPositionData.value?.potionRouterData.counterparties.map(
-          (seller) => {
-            return {
-              lp: seller.lp,
-              poolId: seller.poolId,
-              curve: seller.curve,
-              criteria: seller.criteria,
-              orderSizeInOtokens: seller.orderSizeInOtokens,
-            };
-          }
-        ) as Sellers;
+      if (hasCounterparties.value) {
+        // TODO: extend it to split routes
+        const swapRoute = enterPositionData.value?.uniswapRouterData.routes[0];
+        const executionPrice =
+          enterPositionData.value?.uniswapRouterData.tradeExecutionPrice;
+        const routePremium =
+          enterPositionData?.value?.potionRouterData?.premium;
 
-      if (
-        enterPositionData.value?.uniswapRouterData &&
-        enterPositionData.value?.fallbackUniswapRouterData &&
-        swapRoute &&
-        swapRoute.protocol === Protocol.V3 &&
-        executionPrice &&
-        routePremium
-      ) {
-        const USDCToken = convertUniswapTokenToToken(USDCUniToken);
-        // mock the official address of USDC with the one from the local deployment
-        const collateralTokenToSwap = mockCollateralToken(USDCToken);
+        const counterparties =
+          enterPositionData.value?.potionRouterData.counterparties.map(
+            (seller) => {
+              return {
+                lp: seller.lp,
+                poolId: seller.poolId,
+                curve: seller.curve,
+                criteria: seller.criteria,
+                orderSizeInOtokens: seller.orderSizeInOtokens,
+              };
+            }
+          ) as Sellers;
 
-        const swapInfo = evaluateUniswapRoute(
-          enterPositionData.value?.uniswapRouterData,
-          UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
-          oraclePrice.value,
-          underlyingToken.value,
-          collateralTokenToSwap
-        );
+        if (
+          enterPositionData.value?.uniswapRouterData &&
+          enterPositionData.value?.fallbackUniswapRouterData &&
+          swapRoute &&
+          swapRoute.protocol === Protocol.V3 &&
+          executionPrice &&
+          routePremium
+        ) {
+          const swapInfo = evaluateUniswapRoute(
+            enterPositionData.value?.uniswapRouterData,
+            UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
+            oraclePrice.value,
+            underlyingToken.value,
+            collateralTokenToSwap
+          );
 
-        const potionBuyInfo = {
-          targetPotionAddress: newOtokenAddress,
-          underlyingAsset: underlyingToken.value.address,
-          strikePriceInUSDC: strikePrice.value,
-          expirationTimestamp: expirationTimestamp,
-          sellers: counterparties,
-          expectedPremiumInUSDC: routePremium,
+          const potionBuyInfo = {
+            targetPotionAddress: newOtokenAddress,
+            underlyingAsset: underlyingToken.value.address,
+            strikePriceInUSDC: strikePrice.value,
+            expirationTimestamp: expirationTimestamp,
+            sellers: counterparties,
+            expectedPremiumInUSDC: routePremium,
+          };
+
+          const fallbackSwapInfo = evaluateUniswapRoute(
+            enterPositionData.value?.fallbackUniswapRouterData,
+            UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
+            oraclePrice.value,
+            underlyingToken.value,
+            collateralTokenToSwap
+          );
+
+          return { swapInfo, potionBuyInfo, fallback: fallbackSwapInfo };
+        } else {
+          throw new Error(
+            "A set of counterparties is missing or swapRoute isn't a protocol v3 route"
+          );
+        }
+      } else if (enterPositionData.value === null) {
+        // in this case the total amount to swap is 0
+        return {
+          swapInfo: {
+            steps: [
+              {
+                inputToken: underlyingToken.value,
+                fee: 0,
+              },
+            ],
+            outputToken: collateralTokenToSwap,
+            expectedPriceRate: 0,
+          },
+          potionBuyInfo: {
+            targetPotionAddress: newOtokenAddress,
+            underlyingAsset: underlyingToken.value.address,
+            strikePriceInUSDC: strikePrice.value,
+            expirationTimestamp: expirationTimestamp,
+            sellers: [],
+            expectedPremiumInUSDC: 0,
+          },
+          fallback: {
+            steps: [
+              {
+                inputToken: underlyingToken.value,
+                fee: 0,
+              },
+            ],
+            outputToken: collateralTokenToSwap,
+            expectedPriceRate: 0,
+          },
         };
-
-        const fallbackSwapInfo = evaluateUniswapRoute(
-          enterPositionData.value?.fallbackUniswapRouterData,
-          UniswapActionType.ENTER_POSITION, // TODO: change enum names to better ones
-          oraclePrice.value,
-          underlyingToken.value,
-          collateralTokenToSwap
-        );
-
-        return { swapInfo, potionBuyInfo, fallback: fallbackSwapInfo };
-      } else {
-        throw new Error("swapRoute isn't a protocol v3 route");
       }
-    } else {
-      throw new Error(
-        "A uniswap route and a set of counterparties is required to enter position"
-      );
     }
+    throw new Error("Invalid Enter position data");
+  };
+
+  const resetData = () => {
+    enterPositionData.value = null;
   };
 
   onMounted(async () => {
@@ -506,7 +572,7 @@ export function useVaultOperatorEnterPosition(
     isEnterPositionOperationValid,
     loadEnterPositionRoute,
     evaluateEnterPositionData,
-    effectiveVaultSizeInUnderlying,
     debugData,
+    resetData,
   };
 }
