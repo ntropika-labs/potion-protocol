@@ -27,7 +27,7 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
     symbol: result?.shareToken.symbol ?? "",
     decimals: parseInt(result?.shareToken.decimals ?? "0"),
   },
-  totalShares: result?.totalShares ?? "0",
+  totalShares: formatUnits(result?.totalShares ?? "0"),
   hedgingRate: formatUnits(result?.action?.hedgingRate ?? "0", 6),
   strikePercentage: formatUnits(result?.action?.strikePercentage ?? "0", 6),
   cycleDurationSecs: secsToDays(result?.action?.cycleDurationSecs ?? "0"),
@@ -40,7 +40,12 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
   currentRound: result?.currentRound ?? "0",
   rounds: (result?.rounds ?? []) as unknown as RoundsFragment,
-  lastShareToUnderlyingRate: result?.lastShareToUnderlyingRate ?? "0",
+  lastUnderlyingToShareRate: parseFloat(
+    formatUnits(result?.lastUnderlyingToShareRate ?? "0")
+  ),
+  lastShareToUnderlyingRate: parseFloat(
+    formatUnits(result?.lastShareToUnderlyingRate ?? "0")
+  ),
   lastTotalUnderlyingsAtRoundEnd: parseFloat(
     formatUnits(result?.rounds?.[0]?.totalUnderlyingsAtRoundEnd ?? "0", 18)
   ),
