@@ -96,6 +96,14 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
 
         @dev The Swap to USDC action takes the following steps to enter a position:
             - Swap all the investment asset to USDC and keep it in the action
+
+        @audit It is protected with the nonReentrant modifier to avoid re-entrancy. In any case
+        the only contract allowed to call this function is the InvestmentVault and the call would only happen
+        upon instruction of the operator. A possible attack vector would be for a malicious actor to deposit
+        some assets in the RoundsInputVault when the PotionBuyAction is trying to enter the position, but
+        that is countermeasure by the fact that assets have been already transferred to the PotionBuyContract
+        before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+        is the InvestmentVault which will not use the ERC-777 callback.
     */
     function enterPosition(address investmentAsset, uint256 amountToInvest)
         external
@@ -123,6 +131,14 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
 
         @dev Even though the exit position can only be called by the Vault, it is also 
              protected against reentrancy in case the Vault is compromised
+
+        @audit It is protected with the nonReentrant modifier to avoid re-entrancy. In any case
+        the only contract allowed to call this function is the InvestmentVault and the call would only happen
+        upon instruction of the operator. A possible attack vector would be for a malicious actor to deposit
+        some assets in the RoundsInputVault when the PotionBuyAction is trying to enter the position, but
+        that is countermeasure by the fact that assets have been already transferred to the PotionBuyContract
+        before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+        is the InvestmentVault which will not use the ERC-777 callback.
      */
     // slither-disable-next-line reentrancy-no-eth
     function exitPosition(address investmentAsset)
