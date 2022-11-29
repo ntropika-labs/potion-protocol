@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { getEnsOrAddress } from "../../helpers";
+import { getEtherscanUrl, getEnsOrAddress } from "../../helpers";
 
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
@@ -42,10 +42,8 @@ const strategyName = computed(() => {
       return t("protective_put");
   }
 });
-const vaultEtherscanLink = computed(() => getEnsOrAddress(props.address));
-const vaultEtherscanLabel = computed(
-  () => props.address.substring(0, 8) + "..."
-);
+const vaultEtherscanLink = computed(() => getEtherscanUrl(props.address));
+const vaultEtherscanLabel = computed(() => getEnsOrAddress(props.address));
 const callbackNavigateToEtherscan = (url: string) => {
   window && window.open(url, "_blank")?.focus();
 };
@@ -72,12 +70,11 @@ const callbackNavigateToEtherscan = (url: string) => {
           :label="vaultEtherscanLabel"
           size="sm"
           palette="flat"
-          class="!rounded bg-white/10 !hover:bg-black/40 group-hover:bg-black/20 transition-none z-4"
+          class="flex-col gap-1 lg:(flex-row gap-0) !rounded bg-white/10 !hover:bg-black/40 group-hover:bg-black/20 transition-none z-4"
           test-address
           @click.prevent="callbackNavigateToEtherscan(vaultEtherscanLink)"
         >
-          <template #post-icon>
-            <i class="i-ph-arrow-square-in mr-1"></i> </template
+          <template #post-icon> <i class="i-ph-arrow-square-in"></i> </template
         ></BaseButton>
       </div>
 
