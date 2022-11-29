@@ -246,12 +246,13 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param amount The amount of the receipt to be redeemed
         @param receiver The address that will receive the underlying tokens
         @param owner The address that owns the receipt, in case the caller is not the owner
+    */
 
-        @audit This function follows the CEI pattern to avoid out-of-order execution. The only
-        external call is `safeTransfer` that is done at the end of the function where the state
-        of the contract is consistent and a reentrancy is protected by the `_burn` function that
-        will check the balance of the user
-     */
+    // @audit This function follows the CEI pattern to avoid out-of-order execution. The only
+    // external call is `safeTransfer` that is done at the end of the function where the state
+    // of the contract is consistent and a reentrancy is protected by the `_burn` function that
+    // will check the balance of the user
+
     function _redeemExchangeAsset(
         address caller,
         address receiver,
@@ -287,12 +288,13 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param owner The address that owns the receipt, in case the caller is not the owner
         @param ids The ids of the receipts to be redeemed
         @param amounts The amounts of the receipts to be redeemed
-
-        @audit This function follows the CEI pattern to avoid out-of-order execution. The only
-        external call is `safeTransfer` that is done at the end of the function where the state
-        of the contract is consistent and a reentrancy is protected by the `_burnBatch` function that
-        will check the balance of the user
      */
+
+    // @audit This function follows the CEI pattern to avoid out-of-order execution. The only
+    // external call is `safeTransfer` that is done at the end of the function where the state
+    // of the contract is consistent and a reentrancy is protected by the `_burnBatch` function that
+    // will check the balance of the user
+
     function _redeemExchangeAssetBatch(
         address caller,
         address receiver,
