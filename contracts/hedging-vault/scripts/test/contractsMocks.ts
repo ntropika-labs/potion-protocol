@@ -46,8 +46,8 @@ export async function mockOpynController(): Promise<MockContract<MockOpynControl
     return mockContract<MockOpynController>("MockOpynController", [], "OpynController");
 }
 
-export async function mockOpynFactory(): Promise<MockContract<MockOpynFactory> | MockOpynFactory> {
-    return mockContract<MockOpynFactory>("MockOpynFactory", [], "OpynFactory");
+export async function mockOpynFactory(otoken: string): Promise<MockContract<MockOpynFactory> | MockOpynFactory> {
+    return mockContract<MockOpynFactory>("MockOpynFactory", [otoken], "OpynFactory");
 }
 
 export async function mockChainlinkAggregator(

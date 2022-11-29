@@ -62,6 +62,7 @@ export interface HedgingVaultEnvironmentDeployment {
     opynFactory: IOpynFactory | MockContract<IOpynFactory>;
     opynOracle: IOpynOracle | MockContract<IOpynOracle>;
     opynMockOracle: MockOpynOracle | MockContract<MockOpynOracle>;
+    opynMockOtoken: ERC20PresetMinterPauser | MockContract<ERC20PresetMinterPauser>;
     uniswapV3SwapRouter: ISwapRouter | MockContract<ISwapRouter>;
     chainlinkAggregatorUSDC: IChainlinkAggregatorV3 | MockContract<IChainlinkAggregatorV3>;
     chainlinkAggregatorUnderlying: IChainlinkAggregatorV3 | MockContract<IChainlinkAggregatorV3>;
@@ -188,8 +189,11 @@ async function mockContractsIfNeeded(
     }
 
     if (!deploymentConfig.opynAddressBook) {
+        testingEnvironmentDeployment.opynMockOtoken = await mockERC20("Otoken", 8);
         testingEnvironmentDeployment.opynController = await mockOpynController();
-        testingEnvironmentDeployment.opynFactory = await mockOpynFactory();
+        testingEnvironmentDeployment.opynFactory = await mockOpynFactory(
+            testingEnvironmentDeployment.opynMockOtoken.address,
+        );
         const opynOracle = await mockOpynOracle();
 
         testingEnvironmentDeployment.opynOracle = opynOracle;
