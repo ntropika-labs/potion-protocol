@@ -8,11 +8,7 @@ import {
   convertUniswapTokenToToken,
   evaluateUniswapRoute,
 } from "@/helpers/uniswap";
-import {
-  getRecipientAddress,
-  mockCollateralToken,
-  mockUnderlyingToken,
-} from "@vault-operator-utils";
+import { getRecipientAddress } from "@vault-operator-utils";
 
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 import { useAlphaRouter } from "./useAlphaRouter";
@@ -117,7 +113,7 @@ export function useVaultOperatorExitPosition(
       let fallbackRoute = null;
       isLoading.value = true;
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
-      const underlyingTokenToSwap = mockUnderlyingToken(underlyingToken.value);
+      const underlyingTokenToSwap = underlyingToken.value;
       const recipientAddress = getRecipientAddress(lowercaseVaultAddress.value);
       /**
        * TODO: if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
@@ -189,8 +185,7 @@ export function useVaultOperatorExitPosition(
     let swapInfo: UniSwapInfo;
     let fallbackInfo: UniSwapInfo;
     const USDCToken = convertUniswapTokenToToken(USDCUniToken);
-    // mock the official address of USDC with the one from the local deployment
-    const collateralTokenToSwap = mockCollateralToken(USDCToken);
+    const collateralTokenToSwap = USDCToken;
 
     console.log("TOTAL PAYOUT USDC", totalPayoutUSDC.value);
     if (
@@ -250,6 +245,10 @@ export function useVaultOperatorExitPosition(
     return { swapInfo, fallback: fallbackInfo };
   };
 
+  const resetData = () => {
+    exitPositionData.value = null;
+  };
+
   return {
     exitPositionData,
     isActionLoading,
@@ -257,5 +256,6 @@ export function useVaultOperatorExitPosition(
     isExitPositionOperationValid,
     loadExitPositionRoute,
     evaluateExitPositionData,
+    resetData,
   };
 }

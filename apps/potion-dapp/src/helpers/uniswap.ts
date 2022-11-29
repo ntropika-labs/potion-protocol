@@ -16,6 +16,8 @@ import {
   type UniswapRouterReturn,
 } from "@/types";
 import { getExpectedPriceRate } from "@vault-operator-utils";
+import { contractsAddresses } from "@/helpers/contracts";
+
 // The alphaRouter expectes only V2 or V3 as protocol config and not also MIXED so we can't import the Protocol enum from uniswap sdk
 // as a workaround we just redeclare it here, hoping that uniswap decides to actually expose this enum from the router package
 enum Protocol {
@@ -27,32 +29,16 @@ const getChainId = () => {
   switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
     case "goerli":
       return ChainId.GÖRLI;
+    case "ply-mumbai.testcomp":
+      return ChainId.POLYGON_MUMBAI;
     default:
       return ChainId.MAINNET;
   }
 };
 
-const getUSDCAddress = () => {
-  switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
-    case "goerli":
-      return "0x786A7c36d8b3acE2AE2A62c00D915C9f84eaAcB7";
-    default:
-      return "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-  }
-};
-
-const getWETHAddress = () => {
-  switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
-    case "goerli":
-      return "0x9889DfADE1d68488590DF17bbA882914535a8F92";
-    default:
-      return "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
-  }
-};
-
 const USDCUniToken = new UniswapToken(
   getChainId(),
-  getUSDCAddress(),
+  contractsAddresses.USDC.address,
   6,
   "USDC",
   "USD//C"
@@ -162,8 +148,6 @@ const evaluateUniswapRoute = (
 export {
   USDCUniToken,
   getChainId,
-  getUSDCAddress,
-  getWETHAddress,
   convertUniswapRouteToFlatRoute,
   convertTokenToUniswapToken,
   convertUniswapTokenToToken,

@@ -15,7 +15,6 @@ describe("VaultCard.cy.ts", () => {
     maxPremium: "10",
     currency: "TST",
     strategy: "PROTECTIVE_PUT",
-    onSelected: {},
   };
 
   it("Renders correctly", () => {
@@ -27,14 +26,5 @@ describe("VaultCard.cy.ts", () => {
     cy.get("[test-strike-percentage]").should("be.visible");
     cy.get("[test-round-length]").should("be.visible");
     cy.get("[test-max-premium]").should("be.visible");
-    cy.get("[test-button]").should("be.visible");
-  });
-
-  it("Emits an event when clicked", () => {
-    const onSelectedSpy = cy.spy().as("onSelectedSpy");
-    props.onSelected = onSelectedSpy;
-    cy.mount(VaultCard, { props: props });
-    cy.get("[test-button]").click();
-    cy.get("@onSelectedSpy").should("have.been.called");
   });
 });

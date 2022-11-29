@@ -1,39 +1,7 @@
 import type { BigNumberish } from "ethers";
 
-import type { Token } from "dapp-types";
-
 import { getContractsFromVault } from "./hedgingVaultContracts";
 import { UniswapActionType } from "@/types";
-
-/**
- * This function was developed with no other purpose than being able to change the recipient by mocking this file.
- * This is required because we need a valid address for uniswap to run the router
- * @param vaultAddress Address of the vault we are acting on
- * @returns The address to use as an intermediate recipient in multihop swaps
- */
-const mockCollateralToken = (token: Token): Token => {
-  return {
-    name: token.name || "",
-    symbol: token.symbol || "",
-    address: token.address,
-    decimals: token.decimals,
-  };
-};
-
-/**
- * This function was developed with no other purpose than being able to change the recipient by mocking this file.
- * This is required because we need a valid address for uniswap to run the router
- * @param vaultAddress Address of the vault we are acting on
- * @returns The address to use as an intermediate recipient in multihop swaps
- */
-const mockUnderlyingToken = (token: Token): Token => {
-  return {
-    name: token.name || "",
-    symbol: token.symbol || "",
-    address: token.address,
-    decimals: token.decimals,
-  };
-};
 
 /**
  * This function was developed with no other purpose than being able to change the recipient by mocking this file.
@@ -62,9 +30,4 @@ const getRecipientAddress = (vaultAddress: string): string => {
   return PotionBuyAction;
 };
 
-export {
-  getExpectedPriceRate,
-  getRecipientAddress,
-  mockCollateralToken,
-  mockUnderlyingToken,
-};
+export { getExpectedPriceRate, getRecipientAddress };
