@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import type { Ref } from "vue";
 import { formatUnits } from "@ethersproject/units";
 import { Oracle__factory } from "@potion-protocol/core/typechain";
 
@@ -59,7 +60,7 @@ export function useOracleContract() {
     }
   };
 
-  const polledPrice = ref();
+  const polledPrice: Ref<string | undefined> = ref("0");
   const pollingTimer = ref<NodeJS.Timer>();
 
   const startPolling = async (address: string) => {

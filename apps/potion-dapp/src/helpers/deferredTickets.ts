@@ -61,10 +61,10 @@ const getDepositTicketsFromRounds = (
       const ticket = round.depositTickets[0];
       return {
         id: parseInt(round.roundNumber),
-        amount: parseFloat(ticket.amountRemaining),
-        amountRedeemed: parseFloat(ticket.amountRedeemed),
-        shares: parseFloat(ticket.shares),
-        sharesRemaining: parseFloat(ticket.sharesRemaining),
+        amount: parseFloat(formatUnits(ticket.amount)),
+        amountRedeemed: parseFloat(formatUnits(ticket.amountRedeemed)),
+        shares: parseFloat(formatUnits(ticket.shares)),
+        sharesRemaining: parseFloat(formatUnits(ticket.sharesRemaining)),
       };
     });
 
