@@ -8,7 +8,12 @@ import {
   RoundsInputVault,
 } from "../generated/RoundsInputVault/RoundsInputVault";
 import { DepositTicket } from "../generated/schema";
-import { getOrCreateRound, createRoundId, updateShares } from "./rounds";
+import {
+  getOrCreateRound,
+  createRoundId,
+  updateShares,
+  getUnderlyingToShareRate,
+} from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
@@ -173,8 +178,7 @@ function handleWithdrawExchangeAsset(event: WithdrawExchangeAsset): void {
     event.params.receiptId,
     vaultAddress,
     event.params.owner,
-    event.params.receiptAmount,
-    event.params.exchangeAssetAmount
+    event.params.receiptAmount
   );
 }
 
@@ -188,8 +192,7 @@ function handleWithdrawExchangeAssetBatch(
       event.params.receiptIds[i],
       vaultAddress,
       event.params.owner,
-      event.params.receiptAmounts[i],
-      event.params.exchangeAssetAmount
+      event.params.receiptAmounts[i]
     );
   }
 }
@@ -198,8 +201,7 @@ function withdraw(
   receiptId: BigInt,
   vaultAddress: Address,
   investor: Address,
-  receiptAmount: BigInt,
-  exchangeAssetAmount: BigInt
+  receiptAmount: BigInt
 ): void {
   const depositTicket = getDepositTicket(receiptId, vaultAddress, investor);
   if (depositTicket == null) {
@@ -208,6 +210,8 @@ function withdraw(
       investor.toHexString(),
     ]);
   } else {
+    const exchangeRate = getUnderlyingToShareRate(depositTicket.round);
+    const exchangeAssetAmount = exchangeRate.times(receiptAmount);
     depositTicket.amountRemaining =
       depositTicket.amountRemaining.minus(receiptAmount);
     depositTicket.amountRedeemed =
