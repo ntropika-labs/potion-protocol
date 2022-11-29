@@ -8,6 +8,7 @@ import {
 import {
   mockAsset,
   mockTotalAssets,
+  mockTotalSupply,
   mockTokenName,
   mockTokenSymbol,
   mockTokenDecimals,
@@ -60,6 +61,7 @@ describe("InvestmentVault tests", () => {
     // mock contracts calls
     mockAsset(contractAddress, underlyingAddress);
     mockTotalAssets(contractAddress, BigInt.fromString("10"));
+    mockTotalSupply(contractAddress, BigInt.fromString("20"));
     // mock erc20 properties
     mockTokenName(contractAddress, "TEST_HV");
     mockTokenSymbol(contractAddress, "THV");
@@ -102,7 +104,8 @@ describe("InvestmentVault tests", () => {
         },
         { field: "underlying", value: underlyingAddress.toHexString() },
         { field: "shareToken", value: contractAddress.toHexString() },
-        { field: "totalShares", value: "10" },
+        { field: "totalAssets", value: "10" },
+        { field: "totalShares", value: "20" },
       ]);
     });
 
@@ -136,6 +139,7 @@ describe("InvestmentVault tests", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("30"),
+        BigInt.fromString("20"),
         BigInt.fromString("0")
       );
       mockPotionBuyAction(
@@ -177,7 +181,7 @@ describe("InvestmentVault tests", () => {
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", contractAddress.toHexString(), [
         { field: "lastUnderlyingsInvested", value: "50" },
-        { field: "totalShares", value: "100" },
+        { field: "totalAssets", value: "100" },
       ]);
     });
 
@@ -198,6 +202,7 @@ describe("InvestmentVault tests", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("20"),
+        BigInt.fromString("10"),
         BigInt.fromString("0")
       );
       mockRound(BigInt.fromString("0"), contractAddress);
@@ -222,7 +227,7 @@ describe("InvestmentVault tests", () => {
 
     test("HedgingVault has been updated correctly", () => {
       assertEntity("HedgingVault", contractAddress.toHexString(), [
-        { field: "totalShares", value: "60" },
+        { field: "totalAssets", value: "60" },
       ]);
     });
   });
@@ -234,6 +239,7 @@ describe("InvestmentVault tests", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("20"),
+        BigInt.fromString("10"),
         BigInt.fromString("0")
       );
       mockRound(BigInt.fromString("0"), contractAddress);
@@ -268,6 +274,7 @@ describe("InvestmentVault tests", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("20"),
+        BigInt.fromString("10"),
         BigInt.fromString("0")
       );
       mockRound(BigInt.fromString("0"), contractAddress);

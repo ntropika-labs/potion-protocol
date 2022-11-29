@@ -162,6 +162,7 @@ describe("roundsInputVault", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("30"),
+        BigInt.fromString("20"),
         BigInt.fromString("0")
       );
       mockToken(
@@ -1004,13 +1005,20 @@ describe("roundsInputVault", () => {
         contractAddress,
         contractAddress
       );
+      mockRound(
+        BigInt.fromString("1"),
+        vaultAddress,
+        [],
+        [],
+        BigInt.fromString("2")
+      );
       const mockedEvent = createWithdrawExchangeAsset(
         mockedCaller,
         mockedCaller,
         mockedInvestor,
-        BigInt.fromString("15"),
+        BigInt.fromString("30"),
         BigInt.fromString("2"),
-        BigInt.fromString("30")
+        BigInt.fromString("15")
       );
       handleWithdrawExchangeAsset(mockedEvent);
     });
@@ -1030,11 +1038,11 @@ describe("roundsInputVault", () => {
         ).toHexString(),
         [
           { field: "amount", value: "100" },
-          { field: "amountRemaining", value: "70" },
-          { field: "amountRedeemed", value: "30" },
+          { field: "amountRemaining", value: "85" },
+          { field: "amountRedeemed", value: "15" },
           { field: "shares", value: "50" },
-          { field: "sharesRemaining", value: "35" },
-          { field: "sharesRedeemed", value: "15" },
+          { field: "sharesRemaining", value: "20" },
+          { field: "sharesRedeemed", value: "30" },
         ]
       );
     });
@@ -1051,11 +1059,18 @@ describe("roundsInputVault", () => {
         contractAddress,
         contractAddress
       );
+      mockRound(
+        BigInt.fromString("1"),
+        vaultAddress,
+        [],
+        [],
+        BigInt.fromString("2")
+      );
       const mockedEvent = createWithdrawExchangeAssetBatch(
         mockedCaller,
         mockedCaller,
         mockedInvestor,
-        BigInt.fromString("5"),
+        BigInt.fromString("42"),
         [
           BigInt.fromString("1"),
           BigInt.fromString("2"),
@@ -1063,7 +1078,7 @@ describe("roundsInputVault", () => {
         ],
         [
           BigInt.fromString("1"),
-          BigInt.fromString("100"),
+          BigInt.fromString("20"),
           BigInt.fromString("0"),
         ]
       );
@@ -1088,8 +1103,8 @@ describe("roundsInputVault", () => {
           { field: "amountRemaining", value: "9" },
           { field: "amountRedeemed", value: "1" },
           { field: "shares", value: "5" },
-          { field: "sharesRemaining", value: "0" },
-          { field: "sharesRedeemed", value: "5" },
+          { field: "sharesRemaining", value: "3" },
+          { field: "sharesRedeemed", value: "2" },
         ]
       );
     });
@@ -1103,11 +1118,11 @@ describe("roundsInputVault", () => {
         ).toHexString(),
         [
           { field: "amount", value: "100" },
-          { field: "amountRemaining", value: "0" },
-          { field: "amountRedeemed", value: "100" },
+          { field: "amountRemaining", value: "80" },
+          { field: "amountRedeemed", value: "20" },
           { field: "shares", value: "50" },
-          { field: "sharesRemaining", value: "45" },
-          { field: "sharesRedeemed", value: "5" },
+          { field: "sharesRemaining", value: "10" },
+          { field: "sharesRedeemed", value: "40" },
         ]
       );
     });
@@ -1124,8 +1139,8 @@ describe("roundsInputVault", () => {
           { field: "amountRemaining", value: "1000" },
           { field: "amountRedeemed", value: "0" },
           { field: "shares", value: "500" },
-          { field: "sharesRemaining", value: "495" },
-          { field: "sharesRedeemed", value: "5" },
+          { field: "sharesRemaining", value: "500" },
+          { field: "sharesRedeemed", value: "0" },
         ]
       );
     });

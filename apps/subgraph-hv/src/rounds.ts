@@ -150,6 +150,33 @@ function updateAssets(
   }
 }
 
+function getRate(id: Bytes, field: string): BigInt {
+  const round = Round.load(id);
+  if (round == null) {
+    log.error("round {} not found", [id.toHexString()]);
+    return BigInt.fromString("0");
+  } else {
+    const rate = round.getBigInt(field);
+    if (rate) {
+      return rate;
+    } else {
+      log.warning("round {} doesn't have a {} set yet, returning 0", [
+        id.toHexString(),
+        field,
+      ]);
+      return BigInt.fromString("0");
+    }
+  }
+}
+
+function getUnderlyingToShareRate(id: Bytes): BigInt {
+  return getRate(id, "underlyingToShareRate");
+}
+
+function getShareToUnderlyingRate(id: Bytes): BigInt {
+  return getRate(id, "shareToUnderlyingRate");
+}
+
 export {
   createRoundId,
   getOrCreateRound,
@@ -159,4 +186,6 @@ export {
   removeWithdrawalTicket,
   updateShares,
   updateAssets,
+  getUnderlyingToShareRate,
+  getShareToUnderlyingRate,
 };
