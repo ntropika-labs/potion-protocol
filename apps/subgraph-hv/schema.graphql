@@ -1,5 +1,8 @@
 ### STILL WIP
 
+"""
+Used to track both the underlying asset that is protected by a vault and the vault token itself
+"""
 type Token @entity(immutable: true) {
   id: Bytes!
   name: String!
@@ -7,35 +10,44 @@ type Token @entity(immutable: true) {
   decimals: BigInt!
 }
 
-# we could have a field deposits and withdrawals to track all the deposits and withdrawals for the given block
 type Block @entity(immutable: true) {
   id: Bytes!
   number: BigInt!
   timestamp: BigInt!
 }
 
-# ActionsAdded event will be emitted by the vault
+"""
+Used to track an Hedging Vault; id is the address of the InvestmentVault contract
+"""
 type HedgingVault @entity {
   id: Bytes!
+  "address of the PotionBuyAction that the vault will use to perform hedging rounds"
   action: PotionBuyAction
-  # RoleGranted() from roles manager upgradeable
+  "the address that is authorized to run operations like starting a new round"
   operator: Bytes
+  "the address that is authorized to run operations like purchasing/selling tokens"
   admin: Bytes
+  "the address that is authorized to tweak the vault parameters"
   strategist: Bytes
-  shareToken: Token!
+  "the asset that is deposited in the vault to be protected"
   underlying: Token!
+  "the token supplied by the vault to rappresent user shares"
+  shareToken: Token!
+  "the amount of underlyings that have been invested into the vault"
   totalAssets: BigInt!
+  "the total amount of shareTokens that have been supplied by the vault"
   totalShares: BigInt!
-  #investors: [Investor!] @derivedFrom(field: "user")
   lastUnderlyingsInvested: BigInt
   lastUnderlyingToShareRate: BigInt
   lastShareToUnderlyingRate: BigInt
   currentRound: BigInt
-  # PotionBuyAction settings - we might create a separate entity for this
+  "an array of rounds that the vault has executed or is still executing"
   rounds: [Round!] @derivedFrom(field: "vault")
 }
 
-# MaxPremiumPercentageChanged() to listen and create the entity
+"""
+The settings used by a vault to execute hedging rounds on the Potion Protocol; id is the address of the PotionBuyAction contract
+"""
 type PotionBuyAction @entity {
   id: Bytes!
   vault: HedgingVault
@@ -53,35 +65,35 @@ type Round @entity {
   id: Bytes!
   vault: HedgingVault!
   roundNumber: BigInt!
-  #NextRound()
+  "exchangeRate provided in the nextRound event of roundsInputVault"
   underlyingToShareRate: BigInt
+  "exchangeRate provided in the nextRound event of roundsOutputVault"
   shareToUnderlyingRate: BigInt
-  # VaultPositionExited()
   totalUnderlyingsAtRoundEnd: BigInt
-  # VaultPositionEntered()
   underlyingsInvested: BigInt
-  # otokenPremium: BigDecimal!
-  # uniswapEnterFees: BigDecimal!
-  # uniswapExitFees: BigDecimal!
   depositTickets: [DepositTicket!]!
   withdrawalTickets: [WithdrawalTicket!]!
-  # VaultPositionExited() VaultPositionEntered()
+  # implementation note: depositTickets and withdrawalTickets MUST be an array and not a derived field because in the mappings API it is not possible to access a derived field; without this access it would be impossible to do calculations at nextRound()
   blockEntered: Block
   blockExited: Block
   deposit: Deposit
   withdrawal: Withdrawal
 }
 
-# Receiver
+"""
+This entity is used to keep track of all the addresses that have provided liquidity at least one time; can be a wallet or a contract
+"""
 type Investor @entity {
   id: Bytes!
-  vaults: [HedgingVault!]!
   user: Bytes!
+  vaults: [HedgingVault!]! # we are storing the vaults as an array because we aren't currently interested into having the vault -> investor relation; if we need it in the future we will need an auxiliary entity
   depositTickets: [DepositTicket!] @derivedFrom(field: "investor")
   withdrawalTickets: [WithdrawalTicket!] @derivedFrom(field: "investor")
 }
 
-#InvestmentVault contract
+"""
+This entity is used to keep track of all the deposits that an InvestmentVault performed
+"""
 type Deposit @entity {
   id: Bytes!
   round: Round!
@@ -91,7 +103,9 @@ type Deposit @entity {
   tx: Bytes!
 }
 
-#InvestmentVault contract
+"""
+This entity is used to keep track of all the withdrawals that an InvestmentVault performed
+"""
 type Withdrawal @entity {
   id: Bytes!
   round: Round!
@@ -101,30 +115,42 @@ type Withdrawal @entity {
   tx: Bytes!
 }
 
+"""
+This entity keeps track of a deposit request that an Investor did; the id is composed using vault address + round number + investor addresses.
+Only one DepositTicket per Investor can exist in a round, if an Investor request multiple deposits the ticket will be simply updated
+"""
 type DepositTicket @entity {
   id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
+  "the amount of underlyings that the Investor deposited; it can change only if the ticket is updated, when this liquidity changes after a withdraw the change is tracked in amountRemaining and amountRedeemed"
   amount: BigInt!
   amountRemaining: BigInt!
   amountRedeemed: BigInt!
-  shares: BigInt! # calculated at nextRound() multiplying amount with the round underlyingToShareRate
+  "calculated at nextRound() multiplying amount with the round underlyingToShareRate"
+  shares: BigInt!
   sharesRemaining: BigInt!
   sharesRedeemed: BigInt!
   block: Block!
   tx: Bytes!
 }
 
+"""
+This entity keeps track of a withdrawal request that an Investor did; the id is composed using vault address + round number + investor addresses.
+Only one WithdrawalTicket per Investor can exist in a round, if an Investor request multiple withdraws the ticket will be simply updated
+"""
 type WithdrawalTicket @entity {
   id: Bytes!
   sender: Bytes!
   investor: Investor!
   round: Round!
+  "the amount of underlyings that the Investor can withdraw; it can change only if the ticket is updated, when this liquidity changes after a withdraw the change is tracked in amountRemaining and amountRedeemed"
   amount: BigInt!
   amountRedeemed: BigInt!
   amountRemaining: BigInt!
-  underlyings: BigInt! # calculated at nextRound() multiplying amount with the round shareToUnderlyingRate
+  "calculated at nextRound() multiplying amount with the round shareToUnderlyingRate"
+  underlyings: BigInt!
   underlyingsRedeemed: BigInt!
   underlyingsRemaining: BigInt!
   block: Block!
