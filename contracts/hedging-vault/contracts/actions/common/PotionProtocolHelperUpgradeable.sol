@@ -30,6 +30,7 @@ import { IERC20MetadataUpgradeable as IERC20Metadata } from "@openzeppelin/contr
 contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
     using PotionProtocolLib for IPotionLiquidityPool;
     using OpynProtocolLib for IOpynController;
+    using OpynProtocolLib for IOpynFactory;
     using PercentageUtils for uint256;
 
     /**
@@ -205,6 +206,29 @@ contract PotionProtocolHelperUpgradeable is PotionProtocolOracleUpgradeable {
         for (uint256 i = 0; i < buyInfo.sellers.length; i++) {
             orderSize += buyInfo.sellers[i].orderSizeInOtokens;
         }
+    }
+
+    /**
+        @notice Checks if the potion for the given asset can be redeemed already
+
+        @param hedgedAsset The address of the hedged asset related to the potion to be redeemed
+        @param expirationTimestamp The timestamp when the potion expires
+
+        @return Whether the potion can be redeemed or not
+     */
+    function _isPotionBought(address hedgedAsset, uint256 expirationTimestamp) internal view returns (bool) {
+        PotionBuyInfo memory buyInfo = getPotionBuyInfo(hedgedAsset, expirationTimestamp);
+        IOpynFactory opynFactory = IOpynFactory(_opynAddressBook.getOtokenFactory());
+
+        uint256 otokenBalance = opynFactory.getOtokenBalance(
+            hedgedAsset,
+            buyInfo.strikePriceInUSDC,
+            expirationTimestamp,
+            _USDC,
+            address(this)
+        );
+
+        return otokenBalance > 0;
     }
 
     /**

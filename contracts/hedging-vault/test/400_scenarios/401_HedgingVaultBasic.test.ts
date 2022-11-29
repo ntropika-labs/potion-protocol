@@ -183,13 +183,126 @@ describe("HedgingVaultBasic", function () {
         expect(await vault.balanceOf(investorAccount.address)).to.equal(0);
         expect(await tEnv.underlyingAsset.balanceOf(investorAccount.address)).to.equal(20000);
     });
-    it("HVB0004 - Full cycle", async function () {
+    it("HVB0004 - Empty Vault Next Round", async function () {
+        // Test Settings
+        const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8);
+        const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8);
+        const amountToBeInvested = ethers.utils.parseEther("0");
+
+        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+
+        /*
+            ENTER POSITION
+        */
+
+        // Enter the position
+        await fastForwardChain(DAY_IN_SECONDS);
+
+        // Emulate what the orchestrator is doing to enter a position
+        await potionBuy.connect(ownerAccount).setPotionBuyInfo(tCond.potionBuyInfo);
+        await potionBuy.connect(ownerAccount).setSwapInfo(tCond.potionBuySwapEnterPosition);
+
+        await expect(vault.connect(ownerAccount).enterPosition())
+            .to.emit(vault, "VaultPositionEntered")
+            .withArgs(amountToBeInvested, amountToBeInvested, {
+                actionsIndexes: [BigNumber.from(0)],
+                principalPercentages: [toSolidityPercentage(100)],
+            });
+
+        // Check that the helper set the correct info in the potionBuy
+        const currentPotionBuyInfo = await potionBuy.getPotionBuyInfo(
+            tEnv.underlyingAsset.address,
+            tCond.expirationTimestamp,
+        );
+
+        expectSolidityDeepCompare(tCond.potionBuyInfo, currentPotionBuyInfo);
+
+        let currentSwapInfo = await potionBuy.getSwapInfo(tEnv.underlyingAsset.address, tEnv.USDC.address);
+
+        expectSolidityDeepCompare(tCond.potionBuySwapEnterPosition, currentSwapInfo);
+
+        // Check the new state of the system
+        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Locked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Locked);
+
+        // These balances will not be valid if the real Uniswap and Potion protocol are used.
+        // As of now, the asset is not really swapped, so the only movement in balances is from
+        // the vault to the potionBuy
+        expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
+        expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(0);
+
+        /*
+            EXIT POSITION
+        */
+
+        // Set the Opyn oracle asset price for the underlying asset
+        await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, tCond.underlyingAssetExitPriceInUSD);
+
+        // Set the dispute period as over, this only works with the mock contract
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, tCond.expirationTimestamp, true);
+        await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.USDC.address, tCond.expirationTimestamp, true);
+
+        // Exit the position
+        await fastForwardChain(DAY_IN_SECONDS);
+        // Emulate what the orchestrator is doing
+        await potionBuy.connect(ownerAccount).setSwapInfo(tCond.potionBuySwapExitPosition);
+
+        await expect(vault.connect(ownerAccount).exitPosition())
+            .to.emit(vault, "VaultPositionExited")
+            .withArgs(0, {
+                actionsIndexes: [BigNumber.from(0)],
+                principalPercentages: [toSolidityPercentage(100)],
+            });
+
+        // Check that the operator helper set the uniswap info correctly
+        currentSwapInfo = await potionBuy.getSwapInfo(tEnv.USDC.address, tEnv.underlyingAsset.address);
+
+        expectSolidityDeepCompare(tCond.potionBuySwapExitPosition, currentSwapInfo);
+
+        // Check the new state of the system
+        expect(await vault.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
+        expect(await potionBuy.getLifecycleState()).to.equal(LifecycleStates.Unlocked);
+
+        // Assets balances
+        ifMocksEnabled(async () => {
+            expect(await tEnv.underlyingAsset.balanceOf(vault.address)).to.equal(0);
+        });
+        expect(await tEnv.underlyingAsset.balanceOf(potionBuy.address)).to.equal(0);
+        expect(await tEnv.USDC.balanceOf(potionBuy.address)).to.equal(0);
+
+        /**
+         * MOCKS CHECKS
+         */
+        ifMocksEnabled(() => {
+            // USDC calls
+            expect(asMock(tEnv.USDC).approve).to.have.callCount(0);
+
+            // Underlying Asset calls
+            expect(asMock(tEnv.underlyingAsset).approve).to.have.callCount(2);
+            expect(asMock(tEnv.underlyingAsset).approve.atCall(1)).to.have.been.calledWith(
+                potionBuy.address,
+                amountToBeInvested,
+            );
+
+            // Uniswap V3 Router calls
+            expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput).to.have.not.been.called;
+            expect(asMock(tEnv.uniswapV3SwapRouter).exactInput).to.have.not.been.called;
+
+            // Potion Liquidity Manager calls
+            expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens).to.have.not.been.called;
+            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.not.been.called;
+        });
+    });
+    it("HVB0005 - Full cycle", async function () {
         // Test Settings
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8);
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8);
         const amountToBeInvested = ethers.utils.parseEther("20");
 
         const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+
+        // Mint some otokens for the Potion Buy action so it thinks that it bought some otokens
+        tEnv.opynMockOtoken.mint(potionBuy.address, ethers.utils.parseEther("1000"));
 
         /*
             MINT

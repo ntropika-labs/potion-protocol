@@ -23,7 +23,7 @@
         :strike-price="strikePrice"
         :total-underlyings-at-round-end="vault.lastTotalUnderlyingsAtRoundEnd"
         :underlying-balance-action-contract="potionBuyActionBalance"
-        :underlying-price="polledPrice"
+        :underlying-price="parseFloat(polledPrice ?? '0')"
         :underlying-symbol="underlyingSymbol"
         :usdc-balance-action-contract="potionBuyActionUSDC"
       ></EstimationCard>

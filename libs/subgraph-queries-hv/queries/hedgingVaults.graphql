@@ -27,6 +27,7 @@ fragment TokenInfo on Token {
 }
 
 fragment DepositTicketInfo on DepositTicket {
+  amount
   amountRemaining
   amountRedeemed
   shares
@@ -35,6 +36,7 @@ fragment DepositTicketInfo on DepositTicket {
 }
 
 fragment WithdrawalTicketInfo on WithdrawalTicket {
+  amount
   amountRemaining
   amountRedeemed
   underlyings

@@ -23,14 +23,24 @@ import type {
 
 export interface MockOpynFactoryInterface extends utils.Interface {
   functions: {
+    "OTOKEN_DECIMALS()": FunctionFragment;
     "getOtoken(address,address,address,uint256,uint256,bool)": FunctionFragment;
     "getTargetOtokenAddress(address,address,address,uint256,uint256,bool)": FunctionFragment;
+    "otoken()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getOtoken" | "getTargetOtokenAddress"
+    nameOrSignatureOrTopic:
+      | "OTOKEN_DECIMALS"
+      | "getOtoken"
+      | "getTargetOtokenAddress"
+      | "otoken"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "OTOKEN_DECIMALS",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getOtoken",
     values: [
@@ -53,12 +63,18 @@ export interface MockOpynFactoryInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "otoken", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "OTOKEN_DECIMALS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getOtoken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTargetOtokenAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "otoken", data: BytesLike): Result;
 
   events: {};
 }
@@ -90,6 +106,8 @@ export interface MockOpynFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    OTOKEN_DECIMALS(overrides?: CallOverrides): Promise<[number]>;
+
     getOtoken(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -109,7 +127,11 @@ export interface MockOpynFactory extends BaseContract {
       arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    otoken(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  OTOKEN_DECIMALS(overrides?: CallOverrides): Promise<number>;
 
   getOtoken(
     arg0: PromiseOrValue<string>,
@@ -131,7 +153,11 @@ export interface MockOpynFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  otoken(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    OTOKEN_DECIMALS(overrides?: CallOverrides): Promise<number>;
+
     getOtoken(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -151,11 +177,15 @@ export interface MockOpynFactory extends BaseContract {
       arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    otoken(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
+    OTOKEN_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
     getOtoken(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -175,9 +205,13 @@ export interface MockOpynFactory extends BaseContract {
       arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    otoken(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    OTOKEN_DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getOtoken(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -197,5 +231,7 @@ export interface MockOpynFactory extends BaseContract {
       arg5: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    otoken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
