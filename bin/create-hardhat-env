@@ -162,6 +162,8 @@ spin_up_environment() {
 
   yarn nx run potion-subgraph:prepare-hedging
   msg "${GREEN}- Potion subgraph.yaml is ready ${NOFORMAT}"
+  
+  yarn nx run potion-subgraph:codegen
 
   yarn nx run potion-subgraph:create-local
   msg "${GREEN}- - Potion subgraph created ${NOFORMAT}"
@@ -175,6 +177,8 @@ spin_up_environment() {
   yarn nx run subgraph-queries-hv:codegen
 
   yarn nx run multivault-helpers:prepare-manifest
+
+  yarn nx run potion-subgraph-hv:codegen
 
   yarn nx run potion-subgraph-hv:create-local
   msg "${GREEN}- Hedging Vault subgraph created ${NOFORMAT}"
