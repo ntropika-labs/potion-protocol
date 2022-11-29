@@ -246,6 +246,10 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param amount The amount of the receipt to be redeemed
         @param receiver The address that will receive the underlying tokens
         @param owner The address that owns the receipt, in case the caller is not the owner
+
+        @audit the external call through `safeTransfer` is done at the end of the function,
+        following the CEI pattern to prevent out-of-order execution. This function is only called
+        from `redeemExchangeAsset` and it is called at the end of that function as well.
      */
     function _redeemExchangeAsset(
         address caller,
@@ -282,6 +286,10 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param owner The address that owns the receipt, in case the caller is not the owner
         @param ids The ids of the receipts to be redeemed
         @param amounts The amounts of the receipts to be redeemed
+
+        @audit the external call through `safeTransfer` is done at the end of the function,
+        following the CEI pattern to prevent out-of-order execution. This function is only called
+        from `redeemExchangeAssetBatch` and it is called at the end of that function as well.
      */
     function _redeemExchangeAssetBatch(
         address caller,

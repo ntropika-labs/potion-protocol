@@ -120,7 +120,11 @@ contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, 
 
     /**
         @inheritdoc IAction
+
+        @dev Even though the exit position can only be called by the Vault, it is also 
+             protected against reentrancy in case the Vault is compromised
      */
+    // slither-disable-next-line reentrancy-no-eth
     function exitPosition(address investmentAsset)
         external
         onlyVault

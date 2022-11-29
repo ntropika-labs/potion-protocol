@@ -113,6 +113,11 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
     /**
         @inheritdoc IVaultV0
+
+        @audit The external call to `action.exitPosition` is trusted but the action
+               will eventually call some other external contracts that may not be trusted.
+               This needs further analysis but for the Testnet Competition it should be fine
+               as we control all the contracts in the system.
      */
     function exitPosition() external onlyOperator onlyLocked nonReentrant returns (uint256 newPrincipalAmount) {
         address investmentAsset = asset();
@@ -205,6 +210,11 @@ contract InvestmentVault is BaseVaultUpgradeable, InvestmentVaultV0 {
 
     /**
         @inheritdoc IVaultV0
+
+        @audit the external call to `action.canPositionBeExited` is trusted but the action
+               will eventually call some other external contracts that may not be trusted.
+               This needs further analysis but for the Testnet Competition it should be fine
+               as we control all the contracts in the system.
      */
     function canPositionBeExited() external view returns (bool canExit) {
         uint256 numActions = _lastStrategy.actionsIndexes.length;

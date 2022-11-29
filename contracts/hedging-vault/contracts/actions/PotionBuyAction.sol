@@ -93,6 +93,10 @@ contract PotionBuyAction is
 
         @dev See { PotionBuyInitParams }
 
+        @audit If a miner would tamper with the block timestamp, it could indeed alter the beginning
+        of the next cycle, taking advantage of this to perhaps extract more value from the protocol.
+        Unfortunately, there is no way to prevent this, as the block timestamp is needed to calculate
+        when the round starts.
      */
     function initialize(PotionBuyInitParams calldata initParams) external initializer {
         // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
@@ -144,6 +148,18 @@ contract PotionBuyAction is
             - Buy the potions using the calculated premium and the new USDC balance in the Action
               contract
 
+        @audit If a miner would tamper with the block timestamp, it could indeed alter the beginning
+        of the next cycle, taking advantage of this to perhaps extract more value from the protocol.
+        Unfortunately, there is no way to prevent this, as the block timestamp is needed to calculate
+        when the round starts.
+
+        @audit It is protected with the `nonReentrant` modifier to avoid re-entrancy. In any case
+        the only contract allowed to call this function is the `InvestmentVault` and the call would only happen
+        upon instruction of the operator. A possible attack vector would be for  a malicious actor to deposit
+        some assets in the `RoundsInputVault` when the `PotionBuyAction` is trying to enter the position, but
+        that is countermeasure by the fact that assets have been already transferred to the `PotionBuyContract`
+        before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+        is the `InvestmentVault` which will not use the ERC-777 callback.
      */
     function enterPosition(address investmentAsset, uint256 amountToInvest)
         external
@@ -192,6 +208,17 @@ contract PotionBuyAction is
 
     /**
         @inheritdoc IAction
+
+        @dev Even though the exit position can only be called by the Vault, it is also 
+             protected against reentrancy in case the Vault is compromised
+
+        @audit It is protected with the `nonReentrant` modifier to avoid re-entrancy. In any case
+        the only contract allowed to call this function is the `InvestmentVault` and the call would only happen
+        upon instruction of the operator. A possible attack vector would be for  a malicious actor to deposit
+        some assets in the `RoundsInputVault` when the `PotionBuyAction` is trying to enter the position, but
+        that is countermeasure by the fact that assets have been already transferred to the `PotionBuyContract`
+        before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+        is the `InvestmentVault` which will not use the ERC-777 callback.
      */
     function exitPosition(address investmentAsset)
         external
@@ -282,6 +309,11 @@ contract PotionBuyAction is
 
     /**
         @inheritdoc IAction
+
+        @audit If a miner would tamper with the block timestamp, it could indeed alter the beginning
+        of the next cycle, taking advantage of this to perhaps extract more value from the protocol.
+        Unfortunately, there is no way to prevent this, as the block timestamp is needed to calculate
+        when the round starts.
      */
     function canPositionBeEntered(
         address /*investmentAsset*/
@@ -416,8 +448,13 @@ contract PotionBuyAction is
         @notice Checks if the next cycle has already started or not
 
         @return True if the next cycle has already started, false otherwise
-     */
 
+        @audit If a miner would tamper with the block timestamp, it could indeed alter the beginning
+        of the next cycle, taking advantage of this to perhaps extract more value from the protocol.
+        Unfortunately, there is no way to prevent this, as the block timestamp is needed to calculate
+        when the round starts.
+     */
+    // slither-disable-next-line timestamp
     function _isNextCycleStarted() internal view returns (bool) {
         return block.timestamp >= nextCycleStartTimestamp;
     }
@@ -430,7 +467,11 @@ contract PotionBuyAction is
         timestamp. To do so we calculate the current cycle offset from the cycle start that is closest
         to now, but in the past. Then we substract this offset from now to get the start of the current
         cycle. We then calculate the next cycle start from the previous by adding the cycle duration
-     */
+
+        @dev Slither complains about PRNG here but is quite the opposite, we are calculating the nex
+             cycle start which should be deterministic
+    */
+    // slither-disable-next-line weak-prng
     function _updateNextCycleStart() internal {
         uint256 currentCycleOffset = (block.timestamp - nextCycleStartTimestamp) % cycleDurationSecs;
         uint256 lastCycleExpectedStart = block.timestamp - currentCycleOffset;
