@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { getEtherscanUrl } from "../../helpers";
+import { getEnsOrAddress } from "../../helpers";
 
 import TokenIcon from "../TokenIcon/TokenIcon.vue";
 import BaseCard from "../BaseCard/BaseCard.vue";
@@ -42,7 +42,7 @@ const strategyName = computed(() => {
       return t("protective_put");
   }
 });
-const vaultEtherscanLink = computed(() => getEtherscanUrl(props.address));
+const vaultEtherscanLink = computed(() => getEnsOrAddress(props.address));
 const vaultEtherscanLabel = computed(
   () => props.address.substring(0, 8) + "..."
 );
