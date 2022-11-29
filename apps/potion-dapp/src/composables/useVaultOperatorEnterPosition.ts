@@ -31,7 +31,7 @@ import { useDepthRouter } from "./useDepthRouter";
 import { createValidExpiry } from "@/helpers";
 import { useOtokenFactory } from "./useOtokenFactory";
 import { calculateOrderSize } from "hedging-vault-sdk";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 
 /**
  * The composable returns a set of functions to perform operations to enter a new cycle and exposes references
@@ -314,33 +314,12 @@ export function useVaultOperatorEnterPosition(
           potionRouterWithEstimatedPremium
         );
 
-        console.log(
-          "calculateOrderSize params",
-          principalHedgedAmountInUnderlying,
-          underlyingTokenValue.decimals as number,
-          USDCToken.decimals as number,
-          hedgingRate.value,
-          strikePercent.value,
-          oraclePrice.value,
-          potionRouterWithEstimatedPremium.premium.toFixed(
-            USDCToken.decimals as number
-          ),
-          parseUnits(
-            String(
-              potionRouterWithEstimatedPremium.premium.toFixed(
-                USDCToken.decimals as number
-              )
-            ),
-            USDCToken.decimals as number
-          ).toNumber()
-        );
-
         const actualVaultSizeInUnderlying = calculateOrderSize(
           principalHedgedAmountInUnderlying,
           underlyingTokenValue.decimals as number,
           hedgingRate.value,
           strikePercent.value,
-          oraclePrice.value,
+          oraclePrice.value.toFixed(6),
           potionRouterWithEstimatedPremium.premium.toFixed(
             USDCToken.decimals as number
           )
