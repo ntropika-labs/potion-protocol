@@ -157,6 +157,7 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         actionAddress,
         BigInt.fromString("30"),
+        BigInt.fromString("20"),
         BigInt.fromString("0")
       );
       const mockedEvent = createOutputNextRound(

@@ -24,6 +24,7 @@ type HedgingVault @entity {
   strategist: Bytes
   shareToken: Token!
   underlying: Token!
+  totalAssets: BigInt!
   totalShares: BigInt!
   #investors: [Investor!] @derivedFrom(field: "user")
   lastUnderlyingsInvested: BigInt

@@ -88,6 +88,7 @@ describe("RolesManager", () => {
           actionAddress,
           underlyingAddress,
           BigInt.fromString("30"),
+          BigInt.fromString("20"),
           BigInt.fromString("0")
         );
       });
@@ -168,6 +169,7 @@ describe("RolesManager", () => {
           actionAddress,
           underlyingAddress,
           BigInt.fromString("30"),
+          BigInt.fromString("20"),
           BigInt.fromString("0"),
           adminAddress,
           operatorAddress,
