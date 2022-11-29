@@ -15,6 +15,14 @@ function mockTotalAssets(contractAddress: Address, totalAssets: BigInt): void {
   ).returns([ethereum.Value.fromUnsignedBigInt(totalAssets)]);
 }
 
+function mockTotalSupply(contractAddress: Address, totalSupply: BigInt): void {
+  createMockedFunction(
+    contractAddress,
+    "totalSupply",
+    "totalSupply():(uint256)"
+  ).returns([ethereum.Value.fromUnsignedBigInt(totalSupply)]);
+}
+
 function mockTokenName(contractAddress: Address, name: string): void {
   createMockedFunction(contractAddress, "name", "name():(string)").returns([
     ethereum.Value.fromString(name),
@@ -164,6 +172,7 @@ function mockStrategistRole(contractAddress: Address, role: Bytes): void {
 export {
   mockAsset,
   mockTotalAssets,
+  mockTotalSupply,
   mockTokenName,
   mockTokenSymbol,
   mockTokenDecimals,

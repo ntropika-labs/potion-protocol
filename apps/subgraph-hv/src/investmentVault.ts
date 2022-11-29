@@ -28,7 +28,7 @@ function createHedgingVault(id: Address): HedgingVault {
   getOrCreateToken(id);
   vault.underlying = contract.asset();
   vault.totalAssets = contract.totalAssets();
-  vault.totalShares = BigInt.fromString("0");
+  vault.totalShares = contract.totalSupply();
   vault.shareToken = id;
   vault.save();
   return vault;
@@ -100,8 +100,10 @@ function handleVaultPositionEntered(event: VaultPositionEntered): void {
     round.underlyingsInvested = event.params.principalAmountInvested;
     round.blockEntered = event.block.hash;
     round.save();
+    const contract = InvestmentVault.bind(event.address);
     vault.lastUnderlyingsInvested = event.params.principalAmountInvested;
     vault.totalAssets = event.params.totalPrincipalAmount;
+    vault.totalShares = contract.totalSupply();
     vault.save();
     log.info(
       "PositionEntered for vault {}, with principalAmountInvested {} and totalPrincipalAmount {}",
@@ -127,7 +129,9 @@ function handleVaultPositionExited(event: VaultPositionExited): void {
     round.totalUnderlyingsAtRoundEnd = event.params.newPrincipalAmount;
     round.blockExited = event.block.hash;
     round.save();
+    const contract = InvestmentVault.bind(event.address);
     vault.totalAssets = event.params.newPrincipalAmount;
+    vault.totalShares = contract.totalSupply();
     vault.save();
     log.info("PositionExited for vault {} with newPrincipalAmount {}", [
       vault.id.toHexString(),

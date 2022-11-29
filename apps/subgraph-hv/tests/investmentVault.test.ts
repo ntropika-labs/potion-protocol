@@ -8,6 +8,7 @@ import {
 import {
   mockAsset,
   mockTotalAssets,
+  mockTotalSupply,
   mockTokenName,
   mockTokenSymbol,
   mockTokenDecimals,
@@ -60,6 +61,7 @@ describe("InvestmentVault tests", () => {
     // mock contracts calls
     mockAsset(contractAddress, underlyingAddress);
     mockTotalAssets(contractAddress, BigInt.fromString("10"));
+    mockTotalSupply(contractAddress, BigInt.fromString("20"));
     // mock erc20 properties
     mockTokenName(contractAddress, "TEST_HV");
     mockTokenSymbol(contractAddress, "THV");
@@ -103,6 +105,7 @@ describe("InvestmentVault tests", () => {
         { field: "underlying", value: underlyingAddress.toHexString() },
         { field: "shareToken", value: contractAddress.toHexString() },
         { field: "totalAssets", value: "10" },
+        { field: "totalShares", value: "20" },
       ]);
     });
 
