@@ -162,6 +162,7 @@ describe("roundsInputVault", () => {
         actionAddress,
         underlyingAddress,
         BigInt.fromString("30"),
+        BigInt.fromString("20"),
         BigInt.fromString("0")
       );
       mockToken(

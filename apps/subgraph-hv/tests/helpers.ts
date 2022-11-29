@@ -51,6 +51,7 @@ function mockHedgingVault(
   id: Address,
   action: Address,
   underlying: Address,
+  totalAssets: BigInt,
   totalShares: BigInt,
   currentRound: BigInt,
   admin: Address = Address.fromString(
@@ -67,6 +68,7 @@ function mockHedgingVault(
   vault.shareToken = id;
   vault.underlying = underlying;
   vault.action = action;
+  vault.totalAssets = totalAssets;
   vault.totalShares = totalShares;
   vault.currentRound = currentRound;
   vault.admin = admin;
