@@ -51,7 +51,9 @@ function setAction(id: Address, action: Address): void {
 function setLastShareToUnderlyingRate(id: Address, exchangeRate: BigInt): void {
   const vault = HedgingVault.load(id);
   if (vault == null) {
-    log.error("vault {} doesn't exists", [id.toHexString()]);
+    log.error("Can't set lastShareToUnderlyingRate: vault {} doesn't exists", [
+      id.toHexString(),
+    ]);
   } else {
     vault.lastShareToUnderlyingRate = exchangeRate;
     vault.save();
@@ -61,7 +63,9 @@ function setLastShareToUnderlyingRate(id: Address, exchangeRate: BigInt): void {
 function setLastUnderlyingToShareRate(id: Address, exchangeRate: BigInt): void {
   const vault = HedgingVault.load(id);
   if (vault == null) {
-    log.error("vault {} doesn't exists", [id.toHexString()]);
+    log.error("Can't set lastUnderlyingToShareRate: vault {} doesn't exists", [
+      id.toHexString(),
+    ]);
   } else {
     vault.lastUnderlyingToShareRate = exchangeRate;
     vault.save();
@@ -218,33 +222,29 @@ function addRoleVault(
   account: Address
 ): void {
   const vaultRole = getVaultRole(role, vaultAddress);
-  const vault = HedgingVault.load(vaultAddress);
-  if (vault != null) {
-    if (vaultRole != "") {
-      if (vaultRole == "admin") {
-        vault.admin = account;
-      } else if (vaultRole == "strategist") {
-        vault.strategist = account;
-      } else if (vaultRole == "operator") {
-        vault.operator = account;
-      }
-
-      vault.save();
-
-      log.info("Role {} set to account {} for vault {}", [
-        vaultRole,
-        account.toHexString(),
-        vaultAddress.toHexString(),
-      ]);
-    } else {
-      log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
-        role.toHexString(),
-        account.toHexString(),
-        vaultAddress.toHexString(),
-      ]);
+  const vault = getOrCreateHedgingVault(vaultAddress);
+  if (vaultRole != "") {
+    if (vaultRole == "admin") {
+      vault.admin = account;
+    } else if (vaultRole == "strategist") {
+      vault.strategist = account;
+    } else if (vaultRole == "operator") {
+      vault.operator = account;
     }
+
+    vault.save();
+
+    log.info("Role {} set to account {} for vault {}", [
+      vaultRole,
+      account.toHexString(),
+      vaultAddress.toHexString(),
+    ]);
   } else {
-    log.error("vault {} doesn't exists", [vaultAddress.toHexString()]);
+    log.error("Tried setting role <{}> to account <{}> for vault <{}>", [
+      role.toHexString(),
+      account.toHexString(),
+      vaultAddress.toHexString(),
+    ]);
   }
 }
 
@@ -296,7 +296,9 @@ function removeRoleVault(
       ]);
     }
   } else {
-    log.error("vault {} doesn't exists", [vaultAddress.toHexString()]);
+    log.error("removeRole - vault {} doesn't exists", [
+      vaultAddress.toHexString(),
+    ]);
   }
 }
 
