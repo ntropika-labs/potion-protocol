@@ -1023,7 +1023,15 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         mockedInvestor,
         mockedCaller,
-        mockedWithdrawalParams,
+        {
+          depositId: BigInt.fromString("2"),
+          amount: BigInt.fromString("100").times(decimals),
+          amountRemaining: BigInt.fromString("100").times(decimals),
+          amountRedeemed: BigInt.fromString("0"),
+          underlyings: BigInt.fromString("50").times(decimals),
+          underlyingsRemaining: BigInt.fromString("50").times(decimals),
+          underlyingsRedeemed: BigInt.fromString("0"),
+        },
         contractAddress,
         contractAddress
       );
@@ -1032,15 +1040,15 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         [],
         [],
-        BigInt.fromString("3")
+        BigInt.fromString("3").times(decimals)
       );
       const mockedEvent = createOutputWithdrawExchangeAsset(
         mockedInvestor,
         mockedInvestor,
         mockedInvestor,
-        BigInt.fromString("45"),
+        BigInt.fromString("45").times(decimals),
         BigInt.fromString("2"),
-        BigInt.fromString("15")
+        BigInt.fromString("15").times(decimals)
       );
       handleWithdrawExchangeAsset(mockedEvent);
     });
@@ -1059,12 +1067,12 @@ describe("roundsOutputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "100" },
-          { field: "amountRemaining", value: "85" },
-          { field: "amountRedeemed", value: "15" },
-          { field: "underlyings", value: "50" },
-          { field: "underlyingsRemaining", value: "5" },
-          { field: "underlyingsRedeemed", value: "45" },
+          { field: "amount", value: "100000000000000000000" },
+          { field: "amountRemaining", value: "85000000000000000000" },
+          { field: "amountRedeemed", value: "15000000000000000000" },
+          { field: "underlyings", value: "50000000000000000000" },
+          { field: "underlyingsRemaining", value: "5000000000000000000" },
+          { field: "underlyingsRedeemed", value: "45000000000000000000" },
         ]
       );
     });
@@ -1077,7 +1085,44 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         mockedInvestor,
         mockedCaller,
-        mockedWithdrawalParamsArray,
+        [
+          {
+            depositId: BigInt.fromString("1"),
+            amount: BigInt.fromString("10").times(decimals),
+            amountRemaining: BigInt.fromString("10").times(decimals),
+            amountRedeemed: BigInt.fromString("0"),
+            underlyings: BigInt.fromString("5").times(decimals),
+            underlyingsRemaining: BigInt.fromString("5").times(decimals),
+            underlyingsRedeemed: BigInt.fromString("0"),
+          },
+          {
+            depositId: BigInt.fromString("2"),
+            amount: BigInt.fromString("100").times(decimals),
+            amountRemaining: BigInt.fromString("100").times(decimals),
+            amountRedeemed: BigInt.fromString("0"),
+            underlyings: BigInt.fromString("50").times(decimals),
+            underlyingsRemaining: BigInt.fromString("50").times(decimals),
+            underlyingsRedeemed: BigInt.fromString("0"),
+          },
+          {
+            depositId: BigInt.fromString("3"),
+            amount: BigInt.fromString("500").times(decimals),
+            amountRemaining: BigInt.fromString("500").times(decimals),
+            amountRedeemed: BigInt.fromString("0"),
+            underlyings: BigInt.fromString("250").times(decimals),
+            underlyingsRemaining: BigInt.fromString("250").times(decimals),
+            underlyingsRedeemed: BigInt.fromString("0"),
+          },
+          {
+            depositId: BigInt.fromString("4"),
+            amount: BigInt.fromString("1000").times(decimals),
+            amountRemaining: BigInt.fromString("1000").times(decimals),
+            amountRedeemed: BigInt.fromString("0"),
+            underlyings: BigInt.fromString("500").times(decimals),
+            underlyingsRemaining: BigInt.fromString("500").times(decimals),
+            underlyingsRedeemed: BigInt.fromString("0"),
+          },
+        ],
         contractAddress,
         contractAddress
       );
@@ -1086,21 +1131,21 @@ describe("roundsOutputVault", () => {
         vaultAddress,
         [],
         [],
-        BigInt.fromString("5")
+        BigInt.fromString("5").times(decimals)
       );
       const mockedEvent = createOutputWithdrawExchangeAssetBatch(
         mockedInvestor,
         mockedInvestor,
         mockedInvestor,
-        BigInt.fromString("55"),
+        BigInt.fromString("55").times(decimals),
         [
           BigInt.fromString("1"),
           BigInt.fromString("2"),
           BigInt.fromString("4"),
         ],
         [
-          BigInt.fromString("1"),
-          BigInt.fromString("10"),
+          BigInt.fromString("1").times(decimals),
+          BigInt.fromString("10").times(decimals),
           BigInt.fromString("0"),
         ]
       );
@@ -1121,12 +1166,12 @@ describe("roundsOutputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "10" },
-          { field: "amountRemaining", value: "9" },
-          { field: "amountRedeemed", value: "1" },
-          { field: "underlyings", value: "5" },
+          { field: "amount", value: "10000000000000000000" },
+          { field: "amountRemaining", value: "9000000000000000000" },
+          { field: "amountRedeemed", value: "1000000000000000000" },
+          { field: "underlyings", value: "5000000000000000000" },
           { field: "underlyingsRemaining", value: "0" },
-          { field: "underlyingsRedeemed", value: "5" },
+          { field: "underlyingsRedeemed", value: "5000000000000000000" },
         ]
       );
     });
@@ -1139,12 +1184,12 @@ describe("roundsOutputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "100" },
-          { field: "amountRemaining", value: "90" },
-          { field: "amountRedeemed", value: "10" },
-          { field: "underlyings", value: "50" },
+          { field: "amount", value: "100000000000000000000" },
+          { field: "amountRemaining", value: "90000000000000000000" },
+          { field: "amountRedeemed", value: "10000000000000000000" },
+          { field: "underlyings", value: "50000000000000000000" },
           { field: "underlyingsRemaining", value: "0" },
-          { field: "underlyingsRedeemed", value: "50" },
+          { field: "underlyingsRedeemed", value: "50000000000000000000" },
         ]
       );
     });
@@ -1157,11 +1202,11 @@ describe("roundsOutputVault", () => {
           mockedInvestor
         ).toHexString(),
         [
-          { field: "amount", value: "1000" },
-          { field: "amountRemaining", value: "1000" },
+          { field: "amount", value: "1000000000000000000000" },
+          { field: "amountRemaining", value: "1000000000000000000000" },
           { field: "amountRedeemed", value: "0" },
-          { field: "underlyings", value: "500" },
-          { field: "underlyingsRemaining", value: "500" },
+          { field: "underlyings", value: "500000000000000000000" },
+          { field: "underlyingsRemaining", value: "500000000000000000000" },
           { field: "underlyingsRedeemed", value: "0" },
         ]
       );

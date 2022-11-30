@@ -13,6 +13,7 @@ import {
   createRoundId,
   updateShares,
   getUnderlyingToShareRate,
+  getExchangeAmount,
 } from "./rounds";
 import { addInvestorVault } from "./investors";
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
@@ -211,7 +212,7 @@ function withdraw(
     ]);
   } else {
     const exchangeRate = getUnderlyingToShareRate(depositTicket.round);
-    const exchangeAssetAmount = exchangeRate.times(receiptAmount);
+    const exchangeAssetAmount = getExchangeAmount(exchangeRate, receiptAmount);
     depositTicket.amountRemaining =
       depositTicket.amountRemaining.minus(receiptAmount);
     depositTicket.amountRedeemed =

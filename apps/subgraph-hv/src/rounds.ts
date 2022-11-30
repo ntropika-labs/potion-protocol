@@ -177,6 +177,11 @@ function getShareToUnderlyingRate(id: Bytes): BigInt {
   return getRate(id, "shareToUnderlyingRate");
 }
 
+function getExchangeAmount(exchangeRate: BigInt, amount: BigInt): BigInt {
+  const decimals = BigInt.fromI32(10).pow(18);
+  return exchangeRate.times(amount).div(decimals);
+}
+
 export {
   createRoundId,
   getOrCreateRound,
@@ -188,4 +193,5 @@ export {
   updateAssets,
   getUnderlyingToShareRate,
   getShareToUnderlyingRate,
+  getExchangeAmount,
 };
