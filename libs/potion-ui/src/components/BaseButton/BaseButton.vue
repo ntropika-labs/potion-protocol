@@ -69,9 +69,6 @@ const props = withDefaults(defineProps<Props>(), {
   type: "button",
   loading: false,
 });
-const emit = defineEmits<{
-  (e: "click"): void;
-}>();
 
 const sizeClass = computed(() => buttonSizeMap.get(props.size as ButtonSize));
 const paletteClass = computed(() =>
@@ -95,7 +92,6 @@ const weightClass = computed(() =>
     ]"
     :type="props.type"
     test-base-button
-    @click="emit('click')"
   >
     <i v-if="props.loading" class="i-eos-icons-loading mr-2"></i>
     <slot v-else name="pre-icon"></slot>

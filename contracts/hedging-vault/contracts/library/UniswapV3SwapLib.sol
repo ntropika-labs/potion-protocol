@@ -117,7 +117,10 @@ library UniswapV3SwapLib {
         could have been used for the input
 
         @dev The `maxDuration` parameter is used to calculate the deadline from the current block timestamp
-     */
+    */
+    // @audit `block.timestamp` is used to calculate the deadline, which is a timestamp in seconds. This is not vulnerable to
+    // to the `timestamp` vulnerability, as the `block.timestamp` is not used to calculate anything random
+
     function swapOutput(ISwapRouter swapRouter, SwapOutputParameters memory parameters)
         internal
         returns (uint256 amountIn)

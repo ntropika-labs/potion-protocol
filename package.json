@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "nx build",
+    "build-testnet": "nx run multivault-helpers:prepare-dapp-mumbai && nx run subgraph-queries:codegen && nx run subgraph-queries-hv:codegen && nx run potion-dapp:build-testnet",
     "codegen": "nx codegen",
     "compile-contracts": "nx run-many --target=compile --all",
     "dev": "nx dev",

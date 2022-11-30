@@ -71,7 +71,7 @@ const { PotionBuyAction, RoundsOutputVault } = getContractsFromVault(
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { polledPrice, startPolling, stopPolling } = useOracleContract();
-const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
+const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? "0"));
 
 const {
   vaultStatus,
@@ -134,8 +134,8 @@ const {
   isEnterPositionOperationValid,
   loadEnterPositionRoute,
   evaluateEnterPositionData,
-  effectiveVaultSizeInUnderlying,
   debugData,
+  resetData: resetEnterPositionData,
 } = useVaultOperatorEnterPosition(
   vaultId,
   tokenAsset,
@@ -154,6 +154,7 @@ const {
   isExitPositionOperationValid,
   loadExitPositionRoute,
   evaluateExitPositionData,
+  resetData: resetExitPositionData,
 } = useVaultOperatorExitPosition(
   vaultId,
   tokenAsset,
@@ -188,6 +189,8 @@ const counterpartiesText = computed(() => {
     ? t("counterparties")
     : t("counterparty");
 });
+
+const vaultSizeInShares = computed(() => vault.value.totalShares);
 
 /**
  * Callback to enter the next round.
@@ -246,8 +249,8 @@ const callbackEnterNextRound = async () => {
   );
 
   // Reset data from routers
-  enterPositionData.value = null;
-  exitPositionData.value = null;
+  resetEnterPositionData();
+  resetExitPositionData();
 
   await getTotalPayoutInUSDC();
 };
@@ -502,8 +505,8 @@ watch(blockTimestamp, async () => {
     <div class="flex flex-col mt-4 gap-2 text-left">
       <table class="table-fixed border-collapse">
         <thead>
-          <th>Total deposit (WETH)</th>
-          <th>Total withdrawal (WETH)</th>
+          <th>Total deposit (UND.)</th>
+          <th>Total withdrawal (UND.)</th>
           <th>Spot price at round end</th>
           <th>
             Potion initial premium
@@ -550,13 +553,17 @@ watch(blockTimestamp, async () => {
       <table class="table-fixed border-collapse">
         <thead>
           <th>Order size (OT)</th>
-          <th>Action balance (WETH)</th>
+          <th>Action balance (UND.)</th>
           <th>Action balance (USDC)</th>
         </thead>
         <tbody>
           <tr>
             <td>
-              {{ effectiveVaultSizeInUnderlying.toFixed(9).slice(0, -1) }}
+              {{
+                debugData.effectiveVaultSizeInUnderlying
+                  ?.toFixed(9)
+                  .slice(0, -1)
+              }}
             </td>
             <td>
               {{ potionActionUnderlyingBalance.toFixed(19).slice(0, -1) }}
@@ -641,12 +648,15 @@ watch(blockTimestamp, async () => {
         <BaseCard class="p-6 grid gap-4">
           <h3 class="text-lg font-semibold mb-4">Recap</h3>
           <div class="grid md:grid-cols-2 items-start gap-12">
-            <LabelValue
-              size="lg"
-              :title="t('vault_size')"
-              :value="vault.totalShares.toString()"
-              :symbol="assetSymbol"
-            />
+            <div class="flex flex-col gap-2">
+              <LabelValue
+                size="lg"
+                :title="t('total_shares')"
+                :value="vaultSizeInShares"
+                symbol="shares"
+              />
+            </div>
+
             <div class="flex flex-col gap-2">
               <AssetTag size="lg" :title="t('asset')" :token="tokenAsset" />
               <div>
@@ -772,7 +782,7 @@ watch(blockTimestamp, async () => {
           <BaseCard class="p-6">
             <!-- START ENTER POSITION TAB -->
             <!-- START POTION INFO -->
-            <div class="flex flex-col gap-8">
+            <div class="flex flex-col gap-4">
               <div class="flex flex-row justify-between">
                 <div v-if="hasCounterparties">
                   <h3 class="text-xl font-bold">Premium</h3>
@@ -802,7 +812,7 @@ watch(blockTimestamp, async () => {
                   ></span>
                   <span v-else>no</span>
                 </div>
-                <h3 class="text-xl font-bold capitalize">
+                <h3 class="text-3xl font-bold capitalize">
                   {{ counterpartiesText }}
                 </h3>
               </div>
@@ -916,10 +926,10 @@ watch(blockTimestamp, async () => {
             </div>
             <!-- END POTION INFO -->
             <!-- START ENTER UNI ROUTE -->
-            <div class="mt-4">
+            <div class="mt-16">
               <!-- START ROUTE HEADER -->
               <div>
-                <h1 class="text-xl font-semibold">Uniswap route</h1>
+                <h1 class="text-3xl font-semibold">Uniswap route</h1>
               </div>
               <!-- END ROUTE HEADER -->
               <TokenSwap

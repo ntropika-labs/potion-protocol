@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { onMounted, ref, watch, type Ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
@@ -26,7 +25,6 @@ interface StrategyButton {
 }
 
 const { t } = useI18n();
-const router = useRouter();
 
 // user info
 const { walletAddress } = storeToRefs(useUserDataStore());
@@ -45,10 +43,6 @@ const vaultsByUnderlying: Ref<{
   [underlyinAddress: string]: Array<VaultDataWithStrategy>;
 }> = ref({});
 const personalVaults: Ref<Array<VaultDataWithStrategy>> = ref([]);
-
-const toVault = (id: string) => {
-  router.push({ name: "hedging-vault", params: { id } });
-};
 
 const getStrategyPalette = (code: string): "primary" | "filter" => {
   return currentSelectedStrategy.value === code ? "primary" : "filter";
@@ -105,18 +99,25 @@ watch(walletAddress, () => updateData());
     <div
       class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-12 m-4"
     >
-      <VaultCard
+      <router-link
         v-for="vault in personalVaults"
         :key="vault.address"
-        :address="vault.address"
-        :asset="vault.underlying"
-        :max-premium="vault.action.maxPremium"
-        :cycle-duration-secs="vault.action.cycleDurationInSecs"
-        :strike="vault.strikePercentage"
-        :strategy="vault.strategy"
-        @selected="toVault(vault.address)"
+        :to="{
+          name: 'hedging-vault',
+          params: {
+            id: vault.address,
+          },
+        }"
       >
-      </VaultCard>
+        <VaultCard
+          :address="vault.address"
+          :asset="vault.underlying"
+          :max-premium="vault.action.maxPremium"
+          :cycle-duration-secs="vault.action.cycleDurationInSecs"
+          :strike="vault.strikePercentage"
+          :strategy="vault.strategy"
+        />
+      </router-link>
     </div>
   </BaseCard>
 
@@ -148,37 +149,46 @@ watch(walletAddress, () => updateData());
       }}</span>
     </div>
   </div>
-  <BaseCard
-    v-for="underlying in availableUnderlyings"
-    :key="underlying.address"
-    class="px-6 py-4"
-  >
-    <div class="flex flex-row items-center gap-2 mb-8">
-      <TokenIcon
-        class="rounded-full bg-deep-black-700 mr-2"
-        :address="underlying.address"
-        :name="underlying.name"
-        :image="underlying.image"
-        size="lg"
-      />
-      <p class="font-semibold text-3xl">{{ underlying.symbol }}</p>
-    </div>
-    <div
-      class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-4"
+  <div class="flex flex-col gap-8">
+    <BaseCard
+      v-for="underlying in availableUnderlyings"
+      :key="underlying.address"
+      class="px-6 py-4"
     >
-      <VaultCard
-        v-for="vault in vaultsByUnderlying[underlying.address]"
-        :key="vault.address"
-        :address="vault.address"
-        :asset="vault.underlying"
-        :max-premium="vault.action.maxPremium"
-        :cycle-duration-secs="vault.action.cycleDurationInSecs"
-        :strike="vault.strikePercentage"
-        :strategy="vault.strategy"
-        @selected="toVault(vault.address)"
+      <div class="flex flex-row items-center gap-2 mb-8">
+        <TokenIcon
+          class="rounded-full bg-deep-black-700 mr-2"
+          :address="underlying.address"
+          :name="underlying.name"
+          :image="underlying.image"
+          size="lg"
+        />
+        <p class="font-semibold text-3xl">{{ underlying.symbol }}</p>
+      </div>
+      <div
+        class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-4"
       >
-      </VaultCard>
-    </div>
-    <div class="p-8"></div>
-  </BaseCard>
+        <router-link
+          v-for="vault in vaultsByUnderlying[underlying.address]"
+          :key="vault.address"
+          :to="{
+            name: 'hedging-vault',
+            params: {
+              id: vault.address,
+            },
+          }"
+        >
+          <VaultCard
+            :address="vault.address"
+            :asset="vault.underlying"
+            :max-premium="vault.action.maxPremium"
+            :cycle-duration-secs="vault.action.cycleDurationInSecs"
+            :strike="vault.strikePercentage"
+            :strategy="vault.strategy"
+          />
+        </router-link>
+      </div>
+      <div class="p-8"></div>
+    </BaseCard>
+  </div>
 </template>

@@ -70,7 +70,10 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
 
     /**
         @inheritdoc IHedgingVaultOrchestrator
+
+        @dev Disabling unused return because the return value of `exitPosition` is only used for composability
      */
+    // slither-disable-next-line unused-return
     function nextRound(
         IUniswapV3Oracle.SwapInfo calldata potionBuyExitSwapInfo,
         PotionBuyInfo calldata potionBuyEnterBuyInfo,
@@ -85,6 +88,7 @@ contract HedgingVaultOrchestrator is Ownable, IHedgingVaultOrchestrator {
             potionBuyAction.setSwapInfo(potionBuyExitSwapInfo);
             swapToUSDCAction.setSwapInfo(swapToUSDCExitSwapInfo);
 
+            // Return value is ignored on purpose, as the value is only returned for composability
             investmentVault.exitPosition();
         }
 

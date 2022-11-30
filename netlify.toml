@@ -1,7 +1,7 @@
 # example netlify.toml
 [build]
-  command = "yarn build potion-dapp"
-  functions = "netlify/functions"
+  command = "yarn build-testnet"
+  #functions = "netlify/functions"
   publish = "apps/potion-dapp/dist"
 
   ## Uncomment to use this redirect for Single Page Applications like create-react-app.

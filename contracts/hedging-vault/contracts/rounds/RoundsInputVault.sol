@@ -63,7 +63,13 @@ contract RoundsInputVault is BaseRoundsVaultUpgradeable, IRoundsInputVault {
         @inheritdoc BaseRoundsVaultUpgradeable
 
         @dev Deposits the available funds into the main vault, receiving back an amount of target vault shares
-     */
+    */
+    // @audit This function is protected for re-entrancy by two mechanisms: only the Operator can call
+    // `_nextRound` which is the function that in turn calls this function, and the Operator is a trusted
+    // entity. Also, even if the operator would call `nextRound` in a re-entrancy attack, the funds are being
+    // moved from this contract to the `InvestmentVault` contract and no more funds would be left, leading
+    // the following code to be a no-op
+
     function _operate() internal override {
         uint256 assets = totalAssets();
         if (assets > 0) {
