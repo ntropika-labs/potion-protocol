@@ -128,7 +128,7 @@ abstract contract VaultWithReceiptsUpgradeable is
         uint256 amount,
         uint256 id
     ) private {
-        // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
+        // @audit If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
         // `tokensToSend` hook. On the other hand, the `tokenReceived` hook, that is triggered after the transfer,
         // calls the vault, which is assumed not malicious.
         //
@@ -155,7 +155,7 @@ abstract contract VaultWithReceiptsUpgradeable is
             require(isApprovedForAll(owner, caller), "caller is not owner nor approved");
         }
 
-        // If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
+        // @audit If _asset is ERC777, `transfer` can trigger trigger a reentrancy AFTER the transfer happens through the
         // `tokensReceived` hook. On the other hand, the `tokensToSend` hook, that is triggered before the transfer,
         // calls the vault, which is assumed not malicious.
         //
