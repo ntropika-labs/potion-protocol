@@ -71,7 +71,7 @@ const { PotionBuyAction, RoundsOutputVault } = getContractsFromVault(
 
 const { blockTimestamp, getBlock, initProvider } = useEthersProvider();
 const { polledPrice, startPolling, stopPolling } = useOracleContract();
-const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? 0));
+const oraclePrice = computed(() => parseFloat(polledPrice?.value ?? "0"));
 
 const {
   vaultStatus,
@@ -190,9 +190,7 @@ const counterpartiesText = computed(() => {
     : t("counterparty");
 });
 
-const vaultSizeInShares = computed(() =>
-  formatUnits(vault.value.totalShares, 18)
-);
+const vaultSizeInShares = computed(() => vault.value.totalShares);
 
 /**
  * Callback to enter the next round.
