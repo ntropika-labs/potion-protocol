@@ -10,7 +10,7 @@ import {
 } from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
-import { InvestmentVault, PotionBuyAction, SwapToUSDCAction } from "../../typechain";
+import { InvestmentVault, IPotionLiquidityPool, PotionBuyAction, SwapToUSDCAction } from "../../typechain";
 import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
@@ -290,7 +290,7 @@ describe("HedgingVaultBasic", function () {
 
             // Potion Liquidity Manager calls
             expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens).to.have.not.been.called;
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.not.been.called;
+            expect(asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement).to.have.not.been.called;
         });
     });
     it("HVB0005 - Full cycle", async function () {
@@ -302,7 +302,7 @@ describe("HedgingVaultBasic", function () {
         const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
 
         // Mint some otokens for the Potion Buy action so it thinks that it bought some otokens
-        tEnv.opynMockOtoken.mint(potionBuy.address, ethers.utils.parseEther("1000"));
+        await tEnv.opynMockOtoken.mint(potionBuy.address, ethers.utils.parseEther("1000"));
 
         /*
             MINT
@@ -478,9 +478,22 @@ describe("HedgingVaultBasic", function () {
             expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[2]).to.be.equal(
                 tCond.maxPremiumWithSlippageInUSDC,
             );
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry.getCall(0).args[0]).to.be.equal(
-                tCond.potionBuyInfo.targetPotionAddress,
+            expect(asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement).to.have.been.calledOnce;
+            expect(
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[0],
+            ).to.be.equal(tCond.potionBuyInfo.targetPotionAddress);
+
+            const pools: IPotionLiquidityPool.PoolIdentifierStruct[] = [];
+            for (let i = 0; i < tCond.potionBuyInfo.sellers.length; i++) {
+                pools.push({
+                    lp: tCond.potionBuyInfo.sellers[i].lp,
+                    poolId: tCond.potionBuyInfo.sellers[i].poolId,
+                });
+            }
+
+            expectSolidityDeepCompare(
+                pools,
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[1],
             );
         });
     });

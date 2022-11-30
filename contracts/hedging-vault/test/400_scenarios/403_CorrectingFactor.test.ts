@@ -10,7 +10,7 @@ import {
 } from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
-import { InvestmentVault, PotionBuyAction } from "../../typechain";
+import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool } from "../../typechain";
 import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
@@ -272,9 +272,23 @@ describe("CorrectingFactor", function () {
             expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[2]).to.be.equal(
                 tCond.maxPremiumWithSlippageInUSDC,
             );
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry.getCall(0).args[0]).to.be.equal(
-                tCond.potionBuyInfo.targetPotionAddress,
+
+            expect(asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement).to.have.been.calledOnce;
+            expect(
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[0],
+            ).to.be.equal(tCond.potionBuyInfo.targetPotionAddress);
+
+            const pools: IPotionLiquidityPool.PoolIdentifierStruct[] = [];
+            for (let i = 0; i < tCond.potionBuyInfo.sellers.length; i++) {
+                pools.push({
+                    lp: tCond.potionBuyInfo.sellers[i].lp,
+                    poolId: tCond.potionBuyInfo.sellers[i].poolId,
+                });
+            }
+
+            expectSolidityDeepCompare(
+                pools,
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[1],
             );
         });
     });
