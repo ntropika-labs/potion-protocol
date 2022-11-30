@@ -47,7 +47,11 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
     formatUnits(result?.lastShareToUnderlyingRate ?? "0")
   ),
   lastTotalUnderlyingsAtRoundEnd: parseFloat(
-    formatUnits(result?.rounds?.[0]?.totalUnderlyingsAtRoundEnd ?? "0", 18)
+    formatUnits(
+      result?.rounds?.[result?.rounds?.length - 2]
+        ?.totalUnderlyingsAtRoundEnd ?? "0",
+      18
+    )
   ),
 });
 
