@@ -40,12 +40,17 @@ const queryResultToVault = (result: HedgingVaultFragment) => ({
   nextCycleTimestamp: result?.action?.nextCycleStartTimestamp ?? "0",
   currentRound: result?.currentRound ?? "0",
   rounds: (result?.rounds ?? []) as unknown as RoundsFragment,
-  lastUnderlyingToShareRate: parseFloat(
-    formatUnits(result?.lastUnderlyingToShareRate ?? "0")
-  ),
-  lastShareToUnderlyingRate: parseFloat(
-    formatUnits(result?.lastShareToUnderlyingRate ?? "0")
-  ),
+  // IMPORTANT: leave those rates as big numbers otherwise we will need to refactor and test again the entire math of deposit, exchange and withdrawal
+  lastUnderlyingToShareRate: result?.lastUnderlyingToShareRate ?? "0",
+  lastShareToUnderlyingRate: result?.lastShareToUnderlyingRate ?? "0",
+  debug: {
+    lastUnderlyingToShareRate: formatUnits(
+      result?.lastUnderlyingToShareRate ?? "0"
+    ),
+    lastShareToUnderlyingRate: formatUnits(
+      result?.lastShareToUnderlyingRate ?? "0"
+    ),
+  },
   lastTotalUnderlyingsAtRoundEnd: parseFloat(
     formatUnits(
       result?.rounds?.[result?.rounds?.length - 2]
