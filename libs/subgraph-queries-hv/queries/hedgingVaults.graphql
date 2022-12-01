@@ -92,3 +92,11 @@ query getHedgingVaults($investor: String) {
     }
   }
 }
+
+query getHedgingVaultsUnderlyings {
+  hedgingVaults {
+    underlying {
+      ...TokenInfo
+    }
+  }
+}

@@ -5300,6 +5300,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@headlessui/vue@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "@headlessui/vue@npm:1.7.4"
+  peerDependencies:
+    vue: ^3.2.0
+  checksum: 6a508af382f03112989fcf1e42319eaaccb7a51bf319aac388e9f8f8fb27867d6a03ddc37f74e2199721b34c3005fd8246661888f21168b1a0dd9c721dc9d536
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.10.4":
   version: 0.10.4
   resolution: "@humanwhocodes/config-array@npm:0.10.4"
@@ -29989,6 +29998,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": ^2.5.3
     "@graphql-codegen/typescript-vue-urql": ^2.3.3
     "@graphql-eslint/eslint-plugin": ^3.10.7
+    "@headlessui/vue": ^1.7.4
     "@iconify-json/eos-icons": ^1.1.2
     "@iconify-json/ph": ^1.1.2
     "@intlify/vite-plugin-vue-i18n": ^6.0.1

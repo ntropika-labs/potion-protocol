@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import BaseLayout from "@/layouts/BaseLayout.vue";
-import { useOnboard } from "@onboard-composable";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
+import BaseLayout from "@/layouts/BaseLayout.vue";
+import { useOnboard } from "@onboard-composable";
 
 const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
 const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
@@ -21,7 +21,7 @@ const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
 const VaultOperator = () => import("@/views/Vault/VaultOperator.vue");
 const ViewPools = () => import("@/views/Pools/ViewPools.vue");
 const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
-
+const SwapTokens = () => import("@/views/Vault/SwapTokens.vue");
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -149,6 +149,12 @@ const router = createRouter({
       path: "/potions/:id",
       name: "show-potion",
       component: ShowPotion,
+      meta: { requiredWallet: false, layout: BaseLayout, sublink: "potions" },
+    },
+    {
+      path: "/swap",
+      name: "swap-tokens",
+      component: SwapTokens,
       meta: { requiredWallet: false, layout: BaseLayout, sublink: "potions" },
     },
   ],
