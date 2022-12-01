@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">90.63% </span>
+        <span class="strong">90.91% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>29/32</span>
+        <span class='fraction'>30/33</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">52.94% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>13/15</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">91.67% </span>
+        <span class="strong">91.89% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>33/36</span>
+        <span class='fraction'>34/37</span>
       </div>
     </div>
   </div>
@@ -354,7 +354,21 @@
 309
 310
 311
-312</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -411,7 +425,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">88×</span>
+<span class="cline-any cline-yes">106×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -434,6 +448,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">32×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -608,6 +624,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -625,6 +647,12 @@
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -746,13 +774,15 @@ abstract contract BaseRoundsVaultUpgradeable is
         @inheritdoc IBaseRoundsVault
      */
     function nextRound() external <span class="missing-if-branch" title="else path not taken" >E</span>onlyOperator {
-        _exchangeRateByRound[_roundNumber.current()] = _getCurrentExchangeRate();
+        uint256 exchangeRate = _getCurrentExchangeRate();
+&nbsp;
+        _exchangeRateByRound[_roundNumber.current()] = exchangeRate;
 &nbsp;
         _operate();
 &nbsp;
         _roundNumber.increment();
 &nbsp;
-        emit NextRound(_roundNumber.current());
+        emit NextRound(_roundNumber.current(), exchangeRate);
     }
 &nbsp;
     /**
@@ -911,7 +941,13 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param amount The amount of the receipt to be redeemed
         @param receiver The address that will receive the underlying tokens
         @param owner The address that owns the receipt, in case the caller is not the owner
-     */
+    */
+&nbsp;
+    // @audit This function follows the CEI pattern to avoid out-of-order execution. The only
+    // external call is `safeTransfer` that is done at the end of the function where the state
+    // of the contract is consistent and a reentrancy is protected by the `_burn` function that
+    // will check the balance of the user
+&nbsp;
     function _redeemExchangeAsset(
         address caller,
         address receiver,
@@ -948,6 +984,12 @@ abstract contract BaseRoundsVaultUpgradeable is
         @param ids The ids of the receipts to be redeemed
         @param amounts The amounts of the receipts to be redeemed
      */
+&nbsp;
+    // @audit This function follows the CEI pattern to avoid out-of-order execution. The only
+    // external call is `safeTransfer` that is done at the end of the function where the state
+    // of the contract is consistent and a reentrancy is protected by the `_burnBatch` function that
+    // will check the balance of the user
+&nbsp;
     function _redeemExchangeAssetBatch(
         address caller,
         address receiver,
@@ -982,7 +1024,7 @@ abstract contract BaseRoundsVaultUpgradeable is
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Dec 01 2022 09:09:45 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>
