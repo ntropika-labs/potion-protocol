@@ -10,7 +10,7 @@ import {
 } from "../../scripts/hedging-vault/deployHedgingVaultEnvironment";
 import { PotionHedgingVaultConfigParams } from "../../scripts/config/deployConfig";
 
-import { InvestmentVault, PotionBuyAction } from "../../typechain";
+import { InvestmentVault, PotionBuyAction, IPotionLiquidityPool, MockChainlinkAggregatorV3 } from "../../typechain";
 import { LifecycleStates, toSolidityPercentage } from "hedging-vault-sdk";
 import { fastForwardChain, getCurrentTimestamp } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
@@ -82,7 +82,7 @@ describe("CorrectingFactor", function () {
         await action.grantRole(Roles.Operator, ownerAccount.address);
 
         // Mint some otokens for the Potion Buy action so it thinks that it bought some otokens
-        tEnv.opynMockOtoken.mint(action.address, ethers.utils.parseEther("1000"));
+        await tEnv.opynMockOtoken.mint(action.address, ethers.utils.parseEther("1000"));
     });
 
     it("CF0001 - Potion Buy Action Hedging Rate Config", async function () {
@@ -98,8 +98,15 @@ describe("CorrectingFactor", function () {
         const underlyingAssetPriceInUSD = ethers.utils.parseUnits("1000.0", 8); // 1000 USDC with 8 decimals
         const USDCPriceInUSD = ethers.utils.parseUnits("1.0", 8); // 1 USDC with 8 decimals
         const amountToBeInvested = ethers.utils.parseEther("20");
+        const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
 
-        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+        const tCond = await setupTestConditions(
+            tEnv,
+            underlyingAssetPriceInUSD,
+            USDCPriceInUSD,
+            amountToBeInvested,
+            exitPriceDecreasePercentage,
+        );
 
         /*
             MINT
@@ -170,6 +177,9 @@ describe("CorrectingFactor", function () {
 
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, tCond.underlyingAssetExitPriceInUSD);
+        await (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(
+            tCond.underlyingAssetExitPriceInUSD,
+        );
 
         // Set the dispute period as over, this only works with the mock contract
         await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, tCond.expirationTimestamp, true);
@@ -220,7 +230,7 @@ describe("CorrectingFactor", function () {
             );
 
             // Underlying Asset calls
-            expect(asMock(tEnv.underlyingAsset).approve).to.have.callCount(4);
+            expect(asMock(tEnv.underlyingAsset).approve).to.have.callCount(5);
             expect(asMock(tEnv.underlyingAsset).approve.atCall(1)).to.have.been.calledWith(
                 action.address,
                 amountToBeInvested,
@@ -229,7 +239,11 @@ describe("CorrectingFactor", function () {
                 tEnv.uniswapV3SwapRouter.address,
                 tCond.uniswapEnterPositionInputAmountWithSlippage,
             );
-            expect(asMock(tEnv.underlyingAsset).approve.atCall(3)).to.have.been.calledWith(action.address, 0);
+            expect(asMock(tEnv.underlyingAsset).approve.atCall(3)).to.have.been.calledWith(
+                tEnv.uniswapV3SwapRouter.address,
+                0,
+            );
+            expect(asMock(tEnv.underlyingAsset).approve.atCall(4)).to.have.been.calledWith(action.address, 0);
 
             // Uniswap V3 Router calls
             expect(asMock(tEnv.uniswapV3SwapRouter).exactOutput).to.have.been.calledOnce;
@@ -272,9 +286,23 @@ describe("CorrectingFactor", function () {
             expect(asMock(tEnv.potionLiquidityPoolManager).buyOtokens.getCall(0).args[2]).to.be.equal(
                 tCond.maxPremiumWithSlippageInUSDC,
             );
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry).to.have.been.calledOnce;
-            expect(asMock(tEnv.potionLiquidityPoolManager).settleAfterExpiry.getCall(0).args[0]).to.be.equal(
-                tCond.potionBuyInfo.targetPotionAddress,
+
+            expect(asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement).to.have.been.calledOnce;
+            expect(
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[0],
+            ).to.be.equal(tCond.potionBuyInfo.targetPotionAddress);
+
+            const pools: IPotionLiquidityPool.PoolIdentifierStruct[] = [];
+            for (let i = 0; i < tCond.potionBuyInfo.sellers.length; i++) {
+                pools.push({
+                    lp: tCond.potionBuyInfo.sellers[i].lp,
+                    poolId: tCond.potionBuyInfo.sellers[i].poolId,
+                });
+            }
+
+            expectSolidityDeepCompare(
+                pools,
+                asMock(tEnv.potionLiquidityPoolManager).settleAndRedistributeSettlement.getCall(0).args[1],
             );
         });
     });

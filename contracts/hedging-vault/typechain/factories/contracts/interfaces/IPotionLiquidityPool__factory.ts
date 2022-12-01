@@ -333,6 +333,36 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "contract IOtoken",
+        name: "_otoken",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "lp",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "poolId",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IPotionLiquidityPool.PoolIdentifier[]",
+        name: "_pools",
+        type: "tuple[]",
+      },
+    ],
+    name: "settleAndRedistributeSettlement",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
 export class IPotionLiquidityPool__factory {

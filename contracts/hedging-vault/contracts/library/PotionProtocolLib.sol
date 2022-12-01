@@ -107,7 +107,10 @@ library PotionProtocolLib {
      */
     function settlePotion(IPotionLiquidityPool potionLiquidityPoolManager, PotionBuyInfo memory buyInfo) internal {
         IOtoken potion = IOtoken(buyInfo.targetPotionAddress);
-        potionLiquidityPoolManager.settleAfterExpiry(potion);
+
+        IPotionLiquidityPool.PoolIdentifier[] memory pools = _getPoolsInfo(buyInfo);
+
+        potionLiquidityPoolManager.settleAndRedistributeSettlement(potion, pools);
     }
 
     /**
@@ -186,5 +189,27 @@ library PotionProtocolLib {
         });
 
         return redeemArgs;
+    }
+
+    /**
+        @notice Retrieves the list of pools from the counterparties list
+
+        @param buyInfo Structure with the counterparties list
+
+        @return pools The list of pools to be settled
+     */
+    function _getPoolsInfo(PotionBuyInfo memory buyInfo)
+        private
+        pure
+        returns (IPotionLiquidityPool.PoolIdentifier[] memory pools)
+    {
+        pools = new IPotionLiquidityPool.PoolIdentifier[](buyInfo.sellers.length);
+
+        for (uint256 i = 0; i < buyInfo.sellers.length; i++) {
+            pools[i] = IPotionLiquidityPool.PoolIdentifier({
+                lp: buyInfo.sellers[i].lp,
+                poolId: buyInfo.sellers[i].poolId
+            });
+        }
     }
 }

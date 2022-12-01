@@ -18,6 +18,7 @@ import {
     HedgingVaultOrchestrator,
     RoundsVaultExchanger,
     SwapToUSDCAction,
+    MockChainlinkAggregatorV3,
 } from "../../typechain";
 import { fastForwardChain } from "contracts-utils";
 import { expectSolidityDeepCompare } from "../utils/chaiHelpers";
@@ -276,8 +277,15 @@ describe("DeferredDepositsWithdrawals", function () {
         const amountToBeInvested = ethers.utils.parseEther("20");
         const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
         const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
+        const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
 
-        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+        const tCond = await setupTestConditions(
+            tEnv,
+            underlyingAssetPriceInUSD,
+            USDCPriceInUSD,
+            amountToBeInvested,
+            exitPriceDecreasePercentage,
+        );
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -364,7 +372,16 @@ describe("DeferredDepositsWithdrawals", function () {
         const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
         const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
-        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+        // Do not change the exit price so we can redeem the withdraw receipt at an exact rate
+        const exitPriceDecreasePercentage = ethers.utils.parseUnits("0", 6);
+
+        const tCond = await setupTestConditions(
+            tEnv,
+            underlyingAssetPriceInUSD,
+            USDCPriceInUSD,
+            amountToBeInvested,
+            exitPriceDecreasePercentage,
+        );
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -486,6 +503,9 @@ describe("DeferredDepositsWithdrawals", function () {
         */
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, tCond.underlyingAssetExitPriceInUSD);
+        await (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(
+            tCond.underlyingAssetExitPriceInUSD,
+        );
 
         // Set the dispute period as over, this only works with the mock contract
         await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, tCond.expirationTimestamp, true);
@@ -558,7 +578,16 @@ describe("DeferredDepositsWithdrawals", function () {
         const underlyingAssetDecimals = await tEnv.underlyingAsset.decimals();
         const exchangeRate = ethers.utils.parseUnits("1.0", underlyingAssetDecimals);
 
-        const tCond = await setupTestConditions(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD, amountToBeInvested);
+        // Do not change the exit price so we can redeem the withdraw receipt at an exact rate
+        const exitPriceDecreasePercentage = ethers.utils.parseUnits("0", 6);
+
+        const tCond = await setupTestConditions(
+            tEnv,
+            underlyingAssetPriceInUSD,
+            USDCPriceInUSD,
+            amountToBeInvested,
+            exitPriceDecreasePercentage,
+        );
 
         let currentRound = await tEnv.roundsInputVault.getCurrentRound();
 
@@ -678,6 +707,9 @@ describe("DeferredDepositsWithdrawals", function () {
         */
         // Set the Opyn oracle asset price for the underlying asset
         await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, tCond.underlyingAssetExitPriceInUSD);
+        await (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(
+            tCond.underlyingAssetExitPriceInUSD,
+        );
 
         // Set the dispute period as over, this only works with the mock contract
         await tEnv.opynMockOracle.setIsDisputePeriodOver(tEnv.underlyingAsset.address, tCond.expirationTimestamp, true);

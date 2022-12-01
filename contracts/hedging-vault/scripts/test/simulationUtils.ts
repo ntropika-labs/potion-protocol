@@ -7,7 +7,12 @@ import { ifMocksEnabled, asMock, DAY_IN_SECONDS } from "contracts-utils";
 
 import { HedgingVaultEnvironmentDeployment } from "../hedging-vault/deployHedgingVaultEnvironment";
 
-import { IPotionLiquidityPool, IUniswapV3Oracle, MockChainlinkAggregatorV3 } from "../../typechain";
+import {
+    ERC20PresetMinterPauser,
+    IPotionLiquidityPool,
+    IUniswapV3Oracle,
+    MockChainlinkAggregatorV3,
+} from "../../typechain";
 import { PotionBuyInfoStruct } from "../../typechain/contracts/actions/PotionBuyAction";
 import { getEncodedSwapPath } from "./uniswapV3Utils";
 import { calculateOrderSize } from "hedging-vault-sdk";
@@ -153,73 +158,22 @@ export async function getPotionBuyInfo(
 }
 
 export async function getSwapInfo(
-    tEnv: HedgingVaultEnvironmentDeployment,
-    underlyingAssetPriceInUSD: BigNumber,
-    USDCPriceInUSD: BigNumber,
-): Promise<{
-    potionBuySwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
-    potionBuySwapExitPosition: IUniswapV3Oracle.SwapInfoStruct;
-    swapToUSDCSwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct;
-    swapToUSDCSwapExitPosition: IUniswapV3Oracle.SwapInfoStruct;
-}> {
-    // Uniswap route info for Potion Buy
-    const potionBuySwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.underlyingAsset.address,
-        outputToken: tEnv.USDC.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            18,
-            6,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
-    };
-
-    // Set the Uniswap route info
-    const potionBuySwapExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.USDC.address,
-        outputToken: tEnv.underlyingAsset.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            6,
-            18,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
-    };
-
-    // Uniswap route info for Swap To USDC
-    const swapToUSDCSwapEnterPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.underlyingAsset.address,
-        outputToken: tEnv.USDC.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            18,
-            6,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.underlyingAsset.address, tEnv.USDC.address]),
-    };
-
-    // Set the Uniswap route info
-    const swapToUSDCSwapExitPosition: IUniswapV3Oracle.SwapInfoStruct = {
-        inputToken: tEnv.USDC.address,
-        outputToken: tEnv.underlyingAsset.address,
-        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
-            Number(ethers.utils.formatUnits(USDCPriceInUSD, 8)),
-            Number(ethers.utils.formatUnits(underlyingAssetPriceInUSD, 8)),
-            6,
-            18,
-        ),
-        swapPath: getEncodedSwapPath([tEnv.USDC.address, tEnv.underlyingAsset.address]),
-    };
-
+    inputToken: ERC20PresetMinterPauser,
+    outputToken: ERC20PresetMinterPauser,
+    inputTokenPriceInUSD: BigNumber,
+    outputTokenPriceInUSD: BigNumber,
+): Promise<IUniswapV3Oracle.SwapInfoStruct> {
     return {
-        potionBuySwapEnterPosition,
-        potionBuySwapExitPosition,
-        swapToUSDCSwapEnterPosition,
-        swapToUSDCSwapExitPosition,
-    };
+        inputToken: inputToken.address,
+        outputToken: outputToken.address,
+        expectedPriceRate: HedgingVaultUtils.getRateInUD60x18(
+            Number(ethers.utils.formatUnits(inputTokenPriceInUSD, 8)),
+            Number(ethers.utils.formatUnits(outputTokenPriceInUSD, 8)),
+            await inputToken.decimals(),
+            await outputToken.decimals(),
+        ),
+        swapPath: getEncodedSwapPath([inputToken.address, outputToken.address]),
+    } as IUniswapV3Oracle.SwapInfoStruct;
 }
 
 export async function setupTestConditions(
@@ -227,31 +181,25 @@ export async function setupTestConditions(
     underlyingAssetPriceInUSD: BigNumber,
     USDCPriceInUSD: BigNumber,
     amountToBeInvested: BigNumber,
+    exitPriceDecreasePercentage: BigNumber,
 ): Promise<TestConditions> {
-    // Setup Chainlink Oracles
-    const PriceDecimals = 8;
-    const PriceUnit = BigNumber.from(10).pow(PriceDecimals);
-    const PriceConversionFactor = BigNumber.from(10).pow(PriceDecimals);
+    /*
+        CHAINLINK ORACLES
+    */
+    await (tEnv.chainlinkAggregatorUSDC as unknown as MockChainlinkAggregatorV3).setAnswer(USDCPriceInUSD);
+    await (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(
+        underlyingAssetPriceInUSD,
+    );
 
-    const USDPerUSDC = PriceUnit.mul(PriceConversionFactor).div(USDCPriceInUSD);
-    const USDCPerUnderlying = PriceUnit.mul(PriceConversionFactor).div(underlyingAssetPriceInUSD);
-
-    (tEnv.chainlinkAggregatorUSDC as unknown as MockChainlinkAggregatorV3).setAnswer(USDPerUSDC);
-    (tEnv.chainlinkAggregatorUnderlying as unknown as MockChainlinkAggregatorV3).setAnswer(USDCPerUnderlying);
-
+    /*
+        POTION BUY INFO
+    */
     const { potionBuyInfo, expectedPremiumInUSDC } = await getPotionBuyInfo(
         tEnv,
         amountToBeInvested,
         underlyingAssetPriceInUSD,
         USDCPriceInUSD,
     );
-
-    const {
-        potionBuySwapEnterPosition,
-        potionBuySwapExitPosition,
-        swapToUSDCSwapEnterPosition,
-        swapToUSDCSwapExitPosition,
-    } = await getSwapInfo(tEnv, underlyingAssetPriceInUSD, USDCPriceInUSD);
 
     /*
         COLLATERAL
@@ -276,7 +224,6 @@ export async function setupTestConditions(
         tEnv.swapSlippage,
     );
 
-    const exitPriceDecreasePercentage = ethers.utils.parseUnits("10", 6);
     const underlyingAssetPricePercentage = tEnv.strikePercentage.sub(exitPriceDecreasePercentage);
     const underlyingAssetExitPriceInUSD = HedgingVaultUtils.applyPercentage(
         underlyingAssetPriceInUSD,
@@ -293,23 +240,47 @@ export async function setupTestConditions(
         totalUSDCInActionAfterPayout = maxPremiumWithSlippageInUSDC;
     }
 
-    const extraUnderlyingAssetInVaultAfterPayout = totalUSDCInActionAfterPayout
-        .mul(BigNumber.from(1000000000000))
-        .mul(USDCPriceInUSD)
-        .div(underlyingAssetPriceInUSD);
+    /*
+        SWAP INFO
+    */
+    const potionBuySwapEnterPosition = await getSwapInfo(
+        tEnv.underlyingAsset as ERC20PresetMinterPauser,
+        tEnv.USDC as ERC20PresetMinterPauser,
+        underlyingAssetPriceInUSD,
+        USDCPriceInUSD,
+    );
+    const swapToUSDCSwapEnterPosition = potionBuySwapEnterPosition;
 
-    const uniswapExitPositionOutputAmount = extraUnderlyingAssetInVaultAfterPayout;
+    const potionBuySwapExitPosition = await getSwapInfo(
+        tEnv.USDC as ERC20PresetMinterPauser,
+        tEnv.underlyingAsset as ERC20PresetMinterPauser,
+        USDCPriceInUSD,
+        underlyingAssetExitPriceInUSD,
+    );
+
+    const swapToUSDCSwapExitPosition = potionBuySwapExitPosition;
+
+    /*
+        EXIT CALCULATIONS
+    */
+    const uniswapExitPositionOutputAmount = totalUSDCInActionAfterPayout
+        .mul(potionBuySwapExitPosition.expectedPriceRate as BigNumber)
+        .div(BigNumber.from("1000000000000000000"));
 
     const uniswapExitPositionOutputAmountWithSlippage = HedgingVaultUtils.subtractPercentage(
         uniswapExitPositionOutputAmount,
         tEnv.swapSlippage,
     );
 
-    // Set the Opyn oracle asset price for the underlying asset
+    /*
+        OPYN ORACLE
+    */
     await tEnv.opynOracle.setStablePrice(tEnv.underlyingAsset.address, underlyingAssetPriceInUSD);
     await tEnv.opynOracle.setStablePrice(tEnv.USDC.address, USDCPriceInUSD);
 
-    // Setup the mocks
+    /*
+        MOCKS SETUP
+    */
     ifMocksEnabled(() => {
         asMock(tEnv.potionLiquidityPoolManager).buyOtokens.returns(async () => {
             // Transfer
