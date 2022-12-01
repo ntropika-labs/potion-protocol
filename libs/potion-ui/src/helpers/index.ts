@@ -20,6 +20,7 @@ const usdFormatter = new Intl.NumberFormat(locale, {
   style: "currency",
   currency: "USD",
   compactDisplay: "short",
+  currencyDisplay: "narrowSymbol",
   notation: "compact",
   minimumFractionDigits: 1,
   maximumFractionDigits: 2,
