@@ -53,7 +53,10 @@ function useDepositTickets(
   const canDeleteDepositTicket = computed(() => currentDepositAmount.value > 0);
   const deleteDepositTicket = async () => {
     if (canDeleteDepositTicket.value) {
-      await redeem(unref(currentRoundNumber), currentDepositAmount.value);
+      await redeem(
+        unref(currentRoundNumber),
+        parseAmount(currentDepositAmount.value, unref(assetDecimals))
+      );
     }
   };
 

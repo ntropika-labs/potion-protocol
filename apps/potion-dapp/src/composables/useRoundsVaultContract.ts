@@ -247,26 +247,25 @@ export function useRoundsVaultContract(
 
   const redeem = async (
     id: BigNumberish,
-    amount: number,
+    amount: BigNumberish,
     self = true,
     receiver?: string
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString());
       try {
         redeemLoading.value = true;
         if (self === true) {
           redeemTx.value = await contractSigner.redeem(
             id,
-            parsedAmount,
+            amount,
             connectedWallet.value.accounts[0].address,
             connectedWallet.value.accounts[0].address
           );
         } else if (self === false && receiver) {
           redeemTx.value = await contractSigner.redeem(
             id,
-            parsedAmount,
+            amount,
             receiver,
             connectedWallet.value.accounts[0].address
           );

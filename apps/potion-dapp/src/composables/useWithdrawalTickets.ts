@@ -4,6 +4,7 @@ import {
   formatAmount,
   hasUnderlyings,
   calcUnderlyings,
+  parseAmount,
 } from "@/helpers/deferredTickets";
 
 import type { MaybeRef } from "@vueuse/core";
@@ -12,6 +13,7 @@ import type { RoundsFragment } from "@/types";
 function useWithdrawalTickets(
   vaultAddress: MaybeRef<string>,
   assetAddress: MaybeRef<string>,
+  assetDecimals: MaybeRef<number>,
   currentRound: MaybeRef<string>,
   rounds: MaybeRef<RoundsFragment[]>
 ) {
@@ -59,7 +61,10 @@ function useWithdrawalTickets(
   );
 
   const currentWithdrawalAmount = computed(() =>
-    formatAmount(currentWithdrawalTicket?.value?.amountRemaining)
+    formatAmount(
+      currentWithdrawalTicket?.value?.amountRemaining,
+      unref(assetDecimals)
+    )
   );
 
   const canDeleteWithdrawalTicket = computed(
@@ -68,7 +73,10 @@ function useWithdrawalTickets(
 
   const deleteWithdrawalTicket = async () => {
     if (canDeleteWithdrawalTicket.value) {
-      await redeem(unref(currentRound), currentWithdrawalAmount.value);
+      await redeem(
+        unref(currentRound),
+        parseAmount(currentWithdrawalAmount.value, unref(assetDecimals))
+      );
     }
   };
 
