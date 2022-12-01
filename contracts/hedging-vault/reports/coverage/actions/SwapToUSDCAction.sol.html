@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for actions/SwapToUSDCAction.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">actions/</a> SwapToUSDCAction.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">41.67% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>10/24</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">8.33% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>2/24</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">36.36% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>4/11</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">47.06% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>16/34</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * SPDX-License-Identifier: Apache-2.0
+ */
+pragma solidity 0.8.14;
+&nbsp;
+import "./common/BaseActionUpgradeable.sol";
+import { UniswapV3HelperUpgradeable } from "./common/UniswapV3HelperUpgradeable.sol";
+import { PercentageUtils } from "../library/PercentageUtils.sol";
+import { SafeERC20Upgradeable as SafeERC20 } from "@openzeppelin/contracts-upgradeable-4.7.3/token/ERC20/utils/SafeERC20Upgradeable.sol";
+&nbsp;
+import "../versioning/SwapToUSDCActionV0.sol";
+&nbsp;
+/**
+    @title SwapToUSDCAction
+&nbsp;
+    @author Roberto Cano &lt;robercano&gt;
+&nbsp;
+    @notice Investment action that swaps the underlying asset to USDC to keep it safe from Black Swan events
+&nbsp;
+    @dev The action needs a Uniswap V3 Route to do the swap both at the enter position and the exit position
+&nbsp;
+    @dev AUDIT: a possible attack that a malicious user could perform is sending USDC to this contract to increase the amount
+                that would be swapped in during exit position. This could make the swap in route to not be the ideal one
+                for the swap, having a greater slippage, and thus reverting the swap if the slippage is too high. This however
+                seems unlikely and probably the new added USDC could cover for the added slippage. This is something we need
+                to research further.
+&nbsp;
+ */
+contract SwapToUSDCAction is BaseActionUpgradeable, UniswapV3HelperUpgradeable, SwapToUSDCActionV0 {
+    using SafeERC20 for IERC20;
+&nbsp;
+    /**
+        @notice Structure with all initialization parameters for the Potion Buy action
+&nbsp;
+        @param adminAddress The address of the admin of the Action
+        @param strategistAddress The address of the strategist of the Action
+        @param operatorAddress The address of the operator of the Action
+        @param investmentAsset The address of the asset managed by this Action
+        @param USDC The address of the USDC token
+        @param uniswapV3SwapRouter The address of the Uniswap V3 swap router
+        @param swapSlippage The slippage percentage allowed on the swap operation
+        @param maxSwapDurationSecs The maximum duration of the swap operation in seconds
+        @param swapPercentage The percentage of the investment asset to swap to USDC
+     */
+    struct SwapToUSDCInitParams {
+        address adminAddress;
+        address strategistAddress;
+        address operatorAddress;
+        address investmentAsset;
+        address USDC;
+        address uniswapV3SwapRouter;
+        uint256 swapSlippage;
+        uint256 maxSwapDurationSecs;
+        uint256 swapPercentage;
+    }
+&nbsp;
+    /// INITIALIZERS
+&nbsp;
+    /**
+        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
+        to the hierarchy will require to review this function to make sure that no initializer
+        is called twice, and most importantly, that all initializers are called here
+&nbsp;
+        @param initParams Initialization parameters for the Swap to USDC action
+&nbsp;
+        @dev See { SwapToUSDCInitParams }
+&nbsp;
+     */
+    function initialize(SwapToUSDCInitParams calldata initParams) external <span class="missing-if-branch" title="else path not taken" >E</span>initializer {
+        // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
+        // asset is not allowed to be refunded and also USDC because the action will hold some of it
+        // at some times. This prevents the admin to accidentally refund those assets
+        address[] memory cannotRefundTokens = new address[](2);
+        cannotRefundTokens[0] = initParams.investmentAsset;
+        cannotRefundTokens[1] = initParams.USDC;
+&nbsp;
+        __BaseAction_init_chained(
+            initParams.adminAddress,
+            initParams.strategistAddress,
+            initParams.operatorAddress,
+            cannotRefundTokens
+        );
+        __UniswapV3Helper_init_unchained(initParams.uniswapV3SwapRouter);
+&nbsp;
+        _setSwapSlippage(initParams.swapSlippage);
+        _setMaxSwapDuration(initParams.maxSwapDurationSecs);
+        _setSwapPercentage(initParams.swapPercentage);
+&nbsp;
+        USDC = IERC20(initParams.USDC);
+    }
+&nbsp;
+    /// STATE CHANGERS
+&nbsp;
+    /**
+        @inheritdoc IAction
+&nbsp;
+        @dev The Swap to USDC action takes the following steps to enter a position:
+            - Swap all the investment asset to USDC and keep it in the action
+    */
+&nbsp;
+    // @audit It is protected with the nonReentrant modifier to avoid re-entrancy. In any case
+    // the only contract allowed to call this function is the InvestmentVault and the call would only happen
+    // upon instruction of the operator. A possible attack vector would be for a malicious actor to deposit
+    // some assets in the RoundsInputVault when the PotionBuyAction is trying to enter the position, but
+    // that is countermeasure by the fact that assets have been already transferred to the PotionBuyContract
+    // before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+    // is the InvestmentVault which will not use the ERC-777 callback.
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function enterPosition(address investmentAsset, uint256 amountToInvest)</span>
+        external
+        onlyVault
+        onlyUnlocked
+        nonReentrant
+    {
+<span class="cstat-no" title="statement not covered" >        _setLifecycleState(LifecycleState.Locked)</span>;
+&nbsp;
+        // At this moment in the lifecycle of the vault, this external call could only come back
+        // as a new deposit request or withdrawal request, and the respective Rounds vaults are both
+        // moved to the next rounds at this point, so there is no risk of a malicious user affecting the
+        // operations performed inside this action
+<span class="cstat-no" title="statement not covered" >        IERC20(investmentAsset).safeTransferFrom(_msgSender(), address(this), amountToInvest)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        uint256 amountToSwap = PercentageUtils.applyPercentage(amountToInvest, swapPercentage);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _swapInput(investmentAsset, address(USDC), amountToSwap, swapSlippage, maxSwapDurationSecs)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        emit ActionPositionEntered(investmentAsset, amountToSwap);</span>
+    }
+&nbsp;
+    /**
+        @inheritdoc IAction
+&nbsp;
+        @dev Even though the exit position can only be called by the Vault, it is also 
+             protected against reentrancy in case the Vault is compromised
+    */
+&nbsp;
+    // @audit It is protected with the nonReentrant modifier to avoid re-entrancy. In any case
+    // the only contract allowed to call this function is the InvestmentVault and the call would only happen
+    // upon instruction of the operator. A possible attack vector would be for a malicious actor to deposit
+    // some assets in the RoundsInputVault when the PotionBuyAction is trying to enter the position, but
+    // that is countermeasure by the fact that assets have been already transferred to the PotionBuyContract
+    // before doing any external call. And considering the ERC-777, although deprecated, the owner of the tokens
+    // is the InvestmentVault which will not use the ERC-777 callback.
+&nbsp;
+    // slither-disable-next-line reentrancy-no-eth
+<span class="fstat-no" title="function not covered" >    function exitPosition(address investmentAsset)</span>
+        external
+        onlyVault
+        onlyLocked
+        nonReentrant
+        returns (uint256 amountReturned)
+    {
+<span class="cstat-no" title="statement not covered" >        IERC20 investmentAssetERC20 = IERC20(investmentAsset);</span>
+&nbsp;
+        // Using balanceOf here, check the comment in the contract header about an attacker sending USDC to this contract
+<span class="cstat-no" title="statement not covered" >        uint256 amountToConvertToAssset = USDC.balanceOf(address(this));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _swapInput(address(USDC), investmentAsset, amountToConvertToAssset, swapSlippage, maxSwapDurationSecs)</span>;
+&nbsp;
+        // Using balanceOf here is safe as the whole balance is just sent back to the vault. If an attacker sends
+        // underlying to this contract, it will just end up as profits in the vault
+        amountReturned = investmentAssetERC20.balanceOf(address(this));
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        SafeERC20.safeTransfer(investmentAssetERC20, _msgSender(), amountReturned)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _setLifecycleState(LifecycleState.Unlocked)</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        emit ActionPositionExited(investmentAsset, amountReturned);</span>
+    }
+&nbsp;
+    /**
+        @inheritdoc ISwapToUSDCActionV0
+     */
+<span class="fstat-no" title="function not covered" >    function setSwapSlippage(uint256 swapSlippage_) external override onlyStrategist {</span>
+<span class="cstat-no" title="statement not covered" >        _setSwapSlippage(swapSlippage_)</span>;
+    }
+&nbsp;
+    /**
+        @inheritdoc ISwapToUSDCActionV0
+     */
+<span class="fstat-no" title="function not covered" >    function setMaxSwapDuration(uint256 durationSeconds) external override onlyStrategist {</span>
+<span class="cstat-no" title="statement not covered" >        _setMaxSwapDuration(durationSeconds)</span>;
+    }
+&nbsp;
+    /**
+        @inheritdoc ISwapToUSDCActionV0
+     */
+<span class="fstat-no" title="function not covered" >    function setSwapPercentage(uint256 swapPercentage_) external override onlyStrategist {</span>
+<span class="cstat-no" title="statement not covered" >        _setSwapPercentage(swapPercentage_)</span>;
+    }
+&nbsp;
+    // GETTERS
+&nbsp;
+    /**
+        @inheritdoc IAction
+     */
+<span class="fstat-no" title="function not covered" >    function canPositionBeEntered(</span>
+        address /*investmentAsset*/
+    ) public view returns (bool canEnter) {
+        canEnter = (getLifecycleState() == LifecycleState.Unlocked);
+    }
+&nbsp;
+    /**
+        @inheritdoc IAction
+     */
+<span class="fstat-no" title="function not covered" >    function canPositionBeExited(</span>
+        address /*investmentAsset*/
+    ) public view returns (bool canExit) {
+        canExit = (getLifecycleState() == LifecycleState.Locked);
+    }
+&nbsp;
+    /// INTERNAL FUNCTIONS
+&nbsp;
+    /**
+        @dev See { setSwapSlippage }
+     */
+    function _setSwapSlippage(uint256 swapSlippage_) internal {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (swapSlippage_ &lt;= 0 || swapSlippage_ &gt;= PercentageUtils.PERCENTAGE_100) {
+            revert SwapSlippageOutOfRange(swapSlippage_);
+        }
+&nbsp;
+        swapSlippage = swapSlippage_;
+&nbsp;
+        emit SwapSlippageChanged(swapSlippage_);
+    }
+&nbsp;
+    /**
+        @dev See { setMaxSwapDuration }
+     */
+    function _setMaxSwapDuration(uint256 durationSeconds) internal {
+        maxSwapDurationSecs = durationSeconds;
+&nbsp;
+        emit MaxSwapDurationChanged(durationSeconds);
+    }
+&nbsp;
+    /**
+        @dev See { setSwapPercentage }
+     */
+    function _setSwapPercentage(uint256 swapPercentage_) internal {
+        swapPercentage = swapPercentage_;
+&nbsp;
+        emit SwapPercentageChanged(swapPercentage_);
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Dec 01 2022 09:09:45 GMT+0100 (Central European Standard Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

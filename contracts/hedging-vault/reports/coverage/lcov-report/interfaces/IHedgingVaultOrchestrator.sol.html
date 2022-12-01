@@ -105,7 +105,53 @@
 60
 61
 62
-63</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -173,6 +219,7 @@
 pragma solidity 0.8.14;
 &nbsp;
 import { PotionBuyInfo } from "../interfaces/IPotionBuyInfo.sol";
+import { IVaultV0 } from "../interfaces/IVaultV0.sol";
 import { IUniswapV3Oracle } from "../interfaces/IUniswapV3Oracle.sol";
 &nbsp;
 /**  
@@ -187,17 +234,21 @@ import { IUniswapV3Oracle } from "../interfaces/IUniswapV3Oracle.sol";
     @dev The `nextRound` function should be called once the previous round has ended and the payout is available.
  */
 interface IHedgingVaultOrchestrator {
+    /// STATE MODIFIERS
+&nbsp;
     /**
         @notice Sets the addresses of the vault and the action to be used to enter and exit the position.
 &nbsp;
         @param hedgingVault The vault to be used to enter and exit the position.
         @param potionBuyAction The action to be used to enter and exit the position.
+        @param swapToUSDCAction The action to be used to swap to USDC.
         @param roundsInputVault The rounds input vault to be used to enter and exit the position.
         @param roundsOutputVault The rounds output vault to be used to enter and exit the position.
     */
     function setSystemAddresses(
         address hedgingVault,
         address potionBuyAction,
+        address swapToUSDCAction,
         address roundsInputVault,
         address roundsOutputVault
     ) external;
@@ -212,14 +263,22 @@ interface IHedgingVaultOrchestrator {
         @param prevRoundExitSwapInfo The Uniswap V3 route to swap the received pay-out from USDC back to the hedged asset
         @param nextRoundPotionBuyInfo List of counterparties to use for the Potion Protocol buy
         @param nextRoundEnterSwapInfo The Uniswap V3 route to swap some hedged asset for USDC to pay the Potion Protocol premium
-        
+        @param swapToUSDCExitSwapInfo The Uniswap V3 route to swap back the full investment amount from USDC in case the Potion Buy
+                                      action reverted on the last round
+        @param swapToUSDCEnterSwapInfo The Uniswap V3 route to swap the full investment amount for USDC in case the Potion Buy action
+                                       reverts
+&nbsp;
         @dev Only the owner of the contract (i.e. the Operator) can call this function
      */
     function nextRound(
         IUniswapV3Oracle.SwapInfo calldata prevRoundExitSwapInfo,
         PotionBuyInfo calldata nextRoundPotionBuyInfo,
-        IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo
+        IUniswapV3Oracle.SwapInfo calldata nextRoundEnterSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCExitSwapInfo,
+        IUniswapV3Oracle.SwapInfo calldata swapToUSDCEnterSwapInfo
     ) external;
+&nbsp;
+    /// GETTERS
 &nbsp;
     /**
         @notice Convenience function to know if the next round can be entered or not
@@ -228,6 +287,16 @@ interface IHedgingVaultOrchestrator {
         to be entered as this information is not made available until the position is exited
      */
     function canEnterNextRound() external view returns (bool);
+&nbsp;
+    /**
+        @notice Returns the strategy for buying potions
+     */
+    function potionBuyStrategy() external view returns (IVaultV0.Strategy memory);
+&nbsp;
+    /**
+        @notice Returns the strategy for swapping to USDC
+     */
+    function swapToUSDCStrategy() external view returns (IVaultV0.Strategy memory);
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -235,7 +304,7 @@ interface IHedgingVaultOrchestrator {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Dec 01 2022 09:09:45 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>
