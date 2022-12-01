@@ -17,8 +17,10 @@ const ROUNDS_VAULT_DECIMALS = 18;
 
 const valueOrZero = (value?: MaybeRef<BigNumberish>) => unref(value) ?? "0";
 
-const formatAmount = (amount?: MaybeRef<BigNumberish>) =>
-  parseFloat(formatUnits(valueOrZero(amount), ROUNDS_VAULT_DECIMALS));
+const formatAmount = (
+  amount?: MaybeRef<BigNumberish>,
+  decimals = ROUNDS_VAULT_DECIMALS
+) => parseFloat(formatUnits(valueOrZero(amount), decimals));
 
 const parseAmount = (
   amount?: MaybeRef<number | string>,

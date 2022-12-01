@@ -41,7 +41,10 @@ function useDepositTickets(
   );
 
   const currentDepositAmount = computed(() =>
-    formatAmount(currentDepositTicket?.value?.amountRemaining)
+    formatAmount(
+      currentDepositTicket?.value?.amountRemaining,
+      unref(assetDecimals)
+    )
   );
 
   const updateDepositTicket = async (amount: MaybeRef<number>) =>
