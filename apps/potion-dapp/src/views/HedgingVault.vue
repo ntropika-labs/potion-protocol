@@ -4,7 +4,7 @@
       :address="vaultId"
       :admin-address="vault.admin"
       :operator-address="vault.operator"
-      :underlying-asset="vault.underlying"
+      :underlying-asset="useTokenList(vault.underlying.address)"
       :strike-percent="vault.strikePercentage"
       :round-length="vault.cycleDurationSecs"
       :premium-percentage="vault.maxPremiumPercentage"
@@ -88,6 +88,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { useOracleContract } from "@/composables/useOracleContract";
 import { useRouteVaultIdentifier } from "@/composables/useRouteVaultIdentifier";
 import { useWithdrawalTickets } from "@/composables/useWithdrawalTickets";
+import { useTokenList } from "@/composables/useTokenList";
 
 import {
   getRoundsExchangerFromVault,
@@ -312,11 +313,17 @@ const {
 } = useNotifications();
 
 watch(approveTx, (transaction) => {
-  createTransactionNotification(transaction, t("approving_usdc"));
+  createTransactionNotification(
+    transaction,
+    t("approving_token", { token: underlyingSymbol.value })
+  );
 });
 
 watch(approveReceipt, (receipt) => {
-  createReceiptNotification(receipt, t("usdc_approved"));
+  createReceiptNotification(
+    receipt,
+    t("token_approved", { token: underlyingSymbol.value })
+  );
 });
 
 watch(approveExchangeTransaction, (transaction) => {
