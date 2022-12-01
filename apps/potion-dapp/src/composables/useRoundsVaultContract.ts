@@ -291,6 +291,7 @@ export function useRoundsVaultContract(
   const redeemExchangeAssetLoading = ref(false);
   const redeemExchangeAssetTx = ref<ContractTransaction | null>(null);
   const redeemExchangeAssetReceipt = ref<ContractReceipt | null>(null);
+  // TODO: check if we need to parse to decimals
   const redeemExchangeAsset = async (
     id: BigNumberish,
     amount: BigNumberish,
@@ -347,6 +348,7 @@ export function useRoundsVaultContract(
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
+      // TODO: check if we need to parse to decimals
       const parsedAmounts = amounts.map((amount) =>
         parseUnits(amount.toString())
       );
