@@ -28,9 +28,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const vaultEtherscanLink = getEtherscanUrl(props.address);
-const adminEtherscanLink = getEtherscanUrl(props.adminAddress);
-const operatorEtherscanLink = getEtherscanUrl(props.operatorAddress);
+const vaultEtherscanLink = computed(() => getEtherscanUrl(props.address));
+const adminEtherscanLink = computed(() => getEtherscanUrl(props.adminAddress));
+const operatorEtherscanLink = computed(() =>
+  getEtherscanUrl(props.operatorAddress)
+);
 const emits = defineEmits<{
   (e: "back"): void;
 }>();
