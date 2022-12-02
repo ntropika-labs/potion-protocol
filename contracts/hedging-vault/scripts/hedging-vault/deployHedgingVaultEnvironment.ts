@@ -241,6 +241,7 @@ async function mockContractsIfNeeded(
 
     // Check if need to mock UniswapV3SwapRouter
     if (!deploymentConfig.uniswapV3SwapRouter) {
+        console.log("Mocking UniswapV3SwapRouter");
         const chainlinkAggregatorUSDC = await mockChainlinkAggregator("ChainlinkAggregatorUSDC", 1.0);
         const chainlinkAggregatorUnderlying = await mockChainlinkAggregator(
             "ChainlinkAggregatorUnderlyingAsset",

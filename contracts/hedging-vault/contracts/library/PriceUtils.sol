@@ -72,19 +72,16 @@ library PriceUtils {
         uint256 priceNumerator,
         uint256 priceDenominator
     ) internal pure returns (uint256 outputAmount) {
-        uint256 priceRate = PRBMathUD60x18.div(
-            PRBMathUD60x18.fromUint(priceNumerator),
-            PRBMathUD60x18.fromUint(priceDenominator)
-        );
-
-        if (inputTokenDecimals > outputTokenDecimals) {
+        if (inputTokenDecimals == outputTokenDecimals) {
+            outputAmount = (amount * priceNumerator) / priceDenominator;
+        } else if (inputTokenDecimals > outputTokenDecimals) {
             uint256 exp = inputTokenDecimals - outputTokenDecimals;
-            priceRate = priceRate.div(PRBMathUD60x18.fromUint(10**exp));
-        } else if (inputTokenDecimals < outputTokenDecimals) {
+            outputAmount = (amount * priceNumerator) / priceDenominator / (10**exp);
+        } else {
             uint256 exp = outputTokenDecimals - inputTokenDecimals;
-            priceRate = priceRate.mul(PRBMathUD60x18.fromUint(10**exp));
+            outputAmount = (amount * priceNumerator * (10**exp)) / priceDenominator;
         }
 
-        return priceRate.mul(PRBMathUD60x18.fromUint(amount)).toUint();
+        return outputAmount;
     }
 }

@@ -40,7 +40,9 @@ contract MockRouterWithOracle is ISwapRouter {
         @inheritdoc ISwapRouter
     */
     function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256 amountOut) {
-        return _swapIn(params.tokenIn, params.tokenOut, params.amountIn, params.amountOutMinimum);
+        _swapIn(params.tokenIn, params.tokenOut, params.amountIn, params.amountOutMinimum);
+
+        return params.amountOutMinimum;
     }
 
     /**
@@ -49,14 +51,18 @@ contract MockRouterWithOracle is ISwapRouter {
     function exactInput(ExactInputParams calldata params) external payable returns (uint256 amountOut) {
         (address tokenIn, address tokenOut, ) = params.path.decodeFirstPool();
 
-        return _swapIn(tokenIn, tokenOut, params.amountIn, params.amountOutMinimum);
+        _swapIn(tokenIn, tokenOut, params.amountIn, params.amountOutMinimum);
+
+        return params.amountOutMinimum;
     }
 
     /**
         @inheritdoc ISwapRouter
     */
     function exactOutputSingle(ExactOutputSingleParams calldata params) external payable returns (uint256 amountIn) {
-        return _swapOut(params.tokenIn, params.tokenOut, params.amountInMaximum, params.amountOut);
+        _swapOut(params.tokenIn, params.tokenOut, params.amountInMaximum, params.amountOut);
+
+        return params.amountInMaximum;
     }
 
     /**
@@ -65,7 +71,9 @@ contract MockRouterWithOracle is ISwapRouter {
     function exactOutput(ExactOutputParams calldata params) external payable returns (uint256 amountIn) {
         (address tokenIn, address tokenOut, ) = params.path.decodeFirstPool();
 
-        return _swapOut(tokenIn, tokenOut, params.amountInMaximum, params.amountOut);
+        _swapOut(tokenIn, tokenOut, params.amountInMaximum, params.amountOut);
+
+        return params.amountInMaximum;
     }
 
     function balanceOf(address asset) external view returns (uint256) {
@@ -101,7 +109,7 @@ contract MockRouterWithOracle is ISwapRouter {
         address assetOut,
         uint256 amountIn,
         uint256 amountOutMinimum
-    ) internal returns (uint256 amountOut) {
+    ) internal {
         address oracleIn = oracles[assetIn];
         address oracleOut = oracles[assetOut];
 
@@ -114,7 +122,13 @@ contract MockRouterWithOracle is ISwapRouter {
         uint8 decimalsIn = IERC20Metadata(assetIn).decimals();
         uint8 decimalsOut = IERC20Metadata(assetOut).decimals();
 
-        amountOut = PriceUtils.convertAmount(decimalsIn, decimalsOut, amountIn, uint256(priceIn), uint256(priceOut));
+        uint256 amountOut = PriceUtils.convertAmount(
+            decimalsIn,
+            decimalsOut,
+            amountIn,
+            uint256(priceOut),
+            uint256(priceIn)
+        );
 
         require(amountOut >= amountOutMinimum, "MockUniswapV3RouterWithOracle: amountOut < amountOutMinimum");
 
@@ -127,7 +141,7 @@ contract MockRouterWithOracle is ISwapRouter {
         address assetOut,
         uint256 amountInMaximum,
         uint256 amountOut
-    ) internal returns (uint256 amountIn) {
+    ) internal {
         address oracleIn = oracles[assetIn];
         address oracleOut = oracles[assetOut];
 
@@ -140,7 +154,13 @@ contract MockRouterWithOracle is ISwapRouter {
         uint8 decimalsIn = IERC20Metadata(assetIn).decimals();
         uint8 decimalsOut = IERC20Metadata(assetOut).decimals();
 
-        amountIn = PriceUtils.convertAmount(decimalsOut, decimalsIn, amountOut, uint256(priceOut), uint256(priceIn));
+        uint256 amountIn = PriceUtils.convertAmount(
+            decimalsOut,
+            decimalsIn,
+            amountOut,
+            uint256(priceIn),
+            uint256(priceOut)
+        );
 
         require(amountIn <= amountInMaximum, "MockUniswapV3RouterWithOracle: amountIn > amountInMaximum");
 

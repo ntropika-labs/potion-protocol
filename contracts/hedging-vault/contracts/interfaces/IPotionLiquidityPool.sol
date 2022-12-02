@@ -44,17 +44,6 @@ interface IPotionLiquidityPool {
     }
 
     /**
-        @notice The keys required to identify a given pool of capital in the lpPools map.
-
-        @custom:member lp The LP that owns the pool
-        @custom:member poolId The ID of the pool
-    */
-    struct PoolIdentifier {
-        address lp;
-        uint256 poolId;
-    }
-
-    /**
        @notice Buy a OTokens from the specified list of sellers.
        
        @param _otoken The identifier (address) of the OTokens being bought.
@@ -101,14 +90,6 @@ interface IPotionLiquidityPool {
        @param _otoken The identifier (address) of the expired OToken for which unused collateral should be retrieved.
      */
     function settleAfterExpiry(IOtoken _otoken) external;
-
-    /**
-       @notice Retrieve unused collateral from Opyn, and redistribute it to the specified LPs.
-       
-       @param _otoken The identifier (address) of the expired otoken for which unused collateral should be retrieved.
-       @param _pools The pools of capital to which the collateral should be redistributed. These pools must be (a subset of) the pools that provided collateral for the specified otoken.
-     */
-    function settleAndRedistributeSettlement(IOtoken _otoken, PoolIdentifier[] calldata _pools) external;
 
     /**
         @notice Get the ID of the existing Opyn vault that Potion uses to collateralize a given OToken.
