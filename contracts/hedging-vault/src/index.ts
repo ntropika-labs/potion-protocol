@@ -148,7 +148,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultA": {
-        timestamp: 1669886962,
+        timestamp: 1669961821,
         network: "develop",
         contracts: {
             USDC: {
@@ -226,7 +226,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultB": {
-        timestamp: 1669886968,
+        timestamp: 1669961826,
         network: "develop",
         contracts: {
             USDC: {
@@ -304,7 +304,7 @@ export const Deployments = {
         },
     },
     "localhost.multivaultC": {
-        timestamp: 1669886973,
+        timestamp: 1669961832,
         network: "develop",
         contracts: {
             USDC: {
