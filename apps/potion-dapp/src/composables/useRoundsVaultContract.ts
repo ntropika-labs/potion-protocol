@@ -7,7 +7,7 @@ import { isRef, onMounted, ref, unref, watch } from "vue";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
 import { ContractInitError } from "@/helpers/errors";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 import { BaseRoundsVaultUpgradeable__factory } from "@potion-protocol/hedging-vault/typechain";
 
@@ -291,7 +291,6 @@ export function useRoundsVaultContract(
   const redeemExchangeAssetLoading = ref(false);
   const redeemExchangeAssetTx = ref<ContractTransaction | null>(null);
   const redeemExchangeAssetReceipt = ref<ContractReceipt | null>(null);
-  // TODO: check if we need to parse to decimals
   const redeemExchangeAsset = async (
     id: BigNumberish,
     amount: BigNumberish,
@@ -348,17 +347,13 @@ export function useRoundsVaultContract(
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      // TODO: check if we need to parse to decimals
-      const parsedAmounts = amounts.map((amount) =>
-        parseUnits(amount.toString())
-      );
       try {
         redeemExchangeAssetBatchLoading.value = true;
         if (self === true) {
           redeemExchangeAssetBatchTx.value =
             await contractSigner.redeemExchangeAssetBatch(
               ids,
-              parsedAmounts,
+              amounts,
               connectedWallet.value.accounts[0].address,
               connectedWallet.value.accounts[0].address
             );
@@ -366,7 +361,7 @@ export function useRoundsVaultContract(
           redeemExchangeAssetBatchTx.value =
             await contractSigner.redeemExchangeAssetBatch(
               ids,
-              parsedAmounts,
+              amounts,
               receiver,
               connectedWallet.value.accounts[0].address
             );
