@@ -15,7 +15,7 @@ import { isValidAddress } from "@/helpers";
 
 const roundToDepositTicket = (round: RoundsFragment): DepositTicket => ({
   id: parseInt(round.roundNumber),
-  amount: parseInt(round.depositTickets[0].amountRemaining),
+  amount: parseInt(round.depositTickets[0].amount),
   amountRedeemed: parseInt(round.depositTickets[0].amountRedeemed),
   shares: parseInt(round.depositTickets[0].shares),
   sharesRemaining: parseInt(round.depositTickets[0].sharesRemaining),
