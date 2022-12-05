@@ -230,7 +230,7 @@ describe("PotionProtocolLib", function () {
         if (network.name !== "hardhat") {
             this.skip();
         }
-        fakePotionLiquidityPool.settleAfterExpiry.returns(true);
+        fakePotionLiquidityPool.settleAndRedistributeSettlement.returns(true);
 
         const totalSizeInPotions = 3001;
 

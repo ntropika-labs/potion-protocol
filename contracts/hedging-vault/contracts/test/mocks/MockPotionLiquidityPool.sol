@@ -68,6 +68,17 @@ contract MockPotionLiquidityPool is IPotionLiquidityPool {
     /**
         @inheritdoc IPotionLiquidityPool
     */
+    function settleAndRedistributeSettlement(
+        IOtoken, /*_otoken*/
+        PoolIdentifier[] calldata /*_pools*/
+    ) external {
+        // do nothing
+        __silenceCompilerWarning = 1;
+    }
+
+    /**
+        @inheritdoc IPotionLiquidityPool
+    */
     function getVaultId(
         IOtoken /*_otoken*/
     ) external pure returns (uint256) {

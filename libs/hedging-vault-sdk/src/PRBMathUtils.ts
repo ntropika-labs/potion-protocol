@@ -1,6 +1,5 @@
-import { toBn } from "evm-bn";
 import { BigNumber } from "@ethersproject/bignumber";
-import { toNumber } from "./utils";
+import { parseAmount } from "./utils";
 import type { BigNumberish } from "@ethersproject/bignumber";
 
 /**
@@ -61,14 +60,20 @@ import type { BigNumberish } from "@ethersproject/bignumber";
             UD60x18 rate 32400000000000.000000000000000000
 */
 export function getRateInUD60x18(
-    inputTokenPriceInUSD: BigNumberish,
-    outputTokenPriceInUSD: BigNumberish,
+    inputTokenPriceInUSD_: BigNumberish,
+    outputTokenPriceInUSD_: BigNumberish,
     inputTokenDecimals_: BigNumberish = 18,
     outputTokenDecimals_: BigNumberish = 18,
 ): BigNumber {
-    const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals_);
-    const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals_);
-    const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
+    const tenBn = BigNumber.from(10);
+
+    // const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals_);
+    // const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals_);
+    // const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
+
+    const inputTokenPriceInUSD = parseAmount(inputTokenPriceInUSD_, 8);
+    const outputTokenPriceInUSD = parseAmount(outputTokenPriceInUSD_, 8);
+    const rate = inputTokenPriceInUSD.mul(tenBn.pow(18)).div(outputTokenPriceInUSD);
 
     const inputTokenDecimals = BigNumber.from(inputTokenDecimals_);
     const outputTokenDecimals = BigNumber.from(outputTokenDecimals_);
@@ -77,7 +82,6 @@ export function getRateInUD60x18(
         return rate;
     }
 
-    const tenBn = BigNumber.from(10);
     return inputTokenDecimals.gt(outputTokenDecimals)
         ? rate.div(tenBn.pow(inputTokenDecimals.sub(outputTokenDecimals)))
         : rate.mul(tenBn.pow(outputTokenDecimals.sub(inputTokenDecimals)));

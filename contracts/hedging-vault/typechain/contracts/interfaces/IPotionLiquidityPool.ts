@@ -112,6 +112,16 @@ export declare namespace IPotionLiquidityPool {
     curveHash: string;
     criteriaSetHash: string;
   };
+
+  export type PoolIdentifierStruct = {
+    lp: PromiseOrValue<string>;
+    poolId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type PoolIdentifierStructOutput = [string, BigNumber] & {
+    lp: string;
+    poolId: BigNumber;
+  };
 }
 
 export interface IPotionLiquidityPoolInterface extends utils.Interface {
@@ -121,6 +131,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     "getVaultId(address)": FunctionFragment;
     "lpPools(address,uint256)": FunctionFragment;
     "settleAfterExpiry(address)": FunctionFragment;
+    "settleAndRedistributeSettlement(address,(address,uint256)[])": FunctionFragment;
   };
 
   getFunction(
@@ -130,6 +141,7 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
       | "getVaultId"
       | "lpPools"
       | "settleAfterExpiry"
+      | "settleAndRedistributeSettlement"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -165,6 +177,13 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
     functionFragment: "settleAfterExpiry",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "settleAndRedistributeSettlement",
+    values: [
+      PromiseOrValue<string>,
+      IPotionLiquidityPool.PoolIdentifierStruct[]
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "buyOtokens", data: BytesLike): Result;
   decodeFunctionResult(
@@ -175,6 +194,10 @@ export interface IPotionLiquidityPoolInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "lpPools", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "settleAfterExpiry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "settleAndRedistributeSettlement",
     data: BytesLike
   ): Result;
 
@@ -242,6 +265,12 @@ export interface IPotionLiquidityPool extends BaseContract {
       _otoken: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    settleAndRedistributeSettlement(
+      _otoken: PromiseOrValue<string>,
+      _pools: IPotionLiquidityPool.PoolIdentifierStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   buyOtokens(
@@ -279,6 +308,12 @@ export interface IPotionLiquidityPool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  settleAndRedistributeSettlement(
+    _otoken: PromiseOrValue<string>,
+    _pools: IPotionLiquidityPool.PoolIdentifierStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     buyOtokens(
       _otoken: PromiseOrValue<string>,
@@ -312,6 +347,12 @@ export interface IPotionLiquidityPool extends BaseContract {
 
     settleAfterExpiry(
       _otoken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    settleAndRedistributeSettlement(
+      _otoken: PromiseOrValue<string>,
+      _pools: IPotionLiquidityPool.PoolIdentifierStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -353,6 +394,12 @@ export interface IPotionLiquidityPool extends BaseContract {
       _otoken: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    settleAndRedistributeSettlement(
+      _otoken: PromiseOrValue<string>,
+      _pools: IPotionLiquidityPool.PoolIdentifierStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -388,6 +435,12 @@ export interface IPotionLiquidityPool extends BaseContract {
 
     settleAfterExpiry(
       _otoken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    settleAndRedistributeSettlement(
+      _otoken: PromiseOrValue<string>,
+      _pools: IPotionLiquidityPool.PoolIdentifierStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
