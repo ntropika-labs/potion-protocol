@@ -266,6 +266,7 @@ const {
 } = useWithdrawalTickets(
   roundsOutputAddress,
   underlyingAddress,
+  underlyingDecimals,
   currentRound,
   vaultRounds
 );
