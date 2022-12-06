@@ -7,7 +7,7 @@ import { isRef, onMounted, ref, unref, watch } from "vue";
 import { useErc20Contract } from "@/composables/useErc20Contract";
 import { useEthersContract } from "@/composables/useEthersContract";
 import { ContractInitError } from "@/helpers/errors";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { useOnboard } from "@onboard-composable";
 import { BaseRoundsVaultUpgradeable__factory } from "@potion-protocol/hedging-vault/typechain";
 
@@ -247,26 +247,25 @@ export function useRoundsVaultContract(
 
   const redeem = async (
     id: BigNumberish,
-    amount: number,
+    amount: BigNumberish,
     self = true,
     receiver?: string
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmount = parseUnits(amount.toString());
       try {
         redeemLoading.value = true;
         if (self === true) {
           redeemTx.value = await contractSigner.redeem(
             id,
-            parsedAmount,
+            amount,
             connectedWallet.value.accounts[0].address,
             connectedWallet.value.accounts[0].address
           );
         } else if (self === false && receiver) {
           redeemTx.value = await contractSigner.redeem(
             id,
-            parsedAmount,
+            amount,
             receiver,
             connectedWallet.value.accounts[0].address
           );
@@ -348,16 +347,13 @@ export function useRoundsVaultContract(
   ) => {
     if (connectedWallet.value) {
       const contractSigner = initContractSigner();
-      const parsedAmounts = amounts.map((amount) =>
-        parseUnits(amount.toString())
-      );
       try {
         redeemExchangeAssetBatchLoading.value = true;
         if (self === true) {
           redeemExchangeAssetBatchTx.value =
             await contractSigner.redeemExchangeAssetBatch(
               ids,
-              parsedAmounts,
+              amounts,
               connectedWallet.value.accounts[0].address,
               connectedWallet.value.accounts[0].address
             );
@@ -365,7 +361,7 @@ export function useRoundsVaultContract(
           redeemExchangeAssetBatchTx.value =
             await contractSigner.redeemExchangeAssetBatch(
               ids,
-              parsedAmounts,
+              amounts,
               receiver,
               connectedWallet.value.accounts[0].address
             );
