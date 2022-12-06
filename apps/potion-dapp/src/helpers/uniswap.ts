@@ -25,6 +25,9 @@ enum Protocol {
   V3 = "V3",
 }
 
+/**
+ * Get the current chain id based on the `VITE_ETHEREUM_NETWORK` env variable
+ */
 const getChainId = () => {
   switch (import.meta.env.VITE_ETHEREUM_NETWORK) {
     case "goerli":
@@ -36,6 +39,9 @@ const getChainId = () => {
   }
 };
 
+/**
+ * Constant reference to the USDC UniswapToken
+ */
 const USDCUniToken = new UniswapToken(
   getChainId(),
   contractsAddresses.USDC.address,
@@ -44,6 +50,11 @@ const USDCUniToken = new UniswapToken(
   "USD//C"
 );
 
+/**
+ * Convert an instance of UniswapToken to an object matching the Token interface
+ * @param uniToken Instance of the token we want to convert
+ * @returns An object matching the internal Token interface for the uniswap token supplied as input
+ */
 const convertUniswapTokenToToken = (uniToken: UniswapToken): Token => {
   return {
     name: uniToken.name || "",
@@ -52,7 +63,11 @@ const convertUniswapTokenToToken = (uniToken: UniswapToken): Token => {
     decimals: uniToken.decimals,
   };
 };
-
+/**
+ * Convert an instance of the Token interface to an an instance of the UniswapToken class
+ * @param token Instance of the token we want to convert
+ * @returns An instance of the uniswap Token class
+ */
 const convertTokenToUniswapToken = (token: Token): UniswapToken => {
   return new UniswapToken(
     getChainId(),
@@ -63,6 +78,12 @@ const convertTokenToUniswapToken = (token: Token): UniswapToken => {
   );
 };
 
+/**
+ * Convert an instance of uniswap SwapRoute to an instance of UniswapRouterReturn containing only the info of use
+ * @param uniRoute An instance of the uniswap alpha router SwapRoute
+ * @param actionType The type of operation associated with this route, either `ENTER_POSITION` or `EXIT_POSITION`, to hint how to parse the data
+ * @returns A flat object representation of the uniswap SwapRoute containing only the information of use
+ */
 const convertUniswapRouteToFlatRoute = (
   uniRoute: SwapRoute,
   actionType: UniswapActionType
@@ -112,6 +133,16 @@ const convertUniswapRouteToFlatRoute = (
   return uniswapRouterResult;
 };
 
+/**
+ * Convert the UniswapRouter return object containing all route info to an instance of UniswapInfo
+ * only containing data about the swap steps and the expected price rate
+ * @param routerReturn UniswapRouterReturn instance with data from the uniswap alpha router SwapRoute
+ * @param uniswapActionType Type of operation associated with this route, either `ENTER_POSITION` or `EXIT_POSITION`, to hint how to parse the data
+ * @param oraclePrice The current oracle price
+ * @param inputToken The Token we are swapping from
+ * @param outputToken The Token we are swapping to
+ * @returns An object containing the minimal representation for the swap route
+ */
 const evaluateUniswapRoute = (
   routerReturn: UniswapRouterReturn,
   uniswapActionType: UniswapActionType,
@@ -119,8 +150,10 @@ const evaluateUniswapRoute = (
   inputToken: Token,
   outputToken: Token
 ): UniSwapInfo => {
+  // TODO: inputToken and outputToken can be parse from the route
   const swapRoute = routerReturn.routes[0];
   const executionPrice = routerReturn.tradeExecutionPrice;
+  // Only allow routes for the V3 of the protocol that have a defined execution price
   if (swapRoute && swapRoute.protocol === Protocol.V3 && executionPrice) {
     const firstPoolFee = swapRoute.pools[0].fee;
     const expectedPriceRate = getExpectedPriceRate(

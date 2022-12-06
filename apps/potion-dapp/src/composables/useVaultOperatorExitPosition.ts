@@ -41,19 +41,27 @@ export function useVaultOperatorExitPosition(
   const lowercaseVaultAddress = computed(() =>
     vaultAddress.value.toLowerCase()
   );
+  // Fetch contracts addresses
   const { SwapToUSDCAction, USDC } = getContractsFromVault(
     lowercaseVaultAddress.value
   );
 
+  // Initialize alpha router instance
   const {
     getRoute,
     routerLoading,
     togglePolling: toggleUniswapPolling,
   } = useAlphaRouter(getChainId());
 
+  // Initialize ERC20 contract to fetch the current balance in USDC
   const { balance: fallbackUSDCBalance, getTokenBalance: getUSDCBalance } =
     useErc20Contract(USDC, false);
 
+  /**
+   * Dynamic reference to the actual data to exit the position
+   * - `uniswapRouterData` - uniswap alpha router data to swap USDC to underlying for the payout we got
+   * - `fallbackUniswapRouterData` - uniswap alpha router data to swap back the whole amount using the fallback strategy
+   */
   const exitPositionData: Ref<{
     uniswapRouterData: UniswapRouterReturn | null;
     fallbackUniswapRouterData: UniswapRouterReturn | null;
@@ -61,7 +69,9 @@ export function useVaultOperatorExitPosition(
   const isLoading = ref(false);
 
   /**
-   * FLAGS
+   * Check if the object contains a uniswap route
+   * @param uniswapRouterResult Result of the query to the uniswap alpha router containing swap info
+   * @returns Returns a boolean indicating whether or not the object contains a uniswap route
    */
   const hasRoute = (
     uniswapRouterResult: UniswapRouterReturn | undefined | null
@@ -71,16 +81,28 @@ export function useVaultOperatorExitPosition(
     );
   };
 
+  /**
+   * FLAGS
+   */
+
+  /**
+   * Dynamic reference to compute whether or not the 'totalPayoutUSDC' is a valid number
+   */
   const isTotalAmountValid = computed(
     () =>
       !!totalPayoutUSDC.value &&
       !Number.isNaN(totalPayoutUSDC.value.currentPayout)
   );
 
+  /**
+   * Dynamic reference to compute wheter or not current data to enter the position is
+   * actually a valid operation.
+   * The operation is valid if any of the following conditions are met:
+   * - the total payout is greater than 0 and we have valid routes for uniswap
+   * - the total payout is 0
+   */
   const isExitPositionOperationValid = computed(() => {
-    // The route is only valid if either of this conditions are met:
-    // - we have a total amount to swap > 0, and at least a pair of routes for the uniswap trade and the fallback strategy
-    // - we have no payout and no amount to swap
+    // If we have a payout we also require valid uniswap routes
     const isValidPayout =
       isTotalAmountValid.value &&
       !!totalPayoutUSDC.value &&
@@ -93,7 +115,6 @@ export function useVaultOperatorExitPosition(
       !!totalPayoutUSDC.value &&
       totalPayoutUSDC.value?.currentPayout === 0;
 
-    console.log("EXIT VALID", totalPayoutUSDC.value);
     return isValidPayout || hasNoPayout;
   });
 
@@ -101,6 +122,13 @@ export function useVaultOperatorExitPosition(
     () => routerLoading.value || isLoading.value
   );
 
+  /**
+   * Loads data for the exit position operation and stores the results in `exitPositionData`.
+   * This data actually consist of:
+   * - data from the uniswap alpha router containing info to swap the payout from USDC to underlying
+   * - data from the uniswap alpha router containing info for the Fallback Action to swap back the whole amount from USDC to underlying
+   * @param swapSlippage Maximum slippage allowed when swapping the tokens pair, expressed as percentage interger
+   */
   const loadExitPositionRoute = async (swapSlippage: number) => {
     if (
       !totalPayoutUSDC.value ||
@@ -112,16 +140,17 @@ export function useVaultOperatorExitPosition(
       let uniswapExitRoute = null;
       let fallbackRoute = null;
       isLoading.value = true;
+      // Convert the uniswap token instance of USDC to the Token interface used internally
       const USDCToken = convertUniswapTokenToToken(USDCUniToken);
+      // Create a reference to the current underlying token instance
       const underlyingTokenToSwap = underlyingToken.value;
+      // Compute the recipient address for multi-hop paths
       const recipientAddress = getRecipientAddress(lowercaseVaultAddress.value);
-      /**
-       * TODO: if the payout is 0 and the leftover is 0, the alpha router is going to fail. We need to fix this at the contract level.
-       * We will still need to pass a the swap object with an empty swapPath ("")
-       */
+
       if (totalPayoutUSDC.value && totalPayoutUSDC.value.currentPayout > 0) {
         const payout = totalPayoutUSDC.value.currentPayout;
 
+        // Get the uniswap route to swap the payout from USDC to underlying
         uniswapExitRoute = await getRoute(
           USDCToken,
           underlyingTokenToSwap,
@@ -137,13 +166,16 @@ export function useVaultOperatorExitPosition(
           throw new Error("No uniswap route found");
         }
       } else {
+        // If we have no payout then set the data to null
         uniswapExitRoute = null;
       }
+      // Fetch the current USDC balance for the fallback strategy
       await getUSDCBalance(false, SwapToUSDCAction);
 
       const totalFallbackBalance = fallbackUSDCBalance.value;
-      console.log("- USDC FALLBACK TOTAL BALANCE", totalFallbackBalance);
 
+      // If the strategy has some liquidity then compute the uniswap route
+      // to convert that amount to underlyings
       if (totalFallbackBalance > 0) {
         fallbackRoute = await getRoute(
           USDCToken,
@@ -163,6 +195,7 @@ export function useVaultOperatorExitPosition(
         fallbackRoute = null;
       }
 
+      // Store the info
       exitPositionData.value = {
         uniswapRouterData: uniswapExitRoute,
         fallbackUniswapRouterData: fallbackRoute,
@@ -172,6 +205,11 @@ export function useVaultOperatorExitPosition(
     }
   };
 
+  /**
+   * Evaluate the current data for the exit position operation (from `exitPositionData`) and return
+   * a flat object containing info to exit the position
+   * @returns A flat object containing info for the uniswap swap path and the fallback route
+   */
   const evaluateExitPositionData = (): {
     swapInfo: UniSwapInfo;
     fallback: UniSwapInfo;
@@ -187,7 +225,6 @@ export function useVaultOperatorExitPosition(
     const USDCToken = convertUniswapTokenToToken(USDCUniToken);
     const collateralTokenToSwap = USDCToken;
 
-    console.log("TOTAL PAYOUT USDC", totalPayoutUSDC.value);
     if (
       totalPayoutUSDC.value &&
       totalPayoutUSDC.value.currentPayout > 0 &&
