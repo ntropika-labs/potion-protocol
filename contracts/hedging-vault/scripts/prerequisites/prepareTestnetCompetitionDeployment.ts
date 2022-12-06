@@ -56,7 +56,7 @@ async function main() {
 
         const decimals = await token.decimals();
 
-        token.mint(uniswapRouter.address, ethers.utils.parseUnits(mintAmount, decimals));
+        await token.mint(uniswapRouter.address, ethers.utils.parseUnits(mintAmount, decimals));
     }
 
     Deployments.persist(true);
