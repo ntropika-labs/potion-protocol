@@ -51,11 +51,11 @@ N.B. Never "Publish" your subgraph if it's only intended for testing!
 
 ## Entity Documentation
 
-Visit [docs/schemas.md](docs/schemas.md)
+Visit [docs/schema.md](docs/schema.md)
 
 ## Querying the Subgraph
 
-The entities below can be queried locally viewing the explorer at: [http://localhost:8000/subgraphs/name/potion-labs/potion-subgraph-hv/graphql](http://localhost:8000/subgraphs/name/potion-labs/potion-subgraph-hv/graphql). Here's a link to [documentation on the query language](https://thegraph.com/docs/graphql-api#schema).
+The entities below can be queried locally viewing the explorer at: [http://localhost:8000/subgraphs/name/potion-subgraph-hv/graphql](http://localhost:8000/subgraphs/name/potion-subgraph-hv/graphql). Here's a link to [documentation on the query language](https://thegraph.com/docs/graphql-api#schema).
 Queries used in the frontend can be found [here](../../libs/subgraph-queries-hv)
 
 ## Running tests
