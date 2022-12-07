@@ -68,6 +68,11 @@ export function useHedgingVaultOrchestratorContract(
     ) as HedgingVaultOrchestrator;
   };
 
+  /**
+   * Encodes the data about the uniswap route for a swap
+   * @param swapInfo UniswapInfo object containing the minimal representation for the swap route
+   * @returns Encoded version of the object supplied as input with path encoded as keccak256
+   */
   const getSwapData = (
     swapInfo: UniSwapInfo
   ): IUniswapV3Oracle.SwapInfoStruct => {
@@ -105,11 +110,14 @@ export function useHedgingVaultOrchestratorContract(
     return swapData;
   };
 
+  /**
+   * Encodes the data for the PotionBuyAction strategy
+   * @param potionBuyInfo PotionBuyInfo object with data to purchase potions
+   * @returns Returns a flat object with encoded data for contracts
+   */
   const getPotionBuyActionData = (
     potionBuyInfo: PotionBuyInfo
   ): PotionBuyInfoStruct => {
-    console.log("potionBuyInfo", potionBuyInfo);
-
     return {
       sellers: potionBuyInfo.sellers,
       targetPotionAddress: potionBuyInfo.targetPotionAddress,
@@ -143,6 +151,16 @@ export function useHedgingVaultOrchestratorContract(
   const nextRoundReceipt = ref<ContractReceipt | null>(null);
   const nextRoundLoading = ref(false);
   const nextRoundError = ref<string | null>(null);
+  /**
+   * Enter the next round using the previuosly loaded data.
+   * Converts the data previously loaded for the enter and exit position operations and
+   * calls the contract method to enter the next round by providing the data as input
+   * @param enterSwapInfo UniswapInfo object containing info for the enter position route
+   * @param enterPotionBuyInfo PotionBuyInfo object containing data for the enter position PotionBuyAction strategy
+   * @param exitSwapInfo UniswapInfo object containing info for the exit position route
+   * @param fallbackEnterSwapInfoUSDC UniswapInfo object containing info for the enter position fallback strategy route
+   * @param fallbackExitSwapInfoUSDC UniswapInfo object containing info for the exit position fallback strategy route
+   */
   const enterNextRound = async (
     enterSwapInfo: UniSwapInfo,
     enterPotionBuyInfo: PotionBuyInfo,
@@ -159,6 +177,7 @@ export function useHedgingVaultOrchestratorContract(
       nextRoundError.value = null;
       nextRoundLoading.value = true;
 
+      // Convert the uniswap routes to encoded swap paths
       const enterSwapData = getSwapData(enterSwapInfo),
         exitSwapData = getSwapData(exitSwapInfo),
         fallbackEnterSwapData = getSwapData(fallbackEnterSwapInfoUSDC),

@@ -13,6 +13,7 @@ import {
 import { SrcsetEnum, type Token } from "dapp-types";
 
 import { useHedgingVaults } from "@/composables/useHedgingVaults";
+import { useTokenList } from "@/composables/useTokenList";
 import { useUserDataStore } from "@/stores/useUserDataStore";
 import type { VaultDataWithStrategy } from "@/types";
 import { groupVaultsByUnderlyingAndDeposit } from "@/helpers/hedgingVaults";
@@ -111,7 +112,7 @@ watch(walletAddress, () => updateData());
       >
         <VaultCard
           :address="vault.address"
-          :asset="vault.underlying"
+          :asset="useTokenList(vault.underlying.address)"
           :max-premium="vault.action.maxPremium"
           :cycle-duration-secs="vault.action.cycleDurationInSecs"
           :strike="vault.strikePercentage"
@@ -180,7 +181,7 @@ watch(walletAddress, () => updateData());
         >
           <VaultCard
             :address="vault.address"
-            :asset="vault.underlying"
+            :asset="underlying"
             :max-premium="vault.action.maxPremium"
             :cycle-duration-secs="vault.action.cycleDurationInSecs"
             :strike="vault.strikePercentage"

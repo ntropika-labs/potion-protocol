@@ -30,7 +30,7 @@ const invalidAmount = computed(
 
 const label = computed(() => {
   if (depositAmount.value > props.userAllowance) {
-    return t("approve");
+    return t("approve_token", { token: props.underlyingSymbol });
   }
   if (props.currentDepositAmount) {
     return t("update_request");

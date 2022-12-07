@@ -49,7 +49,7 @@ const getUniswapRoute = async (
     const currencyAmount = CurrencyAmount.fromRawAmount(
       inputUniToken,
       JSBI.BigInt(tokenAmountWithDecimals.toString())
-    ).toFixed(6);
+    ).toString();
 
     const uniswapRouterResult: UniswapRouterReturn = {
       trade: JSON.parse(JSON.stringify({})),

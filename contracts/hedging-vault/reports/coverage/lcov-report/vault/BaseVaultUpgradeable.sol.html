@@ -22,22 +22,22 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>10/10</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>1/2</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>1/1</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>11/11</span>
+        <span class='fraction'>0/0</span>
       </div>
     </div>
   </div>
@@ -97,52 +97,7 @@
 52
 53
 54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+55</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,51 +149,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-yes">36×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -281,7 +191,7 @@ import "@openzeppelin/contracts-upgradeable-4.7.3/security/ReentrancyGuardUpgrad
     contract cannot be updated. The main vault contract will inherit first from the base vault,
     and then use the versioning contracts to expand its storage in case it is needed.
  */
-&nbsp;
+/* solhint-disable-next-line no-empty-blocks */
 abstract contract BaseVaultUpgradeable is
     RolesManagerUpgradeable, // Making explicit inheritance here, although it is not necessary
     ERC4626CapUpgradeable,
@@ -293,52 +203,7 @@ abstract contract BaseVaultUpgradeable is
     ReentrancyGuardUpgradeable,
     IVault
 {
-    // UPGRADEABLE INITIALIZER
-&nbsp;
-    /**
-        @notice Takes care of the initialization of all the contracts hierarchy. Any changes
-        to the hierarchy will require to review this function to make sure that no initializer
-        is called twice, and most importantly, that all initializers are called here
-&nbsp;
-        @param adminAddress The address of the admin of the Vault
-        @param strategistAddress The address of the strategist of the Vault
-        @param operatorAddress The address of the operator of the Vault
-        @param underlyingAsset The address of the asset managed by this vault
-        @param underlyingAssetCap The cap on the amount of principal that the vault can manage
-        @param managementFee The fee percentage charged for the management of the Vault
-        @param performanceFee The fee percentage charged for the performance of the Vault
-        @param feesRecipient The address of the account that will receive the fees
-        @param actions The list of investment actions to be executed in the Vault
-     */
-    function initialize(
-        address adminAddress,
-        address strategistAddress,
-        address operatorAddress,
-        address underlyingAsset,
-        uint256 underlyingAssetCap,
-        uint256 managementFee,
-        uint256 performanceFee,
-        address payable feesRecipient,
-        IAction[] calldata actions,
-        uint256[] calldata principalPercentages
-    ) external <span class="missing-if-branch" title="else path not taken" >E</span>initializer {
-        // Prepare the list of tokens that are not allowed to be refunded. In particular the underlying
-        // asset is not allowed to be refunded to prevent the admin from accidentally refunding the
-        // underlying asset
-        address[] memory cannotRefundToken = new address[](1);
-        cannotRefundToken[0] = underlyingAsset;
-&nbsp;
-        __RolesManager_init_unchained(adminAddress, operatorAddress);
-        __ERC4626Cap_init_unchained(underlyingAssetCap, underlyingAsset);
-        __EmergencyLock_init_unchained();
-        __LifecycleStates_init_unchained();
-        __RefundsHelper_init_unchained(cannotRefundToken, false);
-        __FeeManager_init_unchained(managementFee, performanceFee, feesRecipient);
-        __ActionsManager_init_unchained(actions, principalPercentages);
-        __ReentrancyGuard_init_unchained();
-&nbsp;
-        _grantRole(RolesManagerUpgradeable.STRATEGIST_ROLE, strategistAddress);
-    }
+    // Empty on purpose
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -346,7 +211,7 @@ abstract contract BaseVaultUpgradeable is
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Dec 01 2022 09:09:45 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

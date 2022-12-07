@@ -13,6 +13,7 @@ const useTokenList = (address: string) => {
   const image = token?.logoURI ?? "";
 
   return {
+    address,
     name,
     symbol,
     image,

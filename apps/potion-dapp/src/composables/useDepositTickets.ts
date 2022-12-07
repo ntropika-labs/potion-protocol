@@ -41,7 +41,10 @@ function useDepositTickets(
   );
 
   const currentDepositAmount = computed(() =>
-    formatAmount(currentDepositTicket?.value?.amountRemaining)
+    formatAmount(
+      currentDepositTicket?.value?.amountRemaining,
+      unref(assetDecimals)
+    )
   );
 
   const updateDepositTicket = async (amount: MaybeRef<number>) =>
@@ -50,7 +53,10 @@ function useDepositTickets(
   const canDeleteDepositTicket = computed(() => currentDepositAmount.value > 0);
   const deleteDepositTicket = async () => {
     if (canDeleteDepositTicket.value) {
-      await redeem(unref(currentRoundNumber), currentDepositAmount.value);
+      await redeem(
+        unref(currentRoundNumber),
+        parseAmount(currentDepositAmount.value, unref(assetDecimals))
+      );
     }
   };
 

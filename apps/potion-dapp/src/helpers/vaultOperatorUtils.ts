@@ -4,10 +4,12 @@ import { getContractsFromVault } from "./hedgingVaultContracts";
 import { UniswapActionType } from "@/types";
 
 /**
- * This function was developed with no other purpose than being able to change the recipient by mocking this file.
+ * This function is required to be able to mock the uniswap expected price rate to be able to run in a development environment
  * This is required because the expected price rate must match the one from the oracle for local development
- * @param vaultAddress Address of the vault we are acting on
- * @returns The address to use as an intermediate recipient in multihop swaps
+ * @param _oraclePrice unused - see `mockedVaultOperatorUtils`
+ * @param tradePrice The actual price retrieved from the uniswap alpha router
+ * @param _actionType unused - see `mockedVaultOperatorUtils`
+ * @returns The actual trade price for the swap
  */
 const getExpectedPriceRate = (
   _oraclePrice: number,
@@ -19,8 +21,7 @@ const getExpectedPriceRate = (
 };
 
 /**
- * This function was developed with no other purpose than being able to change the recipient by mocking this file.
- * This is required because we need a valid address for uniswap to run the router
+ * This function is required to be able to mock the uniswap recipient to run the alpha router in a development environment.
  * @param vaultAddress Address of the vault we are acting on
  * @returns The address to use as an intermediate recipient in multihop swaps
  */

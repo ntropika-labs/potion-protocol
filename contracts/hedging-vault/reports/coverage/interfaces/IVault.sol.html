@@ -71,103 +71,7 @@
 26
 27
 28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+29</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,6 +109,7 @@ import { ILifecycleStates } from "../interfaces/ILifecycleStates.sol";
 import { IEmergencyLock } from "../interfaces/IEmergencyLock.sol";
 import { IRefundsHelper } from "../interfaces/IRefundsHelper.sol";
 import { IFeeManager } from "../interfaces/IFeeManager.sol";
+import { IVaultV0 } from "../interfaces/IVaultV0.sol";
 &nbsp;
 /**  
     @title IVault
@@ -218,58 +123,9 @@ import { IFeeManager } from "../interfaces/IFeeManager.sol";
     actions succeed, then the position is entered. Once the position can be exited, the investment
     actions are also exited and the profit/loss of the investment cycle is realized.
  */
-interface IVault is IRolesManager, ILifecycleStates, IEmergencyLock, IRefundsHelper, IFeeManager {
-    /// EVENTS
-    event VaultPositionEntered(uint256 totalPrincipalAmount, uint256 principalAmountInvested);
-    event VaultPositionExited(uint256 newPrincipalAmount);
-&nbsp;
-    /// FUNCTIONS
-    /**
-        @notice Function called to enter the investment position
-&nbsp;
-        @dev When called, the vault will enter the position of all configured actions. For each action
-        it will approve each action for the configured principal percentage so each action can access
-        the funds in order to execute the specific investment strategy
-&nbsp;
-        @dev Once the Vault enters the investment position no more immediate deposits or withdrawals
-        are allowed
-     */
-    function enterPosition() external;
-&nbsp;
-    /**
-        @notice Function called to exit the investment position
-&nbsp;
-        @return newPrincipalAmount The final amount of principal that is in the vault after the actions
-        have exited their positions
-&nbsp;
-        @dev When called, the vault will exit the position of all configured actions. Each action will send
-        back the remaining funds (including profit or loss) to the vault
-     */
-    function exitPosition() external returns (uint256 newPrincipalAmount);
-&nbsp;
-    /**
-        @notice It inficates if the position can be entered or not
-&nbsp;
-        @return canEnter true if the position can be entered, false otherwise
-&nbsp;
-        @dev The function checks if the position can be entered for the current block. If it returns
-        true then it indicates that the position can be entered at any moment from the current block.
-        This invariant only takes into account the current state of the vault itself and not any external
-        dependendencies that the vault or the actions may have
-     */
-    function canPositionBeEntered() external view returns (bool canEnter);
-&nbsp;
-    /**
-        @notice It indicates if the position can be exited or not
-&nbsp;
-        @return canExit true if the position can be exited, false otherwise
-&nbsp;
-        @dev The function checks if the position can be exited for the current block. If it returns
-        true then it indicates that the position can be exited at any moment from the current block.
-        This invariant only takes into account the current state of the vault itself and not any external
-        dependendencies that the vault or the actions may have
-     */
-    function canPositionBeExited() external view returns (bool canExit);
+/* solhint-disable-next-line no-empty-blocks */
+interface IVault is IRolesManager, ILifecycleStates, IEmergencyLock, IRefundsHelper, IFeeManager, IVaultV0 {
+    // Empty on purpose
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -277,7 +133,7 @@ interface IVault is IRolesManager, ILifecycleStates, IEmergencyLock, IRefundsHel
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 03 2022 10:33:20 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Dec 01 2022 09:09:45 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

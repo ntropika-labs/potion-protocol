@@ -1,5 +1,6 @@
 import type { VaultData, VaultDataWithStrategy } from "@/types";
 import { VaultStrategy, type Token } from "dapp-types";
+import { useTokenList } from "@/composables/useTokenList";
 
 function convertToVaultWithStrategy(vault: VaultData): VaultDataWithStrategy {
   let strategy = VaultStrategy.PROTECTIVE_PUT;
@@ -24,7 +25,7 @@ function groupVaultsByUnderlyingAndDeposit(vaults: VaultData[]) {
     let underlyingVaults = vaultsByUnderlying[vault.underlying.address];
     if (!underlyingVaults) {
       underlyingVaults = [];
-      availableUnderlyings.push(vault.underlying);
+      availableUnderlyings.push(useTokenList(vault.underlying.address));
     }
 
     underlyingVaults.push(vault);

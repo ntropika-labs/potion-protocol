@@ -8,6 +8,8 @@ add_more_liquidity: Add More Liquidity
 admin: admin
 all: All
 approve: approve
+approve_token: approve {token}
+approving_token: approving {token}
 approving_usdc: approving usdc
 asset: Asset
 assets: Assets
@@ -187,6 +189,7 @@ times: Times
 timestamp: timestamp
 title: Home page
 token: Token
+token_approved: '{token} approved'
 top_gainers_templates_subtitle: TOP GAINERS
 top_gainers_templates_title: Top PnL since creation.
 total: total

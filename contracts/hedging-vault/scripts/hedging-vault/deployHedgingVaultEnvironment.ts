@@ -244,7 +244,7 @@ async function mockContractsIfNeeded(
         const chainlinkAggregatorUSDC = await mockChainlinkAggregator("ChainlinkAggregatorUSDC", 1.0);
         const chainlinkAggregatorUnderlying = await mockChainlinkAggregator(
             "ChainlinkAggregatorUnderlyingAsset",
-            0.001,
+            1000.0,
         );
 
         testingEnvironmentDeployment.uniswapV3SwapRouter = await mockUniswapV3SwapRouterWithOracle(
