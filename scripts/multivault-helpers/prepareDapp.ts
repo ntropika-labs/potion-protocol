@@ -10,6 +10,11 @@ const getHardhatTarget = (path: string) => {
   return base.replace(/localhost/, "hardhat.develop").replace(/\.json/, "");
 };
 
+const readSource = async (path: string) => {
+  const f = JSON.parse(await readFile(path, "utf8"));
+  return f as VaultSource;
+};
+
 async function main() {
   const args = await yargs
     .option("vaults", {
@@ -17,6 +22,12 @@ async function main() {
       description:
         "path to a JSON file with an array of paths to deployment configurations",
       default: "./vaults.json",
+    })
+    .option("common-contracts", {
+      alias: "c",
+      description:
+        "path to a JSON file containing contracts that are shared with each stack",
+      default: "",
     })
     .help()
     .alias("help", "h").argv;
@@ -26,12 +37,20 @@ async function main() {
   // keep only the paths that the user can read
   const accessibleSources = sources.filter(canAccess);
 
+  let commonSource = { contracts: {} } as VaultSource;
+  if (args["common-contracts"] !== "" && canAccess(args["common-contracts"])) {
+    commonSource = await readSource(args["common-contracts"]);
+  }
+
   // for every stack declared in the stacks file prepare entries
   const stacks = accessibleSources.map(async (path: string) => {
     // load the JSON file
-    const source = JSON.parse(await readFile(path, "utf8")) as VaultSource;
+    const source = await readSource(path);
     const result = new Map<string, string>();
     for (const [key, value] of Object.entries(source.contracts)) {
+      result.set(key, value.address);
+    }
+    for (const [key, value] of Object.entries(commonSource.contracts)) {
       result.set(key, value.address);
     }
     result.set("hardhatDeploymentName", getHardhatTarget(path));

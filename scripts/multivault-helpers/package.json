@@ -6,6 +6,6 @@
     "prepare-manifest": "ts-node prepareManifest.ts",
     "prepare-manifest-mumbai": "ts-node prepareManifest.ts -n mumbai -v mumbai-vaults.json",
     "prepare-dapp": "ts-node prepareDapp.ts",
-    "prepare-dapp-mumbai": "ts-node prepareDapp.ts -n mumbai -v mumbai-vaults.json"
+    "prepare-dapp-mumbai": "ts-node prepareDapp.ts -n mumbai -v mumbai-vaults.json --common-contracts ../../contracts/hedging-vault/deployments/ply-mumbai.prepare-testcomp.json"
   }
 }
