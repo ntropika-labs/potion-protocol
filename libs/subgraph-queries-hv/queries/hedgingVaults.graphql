@@ -95,6 +95,7 @@ query getHedgingVaults($investor: String) {
 
 query getHedgingVaultsUnderlyings {
   hedgingVaults {
+    id
     underlying {
       ...TokenInfo
     }

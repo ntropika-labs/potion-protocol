@@ -24,6 +24,7 @@ import { ERC20Upgradeable__factory } from "@potion-protocol/core/typechain";
 import { useEthersContract } from "@/composables/useEthersContract";
 import { MockRouterWithOracle__factory } from "@potion-protocol/hedging-vault/typechain";
 import type { MockRouterWithOracle } from "@potion-protocol/hedging-vault/typechain";
+import { getContractsFromVault } from "@/helpers/hedgingVaultContracts";
 
 interface Token {
   id: string;
@@ -32,7 +33,7 @@ interface Token {
   decimals: string;
 }
 const { initContract } = useEthersContract();
-const swapperAddress = "0x6b6F2F4Df90d3B2ef47BDF12146a3179A3e860A2";
+// const swapperAddress = getContractsFromVault(underlyings.value[0].id).UniswapV3Router;
 //Provider initialization
 
 const initContractProviderErc20 = (address: string) => {
@@ -48,7 +49,7 @@ const initContractProviderMockRouterWithOracle = () => {
     true,
     false,
     MockRouterWithOracle__factory,
-    swapperAddress
+    swapperAddress.value
   ) as MockRouterWithOracle;
 };
 
@@ -73,7 +74,7 @@ const getTokenBalance = async (
 const infiniteApproval = async (tokenAddress: string) => {
   try {
     const provider = initContractProviderErc20(tokenAddress);
-    const tx = await provider.approve(swapperAddress, MaxUint256);
+    const tx = await provider.approve(swapperAddress.value, MaxUint256);
     return tx.wait();
   } catch (error) {
     if (error instanceof Error) {
@@ -142,6 +143,8 @@ const { data: underlyings, executeQuery } = useGetHedgingVaultsUnderlyingsQuery(
   }
 );
 
+const swapperAddress = ref("");
+
 const tokens = computed(() => {
   if (underlyings && underlyings.value) {
     const arrUniq = [
@@ -185,16 +188,17 @@ const swap = async () => {
   const provider = initContractProviderMockRouterWithOracle();
   const allowance = await getAllowance(
     selectedTokenIn.value?.id || "",
-    swapperAddress
+    swapperAddress.value
   );
   // add 2% slippage
   const amountOutMin = amountOut.value * 0.98;
   const amountOutMinParsed = parseUnits(
-    amountOutMin.toString(),
+    amountOutMin.toFixed(parseInt(selectedTokenOut.value?.decimals ?? "18")),
     selectedTokenOut.value?.decimals ?? 18
   );
+  console.log(amountOutMinParsed);
   const amountInParsed = parseUnits(
-    amountIn.value.toString(),
+    amountIn.value.toFixed(parseInt(selectedTokenIn.value?.decimals ?? "18")),
     selectedTokenIn.value?.decimals ?? 18
   );
   if (allowance.lt(amountInParsed)) {
@@ -220,6 +224,10 @@ const swap = async () => {
 
 onMounted(async () => {
   await executeQuery();
+  swapperAddress.value = getContractsFromVault(
+    underlyings?.value?.hedgingVaults[0].id ?? ""
+  ).UniswapV3Router;
+
   if (tokens.value.length > 0) {
     tokenIn.value = tokens.value[0].id;
     tokenOut.value = tokens.value[1].id;
