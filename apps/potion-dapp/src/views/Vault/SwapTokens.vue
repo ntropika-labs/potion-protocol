@@ -5,6 +5,7 @@ import {
   ListboxOptions,
   ListboxOption,
 } from "@headlessui/vue";
+import { MaxUint256 } from "@ethersproject/constants";
 import { InputNumber } from "potion-ui";
 import { parseUnits } from "@ethersproject/units";
 // import { useI18n } from "vue-i18n";
@@ -31,12 +32,12 @@ interface Token {
   decimals: string;
 }
 const { initContract } = useEthersContract();
-
+const swapperAddress = "0x6b6F2F4Df90d3B2ef47BDF12146a3179A3e860A2";
 //Provider initialization
 
 const initContractProviderErc20 = (address: string) => {
   return initContract(
-    false,
+    true,
     false,
     ERC20Upgradeable__factory,
     address
@@ -47,7 +48,7 @@ const initContractProviderMockRouterWithOracle = () => {
     true,
     false,
     MockRouterWithOracle__factory,
-    "0x172076E0166D1F9Cc711C77Adf8488051744980C"
+    swapperAddress
   ) as MockRouterWithOracle;
 };
 
@@ -65,6 +66,37 @@ const getTokenBalance = async (
       throw new Error(`Cannot get token balance: ${error.message}`);
     } else {
       throw new Error("Cannot get token balance");
+    }
+  }
+};
+
+const infiniteApproval = async (tokenAddress: string) => {
+  try {
+    const provider = initContractProviderErc20(tokenAddress);
+    const tx = await provider.approve(swapperAddress, MaxUint256);
+    return tx.wait();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`cannot approve: ${error.message}`);
+    } else {
+      throw new Error("cannot approve");
+    }
+  }
+};
+
+const getAllowance = async (tokenAddress: string, spenderAddress: string) => {
+  try {
+    const provider = initContractProviderErc20(tokenAddress);
+    const allowance = await provider.allowance(
+      walletAddress.value,
+      spenderAddress
+    );
+    return allowance;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Cannot get token allowance: ${error.message}`);
+    } else {
+      throw new Error("Cannot get token allowance");
     }
   }
 };
@@ -151,6 +183,10 @@ const selectedTokenOut = computed(() => {
 
 const swap = async () => {
   const provider = initContractProviderMockRouterWithOracle();
+  const allowance = await getAllowance(
+    selectedTokenIn.value?.id || "",
+    swapperAddress
+  );
   // add 2% slippage
   const amountOutMin = amountOut.value * 0.98;
   const amountOutMinParsed = parseUnits(
@@ -161,7 +197,16 @@ const swap = async () => {
     amountIn.value.toString(),
     selectedTokenIn.value?.decimals ?? 18
   );
+  if (allowance.lt(amountInParsed)) {
+    await infiniteApproval(selectedTokenIn.value?.id || "");
+  }
   if (tokenIn.value && tokenOut.value && walletAddress.value) {
+    console.log(
+      tokenIn.value,
+      tokenOut.value,
+      amountInParsed.toString(),
+      amountOutMinParsed.toString()
+    );
     const tx = await provider.swap(
       tokenIn.value,
       tokenOut.value,
