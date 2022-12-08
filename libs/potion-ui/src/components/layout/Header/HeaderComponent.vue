@@ -9,7 +9,7 @@
         size="icon"
         label=""
         color="transparent"
-        class="md:hidden"
+        class="lg:hidden"
         @click="toggleMobileMenu"
       >
         <template #pre-icon>
@@ -17,7 +17,7 @@
         </template>
       </BaseButton>
 
-      <div class="hidden md:flex flex-1 justify-between items-center">
+      <div class="hidden lg:flex flex-1 justify-between items-center">
         <!-- empty span for symmetric spacing -->
         <span class="w-12"></span>
         <slot name="routes"></slot>
@@ -26,7 +26,7 @@
     <transition name="fade">
       <section
         v-if="mobileMenuOpen"
-        class="md:hidden fixed inset-0 flex flex-col items-start p-6 gap-6 bg-gradient-to-br from-deep-blue-500 to-deep-black-900 z-40"
+        class="lg:hidden fixed inset-0 flex flex-col items-start p-6 gap-6 bg-gradient-to-br from-deep-blue-500 to-deep-black-900 z-40"
       >
         <section class="flex w-full items-center justify-between p-2">
           <span class="uppercase text-sm text-dwhite-400">Menu</span>
@@ -43,7 +43,7 @@
           </BaseButton>
         </section>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-10">
           <slot name="routes"></slot>
         </div>
       </section>
