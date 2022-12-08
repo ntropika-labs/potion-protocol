@@ -6,7 +6,7 @@ import {
   ListboxOption,
 } from "@headlessui/vue";
 import { MaxUint256 } from "@ethersproject/constants";
-import { InputNumber } from "potion-ui";
+import { InputNumber, BaseButton } from "potion-ui";
 import { parseUnits } from "@ethersproject/units";
 // import { useI18n } from "vue-i18n";
 import { ref, computed, onMounted, watch } from "vue";
@@ -395,8 +395,8 @@ watch(walletAddress, async () => {
         :unit="selectedTokenIn?.symbol"
       />
     </div>
-    <div class="mt=10">
-      <button @click="swap()">SWAP</button>
+    <div class="mt-10 w-full flex justify-center">
+      <BaseButton label="SWAP" @click="swap()"></BaseButton>
     </div>
   </div>
 </template>
