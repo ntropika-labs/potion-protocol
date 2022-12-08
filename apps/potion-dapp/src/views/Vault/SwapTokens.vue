@@ -6,7 +6,7 @@ import {
   ListboxOption,
 } from "@headlessui/vue";
 import { MaxUint256 } from "@ethersproject/constants";
-import { InputNumber, BaseButton } from "potion-ui";
+import { InputNumber, BaseButton, BaseCard } from "potion-ui";
 import { parseUnits } from "@ethersproject/units";
 // import { useI18n } from "vue-i18n";
 import { ref, computed, onMounted, watch } from "vue";
@@ -248,17 +248,24 @@ watch(walletAddress, async () => {
 </script>
 <template>
   <div class="max-w-4xl mx-auto">
-    <div v-if="pricesMap">
-      <p>Prices</p>
-      <div>
-        <div v-for="token in tokens" :key="token.id" class="flex gap-2">
-          <div class="">{{ token.symbol }}</div>
-          <div class="">{{ pricesMap.get(token.id) }}</div>
+    <BaseCard v-if="pricesMap" class="max-w-sm mx-auto p-4">
+      <p class="text-center mb-5">Current Prices</p>
+
+      <div
+        v-for="token in tokens"
+        :key="token.id"
+        class="flex flex-col gap-1 justify-between children-odd-bg-white/10"
+      >
+        <div class="flex justify-between p-1 rounded">
+          <span class="font-light">{{ token.symbol }}</span>
+          <span class="text-right font-bold text-primary-400">
+            {{ pricesMap.get(token.id) ?? "0" }}$
+          </span>
         </div>
       </div>
-    </div>
+    </BaseCard>
     <div v-if="tokens.length > 0" class="mt-10">
-      <p>Token Selection</p>
+      <!-- <p>Token Selection</p> -->
       <div class="grid grid-cols-2 gap-5">
         <div>
           <p>Token In</p>
@@ -286,7 +293,7 @@ watch(walletAddress, async () => {
                 leave-to-class="opacity-0"
               >
                 <ListboxOptions
-                  class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-transparent border border-white/10 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                  class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-deep-black-700/40 border border-white/10 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm backdrop-blur"
                 >
                   <ListboxOption
                     v-for="token in tokens"
@@ -347,7 +354,7 @@ watch(walletAddress, async () => {
                 leave-to-class="opacity-0"
               >
                 <ListboxOptions
-                  class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-transparent border border-white/10 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                  class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-deep-black-700/40 border border-white/10 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm backdrop-blur"
                 >
                   <ListboxOption
                     v-for="token in tokens"
