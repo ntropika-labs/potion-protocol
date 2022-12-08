@@ -184,6 +184,10 @@ const selectedTokenOut = computed(() => {
   return tokens.value.find((token) => token.id === tokenOut.value) ?? null;
 });
 
+const amountOutMin = computed(() => {
+  return amountOut.value * 0.98;
+});
+
 const swap = async () => {
   const provider = initContractProviderMockRouterWithOracle();
   const allowance = await getAllowance(
@@ -191,9 +195,11 @@ const swap = async () => {
     swapperAddress.value
   );
   // add 2% slippage
-  const amountOutMin = amountOut.value * 0.98;
+  // const amountOutMin = amountOut.value * 0.98;
   const amountOutMinParsed = parseUnits(
-    amountOutMin.toFixed(parseInt(selectedTokenOut.value?.decimals ?? "18")),
+    amountOutMin.value.toFixed(
+      parseInt(selectedTokenOut.value?.decimals ?? "18")
+    ),
     selectedTokenOut.value?.decimals ?? 18
   );
   console.log(amountOutMinParsed);
@@ -406,6 +412,10 @@ watch(walletAddress, async () => {
         :max="parseFloat(balancesMap.get(selectedTokenIn?.id ?? '') ?? '0')"
         :unit="selectedTokenIn?.symbol"
       />
+      <p class="mt-5">
+        Expected {{ selectedTokenOut?.symbol }}:
+        <span>{{ amountOutMin.toFixed(18) }}</span>
+      </p>
     </div>
     <div class="mt-10 w-full flex justify-center">
       <BaseButton label="SWAP" @click="swap()"></BaseButton>
