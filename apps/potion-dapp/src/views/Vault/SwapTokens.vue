@@ -259,7 +259,12 @@ watch(walletAddress, async () => {
         <div class="flex justify-between p-1 rounded">
           <span class="font-light">{{ token.symbol }}</span>
           <span class="text-right font-bold text-primary-400">
-            {{ pricesMap.get(token.id) ?? "0" }}$
+            {{
+              new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(parseFloat(pricesMap.get(token.id) ?? "0"))
+            }}
           </span>
         </div>
       </div>
