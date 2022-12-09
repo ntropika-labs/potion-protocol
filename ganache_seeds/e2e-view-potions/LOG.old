@@ -1,11 +1,4 @@
-2022/06/30-12:52:21.524258 7fefce83e700 Recovering log #6
-2022/06/30-12:52:21.526052 7fefce83e700 Level-0 table #8: started
-2022/06/30-12:52:21.532790 7fefce83e700 Level-0 table #8: 191731 bytes OK
-2022/06/30-12:52:21.550589 7fefce83e700 Delete type=0 #6
-2022/06/30-12:52:21.550735 7fefce83e700 Delete type=3 #4
-2022/06/30-12:52:34.144110 7feab3fff700 Compacting 2@0 + 0@1 files
-2022/06/30-12:52:34.156387 7feab3fff700 Generated table #10@0: 3084 keys, 1018156 bytes
-2022/06/30-12:52:34.156418 7feab3fff700 Compacted 2@0 + 0@1 files => 1018156 bytes
-2022/06/30-12:52:34.164933 7feab3fff700 compacted to: files[ 0 1 0 0 0 0 0 ]
-2022/06/30-12:52:34.165145 7feab3fff700 Delete type=2 #5
-2022/06/30-12:52:34.165295 7feab3fff700 Delete type=2 #8
+2022/12/09-08:39:02.431381 7f8ef9dc4700 Delete type=3 #1
+2022/12/09-08:39:51.272642 7f8eeb7fe700 Level-0 table #5: started
+2022/12/09-08:39:51.293598 7f8eeb7fe700 Level-0 table #5: 2174182 bytes OK
+2022/12/09-08:39:51.295009 7f8eeb7fe700 Delete type=0 #3
