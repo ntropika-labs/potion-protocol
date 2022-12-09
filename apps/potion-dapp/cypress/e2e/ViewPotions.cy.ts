@@ -2,6 +2,7 @@
 /// <reference types="../support" />
 
 import { aliasQuery } from "../support/utilities";
+import { shortDigitFormatter } from "potion-ui/src/helpers";
 
 describe("Show Potions Flow", () => {
   context("environment setup", () => {
@@ -62,16 +63,17 @@ describe("Show Potions Flow", () => {
 
         cy.get("@card")
           .find("[test-strike-price]")
-          .should("contain.text", "USDC1.05K");
+          .should("contain.text", shortDigitFormatter(500));
         cy.get("@card")
           .find("[test-expiration]")
           .should("contain.text", "Jan 2, 2022");
         cy.get("@card").find("[test-quantity]").should("contain.text", "1");
         cy.get("@card")
           .find("[test-current-payout]")
-          .should("contain.text", "USDC1.05K");
+          .should("contain.text", shortDigitFormatter(500));
         cy.get("@card").find("[test-withdraw-button]").should("not.exist");
       });
+
       it("Renders the expired potions", () => {
         cy.get("[test-expired-potions-grid] [test-my-potion-card]").should(
           "have.length",
@@ -83,14 +85,14 @@ describe("Show Potions Flow", () => {
 
         cy.get("@card")
           .find("[test-strike-price]")
-          .should("contain.text", "USDC1K");
+          .should("contain.text", shortDigitFormatter(1100));
         cy.get("@card")
           .find("[test-expiration]")
           .should("contain.text", "Jan 2, 2021");
-        cy.get("@card").find("[test-quantity]").should("contain.text", "1");
+        cy.get("@card").find("[test-quantity]").should("contain.text", "10");
         cy.get("@card")
           .find("[test-current-payout]")
-          .should("contain.text", "USDC500");
+          .should("contain.text", shortDigitFormatter(1000));
         cy.get("@card").find("[test-withdraw-button]").should("be.visible");
       });
     });

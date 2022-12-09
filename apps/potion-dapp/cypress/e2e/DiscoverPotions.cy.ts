@@ -68,7 +68,7 @@ describe("DiscoverPotions", () => {
           .trigger("click", { force: true });
         cy.location("pathname").should(
           "eq",
-          "/potions/0x128e3a22ac64263406d41f8941828b5597fe5879"
+          "/potions/0xc4ce0963626822f2c3f8c166968346a8bf46af26"
         );
       });
     });

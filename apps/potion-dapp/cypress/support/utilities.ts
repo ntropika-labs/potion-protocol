@@ -2,7 +2,7 @@ import { Contract, Wallet } from "ethers";
 
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import ERC20Abi from "../../../../contracts/core/abis/ERC20.json";
+import ERC20Abi from "../../../../contracts/core/abis/IERC20MetadataUpgradeable.json";
 import localDeploymentAddresses from "../../../../contracts/core/deployments/localhost.json";
 
 // Alias query if operationName matches

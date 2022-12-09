@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 /// <reference types="../support" />
 
+import { shortDigitFormatter } from "potion-ui/src/helpers";
+
 describe("ViewPools", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
@@ -19,17 +21,17 @@ describe("ViewPools", () => {
       it("shows the correct number of pools", () => {
         cy.get("[test-total-pools]")
           .should("be.visible")
-          .and("contain.text", "1");
+          .and("contain.text", "2");
       });
       it("shows the correct average PnL", () => {
         cy.get("[test-average-pnl]")
           .should("be.visible")
-          .and("contain.text", "45.213");
+          .and("contain.text", shortDigitFormatter(1.539));
       });
       it("shows the correct total liquidity", () => {
         cy.get("[test-total-liquidity]")
           .should("be.visible")
-          .and("contain.text", "917.3K");
+          .and("contain.text", shortDigitFormatter(206887.564072));
       });
     });
 
@@ -39,7 +41,7 @@ describe("ViewPools", () => {
       });
 
       it("shows the pools", () => {
-        cy.get("[test-pool-card]").should("be.visible").and("have.length", 1);
+        cy.get("[test-pool-card]").should("be.visible").and("have.length", 2);
       });
     });
 
@@ -64,6 +66,7 @@ describe("ViewPools", () => {
 
       it("can go to a specific pool page", () => {
         cy.get("[test-pool-card]")
+          .first()
           .find("[test-pool-card-button]")
           .trigger("click");
         cy.location("pathname").should(

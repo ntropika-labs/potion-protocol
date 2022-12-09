@@ -2,9 +2,10 @@
 /// <reference types="../support" />
 
 import { aliasQuery, resetApproval } from "../support/utilities";
+import { currencyFormatter, shortDigitFormatter } from "potion-ui/src/helpers";
 
-describe.skip("Show Potion Flow", () => {
-  context("environment setup", () => {
+describe("Show Potion Flow", () => {
+  context.skip("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
       cy.seed("/opt/e2e-show-potion", "2021-01-01 09:00:00+00:00", false);
     });
@@ -29,7 +30,7 @@ describe.skip("Show Potion Flow", () => {
     it("Can visit the potion page and load required data", () => {
       cy.viewport(1920, 1080);
 
-      cy.visit("/potions/0x128e3a22ac64263406d41f8941828b5597fe5879");
+      cy.visit("/potions/0xc4ce0963626822f2c3f8c166968346a8bf46af26");
 
       cy.wait(
         ["@getPotionById", "@getOrderBookEntries", "@getPoolsFromCriteria"],
@@ -42,7 +43,7 @@ describe.skip("Show Potion Flow", () => {
         expect(potionResponse).to.haveOwnProperty("data");
         expect(potionResponse.data).to.haveOwnProperty("otoken");
         expect(potionResponse.data.otoken.id).to.equal(
-          "0x128e3a22ac64263406d41f8941828b5597fe5879"
+          "0xc4ce0963626822f2c3f8c166968346a8bf46af26"
         );
 
         // loads order book correctly
@@ -66,19 +67,19 @@ describe.skip("Show Potion Flow", () => {
         cy.wait(15000);
         cy.get("[test-potion-strike-price]")
           .should("be.visible")
-          .and("contain.text", "USDC1K");
+          .and("contain.text", shortDigitFormatter(1100));
       });
       it("Shows the correct expiration", () => {
         cy.get("[test-potion-expiration]")
           .should("be.visible")
-          .and("contain.text", "Jan 2, 2021");
+          .and("contain.text", "Feb 1, 2021");
       });
       it("Shows the correct number of potions", () => {
         cy.get("[test-potion-number-of-potions]")
           .should("be.visible")
           .and("contain.text", "0.001");
       });
-      it("Shows the buy/approval button", () => {
+      it.skip("Shows the buy/approval button", () => {
         cy.get("[test-potion-buy-button]")
           .should("be.visible")
           .and("contain.text", "approve");
@@ -96,13 +97,13 @@ describe.skip("Show Potion Flow", () => {
       it("Shows the correct market size", () => {
         cy.get("[test-potion-market-size]")
           .should("be.visible")
-          .and("contain.text", "USDC 2.05M");
+          .and("contain.text", currencyFormatter(195265.154365, "USDC"));
       });
       context("depth router based data", () => {
         it("Shows the correct price per potion", () => {
           cy.get("[test-potion-price-per-potion]")
             .should("be.visible")
-            .and("contain.text", "USDC 12.08");
+            .and("contain.text", currencyFormatter(0.11, "USDC"));
         });
         it("Shows the correct number of transactions", () => {
           cy.get("[test-potion-number-of-transactions]")
@@ -112,7 +113,7 @@ describe.skip("Show Potion Flow", () => {
         it("Shows the correct total", () => {
           cy.get("[test-potion-total-price]")
             .should("be.visible")
-            .and("contain.text", "USDC 12.14");
+            .and("contain.text", currencyFormatter(0.11, "USDC"));
         });
       });
     });
@@ -127,10 +128,10 @@ describe.skip("Show Potion Flow", () => {
       it("Updates the number of transactions and the total price", () => {
         cy.get("[test-potion-number-of-transactions]")
           .should("be.visible")
-          .and("contain.text", "5");
+          .and("contain.text", "2");
         cy.get("[test-potion-total-price]")
           .should("be.visible")
-          .and("contain.text", "USDC 12.14K");
+          .and("contain.text", currencyFormatter(117.22, "USDC"));
       });
 
       it("Can change the selected slippage", () => {
@@ -142,7 +143,7 @@ describe.skip("Show Potion Flow", () => {
       });
     });
 
-    context("Buy more potions", () => {
+    context.skip("Buy more potions", () => {
       beforeEach(() => {
         cy.get("[test-potion-buy-button]").first().as("purchaseButton");
       });

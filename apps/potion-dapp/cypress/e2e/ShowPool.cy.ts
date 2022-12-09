@@ -2,11 +2,12 @@
 /// <reference types="../support" />
 
 import { aliasQuery, resetApproval } from "../support/utilities";
+import { shortCurrencyFormatter } from "potion-ui/src/helpers";
 
 describe("Show Pool Flow", () => {
   context("environment setup", () => {
     it("relods the blockchain with the correct database and date", () => {
-      cy.seed("/opt/e2e-show-pool", "2022-02-01 09:00:00+00:00");
+      cy.seed("/opt/e2e-show-pool", "2022-01-01 09:00:00+00:00");
     });
     it("can reset the approval", async () => {
       await resetApproval();
@@ -27,7 +28,7 @@ describe("Show Pool Flow", () => {
     it("Can visit the pool page", () => {
       cy.viewport(1920, 1080);
       cy.visit(
-        "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/1"
+        "/liquidity-provider/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0"
       );
       cy.wait("@getPoolById", {
         timeout: 20000,
@@ -38,7 +39,7 @@ describe("Show Pool Flow", () => {
         expect(response).to.haveOwnProperty("data");
         expect(response.data).to.haveOwnProperty("pool");
         expect(response.data.pool.id).to.equal(
-          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb922660x1"
+          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb922660x0"
         );
       });
     });
@@ -109,8 +110,7 @@ describe("Show Pool Flow", () => {
       });
     });
 
-    // TODO: fix enable these tests again
-    context.skip("active put options", () => {
+    context("active put options", () => {
       it("Can switch to active options", () => {
         cy.get("[test-claim-table-active-tab-switch]").click();
       });
@@ -124,26 +124,26 @@ describe("Show Pool Flow", () => {
           .as("option");
         cy.get("@option")
           .find("td:nth-child(1)")
-          .should("contain.text", "WETH");
+          .should("contain.text", "WETH"); // underlying asset
         cy.get("@option")
           .find("td:nth-child(2)")
-          .should("contain.text", "Feb 2, 2022");
+          .should("contain.text", "Jan 2, 2022"); // expiration date
         cy.get("@option")
           .find("td:nth-child(3)")
-          .should("contain.text", "USDC 202.7");
+          .should("contain.text", shortCurrencyFormatter(100.4, "USDC")); // premium
         cy.get("@option")
           .find("td:nth-child(4)")
-          .should("contain.text", "USDC 100.0");
+          .should("contain.text", shortCurrencyFormatter(50, "USDC")); // strike price
         cy.get("@option")
           .find("td:nth-child(5)")
-          .should("contain.text", "USDC 1.36K");
+          .should("contain.text", shortCurrencyFormatter(1000, "USDC")); // collateral
         cy.get("@option")
           .find("td:nth-child(6)")
-          .should("contain.text", "+ 14.95%");
+          .should("contain.text", "+ 10.04%"); // projected pnl
       });
     });
 
-    context.skip("expired put options", () => {
+    context("expired put options", () => {
       it("Can switch to expired options", () => {
         cy.get("[test-claim-table-expired-tab-switch]").click();
       });
@@ -153,102 +153,85 @@ describe("Show Pool Flow", () => {
           cy.get("[test-claim-table-expired-options]").should("be.visible");
         });
         it("Shows the correct filters", () => {
-          cy.get("[test-claim-table-toggle-all-button]")
-            .should("be.visible")
-            .and("not.have.class", "bg-transparent");
+          cy.get("[test-claim-table-toggle-all-button]").should("not.exist");
           cy.get("[test-claim-table-toggle-asset-button]").should(
             "have.length",
-            6
+            1
           );
         });
 
-        it("Shows the not settled option correctly", () => {
+        it("Shows the claimed option correctly", () => {
           cy.get("[test-claim-table-expired-options]")
             .find("tbody > tr:nth-child(1)")
             .as("option");
           cy.get("@option")
-            .find("td:nth-child(1)")
-            .should("contain.text", "WETH");
+            .find("td:nth-child(1) > [test-table-claim-button]")
+            .should("be.visible")
+            .and("contain.text", "Claimed");
           cy.get("@option")
             .find("td:nth-child(2)")
-            .should("contain.text", "Jan 2, 2021");
+            .should("contain.text", "WETH"); // underlying asset
           cy.get("@option")
             .find("td:nth-child(3)")
-            .should("contain.text", "USDC 10.01K");
+            .should("contain.text", "Jan 2, 2021"); //expiration date
           cy.get("@option")
             .find("td:nth-child(4)")
-            .should("contain.text", "USDC 1.0K");
+            .should("contain.text", shortCurrencyFormatter(1200, "USDC")); // strike price
           cy.get("@option")
             .find("td:nth-child(5)")
-            .should("contain.text", "USDC 100.0K");
-          cy.get("@option").find("td:nth-child(6)").should("contain.text", "0");
+            .should("contain.text", "- 14.59%"); // pnl
           cy.get("@option")
-            .find("td:nth-child(7)")
-            .should("contain.text", "+ 10.01%");
+            .find("td:nth-child(6)")
+            .should("contain.text", shortCurrencyFormatter(1248.93, "USDC")); // strike price
+          cy.get("@option").find("td:nth-child(7)").should("contain.text", "0"); //claimable liquidity
           cy.get("@option")
-            .find("td:nth-child(8) > [test-table-claim-button]")
-            .should("be.visible")
-            .and("contain.text", "claim");
+            .find("td:nth-child(8)")
+            .should("contain.text", shortCurrencyFormatter(9000, "USDC")); //claimed liquidity
         });
 
-        it("Shows the settled option correctly", () => {
+        it("Shows the not claimed option correctly", () => {
           cy.get("[test-claim-table-expired-options]")
             .find("tbody > tr:nth-child(2)")
             .as("option");
           cy.get("@option")
-            .find("td:nth-child(1)")
-            .should("contain.text", "WETH");
-          cy.get("@option")
-            .find("td:nth-child(2)")
-            .should("contain.text", "Jan 2, 2022");
-          cy.get("@option")
-            .find("td:nth-child(3)")
-            .should("contain.text", "USDC 1.46K");
-          cy.get("@option")
-            .find("td:nth-child(4)")
-            .should("contain.text", "USDC 1.1K");
-          cy.get("@option")
-            .find("td:nth-child(5)")
-            .should("contain.text", "USDC 9.55K");
-          cy.get("@option").find("td:nth-child(6)").should("contain.text", "0");
-          cy.get("@option")
-            .find("td:nth-child(7)")
-            .should("contain.text", "+ 19.10%");
-          cy.get("@option")
-            .find("td:nth-child(8) > [test-table-claim-button]")
+            .find("td:nth-child(1) > [test-table-claim-button]")
             .should("be.visible")
             .and("contain.text", "claim");
+          cy.get("@option")
+            .find("td:nth-child(2)")
+            .should("contain.text", "WETH"); // underlying asset
+          cy.get("@option")
+            .find("td:nth-child(3)")
+            .should("contain.text", "Mar 1, 2021"); // expiration date
+          cy.get("@option")
+            .find("td:nth-child(4)")
+            .should("contain.text", shortCurrencyFormatter(100, "USDC")); // strike price
+          cy.get("@option")
+            .find("td:nth-child(5)")
+            .should("contain.text", "+ 10.00%"); // pnl
+          cy.get("@option")
+            .find("td:nth-child(6)")
+            .should("contain.text", shortCurrencyFormatter(10, "USDC")); // premium
+          cy.get("@option")
+            .find("td:nth-child(7)")
+            .should("contain.text", shortCurrencyFormatter(100, "USDC")); // claimable liquidity
+          cy.get("@option").find("td:nth-child(8)").should("contain.text", "0"); // claimed liquidity
         });
       });
 
-      context.skip("Claiming options", () => {
-        it("Can claim the not settled option", () => {
-          cy.get("[test-claim-table-expired-options]")
-            .find("tbody > tr:nth-child(1)")
-            .as("option");
-          cy.get("@option")
-            .find("td:nth-child(8) > [test-table-claim-button]")
-            .as("button");
-          cy.get("@button").click();
-          cy.get("@option").find("td:nth-child(5)").should("contain.text", "0");
-          cy.get("@option")
-            .find("td:nth-child(6)")
-            .should("contain.text", "USDC 100.0K");
-          cy.get("@button").should("be.visible").and("contain.text", "Claimed");
-        });
-
-        it("Can claim the settled option", () => {
+      context("Claiming options", () => {
+        it("Can claim", () => {
           cy.get("[test-claim-table-expired-options]")
             .find("tbody > tr:nth-child(2)")
             .as("option");
           cy.get("@option")
-            .find("td:nth-child(8) > [test-table-claim-button]")
+            .find("td:nth-child(1) > [test-table-claim-button]")
             .as("button");
           cy.get("@button").click();
-          cy.get("@option").find("td:nth-child(5)").should("contain.text", "0");
+          cy.get("@option").find("td:nth-child(7)").should("contain.text", "0");
           cy.get("@option")
-            .find("td:nth-child(6)")
-            .should("contain.text", "USDC 9.55K");
+            .find("td:nth-child(8)")
+            .should("contain.text", shortCurrencyFormatter(100, "USDC"));
           cy.get("@button").should("be.visible").and("contain.text", "Claimed");
         });
       });
