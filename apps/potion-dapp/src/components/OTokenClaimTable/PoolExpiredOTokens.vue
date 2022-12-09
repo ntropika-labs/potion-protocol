@@ -47,19 +47,19 @@ const dataset = computed<OtokenDataset>(() => {
       const pnl = calculatePnL(premium, collateral, payout) * 100;
 
       return [
-        { value: symbol },
-        { value: dateFormatter(item.otoken.expiry, true) },
-        { value: shortCurrencyFormatter(premium, currency) },
-        { value: shortCurrencyFormatter(strikePrice, currency) },
-        { value: shortCurrencyFormatter(0, currency) },
-        { value: shortCurrencyFormatter(payout, currency) },
-        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
         {
           button: true,
           claimable: false,
           value: t("claimed"),
           color: "secondary",
         },
+        { value: symbol },
+        { value: dateFormatter(item.otoken.expiry, true) },
+        { value: shortCurrencyFormatter(strikePrice, currency) },
+        { value: pnlFormatter(pnl), color: getPnlColor(pnl) },
+        { value: shortCurrencyFormatter(premium, currency) },
+        { value: shortCurrencyFormatter(0, currency) },
+        { value: shortCurrencyFormatter(payout, currency) },
       ];
     } else {
       const reclaimable = payout > 0 ? payout : returned;
