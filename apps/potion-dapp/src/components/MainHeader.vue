@@ -11,7 +11,7 @@
       </router-link>
     </template>
     <template #routes>
-      <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex flex-col lg:flex-row gap-6">
         <router-link
           v-for="r in routes"
           :key="r.name"
@@ -75,6 +75,10 @@ const routes = [
   {
     name: "discover-hedging-vaults",
     label: "Hedging Vaults",
+  },
+  {
+    name: "swap-tokens",
+    label: "Swap",
   },
 ];
 
