@@ -1,7 +1,8 @@
 version: "3"
 services:
   graph-node:
-    image: graphprotocol/graph-node:v0.26.0
+    container_name: potion_graph_node
+    image: graphprotocol/graph-node:v0.27.0
     ports:
       - "8000:8000"
       - "8001:8001"
@@ -22,13 +23,33 @@ services:
       ipfs: "ipfs:5001"
       ethereum: "mainnet:http://host.docker.internal:8545"
       GRAPH_LOG: info
+    healthcheck:
+      test: ["CMD-SHELL", "nc -zn 0.0.0.0 8040 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   ipfs:
+    container_name: potion_ipfs
     image: ipfs/go-ipfs:v0.4.23
     ports:
       - "5001:5001"
     volumes:
       - /data/ipfs
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "ipfs dag resolve /ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn",
+        ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   postgres:
+    container_name: potion_postgres
     image: postgres
     ports:
       - "5432:5432"
@@ -39,8 +60,19 @@ services:
       POSTGRES_DB: graph-node
     volumes:
       - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   ganache:
-    image: trufflesuite/ganache:latest
+    container_name: potion_ganache
+    image: trufflesuite/ganache:v7.4.3
     ports:
       - "8545:8545"
-    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}'
+    volumes:
+      - ${GANACHE_VOLUME}:/opt
+    command: --chain.chainId 31337 --wallet.mnemonic '${DEPLOYER_MNEMONIC}' --database.dbPath='${DATABASE_PATH}' --miner.blockGasLimit 0x1C9C380 --miner.callGasLimit 0x1C9C380 --miner.defaultTransactionGasLimit 0x1C9C380 --chain.time='${CHAIN_TIME}'
+

@@ -1,0 +1,156 @@
+fragment tokenInfo on Token {
+  address
+  decimals
+  name
+  symbol
+}
+
+query getPoolsFromCriteria(
+  $underlyingAddress: String
+  $minDuration: BigInt
+  $minStrike: BigDecimal
+) {
+  criterias(
+    where: {
+      underlyingAsset: $underlyingAddress
+      maxDurationInDays_gte: $minDuration
+      maxStrikePercent_gte: $minStrike
+    }
+  ) {
+    isPut
+    maxStrikePercent
+    maxDurationInDays
+    strikeAsset {
+      address
+    }
+    criteriaSets {
+      criteriaSet {
+        templates {
+          curve {
+            id
+            a
+            b
+            c
+            d
+            maxUtil
+          }
+          pools(
+            first: 1000
+            orderBy: averageCost
+            orderDirection: asc
+            where: { utilization_lt: 100 }
+          ) {
+            id
+            size
+            locked
+            unlocked
+            utilization
+            lp
+            poolId
+          }
+        }
+      }
+    }
+  }
+}
+
+query getLatestPoolId($lp: Bytes) {
+  pools(where: { lp: $lp }, first: 1, orderBy: poolId, orderDirection: desc) {
+    poolId
+  }
+}
+
+query getNumberOfPoolsFromUser($lp: Bytes, $ids: [ID!]) {
+  pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
+    id
+  }
+}
+query getPoolsFromUser($lp: Bytes, $ids: [ID!]) {
+  pools(where: { lp: $lp, id_not_in: $ids }, first: 1000) {
+    id
+    pnlPercentage
+    poolId
+    size
+    utilization
+    template {
+      criteriaSet {
+        criterias {
+          criteria {
+            underlyingAsset {
+              ...tokenInfo
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query getPoolById($id: ID!) {
+  pool(id: $id) {
+    id
+    poolId
+    lp
+    size
+    locked
+    pnlPercentage
+    utilization
+    dailyData (orderBy: timestamp, orderDirection: asc) {
+      timestamp
+      pnl
+      liquidity
+      utilization
+    }
+    template {
+      curve {
+        id
+        a
+        b
+        c
+        d
+        maxUtil
+      }
+      criteriaSet {
+        criterias {
+          criteria {
+            id
+            underlyingAsset {
+              address
+              decimals
+              symbol
+              name
+            }
+            strikeAsset {
+              address
+              decimals
+              symbol
+              name
+            }
+            isPut
+            maxStrikePercent
+            maxDurationInDays
+          }
+        }
+      }
+    }
+  }
+}
+
+query poolsWithLiquidity($alreadyLoadedIds: [ID!]) {
+  pools(
+    where: { size_gt: 0, utilization_lt: 100, id_not_in: $alreadyLoadedIds }
+  ) {
+    id
+    template {
+      criteriaSet {
+        criterias {
+          criteria {
+            underlyingAsset {
+              address
+            }
+          }
+        }
+      }
+    }
+  }
+}

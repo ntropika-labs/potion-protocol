@@ -29,11 +29,19 @@
     },
     {
       "path": "libs/subgraph-queries"
+    },
+    {
+      "path": "libs/potion-router"
+    },
+    {
+      "path": "libs/contracts-math"
+    },
+    {
+      "path": "libs/potion-unocss"
+    },
+    {
+      "path": "libs/dapp-types"
     }
   ],
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "dist"
-  ]
+  "exclude": ["node_modules", "tmp", "dist"]
 }

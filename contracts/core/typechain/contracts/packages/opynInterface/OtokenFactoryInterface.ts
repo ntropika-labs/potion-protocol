@@ -20,6 +20,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../../../common";
 
 export interface OtokenFactoryInterfaceInterface extends utils.Interface {
@@ -38,15 +39,36 @@ export interface OtokenFactoryInterfaceInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "createOtoken",
-    values: [string, string, string, BigNumberish, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getOtoken",
-    values: [string, string, string, BigNumberish, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getTargetOtokenAddress",
-    values: [string, string, string, BigNumberish, BigNumberish, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -90,94 +112,94 @@ export interface OtokenFactoryInterface extends BaseContract {
 
   functions: {
     createOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     getTargetOtokenAddress(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
 
   createOtoken(
-    _underlyingAsset: string,
-    _strikeAsset: string,
-    _collateralAsset: string,
-    _strikePrice: BigNumberish,
-    _expiry: BigNumberish,
-    _isPut: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _underlyingAsset: PromiseOrValue<string>,
+    _strikeAsset: PromiseOrValue<string>,
+    _collateralAsset: PromiseOrValue<string>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _expiry: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getOtoken(
-    _underlyingAsset: string,
-    _strikeAsset: string,
-    _collateralAsset: string,
-    _strikePrice: BigNumberish,
-    _expiry: BigNumberish,
-    _isPut: boolean,
+    _underlyingAsset: PromiseOrValue<string>,
+    _strikeAsset: PromiseOrValue<string>,
+    _collateralAsset: PromiseOrValue<string>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _expiry: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   getTargetOtokenAddress(
-    _underlyingAsset: string,
-    _strikeAsset: string,
-    _collateralAsset: string,
-    _strikePrice: BigNumberish,
-    _expiry: BigNumberish,
-    _isPut: boolean,
+    _underlyingAsset: PromiseOrValue<string>,
+    _strikeAsset: PromiseOrValue<string>,
+    _collateralAsset: PromiseOrValue<string>,
+    _strikePrice: PromiseOrValue<BigNumberish>,
+    _expiry: PromiseOrValue<BigNumberish>,
+    _isPut: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   callStatic: {
     createOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     getOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     getTargetOtokenAddress(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -186,64 +208,64 @@ export interface OtokenFactoryInterface extends BaseContract {
 
   estimateGas: {
     createOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTargetOtokenAddress(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     createOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getOtoken(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTargetOtokenAddress(
-      _underlyingAsset: string,
-      _strikeAsset: string,
-      _collateralAsset: string,
-      _strikePrice: BigNumberish,
-      _expiry: BigNumberish,
-      _isPut: boolean,
+      _underlyingAsset: PromiseOrValue<string>,
+      _strikeAsset: PromiseOrValue<string>,
+      _collateralAsset: PromiseOrValue<string>,
+      _strikePrice: PromiseOrValue<BigNumberish>,
+      _expiry: PromiseOrValue<BigNumberish>,
+      _isPut: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

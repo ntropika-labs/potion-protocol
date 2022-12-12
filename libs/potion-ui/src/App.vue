@@ -1,8 +1,4 @@
-<script setup lang="ts">
-import BaseInput from "./components/Input/BaseInput.vue";
-import { InputType } from "./types";
-</script>
-
+<script setup lang="ts"></script>
 <template>
-  <BaseInput :input-type="InputType.text" model-value=""></BaseInput>
+  <div class="p-24"></div>
 </template>

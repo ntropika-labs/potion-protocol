@@ -9,21 +9,27 @@
         size="icon"
         label=""
         color="transparent"
-        class="lg:hidden"
+        class="md:hidden"
         @click="toggleMobileMenu"
       >
-        Menu
+        <template #pre-icon>
+          <i class="i-ph-list-duotone"></i>
+        </template>
       </BaseButton>
 
-      <slot name="routes"></slot>
+      <div class="hidden md:flex flex-1 justify-between items-center">
+        <!-- empty span for symmetric spacing -->
+        <span class="w-12"></span>
+        <slot name="routes"></slot>
+      </div>
     </div>
     <transition name="fade">
       <section
         v-if="mobileMenuOpen"
-        class="lg:hidden fixed inset-0 flex flex-col items-start p-4 gap-6 bg-light z-40"
+        class="md:hidden fixed inset-0 flex flex-col items-start p-6 gap-6 bg-gradient-to-br from-deep-blue-500 to-deep-black-900 z-40"
       >
-        <section class="flex w-full items-center justify-between">
-          <span class="uppercase text-sm">Menu</span>
+        <section class="flex w-full items-center justify-between p-2">
+          <span class="uppercase text-sm text-dwhite-400">Menu</span>
           <BaseButton
             size="icon"
             label=""
@@ -31,11 +37,15 @@
             color="transparent"
             @click="toggleMobileMenu"
           >
-            Close
+            <template #pre-icon>
+              <i class="i-ph-x"></i>
+            </template>
           </BaseButton>
         </section>
 
-        <slot name="routes"></slot>
+        <div class="flex flex-col">
+          <slot name="routes"></slot>
+        </div>
       </section>
     </transition>
   </header>

@@ -1,0 +1,107 @@
+{
+  "root": "apps/potion-dapp/",
+  "sourceRoot": "apps/potion-dapp/",
+  "projectType": "application",
+  "targets": {
+    "local-dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/setup-local-env",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:dev",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "local-dev-test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/setup-local-env",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "nx-internal-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-dev",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
+    },
+    "local-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/setup-local-env --redeploy=false",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "./bin/setup-database-seed --all",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "yarn nx run potion-dapp:nx-internal-test-e2e",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "ci-test-e2e": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:build-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-ci",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
+    },
+    "ci-test-e2e-dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn nx run potion-dapp:dev-test",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "yarn nx run potion-dapp:test-e2e-ci-dev",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": true
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+name: Development branch actions
+
+# run when issued manually, push or pr
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+    paths-ignore:
+      - "**.md"
+      - "**.txt"
+  pull_request:
+    branches: [develop]
+    paths-ignore:
+      - "**.md"
+      - "**.txt"
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-lint:
+    uses: ./.github/workflows/call-lint-run-tests.yml
+    with:
+      VITE_ETHEREUM_NETWORK: "localhost"
+      VITE_ENDPOINT_PROVIDER: "alchemy"
+      VITE_COINGECKO_API_ENDPOINT: "https://api.coingecko.com/api/v3"
+    secrets:
+      VITE_DEVELOPMENT_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      VITE_ALCHEMY_KEY: ${{ secrets.VITE_ALCHEMY_KEY }}
+      VITE_DEVELOPMENT_ADDRESS: ${{ secrets.VITE_DEVELOPMENT_ADDRESS }}
+      VITE_SUBGRAPH_ADDRESS: ${{ secrets.VITE_SUBGRAPH_ADDRESS }}
+      VITE_BLOCKNATIVE_API_KEY: ${{ inputs.VITE_BLOCKNATIVE_API_KEY }}
+      DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+      GANACHE_VOLUME: ${{ secrets.GANACHE_VOLUME }}
+      DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+
+  #update-storybook:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - nane: Build Storybook
+  #      run: yarn nx run potion-ui:build-storybook
+  #  TODO: upload build files to remote host

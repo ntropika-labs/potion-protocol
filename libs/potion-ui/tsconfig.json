@@ -8,25 +8,30 @@
     "declarationMap": true,
     "declarationDir": "./dist/types",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "types": [
+      "node",
+      "vitest",
+      "jsdom",
       "vite/client",
       "vue/macros",
-      "vitest"
+      "@intlify/vite-plugin-vue-i18n/client",
+      "cypress",
+      "@testing-library/cypress"
     ]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue",
-    "vite.config.ts"
+    "vite.config.ts",
+    "cypress.d.ts"
   ],
   "exclude": [
     "src/stories/**/*",
     "src/**/*.stories.ts",
-    ".storybook/**/*"
+    ".storybook/**/*",
+    "src/**/*.spec.ts"
   ]
 }

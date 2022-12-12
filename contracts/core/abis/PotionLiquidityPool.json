@@ -1,0 +1,1520 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CriteriaSetSelected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "curveHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CurveSelected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Deposited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "otoken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "collateralReturned",
+        "type": "uint256"
+      }
+    ],
+    "name": "OptionSettled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "otoken",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "collateralReturned",
+        "type": "uint256"
+      }
+    ],
+    "name": "OptionSettlementDistributed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "buyer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "otoken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "numberOfOtokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalPremiumPaid",
+        "type": "uint256"
+      }
+    ],
+    "name": "OptionsBought",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "otoken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "curveHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "numberOfOtokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "liquidityCollateralized",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "premiumReceived",
+        "type": "uint256"
+      }
+    ],
+    "name": "OptionsSold",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Unpaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "lp",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdrawn",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.Criteria[]",
+        "name": "_criterias",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "addAndSetCriterias",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct ICurveManager.Curve",
+        "name": "_curve",
+        "type": "tuple"
+      }
+    ],
+    "name": "addAndSetCurve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "a_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "b_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "c_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "d_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "max_util_59x18",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct ICurveManager.Curve",
+            "name": "curve",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "underlyingAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "strikeAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "isPut",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxStrikePercent",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxDurationInDays",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ICriteriaManager.Criteria",
+            "name": "criteria",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "orderSizeInOtokens",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.CounterpartyDetails[]",
+        "name": "_sellers",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxPremium",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyOtokens",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_otokenQty",
+        "type": "uint256"
+      }
+    ],
+    "name": "collateralNeededForPuts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_underlyingAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_strikeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_collateralAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_strikePrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_expiry",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isPut",
+        "type": "bool"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "a_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "b_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "c_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "d_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "max_util_59x18",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct ICurveManager.Curve",
+            "name": "curve",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "underlyingAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "strikeAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "isPut",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxStrikePercent",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxDurationInDays",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ICriteriaManager.Criteria",
+            "name": "criteria",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "orderSizeInOtokens",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.CounterpartyDetails[]",
+        "name": "_sellers",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxPremium",
+        "type": "uint256"
+      }
+    ],
+    "name": "createAndBuyOtokens",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "createNewVaultId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "crit",
+    "outputs": [
+      {
+        "internalType": "contract ICriteriaManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "crv",
+    "outputs": [
+      {
+        "internalType": "contract ICurveManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_curveHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "depositAndConfigurePool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "a_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "b_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "c_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "d_59x18",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "max_util_59x18",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct ICurveManager.Curve",
+        "name": "_curve",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "underlyingAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "strikeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPut",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStrikePercent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDurationInDays",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICriteriaManager.Criteria[]",
+        "name": "_criterias",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "depositAndCreateCurveAndCriteria",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "durationInDays",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "getVaultId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_opynAddressBook",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_poolCollateralToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_curveManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_criteriaManager",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "isSettled",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lp",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      }
+    ],
+    "name": "lpLockedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "lpPools",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "locked",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "curveHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lp",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      }
+    ],
+    "name": "lpTotalAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxTotalValueLocked",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "opynAddressBook",
+    "outputs": [
+      {
+        "internalType": "contract AddressBookInterface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "opynController",
+    "outputs": [
+      {
+        "internalType": "contract ControllerInterface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.PoolIdentifier",
+        "name": "_pool",
+        "type": "tuple"
+      }
+    ],
+    "name": "outstandingSettlement",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "collateralDueBack",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "percentStrike",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolCollateralToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20Upgradeable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "a_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "b_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "c_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "d_59x18",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "max_util_59x18",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct ICurveManager.Curve",
+            "name": "curve",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "underlyingAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "strikeAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "isPut",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxStrikePercent",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxDurationInDays",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ICriteriaManager.Criteria",
+            "name": "criteria",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "orderSizeInOtokens",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.CounterpartyDetails[]",
+        "name": "_sellers",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "premiums",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalPremiumInCollateralTokens",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "perLpPremiumsInCollateralTokens",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.PoolIdentifier[]",
+        "name": "_pools",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "redistributeSettlement",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ICriteriaManager",
+        "name": "_new",
+        "type": "address"
+      }
+    ],
+    "name": "setCriteriaManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_curveHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setCurve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_criteriaSetHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setCurveCriteria",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ICurveManager",
+        "name": "_new",
+        "type": "address"
+      }
+    ],
+    "name": "setCurveManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newMax",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMaxTotalValueLocked",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      }
+    ],
+    "name": "settleAfterExpiry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OtokenInterface",
+        "name": "_otoken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lp",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolId",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PotionLiquidityPool.PoolIdentifier[]",
+        "name": "_pools",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "settleAndRedistributeSettlement",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sumOfAllLockedBalances",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sumOfAllUnlockedBalances",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lp",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_collateralToLock",
+        "type": "uint256"
+      }
+    ],
+    "name": "util",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "utilBeforeAs59x18",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "utilAfterAs59x18",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockedAmountBefore",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockedAmountAfter",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "vaultCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

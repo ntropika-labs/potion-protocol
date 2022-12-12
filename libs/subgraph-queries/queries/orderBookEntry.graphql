@@ -1,0 +1,16 @@
+query getOrderBookEntries(
+  $otoken: String!
+  $alreadyLoadedIds: [Bytes!]
+  $direction: OrderDirection = asc
+) {
+  orderBookEntries(
+    where: { otoken: $otoken, id_not_in: $alreadyLoadedIds }
+    orderBy: timestamp
+    orderDirection: $direction
+  ) {
+    id
+    premium
+    timestamp
+    numberOfOTokens
+  }
+}

@@ -1,25 +1,105 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import { useOnboard } from "@/composables/useOnboard";
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import EmptyLayout from "@/layouts/EmptyLayout.vue";
-import AboutView from "@/views/AboutView.vue";
-import HomeView from "@/views/HomeView.vue";
+import { useOnboard } from "@onboard-composable";
+
+const EmptyLayout = () => import("@/layouts/EmptyLayout.vue");
+const CustomPoolCreation = () => import("@/views/CustomPoolCreation.vue");
+const CustomPotionCreation = () => import("@/views/CustomPotionCreation.vue");
+const DiscoverPotions = () => import("@/views/DiscoverPotions.vue");
+const DiscoverTemplates = () => import("@/views/DiscoverTemplates.vue");
+const NotFound = () => import("@/views/NotFound.vue");
+const EditPool = () => import("@/views/Pools/EditPool.vue");
+const ShowPool = () => import("@/views/Pools/ShowPool.vue");
+const ViewPools = () => import("@/views/Pools/ViewPools.vue");
+const PoolTemplate = () => import("@/views/PoolTemplate.vue");
+const ShowPotion = () => import("@/views/Potions/ShowPotion.vue");
+const ViewPotions = () => import("@/views/Potions/ViewPotions.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      name: "home",
-      component: HomeView,
-      meta: { requireWallet: false, layout: BaseLayout },
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: NotFound,
+      meta: { layout: EmptyLayout },
     },
     {
-      path: "/about",
-      name: "about",
-      component: AboutView,
-      meta: { requireWallet: true, layout: EmptyLayout },
+      path: "/",
+      name: "home",
+      redirect: { name: "discover-potions" },
+    },
+    {
+      path: "/templates",
+      name: "discover-templates",
+      component: DiscoverTemplates,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
+    },
+    {
+      path: "/templates/:id",
+      name: "pool-template",
+      component: PoolTemplate,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
+    },
+    {
+      path: "/custom-pool-creation",
+      name: "custom-pool-creation",
+      component: CustomPoolCreation,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "pools" },
+    },
+    {
+      path: "/custom-potion-creation",
+      name: "custom-potion-creation",
+      component: CustomPotionCreation,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
+    },
+    {
+      path: "/liquidity-provider/:lp",
+      name: "liquidity-provider",
+      component: ViewPools,
+      meta: { requireWallet: true, layout: BaseLayout, sublink: "pools" },
+    },
+    {
+      path: "/liquidity-provider/:lp/:id",
+      name: "liquidity-provider-pool",
+      component: ShowPool,
+      meta: { requiredWallet: false, layout: BaseLayout, sublink: "pools" },
+    },
+    {
+      path: "/liquidity-provider/:lp/:id/edit",
+      name: "liquidity-provider-pool-edit",
+      component: EditPool,
+      meta: { requiredWallet: true, layout: BaseLayout, sublink: "pools" },
+      beforeEnter: (to, from, next) => {
+        const { connectedWallet } = useOnboard();
+        if (
+          connectedWallet.value?.accounts[0].address.toLowerCase() !==
+          to.params.lp
+        ) {
+          next({ name: "NotFound" });
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/buyer/:address",
+      name: "buyer",
+      component: ViewPotions,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
+    },
+    {
+      path: "/potions",
+      name: "discover-potions",
+      component: DiscoverPotions,
+      meta: { requireWallet: false, layout: BaseLayout, sublink: "potions" },
+    },
+    {
+      path: "/potions/:id",
+      name: "show-potion",
+      component: ShowPotion,
+      meta: { requiredWallet: false, layout: BaseLayout, sublink: "potions" },
     },
   ],
 });

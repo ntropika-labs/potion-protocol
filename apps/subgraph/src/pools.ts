@@ -21,46 +21,54 @@ import {
   Template,
 } from "../generated/schema";
 import { calculateAverageCost } from "./curves";
+import { Actions } from "./enums";
 import {
-  getOTokenIdFromAddress,
+  updateHistoricalPoolData,
+  updateHistoricalTemplateData,
+} from "./historicalData";
+import {
   oTokenFixedtoDecimals,
   oTokenIncrementLiquidity,
   oTokenIncrementPurchasesCount,
   oTokenSettled,
 } from "./otoken";
-import { collateralFixedtoDecimals } from "./token";
+import { collateralToDecimals } from "./token";
 
 const ZERO_BIGDECIMAL = BigDecimal.fromString("0");
 const HUNDRED_BIGDECIMAL = BigDecimal.fromString("100");
 const ONE_BIGINT = BigInt.fromI32(1);
 
-// Have to manually define this Enum since codegen schema does not contain Enums
-export enum Actions {
-  POOL_LEFT_TEMPLATE = -3,
-  CURVE_CHANGE = -2,
-  CRITERIASET_CHANGE = -1,
-  DEPOSIT = 0,
-  WITHDRAW = 1,
-  PREMIUM_RECEIVED = 2,
-  CAPITAL_EXERCISED = 3,
-}
-
 export function createPoolId(lp: Bytes, poolId: BigInt): string {
   return lp.toHexString() + poolId.toHexString();
 }
 
-function createPoolSnapshotId(
-  lp: Bytes,
-  poolId: BigInt,
-  templateId: string,
-  timestamp: BigInt
+function createActionHash(
+  actionAmount: BigDecimal,
+  actionType: Actions
 ): string {
+  return actionAmount.toString() + actionType.toString();
+}
+
+function createPoolHash(pool: Pool): string {
   return (
-    lp.toHexString() +
-    poolId.toHexString() +
-    timestamp.toHexString() +
-    templateId
+    pool.id +
+    pool.size.toString() +
+    pool.locked.toString() +
+    pool.unlocked.toString() +
+    pool.utilization.toString() +
+    pool.pnlTotal.toString() +
+    pool.pnlPercentage.toString() +
+    pool.liquidityAtTrades.toString()
   );
+}
+
+function createPoolSnapshotId(
+  poolHash: string,
+  templateId: string,
+  actionHash: string,
+  blockHash: string
+): string {
+  return poolHash + templateId + blockHash + actionHash;
 }
 
 export function createTemplateId(
@@ -72,8 +80,8 @@ export function createTemplateId(
 
 export function createTemplate(
   templateId: string,
-  curveHash: string,
-  criteriaSetHash: string,
+  curveHash: Bytes,
+  criteriaSetHash: Bytes,
   creator: Bytes
 ): Template {
   const template = new Template(templateId);
@@ -90,12 +98,12 @@ export function createTemplate(
   return template;
 }
 
-function createLPRecordID(lp: Bytes, otoken: Bytes): string {
-  return lp.toHexString() + otoken.toHexString();
+function createLPRecordID(lp: Bytes, otoken: Bytes): Bytes {
+  return lp.concat(otoken);
 }
 
-function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): string {
-  return lp.toHexString() + poolId.toHexString() + otoken.toHexString();
+function createPoolRecordID(lp: Bytes, poolId: BigInt, otoken: Bytes): Bytes {
+  return lp.concatI32(poolId.toI32()).concat(otoken);
 }
 
 function getUtilization(size: BigDecimal, locked: BigDecimal): BigDecimal {
@@ -122,15 +130,16 @@ and count of pools.
 function updateConfigPoolTemplate(
   pool: Pool,
   pastTemplate: Template | null,
-  curveHash: string,
-  criteriaSetHash: string,
+  curveHash: Bytes,
+  criteriaSetHash: Bytes,
+  blockHash: Bytes,
   timestamp: BigInt
 ): void {
   // Case where the old template was null or different from the current settings
   log.info("Updating the pool {} with the following curve {} and criteria {}", [
     pool.id,
-    curveHash,
-    criteriaSetHash,
+    curveHash.toHexString(),
+    criteriaSetHash.toHexString(),
   ]);
   if (pastTemplate != null) {
     log.info("The pastTemplate id is {}", [pastTemplate.id]);
@@ -156,10 +165,7 @@ function updateConfigPoolTemplate(
         log.debug("pastTemplate.criteriaSet != criteriaSetHash", []);
       }
     }
-    const templateId = createTemplateId(
-      Bytes.fromHexString(curveHash) as Bytes,
-      Bytes.fromHexString(criteriaSetHash) as Bytes
-    );
+    const templateId = createTemplateId(curveHash, criteriaSetHash);
     let template = Template.load(templateId);
     log.info("Loading the template {}", [templateId]);
 
@@ -173,10 +179,15 @@ function updateConfigPoolTemplate(
         pool.lp
       );
     }
-    // increment template's fields to represent the new pool joining.
+    // increase template's fields to represent the new pool joining.
     template.numPools = template.numPools.plus(ONE_BIGINT);
-    template.size = template.size.plus(pool.size);
-    template.save();
+    increaseTemplate(
+      template,
+      pool.size,
+      pool.locked,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
+    );
     // Set the pool to use the new / loaded template
     pool.template = template.id;
 
@@ -191,8 +202,13 @@ function updateConfigPoolTemplate(
         ]
       );
       pastTemplate.numPools = pastTemplate.numPools.minus(ONE_BIGINT);
-      pastTemplate.size = pastTemplate.size.minus(pool.size);
-      pastTemplate.save();
+      decreaseTemplate(
+        pastTemplate,
+        pool.size,
+        pool.locked,
+        ZERO_BIGDECIMAL,
+        ZERO_BIGDECIMAL
+      );
       log.info("Updated the pastTemplate {}, size is {} and numPools is {}", [
         pastTemplate.id,
         pastTemplate.size.toString(),
@@ -201,6 +217,7 @@ function updateConfigPoolTemplate(
       createPoolSnapshot(
         pool,
         timestamp,
+        blockHash,
         ZERO_BIGDECIMAL,
         Actions.POOL_LEFT_TEMPLATE,
         pastTemplate.id,
@@ -208,31 +225,77 @@ function updateConfigPoolTemplate(
       );
     }
     pool.save();
+    updateHistoricalPoolData(pool, timestamp);
+    updateHistoricalTemplateData(template, timestamp);
   }
 }
 
 /**
+ * Functions used to increase and decrease size, utilization, liquidityAtTrades and pnl of a Template after certain actions
+ */
+function increaseTemplate(
+  template: Template,
+  newSize: BigDecimal,
+  newLocked: BigDecimal,
+  newLiquidityAtTrades: BigDecimal,
+  newPnl: BigDecimal
+): void {
+  template.size = template.size.plus(newSize);
+  template.locked = template.locked.plus(newLocked);
+  template.utilization = getUtilization(template.size, template.locked);
+  template.liquidityAtTrades =
+    template.liquidityAtTrades.plus(newLiquidityAtTrades);
+  template.pnlTotal = template.pnlTotal.plus(newPnl);
+  template.pnlPercentage = getPnlPercentage(
+    template.liquidityAtTrades,
+    template.pnlTotal
+  );
+  template.save();
+}
+
+function decreaseTemplate(
+  template: Template,
+  newSize: BigDecimal,
+  newLocked: BigDecimal,
+  newLiquidityAtTrades: BigDecimal,
+  newPnl: BigDecimal
+): void {
+  template.size = template.size.minus(newSize);
+  template.locked = template.locked.minus(newLocked);
+  template.utilization = getUtilization(template.size, template.locked);
+  template.liquidityAtTrades =
+    template.liquidityAtTrades.minus(newLiquidityAtTrades);
+  template.pnlTotal = template.pnlTotal.minus(newPnl);
+  template.pnlPercentage = getPnlPercentage(
+    template.liquidityAtTrades,
+    template.pnlTotal
+  );
+  template.save();
+}
+
+/**
  * Creates a Pool Snapshot entity, called when a pool is updated.
- * @param {Pool} pool Pool instance.
- * @param {BigInt} timestamp Timestamp of the transaction, epoch in seconds.
- * @param {BigDecimal} actionAmount Amount to increment or decrement the pool size
- * or locked by.
- * @param {string} actionType Enumerated action value.
- * @param {string} templateId The id of the template for which we are creating a snapshot
  */
 export function createPoolSnapshot(
   pool: Pool,
   timestamp: BigInt,
+  blockHash: Bytes,
   actionAmount: BigDecimal,
   actionType: Actions,
   templateId: string,
   template: Template
 ): void {
+  const poolHash = createPoolHash(pool);
+  const actionHash = createActionHash(actionAmount, actionType);
+  log.debug(
+    "PoolSnapshotId params: poolHash {}, templateId {}, actionHash {}, blockHash {}",
+    [poolHash, templateId, actionHash, blockHash.toHexString()]
+  );
   const poolSnapshotId = createPoolSnapshotId(
-    pool.lp,
-    pool.poolId,
+    poolHash,
     templateId,
-    timestamp
+    actionHash,
+    blockHash.toHexString()
   );
   const poolSnapshot = new PoolSnapshot(poolSnapshotId);
   log.info("Creating Snapshot {} for Pool {}", [
@@ -243,9 +306,6 @@ export function createPoolSnapshot(
     actionAmount.toString(),
     actionType.toString(),
   ]);
-  // log.info("This is the template you're passing, is it null??", [
-  //   template.toString(),
-  // ]);
   poolSnapshot.poolId = pool.poolId;
   poolSnapshot.lp = pool.lp;
   poolSnapshot.size = pool.size;
@@ -255,7 +315,7 @@ export function createPoolSnapshot(
   poolSnapshot.template = templateId;
   poolSnapshot.timestamp = timestamp;
   poolSnapshot.actionAmount = actionAmount;
-  poolSnapshot.actionType = BigInt.fromI32(actionType);
+  poolSnapshot.actionType = actionType;
   poolSnapshot.currentPool = pool.id;
   poolSnapshot.pnlTotal = pool.pnlTotal;
   poolSnapshot.pnlPercentage = pool.pnlPercentage;
@@ -287,6 +347,14 @@ export function createPool(poolUUID: string, lp: Bytes, poolId: BigInt): Pool {
   return pool;
 }
 
+function createOrderBookEntryID(
+  buyer: Bytes,
+  otoken: Bytes,
+  timestamp: BigInt
+): Bytes {
+  return buyer.concat(otoken).concatI32(timestamp.toI32());
+}
+
 /**
  * Creates an OrderBookEntry from the buyer address, oToken address, and timestamp.
    Modifies Entities: OrderBookEntry
@@ -304,13 +372,11 @@ function createOrderBookEntry(
   tokens: BigDecimal,
   timestamp: BigInt
 ): void {
-  const entryId =
-    buyer.toHexString() + otoken.toHexString() + timestamp.toString();
+  const entryId = createOrderBookEntryID(buyer, otoken, timestamp);
   const entry = new OrderBookEntry(entryId);
 
   entry.buyer = buyer;
-  // to set field to an entity, set to the string of the entity's ID.
-  entry.otoken = getOTokenIdFromAddress(otoken);
+  entry.otoken = otoken;
   entry.premium = premium;
   entry.numberOfOTokens = tokens;
   entry.timestamp = timestamp;
@@ -326,7 +392,7 @@ export function handleDeposited(event: Deposited): void {
   //Deposited(address indexed lp, uint256 indexed poolId, uint256 amount);
   const poolId = createPoolId(event.params.lp, event.params.poolId);
   const pool = Pool.load(poolId);
-  const tokenAmount = collateralFixedtoDecimals(event.params.amount);
+  const tokenAmount = collateralToDecimals(event.params.amount);
   if (pool) {
     pool.size = pool.size.plus(tokenAmount);
     pool.unlocked = pool.unlocked.plus(tokenAmount);
@@ -342,7 +408,7 @@ export function handleDeposited(event: Deposited): void {
       template.save();
       if (template.curve) {
         pool.averageCost = calculateAverageCost(
-          template.curve as string,
+          template.curve as Bytes,
           pool.utilization,
           pool.locked,
           pool.size
@@ -353,17 +419,21 @@ export function handleDeposited(event: Deposited): void {
       createPoolSnapshot(
         pool as Pool,
         event.block.timestamp,
+        event.block.hash,
         tokenAmount,
         Actions.DEPOSIT,
         pool.template as string,
         template as Template
       );
+      updateHistoricalPoolData(pool, event.block.timestamp);
+      updateHistoricalTemplateData(template, event.block.timestamp);
     } else {
       log.warning("Deposited {} in the pool {} that doesn't have a template", [
         tokenAmount.toString(),
         poolId,
       ]);
       pool.save();
+      updateHistoricalPoolData(pool, event.block.timestamp);
     }
   } else {
     log.error(
@@ -381,7 +451,7 @@ export function handleDeposited(event: Deposited): void {
 export function handleWithdrawn(event: Withdrawn): void {
   const poolId = createPoolId(event.params.lp, event.params.poolId);
   const pool = Pool.load(poolId);
-  const withdrawalAmount = collateralFixedtoDecimals(event.params.amount);
+  const withdrawalAmount = collateralToDecimals(event.params.amount);
 
   if (pool == null) {
     log.error(
@@ -413,7 +483,7 @@ export function handleWithdrawn(event: Withdrawn): void {
         template.save();
         if (template.curve) {
           pool.averageCost = calculateAverageCost(
-            template.curve as string,
+            template.curve as Bytes,
             pool.utilization,
             pool.locked,
             pool.size
@@ -424,17 +494,21 @@ export function handleWithdrawn(event: Withdrawn): void {
         createPoolSnapshot(
           pool as Pool,
           event.block.timestamp,
+          event.block.hash,
           withdrawalAmount,
           Actions.WITHDRAW,
           pool.template as string,
           template as Template
         );
+        updateHistoricalPoolData(pool, event.block.timestamp);
+        updateHistoricalTemplateData(template, event.block.timestamp);
       } else {
         log.warning("Withdrawn {} from pool {} that is missing a template", [
           withdrawalAmount.toString(),
           poolId,
         ]);
         pool.save();
+        updateHistoricalPoolData(pool, event.block.timestamp);
       }
     }
   }
@@ -451,10 +525,9 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const criteriaSetHashId = event.params.criteriaSetHash.toHexString();
   log.info("Setting a criteria for {}, criteria hash id is {}", [
     poolId,
-    criteriaSetHashId,
+    event.params.criteriaSetHash.toHexString(),
   ]);
 
   if (pool.template == null) {
@@ -462,13 +535,14 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       null,
-      "",
-      criteriaSetHashId,
+      Bytes.fromHexString(""),
+      event.params.criteriaSetHash,
+      event.block.hash,
       event.block.timestamp
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.criteriaSet == null) {
+    if (!pastTemplate.criteriaSet) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -476,8 +550,9 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
     updateConfigPoolTemplate(
       pool as Pool,
       pastTemplate as Template,
-      pastTemplate.curve as string,
-      criteriaSetHashId,
+      pastTemplate.curve as Bytes,
+      event.params.criteriaSetHash,
+      event.block.hash,
       event.block.timestamp
     );
   }
@@ -486,6 +561,7 @@ export function handleCriteriaSetSelected(event: CriteriaSetSelected): void {
   createPoolSnapshot(
     pool as Pool,
     event.block.timestamp,
+    event.block.hash,
     BigDecimal.fromString("0"),
     Actions.CRITERIASET_CHANGE,
     pool.template as string,
@@ -504,8 +580,11 @@ export function handleCurveSelected(event: CurveSelected): void {
   if (pool == null) {
     pool = createPool(poolId, event.params.lp, event.params.poolId);
   }
-  const curveId = event.params.curveHash.toHexString();
-  log.info("Setting a curve for {}, curve id is {}", [poolId, curveId]);
+  const curveId = event.params.curveHash;
+  log.info("Setting a curve for {}, curve id is {}", [
+    poolId,
+    curveId.toHexString(),
+  ]);
 
   if (pool.template == null) {
     log.info("pool.template is null, creating a new template", []);
@@ -513,12 +592,13 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       null,
       curveId,
-      "",
+      Bytes.fromHexString(""),
+      event.block.hash,
       event.block.timestamp
     );
   } else {
     const pastTemplate = Template.load(pool.template as string)!;
-    if (pastTemplate.curve == null) {
+    if (!pastTemplate.curve) {
       log.info("Pool already have the partial template {}, completing it", [
         pool.template as string,
       ]);
@@ -527,7 +607,8 @@ export function handleCurveSelected(event: CurveSelected): void {
       pool as Pool,
       pastTemplate as Template,
       curveId,
-      pastTemplate.criteriaSet as string,
+      pastTemplate.criteriaSet as Bytes,
+      event.block.hash,
       event.block.timestamp
     );
   }
@@ -543,11 +624,16 @@ export function handleCurveSelected(event: CurveSelected): void {
   createPoolSnapshot(
     pool as Pool,
     event.block.timestamp,
+    event.block.hash,
     BigDecimal.fromString("0"),
     Actions.CURVE_CHANGE,
     pool.template as string,
     template as Template
   );
+}
+
+function createBuyerRecordID(buyer: Bytes, otoken: Bytes): Bytes {
+  return buyer.concat(otoken);
 }
 
 /**
@@ -558,17 +644,16 @@ export function handleCurveSelected(event: CurveSelected): void {
  * @return {void}
  */
 export function handleOptionsBought(event: OptionsBought): void {
-  const recordID =
-    event.params.buyer.toHexString() + event.params.otoken.toHexString();
+  const recordID = createBuyerRecordID(event.params.buyer, event.params.otoken);
   let record = BuyerRecord.load(recordID);
   const tokenAmount = oTokenFixedtoDecimals(
     event.params.otoken,
     event.params.numberOfOtokens
   );
-  const premiumPaid = collateralFixedtoDecimals(event.params.totalPremiumPaid);
+  const premiumPaid = collateralToDecimals(event.params.totalPremiumPaid);
 
   if (record == null) {
-    const otokenAddress = getOTokenIdFromAddress(event.params.otoken);
+    const otokenAddress = event.params.otoken;
     const otoken = OToken.load(otokenAddress)!;
     record = new BuyerRecord(recordID);
     record.buyer = event.params.buyer;
@@ -604,35 +689,34 @@ export function handleOptionsSold(event: OptionsSold): void {
       event.params.otoken,
       event.params.numberOfOtokens
     );
-    const premiumAmount = collateralFixedtoDecimals(
-      event.params.premiumReceived
-    );
-    const liquidityCollateralized = collateralFixedtoDecimals(
+    const premiumAmount = collateralToDecimals(event.params.premiumReceived);
+    const liquidityCollateralized = collateralToDecimals(
       event.params.liquidityCollateralized
     );
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string);
+    const template = Template.load(pool.template as string)!;
     if (template) {
-      template.size = template.size.plus(premiumAmount);
-      template.pnlTotal = template.pnlTotal.plus(premiumAmount);
-      template.liquidityAtTrades = template.liquidityAtTrades.plus(pool.size);
-      template.locked = template.locked.plus(liquidityCollateralized);
-      template.utilization = getUtilization(template.size, template.locked);
-      template.save();
+      increaseTemplate(
+        template,
+        premiumAmount,
+        liquidityCollateralized,
+        pool.size,
+        premiumAmount
+      );
     }
 
     // Update the pool
     pool.liquidityAtTrades = pool.liquidityAtTrades.plus(pool.size);
-    pool.locked = liquidityCollateralized.plus(pool.locked);
-    pool.size = premiumAmount.plus(pool.size);
+    pool.locked = pool.locked.plus(liquidityCollateralized);
+    pool.size = pool.size.plus(premiumAmount);
     pool.unlocked = pool.size.minus(pool.locked);
     pool.utilization = getUtilization(pool.size, pool.locked);
     pool.pnlTotal = pool.pnlTotal.plus(premiumAmount);
 
     if (template && template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size
@@ -643,18 +727,21 @@ export function handleOptionsSold(event: OptionsSold): void {
     createPoolSnapshot(
       pool as Pool,
       event.block.timestamp,
+      event.block.hash,
       premiumAmount,
       Actions.PREMIUM_RECEIVED,
       pool.template as string,
       template as Template
     );
+    updateHistoricalPoolData(pool, event.block.timestamp);
+    updateHistoricalTemplateData(template as Template, event.block.timestamp);
 
     const recordID = createLPRecordID(event.params.lp, event.params.otoken);
     let record = LPRecord.load(recordID);
     if (record == null) {
       record = new LPRecord(recordID);
       record.lp = event.params.lp;
-      record.otoken = getOTokenIdFromAddress(event.params.otoken);
+      record.otoken = event.params.otoken;
       record.numberOfOTokens = BigDecimal.fromString("0");
       record.liquidityCollateralized = BigDecimal.fromString("0");
       record.premiumReceived = BigDecimal.fromString("0");
@@ -676,8 +763,9 @@ export function handleOptionsSold(event: OptionsSold): void {
       // The oToken (and record) has not received liquidity from this pool
       poolRecord = new PoolRecord(poolRecordID);
       poolRecord.pool = poolId;
+      poolRecord.template = template.id;
       poolRecord.lpRecord = record.id;
-      poolRecord.otoken = getOTokenIdFromAddress(event.params.otoken);
+      poolRecord.otoken = event.params.otoken;
       poolRecord.collateral = liquidityCollateralized;
       poolRecord.premiumReceived = premiumAmount;
       poolRecord.numberOfOTokens = tokenAmount;
@@ -715,7 +803,7 @@ export function handleOptionSettlementDistributed(
   const record = LPRecord.load(recordID);
 
   if (record) {
-    const collateralReturned = collateralFixedtoDecimals(
+    const collateralReturned = collateralToDecimals(
       event.params.collateralReturned
     );
     record.liquidityCollateralized =
@@ -740,16 +828,32 @@ export function handleOptionSettlementDistributed(
       poolTotalCollateralized.minus(collateralReturned);
 
     // Updates the template to reflect the new liquidity, utilization and PnL
-    const template = Template.load(pool.template as string)!;
-    template.size = template.size.minus(deltaCollateralizedAndReturned);
-    template.locked = template.locked.minus(poolTotalCollateralized);
-    template.utilization = getUtilization(template.size, template.locked);
-    template.pnlTotal = template.pnlTotal.minus(deltaCollateralizedAndReturned);
-    template.pnlPercentage = getPnlPercentage(
-      template.liquidityAtTrades,
-      template.pnlTotal
+    // because the template of the pool could have been changed in the meantmime we need to load
+    // both the current template to update liquidity and utilization
+    // and the template at the moment of the PoolRecord creation to update the PnL
+    const currentTemplate = Template.load(pool.template as string)!;
+
+    // update template liquidity and utilization
+    decreaseTemplate(
+      currentTemplate,
+      deltaCollateralizedAndReturned,
+      poolTotalCollateralized,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL
     );
-    template.save();
+
+    const pnlTemplate = Template.load(poolRecord.template as string)!;
+    // update template PnL
+    decreaseTemplate(
+      pnlTemplate,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
+      ZERO_BIGDECIMAL,
+      deltaCollateralizedAndReturned
+    );
+
+    // load the updated template
+    const template = Template.load(pool.template as string)!;
 
     // Update the pool
     pool.size = pool.size.minus(deltaCollateralizedAndReturned);
@@ -764,7 +868,7 @@ export function handleOptionSettlementDistributed(
 
     if (template.curve) {
       pool.averageCost = calculateAverageCost(
-        template.curve as string,
+        template.curve as Bytes,
         pool.utilization,
         pool.locked,
         pool.size
@@ -776,11 +880,14 @@ export function handleOptionSettlementDistributed(
     createPoolSnapshot(
       pool as Pool,
       event.block.timestamp,
+      event.block.hash,
       deltaCollateralizedAndReturned,
       Actions.CAPITAL_EXERCISED,
       pool.template as string,
       template as Template
     );
+    updateHistoricalPoolData(pool, event.block.timestamp);
+    updateHistoricalTemplateData(template, event.block.timestamp);
   }
 }
 

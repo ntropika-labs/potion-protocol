@@ -1,0 +1,31 @@
+fragment PoolRecordOtokenInfo on PoolRecord {
+  id
+  premiumReceived
+  collateral
+  numberOfOTokens
+  returned
+  otoken {
+    id
+    strikePrice
+    expiry
+    underlyingAsset {
+      address
+      symbol
+      decimals
+      name
+    }
+  }
+}
+
+query getPoolRecordsByPool(
+  $pool: String
+  $alreadyLoadedIds: [Bytes!]
+  $num: Int = 1000
+) {
+  poolRecords(
+    where: { pool: $pool, id_not_in: $alreadyLoadedIds }
+    first: $num
+  ) {
+    ...PoolRecordOtokenInfo
+  }
+}

@@ -1,9 +1,0 @@
-#!/bin/bash
-echo "Run and deploy the contracts and subgraph on local ganache" &&
-docker compose up -d -V && echo "Containers started..." &&
-bin/wait-for-it localhost:8545 && sleep 2 && echo "Ganache is ready" &&
-yarn nx run potion-contracts:deploy-local && echo "Potion smart contracts deployed" &&
-yarn nx run potion-subgraph:prepare-local && echo "Potion subgraph.yaml is ready..." &&
-sleep 3 && bin/wait-for-it localhost:8020 && sleep 10 && echo "graph-node is ready" &&
-yarn nx run potion-subgraph:create-local && echo "Potion subgraph created" &&
-sleep 3 && yarn nx run potion-subgraph:deploy-local --version-label 0.0.1 && echo "Potion subgraph deployed"

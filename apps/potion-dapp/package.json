@@ -4,19 +4,33 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development vite",
-    "build": "NODE_ENV=production vue-tsc --noEmit && vite build",
-    "preview": "vite preview --port 5050",
+    "dev-test": "NODE_ENV=development MODE=test vite --mode=test",
+    "dev-testnet": "NODE_ENV=development MODE=testnet vite --mode=test",
+    "build": "NODE_ENV=production MODE=production vite build",
+    "build-testnet": "NODE_ENV=production MODE=testnet vite build --mode=testnet",
+    "build-test": "NODE_ENV=production MODE=test vite build --mode=test",
+    "build-tsc": "NODE_ENV=production vue-tsc --noEmit",
+    "preview": "yarn run -T vite preview --port 5050",
     "test-unit": "vitest run --environment jsdom",
+    "test-unit-ui": "vitest --environment jsdom --ui",
     "test-unit-watch": "vitest watch --environment jsdom",
-    "test-e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
-    "test-e2e-ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
+    "test-unit-coverage": "vitest run --coverage --environment jsdom",
+    "cypress": "cypress open",
+    "test-e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --config baseUrl=http://127.0.0.1:5050/'",
+    "test-e2e-dev": "DEBUG=cypress:webpack cypress open --config baseUrl=http://127.0.0.1:5173/",
+    "test-e2e-ci-dev": "cypress run --config baseUrl=http://127.0.0.1:3000/",
+    "test-e2e-ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run --config baseUrl=http://127.0.0.1:5050/'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
   },
   "dependencies": {
+    "dapp-types": "*",
     "potion-contracts": "*",
+    "potion-router": "*",
+    "potion-tokenlist": "*",
     "potion-ui": "*",
+    "potion-unocss": "*",
     "subgraph-queries": "*"
   }
 }

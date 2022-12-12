@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
+import type { PromiseOrValue } from "../../../../common";
 import type {
   MarginCalculator,
   MarginCalculatorInterface,
@@ -816,14 +817,14 @@ export class MarginCalculator__factory extends ContractFactory {
   }
 
   override deploy(
-    _oracle: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _oracle: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<MarginCalculator> {
     return super.deploy(_oracle, overrides || {}) as Promise<MarginCalculator>;
   }
   override getDeployTransaction(
-    _oracle: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _oracle: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): TransactionRequest {
     return super.getDeployTransaction(_oracle, overrides || {});
   }

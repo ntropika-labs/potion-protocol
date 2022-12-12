@@ -1,9 +1,11 @@
-import { ethers } from "hardhat";
 import { expect } from "chai";
-import { CurveCriteria, CriteriaSet, OtokenPropertiesForValidation } from "../scripts/lib/typeHelpers";
+import { CriteriaSet, CurveCriteria } from "contracts-math";
 import { utils } from "ethers";
+import { ethers } from "hardhat";
 
-import { MockOtoken, CriteriaManager, MockAddressBook } from "../typechain/";
+import { CriteriaManager, MockAddressBook, MockOtoken } from "../typechain/";
+import { OtokenPropertiesForValidation } from "./helpers/typeHelpers";
+
 const unusedAddress = "0x0000000000000000000000000000000000000000";
 const mockUnderlyingTokenAddress = "0x1122334455667788990011223344556677889900";
 const mockStrikeTokenAddress = "0x0000111122223333444455556666777788889999";

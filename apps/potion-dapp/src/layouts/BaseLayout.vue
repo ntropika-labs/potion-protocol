@@ -1,15 +1,38 @@
 <template>
-  <div class="h-screen w-full overflow-y-auto overflow-x-hidden">
-    <div class="container mx-auto mt-24">
+  <div
+    class="min-h-screen py-5 font-sans text-dwhite-300 bg-gradient-to-br from-deepBlue to-deepBlack-900 font-medium w-[calc(100vw_-_15px)]"
+  >
+    <div class="container mx-auto px-6 md:px-12">
+      <MainHeader></MainHeader>
+    </div>
+
+    <div class="container mx-auto mt-24 px-6 md:px-12">
       <slot />
+    </div>
+    <div class="absolute fixed top-0 right-0 z-20 pr-10 pt-10">
+      <div
+        id="toast-wrap"
+        v-auto-animate
+        class="flex flex-col items-end justify-start gap-5"
+      ></div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-  component: {
-    name: "BaseLayout",
-  },
+  name: "BaseLayout",
 });
 </script>
+<script lang="ts" setup>
+import MainHeader from "../components/MainHeader.vue";
+</script>
+<style scoped>
+.basic {
+  background: linear-gradient(
+    113.69deg,
+    var(--deep-blue) 23.72%,
+    var(--deep-black-900) 81.45%
+  );
+}
+</style>

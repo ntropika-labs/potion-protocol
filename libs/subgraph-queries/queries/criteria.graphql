@@ -1,0 +1,43 @@
+fragment CriteriaSetsWithLiquidity on CriteriaJoinedCriteriaSet {
+  criteriaSet {
+    templates(where: { size_gt: 0, utilization_lt: 100 }) {
+      id
+    }
+  }
+}
+
+query getMaxStrikeForUnderlying($underlying: String, $alreadyLoadedIds: [Bytes!]) {
+  criterias(
+    where: { underlyingAsset: $underlying, id_not_in: $alreadyLoadedIds }
+    orderBy: maxStrikePercent
+    orderDirection: desc
+  ) {
+    id
+    maxStrikePercent
+    criteriaSets {
+      ...CriteriaSetsWithLiquidity
+    }
+  }
+}
+
+query getMaxDurationForStrike(
+  $underlying: String
+  $strike: BigDecimal
+  $alreadyLoadedIds: [Bytes!]
+) {
+  criterias(
+    where: {
+      underlyingAsset: $underlying
+      maxStrikePercent_gte: $strike
+      id_not_in: $alreadyLoadedIds
+    }
+    orderBy: maxDurationInDays
+    orderDirection: desc
+  ) {
+    id
+    maxDurationInDays
+    criteriaSets {
+      ...CriteriaSetsWithLiquidity
+    }
+  }
+}

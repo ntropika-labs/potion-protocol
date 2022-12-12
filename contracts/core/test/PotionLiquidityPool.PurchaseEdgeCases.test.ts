@@ -1,23 +1,30 @@
-import { waffle } from "hardhat";
 import { expect } from "chai";
-import { BigNumber } from "ethers";
+import { CurveCriteria, HyperbolicCurve } from "contracts-math";
+import { BigNumber, type Wallet } from "ethers";
+import { waffle } from "hardhat";
+
+import { deployDefaultCriteria, deployDefaultCurves } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
 import { CounterpartyDetails } from "../scripts/lib/purchaseHelpers";
-import { usdcDecimals, deployTestContracts, getTestOtoken, mintTokens, TestContracts } from "./helpers/testSetup";
-import { CurveCriteria, HyperbolicCurve } from "../scripts/lib/typeHelpers";
-
-const provider = waffle.provider;
-
 import {
+    CriteriaManager,
+    CurveManager,
     MockERC20,
     MockOracle,
     Otoken as OtokenInstance,
-    OtokenFactory, // Renamed from OtokenFactory for easy compatibility with hardhat-typechain, which generates a factory for the Otoken contract
+    OtokenFactory,
     PotionLiquidityPool,
-    CurveManager,
-    CriteriaManager,
 } from "../typechain";
-import { createTokenAmount, createScaledNumber as scaleNum } from "./helpers/OpynUtils";
-import { deployDefaultCurves, deployDefaultCriteria } from "../scripts/lib/postDeployActions/CurveAndCriteriaActions";
+import { createScaledNumber as scaleNum, createTokenAmount } from "./helpers/OpynUtils";
+import {
+    deployTestContracts,
+    getTestOtoken,
+    MintDestination,
+    mintTokens,
+    TestContracts,
+    usdcDecimals,
+} from "./helpers/testSetup";
+
+const provider = waffle.provider;
 
 // When testing purchases and settlements, we often want to run the same set of operations and the same set of checks.
 // This suite of tests does that, by generating a set of nearly-identical tests in the before() block.
@@ -26,7 +33,14 @@ import { deployDefaultCurves, deployDefaultCriteria } from "../scripts/lib/postD
 // To change what the generated tests *do*, edit the code that iterates through those arrays
 describe("PotionLiquidityPool - Edge and Error cases", function () {
     const wallets = provider.getWallets();
-    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets;
+    const [potionBuyer1, potionLp1, potionLp2, potionLp3, potionLp4, potionLp5] = wallets as [
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+        Wallet,
+    ];
     let usdcStartAmount: BigNumber;
 
     let testContracts: TestContracts;
@@ -85,7 +99,7 @@ describe("PotionLiquidityPool - Edge and Error cases", function () {
 
         // mint usdc to users
         usdcStartAmount = createTokenAmount(100000000, usdcDecimals);
-        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount }));
+        const mintings = wallets.map(w => ({ wallet: w, amount: usdcStartAmount } as MintDestination));
         await mintTokens(usdc, mintings, potionLiquidityPool.address);
 
         // Have LPs deposit collateral

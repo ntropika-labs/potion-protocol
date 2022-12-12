@@ -42,7 +42,6 @@ const init = (options: InitOptions): OnboardAPI => {
 
   useSubscription(
     web3Onboard.state.select().subscribe((update) => {
-      console.log("subscription handler", update);
       onboardState.value = update;
       updateAlreadyConnectedWallets();
     })

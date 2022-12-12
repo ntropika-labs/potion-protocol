@@ -17,5 +17,7 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "unocss.root": "apps/potion-dapp"
+  "unocss.root": "apps/potion-dapp",
+  "i18n-ally.localesPaths": ["libs/locales"],
+  "i18n-ally.keystyle": "nested"
 }

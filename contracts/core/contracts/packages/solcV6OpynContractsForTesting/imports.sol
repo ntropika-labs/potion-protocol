@@ -16,3 +16,4 @@ import { Otoken } from "gamma-protocol/contracts/core/Otoken.sol";
 import { OtokenFactory } from "gamma-protocol/contracts/core/OtokenFactory.sol";
 import { OtokenFactory } from "gamma-protocol/contracts/core/OtokenFactory.sol";
 import { Whitelist } from "gamma-protocol/contracts/core/Whitelist.sol";
+import { ChainLinkPricer } from "gamma-protocol/contracts/pricers/ChainlinkPricer.sol";

@@ -3,20 +3,15 @@ import { BigInt, BigDecimal, Bytes } from "@graphprotocol/graph-ts";
 import { OtokenCreated } from "../generated/OtokenFactoryContract/OtokenFactoryContract";
 import { OToken } from "../generated/schema";
 import { Otoken } from "../generated/OtokenFactoryContract/Otoken";
-import { createTokenId, collateralFixedtoDecimals } from "./token";
+import { collateralToDecimals } from "./token";
 import { bigIntToDecimal } from "./helpers";
 
-export function getOTokenIdFromEvent(event: OtokenCreated): string {
-  return event.params.tokenAddress.toHexString();
-}
-
-export function getOTokenIdFromAddress(tokenHexAdress: Bytes): string {
-  return tokenHexAdress.toHexString();
+export function getOTokenIdFromEvent(event: OtokenCreated): Bytes {
+  return event.params.tokenAddress;
 }
 
 export function getOtokenDecimals(address: Bytes): BigInt {
-  const id = getOTokenIdFromAddress(address);
-  const oTokenEntity = OToken.load(id)!;
+  const oTokenEntity = OToken.load(address)!;
   return oTokenEntity.decimals;
 }
 
@@ -48,9 +43,9 @@ export function handleOtokenCreate(event: OtokenCreated): void {
   }
   otoken.tokenAddress = event.params.tokenAddress;
   otoken.creator = event.params.creator;
-  otoken.underlyingAsset = createTokenId(event.params.underlying);
-  otoken.strikeAsset = createTokenId(event.params.strike);
-  otoken.collateralAsset = createTokenId(event.params.collateral);
+  otoken.underlyingAsset = event.params.underlying;
+  otoken.strikeAsset = event.params.strike;
+  otoken.collateralAsset = event.params.collateral;
   otoken.strikePrice = bigIntToDecimal(event.params.strikePrice, 8 as i32);
   otoken.expiry = event.params.expiry;
   otoken.isPut = event.params.isPut;
@@ -75,12 +70,11 @@ export function handleOtokenCreate(event: OtokenCreated): void {
  * @param {BigInt} collateralReturned Amount of collateral returned to Pools.
  */
 export function oTokenSettled(oToken: Bytes, collateralReturned: BigInt): void {
-  const oTokenID = getOTokenIdFromAddress(oToken);
-  const otoken = OToken.load(oTokenID);
+  const otoken = OToken.load(oToken);
 
   if (otoken) {
     otoken.settled = true;
-    otoken.liquiditySettled = collateralFixedtoDecimals(collateralReturned);
+    otoken.liquiditySettled = collateralToDecimals(collateralReturned);
     otoken.save();
   }
 }
@@ -99,17 +93,16 @@ export function oTokenIncrementLiquidity(
   liquidityCollateralized: BigInt,
   premiumReceived: BigInt
 ): void {
-  const oTokenID = getOTokenIdFromAddress(oTokenAddress);
-  const otoken = OToken.load(oTokenID);
+  const otoken = OToken.load(oTokenAddress);
   if (otoken) {
     const tokensDecimals = oTokenFixedtoDecimals(
       oTokenAddress,
       numberOfOtokens
     );
-    const liquidityCollateralizedDecimals = collateralFixedtoDecimals(
+    const liquidityCollateralizedDecimals = collateralToDecimals(
       liquidityCollateralized
     );
-    const premiumReceivedDecimals = collateralFixedtoDecimals(premiumReceived);
+    const premiumReceivedDecimals = collateralToDecimals(premiumReceived);
 
     otoken.numberOfOTokens = otoken.numberOfOTokens.plus(tokensDecimals);
     otoken.collateralized = otoken.collateralized.plus(
@@ -125,8 +118,7 @@ export function oTokenIncrementLiquidity(
  * @param {Bytes} oTokenAddress Address of the oToken.
  */
 export function oTokenIncrementPurchasesCount(oTokenAddress: Bytes): void {
-  const oTokenID = getOTokenIdFromAddress(oTokenAddress);
-  const otoken = OToken.load(oTokenID);
+  const otoken = OToken.load(oTokenAddress);
 
   if (otoken) {
     otoken.purchasesCount = otoken.purchasesCount.plus(

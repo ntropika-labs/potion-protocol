@@ -5,7 +5,6 @@
   "files": [
     "dist"
   ],
-  "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "nx": {
@@ -22,12 +21,20 @@
     "build-ui": "NODE_ENV=production vue-tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
     "watch": "vite build --watch",
     "preview": "vite preview",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "BROWSER=none start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "cypress": "cypress open",
+    "test-component-ci": "cypress run --component",
     "test-unit": "vitest run --environment jsdom",
     "test-unit-watch": "vitest watch --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint --ext .ts,.js,.vue src --fix  --ignore-path .gitignore",
     "format": "prettier --write 'src/**/*.{ts,js,vue}'"
+  },
+  "dependencies": {
+    "contracts-math": "*",
+    "dapp-types": "*",
+    "potion-tokenlist": "*",
+    "potion-unocss": "*"
   }
 }

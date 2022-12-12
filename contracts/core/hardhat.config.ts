@@ -7,6 +7,7 @@ import "hardhat-abi-exporter";
 import "hardhat-gas-reporter";
 import "hardhat-contract-sizer";
 import "solidity-coverage";
+import "solidity-docgen";
 
 import "./tasks/accounts";
 import "./tasks/clean";
@@ -105,12 +106,17 @@ const config: HardhatUserConfig = {
             "gamma-protocol.*:AddressBook$",
             "gamma-protocol.*:MarginCalculator$",
             "gamma-protocol.*:Oracle$",
+            "gamma-protocol.*:ChainLinkPricer$",
         ],
         spacing: 2,
         pretty: false,
     },
     etherscan: {
         apiKey: getEtherscanApiKey(),
+    },
+    docgen: {
+        outputDir: "reference",
+        templates: "templates",
     },
 };
 

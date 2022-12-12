@@ -1,0 +1,10 @@
+query allCollateralizedProductsUnderlying($collateral: String) {
+  products(where: { isWhitelisted: true, collateral: $collateral }) {
+    underlying {
+      address
+      decimals
+      name
+      symbol
+    }
+  }
+}

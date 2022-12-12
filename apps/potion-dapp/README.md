@@ -1,6 +1,8 @@
-# vue-starter
+# Potion DApp
 
-This template should help get you started developing with Vue 3 in Vite.
+This project contains the DApp of the Potion Protocol developed with Vue 3 in Vite.
+
+Before getting started please be sure to have installed the [Requirements](#requirements).
 
 ## Recommended IDE Setup
 
@@ -21,39 +23,116 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+## Requirements
+
+- [NodeJS](https://nodejs.org/en/download/) (v16)
+
+- [Yarn](https://yarnpkg.com/getting-started/install)
+
 ## Project Setup
 
 ```sh
-npm install
+yarn install
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+yarn dev
+```
+
+### Spin up Docker, Compile and Hot-Reload for Development
+
+```sh
+yarn local-dev
 ```
 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
-npm run build
+yarn build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Type-Check, Compile and Minify for Production with mocked `web3-onboard`
 
 ```sh
-npm run test:unit
+yarn build-test
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
 
 ```sh
-npm run build
-npm run test:e2e # or `npm run test:e2e:ci` for headless testing
+yarn build-test
+yarn test-e2e # or `yarn test-e2e-ci` for headless testing
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
-npm run lint
+yarn lint
 ```
+
+### NX custom commands
+
+Execution can be customized by passing the `redeploy` flag:
+
+- [DEFAULT] When `true` will instruct docker to always deploy a fresh environment (even if one is already available)
+- When `false` an existing environment will be used if any.
+  **WARNING: currently the script has no way of detecting an healthy enviroment and will only check for running containers**
+
+#### `local-dev`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev [redeploy=(true/false)]
+```
+
+Used to spin up the development environment.
+
+- Start `docker-compose` containers
+- Start `vite` dev server by running `yarn nx run potion-dapp:dev`
+
+_The command runs in **foreground**_
+
+#### `local-dev-test`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev-test [redeploy=(true/false)]
+```
+
+Used to spin up the development environment with mocked Onboard.
+
+- Start `docker-compose` containers
+- Start `vite` dev server **with mocked Onboard** by running `yarn nx run potion-dapp:dev-test`
+
+_The command runs in **foreground**_
+
+#### `local-dev-test-e2e`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-dev-test-e2e [redeploy=(true/false)]
+```
+
+Used as a utility command to run in parallel the dev server and Cypress client
+
+- Start `vite` dev server **with mocked Onboard** by running `yarn nx run potion-dapp:dev-test`
+- start `cypress` client by running `yarn nx run potion-dapp:test-e2e-dev`
+
+_The command runs in **foreground**, command needs to be terminated manually_
+
+#### `local-test-e2e`
+
+```bash
+EG:
+yarn nx run potion-dapp:local-test-e2e
+```
+
+- Start `docker-compose` containers
+- Run `yarn nx run potion-dapp:local-dev-test-e2e` to spin up the dev server and cypress client simultaneously
+
+_The command runs in **foreground**, command needs to be terminated manually_
+
+## Build for Testnet
+To build for a testnet, you need to use the command `build-testnet`. This command will use oracles to fetch prices instead of getting them from Coingecko.

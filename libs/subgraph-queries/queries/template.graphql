@@ -1,0 +1,149 @@
+fragment curveData on Curve {
+  a
+  b
+  c
+  d
+  maxUtil
+}
+
+fragment tokenInfo on Token {
+  address
+  decimals
+  name
+  symbol
+}
+
+fragment templateInfo on Template {
+  creator
+  id
+  numPools
+  pnlPercentage
+  size
+}
+
+fragment templateData on Template {
+  ...templateInfo
+  dailyData (orderBy: timestamp, orderDirection: asc) {
+    timestamp
+    pnl
+    liquidity
+    utilization
+  }
+  curve {
+    ...curveData
+  }
+  criteriaSet {
+    criterias {
+      criteria {
+        underlyingAsset {
+          ...tokenInfo
+        }
+        strikeAsset {
+          ...tokenInfo
+        }
+        maxStrikePercent
+        maxDurationInDays
+      }
+    }
+  }
+}
+
+fragment templateCardData on Template {
+  ...templateInfo
+  criteriaSet {
+    criterias {
+      criteria {
+        underlyingAsset {
+          ...tokenInfo
+        }
+      }
+    }
+  }
+}
+
+query mostPopularTemplates(
+  $size: BigDecimal!
+  $minClones: BigInt!
+  $minPnl: BigDecimal!
+  $orderDirection: OrderDirection = desc
+  $num: Int = 8
+) {
+  byNumber: templates(
+    where: { numPools_gt: $minClones }
+    orderBy: numPools
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+  bySize: templates(
+    where: { size_gt: $size }
+    orderBy: size
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+  byPnl: templates(
+    where: { pnlPercentage_gt: $minPnl }
+    orderBy: pnlPercentage
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesBySize(
+  $size: BigDecimal!
+  $orderDirection: OrderDirection = desc
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { size_gt: $size, id_not_in: $alreadyLoadedIds }
+    orderBy: size
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesByNumber(
+  $minClones: BigInt!
+  $orderDirection: OrderDirection = desc
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { numPools_gt: $minClones, id_not_in: $alreadyLoadedIds }
+    orderBy: numPools
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query loadMoreTemplatesByPnl(
+  $minPnl: BigDecimal!
+  $orderDirection: OrderDirection = desc
+  $alreadyLoadedIds: [ID!]
+  $num: Int = 8
+) {
+  templates(
+    where: { pnlPercentage_gt: $minPnl, id_not_in: $alreadyLoadedIds }
+    orderBy: pnlPercentage
+    orderDirection: $orderDirection
+    first: $num
+  ) {
+    ...templateCardData
+  }
+}
+
+query getTemplate($id: ID!) {
+  template(id: $id) {
+    ...templateData
+  }
+}

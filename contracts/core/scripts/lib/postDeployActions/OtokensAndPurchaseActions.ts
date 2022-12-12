@@ -1,14 +1,16 @@
-import { ethers } from "hardhat";
+import BigDecimal from "bignumber.js";
+import { CriteriaSet, CurveCriteria, HyperbolicCurve } from "contracts-math";
 import { BigNumber, BigNumberish, ContractFactory } from "ethers";
-import { CurveCriteria, HyperbolicCurve, CriteriaSet } from "../typeHelpers";
+import { ethers } from "hardhat";
+
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+
+import { Deployment } from "../../../deployments/deploymentConfig";
+import { createValidExpiry } from "../../../test/helpers/OpynUtils";
 import { MockOracle, Otoken as OtokenInstance, OtokenFactory } from "../../../typechain";
 import { DepositParams } from "../lpHelpers";
+import { OtokenParams, PostDeployAction, PostDeployActionResult, PostDeployActionsResults } from "../postDeploy";
 import { CounterpartyDetails, PurchaseParams } from "../purchaseHelpers";
-import { createValidExpiry } from "../../../test/helpers/OpynUtils";
-import { Deployment } from "../../../deployments/deploymentConfig";
-import { PostDeployAction, PostDeployActionResult, PostDeployActionsResults, OtokenParams } from "../postDeploy";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import BigDecimal from "bignumber.js";
 
 // We select buyers from from the back of the list (in reverse), so for a small number of LPs and buyers they will not overlap
 export async function getBuyers(count?: number): Promise<SignerWithAddress[]> {

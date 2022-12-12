@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">99.57% </span>
+        <span class="strong">99.4% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>231/232</span>
+        <span class='fraction'>167/168</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">67.86% </span>
+        <span class="strong">70.9% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>57/84</span>
+        <span class='fraction'>95/134</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -2368,7 +2368,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
         address _poolCollateralToken,
         address _curveManager,
         address _criteriaManager
-    ) external initializer {
+    ) external <span class="missing-if-branch" title="else path not taken" >E</span>initializer {
         __Ownable_init();
         __Pausable_init_unchained();
         sumOfAllUnlockedBalances = 0;
@@ -2533,21 +2533,21 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      * @notice Set the total max value locked per user in a Pool of Capital.
      * @param _newMax The new total max value locked.
      */
-    function setMaxTotalValueLocked(uint256 _newMax) external onlyOwner whenNotPaused {
+    function setMaxTotalValueLocked(uint256 _newMax) external onlyOwner <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused {
         maxTotalValueLocked = _newMax;
     }
 &nbsp;
     /**
      * @notice Allows the admin to pause the whole system
      */
-    function pause() external onlyOwner whenNotPaused {
+    function pause() external onlyOwner <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused {
         _pause();
     }
 &nbsp;
     /**
      * @notice Allows the admin to unpause the whole system
      */
-    function unpause() external onlyOwner whenPaused {
+    function unpause() external onlyOwner <span class="missing-if-branch" title="else path not taken" >E</span>whenPaused {
         _unpause();
     }
 &nbsp;
@@ -2557,7 +2557,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      * @dev The `CurveManager` can be changed while paused, in case this is required to address security issues
      * @param _new The new address of the CurveManager
      */
-    function setCurveManager(ICurveManager _new) external onlyOwner {
+    function setCurveManager(ICurveManager _new) external <span class="missing-if-branch" title="else path not taken" >E</span>onlyOwner {
         crv = _new;
     }
 &nbsp;
@@ -2567,7 +2567,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      * @dev The `CriteriaManager` can be changed while paused, in case this is required to address security issues
      * @param _new The new address of the CriteriaManager
      */
-    function setCriteriaManager(ICriteriaManager _new) external onlyOwner {
+    function setCriteriaManager(ICriteriaManager _new) external <span class="missing-if-branch" title="else path not taken" >E</span>onlyOwner {
         crit = _new;
     }
 &nbsp;
@@ -3098,7 +3098,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      */
     function settleAndRedistributeSettlement(OtokenInterface _otoken, PoolIdentifier[] calldata _pools)
         external
-        whenNotPaused
+        <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused
     {
         settleAfterExpiry(_otoken);
         redistributeSettlement(_otoken, _pools);
@@ -3117,7 +3117,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
         uint256 _amount,
         ICurveManager.Curve memory _curve,
         ICriteriaManager.Criteria[] memory _criterias
-    ) external whenNotPaused {
+    ) external <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused {
         addAndSetCurve(_poolId, _curve);
         addAndSetCriterias(_poolId, _criterias);
 &nbsp;
@@ -3131,7 +3131,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      * @param _poolId The identifier for a PoolOfCapital belonging to the caller. Could be an existing pool or a new one.
      * @param _curve The Curve to add and set in the pool.
      */
-    function addAndSetCurve(uint256 _poolId, ICurveManager.Curve memory _curve) public whenNotPaused {
+    function addAndSetCurve(uint256 _poolId, ICurveManager.Curve memory _curve) public <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused {
         bytes32 curveHash = crv.addCurve(_curve);
         setCurve(_poolId, curveHash);
     }
@@ -3142,7 +3142,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
      * @param _poolId The identifier for a PoolOfCapital belonging to the caller. Could be an existing pool or a new one.
      * @param _criterias A sorted array of Criteria, ordered by Criteria hash.
      */
-    function addAndSetCriterias(uint256 _poolId, ICriteriaManager.Criteria[] memory _criterias) public whenNotPaused {
+    function addAndSetCriterias(uint256 _poolId, ICriteriaManager.Criteria[] memory _criterias) public <span class="missing-if-branch" title="else path not taken" >E</span>whenNotPaused {
         uint256 criteriasLength = _criterias.length;
         bytes32[] memory criteriaHashes = new bytes32[](criteriasLength);
         for (uint256 i = 0; i &lt; criteriasLength; i++) {
@@ -3439,7 +3439,7 @@ contract PotionLiquidityPool is PausableUpgradeable, OwnableUpgradeable {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu May 05 2022 11:54:59 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 13 2022 17:37:16 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

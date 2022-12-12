@@ -1,10 +1,10 @@
-import { ethers } from "hardhat";
-import { expect, assert } from "chai";
-import { Int59x18 } from "../scripts/lib/math59x18";
-import { HyperbolicCurve } from "../scripts/lib/typeHelpers";
-import { CurveManager } from "../typechain";
-import { HyperbolicCurveTestCase, PowerDecimalTestCase, CoshTestCase } from "./helpers/testCases";
 import BigDecimal from "bignumber.js";
+import { assert, expect } from "chai";
+import { HyperbolicCurve, Int59x18 } from "contracts-math";
+import { ethers } from "hardhat";
+
+import { CurveManager } from "../typechain";
+import { CoshTestCase, HyperbolicCurveTestCase, PowerDecimalTestCase } from "./helpers/testCases";
 
 describe("CurveManager math", function () {
     let curveManager: CurveManager;

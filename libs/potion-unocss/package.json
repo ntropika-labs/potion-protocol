@@ -1,0 +1,10 @@
+{
+  "name": "potion-unocss",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/unocss.config.ts",
+  "types": "./src/unocss.config.ts",
+  "files": [
+    "./src/variables.css"
+  ]
+}

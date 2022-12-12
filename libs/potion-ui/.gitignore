@@ -23,3 +23,7 @@ storybook-static
 *.njsproj
 *.sln
 *.sw?
+
+# Cypress videos and screenshots
+cypress/videos
+cypress/screenshots

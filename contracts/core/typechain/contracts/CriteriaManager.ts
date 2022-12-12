@@ -24,15 +24,16 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "../common";
 
 export declare namespace ICriteriaManager {
   export type CriteriaStruct = {
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
-    maxStrikePercent: BigNumberish;
-    maxDurationInDays: BigNumberish;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
+    maxStrikePercent: PromiseOrValue<BigNumberish>;
+    maxDurationInDays: PromiseOrValue<BigNumberish>;
   };
 
   export type CriteriaStructOutput = [
@@ -50,11 +51,11 @@ export declare namespace ICriteriaManager {
   };
 
   export type OtokenPropertiesStruct = {
-    percentStrikeValue: BigNumberish;
-    wholeDaysRemaining: BigNumberish;
-    underlyingAsset: string;
-    strikeAsset: string;
-    isPut: boolean;
+    percentStrikeValue: PromiseOrValue<BigNumberish>;
+    wholeDaysRemaining: PromiseOrValue<BigNumberish>;
+    underlyingAsset: PromiseOrValue<string>;
+    strikeAsset: PromiseOrValue<string>;
+    isPut: PromiseOrValue<boolean>;
   };
 
   export type OtokenPropertiesStructOutput = [
@@ -104,11 +105,11 @@ export interface CriteriaManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addCriteriaSet",
-    values: [BytesLike[]]
+    values: [PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "criteriaSetByHash",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "hashCriteria",
@@ -116,19 +117,19 @@ export interface CriteriaManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "hashOfSortedHashes",
-    values: [BytesLike[]]
+    values: [PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isCriteriaSetHash",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "isInCriteriaSet",
-    values: [BytesLike, BytesLike]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "registeredCriteria",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "requireOtokenMeetsCriteria",
@@ -236,16 +237,16 @@ export interface CriteriaManager extends BaseContract {
   functions: {
     addCriteria(
       _criteria: ICriteriaManager.CriteriaStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     addCriteriaSet(
-      _hashes: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _hashes: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     criteriaSetByHash(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { exists: boolean }>;
 
@@ -255,23 +256,23 @@ export interface CriteriaManager extends BaseContract {
     ): Promise<[string]>;
 
     hashOfSortedHashes(
-      _hashes: BytesLike[],
+      _hashes: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     isCriteriaSetHash(
-      _criteriaSetHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { valid: boolean }>;
 
     isInCriteriaSet(
-      _criteriaSetHash: BytesLike,
-      _criteriaHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      _criteriaHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { isInSet: boolean }>;
 
     registeredCriteria(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -284,16 +285,16 @@ export interface CriteriaManager extends BaseContract {
 
   addCriteria(
     _criteria: ICriteriaManager.CriteriaStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   addCriteriaSet(
-    _hashes: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _hashes: PromiseOrValue<BytesLike>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   criteriaSetByHash(
-    arg0: BytesLike,
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -303,23 +304,23 @@ export interface CriteriaManager extends BaseContract {
   ): Promise<string>;
 
   hashOfSortedHashes(
-    _hashes: BytesLike[],
+    _hashes: PromiseOrValue<BytesLike>[],
     overrides?: CallOverrides
   ): Promise<string>;
 
   isCriteriaSetHash(
-    _criteriaSetHash: BytesLike,
+    _criteriaSetHash: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isInCriteriaSet(
-    _criteriaSetHash: BytesLike,
-    _criteriaHash: BytesLike,
+    _criteriaSetHash: PromiseOrValue<BytesLike>,
+    _criteriaHash: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   registeredCriteria(
-    arg0: BytesLike,
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -336,12 +337,12 @@ export interface CriteriaManager extends BaseContract {
     ): Promise<string>;
 
     addCriteriaSet(
-      _hashes: BytesLike[],
+      _hashes: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<string>;
 
     criteriaSetByHash(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -351,23 +352,23 @@ export interface CriteriaManager extends BaseContract {
     ): Promise<string>;
 
     hashOfSortedHashes(
-      _hashes: BytesLike[],
+      _hashes: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<string>;
 
     isCriteriaSetHash(
-      _criteriaSetHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isInCriteriaSet(
-      _criteriaSetHash: BytesLike,
-      _criteriaHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      _criteriaHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     registeredCriteria(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -380,20 +381,20 @@ export interface CriteriaManager extends BaseContract {
 
   filters: {
     "CriteriaAdded(bytes32,tuple)"(
-      criteriaHash?: BytesLike | null,
+      criteriaHash?: PromiseOrValue<BytesLike> | null,
       criteria?: null
     ): CriteriaAddedEventFilter;
     CriteriaAdded(
-      criteriaHash?: BytesLike | null,
+      criteriaHash?: PromiseOrValue<BytesLike> | null,
       criteria?: null
     ): CriteriaAddedEventFilter;
 
     "CriteriaSetAdded(bytes32,bytes32[])"(
-      criteriaSetHash?: BytesLike | null,
+      criteriaSetHash?: PromiseOrValue<BytesLike> | null,
       criteriaSet?: null
     ): CriteriaSetAddedEventFilter;
     CriteriaSetAdded(
-      criteriaSetHash?: BytesLike | null,
+      criteriaSetHash?: PromiseOrValue<BytesLike> | null,
       criteriaSet?: null
     ): CriteriaSetAddedEventFilter;
   };
@@ -401,16 +402,16 @@ export interface CriteriaManager extends BaseContract {
   estimateGas: {
     addCriteria(
       _criteria: ICriteriaManager.CriteriaStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     addCriteriaSet(
-      _hashes: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _hashes: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     criteriaSetByHash(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -420,23 +421,23 @@ export interface CriteriaManager extends BaseContract {
     ): Promise<BigNumber>;
 
     hashOfSortedHashes(
-      _hashes: BytesLike[],
+      _hashes: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isCriteriaSetHash(
-      _criteriaSetHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isInCriteriaSet(
-      _criteriaSetHash: BytesLike,
-      _criteriaHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      _criteriaHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registeredCriteria(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -450,16 +451,16 @@ export interface CriteriaManager extends BaseContract {
   populateTransaction: {
     addCriteria(
       _criteria: ICriteriaManager.CriteriaStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     addCriteriaSet(
-      _hashes: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _hashes: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     criteriaSetByHash(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -469,23 +470,23 @@ export interface CriteriaManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     hashOfSortedHashes(
-      _hashes: BytesLike[],
+      _hashes: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isCriteriaSetHash(
-      _criteriaSetHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isInCriteriaSet(
-      _criteriaSetHash: BytesLike,
-      _criteriaHash: BytesLike,
+      _criteriaSetHash: PromiseOrValue<BytesLike>,
+      _criteriaHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     registeredCriteria(
-      arg0: BytesLike,
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
