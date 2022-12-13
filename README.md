@@ -222,7 +222,7 @@ This is what happens locally behind the scenes to start and seed the environment
       G(gamma-protocol)
       H([contracts-math])
       I([contracts-utils])
-      J([dapp-helpers])
+      J([dapp-types])
       K([hardhat-helpers])
       L([hedging-vault-sdk])
       M([locales])
