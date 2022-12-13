@@ -214,34 +214,37 @@ This is what happens locally behind the scenes to start and seed the environment
 ```mermaid
     graph TD;
       A[potion-dapp]
-      A --> C;
-      A --> D;
-      A --> E;
-      A --> F;
-      A --> G;
-      A --> H;
-      A --> I;
-      A --> J;
-      B[(potion-subgraph)];
-      C([potion-ui]);
-      C --> E;
-      C --> F;
-      C --> G;
-      C --> J;
-      D([potion-router]);
-      D --> E;
-      D --> H;
-      D --> I;
-      D --> J;
-      E([dapp-types]);
-      F([potion-tokenlist]);
-      G([potion-unocss]);
-      H([subgraph-queries]);
-      I[potion-contracts];
-      I --> J;
-      I --> K;
-      J([contracts-math]);
-      K([gamma-protocol]);
+      B[price-source-benchmark]
+      C[(subgraph)]
+      D(contracts-core)
+      E(gamma-protocol)
+      F([contracts-math])
+      G([dapp-types])
+      H([locales])
+      I([potion-router])
+      J([potion-tokenlist])
+      K([potion-ui])
+      L([potion-unocss])
+      M([subgraph-queries])
+      C --> M
+      D --> A
+      D --> C
+      E --> D
+      F --> A
+      F --> D
+      G --> A
+      G --> K
+      H --> A
+      H --> B
+      I --> A
+      J --> A
+      J --> B
+      K --> A
+      K --> B
+      L --> A
+      L --> B
+      L --> K
+      M --> A
 ```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
