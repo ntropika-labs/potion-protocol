@@ -212,41 +212,40 @@ This is what happens locally behind the scenes to start and seed the environment
 ## Monorepo overview
 
 ```mermaid
-    graph TD;
-      A[potion-dapp]
-      B[price-source-benchmark]
-      C[(subgraph)]
-      D(contracts-core)
-      E(gamma-protocol)
-      F([contracts-math])
-      G([dapp-types])
-      H([locales])
-      I([potion-router])
-      J([potion-tokenlist])
-      K([potion-ui])
-      L([potion-unocss])
-      M([subgraph-queries])  
-      subgraph PC[Potion contracts]
-        E ==> D
-      end
-      subgraph PD[Potion Dapp]
-        F --> A
-        I --> A
-      end
-      subgraph PS[Potion Subgraph]
-        C --> M
-      end
-      subgraph PU[Potion UI]
-        G -.-> K
-        H --> K
-        J --> K
-        L --> K
-      end
-      PC -.-> PD
-      PC --> PS
-      PS --> PD
-      PU --> B
-      PU --> PD
+flowchart TD;
+  A[potion-dapp];
+  B[price-source-benchmark];
+  C[(subgraph)];
+  D(contracts-core);
+  E(gamma-protocol);
+  F([contracts-math]);
+  G([dapp-types]);
+  H([locales]);
+  I([potion-router]);
+  J([potion-tokenlist]);
+  K([potion-ui]);
+  L([potion-unocss]);
+  M([subgraph-queries]);  
+  subgraph PC[Potion contracts];
+    E ==> D;
+  end
+  subgraph PD[Potion Dapp]
+    F --> A;
+    I --> A;
+  end
+  subgraph PS[Potion Subgraph]
+    C --> M;
+  end
+  subgraph PU[Potion UI]
+    G -.-> K;
+    H --> K;
+    J --> K;
+    L --> K;
+  end
+  PC -. Provide types .-> PD;
+  PC -- Provide ABIs --> PS;
+  PS -- Providess data --> PD;
+  PU -- Provides UI component and utilities ---> B & PD;
 ```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
