@@ -67,10 +67,6 @@ export function getRateInUD60x18(
 ): BigNumber {
     const tenBn = BigNumber.from(10);
 
-    // const fpInputTokenPriceInUSD = toNumber(inputTokenPriceInUSD, inputTokenDecimals_);
-    // const fpOutputTokenPriceInUSD = toNumber(outputTokenPriceInUSD, outputTokenDecimals_);
-    // const rate = toBn(String(fpInputTokenPriceInUSD / fpOutputTokenPriceInUSD));
-
     const inputTokenPriceInUSD = parseAmount(inputTokenPriceInUSD_, 8);
     const outputTokenPriceInUSD = parseAmount(outputTokenPriceInUSD_, 8);
     const rate = inputTokenPriceInUSD.mul(tenBn.pow(18)).div(outputTokenPriceInUSD);
