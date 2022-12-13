@@ -33,3 +33,7 @@ Contains the calculation for the vault collateralization aproximation. This calc
 ### vaultEstimations.ts
 
 Contains several calculation used in the front-end to calculate the different values that are needed for the Operator to estimate the balance that will be present in the Vault for the next round. Due to the fact that this amount will depend on the price of the hedged asset, the functions in this file try to aid the calculations by estimating different values. The functions are not integrated yet in the Operator page, but some are used in the front-end.
+
+### exchangeInputForOutput.ts
+
+Contains the logic and calculations to swap deposit tokens for withdrawal tokens. Those methods are used in the Hedging Vault page.
