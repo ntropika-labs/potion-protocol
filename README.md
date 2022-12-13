@@ -212,59 +212,67 @@ This is what happens locally behind the scenes to start and seed the environment
 ## Monorepo overview
 
 ```mermaid
-    graph TD;
-      A[potion-dapp]
-      B[price-source-benchmark]
-      C[(subgraph)]
-      D[(subgraph-hv)]
-      E("@potion-protocol/core")
-      F("@potion-protocol/hedging-vault")
-      G(gamma-protocol)
-      H([contracts-math])
-      I([contracts-utils])
-      J([dapp-types])
-      K([hardhat-helpers])
-      L([hedging-vault-sdk])
-      M([locales])
-      N([potion-router])
-      O([potion-tokenlist])
-      P([potion-ui])
-      Q([potion-unocss])
-      R([subgraph-queries])
-      S([subgraph-queries-hv])
-      T>multivault-helpers]
-      A --> T
-      C --> R
-      D --> S
-      D --> T
-      E --> A
-      E --> C
-      E --> F
-      F --> A
-      F --> D
-      G --> E
-      H --> A
-      H --> E
-      I --> E
-      I --> F
-      J --> A
-      J --> P
-      K --> E
-      K --> F
-      L --> A
-      L --> F
-      M --> A
-      M --> B
-      N --> A
-      O --> A
-      O --> B
-      P --> A
-      P --> B
-      Q --> A
-      Q --> B
-      Q --> P
-      R --> A
-      S --> A
+flowchart TD;
+  A[potion-dapp]
+  B[price-source-benchmark]
+  C[(subgraph)]
+  D[(subgraph-hv)]
+  E("@potion-protocol/core")
+  F("@potion-protocol/hedging-vault")
+  G(gamma-protocol)
+  H([contracts-math])
+  I([contracts-utils])
+  J([dapp-types])
+  K([hardhat-helpers])
+  L([hedging-vault-sdk])
+  M([locales])
+  N([potion-router])
+  O([potion-tokenlist])
+  P([potion-ui])
+  Q([potion-unocss])
+  R([subgraph-queries])
+  S([subgraph-queries-hv])
+  T[[multivault-helpers]]
+  subgraph CHLP [Contracts Helpers]
+    I
+    K
+  end
+  subgraph PCC [Potion Contracts Core]
+    G ==> E
+  end
+  subgraph PCHV [Potion Contracts Hedging Vault]
+    F
+  end
+  subgraph PD [Potion Dapp]
+    N --> A
+  end
+  subgraph PSC [Potion Subgraph Core]
+    C --> R 
+  end
+  subgraph PSHV [Potion Subgraph Hedging Vault]
+    D --> S
+  end
+  subgraph PU [Potion UI]
+    J -.-> P
+    O --> P
+    M --> P
+    Q --> P
+  end
+  subgraph SDK [SDKs]
+    H 
+    L
+  end
+  CHLP -- Provides helpers for common functionalities ---> PCC & PCHV
+  PCC == Use the liquidity pools ==> PCHV
+  PCC -- Provides ABIs --> PSC
+  PCHV -- Provides ABIs --> PSHV
+  PCC & PCHV -. Provides types .-> PD
+  PSC & PSHV -- Provides data --> PD
+  PU -- Provides UI Components and utilities --> PD & B
+  SDK -. Provides functions used in unit tests ..-> PCC & PCHV
+  SDK -- Provides functions used to do computations --> PD
+  T -- Provides scripts to manage multiple vaults --> PCHV & PD
+
 ```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
