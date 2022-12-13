@@ -214,34 +214,57 @@ This is what happens locally behind the scenes to start and seed the environment
 ```mermaid
     graph TD;
       A[potion-dapp]
-      A --> C;
-      A --> D;
-      A --> E;
-      A --> F;
-      A --> G;
-      A --> H;
-      A --> I;
-      A --> J;
-      B[(potion-subgraph)];
-      C([potion-ui]);
-      C --> E;
-      C --> F;
-      C --> G;
-      C --> J;
-      D([potion-router]);
-      D --> E;
-      D --> H;
-      D --> I;
-      D --> J;
-      E([dapp-types]);
-      F([potion-tokenlist]);
-      G([potion-unocss]);
-      H([subgraph-queries]);
-      I[@potion-protocol/core];
-      I --> J;
-      I --> K;
-      J([contracts-math]);
-      K([gamma-protocol]);
+      B[price-source-benchmark]
+      C[(subgraph)]
+      D[(subgraph-hv)]
+      E("@potion-protocol/core")
+      F("@potion-protocol/hedging-vault")
+      G(gamma-protocol)
+      H([contracts-math])
+      I([contracts-utils])
+      J([dapp-helpers])
+      K([hardhat-helpers])
+      L([hedging-vault-sdk])
+      M([locales])
+      N([potion-router])
+      O([potion-tokenlist])
+      P([potion-ui])
+      Q([potion-unocss])
+      R([subgraph-queries])
+      S([subgraph-queries-hv])
+      T>multivault-helpers]
+      A --> T
+      C --> R
+      D --> S
+      D --> T
+      E --> A
+      E --> C
+      E --> F
+      F --> A
+      F --> D
+      G --> E
+      H --> A
+      H --> E
+      I --> E
+      I --> F
+      J --> A
+      J --> P
+      K --> E
+      K --> F
+      L --> A
+      L --> F
+      M --> A
+      M --> B
+      N --> A
+      O --> A
+      O --> B
+      P --> A
+      P --> B
+      Q --> A
+      Q --> B
+      Q --> P
+      R --> A
+      S --> A
 ```
 
 This repository hosts all of the code for the Potion Protocol and as such comprises:
