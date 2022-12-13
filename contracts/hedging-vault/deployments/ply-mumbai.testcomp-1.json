@@ -1,5 +1,5 @@
 {
-  "timestamp": 1669890874,
+  "timestamp": 1670931736,
   "network": "ply-mumbai",
   "contracts": {
     "USDC": {
@@ -35,32 +35,32 @@
       "blockNumber": 0
     },
     "HedgingVaultOrchestrator": {
-      "address": "0x72AB524b5924CF6e0Bbd13860CC28B5Da46f6FB1",
-      "blockNumber": 29431623
+      "address": "0x10aB49C449D8f0A7a8aFAcc6BE198720dff6D4a7",
+      "blockNumber": 29639785
     },
     "PotionBuyAction": {
-      "address": "0xF661bb0b1adBDc2CA1170318E13ef91636aA036a",
-      "blockNumber": 29431625
+      "address": "0xF1a01Dd332E3eeC9881Cf4ce7d775c5601615904",
+      "blockNumber": 29639809
     },
     "SwapToUSDCAction": {
-      "address": "0x43e317A2f451c845b13839562D13F6C74bfF63FA",
-      "blockNumber": 29431628
+      "address": "0xdF66A8ABD5abe0C8739B845AB29818856236a46e",
+      "blockNumber": 29639813
     },
     "InvestmentVault": {
-      "address": "0xfcDA1542A74064CcFa4D7392879B9EbC5b4880F7",
-      "blockNumber": 29431631
+      "address": "0x19EA07578D02D4585Ac226eD1eE8ed75e4a4684B",
+      "blockNumber": 29639817
     },
     "RoundsInputVault": {
-      "address": "0x1300cF8D3c9636505A21eB87F279a7dB077A55D1",
-      "blockNumber": 29431635
+      "address": "0x43dB9A2223F8a64C3826E5E4DB2b07296fF49208",
+      "blockNumber": 29639821
     },
     "RoundsOutputVault": {
-      "address": "0xF5E8AdbCE6874295766c2a6F0c2c89f6Af2F0a0E",
-      "blockNumber": 29431638
+      "address": "0x6225B252b7A1368cF24cDBB794f77dEE9674cF50",
+      "blockNumber": 29639824
     },
     "RoundsVaultExchanger": {
-      "address": "0x0F70578Db6331f68c2990ccAc3C5a3901F223559",
-      "blockNumber": 29431640
+      "address": "0x1DfCC7Ef83D90D49479Fa9a964557A3477AFAa66",
+      "blockNumber": 29639828
     }
   }
 }
