@@ -416,7 +416,7 @@ CHAIN_TIME="2021-01-01 08:00:00+00:00"
 - `VITE_SUBGRAPH_HV_ADDRESS` - Absolute url pointing to a running [Graph Node](https://github.com/graphprotocol/graph-node) deployment.  
   Changes to the value must also be reflected in:
 
-  - [apps/subgraph/package.json](./apps/subgraph-hv/package.json) - Setup and deploy scripts are referencing the subgraph by its name `potion-hv-subgraph`
+  - [apps/subgraph-hv/package.json](./apps/subgraph-hv/package.json) - Setup and deploy scripts are referencing the subgraph by its name `potion-hv-subgraph`
   - [docker-compose.yml](./docker-compose.yml) - Changing the default port number requires to update the list of exposed ports for the `graph-node` service
 
 - `VITE_DEVELOPMENT_MNEMONIC` and `DEPLOYER_MNEMONIC` - A passphrase of 12 or 24 words. these two must always match

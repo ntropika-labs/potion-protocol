@@ -112,11 +112,12 @@ Ganace is used internally to run e2e tests
     ./bin/setup-local-env
     ```
 
-10.  To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.
-    ```bash
-    yarn dev potion-dapp
-    ```
-    This will make the Vite development server available on `localhost:5173`
+
+To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.
+```bash
+yarn dev potion-dapp
+```
+This will make the Vite development server available on `localhost:5173`
 
 
 
