@@ -47,7 +47,13 @@ Run `cp .env.example .env` to copy the environment example file and customize th
 
 - Run `yarn dev potion-dapp` to start Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`  
   or  
-  `yarn nx run potion-dapp:local-dev-test` to spin up docker environment and start Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
+  `yarn nx run potion-dapp:dev-test` to spin up docker environment and start Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
+
+WARNING: We found out Ganache has some issues with transactions. We advise you to use Hardhat to test the app locally. To do so:
+
+- run `yarn nx run @potion-protocol/hedging-vault:hardhat-localnode`. This command will spin the hardhat node.
+- run `./bin/create-hardhat-env`. this command will deploy everything.
+- yarn nx run potion-dapp:
 
 ## Using ganache databases
 
