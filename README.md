@@ -23,7 +23,7 @@ You can run the `bin/check-dependencies` script to check if everything is instal
 
 ## Quick Start
 
-[Setup instructions](./setup_instructions.md)
+First of all, follow the [Setup instructions](./setup_instructions.md).
 
 Some configuration is required before spinning up the environment.  
 Run `cp .env.example .env` to copy the environment example file and customize the following variables:
@@ -137,10 +137,12 @@ Every time that you do a fast forward remember to update your starting time to r
 ## Testing
 
 ### unit test
+
 The project implements unit tests for `@potion-protocol/core` with [Hardhat](https://hardhat.org/), `potion-subgraph` with [Matchstick](https://thegraph.com/docs/en/developing/unit-testing-framework/) and [Vitest](https://vitest.dev) for `potion-dapp` and `potion-ui`.
 Every package has at least one script (eg, `test-unit`) to launch them, for more details check the specific `package.json` of that package.
 
 ### e2e
+
 The project currently implements e2e testing for `potion-dapp` and component testing for `potion-ui`.
 Both workspaces are configured to use [Cypress](https://github.com/cypress-io/cypress) as a testing tool.
 
@@ -247,7 +249,7 @@ flowchart TD;
     N --> A
   end
   subgraph PSC [Potion Subgraph Core]
-    C --> R 
+    C --> R
   end
   subgraph PSHV [Potion Subgraph Hedging Vault]
     D --> S
@@ -259,7 +261,7 @@ flowchart TD;
     Q --> P
   end
   subgraph SDK [SDKs]
-    H 
+    H
     L
   end
   CHLP -- Provides helpers for common functionalities ---> PCC & PCHV
