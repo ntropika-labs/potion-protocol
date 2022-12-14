@@ -45,9 +45,9 @@ Run `cp .env.example .env` to copy the environment example file and customize th
 
 - Run `./bin/setup-local-env` to bootstrap your development environment
 
-- Run `yarn dev potion-dapp` to start Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:3000`  
+- Run `yarn dev potion-dapp` to start Vite development server for [Potion DApp](#appspotion-dapp) on `localhost:5173`  
   or  
-  `yarn nx run potion-dapp:local-dev-test` to spin up docker environment and start Vite development for [Potion DApp](#appspotion-dapp) on `localhost:3000` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
+  `yarn nx run potion-dapp:local-dev-test` to spin up docker environment and start Vite development for [Potion DApp](#appspotion-dapp) on `localhost:5173` with a [mocked](#mocked-web3-onboard) instance of `web3-onboard` (useful for testing or if you can't connect a wallet)
 
 ## Using ganache databases
 
@@ -152,7 +152,7 @@ Tests are located within `cypress/e2e` folder.
 
 - Spin up Docker environment if not started
 - Copy `ganache_seeds` to `DATABASE_PATH` folder
-- Start Vite development server with mocked onboard with files from your latest build on `localhost:3000`
+- Start Vite development server with mocked onboard with files from your latest build on `localhost:5173`
 - Open Cypress with an interactive session
 
 #### `yarn nx run potion-dapp:ci-test-e2e`
@@ -167,8 +167,8 @@ Tests are located within `cypress/e2e` folder.
 To have more control over what commands are issues to start the testing environment you can use:
 
 - `yarn nx run potion-dapp:test-e2e`: Start Vite preview server with files from your latest build and open Cypress interactive session
-- `yarn nx run potion-dapp:test-e2e-dev`: Open Cypress interactive session for an existing Vite development server running on `localhost:3000`
-- `yarn nx run potion-dapp:test-e2e-ci-dev`: Run the whole test suite with Cypress headless mode for an existing Vite development server running on `localhost:3000`
+- `yarn nx run potion-dapp:test-e2e-dev`: Open Cypress interactive session for an existing Vite development server running on `localhost:5173`
+- `yarn nx run potion-dapp:test-e2e-ci-dev`: Run the whole test suite with Cypress headless mode for an existing Vite development server running on `localhost:5173`
 - `yarn nx run potion-dapp:test-e2e-ci`: Start Vite preview server with files from your latest build and run the test suite with Cypress headless mode
 
 ### Potion UI testing
@@ -382,6 +382,7 @@ The project allows for customizing various aspects of it also affecting differen
 
 ```bash
 VITE_SUBGRAPH_ADDRESS="http://localhost:8000/subgraphs/name/potion-subgraph"
+VITE_SUBGRAPH_HV_ADDRESS="http://localhost:8000/subgraphs/name/potion-hv-subgraph" # subgraph address for hedging vault contracts
 VITE_DEVELOPMENT_MNEMONIC="test test test test test test test test test test test junk"
 DEPLOYER_MNEMONIC="test test test test test test test test test test test junk"
 VITE_BLOCKNATIVE_API_KEY="your BlockNative API key"
@@ -410,6 +411,12 @@ CHAIN_TIME="2021-01-01 08:00:00+00:00"
   Changes to the value must also be reflected in:
 
   - [apps/subgraph/package.json](./apps/subgraph/package.json) - Setup and deploy scripts are referencing the subgraph by its name `potion-subgraph`
+  - [docker-compose.yml](./docker-compose.yml) - Changing the default port number requires to update the list of exposed ports for the `graph-node` service
+
+- `VITE_SUBGRAPH_HV_ADDRESS` - Absolute url pointing to a running [Graph Node](https://github.com/graphprotocol/graph-node) deployment.  
+  Changes to the value must also be reflected in:
+
+  - [apps/subgraph/package.json](./apps/subgraph-hv/package.json) - Setup and deploy scripts are referencing the subgraph by its name `potion-hv-subgraph`
   - [docker-compose.yml](./docker-compose.yml) - Changing the default port number requires to update the list of exposed ports for the `graph-node` service
 
 - `VITE_DEVELOPMENT_MNEMONIC` and `DEPLOYER_MNEMONIC` - A passphrase of 12 or 24 words. these two must always match
