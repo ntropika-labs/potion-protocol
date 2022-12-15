@@ -390,3 +390,19 @@ CHAIN_TIME="2021-01-01 08:00:00+00:00"
 ### Environment variables
 
 See `.env.example` for available environment variables and their purpose.
+
+## Updating packages
+
+### Packages that shouldn't be updated without a reason
+
+- `@openzeppelin/contracts` and `@openzeppelin/contracts-core` should be updated only if there is a critical vulnerability known: they are considered part of the audit, so updating them will make the resulting deployment not compliant with it
+- `@types/node` major version should always match the node version used by the project: it is suggested to always use an LTS version of node, and just to be safer to not immediately switch to the latest LTS major version
+
+### How to perform a dependency update
+
+- try to always update related packages at the same time (eg, storybook and its subpackages) in a single commit, this way it is easier to just revert a single update that went wrong
+- run the relevant unit/component/e2e test suite after every update
+
+#### Known dependencies between packages
+- `graph-cli`, `graph-ts` and `matchstick` should always be updated at the same time because they all depends on the typing of `graph-ts`
+- `hardhat`, `ethers` and `typechain` should always be updated together to avoid type discrepancies
