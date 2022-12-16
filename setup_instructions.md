@@ -1,33 +1,37 @@
 # Potion Protocol Setup
 
-This file contains two main sections describing how to setup the project for local development and how to deploy the project on a test network.
+This file describes how to setup the project for local development.
 
-## Local development
+## Requirements
 
-1.  The following binaries are required to run the project:
+The following binaries are required to run the project
 
-    1. [NodeJS](https://nodejs.org/en/download/) (v16)
+- [jq](https://github.com/stedolan/jq)
 
-       - To install and manage Node we suggest to use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm)
+- [NodeJS](https://nodejs.org/en/download/) (v16)
 
-    2. [Yarn](https://yarnpkg.com/getting-started/install)
+  - To install and manage Node we suggest to use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm)
 
-    3. [Docker](https://docs.docker.com/engine/install/)
+- [Yarn](https://yarnpkg.com/getting-started/install)
 
-    4. [Docker Compose](https://docs.docker.com/compose/install/)
+- [Docker](https://docs.docker.com/engine/install/)
 
-    If one of the binaries is already available on your system, you can skip that step; only pay attention to the versions (eg: the project is not compatible with Node versions prior to 16).
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-2.  Clone the repository in the `./potion-protocol` folder  
+You can run the `bin/check-dependencies` script to check if everything is installed correctly
+
+## Setup
+
+1.  Clone the repository in the `./potion-protocol` folder  
     `git clone https://github.com/ntropika-labs/potion-protocol.git potion-protocol`
 
-3.  Move to the repository folder on your system  
+2.  Move to the repository folder on your system  
     `cd potion-protocol`
 
-4.  Copy the example [environment file](./.env.example) to a new env file  
+3.  Copy the example [environment file](./.env.example) to a new env file  
     `cp .env.example .env`
 
-5.  In order for the application to run properly, you must define the following set of variables in the new [environment file](./.env)
+4.  In order for the application to run properly, you must define the following set of variables in the new [environment file](./.env)
 
     ```bash
     # example .env file
@@ -46,10 +50,10 @@ This file contains two main sections describing how to setup the project for loc
     ```
 
     - `VITE_SUBGRAPH_ADDRESS` - Absolute url pointing to a running [Graph Node](https://github.com/graphprotocol/graph-node) deployment for the core contracts. In a local environment it's the address for the `graph-node` service deployed by the [docker-compose.yml](./docker-compose.yml).  
-    See [Customization](./README.md#customization)
+      See [Customization](./README.md#customization)
 
     - `VITE_SUBGRAPH_HV_ADDRESS` - Absolute url pointing to a running [Graph Node](https://github.com/graphprotocol/graph-node) deployment for the hedging vault contracts. In a local environment it's the address for the `graph-node` service deployed by the [docker-compose.yml](./docker-compose.yml).  
-    See [Customization](./README.md#customization)
+      See [Customization](./README.md#customization)
 
     - `VITE_BLOCKNATIVE_API_KEY` - This API key is required to fetch gas prices. A default key is generated on sign up and is available in your dashboard. You can register at [BlockNative](https://www.blocknative.com/) to get your own key.
 
@@ -62,26 +66,56 @@ This file contains two main sections describing how to setup the project for loc
 
       You can register at [Alchemy](https://www.alchemy.com/) or [Infura](https://infura.io/) to get your own key.
 
-
-6.  Once you have configured your environment you can run `yarn` to install all dependencies
+5.  Once you have configured your environment you can run `yarn` to install all dependencies
 
     ```bash
     yarn install
     ```
 
 ### Hardhat development
+
 Hardhat is used internally to develop and debug new features
 
-7.  Run the [hardhat-localnode](./contracts/hedging-vault/package.json) script to spin up a local hardhat node
+6.  Run the [hardhat-localnode](./contracts/hedging-vault/package.json) script to spin up a local hardhat node
 
     ```bash
     yarn nx run @potion-protocol/hedging-vault:hardhat-localnode
     ```
 
-8.  Run the [create-hardhat-env](./bin/create-hardhat-env) to bootstrap your environment with Hardhat
+7.  Run the [create-hardhat-env](./bin/create-hardhat-env) to bootstrap your environment with Hardhat
 
     ```bash
     ./bin/create-hardhat-env
+    ```
+
+8.  To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.
+    ```bash
+    yarn dev potion-dapp
+    ```
+    This will make the Vite development server available on `localhost:5173`
+
+### Ganache development
+
+Ganace is used internally to run e2e tests
+
+6.  In order for the application to run properly, you must define the following set of variables in the new [environment file](./.env)
+
+    - `GANACHE_VOLUME` - A relative or absolute path on the host machine to mount into the `ganache` container using [bind mounts](https://docs.docker.com/storage/bind-mounts/). The folder will be managed by Docker and should be reserved for this purpose.  
+      The volume will mount the contents of the `GANACHE_VOLUME` folder at the `/opt` path. Any database will be available from inside the container as `/opt/{folder name}` where `{folder name}` is the name of the folder.
+
+    - `DATABASE_PATH` - An absolute path **inside the ganache container** starting with `/opt`. You can choose any name except those that match a seed name from `ganache_seeds` as the bootstrapping process needs a fresh copy of the database to initialize properly.  
+      If you already initialized your environment you can also use a path to any of the [available ganache seeds](#available-ganache-seeds) (eg `/opt/base`) and the test data will be loaded.
+
+7.  Run the [setup-database-seed](./bin/setup-database-seed) script to automatically copy all database seeds to your `GANACHE_VOLUME` folder
+
+    ```bash
+    ./bin/setup-database-seed --all
+    ```
+
+8.  Run the [setup-local-env](./bin/setup-local-env) to bootstrap your environment
+
+    ```bash
+    ./bin/setup-local-env
     ```
 
 9.  To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.
@@ -89,37 +123,6 @@ Hardhat is used internally to develop and debug new features
     yarn dev potion-dapp
     ```
     This will make the Vite development server available on `localhost:5173`
-
-### Ganache development
-Ganace is used internally to run e2e tests
-
-7.  In order for the application to run properly, you must define the following set of variables in the new [environment file](./.env)
-    - `GANACHE_VOLUME` - A relative or absolute path on the host machine to mount into the `ganache` container using [bind mounts](https://docs.docker.com/storage/bind-mounts/). The folder will be managed by Docker and should be reserved for this purpose.  
-      The volume will mount the contents of the `GANACHE_VOLUME` folder at the `/opt` path. Any database will be available from inside the container as `/opt/{folder name}` where `{folder name}` is the name of the folder.
-
-    - `DATABASE_PATH` - An absolute path **inside the ganache container** starting with `/opt`. You can choose any name except those that match a seed name from `ganache_seeds` as the bootstrapping process needs a fresh copy of the database to initialize properly.  
-      If you already initialized your environment you can also use a path to any of the [available ganache seeds](#available-ganache-seeds) (eg `/opt/base`) and the test data will be loaded.
-
-8.  Run the [setup-database-seed](./bin/setup-database-seed) script to automatically copy all database seeds to your `GANACHE_VOLUME` folder
-
-    ```bash
-    ./bin/setup-database-seed --all
-    ```
-
-9.  Run the [setup-local-env](./bin/setup-local-env) to bootstrap your environment
-
-    ```bash
-    ./bin/setup-local-env
-    ```
-
-
-To start the development server for the [Potion Dapp](./apps/potion-dapp/README.md) you can issue this command.
-```bash
-yarn dev potion-dapp
-```
-This will make the Vite development server available on `localhost:5173`
-
-
 
 ### Recording
 
@@ -133,5 +136,3 @@ If you prefer to see a video to help you with the setup you can look at the [set
 - `ENOENT: no such file or directory, open 'potion-protocol/apps/subgraph/subgraph.yaml'` - Check the environment variables for `VITE_ENDPOINT_PROVIDER` and `VITE_ALCHEMY_KEY` (or `VITE_INFURA_KEY`) are configured properly. Refer to [Customization](./README.md#customization)
 
 - `Cannot read properties of undefined (reading 'dataSources')'` - Check the environment variables for `VITE_ENDPOINT_PROVIDER` and `VITE_ALCHEMY_KEY` (or `VITE_INFURA_KEY`) are configured properly. Refer to [Customization](./README.md#customization)
-
-## Deploy to test network
