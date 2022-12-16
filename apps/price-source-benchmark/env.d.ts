@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_ALCHEMY_KEY: string;
   readonly VITE_ETHEREUM_NETWORK: "mainnet";
   readonly VITE_INFURA_KEY: string;
+  readonly VITE_ORACLE_ADDRESS: string;
 }
 
 interface ImportMeta {

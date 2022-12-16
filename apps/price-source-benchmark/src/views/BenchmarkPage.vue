@@ -44,7 +44,7 @@ const availabletokensAddresses = getTokenList(
 
 // CONST
 const endpoint = import.meta.env.VITE_COINGECKO_API_ENDPOINT;
-const ORACLE_MAINNET_ADDRESS = "0x789cD7AB3742e23Ce0952F6Bc3Eb3A73A0E08833";
+
 const currency = "usd";
 const oracleEndpointUrl = new Map<OracleEndpoint, string>([
   ["alchemy", alchemyRpcUrl],
@@ -120,7 +120,7 @@ const initContractProvider = (rpcUrl: string) => {
   return initContract(
     rpcUrl,
     Oracle__factory,
-    ORACLE_MAINNET_ADDRESS
+    import.meta.env.VITE_ORACLE_ADDRESS
   ) as Oracle;
 };
 
@@ -142,7 +142,7 @@ const tokenToSelectableToken = (
 };
 
 const fakeToken = {
-  address: "0x_TEST_FAKE_TOKEN",
+  address: "0x0000000000000000000000000000000000000000",
   decimals: 0,
   name: "Bogus",
   symbol: "FAKE",
