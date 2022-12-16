@@ -9,6 +9,8 @@ Before getting started please be sure to have installed the [Requirements](#requ
 
 The following binaries are required to run the project
 
+- [jq](https://github.com/stedolan/jq)
+
 - [NodeJS](https://nodejs.org/en/download/) (v16)
 
   - To install and manage Node we suggest to use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm)
@@ -23,7 +25,7 @@ You can run the `bin/check-dependencies` script to check if everything is instal
 
 ## Quick Start
 
-[Setup instructions](./setup_instructions.md)
+See [Setup instructions](./setup_instructions.md)
 
 Some configuration is required before spinning up the environment.  
 Run `cp .env.example .env` to copy the environment example file and customize the following variables:
