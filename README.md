@@ -137,10 +137,12 @@ Every time that you do a fast forward remember to update your starting time to r
 ## Testing
 
 ### unit test
+
 The project implements unit tests for `@potion-protocol/core` with [Hardhat](https://hardhat.org/), `potion-subgraph` with [Matchstick](https://thegraph.com/docs/en/developing/unit-testing-framework/) and [Vitest](https://vitest.dev) for `potion-dapp` and `potion-ui`.
 Every package has at least one script (eg, `test-unit`) to launch them, for more details check the specific `package.json` of that package.
 
 ### e2e
+
 The project currently implements e2e testing for `potion-dapp` and component testing for `potion-ui`.
 Both workspaces are configured to use [Cypress](https://github.com/cypress-io/cypress) as a testing tool.
 
@@ -247,7 +249,7 @@ flowchart TD;
     N --> A
   end
   subgraph PSC [Potion Subgraph Core]
-    C --> R 
+    C --> R
   end
   subgraph PSHV [Potion Subgraph Hedging Vault]
     D --> S
@@ -259,7 +261,7 @@ flowchart TD;
     Q --> P
   end
   subgraph SDK [SDKs]
-    H 
+    H
     L
   end
   CHLP -- Provides helpers for common functionalities ---> PCC & PCHV
@@ -304,7 +306,19 @@ Project containing files for the Vue3 app in charge of showing and updating data
 
 [Read more](./apps/subgraph/README.md)
 
-Local subgraph tracking updates to the protocol entities.
+Local subgraph tracking updates to the core protocol entities.
+
+### apps/subgraph-hv
+
+[Read more](./apps/subgraph-hv/README.md)
+
+Local subgraph tracking updates to the hedging vault protocol entities.
+
+### apps/price-source-benchmark
+
+[Read more](./apps/price-source-benchmark/README.md)
+
+Internal application developed to benchmark stability and performance of the sources used to fetch token prices
 
 ### bin
 
@@ -316,6 +330,34 @@ These consist of:
 - `setup-database-seed`: Based on supplied parameters copies one or all seeds to your `DATABASE_PATH` folder. When called with `--all` flag, restores all database seeds from `ganache_seeds` folder and creates the `tests` subfolder used in e2e-testing.  
   _Called by default when running `yarn nx run potion-dapp:local-test-e2e`_
 
+### scripts/multivault-helpers
+
+[Read more](./scripts/multivault-helpers/README.md)
+
+This workspace contains a couple of helper scripts used to provide [subgraph-hv](../../apps/subgraph-hv) and [potion-dapp](../../apps/potion-dapp) with the required files to run a Hedging Vault multivault deployment.  
+The helpers can be used for example to test the DApp locally while relying on deployed subgraphs.
+
+For example to test on `mumbai`:
+
+1. Change the environment variable for the subgraphs addresses
+
+```bash
+VITE_SUBGRAPH_ADDRESS="https://api.thegraph.com/subgraphs/name/your-project-name/xxxx"
+VITE_SUBGRAPH_HV_ADDRESS="https://api.thegraph.com/subgraphs/name/your-project-name/xxxx"
+```
+
+2. Run the following commands in sequence to generate the required data and start the DApp
+
+```bash
+yarn nx run multivault-helpers:prepare-dapp-mumbai
+```
+
+3. Start the DApp
+
+```bash
+yarn dev potion-dapp
+```
+
 ### contracts/core
 
 [Read more](./contracts/core/README.md)
@@ -326,6 +368,12 @@ files are:
 
 - [CurvePricing.test.js](./contracts/core/test/CurvePricing.test.ts)
 - [PotionLiquidityPool.Upgrades.test.js](./contracts/core/test/PotionLiquidityPool.Upgrades.test.ts)
+
+### contracts/hedging-vault
+
+[Read more](./contracts/hedging-vault/README.md)
+
+The Hedging Vault contracts provide a perpetual hedging vault that automatically purchases new Potions every time the previous Potions expire. Several Users can participate in this Vault at the same time. Each investor can add Principal into the vault in the form of the Hedged Asset, and the Vault will automatically hedge the asset with the Potion Protocol and renew these potions on every cycle.
 
 ### contracts/gamma-protocol
 
@@ -342,9 +390,25 @@ Different seeds are useful for testing different features of the DApp.
 
 This library provides convenient wrappers and type helpers for working with 59x18 bit fixed-point decimals.
 
+### libs/contracts-utils
+
+This library provides convenient wrappers and type helpers to manage and deploy available contracts.
+
+### libs/hardhat-helpers
+
+This library provides convenient wrappers and type helpers to manage hardhat deployments.
+
 ### libs/dapp-types
 
 This library contains a single `index.ts` file with types shared among apps and libraries
+
+### libs/hedging-vault-sdk
+
+[Read more](./libs/hedging-vault-sdk/README.md)
+
+This is a library with common functionality for Hedging Vault implementation. It contains code used both in the front-end and in unit tests.
+
+The purpose of this library is to collect common functionality in one place and to avoid code duplication. Also to provide a third-party with an easy way to integrate the Hedging Vault into their project.
 
 ### libs/locales
 
@@ -374,7 +438,13 @@ It's contained in it's own library to share config between apps and libraries.
 
 [Read more](./libs/subgraph-queries/README.md)
 
-This library is used to generate useful javascript/typescript bindings to interact with a graphql endpoint.
+This library is used to generate useful javascript/typescript bindings to interact with a graphql endpoint for the core protocol.
+
+### libs/subgraph-queries-hv
+
+[Read more](./libs/subgraph-queries-hv/README.md)
+
+This library is used to generate useful javascript/typescript bindings to interact with a graphql endpoint for the hedging vault protocol.
 
 ## Customization
 
