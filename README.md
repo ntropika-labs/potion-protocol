@@ -5,6 +5,11 @@ Potion is a decentralized protocol for the creation of price insurance contracts
 
 Before getting started please be sure to have installed the [Requirements](#requirements).
 
+## Current Deployments
+
+- [Goerli Deployment](./GOERLI_DEPLOYMENT.md)
+- [Mumbai Deployment](./MUMBAI_DEPLOYMENT.md)
+
 ## Requirements
 
 The following binaries are required to run the project
