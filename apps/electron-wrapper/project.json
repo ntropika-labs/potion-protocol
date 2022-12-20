@@ -3,12 +3,12 @@
   "sourceRoot": "apps/electron-wrapper/",
   "projectType": "application",
   "targets": {
-    "build-dapp": {
+    "build-price-benchmark": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
           {
-            "command": "yarn nx run potion-dapp:build-electron",
+            "command": "yarn nx run price-source-benchmark:build-electron",
             "forwardAllArgs": false
           },
           {

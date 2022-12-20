@@ -4,8 +4,6 @@ import { join } from "path";
 //import { URL } from "url";
 
 async function createWindow() {
-  console.log("CREATE WINDOW");
-  console.log(import.meta.env.DEV, import.meta.env.VITE_DEV_SERVER_URL);
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     webPreferences: {
