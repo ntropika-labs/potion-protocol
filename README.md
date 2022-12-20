@@ -430,3 +430,7 @@ CHAIN_TIME="2021-01-01 08:00:00+00:00"
 ### Environment variables
 
 See `.env.example` for available environment variables and their purpose.
+
+# Further Documentation
+
+Additional documents with more information about the project are available in the [docs](./docs) folder. This folder contains architecture documents, technical designs and brainstorms for the current implementation of the protocol and future iterations.
